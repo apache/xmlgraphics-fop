@@ -78,9 +78,7 @@ public class PageSequence extends AbstractPageSequence {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         country = pList.get(PR_COUNTRY).getString();
@@ -93,9 +91,7 @@ public class PageSequence extends AbstractPageSequence {
         }        
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         flowMap = new java.util.HashMap();
@@ -105,9 +101,8 @@ public class PageSequence extends AbstractPageSequence {
             this.pageSequenceMaster
                     = getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
             if (this.pageSequenceMaster == null) {
-                throw new ValidationException("master-reference '" + masterReference
-                   + "' for fo:page-sequence matches no"
-                   + " simple-page-master or page-sequence-master", locator);
+                getFOValidationEventProducer().masterNotFound(this, getName(),
+                        masterReference, getLocator());
             }
         }
 
@@ -128,7 +123,7 @@ public class PageSequence extends AbstractPageSequence {
         XSL Content Model: (title?,static-content*,flow)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("title")) {
                 if (titleFO != null) {
@@ -149,8 +144,6 @@ public class PageSequence extends AbstractPageSequence {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -184,18 +177,15 @@ public class PageSequence extends AbstractPageSequence {
         String flowName = flow.getFlowName();
 
         if (hasFlowName(flowName)) {
-            throw new ValidationException("duplicate flow-name \""
-                + flowName
-                + "\" found within fo:page-sequence", flow.getLocator());
+            getFOValidationEventProducer().duplicateFlowNameInPageSequence(this, flow.getName(),
+                    flowName, flow.getLocator());
         }
 
         if (!getRoot().getLayoutMasterSet().regionNameExists(flowName) 
             && !flowName.equals("xsl-before-float-separator") 
             && !flowName.equals("xsl-footnote-separator")) {
-                throw new ValidationException("flow-name \""
-                    + flowName
-                    + "\" could not be mapped to a region-name in the"
-                    + " layout-master-set", flow.getLocator());
+            getFOValidationEventProducer().flowNameNotMapped(this, flow.getName(),
+                    flowName, flow.getLocator());
         }
     }
 

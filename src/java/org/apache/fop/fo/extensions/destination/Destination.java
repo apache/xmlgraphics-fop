@@ -19,15 +19,15 @@
 
 package org.apache.fop.fo.extensions.destination;
 
-import org.apache.fop.fo.ValidationException;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.pagination.Root;
 
 /**
  * Class for named destinations in PDF.
@@ -54,7 +54,7 @@ public class Destination extends FONode {
             Attributes attlist, PropertyList pList) throws FOPException {
         internalDestination = attlist.getValue("internal-destination");
         if (internalDestination == null || internalDestination.length() == 0) {
-            attributeError("Missing attribute:  internal-destination must be specified.");
+            missingPropertyError("internal-destination");
         }
     }
     

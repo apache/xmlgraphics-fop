@@ -23,11 +23,11 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.IOUtils;
+
 import org.apache.xmlgraphics.image.writer.ImageWriter;
 import org.apache.xmlgraphics.image.writer.ImageWriterParams;
 import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
-
-import org.apache.commons.io.IOUtils;
 
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
@@ -74,8 +74,10 @@ public class PNGRenderer extends Java2DRenderer {
 
             OutputStream os = getCurrentOutputStream(i);
             if (os == null) {
-                log.warn("No filename information available."
-                        + " Stopping early after the first page.");
+                BitmapRendererEventProducer eventProducer
+                    = BitmapRendererEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                eventProducer.stoppingAfterFirstPageNoFilename(this);
                 break;
             }
             try {
@@ -104,9 +106,10 @@ public class PNGRenderer extends Java2DRenderer {
         // Encode PNG image
         ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor(getMimeType());
         if (writer == null) {
-            throw new IOException("Could not get an ImageWriter to produce " 
-                    + getMimeType() + ". The most likely explanation for this is a class"
-                    + " loading problem.");
+            BitmapRendererEventProducer eventProducer
+                = BitmapRendererEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+            eventProducer.noImageWriterFound(this, getMimeType());
         }
         if (log.isDebugEnabled()) {
             log.debug("Writing image using " + writer.getClass().getName());

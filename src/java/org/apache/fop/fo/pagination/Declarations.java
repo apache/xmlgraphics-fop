@@ -42,6 +42,7 @@ public class Declarations extends FObj {
     private Map colorProfiles = null;
 
     /**
+     * Creates a new declarations element.
      * @param parent FONode that is the parent of this object
      */
     public Declarations(FONode parent) {
@@ -49,9 +50,7 @@ public class Declarations extends FObj {
         ((Root) parent).setDeclarations(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         // No properties defined for fo:declarations
     }
@@ -73,6 +72,7 @@ public class Declarations extends FObj {
     /**
      * At the end of this element sort out the children into
      * a hashmap of color profiles and a list of extension attachments.
+     * @throws FOPException if there's a problem during processing
      */
     protected void endOfNode() throws FOPException {
         if (firstChild != null) {
@@ -83,7 +83,8 @@ public class Declarations extends FObj {
                     if (!"".equals(cp.getColorProfileName())) {
                         addColorProfile(cp);
                     } else {
-                        log.warn("color-profile-name required for color profile");
+                        getFOValidationEventProducer().missingProperty(this,
+                                cp.getName(), "color-profile-name", locator);
                     }
                 } else {
                     log.debug("Ignoring element " + node.getName() 
@@ -100,22 +101,18 @@ public class Declarations extends FObj {
         }
         if (colorProfiles.get(cp.getColorProfileName()) != null) {
             // duplicate names
-            log.warn("Duplicate fo:color-profile profile name: "
-                    + cp.getColorProfileName());
+            getFOValidationEventProducer().colorProfileNameNotUnique(this,
+                    cp.getName(), cp.getColorProfileName(), locator);
         }
         colorProfiles.put(cp.getColorProfileName(), cp);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "declarations";
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_DECLARATIONS;
     }

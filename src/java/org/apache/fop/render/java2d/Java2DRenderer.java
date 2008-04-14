@@ -66,6 +66,7 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -930,13 +931,17 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                         pos, foreignAttributes);
             }
         } catch (ImageException ie) {
-            log.error("Error while processing image: "
-                    + (info != null ? info.toString() : uri), ie);
-        } catch (FileNotFoundException fnfe) {
-            log.error(fnfe.getMessage());
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            log.error("I/O error while processing image: "
-                    + (info != null ? info.toString() : uri), ioe);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
     }
 

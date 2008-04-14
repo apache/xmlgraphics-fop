@@ -198,11 +198,11 @@ public abstract class AbstractBreaker {
     }
     
     /**
-     * Returns a PageBreakingLayoutListener for the PageBreakingAlgorithm to notify about layout
-     * problems.
+     * Creates and returns a PageBreakingLayoutListener for the PageBreakingAlgorithm to
+     * notify about layout problems.
      * @return the listener instance or null if no notifications are needed
      */
-    protected PageBreakingAlgorithm.PageBreakingLayoutListener getLayoutListener() {
+    protected PageBreakingAlgorithm.PageBreakingLayoutListener createLayoutListener() {
         return null;
     }
     
@@ -320,7 +320,7 @@ public abstract class AbstractBreaker {
                 log.debug("PLM> start of algorithm (" + this.getClass().getName() 
                         + "), flow BPD =" + flowBPD);
                 PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
-                        getPageProvider(), getLayoutListener(),
+                        getPageProvider(), createLayoutListener(),
                         alignment, alignmentLast, footnoteSeparatorLength,
                         isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
                 int iOptPageCount;

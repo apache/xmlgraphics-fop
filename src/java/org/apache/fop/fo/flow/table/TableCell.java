@@ -102,17 +102,13 @@ public class TableCell extends TableFObj {
      */
     public void endOfNode() throws FOPException {
         if (!blockItemFound) {
-            if (getUserAgent().validateStrictly()) {
-                missingChildElementError("marker* (%block;)+");
-            } else if (firstChild != null) {
-                log.warn("fo:table-cell content that is not "
-                        + "enclosed by a fo:block will be dropped/ignored.");
-            }
+            missingChildElementError("marker* (%block;)+", true);
         }
         if ((startsRow() || endsRow())
                 && getParent().getNameId() == FO_TABLE_ROW ) {
-            log.warn("starts-row/ends-row for fo:table-cells "
-                    + "non-applicable for children of an fo:table-row.");
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.startEndRowUnderTableRowWarning(this, getLocator());
         }
         getFOEventHandler().endCell(this);
     }
@@ -123,14 +119,16 @@ public class TableCell extends TableFObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 

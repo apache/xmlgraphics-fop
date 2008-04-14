@@ -20,12 +20,17 @@
 package org.apache.fop.fo.flow;
 
 import java.awt.geom.Point2D;
+
+import org.xml.sax.Locator;
+
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.XMLObj;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:instream-foreign-object object.
@@ -39,6 +44,7 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     //Additional value
     private Point2D intrinsicDimensions;
+    private boolean instrisicSizeDetermined;
     
     private Length intrinsicAlignmentAdjust;
     
@@ -68,11 +74,11 @@ public class InstreamForeignObject extends AbstractGraphics {
      * XSL Content Model: one (1) non-XSL namespace child
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
         } else if (firstChild != null) {
-            tooManyNodesError(loc, "child element");
+            tooManyNodesError(loc, new QName(nsURI, null, localName));
         }
     }
 
@@ -81,32 +87,28 @@ public class InstreamForeignObject extends AbstractGraphics {
         return "instream-foreign-object";
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_INSTREAM_FOREIGN_OBJECT;
     }
 
-    /**
-     * Preloads the image so the intrinsic size is available.
-     */
+    /** Preloads the image so the intrinsic size is available. */
     private void prepareIntrinsicSize() {
-        if (intrinsicDimensions == null) {
+        if (!this.instrisicSizeDetermined) {
             XMLObj child = (XMLObj) firstChild;
             Point2D csize = new Point2D.Float(-1, -1);
             intrinsicDimensions = child.getDimension(csize);
             if (intrinsicDimensions == null) {
-                log.error("Intrinsic dimensions of "
-                        + " instream-foreign-object could not be determined");
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.ifoNoIntrinsicSize(this, getLocator());
             }
             intrinsicAlignmentAdjust = child.getIntrinsicAlignmentAdjust();
+            this.instrisicSizeDetermined = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getIntrinsicWidth() {
         prepareIntrinsicSize();
         if (intrinsicDimensions != null) {
@@ -116,9 +118,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getIntrinsicHeight() {
         prepareIntrinsicSize();
         if (intrinsicDimensions != null) {
@@ -128,11 +128,8 @@ public class InstreamForeignObject extends AbstractGraphics {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public  Length getIntrinsicAlignmentAdjust()
-    {
+    /** {@inheritDoc} */
+    public  Length getIntrinsicAlignmentAdjust() {
         prepareIntrinsicSize();
         return intrinsicAlignmentAdjust;
     }

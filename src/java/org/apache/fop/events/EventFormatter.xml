@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- $Id$ -->
+<catalogue xml:lang="en">
+  <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
+  <message key="rule.markerDescendantOfFlow">An fo:marker is permitted only as the descendant of an fo:flow.</message>
+  <message key="rule.retrieveMarkerDescendatOfStaticContent">An fo:retrieve-marker is permitted only as the descendant of an fo:static-content.</message>
+  <message key="rule.bidiOverrideContent">An fo:bidi-override that is a descendant of an fo:leader or of the fo:inline child of an fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
+  <message key="rule.inlineContent">An fo:inline that is a descendant of an fo:leader or fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
+  <message key="rule.childOfSPM">The element must be a child of fo:simple-page-master.</message>
+  <message key="rule.childOfDeclarations">The element must be a child of fo:declarations.</message>
+  <message key="rule.childOfSPMorDeclarations">The element must be a child of fo:declarations or fo:simple-page-master.</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"!{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidChild">"{offendingNode}" is not a valid child element of "{elementName}"![ {ruleViolated,lookup}]{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingChildElement">"{elementName}" is missing child elements.[
+Required content model: {contentModel}]{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Element "{elementName}" is missing required property "{propertyName}"!{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.idNotUnique">Property ID "{id}" (found on "{elementName}") previously used; ID values must be unique within a document!{severity,equals,EventSeverity:FATAL,,
+Any reference to it will be considered a reference to the first occurrence in the document.}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotInitialChild">fo:marker must be an initial child: {mcname}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidProperty">Invalid property encountered on "{elementName}": {attr}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidPropertyValue">Invalid property value encountered in {propName}="{propValue}"[: {e}]{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.unimplementedFeature">The following feature isn't implemented by Apache FOP, yet: {feature} (on {elementName}){{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.missingLinkDestination">Missing attribute on {elementName}: Either external-destination or internal-destination must be specified.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.markerCloningFailed">Unable to clone subtree of fo:marker (marker-class-name="{markerClassName}") for fo:retrieve-marker.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.colorProfileNameNotUnique">Duplicate color profile profile name: {name}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.regionNameMappedToMultipleRegionClasses">Region-name ("{regionName}") is being mapped to multiple region-classes ({defaultRegionClass1} and {defaultRegionClass2}).{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.masterNameNotUnique">The page master name ("{name}") must be unique across page-masters and page-sequence-masters.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.duplicateFlowNameInPageSequence">Duplicate flow-name "{flowName}" found within {elementName}.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.flowNameNotMapped">The flow-name "{flowName}" on {elementName} could not be mapped to a region-name in the layout-master-set.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.masterNotFound">The master-reference "{masterReference}" on {elementName} matches no simple-page-master or page-sequence-master.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.illegalRegionName">The region-name "{regionName}" for {elementName} is not permitted.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.nonZeroBorderPaddingOnRegion">Border and padding for {elementName} "{regionName}" must be '0' (See 6.4.13 in XSL 1.0).{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.columnCountErrorOnRegionBodyOverflowScroll">If overflow property is set to "scroll" on {elementName}, a column-count other than "1" may not be specified.{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.invalidFORoot">First element must be the fo:root formatting object. Found {elementName} instead. Please make sure you're producing a valid XSL-FO document.</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.emptyDocument">Document is empty (something might be wrong with your XSLT stylesheet).</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.unknownFormattingObject">Unknown formatting object "{offendingNode}" encountered (a child of {elementName}}.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.nonAutoBPDOnTable">Only a value of "auto" for block-progression-dimension has a well-specified behavior on fo:table. Falling back to "auto".{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.noTablePaddingWithCollapsingBorderModel">In collapsing border model a table does not have padding (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders), but a non-zero value for padding was found. The padding will be ignored.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.noMixRowsAndCells">Either fo:table-rows or fo:table-cells may be children of an {elementName} but not both.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.footerOrderCannotRecover">This table uses the collapsing border model. In order to resolve borders in an efficient way the table-footer must be known before any table-body is parsed. Either put the footer at the correct place or switch to the separate border model.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.startEndRowUnderTableRowWarning">starts-row/ends-row for fo:table-cells non-applicable for children of an fo:table-row.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.tooManyCells">The column-number or number of cells in the row overflows the number of fo:table-columns specified for the table.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.valueMustBeBiggerGtEqOne">{propName} must be 1 or bigger, but got {actualValue}{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.warnImplicitColumns">table-layout=\"fixed\" and column-width unspecified =&gt; falling back to proportional-column-width(1){{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found.[ URI: {uri}.]{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available.[ URI: {uri}.] Reason:[ {reason}][ {e}]{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageIOError">I/O error while loading image.[ URI: {uri}.][ Reason: {ioe}]{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.ifoNoIntrinsicSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.uriError">Error while handling URI: {uri}. Reason: {e}{{locator}}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.foreignXMLProcessingError">Some XML content will be ignored. Could not render XML in namespace "{namespaceURI}".[ Reason: {e}]</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.foreignXMLNoHandler">Some XML content will be ignored. No handler defined for XML with namespace "{namespaceURI}".</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.imageWritingError">Error while writing an image to the target file.[ Reason: {e}]</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.cannotDeleteTempFile">Temporary file could not be deleted: {tempFile}</message>
+  <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.leaderWithoutContent">fo:leader is set to "use-content" but has no content.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.lineOverflows">Line {line} of a paragraph overflows the available area by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.rowTooTall">The contents of table-row {row} are taller than they should be (there is a block-progression-dimension or height constraint on the indicated row). Due to its contents the row grows to {effCellBPD} millipoints, but the row shouldn't get any taller than {maxCellBPD} millipoints.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.tableFixedAutoWidthNotSupported">table-layout="fixed" and width="auto", but auto-layout not supported =&gt; assuming width="100%".{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.objectTooWide">The extent in inline-progression-direction (width) of a {elementName} is bigger than the available space ({effIPD}mpt &gt; {maxIPD}mpt).{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.overconstrainedAdjustEndIndent">Adjusting end-indent based on overconstrained geometry rules for {elementName}.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.viewportOverflow">Content overflows the viewport of an {elementName} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.regionOverflow">Content overflows the viewport of the {elementName} on page {page} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.flowNotMappingToRegionBody">Flow "{flowName}" does not map to the region-body in page-master "{masterName}". FOP presently does not support this.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.pageSequenceMasterExhausted">Subsequences exhausted in page-sequence-master "{pageSequenceMasterName}", {canRecover,if,using previous subsequence,cannot recover}.{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.missingSubsequencesInPageSequenceMaster">No subsequences in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.noMatchingPageMaster">No simple-page-master matching "{pageMasterName}" in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.error">SVG error: {message}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.alert">SVG alert: {message}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.info">SVG info: {message}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.svgNotBuilt">SVG graphic could not be built. Reason: {e}</message>
+  <message key="org.apache.fop.svg.SVGEventProducer.svgRenderingError">SVG graphic could not be rendered. Reason: {e}</message>
+  <message key="org.apache.fop.render.RendererEventProducer.ioError">I/O error while writing to target file.[ Reason: {ioe}]</message>
+  <message key="org.apache.fop.area.AreaEventProducer.unresolvedIDReference">{type}: Unresolved ID reference "{id}" found.</message>
+  <message key="org.apache.fop.area.AreaEventProducer.unresolvedIDReferenceOnPage">Page {page}: Unresolved ID reference "{id}" found.</message>
+  <message key="org.apache.fop.area.AreaEventProducer.pageLoadError">Error while deserializing page {page}.[ Reason: {e}]</message>
+  <message key="org.apache.fop.area.AreaEventProducer.pageSaveError">Error while serializing page {page}.[ Reason: {e}]</message>
+  <message key="org.apache.fop.area.AreaEventProducer.pageRenderingError">Error while rendering page {page}.[ Reason: {e}]</message>
+  <message key="org.apache.fop.fonts.FontEventAdapter.fontSubstituted">Font "{requested}" not found. Substituting with "{effective}".</message>
+  <message key="org.apache.fop.fonts.FontEventAdapter.fontLoadingErrorAtAutoDetection">Unable to load font file: {fontURL}.[ Reason: {e}]</message>
+  <message key="org.apache.fop.fonts.FontEventAdapter.glyphNotAvailable">Glyph "{ch}" (0x{ch,hex}[, {ch,glyph-name}]) not available in font "{fontName}".</message>
+</catalogue>

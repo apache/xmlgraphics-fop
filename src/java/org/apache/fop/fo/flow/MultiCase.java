@@ -46,7 +46,8 @@ public class MultiCase extends FObj {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:multi-case is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }

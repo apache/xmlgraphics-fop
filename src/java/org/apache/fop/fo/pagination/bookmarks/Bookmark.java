@@ -20,10 +20,13 @@
 package org.apache.fop.fo.pagination.bookmarks;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
@@ -68,10 +71,10 @@ public class Bookmark extends FObj {
             externalDestination = null;
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
-            attributeError("Missing attribute:  Either external-destination or " +
-                "internal-destination must be specified.");
+            getFOValidationEventProducer().missingLinkDestination(this, getName(), locator);
         } else {
-            attributeWarning("external-destination property not currently supported");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "external-destination", getLocator());
         }
     }
 
@@ -80,18 +83,20 @@ public class Bookmark extends FObj {
         XSL/FOP: (bookmark-title, bookmark*)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-            if (FO_URI.equals(nsURI) && localName.equals("bookmark-title")) {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("bookmark-title")) {
                 if (bookmarkTitle != null) {
                     tooManyNodesError(loc, "fo:bookmark-title");
                 }
-            } else if (FO_URI.equals(nsURI) && localName.equals("bookmark")) {
+            } else if (localName.equals("bookmark")) {
                 if (bookmarkTitle == null) {
                     nodesOutOfOrderError(loc, "fo:bookmark-title", "fo:bookmark");
                 }                
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
+        }
     }
 
     /**
@@ -123,10 +128,18 @@ public class Bookmark extends FObj {
         return bookmarkTitle == null ? "" : bookmarkTitle.getTitle();
     }
 
+    /**
+     * Returns the value of the internal-destination property.
+     * @return the internal-destination
+     */
     public String getInternalDestination() {
         return internalDestination;
     }
 
+    /**
+     * Returns the value of the external-destination property.
+     * @return the external-destination
+     */
     public String getExternalDestination() {
         return externalDestination;
     }
@@ -141,7 +154,11 @@ public class Bookmark extends FObj {
         return bShow;
     }
 
-    public ArrayList getChildBookmarks() {
+    /**
+     * Returns a list of child bookmarks.
+     * @return the list of child bookmarks
+     */
+    public List getChildBookmarks() {
         return childBookmarks;
     }
 
@@ -150,9 +167,7 @@ public class Bookmark extends FObj {
         return "bookmark";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_BOOKMARK;
     }

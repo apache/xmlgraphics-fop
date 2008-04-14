@@ -32,23 +32,22 @@ import org.apache.fop.fo.FONode;
  * The fo:region-before element.
  */
 public class RegionBefore extends RegionBA {
+
     /**
+     * Creates a new region-before element.
+     * @param parent the parent element
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionBefore(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String getDefaultRegionName() {
         return "xsl-region-before";
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving extent as values are resolved relative 
          * to the page size and reference orientation.
@@ -91,9 +90,7 @@ public class RegionBefore extends RegionBA {
         return "region-before";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getNameId() {
         return FO_REGION_BEFORE;
     }

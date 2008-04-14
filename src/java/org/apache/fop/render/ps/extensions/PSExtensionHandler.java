@@ -19,13 +19,15 @@
 
 package org.apache.fop.render.ps.extensions;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.util.ContentHandlerFactory;
-import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
 /**
  * ContentHandler (parser) for restoring PSExtension objects from XML.
@@ -91,25 +93,19 @@ public class PSExtensionHandler extends DefaultHandler
         content.append(ch, start, length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endDocument() throws SAXException {
         if (listener != null) {
             listener.notifyObjectBuilt(getObject());
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Object getObject() {
         return returnedObject;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setObjectBuiltListener(ObjectBuiltListener listener) {
         this.listener = listener;
     }

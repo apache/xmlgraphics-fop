@@ -82,12 +82,16 @@ public class TableColumn extends TableFObj {
         super.bind(pList);
 
         if (numberColumnsRepeated <= 0) {
-            throw new PropertyException("number-columns-repeated must be 1 or bigger, "
-                    + "but got " + numberColumnsRepeated);
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.valueMustBeBiggerGtEqOne(this,
+                    "number-columns-repeated", numberColumnsRepeated, getLocator());
         }
         if (numberColumnsSpanned <= 0) {
-            throw new PropertyException("number-columns-spanned must be 1 or bigger, "
-                    + "but got " + numberColumnsSpanned);
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.valueMustBeBiggerGtEqOne(this,
+                    "number-columns-spanned", numberColumnsSpanned, getLocator());
         }
 
         /* check for unspecified width and replace with default of
@@ -96,8 +100,9 @@ public class TableColumn extends TableFObj {
          */
         if (columnWidth.getEnum() == EN_AUTO) {
             if (!this.implicitColumn && !getTable().isAutoLayout()) {
-                log.warn("table-layout=\"fixed\" and column-width unspecified "
-                        + "=> falling back to proportional-column-width(1)");
+                TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.warnImplicitColumns(this, getLocator());
             }
             columnWidth = new TableColLength(1.0, this);
         }
@@ -146,7 +151,9 @@ public class TableColumn extends TableFObj {
     protected void validateChildNode(Locator loc,
                         String nsURI, String localName)
         throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**
@@ -240,7 +247,7 @@ public class TableColumn extends TableFObj {
      * 
      * @param propId    the id for the property to retrieve
      * @return the requested Property
-     * @throws PropertyException
+     * @throws PropertyException if there is a problem evaluating the property 
      */
     public Property getProperty(int propId) throws PropertyException {
         return this.pList.get(propId);

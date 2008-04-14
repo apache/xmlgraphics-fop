@@ -70,6 +70,7 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
@@ -291,7 +292,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 }
             }
         } else {
-            log.warn("No AFP fonts configured - using default setup");
+            AFPEventProducer eventProducer = AFPEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.warnDefaultFontSetup(this);
         }
         if (this.fontInfo.fontLookup("sans-serif", "normal", 400) == null) {
             CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZH200  ",
@@ -909,7 +912,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         RendererContext context;
         context = super.createRendererContext(x, y, width, height, foreignAttributes);
         context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE,
-                new Boolean(!this.colorImages));
+                Boolean.valueOf(!this.colorImages));
         return context;
     }
 
@@ -1014,13 +1017,17 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 }
 
             } catch (ImageException ie) {
-                log.error("Error while processing image: "
-                        + (info != null ? info.toString() : uri), ie);
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
             } catch (FileNotFoundException fe) {
-                log.error(fe.getMessage());
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
             } catch (IOException ioe) {
-                log.error("I/O error while processing image: "
-                        + (info != null ? info.toString() : uri), ioe);
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
             }
             
             /*
@@ -1195,7 +1202,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         image.getWidth(), image.getHeight(), this.bitsPerPixel);
             }
         } catch (IOException ioe) {
-            log.error("Error while serializing bitmap: " + ioe.getMessage(), ioe);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageWritingError(this, ioe);
         }
     }
 
@@ -1305,8 +1314,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         } catch (Throwable ex) {
             encoding = AFPConstants.EBCIDIC_ENCODING;
             log.warn(
-                "renderText():: Error getting encoding for font "
-                + " - using default encoding "
+                "renderText():: Error getting encoding for font '"
+                + tf.getFullName()
+                + "' - using default encoding "
                 + encoding);
         }
 

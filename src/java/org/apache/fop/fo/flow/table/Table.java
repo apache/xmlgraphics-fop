@@ -22,6 +22,8 @@ package org.apache.fop.fo.flow.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
@@ -35,7 +37,6 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.TableColLength;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:table object.
@@ -126,20 +127,22 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();
 
         if (!blockProgressionDimension.getOptimum(null).isAuto()) {
-            attributeWarning("only a value of \"auto\" for block-progression-dimension has a"
-                    + " well-specified behavior on fo:table. Falling back to \"auto\"");
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.nonAutoBPDOnTable(this, getLocator());
             // Anyway, the bpd of a table is not used by the layout code
         }
         if (tableLayout == EN_AUTO) {
-            attributeWarning("table-layout=\"auto\" is currently not supported by FOP");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "table-layout=\"auto\"", getLocator());
         }
         if (!isSeparateBorderModel()
                 && getCommonBorderPaddingBackground().hasPadding(
                         ValidationPercentBaseContext.getPseudoContext())) {
             //See "17.6.2 The collapsing border model" in CSS2
-            attributeWarning("In collapsing border model a table does not have padding"
-                    + " (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders)"
-                    + ", but a non-zero value for padding was found. The padding will be ignored.");
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.noTablePaddingWithCollapsingBorderModel(this, getLocator());
         }
 
         /* Store reference to the property list, so
@@ -163,7 +166,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * XSL Content Model: (marker*,table-column*,table-header?,table-footer?,table-body+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
-        throws ValidationException {
+                throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if ("marker".equals(localName)) {
                 if (tableColumnFound || tableHeaderFound || tableFooterFound
@@ -193,15 +196,11 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                 } else {
                     tableFooterFound = true;
                     if (tableBodyFound) {
-                        if (getUserAgent().validateStrictly()) {
-                            nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)");
-                        } else if (!isSeparateBorderModel()) {
-                            nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)."
-                                    + " This table uses the collapsing border"
-                                    + " model. In order to resolve borders in an efficient way"
-                                    + " the table-footer must be known before any table-body"
-                                    + " is parsed. Either put the footer at the correct place"
-                                    + " or switch to the separate border model");
+                        nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)", true);
+                        if (!isSeparateBorderModel()) {
+                            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                                    getUserAgent().getEventBroadcaster());
+                            eventProducer.footerOrderCannotRecover(this, getName(), getLocator());
                         }
                     }
                 }
@@ -210,8 +209,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -224,6 +221,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
            missingChildElementError(
                    "(marker*,table-column*,table-header?,table-footer?"
                        + ",table-body+)");
+        }
+        if (!hasChildren()) {
+            getParent().removeChild(this);
+            return;
         }
         if (!inMarker()) {
             rowGroupBuilder.endTable();

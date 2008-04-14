@@ -35,6 +35,7 @@ import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCache;
+import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
@@ -52,6 +53,17 @@ public class FontInfoFinder {
     /** logging instance */
     private Log log = LogFactory.getLog(FontInfoFinder.class);
 
+    private FontEventListener eventListener;
+    
+    /**
+     * Sets the font event listener that can be used to receive events about particular events
+     * in this class.
+     * @param listener the font event listener
+     */
+    public void setEventListener(FontEventListener listener) {
+        this.eventListener = listener;
+    }
+    
     /**
      * Attempts to determine FontTriplets from a given CustomFont.
      * It seems to be fairly accurate but will probably require some tweaking over time
@@ -180,7 +192,6 @@ public class FontInfoFinder {
         
         // try to determine triplet information from font file
         CustomFont customFont = null;
-        
         if (fontUrl.toExternalForm().endsWith(".ttc")) {
             // Get a list of the TTC Font names
             List ttcNames = null; //List<String>
@@ -193,7 +204,9 @@ public class FontInfoFinder {
                 FontFileReader reader = new FontFileReader(in);
                 ttcNames = ttf.getTTCnames(reader);
             } catch (Exception e) {
-                log.error(e);
+                if (this.eventListener != null) {
+                    this.eventListener.fontLoadingErrorAtAutoDetection(this, fontFileURI, e);
+                }
             } finally {
                 IOUtils.closeQuietly(in);
             }
@@ -212,13 +225,15 @@ public class FontInfoFinder {
                 try {
                     ttfLoader = new TTFFontLoader(fontFileURI, fontName, resolver);
                     customFont = ttfLoader.getFont();
+                    if (this.eventListener != null) {
+                        customFont.setEventListener(this.eventListener);
+                    }
                 } catch (Exception e) {
-                    //TODO Too verbose (it's an error but we don't care if some fonts can't be loaded)
-                    //if (log.isErrorEnabled()) {
-                    log.error("Unable to load font file: " + embedUrl + ". Reason: " + e.getMessage());
-                    //}
                     if (fontCache != null) {
                         fontCache.registerFailedFont(embedUrl, fileLastModified);
+                    }
+                    if (this.eventListener != null) {
+                        this.eventListener.fontLoadingErrorAtAutoDetection(this, embedUrl, e);
                     }
                     continue;
                 }
@@ -233,13 +248,15 @@ public class FontInfoFinder {
             // The normal case
             try {
                 customFont = FontLoader.loadFont(fontUrl, null, resolver);
+                if (this.eventListener != null) {
+                    customFont.setEventListener(this.eventListener);
+                }
             } catch (Exception e) {
-                //TODO Too verbose (it's an error but we don't care if some fonts can't be loaded)
-                //if (log.isErrorEnabled()) {
-                    log.error("Unable to load font file: " + embedUrl + ". Reason: " + e.getMessage());
-                //}
                 if (fontCache != null) {
                     fontCache.registerFailedFont(embedUrl, fileLastModified);
+                }
+                if (this.eventListener != null) {
+                    this.eventListener.fontLoadingErrorAtAutoDetection(this, embedUrl, e);
                 }
                 return null;
             }
@@ -250,7 +267,6 @@ public class FontInfoFinder {
                 return null;
             }
         }
-        
 
     }
 

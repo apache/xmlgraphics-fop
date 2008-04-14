@@ -23,13 +23,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:table-body object.
@@ -119,13 +120,8 @@ public class TableBody extends TableCellContainer {
         getFOEventHandler().endBody(this);
 
         if (!(tableRowsFound || tableCellsFound)) {
-            if (getUserAgent().validateStrictly()) {
-                missingChildElementError("marker* (table-row+|table-cell+)");
-            } else {
-                log.error("fo:table-body must not be empty. "
-                        + "Expected: marker* (table-row+|table-cell+)");
-                getParent().removeChild(this);
-            }
+            missingChildElementError("marker* (table-row+|table-cell+)", true);
+            getParent().removeChild(this);
         } else {
             finishLastRowGroup();
         }
@@ -167,23 +163,20 @@ public class TableBody extends TableCellContainer {
             } else if (localName.equals("table-row")) {
                 tableRowsFound = true;
                 if (tableCellsFound) {
-                    invalidChildError(loc, nsURI, localName, "Either fo:table-rows"
-                            + " or fo:table-cells may be children of an " + getName()
-                            + " but not both");
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.noMixRowsAndCells(this, getName(), getLocator());
                 }
             } else if (localName.equals("table-cell")) {
                 tableCellsFound = true;
                 if (tableRowsFound) {
-                    invalidChildError(loc, nsURI, localName,
-                            "Either fo:table-rows or fo:table-cells "
-                            + "may be children of an "
-                            + getName() + " but not both");
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.noMixRowsAndCells(this, getName(), getLocator());
                 }
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 

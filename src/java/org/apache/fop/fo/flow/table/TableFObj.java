@@ -58,9 +58,7 @@ public abstract class TableFObj extends FObj {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
@@ -71,9 +69,9 @@ public abstract class TableFObj extends FObj {
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
                         ValidationPercentBaseContext.getPseudoContext())) {
-            attributeWarning(
-                    "padding-* properties are not applicable to " + getName()
-                    + ", but a non-zero value for padding was found.");
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.paddingNotApplicable(this, getName(), getLocator());
         }
     }
 
@@ -156,17 +154,19 @@ public abstract class TableFObj extends FObj {
             ColumnNumberManager columnIndexManager =  parent.getColumnNumberManager();
             int columnIndex = p.getNumeric().getValue();
             if (columnIndex <= 0) {
+                /* No warning necessary as the spec clearly defines how to handle these cases.
                 log.warn("Specified negative or zero value for "
                         + "column-number on " + fo.getName() + ": "
                         + columnIndex + " forced to "
-                        + columnIndexManager.getCurrentColumnNumber());
+                        + columnIndexManager.getCurrentColumnNumber());*/
                 return NumberProperty.getInstance(columnIndexManager.getCurrentColumnNumber());
             } else {
                 double tmpIndex = p.getNumeric().getNumericValue();
                 if (tmpIndex - columnIndex > 0.0) {
                     columnIndex = (int) Math.round(tmpIndex);
+                    /* No warning necessary as the spec clearly defines how to handle these cases.
                     log.warn("Rounding specified column-number of "
-                            + tmpIndex + " to " + columnIndex);
+                            + tmpIndex + " to " + columnIndex);*/
                     p = NumberProperty.getInstance(columnIndex);
                 }
             }
@@ -179,16 +179,9 @@ public abstract class TableFObj extends FObj {
                     /* if column-number is already in use by another
                      * cell/column => error!
                      */
-                    StringBuffer errorMessage = new StringBuffer();
-                    errorMessage.append(fo.getName() + " overlaps in column ")
-                           .append(columnIndex + i);
-                    org.xml.sax.Locator loc = fo.getLocator();
-                    if (loc != null && loc.getLineNumber() != -1) {
-                        errorMessage.append(" (line #")
-                            .append(loc.getLineNumber()).append(", column #")
-                            .append(loc.getColumnNumber()).append(")");
-                    }
-                    throw new PropertyException(errorMessage.toString());
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                            fo.getUserAgent().getEventBroadcaster());
+                    eventProducer.cellOverlap(this, fo.getName(), columnIndex + 1, fo.getLocator());
                 }
             }
 

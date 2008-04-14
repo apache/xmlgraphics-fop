@@ -19,13 +19,14 @@
 
 package org.apache.fop.fo.flow;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:bidi-override object.
@@ -96,22 +97,21 @@ public class BidiOverride extends FObjMixed {
      *  fo:inline-container."
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockOrInlineItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", 
-                    "(#PCDATA|%inline;|%block;)");
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockOrInlineItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", 
+                        "(#PCDATA|%inline;|%block;)");
+                }
+            } else if (!isBlockOrInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, getParent().getName(), nsURI, getName(),
+                        "rule.bidiOverrideContent");
+            } else {
+                blockOrInlineItemFound = true;
             }
-        } else if (!isBlockOrInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
-            String ruleViolated = "An fo:bidi-override"
-                + " that is a descendant of an fo:leader or of the fo:inline child"
-                + " of an fo:footnote may not have block-level children, unless it" 
-                + " has a nearer ancestor that is an fo:inline-container.";
-            invalidChildError(loc, nsURI, localName, ruleViolated);
-        } else {
-            blockOrInlineItemFound = true;
         }
     }
 
