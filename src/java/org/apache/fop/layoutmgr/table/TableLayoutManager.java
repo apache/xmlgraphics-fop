@@ -191,7 +191,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             updateContentAreaIPDwithOverconstrainedAdjust(contentIPD);
         } else {
             if (!getTable().isAutoLayout()) {
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getTable().getUserAgent().getEventBroadcaster());
                 eventProducer.tableFixedAutoWidthNotSupported(this, getTable().getLocator());
             }
@@ -206,7 +206,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         int availableIPD = referenceIPD - getIPIndents();
         if (getContentAreaIPD() > availableIPD) {
-            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                     getTable().getUserAgent().getEventBroadcaster());
             eventProducer.objectTooWide(this, getTable().getName(),
                     getContentAreaIPD(), context.getRefIPD(),

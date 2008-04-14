@@ -292,7 +292,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 }
             }
         } else {
-            AFPEventProducer eventProducer = AFPEventProducer.Factory.create(
+            AFPEventProducer eventProducer = AFPEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.warnDefaultFontSetup(this);
         }
@@ -1017,15 +1017,15 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 }
 
             } catch (ImageException ie) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
             } catch (FileNotFoundException fe) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
             } catch (IOException ioe) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
             }
@@ -1202,7 +1202,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         image.getWidth(), image.getHeight(), this.bitsPerPixel);
             }
         } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageWritingError(this, ioe);
         }

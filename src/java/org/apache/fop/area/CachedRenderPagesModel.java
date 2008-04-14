@@ -90,14 +90,14 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                         }
                         if (!tempFile.delete()) {
                             ResourceEventProducer eventProducer
-                                = ResourceEventProducer.Factory.create(
+                                = ResourceEventProducer.Provider.get(
                                         renderer.getUserAgent().getEventBroadcaster());
                             eventProducer.cannotDeleteTempFile(this, tempFile);
                         }
                         pageMap.remove(pageViewport);
                     } catch (Exception e) {
                         AreaEventProducer eventProducer
-                            = AreaEventProducer.Factory.create(
+                            = AreaEventProducer.Provider.get(
                                 renderer.getUserAgent().getEventBroadcaster());
                         eventProducer.pageLoadError(this, pageViewport.getPageNumberString(), e);
                     }
@@ -145,7 +145,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
             }
         } catch (IOException ioe) {
             AreaEventProducer eventProducer
-                = AreaEventProducer.Factory.create(
+                = AreaEventProducer.Provider.get(
                     renderer.getUserAgent().getEventBroadcaster());
             eventProducer.pageSaveError(this, page.getPageNumberString(), ioe);
         }

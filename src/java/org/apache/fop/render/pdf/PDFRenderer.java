@@ -491,7 +491,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 PDFGoTo gt = (PDFGoTo) unfinishedGoTos.get(0);
                 finishIDGoTo(gt, defaultPos);
             }
-            PDFEventProducer eventProducer = PDFEventProducer.Factory.create(
+            PDFEventProducer eventProducer = PDFEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.nonFullyResolvedLinkTargets(this, count);
             // dysfunctional if pageref is null
@@ -1663,7 +1663,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                             x, y, posInt.width, posInt.height, foreignAttributes);
                     handler.generateImage(context, img, origin, posInt);
                 } catch (IOException ioe) {
-                    ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                             getUserAgent().getEventBroadcaster());
                     eventProducer.imageWritingError(this, ioe);
                     return;
@@ -1674,15 +1674,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                             + info + " (" + img.getClass().getName() + ")");
             }
         } catch (ImageException ie) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
         } catch (FileNotFoundException fe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }

@@ -127,7 +127,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();
 
         if (!blockProgressionDimension.getOptimum(null).isAuto()) {
-            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.nonAutoBPDOnTable(this, getLocator());
             // Anyway, the bpd of a table is not used by the layout code
@@ -140,7 +140,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                 && getCommonBorderPaddingBackground().hasPadding(
                         ValidationPercentBaseContext.getPseudoContext())) {
             //See "17.6.2 The collapsing border model" in CSS2
-            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.noTablePaddingWithCollapsingBorderModel(this, getLocator());
         }
@@ -198,7 +198,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                     if (tableBodyFound) {
                         nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)", true);
                         if (!isSeparateBorderModel()) {
-                            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                                     getUserAgent().getEventBroadcaster());
                             eventProducer.footerOrderCannotRecover(this, getName(), getLocator());
                         }

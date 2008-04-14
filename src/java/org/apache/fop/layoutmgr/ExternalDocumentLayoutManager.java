@@ -160,7 +160,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
     }
 
     private ResourceEventProducer getResourceEventProducer() {
-        return ResourceEventProducer.Factory.create(
+        return ResourceEventProducer.Provider.get(
                 getExternalDocument().getUserAgent().getEventBroadcaster());
     }
 

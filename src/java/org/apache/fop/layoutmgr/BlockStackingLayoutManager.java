@@ -201,7 +201,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (ipd < 0) {
             //5.3.4, XSL 1.0, Overconstrained Geometry
             log.debug("Adjusting end-indent based on overconstrained geometry rules for " + fobj);
-            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                     getFObj().getUserAgent().getEventBroadcaster());
             eventProducer.overconstrainedAdjustEndIndent(this,
                     getFObj().getName(), ipd, getFObj().getLocator());
@@ -224,7 +224,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (ipd < 0) {
             //5.3.4, XSL 1.0, Overconstrained Geometry
             log.debug("Adjusting end-indent based on overconstrained geometry rules for " + fobj);
-            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                     getFObj().getUserAgent().getEventBroadcaster());
             eventProducer.overconstrainedAdjustEndIndent(this,
                     getFObj().getName(), ipd, getFObj().getLocator());

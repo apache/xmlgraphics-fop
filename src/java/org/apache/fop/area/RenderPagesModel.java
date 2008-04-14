@@ -179,14 +179,14 @@ public class RenderPagesModel extends AreaTreeModel {
             if (!pageViewport.isResolved()) {
                 String[] idrefs = pageViewport.getIDRefs();
                 for (int count = 0; count < idrefs.length; count++) {
-                    AreaEventProducer eventProducer = AreaEventProducer.Factory.create(
+                    AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
                             renderer.getUserAgent().getEventBroadcaster());
                     eventProducer.unresolvedIDReferenceOnPage(this,
                             pageViewport.getPageNumberString(), idrefs[count]);
                 }
             }
         } catch (Exception e) {
-            AreaEventProducer eventProducer = AreaEventProducer.Factory.create(
+            AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
                     renderer.getUserAgent().getEventBroadcaster());
             eventProducer.pageRenderingError(this,
                     pageViewport.getPageNumberString(), e);

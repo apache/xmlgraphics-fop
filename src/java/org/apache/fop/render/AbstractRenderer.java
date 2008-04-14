@@ -794,7 +794,7 @@ public abstract class AbstractRenderer
                 handler.handleXML(ctx, doc, namespace);
             } catch (Exception e) {
                 // could not handle document
-                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                         ctx.getUserAgent().getEventBroadcaster());
                 eventProducer.foreignXMLProcessingError(this, doc, namespace, e);
             }
@@ -805,7 +805,7 @@ public abstract class AbstractRenderer
             if (!warnedXMLHandlers.contains(namespace)) {
                 // no handler found for document
                 warnedXMLHandlers.add(namespace);
-                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                         ctx.getUserAgent().getEventBroadcaster());
                 eventProducer.foreignXMLNoHandler(this, doc, namespace);
             }

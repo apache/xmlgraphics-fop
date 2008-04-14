@@ -29,15 +29,15 @@ import org.apache.fop.events.model.EventModel;
  */
 public interface PCLEventProducer extends EventProducer {
 
-    /** Factory class for the event producer. */
-    class Factory {
+    /** Provider class for the event producer. */
+    class Provider {
         
         /**
-         * Creates a new event producer.
+         * Returns an event producer.
          * @param broadcaster the event broadcaster to use
-         * @return the new event producer
+         * @return the event producer
          */
-        public static PCLEventProducer create(EventBroadcaster broadcaster) {
+        public static PCLEventProducer get(EventBroadcaster broadcaster) {
             return (PCLEventProducer)broadcaster.getEventProducerFor(
                     PCLEventProducer.class);
         }

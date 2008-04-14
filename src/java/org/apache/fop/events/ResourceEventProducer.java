@@ -35,16 +35,16 @@ import org.apache.xmlgraphics.image.loader.ImageException;
 public interface ResourceEventProducer extends EventProducer {
 
     /**
-     * Factory class for the event producer.
+     * Provider class for the event producer.
      */
-    class Factory {
+    class Provider {
         
         /**
-         * Creates a new event producer.
+         * Returns an event producer.
          * @param broadcaster the event broadcaster to use
-         * @return the new event producer
+         * @return the requested event producer
          */
-        public static ResourceEventProducer create(EventBroadcaster broadcaster) {
+        public static ResourceEventProducer get(EventBroadcaster broadcaster) {
             return (ResourceEventProducer)broadcaster.getEventProducerFor(
                     ResourceEventProducer.class);
         }

@@ -260,7 +260,7 @@ public class PageProvider implements Constants {
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
                 // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
                 // any region), but we don't support it yet.
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         pageSeq.getUserAgent().getEventBroadcaster());
                 eventProducer.flowNotMappingToRegionBody(this,
                         pageSeq.getMainFlow().getFlowName(), spm.getMasterName(), spm.getLocator());

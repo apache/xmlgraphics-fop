@@ -163,14 +163,14 @@ public class TableBody extends TableCellContainer {
             } else if (localName.equals("table-row")) {
                 tableRowsFound = true;
                 if (tableCellsFound) {
-                    TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
                             getUserAgent().getEventBroadcaster());
                     eventProducer.noMixRowsAndCells(this, getName(), getLocator());
                 }
             } else if (localName.equals("table-cell")) {
                 tableCellsFound = true;
                 if (tableRowsFound) {
-                    TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
                             getUserAgent().getEventBroadcaster());
                     eventProducer.noMixRowsAndCells(this, getName(), getLocator());
                 }

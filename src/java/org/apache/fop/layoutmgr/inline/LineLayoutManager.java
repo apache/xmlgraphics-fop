@@ -384,7 +384,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 int lack = difference + bestActiveNode.availableShrink; 
                 if (lack < 0) {
                     InlineLevelEventProducer eventProducer
-                        = InlineLevelEventProducer.Factory.create(
+                        = InlineLevelEventProducer.Provider.get(
                             getFObj().getUserAgent().getEventBroadcaster());
                     eventProducer.lineOverflows(this, addedPositions + 1,
                             -lack, getFObj().getLocator());

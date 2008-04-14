@@ -30,16 +30,16 @@ import org.apache.fop.events.EventProducer;
 public interface InlineLevelEventProducer extends EventProducer {
 
     /**
-     * Factory class for the event producer.
+     * Provider class for the event producer.
      */
-    class Factory {
+    class Provider {
         
         /**
-         * Creates a new event producer.
+         * Returns an event producer.
          * @param broadcaster the event broadcaster to use
-         * @return the new event producer
+         * @return the event producer
          */
-        public static InlineLevelEventProducer create(EventBroadcaster broadcaster) {
+        public static InlineLevelEventProducer get(EventBroadcaster broadcaster) {
             return (InlineLevelEventProducer)broadcaster.getEventProducerFor(
                     InlineLevelEventProducer.class);
         }

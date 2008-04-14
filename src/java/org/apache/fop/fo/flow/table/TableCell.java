@@ -106,7 +106,7 @@ public class TableCell extends TableFObj {
         }
         if ((startsRow() || endsRow())
                 && getParent().getNameId() == FO_TABLE_ROW ) {
-            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.startEndRowUnderTableRowWarning(this, getLocator());
         }

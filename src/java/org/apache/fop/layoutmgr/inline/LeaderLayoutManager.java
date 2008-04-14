@@ -159,7 +159,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             leaderArea = fa;
         } else if (fobj.getLeaderPattern() == EN_USECONTENT) {
             if (fobj.getChildNodes() == null) {
-                InlineLevelEventProducer eventProducer = InlineLevelEventProducer.Factory.create(
+                InlineLevelEventProducer eventProducer = InlineLevelEventProducer.Provider.get(
                         getFObj().getUserAgent().getEventBroadcaster());
                 eventProducer.leaderWithoutContent(this, getFObj().getLocator());
                 return null;

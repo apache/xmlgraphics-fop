@@ -210,7 +210,7 @@ public class PCLRenderer extends PrintRenderer {
      */
     protected void handleIOTrouble(IOException ioe) {
         if (!ioTrouble) {
-            RendererEventProducer eventProducer = RendererEventProducer.Factory.create(
+            RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.ioError(this, ioe);
             ioTrouble = true;
@@ -421,7 +421,7 @@ public class PCLRenderer extends PrintRenderer {
         
         if (this.currentPageDefinition == null) {
             this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
-            PCLEventProducer eventProducer = PCLEventProducer.Factory.create(
+            PCLEventProducer eventProducer = PCLEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.paperTypeUnavailable(this, pagewidth, pageheight,
                     this.currentPageDefinition.getName());
@@ -1115,15 +1115,15 @@ public class PCLRenderer extends PrintRenderer {
             }
 
         } catch (ImageException ie) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
         } catch (FileNotFoundException fe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }

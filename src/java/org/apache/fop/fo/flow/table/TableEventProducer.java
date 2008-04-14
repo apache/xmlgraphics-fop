@@ -31,17 +31,15 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public interface TableEventProducer extends EventProducer {
 
-    /**
-     * Factory class for the event producer.
-     */
-    class Factory {
+    /** Provider class for the event producer. */
+    class Provider {
         
         /**
-         * Creates a new event producer.
+         * Returns an event producer.
          * @param broadcaster the event broadcaster to use
-         * @return the new event producer
+         * @return the event producer
          */
-        public static TableEventProducer create(EventBroadcaster broadcaster) {
+        public static TableEventProducer get(EventBroadcaster broadcaster) {
             return (TableEventProducer)broadcaster.getEventProducerFor(
                     TableEventProducer.class);
         }

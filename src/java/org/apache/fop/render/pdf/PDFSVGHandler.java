@@ -146,7 +146,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             try {
                 super.renderSVGDocument(context, doc);
             } catch (IOException ioe) {
-                SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+                SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                         context.getUserAgent().getEventBroadcaster());
                 eventProducer.svgRenderingError(this, ioe, getDocumentURI(doc));
             }
@@ -189,7 +189,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             root = builder.build(ctx, doc);
             builder = null;
         } catch (Exception e) {
-            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;
@@ -263,7 +263,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             root.paint(graphics);
             pdfInfo.currentStream.add(graphics.getString());
         } catch (Exception e) {
-            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }

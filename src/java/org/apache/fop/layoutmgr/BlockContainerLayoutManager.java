@@ -238,7 +238,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         int availableIPD = referenceIPD - getIPIndents();
         if (getContentAreaIPD() > availableIPD) {
-            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                     getBlockContainerFO().getUserAgent().getEventBroadcaster());
             eventProducer.objectTooWide(this, getBlockContainerFO().getName(),
                     getContentAreaIPD(), context.getRefIPD(),
@@ -377,7 +377,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             */
 
             if (contentOverflows) {
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getBlockContainerFO().getUserAgent().getEventBroadcaster());
                 boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW); 
                 eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),
@@ -527,7 +527,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     
             //TODO Maybe check for page overflow when autoHeight=true
             if (!autoHeight & (contentOverflows)) {
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getBlockContainerFO().getUserAgent().getEventBroadcaster());
                 boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW); 
                 eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),

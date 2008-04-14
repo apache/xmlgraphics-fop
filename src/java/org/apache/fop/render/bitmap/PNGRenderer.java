@@ -75,7 +75,7 @@ public class PNGRenderer extends Java2DRenderer {
             OutputStream os = getCurrentOutputStream(i);
             if (os == null) {
                 BitmapRendererEventProducer eventProducer
-                    = BitmapRendererEventProducer.Factory.create(
+                    = BitmapRendererEventProducer.Provider.get(
                             getUserAgent().getEventBroadcaster());
                 eventProducer.stoppingAfterFirstPageNoFilename(this);
                 break;
@@ -107,7 +107,7 @@ public class PNGRenderer extends Java2DRenderer {
         ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor(getMimeType());
         if (writer == null) {
             BitmapRendererEventProducer eventProducer
-                = BitmapRendererEventProducer.Factory.create(
+                = BitmapRendererEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
             eventProducer.noImageWriterFound(this, getMimeType());
         }

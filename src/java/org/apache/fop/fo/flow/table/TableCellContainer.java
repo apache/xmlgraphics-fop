@@ -46,7 +46,7 @@ public abstract class TableCellContainer extends TableFObj implements ColumnNumb
         Table t = getTable();
         if (t.hasExplicitColumns()) {
             if (colNumber + colSpan - 1 > t.getNumberOfColumns()) {
-                TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                TableEventProducer eventProducer = TableEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.tooManyCells(this, getLocator());
             }

@@ -325,7 +325,7 @@ public class AreaTreeHandler extends FOEventHandler {
                 if (pageVPList != null) {
                     res.resolveIDRef(ids[count], pageVPList);
                 } else {
-                    AreaEventProducer eventProducer = AreaEventProducer.Factory.create(
+                    AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
                             getUserAgent().getEventBroadcaster());
                     eventProducer.unresolvedIDReference(this, odi.getName(), ids[count]);
                     idTracker.addUnresolvedIDRef(ids[count], res);

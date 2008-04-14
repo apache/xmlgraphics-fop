@@ -87,7 +87,7 @@ public class PageBreaker extends AbstractBreaker {
                             false, part, PageProvider.RELTO_CURRENT_ELEMENT_LIST);
                 RegionBody body = (RegionBody)p.getSimplePageMaster().getRegion(
                         Region.FO_REGION_BODY);
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         body.getUserAgent().getEventBroadcaster());
 
                 boolean canRecover = (body.getOverflow() != Constants.EN_ERROR_IF_OVERFLOW);

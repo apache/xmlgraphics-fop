@@ -244,7 +244,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             if (!autoHeight) {
                 String page = getPSLM().getCurrentPage().getPageViewport().getPageNumberString();
                 
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getStaticContentFO().getUserAgent().getEventBroadcaster());
                 boolean canRecover = (regionFO.getOverflow() != EN_ERROR_IF_OVERFLOW); 
                 boolean needClip = (regionFO.getOverflow() == Constants.EN_HIDDEN

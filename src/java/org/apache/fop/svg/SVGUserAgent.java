@@ -38,7 +38,7 @@ public class SVGUserAgent extends SimpleSVGUserAgent {
      */
     public SVGUserAgent(FOUserAgent foUserAgent, AffineTransform at) {
         super(foUserAgent.getSourcePixelUnitToMillimeter(), at);
-        this.eventProducer = SVGEventProducer.Factory.create(foUserAgent.getEventBroadcaster());
+        this.eventProducer = SVGEventProducer.Provider.get(foUserAgent.getEventBroadcaster());
     }
 
     /**

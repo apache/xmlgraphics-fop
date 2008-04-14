@@ -99,7 +99,7 @@ public class InstreamForeignObject extends AbstractGraphics {
             Point2D csize = new Point2D.Float(-1, -1);
             intrinsicDimensions = child.getDimension(csize);
             if (intrinsicDimensions == null) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.ifoNoIntrinsicSize(this, getLocator());
             }

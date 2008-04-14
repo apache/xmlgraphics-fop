@@ -200,7 +200,7 @@ public class PageSequenceMaster extends FObj {
         if (currentSubSequence == null) {
             currentSubSequence = getNextSubSequence();
             if (currentSubSequence == null) {
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.missingSubsequencesInPageSequenceMaster(this,
                         masterName, getLocator());
@@ -212,7 +212,7 @@ public class PageSequenceMaster extends FObj {
         while (pageMasterName == null) {
             SubSequenceSpecifier nextSubSequence = getNextSubSequence();
             if (nextSubSequence == null) {
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.pageSequenceMasterExhausted(this,
                         masterName, canRecover, getLocator());
@@ -227,7 +227,7 @@ public class PageSequenceMaster extends FObj {
         SimplePageMaster pageMaster = this.layoutMasterSet
             .getSimplePageMaster(pageMasterName);
         if (pageMaster == null) {
-            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.noMatchingPageMaster(this,
                     masterName, pageMasterName, getLocator());

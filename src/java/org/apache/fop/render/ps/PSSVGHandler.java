@@ -255,7 +255,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
-            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;
@@ -305,7 +305,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
             try {
                 root.paint(graphics);
             } catch (Exception e) {
-                SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+                SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                         context.getUserAgent().getEventBroadcaster());
                 eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
             }
@@ -313,7 +313,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
             gen.restoreGraphicsState();
             gen.commentln("%FOPEndSVG");
         } catch (IOException ioe) {
-            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgRenderingError(this, ioe, getDocumentURI(doc));
         }

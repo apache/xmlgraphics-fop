@@ -298,7 +298,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      */
     protected void handleIOTrouble(IOException ioe) {
         if (!ioTrouble) {
-            RendererEventProducer eventProducer = RendererEventProducer.Factory.create(
+            RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.ioError(this, ioe);
             ioTrouble = true;
@@ -526,15 +526,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             }
 
         } catch (ImageException ie) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
         } catch (FileNotFoundException fe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
@@ -1079,7 +1079,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                             try {
                                 this.pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
                             } catch (PSDictionaryFormatException e) {
-                                PSEventProducer eventProducer = PSEventProducer.Factory.create(
+                                PSEventProducer eventProducer = PSEventProducer.Provider.get(
                                         getUserAgent().getEventBroadcaster());
                                 eventProducer.postscriptDictionaryParseError(this, content, e);
                             }
@@ -1179,7 +1179,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                         try {
                             pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
                         } catch (PSDictionaryFormatException e) {
-                            PSEventProducer eventProducer = PSEventProducer.Factory.create(
+                            PSEventProducer eventProducer = PSEventProducer.Provider.get(
                                     getUserAgent().getEventBroadcaster());
                             eventProducer.postscriptDictionaryParseError(this, content, e);
                         }

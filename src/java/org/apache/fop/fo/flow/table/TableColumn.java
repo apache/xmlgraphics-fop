@@ -82,13 +82,13 @@ public class TableColumn extends TableFObj {
         super.bind(pList);
 
         if (numberColumnsRepeated <= 0) {
-            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.valueMustBeBiggerGtEqOne(this,
                     "number-columns-repeated", numberColumnsRepeated, getLocator());
         }
         if (numberColumnsSpanned <= 0) {
-            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.valueMustBeBiggerGtEqOne(this,
                     "number-columns-spanned", numberColumnsSpanned, getLocator());
@@ -100,7 +100,7 @@ public class TableColumn extends TableFObj {
          */
         if (columnWidth.getEnum() == EN_AUTO) {
             if (!this.implicitColumn && !getTable().isAutoLayout()) {
-                TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                TableEventProducer eventProducer = TableEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.warnImplicitColumns(this, getLocator());
             }

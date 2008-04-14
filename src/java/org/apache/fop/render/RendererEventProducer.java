@@ -29,15 +29,15 @@ import org.apache.fop.events.EventProducer;
  */
 public interface RendererEventProducer extends EventProducer {
 
-    /** Factory class for the event producer. */
-    class Factory {
+    /** Provider class for the event producer. */
+    class Provider {
         
         /**
-         * Creates a new event producer.
+         * Returns an event producer.
          * @param broadcaster the event broadcaster to use
-         * @return the new event producer
+         * @return the event producer
          */
-        public static RendererEventProducer create(EventBroadcaster broadcaster) {
+        public static RendererEventProducer get(EventBroadcaster broadcaster) {
             return (RendererEventProducer)broadcaster.getEventProducerFor(
                     RendererEventProducer.class);
         }

@@ -29,15 +29,15 @@ import org.apache.fop.events.model.EventModel;
  */
 public interface PDFEventProducer extends EventProducer {
 
-    /** Factory class for the event producer. */
-    class Factory {
+    /** Provider class for the event producer. */
+    class Provider {
         
         /**
-         * Creates a new event producer.
+         * Returns an event producer.
          * @param broadcaster the event broadcaster to use
-         * @return the new event producer
+         * @return the event producer
          */
-        public static PDFEventProducer create(EventBroadcaster broadcaster) {
+        public static PDFEventProducer get(EventBroadcaster broadcaster) {
             return (PDFEventProducer)broadcaster.getEventProducerFor(
                     PDFEventProducer.class);
         }

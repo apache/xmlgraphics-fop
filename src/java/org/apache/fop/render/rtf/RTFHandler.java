@@ -166,7 +166,7 @@ public class RTFHandler extends FOEventHandler {
      * @param ioe IOException to handle
      */
     protected void handleIOTrouble(IOException ioe) {
-        RendererEventProducer eventProducer = RendererEventProducer.Factory.create(
+        RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
                 getUserAgent().getEventBroadcaster());
         eventProducer.ioError(this, ioe);
     }
@@ -208,7 +208,7 @@ public class RTFHandler extends FOEventHandler {
                 this.pagemaster
                         = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
                 if (this.pagemaster == null) {
-                    RTFEventProducer eventProducer = RTFEventProducer.Factory.create(
+                    RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
                             getUserAgent().getEventBroadcaster());
                     eventProducer.onlySPMSupported(this, reference, pageSeq.getLocator());
                     PageSequenceMaster master 
@@ -231,7 +231,7 @@ public class RTFHandler extends FOEventHandler {
                     PageAttributesConverter.convertPageAttributes(
                             pagemaster));
             } else {
-                RTFEventProducer eventProducer = RTFEventProducer.Factory.create(
+                RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.noSPMFound(this, pageSeq.getLocator());
             }
@@ -1126,15 +1126,15 @@ public class RTFHandler extends FOEventHandler {
             
             putGraphic(eg, info);
         } catch (ImageException ie) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
         } catch (FileNotFoundException fe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
@@ -1163,7 +1163,7 @@ public class RTFHandler extends FOEventHandler {
             Point2D csize = new Point2D.Float(-1, -1);
             Point2D intrinsicDimensions = child.getDimension(csize);
             if (intrinsicDimensions == null) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.ifoNoIntrinsicSize(this, child.getLocator());
                 return;
@@ -1182,11 +1182,11 @@ public class RTFHandler extends FOEventHandler {
             putGraphic(ifo, converted);
             
         } catch (ImageException ie) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageError(this, null, ie, null);
         } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageIOError(this, null, ioe, null);
         }
@@ -1213,7 +1213,7 @@ public class RTFHandler extends FOEventHandler {
 
             putGraphic(abstractGraphic, image);
         } catch (ImageException ie) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageError(this, null, ie, null);
         }
@@ -1242,7 +1242,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         if (rawData == null) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageWritingError(this, null);
             return;
@@ -1635,7 +1635,7 @@ public class RTFHandler extends FOEventHandler {
                 endCell( (TableCell) foNode);
             }
         } else {
-            RTFEventProducer eventProducer = RTFEventProducer.Factory.create(
+            RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.ignoredDeferredEvent(this, foNode, bStart, foNode.getLocator());
         }
@@ -1681,7 +1681,7 @@ public class RTFHandler extends FOEventHandler {
                 }
             } else {
                 //TODO Implement implicit column setup handling!
-                RTFEventProducer eventProducer = RTFEventProducer.Factory.create(
+                RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
                         getUserAgent().getEventBroadcaster());
                 eventProducer.explicitTableColumnsRequired(this, table.getLocator());
             }

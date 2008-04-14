@@ -322,7 +322,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                     throw new UnsupportedOperationException("Unsupported image type: " + img);
                 }
             } catch (ImageException ie) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                         userAgent.getEventBroadcaster());
                 eventProducer.imageError(resTracker, (info != null ? info.toString() : uri),
                         ie, null);

@@ -356,7 +356,7 @@ public abstract class FONode implements Cloneable {
      * @return an event producer for FO validation
      */
     protected FOValidationEventProducer getFOValidationEventProducer() {
-        return FOValidationEventProducer.Factory.create(
+        return FOValidationEventProducer.Provider.get(
                 getUserAgent().getEventBroadcaster());
     }
     

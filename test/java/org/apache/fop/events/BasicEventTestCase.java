@@ -62,7 +62,7 @@ public class BasicEventTestCase extends TestCase {
         assertTrue(broadcaster.hasEventListeners());
         
         
-        TestEventProducer producer = TestEventProducer.Factory.create(broadcaster);
+        TestEventProducer producer = TestEventProducer.Provider.get(broadcaster);
         producer.complain(this, "I'm tired", 23);
         
         Event ev = listener.event;

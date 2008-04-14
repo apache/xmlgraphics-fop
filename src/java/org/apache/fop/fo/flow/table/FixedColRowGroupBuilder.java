@@ -120,14 +120,14 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     void endTableRow() {
         assert currentTableRow != null;
         if (currentRowIndex > 0 && currentTableRow.getBreakBefore() != Constants.EN_AUTO) {
-            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     currentTableRow.getUserAgent().getEventBroadcaster());
             eventProducer.breakIgnoredDueToRowSpanning(this, currentTableRow.getName(), true,
                     currentTableRow.getLocator());
         }
         if (currentRowIndex < rows.size() - 1
                 && currentTableRow.getBreakAfter() != Constants.EN_AUTO) {
-            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     currentTableRow.getUserAgent().getEventBroadcaster());
             eventProducer.breakIgnoredDueToRowSpanning(this, currentTableRow.getName(), false,
                     currentTableRow.getLocator());

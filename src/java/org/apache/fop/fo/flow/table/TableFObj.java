@@ -69,7 +69,7 @@ public abstract class TableFObj extends FObj {
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
                         ValidationPercentBaseContext.getPseudoContext())) {
-            TableEventProducer eventProducer = TableEventProducer.Factory.create(
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.paddingNotApplicable(this, getName(), getLocator());
         }
@@ -179,7 +179,7 @@ public abstract class TableFObj extends FObj {
                     /* if column-number is already in use by another
                      * cell/column => error!
                      */
-                    TableEventProducer eventProducer = TableEventProducer.Factory.create(
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
                             fo.getUserAgent().getEventBroadcaster());
                     eventProducer.cellOverlap(this, fo.getName(), columnIndex + 1, fo.getLocator());
                 }

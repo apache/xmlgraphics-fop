@@ -79,15 +79,15 @@ public class ExternalGraphic extends AbstractGraphics {
         try {
             info = manager.getImageInfo(url, userAgent.getImageSessionContext());
         } catch (ImageException e) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageError(this, url, e, getLocator());
         } catch (FileNotFoundException fnfe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageNotFound(this, url, fnfe, getLocator());
         } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Factory.create(
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageIOError(this, url, ioe, getLocator());
         }

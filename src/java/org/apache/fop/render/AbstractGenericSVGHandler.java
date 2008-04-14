@@ -82,7 +82,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
-            SVGEventProducer eventProducer = SVGEventProducer.Factory.create(
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;

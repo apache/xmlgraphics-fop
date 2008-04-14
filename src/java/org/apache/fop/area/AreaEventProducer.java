@@ -28,16 +28,16 @@ import org.apache.fop.events.EventProducer;
 public interface AreaEventProducer extends EventProducer {
 
     /**
-     * Factory class for the event producer.
+     * Provider class for the event producer.
      */
-    class Factory {
+    class Provider {
         
         /**
-         * Creates a new event producer.
+         * Returns an event producer.
          * @param broadcaster the event broadcaster to use
-         * @return the new event producer
+         * @return the event producer
          */
-        public static AreaEventProducer create(EventBroadcaster broadcaster) {
+        public static AreaEventProducer get(EventBroadcaster broadcaster) {
             return (AreaEventProducer)broadcaster.getEventProducerFor(
                     AreaEventProducer.class);
         }

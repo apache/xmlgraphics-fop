@@ -229,16 +229,16 @@ broadcaster.broadcastEvent(ev);
         </p>
         <p>
           To simplify the code needed to get an instance of the event producer interface it is
-          suggested to create a public inner factory class inside the interface.
+          suggested to create a public inner provider class inside the interface.
         </p>
         <p>
           Here's an example of such an event producer interface:
         </p>
         <source><![CDATA[public interface MyEventProducer extends EventProducer {
 
-    public class Factory {
+    public class Provider {
         
-        public static MyEventProducer create(EventBroadcaster broadcaster) {
+        public static MyEventProducer get(EventBroadcaster broadcaster) {
             return (MyEventProducer)broadcaster.getEventProducerFor(MyEventProducer.class);
         }
     }
@@ -257,7 +257,7 @@ broadcaster.broadcastEvent(ev);
           To produce the same event as in the first example above, you'd use the following code:
         </p>
         <source><![CDATA[EventBroadcaster broadcaster = [get it from somewhere];
-TestEventProducer producer = TestEventProducer.Factory.create(broadcaster);
+TestEventProducer producer = TestEventProducer.Provider.get(broadcaster);
 producer.complain(this, "I'm tired", 23);]]></source>
       </section>
       <section id="event-model">
