@@ -196,7 +196,6 @@ public class FontInfoFinder {
             // Get a list of the TTC Font names
             List ttcNames = null; //List<String>
             String fontFileURI = fontUrl.toExternalForm().trim();
-            TTFFontLoader ttfLoader = new TTFFontLoader(fontFileURI, resolver);
             InputStream in = null;
             try {
                 in = FontLoader.openFontUri(resolver, fontFileURI);
@@ -207,6 +206,7 @@ public class FontInfoFinder {
                 if (this.eventListener != null) {
                     this.eventListener.fontLoadingErrorAtAutoDetection(this, fontFileURI, e);
                 }
+                return null;
             } finally {
                 IOUtils.closeQuietly(in);
             }
@@ -223,7 +223,7 @@ public class FontInfoFinder {
                     log.debug("Loading " + fontName);
                 }
                 try {
-                    ttfLoader = new TTFFontLoader(fontFileURI, fontName, resolver);
+                    TTFFontLoader ttfLoader = new TTFFontLoader(fontFileURI, fontName, resolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);
