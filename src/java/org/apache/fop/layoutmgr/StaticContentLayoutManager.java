@@ -405,5 +405,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         this.contentAreaBPD = contentAreaBPD;
     }
     
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        return KEEP_AUTO;
+    }
+    
 }
 

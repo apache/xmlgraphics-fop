@@ -19,12 +19,12 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.table.TableAndCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 
 /**
  * LayoutManager for a table-and-caption FO.
@@ -191,5 +191,18 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
             curBlockArea.addBlock((Block) childArea);
         }
     }
+    
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        /* TODO Complete me!
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getTableAndCaption().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getTableAndCaption().getKeepTogether().getWithinColumn()));
+        */
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
+    }    
+    
 }
-

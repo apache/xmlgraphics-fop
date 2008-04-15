@@ -33,7 +33,6 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
@@ -79,11 +78,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         proxyLMiter = new ProxyLMiter();
     }
 
+    /** {@inheritDoc} */
     public void initialize() {
         super.initialize();
         FontInfo fi = getBlockFO().getFOEventHandler().getFontInfo();
         FontTriplet[] fontkeys = getBlockFO().getCommonFont().getFontState(fi);
-        Font initFont = fi.getFontInstance(fontkeys[0], getBlockFO().getCommonFont().fontSize.getValue(this));
+        Font initFont = fi.getFontInstance(fontkeys[0],
+                getBlockFO().getCommonFont().fontSize.getValue(this));
         lead = initFont.getAscender();
         follow = -initFont.getDescender();
         //middleShift = -fs.getXHeight() / 2;
@@ -135,7 +136,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      */
     protected class ProxyLMiter extends LMiter {
 
-        /*
+        /**
          * Constructs a proxy iterator for Block LM.
          */
         public ProxyLMiter() {
@@ -206,40 +207,31 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         return llm;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepTogether() {
-        // TODO Keeps will have to be more sophisticated sooner or later
-        // TODO This is a quick fix for the fact that the parent is not always a BlockLevelLM;
-        // eventually mustKeepTogether() must be moved up to the LM interface
-        return (!getBlockFO().getKeepTogether().getWithinPage().isAuto()
-                || !getBlockFO().getKeepTogether().getWithinColumn().isAuto()
-                || (getParent() instanceof BlockLevelLayoutManager
-                    && ((BlockLevelLayoutManager) getParent()).mustKeepTogether())
-                || (getParent() instanceof InlineLayoutManager
-                    && ((InlineLayoutManager) getParent()).mustKeepTogether()));
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getBlockFO().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getBlockFO().getKeepTogether().getWithinColumn()));
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
+    /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
+        //TODO Keeps will have to be more sophisticated sooner or later
         return !getBlockFO().getKeepWithPrevious().getWithinPage().isAuto()
                 || !getBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
         return !getBlockFO().getKeepWithNext().getWithinPage().isAuto()
                 || !getBlockFO().getKeepWithNext().getWithinColumn().isAuto();
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public void addAreas(PositionIterator parentIter,
             LayoutContext layoutContext) {
         getParentArea(null);

@@ -32,6 +32,7 @@ import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
@@ -278,15 +279,19 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return super.mustKeepTogether() 
-                || !getListBlockFO().getKeepTogether().getWithinPage().isAuto()
-                || !getListBlockFO().getKeepTogether().getWithinColumn().isAuto();
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getListBlockFO().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getListBlockFO().getKeepTogether().getWithinColumn()));
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
     }
-
+    
     /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
+        //TODO Keeps will have to be more sophisticated sooner or later
         return !getListBlockFO().getKeepWithPrevious().getWithinPage().isAuto()
             || !getListBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
     }

@@ -64,11 +64,16 @@ public class GridUnit {
     /** flags for the grid unit */
     private byte flags = 0;
 
+    /** the border-before specification */
     ConditionalBorder borderBefore;
+    /** the border-after specification */
     ConditionalBorder borderAfter;
+    /** the border-start specification */
     BorderSpecification borderStart;
+    /** the border-end specification */
     BorderSpecification borderEnd;
 
+    /** The border model helper associated with the table */
     protected CollapsingBorderModel collapsingBorderModel;
 
     /**
@@ -146,6 +151,10 @@ public class GridUnit {
         }
     }
 
+    /**
+     * Returns the table cell associated with this grid unit.
+     * @return the table cell
+     */
     public TableCell getCell() {
         return cell;
     }

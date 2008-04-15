@@ -1271,13 +1271,16 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepTogether() {
         return ((BlockLevelLayoutManager) getParent()).mustKeepTogether();
     }
 
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        return ((BlockLevelLayoutManager) getParent()).getKeepTogetherStrength();
+    }
+    
     /**
      * {@inheritDoc}
      */

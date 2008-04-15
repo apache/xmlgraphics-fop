@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
@@ -36,6 +37,7 @@ import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
@@ -226,9 +228,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
                 int penaltyValue = 0;
                 keepBetween |= context.isKeepWithPreviousPending();
-                if (keepBetween || tableLM.getTable().mustKeepTogether()) {
+                if (keepBetween) {
                     penaltyValue = KnuthElement.INFINITE;
                 }
+                penaltyValue = Math.max(penaltyValue,
+                        KeepUtil.getPenaltyForKeep(getTableLM().getKeepTogetherStrength()));
+                
                 breakBetween = BreakUtil.compareBreakClasses(breakBetween,
                         context.getBreakBefore());
                 if (breakBetween != Constants.EN_AUTO) {

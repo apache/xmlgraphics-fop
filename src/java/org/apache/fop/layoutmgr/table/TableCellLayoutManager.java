@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
-import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
@@ -41,13 +40,12 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.BreakElement;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver;
@@ -162,46 +160,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             if (prevLM != null) {
                 // there is a block handled by prevLM
                 // before the one handled by curLM
-                if (mustKeepTogether()
-                        || context.isKeepWithNextPending()
-                        || childLC.isKeepWithPreviousPending()) {
-                    //Clear keep pending flag
-                    context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                    childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
-                    // add an infinite penalty to forbid a break between
-                    // blocks
-                    contentList.add(new BreakElement(
-                            new Position(this), KnuthElement.INFINITE, context));
-                    //contentList.add(new KnuthPenalty(0,
-                    //        KnuthElement.INFINITE, false,
-                    //        new Position(this), false));
-                } else if (!(((ListElement) contentList.getLast()).isGlue()
-                        || (((ListElement)contentList.getLast()).isPenalty()
-                                && ((KnuthPenalty)contentList.getLast()).getP() < KnuthElement.INFINITE)
-                                || (contentList.getLast() instanceof BreakElement
-                                        && ((BreakElement)contentList.getLast()).getPenaltyValue() < KnuthElement.INFINITE))) {
-                    // TODO vh: this is hacky
-                    // The getNextKnuthElements method of TableCellLM must not be called
-                    // twice, otherwise some settings like indents or borders will be
-                    // counted several times and lead to a wrong output. Anyway the
-                    // getNextKnuthElements methods should be called only once eventually
-                    // (i.e., when multi-threading the code), even when there are forced
-                    // breaks.
-                    // If we add a break possibility after a forced break the
-                    // AreaAdditionUtil.addAreas method will act on a sequence starting
-                    // with a SpaceResolver.SpaceHandlingBreakPosition element, having no
-                    // LM associated to it. Thus it will stop early instead of adding
-                    // areas for following Positions. The above test aims at preventing
-                    // such a situation from occurring. add a null penalty to allow a break
-                    // between blocks
-                    contentList.add(new BreakElement(
-                            new Position(this), 0, context));
-                    //contentList.add(new KnuthPenalty(0, 0, false,
-                    //        new Position(this), false));
-                } else {
-                    // the last element in contentList is a feasible breakpoint, there is
-                    // no need to add a penalty
-                }
+                addInBetweenBreak(contentList, context, childLC);
             }
             contentList.addAll(returnedList);
             if (returnedList.size() == 0) {
@@ -596,22 +555,22 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         // TODO Auto-generated method stub
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        boolean keep = ((BlockLevelLayoutManager)getParent()).mustKeepTogether();
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
         if (primaryGridUnit.getRow() != null) {
-            keep |= primaryGridUnit.getRow().mustKeepTogether();
+            strength = Math.max(strength, KeepUtil.getKeepStrength(
+                    primaryGridUnit.getRow().getKeepTogether().getWithinPage()));
+            strength = Math.max(strength, KeepUtil.getKeepStrength(
+                    primaryGridUnit.getRow().getKeepTogether().getWithinColumn()));
         }
-        return keep;
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
+    /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
+        //TODO Keeps will have to be more sophisticated sooner or later
         return false; //TODO FIX ME
         /*
         return !fobj.getKeepWithPrevious().getWithinPage().isAuto()
@@ -619,9 +578,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             */
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
         return false; //TODO FIX ME
         /*

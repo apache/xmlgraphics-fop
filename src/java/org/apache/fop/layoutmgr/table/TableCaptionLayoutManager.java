@@ -19,12 +19,12 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.table.TableCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 
 /**
  * LayoutManager for a table-caption FO.
@@ -46,6 +46,11 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
         super(node);
     }
 
+    /** @return the table-caption FO */
+    public TableCaption getTableCaption() {
+        return (TableCaption)this.fobj;
+    }
+    
     /**
      * Get the next break position for the caption.
      *
@@ -190,5 +195,19 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
                 curBlockArea.addBlock((Block) childArea);
         }
     }
+    
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        /* TODO Complete me!
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getTableCaption().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getTableCaption().getKeepTogether().getWithinColumn()));
+        */
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
+    }
+    
 }
 
