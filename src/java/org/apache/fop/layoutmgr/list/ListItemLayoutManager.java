@@ -32,12 +32,12 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
@@ -305,14 +305,17 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             
             //Additional penalty height from penalties in the source lists
             int additionalPenaltyHeight = 0;
+            int stepPenalty = 0;
             KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = endEl.getW();
+                stepPenalty = Math.max(stepPenalty, endEl.getP());
             }
             endEl = (KnuthElement)elementLists[1].get(end[1]);
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = Math.max(
                         additionalPenaltyHeight, endEl.getW());
+                stepPenalty = Math.max(stepPenalty, endEl.getP());
             }
             
             int boxHeight = step - addedBoxHeight - penaltyHeight;
@@ -324,9 +327,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                     start[0], end[0], start[1], end[1]);
             returnList.add(new KnuthBox(boxHeight, stepPosition, false));
             if (addedBoxHeight < totalHeight) {
-                int p = 0;
-                if (keepWithNextActive || mustKeepTogether()) {
+                int p = stepPenalty;
+                if (keepWithNextActive) {
                     p = KnuthPenalty.INFINITE;
+                }
+                if (mustKeepTogether()) {
+                    p = Math.max(p, KeepUtil.getPenaltyForKeep(getKeepTogetherStrength()));
                 }
                 returnList.add(new BreakElement(stepPosition, penaltyHeight, p, -1, context));
             }
@@ -630,15 +636,19 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
-                || !getListItemFO().getKeepTogether().getWithinPage().isAuto()
-                || !getListItemFO().getKeepTogether().getWithinColumn().isAuto();
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getListItemFO().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getListItemFO().getKeepTogether().getWithinColumn()));
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
     }
 
     /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
+        //TODO Keeps will have to be more sophisticated sooner or later
         return !getListItemFO().getKeepWithPrevious().getWithinPage().isAuto()
             || !getListItemFO().getKeepWithPrevious().getWithinColumn().isAuto();
     }

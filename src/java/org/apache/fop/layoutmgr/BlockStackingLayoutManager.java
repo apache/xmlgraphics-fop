@@ -335,27 +335,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 if (prevLM != null) {
                     // there is a block handled by prevLM
                     // before the one handled by curLM
-                    if (mustKeepTogether() 
-                            || context.isKeepWithNextPending()
-                            || childLC.isKeepWithPreviousPending()) {
-                        // Clear keep pending flag
-                        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                        // add an infinite penalty to forbid a break between
-                        // blocks
-                        contentList.add(new BreakElement(
-                                new Position(this), KnuthElement.INFINITE, context));
-                    } else if (!((ListElement) contentList.getLast()).isGlue()) {
-                        // add a null penalty to allow a break between blocks
-                        contentList.add(new BreakElement(
-                                new Position(this), 0, context));
-                    } else {
-                        // the last element in contentList is a glue;
-                        // it is a feasible breakpoint, there is no need to add
-                        // a penalty
-                        log.warn("glue-type break possibility not handled properly, yet");
-                        //TODO Does this happen? If yes, need to deal with border and padding
-                        //at the break possibility
-                    }
+                    addInBetweenBreak(contentList, context, childLC);
                 }
                 if (returnedList == null || returnedList.size() == 0) {
                     //Avoid NoSuchElementException below (happens with empty blocks)
@@ -430,6 +410,66 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         setFinished(true);
 
         return returnList;
+    }
+
+    /**
+     * Adds a break element to the content list between individual child elements.
+     * @param contentList the content list to populate
+     * @param context the current layout context
+     * @param childLC the currently active child layout context
+     */
+    protected void addInBetweenBreak(LinkedList contentList, LayoutContext context,
+            LayoutContext childLC) {
+        if (mustKeepTogether() 
+                || context.isKeepWithNextPending()
+                || childLC.isKeepWithPreviousPending()) {
+            
+            int strength = getKeepTogetherStrength();
+            if (context.isKeepWithNextPending()) {
+                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                strength = KEEP_ALWAYS;
+            }
+            if (childLC.isKeepWithPreviousPending()) {
+                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                strength = KEEP_ALWAYS;
+            }
+            int penalty = KeepUtil.getPenaltyForKeep(strength);
+
+            // add a penalty to forbid or discourage a break between blocks
+            contentList.add(new BreakElement(
+                    new Position(this), penalty, context));
+            return;
+        }
+        
+        ListElement last = (ListElement)contentList.getLast(); 
+        if (last.isGlue()) {
+            // the last element in contentList is a glue;
+            // it is a feasible breakpoint, there is no need to add
+            // a penalty
+            log.warn("glue-type break possibility not handled properly, yet");
+            //TODO Does this happen? If yes, need to deal with border and padding
+            //at the break possibility
+        } else if (!ElementListUtils.endsWithNonInfinitePenalty(contentList)) {
+
+            // TODO vh: this is hacky
+            // The getNextKnuthElements method of TableCellLM must not be called
+            // twice, otherwise some settings like indents or borders will be
+            // counted several times and lead to a wrong output. Anyway the
+            // getNextKnuthElements methods should be called only once eventually
+            // (i.e., when multi-threading the code), even when there are forced
+            // breaks.
+            // If we add a break possibility after a forced break the
+            // AreaAdditionUtil.addAreas method will act on a sequence starting
+            // with a SpaceResolver.SpaceHandlingBreakPosition element, having no
+            // LM associated to it. Thus it will stop early instead of adding
+            // areas for following Positions. The above test aims at preventing
+            // such a situation from occurring. add a null penalty to allow a break
+            // between blocks
+            
+            // add a null penalty to allow a break between blocks
+            contentList.add(new BreakElement(
+                    new Position(this), 0, context));
+        }
     }
 
     /**
@@ -759,26 +799,34 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieves and returns the keep-together strength from the parent element.
+     * @return the keep-together strength
      */
-    // default action: ask parentLM
+    protected int getParentKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        if (getParent() instanceof BlockLevelLayoutManager) {
+            strength = ((BlockLevelLayoutManager)getParent()).getKeepTogetherStrength(); 
+        } else if (getParent() instanceof InlineLayoutManager) {
+            if (((InlineLayoutManager) getParent()).mustKeepTogether()) {
+                strength = KEEP_ALWAYS;
+            }
+            //TODO Fix me
+            //strength = ((InlineLayoutManager) getParent()).getKeepTogetherStrength();
+        }
+        return strength;
+    }
+    
+    /** {@inheritDoc} */
     public boolean mustKeepTogether() {
-        return ((getParent() instanceof BlockLevelLayoutManager
-                    && ((BlockLevelLayoutManager) getParent()).mustKeepTogether())
-                || (getParent() instanceof InlineLayoutManager
-                    && ((InlineLayoutManager) getParent()).mustKeepTogether()));
+        return getKeepTogetherStrength() > KEEP_AUTO;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
         return false;
     }

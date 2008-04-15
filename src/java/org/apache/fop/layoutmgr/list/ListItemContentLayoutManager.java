@@ -28,8 +28,8 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.AbstractListItemPart;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
@@ -221,12 +221,15 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
-                || !getPartFO().getKeepTogether().getWithinPage().isAuto()
-                || !getPartFO().getKeepTogether().getWithinColumn().isAuto();
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getPartFO().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getPartFO().getKeepTogether().getWithinColumn()));
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
     }
-
+    
 }
 

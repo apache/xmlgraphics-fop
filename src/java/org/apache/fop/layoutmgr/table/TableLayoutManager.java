@@ -39,6 +39,7 @@ import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -445,16 +446,17 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return super.mustKeepTogether() 
-                || !getTable().getKeepTogether().getWithinPage().isAuto()
-                || !getTable().getKeepTogether().getWithinColumn().isAuto();
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getTable().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getTable().getKeepTogether().getWithinColumn()));
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
     }
-
+    
     /**
      * {@inheritDoc}
      */

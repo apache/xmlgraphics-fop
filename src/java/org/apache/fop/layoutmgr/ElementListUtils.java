@@ -190,6 +190,23 @@ public class ElementListUtils {
     }
 
     /**
+     * Indicates whether the given element list ends with a penalty with a non-infinite penalty
+     * value.
+     * @param elems the element list
+     * @return true if the list ends with a non-infinite penalty
+     */
+    public static boolean endsWithNonInfinitePenalty(LinkedList elems) {
+        ListElement last = (ListElement)elems.getLast();
+        if (last.isPenalty() && ((KnuthPenalty)last).getP() < KnuthElement.INFINITE) {
+            return true;
+        } else if (last instanceof BreakElement
+                        && ((BreakElement)last).getPenaltyValue() < KnuthElement.INFINITE) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Determines the position of the previous break before the start index on an
      * element list.
      * @param elems the element list

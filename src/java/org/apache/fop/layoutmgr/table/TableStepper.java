@@ -25,11 +25,13 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.layoutmgr.BreakElement;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
@@ -234,13 +236,15 @@ public class TableStepper {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 keepWithNext |= activeCell.keepWithNextSignal();
             }
-            if (keepWithNext || getTableLM().mustKeepTogether()) {
+            if (keepWithNext) {
                 p = KnuthPenalty.INFINITE;
             }
             if (!rowFinished) {
-                if (rowGroup[activeRowIndex].mustKeepTogether()) {
-                    p = KnuthPenalty.INFINITE;
-                }
+                p = Math.max(p, KeepUtil.getPenaltyForKeep(
+                        rowGroup[activeRowIndex].getKeepTogetherStrength()));
+                //The above call doesn't take the penalty from the table into account, so...
+                p = Math.max(p, KeepUtil.getPenaltyForKeep(
+                        getTableLM().getKeepTogetherStrength()));
             } else if (activeRowIndex < rowGroup.length - 1) {
                 if (rowGroup[activeRowIndex].mustKeepWithNext()
                         || rowGroup[activeRowIndex + 1].mustKeepWithPrevious()) {

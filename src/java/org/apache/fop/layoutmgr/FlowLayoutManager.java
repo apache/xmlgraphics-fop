@@ -208,10 +208,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepTogether() {
-        return false;
+    public int getKeepTogetherStrength() {
+        return KEEP_AUTO;
     }
-
+    
     /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
         return false;
