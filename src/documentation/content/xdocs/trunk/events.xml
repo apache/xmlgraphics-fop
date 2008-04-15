@@ -276,6 +276,12 @@ producer.complain(this, "I'm tired", 23);]]></source>
           uses <a href="http://qdox.codehaus.org/">QDox</a> to parse these interfaces.
         </p>
         <p>
+          The event model XML files are generated during build by the Ant task mentioned above when
+          running the "resourcegen" task. So just run <code>"ant resourcegen"</code> if you receive
+          a <code>MissingResourceException</code> at runtime indicating that
+          <code>"event-model.xml"</code> is missing.
+        </p>
+        <p>
           Primarily, the QDox-based collector task records the parameters' names and types.
           Furthermore, it extracts additional attributes embedded as Javadoc comments from
           the methods. At the moment, the only such attribute is "@event.severity" which indicates
