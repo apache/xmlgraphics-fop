@@ -36,7 +36,7 @@ public class ObjectAreaSizeTriplet extends Triplet {
         super(Triplet.OBJECT_AREA_SIZE);
         byte[] xOASize = BinaryUtils.convert(x, 3);
         byte[] yOASize = BinaryUtils.convert(y, 3);
-        super.data = new byte[] {
+        byte[] data = new byte[] {
             0x02, // SizeType
             xOASize[0], // XoaSize - Object area extent for X axis
             xOASize[1],
@@ -45,5 +45,6 @@ public class ObjectAreaSizeTriplet extends Triplet {
             yOASize[1],
             yOASize[2]
         };
+        super.setData(data);
     }
 }

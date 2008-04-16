@@ -30,15 +30,12 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.GraphicsObject;
-import org.apache.fop.render.afp.modca.IncludeObject;
 import org.apache.fop.svg.SVGUserAgent;
 import org.w3c.dom.Document;
 
@@ -60,10 +57,10 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
     }
 
     /**
-     * Get the afp information from the render context.
+     * Get the AFP information from the render context.
      *
      * @param context the renderer context
-     * @return the afp information retrieved from the context
+     * @return the AFP information retrieved from the context
      */
     public static AFPInfo getAFPInfo(RendererContext context) {
         AFPInfo afpi = new AFPInfo();
@@ -102,9 +99,6 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         AFPGraphics2D graphics = new AFPGraphics2D(textAsShapes);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         graphics.setAFPInfo(afpInfo);
-        
-        String uri = ((AbstractDocument)doc).getDocumentURI();
-        graphics.setDocumentURI(uri);
         
         GVTBuilder builder = new GVTBuilder();
 
@@ -160,7 +154,9 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         
         // set the data object parameters
         DataObjectInfo info = new DataObjectInfo();
-        info.setUri(uri);
+        
+        String docUri = ((AbstractDocument)doc).getDocumentURI();
+        info.setUri(docUri);
         info.setX(x);
         info.setY(y);
         info.setWidth(width);
@@ -170,14 +166,11 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         Map/*<QName, String>*/ foreignAttributes
             = (Map/*<QName, String>*/)context.getProperty(
                 RendererContextConstants.FOREIGN_ATTRIBUTES);
-        if (foreignAttributes != null) {
-            info.setResourceInfoFromForeignAttributes(foreignAttributes);
-        }
+        info.setResourceInfoFromForeignAttributes(foreignAttributes);
 
-        //TODO: AC - fix
-//        IncludeObject includeObj = afpInfo.getAFPDataStream().createObject(info);
-//        GraphicsObject graphicsObj = (GraphicsObject)includeObj.getReferencedObject();
-//        graphics.setGraphicsObject(graphicsObj);
+        AFPDataStream afpDataStream = afpInfo.getAFPDataStream();
+        GraphicsObject graphicsObj = (GraphicsObject)afpDataStream.createObject(info);
+        graphics.setGraphicsObject(graphicsObj);
         
         try {
             root.paint(graphics);
@@ -203,5 +196,4 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE,
                 Boolean.FALSE);
     }
-    
 }

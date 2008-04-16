@@ -80,4 +80,12 @@ implements PreparedAFPObject {
     protected int getLength() {
         return getStartDataLength() + getTripletDataLength() + getDataLength();
     }
+    
+    /**
+     * Sets the data
+     * @param data the data
+     */
+    protected void setData(byte[] data) {
+        this.data = data;
+    }
 }

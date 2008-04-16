@@ -33,20 +33,12 @@ import org.apache.commons.logging.LogFactory;
  * AFP format.
  *
  */
-public abstract class AbstractAFPObject {
+public abstract class AbstractAFPObject implements AFPDataStreamWriter {
 
     /**
      * Static logging instance
      */
     protected static final Log log = LogFactory.getLog("org.apache.fop.render.afp.modca");
-
-    /**
-     * DataStream objects must implement the writeDataStream()
-     * method to write its data to the given OutputStream
-     * @param os The outputsteam stream
-     * @throws java.io.IOException an I/O exception of some sort has occurred.
-     */
-    public abstract void writeDataStream(OutputStream os) throws IOException;
 
     /**
      * Help method to write a set of AFPObjects to the AFP datastream.

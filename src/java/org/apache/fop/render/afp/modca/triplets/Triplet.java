@@ -31,6 +31,8 @@ import org.apache.fop.render.afp.modca.AbstractAFPObject;
  */
 public class Triplet extends AbstractAFPObject {
     public static final byte CODED_GRAPHIC_CHARACTER_SET_GLOBAL_IDENTIFIER = 0x01;
+    
+    /** Triplet identifiers */
     public static final byte FULLY_QUALIFIED_NAME = 0x02;    
     public static final byte MAPPING_OPTION = 0x04;  
     public static final byte OBJECT_CLASSIFICATION = 0x10;    
@@ -89,21 +91,21 @@ public class Triplet extends AbstractAFPObject {
     /**
      * the triplet identifier
      */
-    protected byte id;
+    private byte id;
 
     /**
      * the triplet's data contents
      */
-    protected byte[] data;
+    private byte[] data;
 
     /**
      * Main constructor
      * @param id the triplet identifier (see static definitions above)
-     * @param contents the data item contained in this triplet
+     * @param data the data item contained in this triplet
      */
-    public Triplet(byte id, byte[] contents) {
+    public Triplet(byte id, byte[] data) {
         this(id);
-        this.data = contents;
+        setData(data);
     }
 
     /**
@@ -150,9 +152,10 @@ public class Triplet extends AbstractAFPObject {
     }
 
     /**
-     * @return the contents of the triplet
+     * Sets the data contents of this triplet
+     * @param data the data contents
      */
-    public byte[] getData() {
-        return this.data;
+    protected void setData(byte[] data) {
+        this.data = data;
     }
 }

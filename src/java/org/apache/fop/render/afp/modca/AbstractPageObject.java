@@ -410,22 +410,6 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
         writeObjects(objects, os);
     }
     
-//  /**
-//  * {@inheritDoc}
-//  */
-// public IncludeObject createImageObject(ImageObjectParameters params) {
-//     endPresentationObject();
-//     return super.createImageObject(params);
-// }
-//
-// /**
-//  * {@inheritDoc}
-//  */
-// public IncludeObject createGraphicsObject(DataObjectParameters params) {
-//     endPresentationObject();
-//     return super.createGraphicsObject(params);
-// }
-
     /**
      * {@inheritDoc}
      */
@@ -437,12 +421,4 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
         endPresentationObject();
         super.addObject(obj);
     }
-    
-//    /**
-//     * {@inheritDoc}
-//     */
-//    protected void addObject(AbstractStructuredAFPObject obj) {
-//        endPresentationObject();
-//        super.addObject(obj);
-//    }
 }

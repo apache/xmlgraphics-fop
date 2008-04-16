@@ -41,10 +41,13 @@ public final class GraphicsImageData extends AbstractPreparedAFPObject {
         if (startIndex + MAX_DATA_LEN >= imageData.length) {
             dataLen = imageData.length - startIndex - 1;
         }
-        super.data = new byte[dataLen + 2];
+
+        byte[] data = new byte[dataLen + 2];
         data[0] = (byte) 0x92; // GIMD
         data[1] = BinaryUtils.convert(dataLen, 1)[0]; // LENGTH
         System.arraycopy(imageData, startIndex, data, 2, dataLen);
+
+        super.setData(data);
     }
     
     /**

@@ -344,7 +344,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public void startRenderer(OutputStream outputStream) throws IOException {
         currentPageFonts = new java.util.HashMap();
         currentColor = new Color(255, 255, 255);
-        afpDataStream = new AFPDataStream();
+        this.afpDataStream = new AFPDataStream();
         afpDataStream.setPortraitRotation(portraitRotation);
         afpDataStream.setLandscapeRotation(landscapeRotation);
         afpDataStream.setOutputStream(outputStream);
@@ -354,7 +354,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * {@inheritDoc}
      */
     public void stopRenderer() throws IOException {
-        afpDataStream.write();
+        getAFPDataStream().write();
+        afpDataStream = null;
     }
 
     /**
@@ -391,7 +392,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         // renderPageGroupExtensions(page);
 
         final int pageRotation = 0;
-        this.afpDataStream.startPage(pageWidth, pageHeight, pageRotation,
+        getAFPDataStream().startPage(pageWidth, pageHeight, pageRotation,
                 getResolution(), getResolution());
 
         renderPageObjectExtensions(page);
@@ -399,7 +400,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         if (this.pages == null) {
             this.pages = new java.util.HashMap();
         }
-        this.pages.put(page, afpDataStream.savePage());
+        this.pages.put(page, getAFPDataStream().savePage());
 
     }
 
@@ -620,13 +621,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         if (pages != null && pages.containsKey(pageViewport)) {
 
-            this.afpDataStream.restorePage((PageObject) pages.remove(pageViewport));
+            getAFPDataStream().restorePage((PageObject) pages.remove(pageViewport));
 
         } else {
             // renderPageGroupExtensions(page);
 
             final int pageRotation = 0;
-            this.afpDataStream.startPage(pageWidth, pageHeight, pageRotation,
+            getAFPDataStream().startPage(pageWidth, pageHeight, pageRotation,
                     getResolution(), getResolution());
 
             renderPageObjectExtensions(pageViewport);
@@ -641,14 +642,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         while (i.hasNext()) {
             AFPFontAttributes afpFontAttributes = (AFPFontAttributes) i.next();
 
-            afpDataStream.createFont(
+            getAFPDataStream().createFont(
                 (byte)afpFontAttributes.getFontReference(),
                 afpFontAttributes.getFont(),
                 afpFontAttributes.getPointSize());
 
         }
 
-        afpDataStream.endPage();
+        getAFPDataStream().endPage();
         
         popViewPortPos();
     }
@@ -702,7 +703,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             currentColor.getGreen(),
             currentColor.getBlue());
          */
-        afpDataStream.createLine(
+        getAFPDataStream().createLine(
             pts2units(x),
             pts2units(y),
             pts2units(x + width),
@@ -722,6 +723,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             log.error("Negative extent received. Border won't be painted.");
             return;
         }
+        
         switch (style) {
             case Constants.EN_DOUBLE:
                 if (horz) {
@@ -947,7 +949,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         String name = (String)getPageSegments().get(uri);
         if (name != null) {
-            afpDataStream.createIncludePageSegment(name, mpts2units(x), mpts2units(y));
+            getAFPDataStream().createIncludePageSegment(name, mpts2units(x), mpts2units(y));
         } else {
             ImageManager manager = getUserAgent().getFactory().getImageManager();
             ImageInfo info = null;
@@ -1007,7 +1009,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     imageObjectInfo.setCompression(ccitt.getCompression());
                     imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
                     
-                    afpDataStream.createObject(imageObjectInfo);
+                    getAFPDataStream().createObject(imageObjectInfo);
 
                             
 //                    ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw, afph,
@@ -1251,7 +1253,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         imageObjectInfo.setBitsPerPixel(bitsPerPixel);
         imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
 
-        AbstractNamedAFPObject obj = afpDataStream.createObject(imageObjectInfo);
+        //AbstractNamedAFPObject obj = 
+        getAFPDataStream().createObject(imageObjectInfo);
 //            ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw,
 //                    afph, afpres, afpres);
 //            io.setImageParameters(imageResolution, imageResolution,
@@ -1379,7 +1382,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
 
         try {
-            afpDataStream.createText(
+            getAFPDataStream().createText(
                 afpFontAttributes.getFontReference(),
                 mpts2units(rx),
                 mpts2units(bl),
@@ -1596,7 +1599,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
                         String overlay = aps.getName();
                         if (overlay != null) {
-                            afpDataStream.createIncludePageOverlay(overlay);
+                            getAFPDataStream().createIncludePageOverlay(overlay);
                         }
                     } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT
                             .equals(element)) {
@@ -1607,11 +1610,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             .equals(element)) {
                         String name = aps.getName();
                         String value = aps.getValue();
-                        afpDataStream.createTagLogicalElement(name, value);
+                        getAFPDataStream().createTagLogicalElement(name, value);
                     } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
                         String content = aps.getContent();
                         if (content != null) {
-                            afpDataStream.createNoOperation(content);
+                            getAFPDataStream().createNoOperation(content);
                         }
                     }
 //                    else if (AFPElementMapping.RESOURCE.equals(element)) {
@@ -1814,14 +1817,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     private void pushViewPortPos(ViewPortPos vpp) {
         viewPortPositions.add(vpp);
-        afpDataStream.setOffsets(vpp.x, vpp.y, vpp.rot);
+        getAFPDataStream().setOffsets(vpp.x, vpp.y, vpp.rot);
     }
 
     private void popViewPortPos() {
         viewPortPositions.remove(viewPortPositions.size() - 1);
         if (viewPortPositions.size() > 0) {
             ViewPortPos vpp = (ViewPortPos)viewPortPositions.get(viewPortPositions.size() - 1);
-            afpDataStream.setOffsets(vpp.x, vpp.y, vpp.rot);
+            getAFPDataStream().setOffsets(vpp.x, vpp.y, vpp.rot);
         }
     }
 
@@ -1913,7 +1916,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     
     /** {@inheritDoc} */
     public void startPageSequence(LineArea seqTitle) {
-        afpDataStream.endPageGroup();
-        afpDataStream.startPageGroup();
+        getAFPDataStream().endPageGroup();
+        getAFPDataStream().startPageGroup();
     }
 }

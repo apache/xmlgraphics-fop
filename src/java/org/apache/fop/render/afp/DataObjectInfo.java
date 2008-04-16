@@ -25,14 +25,20 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
-import org.apache.fop.render.afp.modca.ObjectTypeRegistry;
-import org.apache.fop.render.afp.modca.ObjectTypeRegistry.ObjectType;
-import org.apache.fop.util.QName;
+import org.apache.fop.render.afp.modca.Registry;
+import org.apache.fop.render.afp.modca.Registry.ObjectType;
+import org.apache.xmlgraphics.util.QName;
 
 /**
  * A list of parameters associated with an AFP data objects
  */
 public class DataObjectInfo {
+    private static final Log log = LogFactory.getLog("org.apache.fop.afp");
+
+    private static final String RESOURCE_NAME = "afp:resource-name";
+    private static final String RESOURCE_LEVEL = "afp:resource-level";
+    private static final String RESOURCE_GROUP_FILE = "afp:resource-group-file";
+
     private static final ResourceInfo DEFAULT_RESOURCE_INFO = new ResourceInfo();
     
     private String uri;
@@ -42,16 +48,19 @@ public class DataObjectInfo {
     private int height;
     private int widthRes;
     private int heightRes;
+    private int rotation = 0;
     
-    // object type entry
-    private ObjectType objectTypeEntry;
+    /** object type entry */
+    private ObjectType objectType;
+    
+    /** resource info */
     private ResourceInfo resourceInfo = DEFAULT_RESOURCE_INFO;
     
     /**
      * Sets the data object uri
      * @param uri the data object uri
      */
-    protected void setUri(String uri) {
+    public void setUri(String uri) {
         this.uri = uri;
     }
 
@@ -159,18 +168,33 @@ public class DataObjectInfo {
     }
     
     /**
-     * Sets the object type entry
-     * @param entry the object type entry
+     * @return the rotation of this data object
+     */
+    public int getRotation() {
+        return rotation;
+    }
+
+    /**
+     * Sets the data object rotation
+     * @param rotation the data object rotation
+     */
+    protected void setRotation(int rotation) {
+        this.rotation = rotation;
+    }
+
+    /**
+     * Sets the object type
+     * @param objectType the object type
      */    
-    public void setObjectType(ObjectTypeRegistry.ObjectType entry) {
-        this.objectTypeEntry = entry;
+    public void setObjectType(Registry.ObjectType objectType) {
+        this.objectType = objectType;
     }
 
     /**
      * @return the object type entry
      */
-    protected ObjectType getObjectTypeEntry() {
-        return objectTypeEntry;
+    protected ObjectType getObjectType() {
+        return objectType;
     }
 
     /**
@@ -188,17 +212,12 @@ public class DataObjectInfo {
         this.resourceInfo = resourceInfo;
     }
 
-    
-    private static final String RESOURCE_NAME = "afp:resource-name";
-    private static final String RESOURCE_LEVEL = "afp:resource-level";
-    private static final String RESOURCE_GROUP_FILE = "afp:resource-group-file";
-
     /**
      * Sets the resource group settings using the given foreign attributes
      * @param foreignAttributes a mapping of element attributes names to values
      */
     public void setResourceInfoFromForeignAttributes(Map/*<QName, String>*/ foreignAttributes) {
-        if (foreignAttributes != null) {
+        if (foreignAttributes != null && !foreignAttributes.isEmpty()) {
             this.resourceInfo = new ResourceInfo();
             QName resourceNameKey = new QName(AFPElementMapping.NAMESPACE, RESOURCE_NAME);
             String resourceName = (String)foreignAttributes.get(resourceNameKey);
@@ -214,15 +233,19 @@ public class DataObjectInfo {
                                 RESOURCE_GROUP_FILE);
                         String resourceExternalDest
                             = (String)foreignAttributes.get(resourceGroupFileKey);
+                        if (resourceExternalDest == null) {
+                            String msg = RESOURCE_GROUP_FILE + " not specified";
+                            log.warn(msg);
+                            throw new UnsupportedOperationException(msg);
+                        }
                         File resourceExternalGroupFile = new File(resourceExternalDest);
                         if (resourceExternalGroupFile.canWrite()) {
                             resourceInfo.setExternalResourceGroupFile(resourceExternalGroupFile);
                         }
                     }
                 } else {
-                    Log log = LogFactory.getLog("org.apache.fop.afp");
-                    log.warn("invalid resource level '" + level
-                            + "', using default document level");
+                    String msg = RESOURCE_LEVEL + " is null or not valid";
+                    log.warn(msg);
                 }
             }
         }
@@ -239,7 +262,8 @@ public class DataObjectInfo {
             + ", height=" + height
             + ", widthRes=" + widthRes
             + ", heightRes=" + heightRes
+            + ", rotation=" + rotation
             + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "")
-            + (objectTypeEntry != null ? ", objectTypeEntry=" + objectTypeEntry : "");
+            + (objectType != null ? ", objectTypeEntry=" + objectType : "");
     }
 }

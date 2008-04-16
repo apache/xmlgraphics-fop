@@ -41,12 +41,12 @@ public class MapDataResource extends AbstractStructuredAFPObject {
 
     /**
      * Main constructor
-     * @param obj a map data resource for a given structured AFP object
+     * @param includeObj a map data resource for a given structured AFP object
      */
     public MapDataResource(IncludeObject includeObj) {
-        AbstractStructuredAFPObject refObj = includeObj.getReferencedObject();
+        AbstractStructuredAFPObject dataObject = includeObj.getDataObject();
 //        ResourceObject resObj = includeObj.getResource();
-        String fqName = refObj.getFullyQualifiedName();
+        String fqName = dataObject.getFullyQualifiedName();
         ResourceInfo resourceInfo = includeObj.getResourceInfo();
         if (fqName != null) {
             if (resourceInfo.isExternal()) {
@@ -75,7 +75,7 @@ public class MapDataResource extends AbstractStructuredAFPObject {
             dataInContainer, containerHasOEG, dataInOCD
         );
 
-        //TODO: AC - fix
+        //  
 //        super.setObjectClassification(
 //                ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
 //                objectType, strucFlgs);

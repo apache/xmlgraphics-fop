@@ -96,12 +96,15 @@ public class FullyQualifiedNameTriplet extends Triplet {
      */
     public FullyQualifiedNameTriplet(byte type, byte format, byte[] name) {
         super(FULLY_QUALIFIED_NAME);
+        
         this.nameBytes = name;
-        super.data = new byte[2 + name.length];
+        byte[] data = new byte[2 + name.length];
         data[0] = type;
         data[1] = format;
         // FQName
         System.arraycopy(name, 0, data, 2, name.length);
+        
+        super.setData(data);
     }
     
     /**

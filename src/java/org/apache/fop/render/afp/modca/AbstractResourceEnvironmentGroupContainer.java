@@ -91,6 +91,9 @@ public abstract class AbstractResourceEnvironmentGroupContainer
         }
     }
     
+    /**
+     * @return the resource environment group
+     */
     private ResourceEnvironmentGroup getResourceEnvironmentGroup() {
         if (resourceEnvironmentGroup == null) {
             this.resourceEnvironmentGroup = new ResourceEnvironmentGroup();

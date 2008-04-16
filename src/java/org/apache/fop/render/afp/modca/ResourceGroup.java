@@ -30,7 +30,6 @@ import org.apache.fop.render.afp.ImageObjectInfo;
 import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.tools.StringUtils;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
 
 /**
  * A Resource Group contains a set of overlays.
@@ -45,7 +44,7 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     /**
      * Mapping of resource uri to data resource object (image/graphic) 
      */
-    private Map/*<String,IncludeObject>*/ resourceMap = null;
+    private Map/*<String, DataObjectAccessor>*/ resourceMap = null;
 
     /**
      * This resource groups container
@@ -64,6 +63,7 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * Constructor for the ResourceGroup, this takes a
      * name parameter which must be 8 characters long.
      * @param name the resource group name
+     * @param container the parent resource group container
      */
     public ResourceGroup(String name, AbstractResourceGroupContainer container) {
         super(name);
@@ -71,8 +71,7 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     }
 
     private static final String RESOURCE_NAME_PREFIX = "RES";
-    private static final String INCLUDE_NAME_PREFIX = "INC";
-    
+
     /**
      * Helper method to create a new resource object in the current container and to return
      * the object.
@@ -84,68 +83,50 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
         ResourceObject resource = new ResourceObject(name);
         return resource;
     }
-    
-//    /**
-//     * Helper method to create a new resource object in the current container and to return
-//     * the object.
-//     * @return a newly created resource object
-//     */
-//    private IncludeObject createIncludeObject() {
-//        String name = INCLUDE_NAME_PREFIX
-//        + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
-//        IncludeObject includeObj = new IncludeObject(name);
-//        return includeObj;
-//    }
+
+    private AbstractResourceGroupContainer getContainer() {
+        return this.container;
+    }
 
     /**
      * Creates a data object in this resource group
-     * @param info the data object info
+     * @param dataObjectInfo the data object info
      * @return an include object reference
      */
-    public IncludeObject createObject(DataObjectInfo info) {
-        IncludeObject includeObj = (IncludeObject)getResourceMap().get(info.getUri());
-        if (includeObj == null) {
-            AbstractDataObject dataObj;
-            if (info instanceof ImageObjectInfo) {
-                dataObj = container.createImage((ImageObjectInfo)info);
+    public IncludeObject createObject(DataObjectInfo dataObjectInfo) {
+        DataObjectAccessor dataObjectAccessor
+            = (DataObjectAccessor)getResourceMap().get(dataObjectInfo.getUri());
+        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        AbstractDataObject dataObj;
+        if (dataObjectAccessor == null) {
+            if (dataObjectInfo instanceof ImageObjectInfo) {
+                dataObj = getContainer().createImage((ImageObjectInfo)dataObjectInfo);
             } else {
-                dataObj = container.createGraphic();
+                dataObj = getContainer().createGraphic(dataObjectInfo);
             }
 
-            ResourceInfo resourceInfo = info.getResourceInfo();
+            dataObj.setViewport(dataObjectInfo.getX(), dataObjectInfo.getY(),
+                    dataObjectInfo.getWidth(), dataObjectInfo.getHeight(),
+                    dataObjectInfo.getWidthRes(), dataObjectInfo.getHeightRes(),
+                    dataObjectInfo.getRotation());
+
             String resourceName = resourceInfo.getName();
+            ObjectContainer objectContainer = new ObjectContainer(resourceName, dataObjectInfo);
+            objectContainer.setDataObject(dataObj);
+            
+            // When externally located, Wrap data object in a resource object
             if (resourceInfo.isExternal()) {
-                ObjectContainer objectContainer = new ObjectContainer(resourceName, dataObj, info);
-            } else {
-                
+                ResourceObject resourceObj = createResourceObject();
+                resourceObj.setObjectContainer(objectContainer);
+                dataObjectAccessor = resourceObj;
+            } else { // no wrappers just container
+                dataObjectAccessor = objectContainer;
             }
-            
-            // Wrap the data object in a page segment
-            PageSegment pageSegment = container.createPageSegment();
-            pageSegment.addObject(dataObj);
-
-            
-            // TODO: AC - rotation?
-            int rotation = 0;
-            dataObj.setViewport(info.getX(), info.getY(),
-                    info.getWidth(), info.getHeight(),
-                    info.getWidthRes(), info.getHeightRes(), rotation);
-            
-            includeObj.setResourceInfo(resourceInfo);
-
-            // If resource is to be stored externally,
-            // wrap the page segment in a resource object 
-            if (resourceInfo.isExternal()) {
-                ResourceObject resource = createResourceObject();
-                resource.setReferencedObject(pageSegment);
-                includeObj = new IncludeObject(resource);
-            } else {
-                includeObj = new IncludeObject(pageSegment);
-            }
-            // Add include object to resource map
-            getResourceMap().put(info.getUri(), includeObj);                
+            getResourceMap().put(dataObjectInfo.getUri(), dataObjectAccessor);            
         }
-        //includeObj.setObjectAreaSize(params.getX(), params.getY());
+        AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
+        String name = dataObject.getName();
+        IncludeObject includeObj = new IncludeObject(name, dataObjectAccessor, resourceInfo);
         return includeObj;
     }
     
@@ -174,9 +155,9 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * Returns the list of resources
      * @return the list of resources
      */
-    public Map/*<String,AbstractAFPObject>*/ getResourceMap() {
+    public Map/*<String, DataObjectAccessor>*/ getResourceMap() {
         if (resourceMap == null) {
-            resourceMap = new java.util.HashMap/*<String,AbstractAFPObject>*/();
+            resourceMap = new java.util.HashMap/*<String, DataObjectAccessor>*/();
         }
         return resourceMap;
     }
@@ -189,9 +170,8 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
             Collection includes = resourceMap.values();
             Iterator it = includes.iterator();
             while (it.hasNext()) {
-                IncludeObject includeObj = (IncludeObject)it.next();
-                AbstractStructuredAFPObject obj = includeObj.getReferencedObject();
-                obj.writeDataStream(os);
+                DataObjectAccessor dataObjectAccessor = (DataObjectAccessor)it.next();
+                dataObjectAccessor.writeDataStream(os);
             }
         }
     }
@@ -240,6 +220,6 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * {@inheritDoc}
      */
     public String toString() {
-        return this.name + " " + this.resourceMap;
+        return this.name + " " + getResourceMap();
     }
 }

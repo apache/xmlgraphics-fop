@@ -63,6 +63,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
             try {
                 getTripletData();
             } catch (IOException e) {
+                log.error("failed to get triplet data");
             }
         }
         if (tripletData != null) {
@@ -228,7 +229,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
      *        object/component type of the object
      * @param strucFlgs information on the structure of the object and its container
      */
-    public void setObjectClassification(byte objectClass, ObjectTypeRegistry.ObjectType objectType,
+    public void setObjectClassification(byte objectClass, Registry.ObjectType objectType,
             StrucFlgs strucFlgs) {
         addTriplet(new ObjectClassificationTriplet(objectClass, objectType, strucFlgs));
     }

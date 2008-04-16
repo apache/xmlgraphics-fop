@@ -19,7 +19,11 @@
 
 package org.apache.fop.render.afp.modca.triplets;
 
-import org.apache.fop.render.afp.modca.ObjectTypeRegistry;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.fop.render.afp.modca.AFPConstants;
+import org.apache.fop.render.afp.modca.Registry;
+import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
  * The Object Classification is used to classify and identify object data.
@@ -65,15 +69,45 @@ public class ObjectClassificationTriplet extends Triplet {
      * 
      * @param objectClass
      *             the object class type
-     * @param entry
+     * @param objectType
      *             the object type registry entry
      * @param strucFlgs
      *             the structured flags pertaining to this object classification triplet
      */
-    public ObjectClassificationTriplet(byte objectClass, ObjectTypeRegistry.ObjectType entry,
+    public ObjectClassificationTriplet(byte objectClass, Registry.ObjectType objectType,
             StrucFlgs strucFlgs) {
+        // no object level or company name specified
+        this(objectClass, objectType, strucFlgs, null, null);
+    }
+    
+    
+    private static final int OBJECT_LEVEL_LEN = 8;
+    private static final int OBJECT_TYPE_NAME_LEN = 32;
+    private static final int COMPANY_NAME_LEN = 32;
+    
+    /**
+     * Fully parameterized constructor
+     * 
+     * @param objectClass
+     *             the object class type
+     * @param objectType
+     *             the object type registry entry
+     * @param strucFlgs
+     *             the structured flags pertaining to this object classification triplet
+     * @param objLev
+     *             the release level or version number of the object type
+     * @param compName
+     *             the name of the company or organization that owns the object definition
+     */
+    public ObjectClassificationTriplet(byte objectClass, Registry.ObjectType objectType,
+            StrucFlgs strucFlgs, String objLev, String compName) {
         super(OBJECT_CLASSIFICATION);
-        byte[] data = new byte[93];
+
+        if (objectType == null) {
+            throw new UnsupportedOperationException("MO:DCA Registry object type is null");
+        }
+
+        byte[] data = new byte[94];
         data[0] = 0x00; // reserved (must be zero)
         data[1] = objectClass; // ObjClass
         data[2] = 0x00; // reserved (must be zero)
@@ -81,21 +115,41 @@ public class ObjectClassificationTriplet extends Triplet {
         // StrucFlgs - Information on the structure of the object container        
         data[4] = strucFlgs.getValue();
         data[5] = 0x00; // StrucFlgs
-        
-        if (entry == null) {
-            throw new UnsupportedOperationException("Unknown registry entry");
-        }
-        
-        byte[] oid = entry.getOID();
+                
+        byte[] oid = objectType.getOID();
         // RegObjId - MOD:CA-registered ASN.1 OID for object type (8-23)
         System.arraycopy(oid, 0, data, 6, oid.length);
             
-        byte[] objectTypeName = entry.getName();
         // ObjTpName - name of object type (24-55)
-        System.arraycopy(objectTypeName, 0, data, 22, objectTypeName.length);
+        byte[] objTpName;
+        try {
+            objTpName = StringUtils.rpad(objectType.getName(), ' ', OBJECT_TYPE_NAME_LEN).getBytes(
+                    AFPConstants.EBCIDIC_ENCODING);
+            System.arraycopy(objTpName, 0, data, 22, objTpName.length);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("an encoding exception occurred");
+        }
              
-        // ObjLev (not specified) - Release level or version number of object type (56-63)
-
-        // CompName (not specified) - Name of company or org that owns object definition (64-95)
+        // ObjLev - release level or version number of object type (56-63)
+        byte[] objectLevel;
+        try {
+            objectLevel = StringUtils.rpad(objLev, ' ', OBJECT_LEVEL_LEN).getBytes(
+                    AFPConstants.EBCIDIC_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("an encoding exception occurred");
+        }
+        System.arraycopy(objectLevel, 0, data, 54, objectLevel.length);        
+        
+        // CompName - name of company or org that owns object definition (64-95)
+        byte[] companyName;
+        try {
+            companyName = StringUtils.rpad(compName, ' ', COMPANY_NAME_LEN).getBytes(
+                    AFPConstants.EBCIDIC_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("an encoding exception occurred");
+        }
+        System.arraycopy(companyName, 0, data, 62, companyName.length);
+        
+        super.setData(data);
     }
 }

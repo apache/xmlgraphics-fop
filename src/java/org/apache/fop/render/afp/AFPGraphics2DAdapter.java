@@ -22,8 +22,13 @@ package org.apache.fop.render.afp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 
@@ -48,16 +53,23 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
         Boolean grayObj = (Boolean)context.getProperty(AFPRendererContextConstants.AFP_GRAYSCALE);
         boolean gray = (grayObj != null ? grayObj.booleanValue() : false);
         
+        FOUserAgent userAgent = context.getUserAgent();
+        
         //Paint to a BufferedImage
-        int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
+        int resolution = (int)Math.round(userAgent.getTargetResolution());
         BufferedImage bi = paintToBufferedImage(painter, wrappedContext, resolution, gray, false);
         
+        ImageManager manager = userAgent.getFactory().getImageManager();
+        ImageSessionContext sessionContext = userAgent.getImageSessionContext();
         
         //TODO: AC - fix
-//        String uri = null;
-//        java.util.Map foreignAttributes = null;
-//        ImageInfo imageInfo = new ImageInfo();
-//        afp.drawBufferedImage(uri, bi, resolution, x, y, width, height, foreignAttributes);
+        String uri = null;
+        
+        try {
+            ImageInfo info = manager.getImageInfo(uri, sessionContext);
+            java.util.Map foreignAttributes = null;
+            afp.drawBufferedImage(info, bi, resolution, x, y, width, height, foreignAttributes);
+        } catch (ImageException e) {
+        }
     }
-
 }

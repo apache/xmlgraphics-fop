@@ -17,38 +17,35 @@
 
 /* $Id: $ */
 
-package org.apache.fop.render.afp.goca;
+package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.fop.render.afp.modca.AbstractNamedAFPObject;
-import org.apache.fop.render.afp.modca.PreparedAFPObject;
-
 /**
- * A base class container of GOCA structured objects
+ * A base container of prepared structured AFP objects
  */
-public abstract class AbstractGraphicsContainer extends AbstractNamedAFPObject
+public abstract class AbstractPreparedObjectContainer extends AbstractNamedAFPObject
 implements PreparedAFPObject {
     
     /**
      * list of objects contained within this container  
      */
-    protected List objects = null;
+    protected List/*<PreparedAFPObject>*/ objects = null;
 
     /**
      * Default constructor
      */
-    protected AbstractGraphicsContainer() {
+    protected AbstractPreparedObjectContainer() {
     }
 
     /**
      * Named constructor
      * @param name the name of the container
      */
-    protected AbstractGraphicsContainer(String name) {
+    protected AbstractPreparedObjectContainer(String name) {
         super(name);
     }
     
@@ -60,24 +57,28 @@ implements PreparedAFPObject {
             super.writeObjects(objects, os);
         }
     }
+
+    private List/*<PreparedAFPObject>*/ getObjects() {
+        if (objects == null) {
+            this.objects = new java.util.ArrayList/*<PreparedAFPObject>*/();
+        }
+        return this.objects;
+    }
     
     /**
-     * Adds a given graphics drawing order to this container
-     * @param drawingOrder the graphics drawing order
+     * Adds a given prepared object to this container
+     * @param preparedObject the prepared object
      * @return the drawingOrder if it was added, null otherwise
      */
-    protected PreparedAFPObject addDrawingOrder(PreparedAFPObject drawingOrder) {
-        log.debug(this + " adding " + drawingOrder);
-        if (objects == null) {
-            this.objects = new java.util.ArrayList();
-        }
-        objects.add(drawingOrder);
-        return drawingOrder;
+    public PreparedAFPObject addObject(PreparedAFPObject preparedObject) {
+        log.debug(this + " adding " + preparedObject);
+        getObjects().add(preparedObject);
+        return preparedObject;
     }
     
     /**
      * @return the current data length of this container including
-     * all enclosed GOCA drawing objects (and their containers)
+     * all enclosed objects (and their containers)
      */
     public int getDataLength() {
         int dataLen = 0;

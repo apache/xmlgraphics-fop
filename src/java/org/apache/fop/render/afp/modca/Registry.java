@@ -19,18 +19,17 @@
 
 package org.apache.fop.render.afp.modca;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ImageObjectInfo;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 /**
- * MOD:CA object type registry
+ * MOD:CA Registry of object types 
  */
-public final class ObjectTypeRegistry {
+public final class Registry {
+
     /** IOB supported object types */    
     private static final byte COMPID_GIF = 22;
     private static final byte COMPID_JFIF = 23; // jpeg file interchange format 
@@ -42,26 +41,26 @@ public final class ObjectTypeRegistry {
     private static final byte COMPID_TIFF = 14;
 
     /** mime type entry mapping */
-    private java.util.Map/*<String, ObjectTypeRegistry.Entry>*/ mimeEntryMap
+    private java.util.Map/*<String, Registry.ObjectType>*/ mimeEntryMap
         = Collections.synchronizedMap(
-                Collections.unmodifiableMap(
-                        new java.util.HashMap/*<String, ObjectTypeRegistry.Entry>*/()));
+                new java.util.HashMap/*<String, Registry.ObjectType>*/());
 
-    private static ObjectTypeRegistry instance = null;
+    /** singleton instance */
+    private static Registry instance = null;
 
     /**
-     * @return a single instance of Registry
+     * @return a single instance of an ObjectTypeRegistry
      */
-    public static ObjectTypeRegistry getInstance() {
-        synchronized (instance) {
+    public static Registry getInstance() {
+        synchronized (Registry.class) {
             if (instance == null) {
-                instance = new ObjectTypeRegistry();
-            }            
+                instance = new Registry();
+            }
         }
         return instance;
     }
     
-    private ObjectTypeRegistry() {
+    private Registry() {
         init();
     }
     
@@ -122,18 +121,17 @@ public final class ObjectTypeRegistry {
     }
 
     /**
-     * Returns the registry Entry for a given data object info
+     * Returns the Registry ObjectType for a given data object info
      * 
-     * @param info
-     *            the data object info
-     * @return the registry Entry for a given data object info
+     * @param dataObjectInfo the data object info
+     * @return the Registry ObjectType for a given data object info
      */
-    public ObjectType getObjectType(DataObjectInfo info) {
+    public Registry.ObjectType getObjectType(DataObjectInfo dataObjectInfo) {
         ObjectType entry = null;
-        if (info instanceof ImageObjectInfo) {
-            ImageObjectInfo imageInfo = (ImageObjectInfo)info;
+        if (dataObjectInfo instanceof ImageObjectInfo) {
+            ImageObjectInfo imageInfo = (ImageObjectInfo)dataObjectInfo;
             String mimeType = imageInfo.getMimeType();
-            entry = (ObjectType)mimeEntryMap.get(mimeType);
+            entry = (Registry.ObjectType)mimeEntryMap.get(mimeType);
         }
         return entry;
     }
@@ -144,30 +142,21 @@ public final class ObjectTypeRegistry {
     public class ObjectType {
         private byte componentId; 
         private byte[] oid;
-        private byte[] name;
+        private String name;
         private boolean canBeIncluded;
         
         /**
          * Main constructor
          * @param componentId the component id of this object type
          * @param oid the object id of this object type
-         * @param objectTypeName the object type name
+         * @param name the object type name
          * @param canBeIncluded true if this object can be included with an IOB structured field
          */
-        public ObjectType(byte componentId, byte[] oid, String objectTypeName,
+        public ObjectType(byte componentId, byte[] oid, String name,
                 boolean canBeIncluded) {
             this.componentId = componentId;
             this.oid = oid;
-            try {
-                this.name = objectTypeName.getBytes(AFPConstants.EBCIDIC_ENCODING);
-            } catch (UnsupportedEncodingException e) {
-                // should never happen!
-                LogFactory.getLog("org.apache.fop.render.afp.modca.Registry.Entry").error(
-                        "character encoding error occurred on componentId "
-                        + componentId
-                        + " : "
-                        + e.getMessage());
-            }
+            this.name = name;
             this.canBeIncluded = canBeIncluded;
         }
                 
@@ -183,7 +172,7 @@ public final class ObjectTypeRegistry {
         /**
          * @return the object type name for the given componentId 
          */
-        public byte[] getName() {
+        public String getName() {
             return this.name;
         }
 
@@ -199,6 +188,13 @@ public final class ObjectTypeRegistry {
          */
         public boolean canBeIncluded() {
             return this.canBeIncluded;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String toString() {
+            return this.getName();
         }
     }
 }

@@ -194,9 +194,6 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
                             "Invalid compression scheme: " + compression);
             }
         }
-        imageObj.setFullyQualifiedName(
-                FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF,
-                FullyQualifiedNameTriplet.FORMAT_URL, info.getUri());
         imageObj.setImageParameters(info.getWidthRes(), info.getHeightRes(), 
                 info.getDataWidth(), info.getDataHeight());
         if (info.isColor()) {
@@ -213,9 +210,10 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
     /**
      * Helper method to create a graphic in the current container and to return
      * the object.
+     * @param info the data object info
      * @return a newly created graphics object
      */
-    protected GraphicsObject createGraphic() {
+    protected GraphicsObject createGraphic(DataObjectInfo info) {
         String name = GRAPHIC_NAME_PREFIX
             + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
         GraphicsObject graphicsObj = new GraphicsObject(name);
@@ -244,8 +242,13 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
         if (info instanceof ImageObjectInfo) {
             dataObject = createImage((ImageObjectInfo)info);
         } else {
-            dataObject = createGraphic();
+            dataObject = createGraphic(info);
         }
+
+         dataObject.setFullyQualifiedName(
+                FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF,
+                FullyQualifiedNameTriplet.FORMAT_URL, info.getUri());
+
         return dataObject;
     }
 

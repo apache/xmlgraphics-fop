@@ -22,13 +22,14 @@ package org.apache.fop.render.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.modca.AbstractPreparedObjectContainer;
 import org.apache.fop.render.afp.modca.PreparedAFPObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
  * A GOCA graphics segment
  */
-public final class GraphicsChainedSegment extends AbstractGraphicsContainer {
+public final class GraphicsChainedSegment extends AbstractPreparedObjectContainer {
 
     /**
      * The maximum segment data length
@@ -91,10 +92,8 @@ public final class GraphicsChainedSegment extends AbstractGraphicsContainer {
     }
 
     private static final byte APPEND_NEW_SEGMENT = 0;
-
-    private static final byte PROLOG = 4;
-
-    private static final byte APPEND_TO_EXISING = 48;
+//    private static final byte PROLOG = 4;
+//    private static final byte APPEND_TO_EXISING = 48;
 
     /**
      * {@inheritDoc}
@@ -148,7 +147,7 @@ public final class GraphicsChainedSegment extends AbstractGraphicsContainer {
      */
     protected void beginArea() {
         this.currentArea = new GraphicsArea();
-        super.addDrawingOrder(currentArea);
+        super.addObject(currentArea);
     }
 
     /**
@@ -161,11 +160,11 @@ public final class GraphicsChainedSegment extends AbstractGraphicsContainer {
     /**
      * {@inheritDoc}
      */
-    protected PreparedAFPObject addDrawingOrder(PreparedAFPObject drawingOrder) {
+    public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
         if (currentArea != null) {
-            currentArea.addDrawingOrder(drawingOrder);
+            currentArea.addObject(drawingOrder);
         } else {
-            super.addDrawingOrder(drawingOrder);
+            super.addObject(drawingOrder);
         }
         return drawingOrder;
     }

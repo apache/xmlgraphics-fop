@@ -127,13 +127,13 @@ public class GraphicsObject extends AbstractDataObject {
     /**
      * {@inheritDoc}
      */
-    protected PreparedAFPObject addDrawingOrder(PreparedAFPObject drawingOrder) {
+    public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
         if (graphicsData == null
                 || (graphicsData.getDataLength() + drawingOrder.getDataLength())
                 >= GraphicsData.MAX_DATA_LEN) {
             newData();
         }
-        graphicsData.addDrawingOrder(drawingOrder);
+        graphicsData.addObject(drawingOrder);
         return drawingOrder;
     }
     
@@ -154,7 +154,7 @@ public class GraphicsObject extends AbstractDataObject {
      */
     private GraphicsData newData() {
         this.graphicsData = new GraphicsData();            
-        super.addDrawingOrder(graphicsData);
+        super.addObject(graphicsData);
         return graphicsData;
     }
     
@@ -163,7 +163,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param col the active color to use
      */
     public void setColor(Color col) {
-        addDrawingOrder(new GraphicsSetProcessColor(col));
+        addObject(new GraphicsSetProcessColor(col));
     }
 
     /**
@@ -171,7 +171,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param coords the x and y coordinates of the current position
      */
     public void setCurrentPosition(int[] coords) {
-        addDrawingOrder(new GraphicsSetCurrentPosition(coords));
+        addObject(new GraphicsSetCurrentPosition(coords));
     }
 
     /**
@@ -180,7 +180,7 @@ public class GraphicsObject extends AbstractDataObject {
      */
     public void setLineWidth(int multiplier) {
         GraphicsSetLineWidth lw = new GraphicsSetLineWidth(multiplier);
-        addDrawingOrder(lw);
+        addObject(lw);
     }
 
     /**
@@ -189,7 +189,7 @@ public class GraphicsObject extends AbstractDataObject {
      */
     public void setLineType(byte type) {
         GraphicsSetLineType lt = new GraphicsSetLineType(type);
-        addDrawingOrder(lt);
+        addObject(lt);
     }    
 
     /**
@@ -201,7 +201,7 @@ public class GraphicsObject extends AbstractDataObject {
                 fill ? GraphicsSetPatternSymbol.SOLID_FILL
                      : GraphicsSetPatternSymbol.NO_FILL
         );
-        addDrawingOrder(pat);
+        addObject(pat);
     }
     
     /**
@@ -209,7 +209,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param fontReference the character set (font) reference
      */
     public void setCharacterSet(int fontReference) {
-        addDrawingOrder(new GraphicsSetCharacterSet(fontReference));
+        addObject(new GraphicsSetCharacterSet(fontReference));
     }
 
     /**
@@ -217,7 +217,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param coords the x/y coordinates (can be a series)
      */
     public void addLine(int[] coords) {
-        addDrawingOrder(new GraphicsLine(coords));
+        addObject(new GraphicsLine(coords));
     }
 
     /**
@@ -225,7 +225,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param coords the x/y coordinates
      */
     public void addBox(int[] coords) {
-        addDrawingOrder(new GraphicsBox(coords));
+        addObject(new GraphicsBox(coords));
     }
 
     /**
@@ -233,7 +233,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param coords the x/y coordinates
      */
     public void addFillet(int[] coords) {
-        addDrawingOrder(new GraphicsFillet(coords));
+        addObject(new GraphicsFillet(coords));
     }
 
     /**
@@ -244,7 +244,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param ymaj the maximum value of the y coordinate
      */
     public void setArcParams(int xmaj, int ymin, int xmin, int ymaj) {
-        addDrawingOrder(new GraphicsSetArcParameters(xmaj, ymin, xmin, ymaj));
+        addObject(new GraphicsSetArcParameters(xmaj, ymin, xmin, ymaj));
     }
 
     /**
@@ -255,7 +255,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param mhr the fractional portion of the multiplier
      */
     public void addFullArc(int x, int y, int mh, int mhr) {
-        addDrawingOrder(new GraphicsFullArc(x, y, mh, mhr));
+        addObject(new GraphicsFullArc(x, y, mh, mhr));
     }
 
     /**
@@ -264,16 +264,16 @@ public class GraphicsObject extends AbstractDataObject {
      * @param y the y coordinate
      * @param width the image width
      * @param height the image height
-     * @param rawData the image data
+     * @param imgData the image data
      */
-    public void addImage(int x, int y, int width, int height, byte[] rawData) {
-        addDrawingOrder(new GraphicsImageBegin(x, y, width, height));
+    public void addImage(int x, int y, int width, int height, byte[] imgData) {
+        addObject(new GraphicsImageBegin(x, y, width, height));
         for (int startIndex = 0;
-            startIndex <= rawData.length;
+            startIndex <= imgData.length;
             startIndex += GraphicsImageData.MAX_DATA_LEN) {
-            addDrawingOrder(new GraphicsImageData(rawData, startIndex));
+            addObject(new GraphicsImageData(imgData, startIndex));
         }
-        addDrawingOrder(new GraphicsImageEnd());
+        addObject(new GraphicsImageEnd());
     }
 
     /**
@@ -283,7 +283,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param y the y coordinate
      */
     public void addString(String str, int x, int y) {
-        addDrawingOrder(new GraphicsString(str, x, y));
+        addObject(new GraphicsString(str, x, y));
     }
     
     /**

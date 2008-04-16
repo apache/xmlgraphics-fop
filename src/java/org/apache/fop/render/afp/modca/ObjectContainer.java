@@ -31,40 +31,56 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
 /**
  * Object containers are MO:DCA objects that envelop and carry object data.
  */
-public class ObjectContainer extends AbstractNamedAFPObject {
+public class ObjectContainer extends AbstractPreparedAFPObject implements DataObjectAccessor {
+                
+    /**
+     * the data object
+     */
+    private AbstractDataObject dataObj = null;
     
     /**
-     * the object container data
+     * the object data
      */
-    private ObjectContainerData objectContainerData;
-
+    private byte[] objectData = null;
+    
     /**
      * Main constructor
      * @param name the name of this object container
-     * @param dataObj the data object to reside within this object container
-     * @param info the data object info about the data object
+     * @param dataObjectInfo the data object info
      */
-    public ObjectContainer(String name, AbstractDataObject dataObj, DataObjectInfo info) {
+    public ObjectContainer(String name, DataObjectInfo dataObjectInfo) {
         super(name);
-        
         final boolean dataInContainer = true;
         final boolean containerHasOEG = false;
         final boolean dataInOCD = true;
         StrucFlgs strucFlgs = new StrucFlgs(
             dataInContainer, containerHasOEG, dataInOCD
         );
-        ObjectTypeRegistry registry = ObjectTypeRegistry.getInstance();
-        ObjectTypeRegistry.ObjectType entry = registry.getObjectType(info);
-        super.setObjectClassification(
-            ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
-            entry, strucFlgs
-        );
-        
-        // write data object to object container data
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        // TODO: AC - fix
-//        dataObj.writeDataStream(bos);
-        this.objectContainerData = new ObjectContainerData(bos.toByteArray());
+        Registry registry = Registry.getInstance();
+        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
+        if (objectType != null) {
+            super.setObjectClassification(
+                    ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
+                    objectType, strucFlgs
+            );
+        } else {
+            log.warn("no object type for " + dataObjectInfo.getUri());
+        }
+    }
+    
+    /**
+     * Sets the data object for this object container
+     * @param dataObj the data object to reside within this object container
+     */
+    public void setDataObject(AbstractDataObject dataObj) {
+        this.dataObj = dataObj;        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AbstractNamedAFPObject getDataObject() {
+        return this.dataObj;
     }
     
     /**
@@ -73,8 +89,13 @@ public class ObjectContainer extends AbstractNamedAFPObject {
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
         
+        // create object data from data object
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        dataObj.writeDataStream(bos);
+        this.objectData = bos.toByteArray();
+
         // Set the total record length
-        byte[] len = BinaryUtils.convert(18 + getTripletDataLength(), 2);
+        byte[] len = BinaryUtils.convert(18 + getTripletDataLength() + objectData.length, 2);
         byte[] data = new byte[] {
             0x5A, // Structured field identifier
             len[0], // Length byte 1
@@ -92,23 +113,24 @@ public class ObjectContainer extends AbstractNamedAFPObject {
             nameBytes[4],
             nameBytes[5],
             nameBytes[6],
-            nameBytes[7],
-            0x00, // Reserved
-            0x00, // Reserved
+            nameBytes[7]
         };
         os.write(data);
     }
-
+    
     /**
      * {@inheritDoc}
      */
     protected void writeContent(OutputStream os) throws IOException {
-        super.writeContent(os); // write triplets
-        if (objectContainerData != null) {
+        super.writeContent(os);
+        
+        // write out object data in chunks of object container data
+        for (int i = 0; i <= objectData.length; i += ObjectContainerData.MAX_DATA_LEN) {
+            ObjectContainerData objectContainerData = new ObjectContainerData(objectData, i);
             objectContainerData.writeDataStream(os);
         }
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -135,37 +157,50 @@ public class ObjectContainer extends AbstractNamedAFPObject {
         os.write(data);
     }
     
-    private class ObjectContainerData extends AbstractStructuredAFPObject {
-        /** the object data */
-        private byte[] objData = null;
+    /**
+     * An Object Container Data holds a chunk of the data object
+     */
+    private class ObjectContainerData extends AbstractPreparedAFPObject {
+        
+        /**
+         * The maximum object container data length
+         */ 
+        private static final int MAX_DATA_LEN = 32759;
         
         /**
          * Main constructor
          * @param objData the object data
          */
-        public ObjectContainerData(byte[] objData) {
-            this.objData = objData;
+        public ObjectContainerData(byte[] objData, int startIndex) {
+            int dataLen = MAX_DATA_LEN;
+            if (startIndex + MAX_DATA_LEN >= objData.length) {
+                dataLen = objData.length - startIndex - 1;
+            }
+            byte[] len = BinaryUtils.convert(8 + dataLen, 2);
+            byte[] data = new byte[9 + dataLen];
+            data[0] = 0x5A; // Structured field identifier 
+            data[1] = len[0]; // Length byte 1
+            data[2] = len[1]; // Length byte 2
+            data[3] = (byte)0xD3; // Structured field id byte 1
+            data[4] = (byte)0xEE; // Structured field id byte 2
+            data[5] = (byte)0x92; // Structured field id byte 3
+            data[6] = 0x00; // Flags
+            data[7] = 0x00; // Reserved
+            data[8] = 0x00; // Reserved
+            
+            // copy object data chunk
+            System.arraycopy(data, startIndex, data, 9, dataLen);
+            
+            super.setData(data);
         }
         
         /**
          * {@inheritDoc}
          */
-        public void writeDataStream(OutputStream os) throws IOException {
-            // Set the total record length
-            byte[] len = BinaryUtils.convert(8 + objData.length, 2);
-            byte[] data = new byte[] {
-                0x5A, // Structured field identifier
-                len[0], // Length byte 1
-                len[1], // Length byte 2
-                (byte)0xD3, // Structured field id byte 1
-                (byte)0xEE, // Structured field id byte 2
-                (byte)0x92, // Structured field id byte 3
-                0x00, // Flags
-                0x00, // Reserved
-                0x00, // Reserved
-            };
-
-            os.write(data);
+        public String toString() {
+            return "ObjectContainerData("
+                + (data != null ? "" + (data.length - 2) : "null")
+                + ")";
         }
     }
 }

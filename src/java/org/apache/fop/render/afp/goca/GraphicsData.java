@@ -22,6 +22,7 @@ package org.apache.fop.render.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.modca.AbstractPreparedObjectContainer;
 import org.apache.fop.render.afp.modca.PreparedAFPObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 import org.apache.fop.render.afp.tools.StringUtils;
@@ -29,7 +30,7 @@ import org.apache.fop.render.afp.tools.StringUtils;
 /**
  * A GOCA graphics data
  */
-public final class GraphicsData extends AbstractGraphicsContainer {   
+public final class GraphicsData extends AbstractPreparedObjectContainer {   
     
     /**
      * The maximum graphics data length
@@ -115,20 +116,20 @@ public final class GraphicsData extends AbstractGraphicsContainer {
         } else {
             this.currentSegment = new GraphicsChainedSegment(name, currentSegment);            
         }
-        super.addDrawingOrder(currentSegment);
+        super.addObject(currentSegment);
         return currentSegment;
     }
 
     /**
      * {@inheritDoc}
      */
-    public PreparedAFPObject addDrawingOrder(PreparedAFPObject drawingOrder) {
+    public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
         if (currentSegment == null 
             || (currentSegment.getDataLength() + drawingOrder.getDataLength())
             >= GraphicsChainedSegment.MAX_DATA_LEN) {
             newSegment();
         }
-        currentSegment.addDrawingOrder(drawingOrder);
+        currentSegment.addObject(drawingOrder);
         return drawingOrder;
     }
     

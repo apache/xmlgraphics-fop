@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.afp.modca;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -40,7 +39,7 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * data objects in the page segment.
  * </p>
  */
-public class IncludeObject extends AbstractNamedAFPObject {
+public class IncludeObject extends AbstractNamedAFPObject implements DataObjectAccessor {
 
     /**
      * the include object is of type page segment
@@ -96,45 +95,69 @@ public class IncludeObject extends AbstractNamedAFPObject {
      * The Y-axis origin defined in the object
      */
     private int yContentOffset = -1;
-    
-//    /**
-//     * The object referenced by this include object
-//     */
-//    private Resource resourceObj = null;
-    
+        
     /**
-     * the level at which this resource object resides
+     * the resource info
      */
-    private ResourceInfo level = null;
+    private ResourceInfo resourceInfo = null;
 
     /**
      * the referenced data object
      */
-    private AbstractNamedAFPObject dataObj = null;
+    private DataObjectAccessor dataObjectAccessor = null;
     
     /**
      * Constructor for the include object with the specified name, the name must
      * be a fixed length of eight characters and is the name of the referenced
      * object.
      *
-     * @param resourceObj the resource object wrapper
+     * @param name the name of this include object
+     * @param dataObjectAccessor the data object accessor
+     * @param resourceInfo the resource information
      */
-    public IncludeObject(AbstractNamedAFPObject dataObj) {
-        super(dataObj.getName());
-        this.dataObj = dataObj;
-//      AbstractStructuredAFPObject referencedObject = resourceObj.getReferencedObject();
-        if (dataObj instanceof ImageObject) {
+    public IncludeObject(String name, DataObjectAccessor dataObjectAccessor,
+            ResourceInfo resourceInfo) {
+        super(name);
+        
+        setDataObjectAccessor(dataObjectAccessor);
+        setResourceInfo(resourceInfo);
+    }
+
+    /**
+     * Sets the data object accessor and the object type
+     * @param dataObjectAccessor the data object accessor
+     */
+    private void setDataObjectAccessor(DataObjectAccessor dataObjectAccessor) {
+        this.dataObjectAccessor = dataObjectAccessor;
+        
+        AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
+        
+        if (dataObject instanceof ImageObject) {
             this.objectType = TYPE_IMAGE;
-        } else if (dataObj instanceof GraphicsObject) {
+        } else if (dataObject instanceof GraphicsObject) {
             this.objectType = TYPE_GRAPHIC;
-        } else if (dataObj instanceof PageSegment) {
+        } else if (dataObject instanceof PageSegment) {
             this.objectType = TYPE_PAGE_SEGMENT;
         } else {
             this.objectType = TYPE_OTHER;
         }
+    }
 
+    /**
+     * @return the data object accessor
+     */
+    private DataObjectAccessor getDataObjectAccessor() {
+        return this.dataObjectAccessor;
+    }
+    
+    /**
+     * Sets the resource level for this resource object
+     * @param resourceInfo the resource information
+     */
+    private void setResourceInfo(ResourceInfo resourceInfo) {
+        this.resourceInfo = resourceInfo;
+        
         // set data object reference triplet
-        ResourceInfo resourceInfo = getResourceInfo();
         if (resourceInfo != null && resourceInfo.isExternal()) {
             String dest = resourceInfo.getExternalResourceGroupDest();
             super.setFullyQualifiedName(
@@ -143,38 +166,22 @@ public class IncludeObject extends AbstractNamedAFPObject {
         } else {
             super.setFullyQualifiedName(
                     FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
-                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, dataObj.getName());            
+                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, getDataObject().getName());
         }        
-    }
-
-    /**
-     * Sets the resource level for this resource object
-     * @param level the resource level
-     */
-    public void setResourceInfo(ResourceInfo level) {
-        this.level = level;
     }
     
     /**
      * @return the resource info of this resource object
      */
     public ResourceInfo getResourceInfo() {
-        return this.level;
+        return this.resourceInfo;
     }
-
-//    /**
-//     * @return the resource container object referenced by this include object
-//     */
-//    public Resource getResource() {
-//        return this.resourceObj;
-//    }
 
     /**
      * @return the actual resource data object referenced by this include object
      */
-    public AbstractStructuredAFPObject getReferencedObject() {
-        return this.dataObj;
-        //getResource().getReferencedObject();
+    public AbstractNamedAFPObject getDataObject() {
+        return getDataObjectAccessor().getDataObject();
     }
 
     /**

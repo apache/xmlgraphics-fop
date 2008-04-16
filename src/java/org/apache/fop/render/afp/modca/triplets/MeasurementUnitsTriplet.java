@@ -38,7 +38,7 @@ public class MeasurementUnitsTriplet extends Triplet {
         //TODO: units correct?
         byte[] xUnits = BinaryUtils.convert(1, 2);
         byte[] yUnits = BinaryUtils.convert(1, 2);
-        super.data = new byte[] {
+        byte[] data = new byte[] {
              TEN_INCHES, // XoaBase
              TEN_INCHES, // YoaBase
              xUnits[0], // XoaUnits (x units per unit base)                
@@ -46,5 +46,6 @@ public class MeasurementUnitsTriplet extends Triplet {
              yUnits[0], // YoaUnits (y units per unit base)
              yUnits[1]
         };
+        super.setData(data);
     }
 }

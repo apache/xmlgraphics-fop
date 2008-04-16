@@ -431,6 +431,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                 col, vsci, ica, data);
     }
 
+    /** Maintain a reference count of instream objects */
+    private int instreamObjectCount = 0;
+
     /**
      * Creates a data object in the datastream.  The data object resides according
      * to its type, info and MO:DCA-L (resource) support.
@@ -441,20 +444,35 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            a data object
      */
     public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
-        ObjectTypeRegistry registry = ObjectTypeRegistry.getInstance();
-        ObjectTypeRegistry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
+        String uri = dataObjectInfo.getUri();
+        
+        // if this is an instream data object adjust uri to ensure that it is unique
+        if (uri.endsWith("/")) {
+            uri += "#" + (++instreamObjectCount);
+            dataObjectInfo.setUri(uri);
+        }
+        
+        Registry.ObjectType objectType = Registry.getInstance().getObjectType(dataObjectInfo);
+        // recognised object type
         if (objectType != null) {
             dataObjectInfo.setObjectType(objectType);
-        }        
-        AbstractNamedAFPObject dataObj;
-        // can this data object use the include object (IOB) mechanism?
-        if (objectType.canBeIncluded()) {
-            ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-            ResourceGroup resourceGroup = getResourceGroup(resourceInfo);
-            dataObj = resourceGroup.createObject(dataObjectInfo);
-        } else {
-            dataObj = getCurrentPage().createObject(dataObjectInfo);
+
+            // can this data object use the include object (IOB) referencing mechanism?
+            if (objectType.canBeIncluded()) {
+                ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+                ResourceGroup resourceGroup = getResourceGroup(resourceInfo);
+                IncludeObject includeObject = resourceGroup.createObject(dataObjectInfo);
+                
+                // add include to current page
+                getCurrentPage().addObject(includeObject);
+                return includeObject.getDataObject();
+            } else {
+                log.warn(uri + "cannot be included so will embed directly");
+            }
         }
+        // unrecognised/unsupported object type so create/embed data object directly in current page
+        AbstractNamedAFPObject dataObj = getCurrentPage().createObject(dataObjectInfo);
+        getCurrentPage().addObject(dataObj);
         return dataObj;
     }
     
@@ -822,28 +840,27 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             // write any external resources
             Iterator it = getExternalResourceGroups().keySet().iterator();
             while (it.hasNext()) {
-                String externalDest = (String)it.next();
+                File resourceGroupFile = (File)it.next();
                 ResourceGroup resourceGroup
-                    = (ResourceGroup)getExternalResourceGroups().get(externalDest);
+                    = (ResourceGroup)getExternalResourceGroups().get(resourceGroupFile);
                 OutputStream os = null;
                 try {
-                    log.debug("Writing external AFP resource file " + externalDest);
-                    os = new java.io.FileOutputStream(externalDest);
+                    log.debug("Writing external AFP resource file "
+                            + resourceGroupFile.getAbsolutePath());
+                            
+                    os = new java.io.FileOutputStream(resourceGroupFile);
                     resourceGroup.writeDataStream(os);
-                } catch (FileNotFoundException e) {
-                    log.error("Failed to open external AFP resource file "
-                            + externalDest);
                 } catch (IOException e) {
                     log.error(
                             "An error occurred when attempting to write external AFP resource file "
-                            + externalDest);
+                            + resourceGroupFile.getAbsolutePath());
                 } finally {
                     if (os != null) {
                         try {
                             os.close();
                         } catch (IOException e) {
                             log.error("Failed to close outputstream for external AFP resource file "
-                                    + externalDest);
+                                    + resourceGroupFile.getAbsolutePath());
                         }
                     }
                 }

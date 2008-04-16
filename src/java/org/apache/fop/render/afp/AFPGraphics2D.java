@@ -486,13 +486,13 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         this.customTextHandler = handler;
     }
 
-    /**
-     * Sets the SVG document URI
-     * @param documentURI the SVG document URI
-     */
-    public void setDocumentURI(String documentURI) {
-        this.documentURI = documentURI;
-    }
+//    /**
+//     * Sets the SVG document URI
+//     * @param documentURI the SVG document URI
+//     */
+//    public void setDocumentURI(String documentURI) {
+//        this.documentURI = documentURI;
+//    }
 
     /**
      * @return the GOCA graphics object

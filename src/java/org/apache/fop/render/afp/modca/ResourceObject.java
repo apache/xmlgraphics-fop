@@ -22,7 +22,6 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.modca.triplets.Triplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -30,34 +29,17 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * This resource structured field begins an envelope that is used to carry
  * resource objects in print-file-level (external) resource groups. 
  */
-public class ResourceObject extends AbstractPreparedAFPObject {
+public class ResourceObject extends AbstractPreparedAFPObject implements DataObjectAccessor {
     
     /**
-     * Resource object types
+     * the object container of this resource object
      */
-    private static final byte GRAPHICS_OBJECT = 0x03;
-    private static final byte BARCODE_OBJECT = 0x05;
-    private static final byte IMAGE_OBJECT = 0x06;
-    private static final byte FONT_CHARACTER_SET_OBJECT = 0x40;
-    private static final byte CODE_PAGE_OBJECT = 0x41;
-    private static final byte CODED_FONT_OBJECT = 0x42;
-    private static final byte OBJECT_CONTAINER = (byte) 0x92;
-    private static final byte DOCUMENT_OBJECT = (byte) 0xA8;
-    private static final byte PAGE_SEGMENT_OBJECT = (byte) 0xFB;
-    private static final byte OVERLAY_OBJECT = (byte) 0xFC;
-    private static final byte PAGEDEF_OBJECT = (byte) 0xFD;
-    private static final byte FORMDEF_OBJECT = (byte) 0xFE;
-        
-    /**
-     * the referenced data object
-     */    
-    private AbstractNamedAFPObject dataObj = null;
+    private ObjectContainer objectContainer;
         
     /**
      * Default constructor
      * 
      * @param name the name of this resource (reference id)
-     * @param dataObj the resource object to be added
      */
     public ResourceObject(String name) {
         super(name);
@@ -65,32 +47,41 @@ public class ResourceObject extends AbstractPreparedAFPObject {
         
     /**
      * Sets the data object referenced by this resource object
-     * @param dataObj the data object
+     * @param objectContainer the object container
      */
-    public void setReferencedObject(AbstractNamedAFPObject dataObj) {
-        this.dataObj = dataObj;
-        setResourceObjectType(dataObj);
-    }
-
-    /**
-     * @return the resource object contained in this envelope 
-     */
-    public AbstractNamedAFPObject getReferencedObject() {
-        return this.dataObj;
+    public void setObjectContainer(ObjectContainer objectContainer) {
+        this.objectContainer = objectContainer;
+        setResourceObjectType(objectContainer);
     }
     
-    private void setResourceObjectType(AbstractNamedAFPObject resourceObj) {
+    /**
+     * {@inheritDoc}
+     */
+    public AbstractNamedAFPObject getDataObject() {
+        if (objectContainer != null) {
+            return objectContainer.getDataObject();
+        }
+        return null;
+    }
+    
+    /**
+     * Sets the resource object type
+     * @param resourceObj the resource object
+     */
+    public void setResourceObjectType(AbstractNamedAFPObject resourceObj) {
         byte type;
-        if (resourceObj instanceof ImageObject) {
-            type = IMAGE_OBJECT;
+        if (resourceObj instanceof ObjectContainer) {
+            type = ResourceObjectTypeTriplet.OBJECT_CONTAINER;
+        } else if (resourceObj instanceof ImageObject) {
+            type = ResourceObjectTypeTriplet.IMAGE_OBJECT;
         } else if (resourceObj instanceof GraphicsObject) {
-            type = GRAPHICS_OBJECT;
+            type = ResourceObjectTypeTriplet.GRAPHICS_OBJECT;
         } else if (resourceObj instanceof Document) {
-            type = DOCUMENT_OBJECT;
+            type = ResourceObjectTypeTriplet.DOCUMENT_OBJECT;
         } else if (resourceObj instanceof PageSegment) {
-            type = PAGE_SEGMENT_OBJECT;
+            type = ResourceObjectTypeTriplet.PAGE_SEGMENT_OBJECT;
         } else if (resourceObj instanceof Overlay) {
-            type = OVERLAY_OBJECT;
+            type = ResourceObjectTypeTriplet.OVERLAY_OBJECT;
         } else {
             throw new UnsupportedOperationException(
                     "Unsupported resource object type " + resourceObj);
@@ -135,8 +126,8 @@ public class ResourceObject extends AbstractPreparedAFPObject {
      */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os); // write triplets
-        if (dataObj != null) {
-            dataObj.writeDataStream(os);
+        if (objectContainer != null) {
+            objectContainer.writeDataStream(os);
         }
     }
 
@@ -176,6 +167,22 @@ public class ResourceObject extends AbstractPreparedAFPObject {
     private class ResourceObjectTypeTriplet extends Triplet {
 
         private static final byte RESOURCE_OBJECT = 0x21;
+
+        /**
+         * Resource object types
+         */
+        private static final byte GRAPHICS_OBJECT = 0x03;
+//        private static final byte BARCODE_OBJECT = 0x05;
+        private static final byte IMAGE_OBJECT = 0x06;
+//        private static final byte FONT_CHARACTER_SET_OBJECT = 0x40;
+//        private static final byte CODE_PAGE_OBJECT = 0x41;
+//        private static final byte CODED_FONT_OBJECT = 0x42;
+        private static final byte OBJECT_CONTAINER = (byte) 0x92;
+        private static final byte DOCUMENT_OBJECT = (byte) 0xA8;
+        private static final byte PAGE_SEGMENT_OBJECT = (byte) 0xFB;
+        private static final byte OVERLAY_OBJECT = (byte) 0xFC;
+//        private static final byte PAGEDEF_OBJECT = (byte) 0xFD;
+//        private static final byte FORMDEF_OBJECT = (byte) 0xFE;
 
         /**
          * Main constructor

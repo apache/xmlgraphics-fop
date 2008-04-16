@@ -22,10 +22,12 @@ package org.apache.fop.render.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.modca.AbstractPreparedObjectContainer;
+
 /**
  * A GOCA graphics area (container for filled shapes/objects)
  */
-public final class GraphicsArea extends AbstractGraphicsContainer {
+public final class GraphicsArea extends AbstractPreparedObjectContainer {
 
     /** draw boundary lines around this area */
     private boolean drawBoundary = false;

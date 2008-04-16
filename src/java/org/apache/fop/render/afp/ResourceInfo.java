@@ -99,7 +99,7 @@ public class ResourceInfo {
      * @return true if the resource level was successfully set
      */
     public boolean setLevel(String lvl) {
-        if (isValid(lvl)) {
+        if (lvl != null && isValid(lvl)) {
             this.level = lvl;
             return true;
         }

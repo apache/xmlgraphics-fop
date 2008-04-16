@@ -22,13 +22,12 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.goca.AbstractGraphicsContainer;
 
 /**
  * Abstract base class used by the ImageObject and GraphicsObject which both
  * have define an ObjectEnvironmentGroup
  */
-public abstract class AbstractDataObject extends AbstractGraphicsContainer {
+public abstract class AbstractDataObject extends AbstractPreparedObjectContainer {
 
     /**
      * The object environment group
