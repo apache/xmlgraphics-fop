@@ -35,9 +35,20 @@ public interface BlockLevelLayoutManager extends LayoutManager {
     /** Adjustment class: adjustment for line height */
     int LINE_HEIGHT_ADJUSTMENT = 3;
 
+    /** The integer value for "auto" keep strength */
+    int KEEP_AUTO = Integer.MIN_VALUE;
+    /** The integer value for "always" keep strength */
+    int KEEP_ALWAYS = Integer.MAX_VALUE;
+    
     int negotiateBPDAdjustment(int adj, KnuthElement lastElement);
 
     void discardSpace(KnuthGlue spaceGlue);
+
+    /**
+     * Returns the keep-together strength for this element.
+     * @return the keep-together strength
+     */
+    int getKeepTogetherStrength();
 
     /**
      * @return true if this element must be kept together

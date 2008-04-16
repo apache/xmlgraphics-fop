@@ -924,7 +924,7 @@ list of possible build targets.
     <echo message="${hyphenation.message}"/>
   </target>
 
-  <target name="junit-layout-standard" depends="junit-compile" if="junit.present" description="Runs FOP's standard JUnit layout tests">
+  <target name="junit-layout-standard" depends="junit-compile, junit-fotree" if="junit.present" description="Runs FOP's standard JUnit layout tests">
     <echo message="Running standard layout engine tests"/>
     <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
@@ -982,7 +982,7 @@ list of possible build targets.
     </junit>
   </target>
 
-  <target name="junit-intermediate-format" depends="junit-compile" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
+  <target name="junit-intermediate-format" depends="junit-compile, junit-layout" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
     <echo message="Running intermediate format tests"/>
     <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>

@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.table.TableRowIterator;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.BreakUtil;
@@ -211,10 +213,26 @@ public class EffRow {
      * @return true if this row must be kept together
      */
     public boolean mustKeepTogether() {
-        TableRow row = getTableRow();
-        return row != null && row.mustKeepTogether();
+        return getKeepTogetherStrength() != BlockLevelLayoutManager.KEEP_AUTO;
     }
 
+    /**
+     * Returns the keep-together strength for this element. Note: The keep strength returned does
+     * not take the parent table's keeps into account!
+     * @return the keep-together strength
+     */
+    public int getKeepTogetherStrength() {
+        TableRow row = getTableRow();
+        int strength = BlockLevelLayoutManager.KEEP_AUTO;
+        if (row != null) {
+            strength = Math.max(strength, KeepUtil.getKeepStrength(
+                    row.getKeepTogether().getWithinPage()));
+            strength = Math.max(strength, KeepUtil.getKeepStrength(
+                    row.getKeepTogether().getWithinColumn()));
+        }
+        return strength;
+    }
+    
     /**
      * Returns the break class for this row. This is a combination of break-before set on
      * the first children of any cells starting on this row.

@@ -308,22 +308,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     if (prevLM != null) {
                         // there is a block handled by prevLM
                         // before the one handled by curLM
-                        if (mustKeepTogether() 
-                                || prevLM.mustKeepWithNext()
-                                || curLM.mustKeepWithPrevious()) {
-                            // add an infinite penalty to forbid a break between
-                            // blocks
-                            contentList.add(new BreakElement(
-                                    new Position(this), KnuthElement.INFINITE, context));
-                        } else if (!((ListElement) contentList.getLast()).isGlue()) {
-                            // add a null penalty to allow a break between blocks
-                            contentList.add(new BreakElement(
-                                    new Position(this), 0, context));
-                        } else {
-                            // the last element in contentList is a glue;
-                            // it is a feasible breakpoint, there is no need to add
-                            // a penalty
-                        }
+                        addInBetweenBreak(contentList, context, childLC);
                     }
                     contentList.addAll(returnedList);
                     if (returnedList.size() == 0) {
@@ -1004,15 +989,19 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return super.mustKeepTogether()
-                || !getBlockContainerFO().getKeepTogether().getWithinPage().isAuto()
-                || !getBlockContainerFO().getKeepTogether().getWithinColumn().isAuto();
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getBlockContainerFO().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getBlockContainerFO().getKeepTogether().getWithinColumn()));
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
     }
 
     /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
+        //TODO Keeps will have to be more sophisticated sooner or later
         return !getBlockContainerFO().getKeepWithPrevious().getWithinPage().isAuto()
                 || !getBlockContainerFO().getKeepWithPrevious().getWithinColumn().isAuto();
     }
