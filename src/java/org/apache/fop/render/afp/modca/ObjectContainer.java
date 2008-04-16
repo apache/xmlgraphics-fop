@@ -31,7 +31,7 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
 /**
  * Object containers are MO:DCA objects that envelop and carry object data.
  */
-public class ObjectContainer extends AbstractPreparedAFPObject implements DataObjectAccessor {
+public class ObjectContainer extends AbstractNamedAFPObject implements DataObjectAccessor {
                 
     /**
      * the data object
@@ -95,7 +95,7 @@ public class ObjectContainer extends AbstractPreparedAFPObject implements DataOb
         this.objectData = bos.toByteArray();
 
         // Set the total record length
-        byte[] len = BinaryUtils.convert(18 + getTripletDataLength() + objectData.length, 2);
+        byte[] len = BinaryUtils.convert(16 + getTripletDataLength(), 2);
         byte[] data = new byte[] {
             0x5A, // Structured field identifier
             len[0], // Length byte 1
@@ -106,7 +106,7 @@ public class ObjectContainer extends AbstractPreparedAFPObject implements DataOb
             0x00, // Flags
             0x00, // Reserved
             0x00, // Reserved
-            nameBytes[0],            
+            nameBytes[0],
             nameBytes[1],
             nameBytes[2],
             nameBytes[3],
