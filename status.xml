@@ -63,6 +63,9 @@
       <action context="Fonts" dev="JM" type="fix">
         Fixed text extraction problem with ZapfDingbats and Symbol font in PDF output.
       </action>
+      <action context="Images" dev="JM" type="fix">
+        Fixed a performance problem concerning image serialization.
+      </action>
       <action context="Fonts" dev="JM" type="fix">
         Fixed NullPointerException when loading a TrueType font using XML font metric files.
       </action>
