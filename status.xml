@@ -58,6 +58,10 @@
         Added SVG support for AFP (GOCA).
         </action>
       -->
+      <action context="Renderers" dev="JM" type="add" fixes-bug="44678" due-to="Antti Karanta">
+        Added ability to pass a preconfigured PrinterJob instance to the PrintRenderer via
+        the rendering options map.
+      </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="44743" due-to="Yegor Kozlov">
         Added a public accessor for reference to the current page to PDFGraphics2D.
       </action>
