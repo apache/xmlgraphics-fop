@@ -198,6 +198,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     /** {@inheritDoc} */
     public void startRenderer(OutputStream out) throws IOException {
+        super.startRenderer(out);
         // do nothing by default
     }
 
@@ -232,7 +233,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
+     * Returns the number of pages available. This method is also part of the Pageable interface.
      * @return The 0-based total number of rendered pages
+     * @see java.awt.print.Pageable
      */
     public int getNumberOfPages() {
         return pageViewportList.size();
@@ -250,7 +253,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /**
      * This method override only stores the PageViewport in a List. No actual
      * rendering is performed here. A renderer override renderPage() to get the
-     * freshly produced PageViewport, and rendere them on the fly (producing the
+     * freshly produced PageViewport, and render them on the fly (producing the
      * desired BufferedImages by calling getPageImage(), which lazily starts the
      * rendering process).
      *
@@ -260,11 +263,22 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @see org.apache.fop.render.Renderer
      */
     public void renderPage(PageViewport pageViewport) throws IOException {
-        // TODO clone?
-        pageViewportList.add(pageViewport.clone());
+        rememberPage((PageViewport)pageViewport.clone());
+        //The clone() call is necessary as we store the page for later. Otherwise, the
+        //RenderPagesModel calls PageViewport.clear() to release memory as early as possible.
         currentPageNumber++;
     }
 
+    /**
+     * Stores the pageViewport in a list of page viewports so they can be rendered later.
+     * Subclasses can override this method to filter pages, for example.
+     * @param pageViewport the page viewport
+     */
+    protected void rememberPage(PageViewport pageViewport) {
+        assert pageViewport.getPageIndex() >= 0;
+        pageViewportList.add(pageViewport);
+    }
+    
     /**
      * Generates a desired page from the renderer's page viewport list.
      *
@@ -362,17 +376,17 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     
     /**
      * Returns a page viewport.
-     * @param pageNum the page number
+     * @param pageIndex the page index (zero-based)
      * @return the requested PageViewport instance
      * @exception FOPException If the page is out of range.
      */
-    public PageViewport getPageViewport(int pageNum) throws FOPException {
-        if (pageNum < 0 || pageNum >= pageViewportList.size()) {
-            throw new FOPException("Requested page number is out of range: " + pageNum
+    public PageViewport getPageViewport(int pageIndex) throws FOPException {
+        if (pageIndex < 0 || pageIndex >= pageViewportList.size()) {
+            throw new FOPException("Requested page number is out of range: " + pageIndex
                      + "; only " + pageViewportList.size()
                      + " page(s) available.");
         }
-        return (PageViewport) pageViewportList.get(pageNum);
+        return (PageViewport) pageViewportList.get(pageIndex);
     }
 
     /**
