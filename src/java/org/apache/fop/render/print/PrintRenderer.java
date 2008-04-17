@@ -27,9 +27,11 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
 /**
@@ -40,6 +42,13 @@ import org.apache.fop.render.java2d.Java2DRenderer;
  */
 public class PrintRenderer extends Java2DRenderer implements Pageable {
 
+    /**
+     * Printing parameter: the preconfigured PrinterJob to use,
+     * datatype: java.awt.print.PrinterJob
+     */
+    public static final String PRINTER_JOB = "printerjob";
+  
+  
     private static final int EVEN_AND_ALL = 0;
 
     private static final int EVEN = 1;
@@ -57,23 +66,42 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
     private PrinterJob printerJob;
 
     /**
-     * Creates a new PrintRenderer with the options set from system properties.
+     * Creates a new PrintRenderer with the options set from system properties if a custom
+     * PrinterJob is not given in FOUserAgent's renderer options.
      */
     public PrintRenderer() {
-        initializePrinterJob();
+        setupFromSystemProperties();
     }
-
+    
     /**
      * Creates a new PrintRenderer and allows you to pass in a specific PrinterJob instance
      * that this renderer should work with.
      * @param printerJob the PrinterJob instance
+     * @deprecated Please use the rendering options on the user agent to pass in the PrinterJob!
      */
     public PrintRenderer(PrinterJob printerJob) {
+        this();
         this.printerJob = printerJob;
         printerJob.setPageable(this);
     }
     
-    private void initializePrinterJob() throws IllegalArgumentException {
+    private void initializePrinterJob() {
+        if (this.printerJob == null) {
+            printerJob = PrinterJob.getPrinterJob();
+            printerJob.setJobName("FOP Document");
+            printerJob.setCopies(copies);
+            if (System.getProperty("dialog") != null) {
+                if (!printerJob.printDialog()) {
+                    throw new RuntimeException(
+                            "Printing cancelled by operator");
+                }
+            }
+            printerJob.setPageable(this);
+        }
+    }
+
+    private void setupFromSystemProperties() {
+        //TODO Remove me! This is not a beautiful way to do this.
         // read from command-line options
         copies = getIntProperty("copies", 1);
         startNumber = getIntProperty("start", 1) - 1;
@@ -82,19 +110,28 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         if (str != null) {
             mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
         }
-
-        printerJob = PrinterJob.getPrinterJob();
-        printerJob.setJobName("FOP Document");
-        printerJob.setCopies(copies);
-        if (System.getProperty("dialog") != null) {
-            if (!printerJob.printDialog()) {
-                throw new IllegalArgumentException(
-                        "Printing cancelled by operator");
-            }
-        }
-        printerJob.setPageable(this);
     }
     
+    /** {@inheritDoc} */
+    public void setUserAgent(FOUserAgent agent) {
+        super.setUserAgent(agent);
+        
+        Map rendererOptions = agent.getRendererOptions();
+        
+        Object printerJobO = rendererOptions.get(PrintRenderer.PRINTER_JOB);
+        if (printerJobO != null) {
+            if (!(printerJobO instanceof PrinterJob)) {
+                throw new IllegalArgumentException(
+                    "Renderer option " + PrintRenderer.PRINTER_JOB
+                    + " must be an instance of java.awt.print.PrinterJob, but an instance of "
+                    + printerJobO.getClass().getName() + " was given.");
+            }
+            printerJob = (PrinterJob)printerJobO;
+            printerJob.setPageable(this);
+        }
+        initializePrinterJob();
+    }
+
     /** @return the PrinterJob instance that this renderer prints to */
     public PrinterJob getPrinterJob() {
         return this.printerJob;
@@ -126,6 +163,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         this.startNumber = start;
     }
     
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         super.stopRenderer();
 
@@ -149,7 +187,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         clearViewportList();
     }
 
-    public static int getIntProperty(String name, int def) {
+    private static int getIntProperty(String name, int def) {
         String propValue = System.getProperty(name);
         if (propValue != null) {
             try {
@@ -219,6 +257,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         }
     }
 
+    /** {@inheritDoc} */
     public Printable getPrintable(int pageIndex)
             throws IndexOutOfBoundsException {
         return this;
