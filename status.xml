@@ -61,6 +61,9 @@
     <!--/release-->
     <release version="0.95" date="TBD">
       <action context="Fonts" dev="JM" type="fix">
+        Fixed text extraction problem with ZapfDingbats and Symbol font in PDF output.
+      </action>
+      <action context="Fonts" dev="JM" type="fix">
         Fixed NullPointerException when loading a TrueType font using XML font metric files.
       </action>
     </release>

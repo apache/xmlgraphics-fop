@@ -190,11 +190,16 @@ public abstract class CustomFont extends Typeface
         return fontBBox;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getFlags() {
         return flags;
+    }
+    
+    /** {@inheritDoc} */
+    public boolean isSymbolicFont() {
+        return ((getFlags() & 4) != 0) || "ZapfDingbatsEncoding".equals(getEncoding());
+        //Note: The check for ZapfDingbats is necessary as the PFM does not reliably indicate
+        //if a font is symbolic.
     }
 
     /**

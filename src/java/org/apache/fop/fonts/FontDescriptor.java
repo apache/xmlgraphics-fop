@@ -53,6 +53,11 @@ public interface FontDescriptor extends FontMetrics {
      */
     int getFlags();
     
+    /**
+     * Indicates whether the font is a symbolic font.
+     * @return true if the font is a symbolic font (i.e. Symbol or ZapfDingbats)
+     */
+    boolean isSymbolicFont();
     
     /**
      * Returns the font's bounding box.

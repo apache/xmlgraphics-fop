@@ -1195,10 +1195,11 @@ public class PDFFactory {
 
             PDFFont font = null;
             font = (PDFFont)PDFFont.createFont(fontname, fonttype,
-                                                        basefont, encoding);
+                                                        basefont, null);
             getDocument().registerObject(font);
 
             if (fonttype == FontType.TYPE0) {
+                font.setEncoding(encoding);
                 CIDFont cidMetrics;
                 if (metrics instanceof LazyFont) {
                     cidMetrics = (CIDFont)((LazyFont) metrics).getRealFont();
@@ -1242,7 +1243,9 @@ public class PDFFactory {
                 
                 //Handle encoding
                 CodePointMapping mapping = singleByteFont.getCodePointMapping();
-                if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
+                if (singleByteFont.isSymbolicFont()) {
+                    //no encoding, use the font's encoding
+                } else if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
                     font.setEncoding(mapping.getName());
                 } else {
                     CodePointMapping winansi = CodePointMapping.getMapping(
