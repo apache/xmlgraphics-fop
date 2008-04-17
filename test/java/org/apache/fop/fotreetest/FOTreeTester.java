@@ -25,14 +25,15 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-
-import org.apache.fop.fotreetest.ext.TestElementMapping;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.fotreetest.ext.TestElementMapping;
+import org.apache.fop.util.ConsoleEventListenerForTests;
 
 /**
  * Test driver class for FO tree tests.
@@ -66,6 +67,8 @@ public class FOTreeTester {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         ua.setBaseURL(testFile.getParentFile().toURL().toString());
         ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
+        ua.getEventBroadcaster().addEventListener(
+                new ConsoleEventListenerForTests(testFile.getName()));
 
         //Used to set values in the user agent through processing instructions
         reader = new PIListener(reader, ua);

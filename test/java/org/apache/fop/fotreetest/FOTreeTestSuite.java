@@ -35,6 +35,7 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+
 import org.apache.fop.DebugHelper;
 import org.apache.fop.fo.flow.table.CollapsedConditionalBorderTestCase;
 import org.apache.fop.fo.flow.table.IllegalRowSpanTestCase;
@@ -104,9 +105,14 @@ public final class FOTreeTestSuite {
                 final FOTreeTester tester, final File f) {
         suite.addTest(new FOTreeTestCase(f.getName()) {
             public void runTest() throws Exception {
-                org.apache.commons.logging.LogFactory.getLog(this.getClass()).info("Starting " + f.getName());
-                prepare(tester, f);
-                testMain();
+                try {
+                    prepare(tester, f);
+                    testMain();
+                } catch (Exception e) {
+                    org.apache.commons.logging.LogFactory.getLog(this.getClass()).info(
+                            "Error on " + f.getName());
+                    throw e;
+                }
             }
         });
     }
