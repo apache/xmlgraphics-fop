@@ -27,9 +27,11 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
 /**
@@ -40,59 +42,155 @@ import org.apache.fop.render.java2d.Java2DRenderer;
  */
 public class PrintRenderer extends Java2DRenderer implements Pageable {
 
-    private static final int EVEN_AND_ALL = 0;
+    /**
+     * Printing parameter: the preconfigured PrinterJob to use,
+     * datatype: java.awt.print.PrinterJob
+     */
+    public static final String PRINTER_JOB = "printerjob";
+  
+    /**
+     * Printing parameter: the pages to be printed (all, even or odd),
+     * datatype: the strings "all", "even" or "odd" or one of PagesMode.*
+     */
+    public static final String PAGES_MODE = "even-odd";
 
-    private static final int EVEN = 1;
+    /**
+     * Printing parameter: the page number (1-based) of the first page to be printed,
+     * datatype: a positive Integer
+     */
+    public static final String START_PAGE = "start-page";
 
-    private static final int ODD = 2;
-
+    /**
+     * Printing parameter: the page number (1-based) of the last page to be printed,
+     * datatype: a positive Integer
+     */
+    public static final String END_PAGE = "end-page";
+    
+    /**
+     * Printing parameter: the number of copies of the document to be printed,
+     * datatype: a positive Integer
+     */
+    public static final String COPIES = "copies";
+    
+    
     private int startNumber = 0;
-
     private int endNumber = -1;
 
-    private int mode = EVEN_AND_ALL;
+    private PagesMode mode = PagesMode.ALL;
 
     private int copies = 1;
 
     private PrinterJob printerJob;
 
     /**
-     * Creates a new PrintRenderer with the options set from system properties.
+     * Creates a new PrintRenderer with the options set from system properties if a custom
+     * PrinterJob is not given in FOUserAgent's renderer options.
      */
     public PrintRenderer() {
-        initializePrinterJob();
+        setupFromSystemProperties();
     }
-
+    
     /**
      * Creates a new PrintRenderer and allows you to pass in a specific PrinterJob instance
      * that this renderer should work with.
      * @param printerJob the PrinterJob instance
+     * @deprecated Please use the rendering options on the user agent to pass in the PrinterJob!
      */
     public PrintRenderer(PrinterJob printerJob) {
+        this();
         this.printerJob = printerJob;
         printerJob.setPageable(this);
     }
     
-    private void initializePrinterJob() throws IllegalArgumentException {
+    private void initializePrinterJob() {
+        if (this.printerJob == null) {
+            printerJob = PrinterJob.getPrinterJob();
+            printerJob.setJobName("FOP Document");
+            printerJob.setCopies(copies);
+            if (System.getProperty("dialog") != null) {
+                if (!printerJob.printDialog()) {
+                    throw new RuntimeException(
+                            "Printing cancelled by operator");
+                }
+            }
+            printerJob.setPageable(this);
+        }
+    }
+
+    private void setupFromSystemProperties() {
+        //TODO Remove me! This is not a beautiful way to do this.
         // read from command-line options
         copies = getIntProperty("copies", 1);
-        startNumber = getIntProperty("start", 1) - 1;
+        startNumber = getIntProperty("start", 1);
         endNumber = getIntProperty("end", -1);
         String str = System.getProperty("even");
         if (str != null) {
-            mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
+            mode = Boolean.valueOf(str).booleanValue() ? PagesMode.EVEN : PagesMode.ODD;
         }
-
-        printerJob = PrinterJob.getPrinterJob();
-        printerJob.setJobName("FOP Document");
-        printerJob.setCopies(copies);
-        if (System.getProperty("dialog") != null) {
-            if (!printerJob.printDialog()) {
+    }
+    
+    /** {@inheritDoc} */
+    public void setUserAgent(FOUserAgent agent) {
+        super.setUserAgent(agent);
+        
+        Map rendererOptions = agent.getRendererOptions();
+        
+        Object printerJobO = rendererOptions.get(PrintRenderer.PRINTER_JOB);
+        if (printerJobO != null) {
+            if (!(printerJobO instanceof PrinterJob)) {
                 throw new IllegalArgumentException(
-                        "Printing cancelled by operator");
+                    "Renderer option " + PrintRenderer.PRINTER_JOB
+                    + " must be an instance of java.awt.print.PrinterJob, but an instance of "
+                    + printerJobO.getClass().getName() + " was given.");
+            }
+            printerJob = (PrinterJob)printerJobO;
+            printerJob.setPageable(this);
+        }
+        Object o = rendererOptions.get(PrintRenderer.PAGES_MODE);
+        if (o != null) {
+            if (o instanceof PagesMode) {
+                this.mode = (PagesMode)o;
+            } else if (o instanceof String) {
+                this.mode = PagesMode.byName((String)o);
+            } else {
+                throw new IllegalArgumentException(
+                        "Renderer option " + PrintRenderer.PAGES_MODE
+                        + " must be an 'all', 'even', 'odd' or a PagesMode instance.");
             }
         }
-        printerJob.setPageable(this);
+        
+        o = rendererOptions.get(PrintRenderer.START_PAGE);
+        if (o != null) {
+            this.startNumber = getPositiveInteger(o);
+        }
+        o = rendererOptions.get(PrintRenderer.END_PAGE);
+        if (o != null) {
+            this.endNumber = getPositiveInteger(o);
+        }
+        if (this.endNumber >= 0 && this.endNumber < this.endNumber) {
+            this.endNumber = this.startNumber;
+        }
+        o = rendererOptions.get(PrintRenderer.COPIES);
+        if (o != null) {
+            this.copies = getPositiveInteger(o);
+        }
+        initializePrinterJob();
+    }
+
+    private int getPositiveInteger(Object o) {
+        if (o instanceof Integer) {
+            Integer i = (Integer)o;
+            if (i.intValue() < 1) {
+                throw new IllegalArgumentException(
+                        "Value must be a positive Integer");
+            }
+            return i.intValue();
+        } else if (o instanceof String) {
+            return Integer.parseInt((String)o);
+        } else {
+            throw new IllegalArgumentException(
+                    "Value must be a positive integer");
+        }
     }
     
     /** @return the PrinterJob instance that this renderer prints to */
@@ -126,6 +224,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         this.startNumber = start;
     }
     
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         super.stopRenderer();
 
@@ -136,7 +235,8 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
 
         Vector numbers = getInvalidPageNumbers();
         for (int i = numbers.size() - 1; i > -1; i--) {
-            // removePage(Integer.parseInt((String)numbers.elementAt(i)));
+            int page = ((Integer)numbers.elementAt(i)).intValue();
+            pageViewportList.remove(page - 1);
         }
 
         try {
@@ -149,7 +249,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         clearViewportList();
     }
 
-    public static int getIntProperty(String name, int def) {
+    private static int getIntProperty(String name, int def) {
         String propValue = System.getProperty(name);
         if (propValue != null) {
             try {
@@ -166,20 +266,20 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         Vector vec = new Vector();
         int max = getNumberOfPages();
         boolean isValid;
-        for (int i = 0; i < max; i++) {
+        for (int i = 1; i <= max; i++) {
             isValid = true;
             if (i < startNumber || i > endNumber) {
                 isValid = false;
-            } else if (mode != EVEN_AND_ALL) {
-                if (mode == EVEN && ((i + 1) % 2 != 0)) {
+            } else if (mode != PagesMode.ALL) {
+                if (mode == PagesMode.EVEN && (i % 2 != 0)) {
                     isValid = false;
-                } else if (mode == ODD && ((i + 1) % 2 != 1)) {
+                } else if (mode == PagesMode.ODD && (i % 2 == 0)) {
                     isValid = false;
                 }
             }
 
             if (!isValid) {
-                vec.add(Integer.toString(i));
+                vec.add(new Integer(i));
             }
         }
         return vec;
@@ -219,6 +319,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         }
     }
 
+    /** {@inheritDoc} */
     public Printable getPrintable(int pageIndex)
             throws IndexOutOfBoundsException {
         return this;

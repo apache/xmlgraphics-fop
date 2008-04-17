@@ -59,6 +59,14 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added de-duplication and externalization support for IOCA and GOCA data resource objects.
       </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="41687">
+        Restored ability to specify from/to and odd/even pages as well as the number of copies
+        for printing from the command-line.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="44678" due-to="Antti Karanta">
+        Added ability to pass a preconfigured PrinterJob instance to the PrintRenderer via
+        the rendering options map.
+      </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="44743" due-to="Yegor Kozlov">
         Added a public accessor for reference to the current page to PDFGraphics2D.
       </action>

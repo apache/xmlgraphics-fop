@@ -43,8 +43,8 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.awt.viewer.PreviewDialog;
-import org.apache.fop.render.awt.viewer.StatusListener;
 import org.apache.fop.render.awt.viewer.Renderable;
+import org.apache.fop.render.awt.viewer.StatusListener;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
 /**
@@ -202,7 +202,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
 
     /** {@inheritDoc} */
     public boolean supportsOutOfOrder() {
-        return true; // TODO true?
+        return false;
     }
 
     /** {@inheritDoc} */

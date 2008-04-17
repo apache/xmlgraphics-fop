@@ -56,10 +56,14 @@ public class IntermediateFormatTestSuite {
             final File f) {
         suite.addTest(new AreaTreeParserTestCase(f) {
             public void runTest() throws Exception {
-                org.apache.commons.logging.LogFactory.getLog(
-                        this.getClass()).info("Starting " + f.getName());
-                testParserToAT();
-                testParserToPDF();
+                try {
+                    testParserToAT();
+                    testParserToPDF();
+                } catch (Exception e) {
+                    org.apache.commons.logging.LogFactory.getLog(
+                            this.getClass()).error("Error on " + f.getName());
+                    throw e;
+                }
             }
         });
     }
