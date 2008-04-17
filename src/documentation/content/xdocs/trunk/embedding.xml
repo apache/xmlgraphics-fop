@@ -183,7 +183,7 @@ try {
         how to configure alternative backends.
       </p>
       <p>
-        As a result of the above we differentiate between to kinds of "logging":
+        As a result of the above we differentiate between two kinds of "logging":
       </p>
       <ul>
         <li>(FOP-)Developer-oriented logging</li>
