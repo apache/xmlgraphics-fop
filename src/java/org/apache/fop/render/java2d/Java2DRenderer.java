@@ -121,9 +121,6 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /** The 0-based current page number */
     private int currentPageNumber = 0;
 
-    /** The 0-based total number of rendered pages */
-    private int numberOfPages;
-
     /** true if antialiasing is set */
     protected boolean antialiasing = true;
 
@@ -208,7 +205,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     public void stopRenderer() throws IOException {
         log.debug("Java2DRenderer stopped");
         renderingDone = true;
-        numberOfPages = currentPageNumber;
+        int numberOfPages = currentPageNumber;
         // TODO set all vars to null for gc
         if (numberOfPages == 0) {
             new FOPException("No page could be rendered");
@@ -238,7 +235,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @return The 0-based total number of rendered pages
      */
     public int getNumberOfPages() {
-            return numberOfPages;
+        return pageViewportList.size();
     }
 
     /**

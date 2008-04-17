@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 
@@ -151,7 +152,9 @@ public class Main {
 
         try {
             options = new CommandLineOptions();
-            options.parse(args);
+            if (!options.parse(args)) {
+                System.exit(1);
+            }
             
             foUserAgent = options.getFOUserAgent();
             String outputFormat = options.getOutputFormat();
