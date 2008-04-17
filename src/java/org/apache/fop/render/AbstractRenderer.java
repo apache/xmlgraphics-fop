@@ -124,12 +124,19 @@ public abstract class AbstractRenderer
 
     /** {@inheritDoc} */
     public FOUserAgent getUserAgent() {
+        if (userAgent == null) {
+            throw new IllegalStateException("FOUserAgent has not been set on Renderer");
+        }
         return userAgent;
     }
 
     /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream)
-        throws IOException { }
+            throws IOException {
+        if (userAgent == null) {
+            throw new IllegalStateException("FOUserAgent has not been set on Renderer");
+        }
+    }
 
     /** {@inheritDoc} */
     public void stopRenderer()
