@@ -34,6 +34,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -42,15 +50,8 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+
 import org.apache.fop.DebugHelper;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * JUnit test suit for running layout engine test under JUnit control.
@@ -187,10 +188,14 @@ public class LayoutEngineTestSuite {
                 final LayoutEngineTester tester, final File f) {
         suite.addTest(new LayoutEngineTestCase(f.getName()) {
             public void runTest() throws Exception {
-                org.apache.commons.logging.LogFactory.getLog(
-                        this.getClass()).info("Starting " + f.getName());
-                prepare(tester, f);
-                testMain();
+                try {
+                    prepare(tester, f);
+                    testMain();
+                } catch (Exception e) {
+                    org.apache.commons.logging.LogFactory.getLog(
+                            this.getClass()).error("Error on " + f.getName());
+                    throw e;
+                }
             }
         });
     }

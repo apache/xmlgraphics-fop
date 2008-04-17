@@ -43,19 +43,23 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.xml.sax.SAXException;
+
+import org.apache.xpath.XPathAPI;
+import org.apache.xpath.objects.XObject;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.render.xml.XMLRenderer;
-import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.apache.fop.util.ConsoleEventListenerForTests;
 
 /**
  * Class for testing the FOP's layout engine using testcases specified in XML
@@ -154,6 +158,9 @@ public class LayoutEngineTester {
             //Setup FOP for area tree rendering
             FOUserAgent ua = effFactory.newFOUserAgent();
             ua.setBaseURL(testFile.getParentFile().toURL().toString());
+            ua.getEventBroadcaster().addEventListener(
+                    new ConsoleEventListenerForTests(testFile.getName()));
+            
             XMLRenderer atrenderer = new XMLRenderer();
             atrenderer.setUserAgent(ua);
             atrenderer.setContentHandler(athandler);
