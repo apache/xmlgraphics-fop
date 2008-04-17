@@ -236,7 +236,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             EmbedFontInfo[] embedFontInfos = finder.find(fontUrl, resolver, fontCache);
 
             if (embedFontInfos == null) {
-                return;
+                continue;
             }
 
             for (int i = 0, c = embedFontInfos.length; i < c; i++) {
