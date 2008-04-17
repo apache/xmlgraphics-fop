@@ -124,6 +124,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         if (original.extensionAttachments != null) {
             this.extensionAttachments = new java.util.ArrayList(original.extensionAttachments);
         }
+        this.pageIndex = original.pageIndex;
         this.pageNumber = original.pageNumber;
         this.pageNumberString = original.pageNumberString;
         this.page = (Page)original.page.clone();
