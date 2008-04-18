@@ -117,7 +117,7 @@ public abstract class TableFObj extends FObj {
      * PropertyMaker subclass for the column-number property
      *
      */
-    public static class ColumnNumberPropertyMaker extends NumberProperty.Maker {
+    public static class ColumnNumberPropertyMaker extends NumberProperty.PositiveIntegerMaker {
 
         /**
          * Constructor
@@ -153,24 +153,6 @@ public abstract class TableFObj extends FObj {
                     = (ColumnNumberManagerHolder) propertyList.getParentFObj();
             ColumnNumberManager columnIndexManager =  parent.getColumnNumberManager();
             int columnIndex = p.getNumeric().getValue();
-            if (columnIndex <= 0) {
-                /* No warning necessary as the spec clearly defines how to handle these cases.
-                log.warn("Specified negative or zero value for "
-                        + "column-number on " + fo.getName() + ": "
-                        + columnIndex + " forced to "
-                        + columnIndexManager.getCurrentColumnNumber());*/
-                return NumberProperty.getInstance(columnIndexManager.getCurrentColumnNumber());
-            } else {
-                double tmpIndex = p.getNumeric().getNumericValue();
-                if (tmpIndex - columnIndex > 0.0) {
-                    columnIndex = (int) Math.round(tmpIndex);
-                    /* No warning necessary as the spec clearly defines how to handle these cases.
-                    log.warn("Rounding specified column-number of "
-                            + tmpIndex + " to " + columnIndex);*/
-                    p = NumberProperty.getInstance(columnIndex);
-                }
-            }
-
             int colSpan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
                                 .getNumeric().getValue();
             int i = -1;

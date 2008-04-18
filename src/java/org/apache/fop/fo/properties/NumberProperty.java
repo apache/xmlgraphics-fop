@@ -68,6 +68,40 @@ public final class NumberProperty extends Property implements Numeric {
 
     }
 
+    public static class PositiveIntegerMaker extends PropertyMaker {
+
+        /**
+         * Constructor for NumberProperty.PositiveIntegerMaker
+         * @param propId the id of the property for which a PositiveIntegerMaker should be created
+         */
+        public PositiveIntegerMaker(int propId) {
+            super(propId);
+        }
+
+        /**
+         * If the value is not positive, return a property with value 1 
+         * 
+         * {@inheritDoc}
+         */
+        public Property convertProperty(Property p, 
+                                        PropertyList propertyList, FObj fo) 
+                    throws PropertyException {
+            if (p instanceof EnumProperty) {
+                return EnumNumber.getInstance(p);
+            }
+            Number val = p.getNumber();
+            if (val != null) {
+                int i = val.intValue();
+                if (i <= 0) {
+                    i = 1;
+                }
+                return getInstance(i);
+            }
+            return convertPropertyDatatype(p, propertyList, fo);
+        }
+
+    }
+    
     /** cache holding all canonical NumberProperty instances */
     private static final PropertyCache cache = new PropertyCache();
     
