@@ -58,6 +58,10 @@
         Added SVG support for AFP (GOCA).
         </action>
       -->
+      <action context="Renderers" dev="JM" type="add">
+        Added support for rendering pages using JPS (Java Printing System). See new example:
+        examples/embedding/java/ExamplesFO2JPSPrint.java
+      </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="41687">
         Restored ability to specify from/to and odd/even pages as well as the number of copies
         for printing from the command-line.
