@@ -242,9 +242,6 @@ public class RTFHandler extends FOEventHandler {
             bFooterSpecified = false;
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
-        } catch (FOPException fope) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startPageSequence: " + fope.getMessage(), fope);
         }
     }
 
