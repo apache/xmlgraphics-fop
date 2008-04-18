@@ -103,7 +103,7 @@ public class FOPException extends SAXException {
      * @param systemId the system id of the FO document which is associated with the exception;
      *                 may be null.
      * @param line line number in the FO document which is associated with the exception.
-     * @param column clolumn number in the line which is associated with the exception.
+     * @param column column number in the line which is associated with the exception.
      */
     public void setLocation(String systemId, int line, int column) {
         this.systemId = systemId;

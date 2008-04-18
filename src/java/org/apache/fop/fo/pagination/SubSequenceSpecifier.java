@@ -19,7 +19,6 @@
  
 package org.apache.fop.fo.pagination;
 
-import org.apache.fop.apps.FOPException;
 
 /**
  * Classes that implement this interface can be added to a PageSequenceMaster,
@@ -35,14 +34,14 @@ public interface SubSequenceSpecifier {
      * @param isOnlyPage True if the next page is the only page
      * @param isBlankPage True if the next page is blank
      * @return the page master name
-     * @throws FOPException if there's a problem determining the next page master
+     * @throws PageProductionException if there's a problem determining the next page master
      */
     String getNextPageMasterName(boolean isOddPage,
                                  boolean isFirstPage,
                                  boolean isLastPage,
                                  boolean isOnlyPage,
                                  boolean isBlankPage)
-                                    throws FOPException;
+                                    throws PageProductionException;
 
     /**
      * Called before a new page sequence is rendered so subsequences can reset

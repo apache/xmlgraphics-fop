@@ -371,13 +371,13 @@ public class PageSequence extends AbstractPageSequence {
      *      page sequence
      * @param isBlank indicator whether the page will be blank
      * @return the SimplePageMaster to use for this page
-     * @throws FOPException if there's a problem determining the page master
+     * @throws PageProductionException if there's a problem determining the page master
      */
     public SimplePageMaster getNextSimplePageMaster(int page, 
             boolean isFirstPage,  
             boolean isLastPage,  
             boolean isOnlyPage,
-            boolean isBlank) throws FOPException {
+            boolean isBlank) throws PageProductionException {
 
         if (pageSequenceMaster == null) {
             return simplePageMaster;

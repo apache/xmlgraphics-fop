@@ -21,9 +21,9 @@ package org.apache.fop.layoutmgr;
 
 import org.xml.sax.Locator;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
+import org.apache.fop.fo.pagination.PageProductionException;
 
 /**
  * Event producer interface for block-level layout managers.
@@ -136,22 +136,22 @@ public interface BlockLevelEventProducer extends EventProducer {
      * @param pageSequenceMasterName the name of the page sequence master
      * @param canRecover indicates whether FOP can recover from this problem and continue working
      * @param loc the location of the error or null
-     * @throws FOPException the error provoked by the method call
+     * @throws PageProductionException the error provoked by the method call
      * @event.severity FATAL
      */
     void pageSequenceMasterExhausted(Object source, String pageSequenceMasterName,
-            boolean canRecover, Locator loc) throws FOPException;
+            boolean canRecover, Locator loc) throws PageProductionException;
 
     /**
      * No subsequences in page sequence master.
      * @param source the event source
      * @param pageSequenceMasterName the name of the page sequence master
      * @param loc the location of the error or null
-     * @throws FOPException the error provoked by the method call
+     * @throws PageProductionException the error provoked by the method call
      * @event.severity FATAL
      */
     void missingSubsequencesInPageSequenceMaster(Object source, String pageSequenceMasterName,
-            Locator loc) throws FOPException;
+            Locator loc) throws PageProductionException;
     
     /**
      * No single-page-master matching in page sequence master.
@@ -159,10 +159,10 @@ public interface BlockLevelEventProducer extends EventProducer {
      * @param pageSequenceMasterName the name of the page sequence master
      * @param pageMasterName the name of the page master not matching
      * @param loc the location of the error or null
-     * @throws FOPException the error provoked by the method call
+     * @throws PageProductionException the error provoked by the method call
      * @event.severity FATAL
      */
     void noMatchingPageMaster(Object source, String pageSequenceMasterName,
-            String pageMasterName, Locator loc) throws FOPException;
+            String pageMasterName, Locator loc) throws PageProductionException;
     
 }
