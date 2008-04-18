@@ -1095,13 +1095,13 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("hyphenation-character", m);
 
         // hyphenation-push-character-count
-        m  = new NumberProperty.Maker(PR_HYPHENATION_PUSH_CHARACTER_COUNT);
+        m  = new NumberProperty.PositiveIntegerMaker(PR_HYPHENATION_PUSH_CHARACTER_COUNT);
         m.setInherited(true);
         m.setDefault("2");
         addPropertyMaker("hyphenation-push-character-count", m);
 
         // hyphenation-remain-character-count
-        m  = new NumberProperty.Maker(PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
+        m  = new NumberProperty.PositiveIntegerMaker(PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
         m.setInherited(true);
         m.setDefault("2");
         addPropertyMaker("hyphenation-remain-character-count", m);
@@ -2137,7 +2137,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("blank-or-not-blank", m);
 
         // column-count
-        m  = new NumberProperty.Maker(PR_COLUMN_COUNT);
+        m  = new NumberProperty.PositiveIntegerMaker(PR_COLUMN_COUNT);
         m.setInherited(false);
         m.setDefault("1");
         addPropertyMaker("column-count", m);
@@ -2175,7 +2175,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("force-page-count", m);
 
         // initial-page-number
-        m  = new NumberProperty.Maker(PR_INITIAL_PAGE_NUMBER);
+        m  = new NumberProperty.PositiveIntegerMaker(PR_INITIAL_PAGE_NUMBER);
         m.setInherited(false);
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         m.addEnum("auto-odd", getEnumProperty(EN_AUTO_ODD, "AUTO_ODD"));
@@ -2359,19 +2359,19 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("ends-row", m);
 
         // number-columns-repeated
-        m  = new NumberProperty.Maker(PR_NUMBER_COLUMNS_REPEATED);
+        m  = new NumberProperty.PositiveIntegerMaker(PR_NUMBER_COLUMNS_REPEATED);
         m.setInherited(false);
         m.setDefault("1");
         addPropertyMaker("number-columns-repeated", m);
 
         // number-columns-spanned
-        m  = new NumberProperty.Maker(PR_NUMBER_COLUMNS_SPANNED);
+        m  = new NumberProperty.PositiveIntegerMaker(PR_NUMBER_COLUMNS_SPANNED);
         m.setInherited(false);
         m.setDefault("1");
         addPropertyMaker("number-columns-spanned", m);
 
         // number-rows-spanned
-        m  = new NumberProperty.Maker(PR_NUMBER_ROWS_SPANNED);
+        m  = new NumberProperty.PositiveIntegerMaker(PR_NUMBER_ROWS_SPANNED);
         m.setInherited(false);
         m.setDefault("1");
         addPropertyMaker("number-rows-spanned", m);
