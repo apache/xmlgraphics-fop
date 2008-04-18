@@ -31,6 +31,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererEventProducer;
 
 /**
  * This uses the AreaTreeModel to store the pages
@@ -115,8 +116,12 @@ public class RenderPagesModel extends AreaTreeModel {
                 String err = "Error while rendering page " + page.getPageNumberString(); 
                 log.error(err, re);
                 throw re;
-            } catch (Exception e) {
-                //TODO use error handler to handle this FOP or IO Exception or propagate exception
+            } catch (IOException ioe) {
+                RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
+                        renderer.getUserAgent().getEventBroadcaster());
+                eventProducer.ioError(this, ioe);
+            } catch (FOPException e) {
+                //TODO use error handler to handle this FOPException or propagate exception
                 String err = "Error while rendering page " + page.getPageNumberString(); 
                 log.error(err, e);
                 throw new IllegalStateException("Fatal error occurred. Cannot continue. " 
