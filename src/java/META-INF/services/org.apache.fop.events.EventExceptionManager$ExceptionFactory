@@ -2,3 +2,4 @@ org.apache.fop.events.ValidationExceptionFactory
 org.apache.fop.events.PropertyExceptionFactory
 org.apache.fop.events.UnsupportedOperationExceptionFactory
 org.apache.fop.layoutmgr.LayoutException$LayoutExceptionFactory
+org.apache.fop.fo.pagination.PageProductionException$PageProductionExceptionFactory

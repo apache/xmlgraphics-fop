@@ -189,14 +189,14 @@ public class PageSequenceMaster extends FObj {
      * @param isOnlyPage True if the next page is the only page
      * @param isBlankPage True if the next page is blank
      * @return the requested page master
-     * @throws FOPException if there's a problem determining the next page master
+     * @throws PageProductionException if there's a problem determining the next page master
      */
     public SimplePageMaster getNextSimplePageMaster(boolean isOddPage,
                                                     boolean isFirstPage,
                                                     boolean isLastPage,
                                                     boolean isOnlyPage,
                                                     boolean isBlankPage)
-                                                      throws FOPException {
+                                                      throws PageProductionException {
         if (currentSubSequence == null) {
             currentSubSequence = getNextSubSequence();
             if (currentSubSequence == null) {
