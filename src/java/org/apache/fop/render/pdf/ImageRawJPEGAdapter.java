@@ -18,7 +18,6 @@
 /* $Id$ */
 
 package org.apache.fop.render.pdf;
-import java.awt.color.ICC_Profile;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +35,6 @@ import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.pdf.PDFFilterList;
-import org.apache.fop.util.ColorProfileUtil;
 
 /**
  * PDFImage implementation for the PDF renderer which handles raw JPEG images.
@@ -81,21 +79,6 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
         return toPDFColorSpace(getImageColorSpace());
     }
 
-    /** {@inheritDoc} */
-    protected ICC_Profile getEffectiveICCProfile() {
-        ICC_Profile profile = super.getEffectiveICCProfile();
-        if (profile != null 
-                && profile.getNumComponents() == 3
-                && !ColorProfileUtil.isDefaultsRGB(profile)) {
-            //RGB profiles which are not sRGB don't seem to work.
-            //Without this override, the image drifts into yellow for an unknown reason.
-            //TODO Find out why this happens.
-            //Test using a JPEG images with, for example, "Adobe RGB 1998" color profile.
-            profile = null;
-        }
-        return profile;
-    }
-    
     /** {@inheritDoc} */
     public int getBitsPerComponent() {
         return 8;
