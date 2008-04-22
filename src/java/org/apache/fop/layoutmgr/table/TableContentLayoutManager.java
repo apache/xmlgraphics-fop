@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -38,6 +39,7 @@ import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
@@ -224,6 +226,17 @@ public class TableContentLayoutManager implements PercentBaseContext {
             while ((rowGroup = iter.getNextRowGroup()) != null) {
                 rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup, stepper);
                 nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
+                /*
+                 * The last break element produced by TableStepper (for the previous row
+                 * group) may be used to represent the break between the two row groups.
+                 * Its penalty value and break class must just be overridden by the
+                 * characteristics of the keep or break between the two.
+                 * 
+                 * However, we mustn't forget that if the after border of the last row of
+                 * the row group is thicker in the normal case than in the trailing case,
+                 * an additional glue will be appended to the element list. So we may have
+                 * to go two steps backwards in the list.
+                 */
                 int penaltyValue = 0;
                 keepBetween |= context.isKeepWithPreviousPending();
                 if (keepBetween || tableLM.getTable().mustKeepTogether()) {
@@ -234,24 +247,35 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 if (breakBetween != Constants.EN_AUTO) {
                     penaltyValue = -KnuthElement.INFINITE;
                 }
-                TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
-                int penaltyLen = 0;
-                if (bodyType == TableRowIterator.BODY) {
-                    if (!getTableLM().getTable().omitHeaderAtBreak()) {
-                        penaltyLen += getHeaderNetHeight();
-                        penaltyPos.headerElements = getHeaderElements();
-                    }
-                    if (!getTableLM().getTable().omitFooterAtBreak()) {
-                        penaltyLen += getFooterNetHeight();
-                        penaltyPos.footerElements = getFooterElements();
-                    }
+                BreakElement breakElement;
+                ListIterator elemIter = returnList.listIterator(returnList.size());
+                ListElement elem = (ListElement) elemIter.previous();
+                if (elem instanceof KnuthGlue) {
+                    breakElement = (BreakElement) elemIter.previous();
+                } else {
+                    breakElement = (BreakElement) elem;
                 }
-                returnList.add(new BreakElement(penaltyPos, 
-                        penaltyLen, penaltyValue, breakBetween, context));
+                breakElement.setPenaltyValue(penaltyValue);
+                breakElement.setBreakClass(breakBetween);
                 returnList.addAll(nextRowGroupElems);
                 breakBetween = context.getBreakAfter();
                 keepBetween = context.isKeepWithNextPending();
             }
+        }
+        /*
+         * The last break produced for the last row-group of this table part must be
+         * removed, because the breaking after the table will be handled by TableLM.
+         * Unless the element list ends with a glue, which must be kept to accurately
+         * represent the content. In such a case the break is simply disabled by setting
+         * its penalty to infinite.
+         */
+        ListIterator elemIter = returnList.listIterator(returnList.size());
+        ListElement elem = (ListElement) elemIter.previous();
+        if (elem instanceof KnuthGlue) {
+            BreakElement breakElement = (BreakElement) elemIter.previous();
+            breakElement.setPenaltyValue(KnuthElement.INFINITE);
+        } else {
+            elemIter.remove();
         }
         context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, keepWithPrevious);
         context.setBreakBefore(breakBefore);
