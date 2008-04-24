@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.expr.RelativeNumericProperty;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
@@ -196,7 +197,9 @@ public class ColumnSetup {
             Length colWidth = (Length) i.next();
             if (colWidth != null) {
                 sumCols += colWidth.getValue(tlm);
-                if (colWidth instanceof TableColLength) {
+                if (colWidth instanceof RelativeNumericProperty) {
+                    factors += ((RelativeNumericProperty) colWidth).getTableUnits();
+                } else if (colWidth instanceof TableColLength) {
                     factors += ((TableColLength) colWidth).getTableUnits();
                 }
             }

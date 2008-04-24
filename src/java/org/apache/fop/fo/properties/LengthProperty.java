@@ -71,22 +71,6 @@ public abstract class LengthProperty extends Property
 
     }
 
-    /**
-     * Return the number of table units which are included in this
-     * length specification.
-     * This will always be 0 unless the property specification used
-     * the proportional-column-width() function (only only table
-     * column FOs).
-     * <p>If this value is not 0, the actual value of the Length cannot
-     * be known without looking at all of the columns in the table to
-     * determine the value of a "table-unit".
-     * @return The number of table units which are included in this
-     * length specification.
-     */
-    public double getTableUnits() {
-        return 0.0;
-    }
-
     /** @return the numeric dimension. Length always a dimension of 1 */
     public int getDimension() {
         return 1;
