@@ -60,6 +60,10 @@
       -->
     <!--/release-->
     <release version="0.95" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed regression causing bad positioning of block-containers if used as descendant
+        of a table-cell.
+      </action>
       <action context="Fonts" dev="JM" type="fix">
         Fixed text extraction problem with ZapfDingbats and Symbol font in PDF output.
       </action>

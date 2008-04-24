@@ -1005,6 +1005,46 @@ public class PCLRenderer extends PrintRenderer {
         //currentFontName = saveFontName;
     }
 
+    /** {@inheritDoc} */
+    protected void renderReferenceArea(Block block) {
+        //TODO This is the same code as in AbstractPathOrientedRenderer
+        //So there's some optimization potential but not otherwise PCLRenderer is a little
+        //difficult to derive from AbstractPathOrientedRenderer. Maybe an additional layer
+        //between PrintRenderer and AbstractPathOrientedRenderer is necessary.
+        
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        at.translate(block.getXOffset(), block.getYOffset());
+        at.translate(0, block.getSpaceBefore());
+        
+        if (!at.isIdentity()) {
+            saveGraphicsState();
+            concatenateTransformationMatrix(mptToPt(at));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        handleBlockTraits(block);
+
+        List children = block.getChildAreas();
+        if (children != null) {
+            renderBlocks(block, children);
+        }
+
+        if (!at.isIdentity()) {
+            restoreGraphicsState();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
     /**
      * Concatenates the current transformation matrix with the given one, therefore establishing
      * a new coordinate system.

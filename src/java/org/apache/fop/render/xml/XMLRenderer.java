@@ -754,9 +754,17 @@ public class XMLRenderer extends PrintRenderer {
         endElement("flow");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    protected void renderReferenceArea(Block block) {
+        handleBlockTraits(block);
+
+        List children = block.getChildAreas();
+        if (children != null) {
+            renderBlocks(block, children);
+        }
+    }
+    
+    /** {@inheritDoc} */
     protected void renderBlock(Block block) {
         atts.clear();
         addAreaAttributes(block);

@@ -588,6 +588,45 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
+    protected void renderReferenceArea(Block block) {
+        //TODO Remove this method once concatenateTransformationMatrix() is implemented 
+        
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        at.translate(block.getXOffset(), block.getYOffset());
+        at.translate(0, block.getSpaceBefore());
+        
+        if (!at.isIdentity()) {
+            Rectangle2D contentRect
+                = new Rectangle2D.Double(at.getTranslateX(), at.getTranslateY(),
+                        block.getAllocIPD(), block.getAllocBPD());
+            pushViewPortPos(new ViewPortPos(contentRect, new CTM(at)));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        handleBlockTraits(block);
+
+        List children = block.getChildAreas();
+        if (children != null) {
+            renderBlocks(block, children);
+        }
+
+        if (!at.isIdentity()) {
+            popViewPortPos();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
+    /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         //Not used here since AFPRenderer defines its own renderBlockViewport() method.
         throw new UnsupportedOperationException("NYI");
