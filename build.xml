@@ -790,7 +790,8 @@ list of possible build targets.
       <exclude name="**/intermediate/*"/>
     </patternset>
   </target>
-  <target name="junit-compile" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" description="Runs FOP's JUnit tests" if="junit.present">
+
+  <target name="junit-compile-java" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" if="junit.present">
     <mkdir dir="${build.dir}/test-classes"/>
     <mkdir dir="${build.dir}/test-gensrc"/>
     <mkdir dir="${junit.reports.dir}"/>
@@ -807,6 +808,9 @@ list of possible build targets.
         </fileset>
       </classpath>
     </javac>
+  </target>
+
+  <target name="junit-compile-copy-resources" if="junit.present">
     <eventResourceGenerator modelfile="${build.dir}/test-gensrc/org/apache/fop/events/test-event-model.xml">
       <fileset dir="${basedir}/test/java">
         <include name="**/*.java"/>
@@ -822,6 +826,8 @@ list of possible build targets.
       </fileset>
     </copy>
   </target>
+
+  <target name="junit-compile" depends="junit-compile-java, junit-compile-copy-resources" description="Compiles FOP's JUnit tests" if="junit.present"/>
 
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
