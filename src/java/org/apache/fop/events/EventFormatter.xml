@@ -33,6 +33,7 @@ Required content model: {contentModel}]{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.missingProperty">Element "{elementName}" is missing required property "{propertyName}"!{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.idNotUnique">Property ID "{id}" (found on "{elementName}") previously used; ID values must be unique within a document!{severity,equals,EventSeverity:FATAL,,
 Any reference to it will be considered a reference to the first occurrence in the document.}{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.markerBlockContainerAbsolutePosition">Only an fo:block-container that does not generate absolutely positioned areas may have one or more fo:markers as its initial children.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotInitialChild">fo:marker must be an initial child: {mcname}{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.markerNotUniqueForSameParent">fo:marker "marker-class-name" must be unique for same parent: {mcname}{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.invalidProperty">Invalid property encountered on "{elementName}": {attr}{{locator}}</message>

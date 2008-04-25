@@ -150,6 +150,15 @@ public interface FOValidationEventProducer extends EventProducer {
             Locator loc) throws ValidationException;
 
     /**
+     * An fo:marker appears as initial descendant in an fo:block-container
+     * that generates absolutely positioned areas
+     * @param source    the event source
+     * @param loc       the location of the error (possibly null)
+     * @event.severity ERROR
+     */
+    void markerBlockContainerAbsolutePosition(Object source, Locator loc);
+
+    /**
      * A marker is not an initial child on a node.
      * @param source the event source
      * @param elementName the name of the context node
