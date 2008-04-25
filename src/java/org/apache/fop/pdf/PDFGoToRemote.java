@@ -20,7 +20,7 @@
 package org.apache.fop.pdf;
 
 /**
- * class representing a /GoToR object.
+ * Class representing a /GoToR object.
  */
 public class PDFGoToRemote extends PDFAction {
 
@@ -30,17 +30,21 @@ public class PDFGoToRemote extends PDFAction {
     private PDFFileSpec pdfFileSpec;
     private int pageReference = 0;
     private String destination = null;
+    private boolean newWindow = false;
 
     /**
-     * create an GoToR object.
+     * Create an GoToR object.
      *
      * @param pdfFileSpec the fileSpec associated with the action
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
      */
-    public PDFGoToRemote(PDFFileSpec pdfFileSpec) {
+    public PDFGoToRemote(PDFFileSpec pdfFileSpec, boolean newWindow) {
         /* generic creation of object */
         super();
 
         this.pdfFileSpec = pdfFileSpec;
+        this.newWindow = newWindow;
     }
 
     /**
@@ -48,13 +52,16 @@ public class PDFGoToRemote extends PDFAction {
      *
      * @param pdfFileSpec the fileSpec associated with the action
      * @param page a page reference within the remote document
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
      */
-    public PDFGoToRemote(PDFFileSpec pdfFileSpec, int page) {
+    public PDFGoToRemote(PDFFileSpec pdfFileSpec, int page, boolean newWindow) {
         /* generic creation of object */
         super();
 
         this.pdfFileSpec = pdfFileSpec;
         this.pageReference = page;
+        this.newWindow = newWindow;
     }
 
     /**
@@ -62,13 +69,16 @@ public class PDFGoToRemote extends PDFAction {
      *
      * @param pdfFileSpec the fileSpec associated with the action
      * @param dest a named destination within the remote document
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
      */
-    public PDFGoToRemote(PDFFileSpec pdfFileSpec, String dest) {
+    public PDFGoToRemote(PDFFileSpec pdfFileSpec, String dest, boolean newWindow) {
         /* generic creation of object */
         super();
 
         this.pdfFileSpec = pdfFileSpec;
         this.destination = dest;
+        this.newWindow = newWindow;
     }
 
     /**
@@ -86,12 +96,18 @@ public class PDFGoToRemote extends PDFAction {
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getObjectID());
-        sb.append("<<\n/S /GoToR\n/F " + pdfFileSpec.referencePDF() + "\n");
+        sb.append("<<\n/S /GoToR\n/F ");
+        sb.append(pdfFileSpec.referencePDF());
+        sb.append("\n");
 
         if (destination != null) {
-            sb.append("/D (" + this.destination + ")");
+            sb.append("/D (").append(this.destination).append(")");
         } else {
-            sb.append("/D [ " + this.pageReference + " /XYZ null null null ]");
+            sb.append("/D [ ").append(this.pageReference).append(" /XYZ null null null ]");
+        }
+
+        if (newWindow) {
+            sb.append("/NewWindow true");
         }
 
         sb.append(" \n>>\nendobj\n");
@@ -142,7 +158,7 @@ public class PDFGoToRemote extends PDFAction {
             }
         }
 
-        return true;
+        return (this.newWindow == remote.newWindow);
     }
 }
 

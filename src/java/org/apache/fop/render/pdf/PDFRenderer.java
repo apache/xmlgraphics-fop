@@ -837,7 +837,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param value the value
      * @return the formatted value
      */
-    protected static final String format(float value) {
+    protected static String format(float value) {
         return PDFNumber.doubleOut(value);
     }
     
@@ -1134,9 +1134,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * (i.e. if the area qualifies as a link target).
      * Otherwise, or if the area has no id, null is returned.
      *
-     * NOTE : area must be on currentPageViewport, otherwise result may be wrong!
+     * <i>NOTE</i>: area must be on currentPageViewport, otherwise result may be wrong!
      *
      * @param area the area for which to return the id
+     * @return the area's id (null if the area has no id or
+     *              other preceding areas have the same id)
      */
     protected String getTargetableID(Area area) {
         String id = (String) area.getTrait(Trait.PROD_ID);
@@ -1374,11 +1376,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         // no INTERNAL_LINK, look for EXTERNAL_LINK
         if (!linkTraitFound) {
-            String extDest = (String) ip.getTrait(Trait.EXTERNAL_LINK);
-            if (extDest != null && extDest.length() > 0) {
-                linkTraitFound = true;
-                if (annotsAllowed) {
-                    action = factory.getExternalAction(extDest);
+            Trait.ExternalLink extLink = (Trait.ExternalLink) ip.getTrait(Trait.EXTERNAL_LINK);
+            if (extLink != null) {
+                String extDest = extLink.getDestination();
+                if (extDest != null && extDest.length() > 0) {
+                    linkTraitFound = true;
+                    if (annotsAllowed) {
+                        action = factory.getExternalAction(extDest, extLink.newWindow());
+                    }
                 }
             }
         }
@@ -1610,7 +1615,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
      * @param uri URL of the bitmap
      * @param pos Position of the bitmap
-     * @deprecated Use {@link @putImage(String, Rectangle2D, Map)} instead.
+     * @deprecated Use {@link #putImage(String, Rectangle2D, Map)} instead.
      */
     protected void putImage(String uri, Rectangle2D pos) {
         putImage(uri, pos, null);

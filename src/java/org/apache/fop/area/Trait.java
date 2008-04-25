@@ -194,7 +194,7 @@ public class Trait implements Serializable {
     public static final Integer OVERLINE_COLOR = new Integer(35);
     /** Trait for color of linethrough decorations when rendering inline parent. */
     public static final Integer LINETHROUGH_COLOR = new Integer(36);
-    
+
     /** Maximum value used by trait keys */
     public static final int MAX_TRAIT_KEY = 36;
     
@@ -226,7 +226,7 @@ public class Trait implements Serializable {
         // Create a hashmap mapping trait code to name for external representation
         //put(ID_LINK, new TraitInfo("id-link", String.class));
         put(INTERNAL_LINK, new TraitInfo("internal-link", InternalLink.class));
-        put(EXTERNAL_LINK, new TraitInfo("external-link", String.class));
+        put(EXTERNAL_LINK, new TraitInfo("external-link", ExternalLink.class));
         put(FONT,         new TraitInfo("font", FontTriplet.class));
         put(FONT_SIZE,    new TraitInfo("font-size", Integer.class));
         put(COLOR, new TraitInfo("color", Color.class));
@@ -277,7 +277,7 @@ public class Trait implements Serializable {
                 new TraitInfo("is-reference-area", Boolean.class));
         put(IS_VIEWPORT_AREA,
                 new TraitInfo("is-viewport-area", Boolean.class));
-        
+
     }
 
     /**
@@ -291,25 +291,6 @@ public class Trait implements Serializable {
     }
 
     /**
-     * Get the trait code for a trait name.
-     *
-     * @param sTraitName the name of the trait to find
-     * @return the trait code object
-     */
-    /*
-    public static Object getTraitCode(String sTraitName) {
-        Iterator iter = TRAIT_INFO.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            TraitInfo ti = (TraitInfo) entry.getValue();
-            if (ti != null && ti.getName().equals(sTraitName)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }*/
-
-    /**
      * Get the data storage class for the trait.
      *
      * @param traitCode the trait code to lookup
@@ -318,99 +299,6 @@ public class Trait implements Serializable {
     public static Class getTraitClass(Object traitCode) {
         return TRAIT_INFO[((Integer)traitCode).intValue()].getClazz();
     }
-
-    /**
-     * The type of trait for an area.
-     */
-    private Object propType;
-
-    /**
-     * The data value of the trait.
-     */
-    private Object data;
-
-    /**
-     * Create a new empty trait.
-     */
-    public Trait() {
-        this.propType = null;
-        this.data = null;
-    }
-
-    /**
-     * Create a trait with the value and type.
-     *
-     * @param propType the type of trait
-     * @param data the data value
-     */
-    public Trait(Object propType, Object data) {
-        this.propType = propType;
-        this.data = data;
-    }
-
-    /**
-     * Returns the trait data value.
-     * @return the trait data value
-     */
-    public Object getData() {
-        return this.data;
-    }
-
-    /**
-     * Returns the property type.
-     * @return the property type
-     */
-    public Object getPropType() {
-        return this.propType;
-    }
-
-    /**
-     * Return the string for debugging.
-     * {@inheritDoc}
-     */
-    public String toString() {
-        return data.toString();
-    }
-
-    /**
-     * Make a trait value.
-     *
-     * @param oCode trait code
-     * @param sTraitValue trait value as String
-     * @return the trait value as object
-     */
-    /*
-    public static Object makeTraitValue(Object oCode, String sTraitValue) {
-        // Get the code from the name
-        // See what type of object it is
-        // Convert string value to an object of that type
-        Class tclass = getTraitClass(oCode);
-        if (tclass == null) {
-            return null;
-        }
-        if (tclass.equals(String.class)) {
-            return sTraitValue;
-        }
-        if (tclass.equals(Integer.class)) {
-            return new Integer(sTraitValue);
-        }
-        // See if the class has a constructor from string or can read from a string
-        try {
-            Object o = tclass.newInstance();
-            //return o.fromString(sTraitValue);
-        } catch (IllegalAccessException e1) {
-            log.error("Can't create instance of "
-                               + tclass.getName());
-            return null;
-        } catch (InstantiationException e2) {
-            log.error("Can't create instance of "
-                               + tclass.getName());
-            return null;
-        }
-
-
-        return null;
-    }*/
 
     /**
      * Class for internal link traits.
@@ -543,6 +431,80 @@ public class Trait implements Serializable {
             StringBuffer sb = new StringBuffer();
             sb.append("pvKey=").append(pvKey);
             sb.append(",idRef=").append(idRef);
+            return sb.toString();
+        }
+    }
+
+    /**
+     * External Link trait structure
+     */
+    public static class ExternalLink implements Serializable {
+
+        private String destination;
+        private boolean newWindow;
+
+        /**
+         * Constructs an ExternalLink object with the given destination
+         *
+         * @param destination   target of the link
+         * @param newWindow     true if the target should be opened in a new window
+         */
+        public ExternalLink(String destination, boolean newWindow) {
+            this.destination = destination;
+            this.newWindow = newWindow;
+        }
+
+        /**
+         * Create an <code>ExternalLink</code> from a trait value/attribute value in the
+         * area tree
+         * @param traitValue    the value to use (should match the result of {@link #toString()}
+         * @return an <code>ExternalLink</code> instance corresponding to the given value
+         */
+        protected static ExternalLink makeFromTraitValue(String traitValue) {
+            if (traitValue.indexOf(ExternalLink.class.getName()) == -1
+                    || traitValue.indexOf("dest=") == -1) {
+                throw new IllegalArgumentException(
+                        "Malformed trait value for Trait.ExternalLink: " + traitValue);
+            }
+            int startIndex = traitValue.indexOf("dest=") + 5;
+            int endIndex = traitValue.indexOf(',', startIndex);
+            if (endIndex == -1) {
+                endIndex = traitValue.indexOf(']');
+            }
+            String dest = traitValue.substring(startIndex, endIndex);
+            startIndex = traitValue.indexOf("newWindow=", endIndex) + 10;
+            endIndex = traitValue.indexOf(']', startIndex);
+            boolean newWindow = Boolean.parseBoolean(
+                    traitValue.substring(startIndex, endIndex));
+            return new ExternalLink(dest, newWindow);
+        }
+
+        /**
+         * Get the target/destination of the link
+         * @return  the destination of the link
+         */
+        public String getDestination() {
+            return this.destination;
+        }
+
+        /**
+         * Check if the target has to be displayed in a new window
+         * @return  <code>true</code> if the target has to be displayed in a new window
+         */
+        public boolean newWindow() {
+            return this.newWindow;
+        }
+
+        /**
+         * Return a String representation of the object.
+         * @return  a <code>String</code> of the form
+         *          "org.apache.fop.area.Trait.ExternalLink[dest=someURL,newWindow=false]"
+         */
+        public String toString() {
+            StringBuffer sb = new StringBuffer(64);
+            sb.append(super.toString());
+            sb.append("[dest=").append(this.destination);
+            sb.append(",newWindow=").append(newWindow).append("]");
             return sb.toString();
         }
     }
