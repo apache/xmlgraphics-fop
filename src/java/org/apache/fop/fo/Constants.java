@@ -1092,7 +1092,11 @@ public interface Constants {
     /** Enumeration constant -- for instream-foreign-object and external-graphic, XSL 1.1 */
     int EN_SCALE_DOWN_TO_FIT = 187; 
     /** Enumeration constant -- for instream-foreign-object and external-graphic, XSL 1.1 */
-    int EN_SCALE_UP_TO_FIT = 188; 
+    int EN_SCALE_UP_TO_FIT = 188;
+    /** Enumeration constant -- for fo:basic-link show-destination */
+    int EN_REPLACE = 189;
+    /** Enumeration constant -- for fo:basic-link show-destination */
+    int EN_NEW = 190;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 188;
+    int ENUM_COUNT = 190;
 }

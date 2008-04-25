@@ -724,6 +724,7 @@ public class PDFFactory {
      * @param theColors the list of colors for the gradient
      * @param theBounds the list of bounds associated with the colors
      * @param theCoords the coordinates for the gradient
+     * @param theMatrix the coordinate-transformation matrix
      * @return the PDF pattern that was created
      */
     public PDFPattern makeGradient(PDFResourceContext res, boolean radial,
@@ -737,7 +738,7 @@ public class PDFFactory {
         List theCone;
         PDFPattern myPattern;
         //PDFColorSpace theColorSpace;
-        double interpolation = (double)1.000;
+        double interpolation = 1.000;
         List theFunctions = new ArrayList();
 
         int currentPosition;
@@ -874,7 +875,8 @@ public class PDFFactory {
      */
     public PDFDests makeDests(List destinationList) {
         PDFDests dests;
-        
+
+        //TODO: Check why the below conditional branch is needed. Condition is always true...
         final boolean deep = true;
         //true for a "deep" structure (one node per entry), true for a "flat" structure
         if (deep) {
@@ -961,7 +963,7 @@ public class PDFFactory {
     }
 
     /**
-     * make a link object
+     * Make a {@link PDFLink} object
      *
      * @param rect   the clickable rectangle
      * @param destination  the destination file
@@ -976,7 +978,7 @@ public class PDFFactory {
         PDFLink link = new PDFLink(rect);
 
         if (linkType == PDFLink.EXTERNAL) {
-            link.setAction(getExternalAction(destination));
+            link.setAction(getExternalAction(destination, false));
         } else {
             // linkType is internal
             String goToReference = getGoToReference(destination, yoffset);
@@ -999,9 +1001,11 @@ public class PDFFactory {
      *
      * @param target The external target. This may be a PDF file name
      * (optionally with internal page number or destination) or any type of URI.
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
      * @return the PDFAction thus created or found
      */
-    public PDFAction getExternalAction(String target) {
+    public PDFAction getExternalAction(String target, boolean newWindow) {
         int index;
         String targetLo = target.toLowerCase();
         // HTTP URL?
@@ -1009,17 +1013,17 @@ public class PDFFactory {
             return new PDFUri(target);
         // Bare PDF file name?
         } else if (targetLo.endsWith(".pdf")) {
-            return getGoToPDFAction(target, null, -1);
+            return getGoToPDFAction(target, null, -1, newWindow);
         // PDF file + page?
         } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) {
             String filename = target.substring(0, index + 4);
             int page = Integer.parseInt(target.substring(index + 10));
-            return getGoToPDFAction(filename, null, page);
+            return getGoToPDFAction(filename, null, page, newWindow);
         // PDF file + destination?
         } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) {
             String filename = target.substring(0, index + 4);
             String dest = target.substring(index + 10);
-            return getGoToPDFAction(filename, dest, -1);
+            return getGoToPDFAction(filename, dest, -1, newWindow);
         // None of the above? Default to URI:
         } else {
             return new PDFUri(target);
@@ -1069,9 +1073,11 @@ public class PDFFactory {
      * @param file the pdf file name
      * @param dest the remote name destination, may be null
      * @param page the remote page number, -1 means not specified
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
      * @return the pdf goto remote object
      */
-    private PDFGoToRemote getGoToPDFAction(String file, String dest, int page) {
+    private PDFGoToRemote getGoToPDFAction(String file, String dest, int page, boolean newWindow) {
         getDocument().getProfile().verifyActionAllowed();
         PDFFileSpec fileSpec = new PDFFileSpec(file);
         PDFFileSpec oldspec = getDocument().findFileSpec(fileSpec);
@@ -1083,11 +1089,11 @@ public class PDFFactory {
         PDFGoToRemote remote;
 
         if (dest == null && page == -1) {
-            remote = new PDFGoToRemote(fileSpec);
+            remote = new PDFGoToRemote(fileSpec, newWindow);
         } else if (dest != null) {
-            remote = new PDFGoToRemote(fileSpec, dest);
+            remote = new PDFGoToRemote(fileSpec, dest, newWindow);
         } else {
-            remote = new PDFGoToRemote(fileSpec, page);
+            remote = new PDFGoToRemote(fileSpec, page, newWindow);
         }
         PDFGoToRemote oldremote = getDocument().findGoToRemote(remote);
         if (oldremote == null) {
@@ -1197,8 +1203,7 @@ public class PDFFactory {
             PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
 
             PDFFont font = null;
-            font = (PDFFont)PDFFont.createFont(fontname, fonttype,
-                                                        basefont, encoding);
+            font = PDFFont.createFont(fontname, fonttype, basefont, encoding);
             getDocument().registerObject(font);
 
             if (fonttype == FontType.TYPE0) {
@@ -1298,6 +1303,7 @@ public class PDFFactory {
     /**
      * Creates a PDFEncoding instance from a CodePointMapping instance.
      * @param encoding the code point mapping (encoding)
+     * @param fontNameHint ...
      * @return the PDF Encoding dictionary (or a String with the predefined encoding)
      */
     public Object createPDFEncoding(SingleByteEncoding encoding, String fontNameHint) {
@@ -1458,6 +1464,7 @@ public class PDFFactory {
                 try {
                     in = new java.net.URL(source.getSystemId()).openStream();
                 } catch (MalformedURLException e) {
+                    //TODO: Why construct a new exception here, when it is not thrown?
                     new FileNotFoundException(
                             "File not found. URL could not be resolved: "
                                     + e.getMessage());
@@ -1514,7 +1521,7 @@ public class PDFFactory {
             log.error(
                     "Failed to embed font [" + desc + "] "
                     + desc.getEmbedFontName(), ioe);
-            return (PDFStream) null;
+            return null;
         }
     }
 
@@ -1563,7 +1570,6 @@ public class PDFFactory {
     /**
      * Create a PDFICCStream
      * @see PDFImageXObject
-     * @see org.apache.fop.image.JpegImage
      * @see org.apache.fop.pdf.PDFDeviceColorSpace     
      * @return the new PDF ICC stream object
      */

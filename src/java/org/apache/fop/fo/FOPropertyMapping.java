@@ -258,7 +258,7 @@ public final class FOPropertyMapping implements Constants {
 
     /**
      * Return a (possibly cached) enum property based in the enum value.
-     * @param enum A enum value from Constants.java.
+     * @param enumValue A enum value from Constants.java.
      * @param text the text value by which this enum property is known
      * @return An EnumProperty instance.
      */
@@ -371,9 +371,8 @@ public final class FOPropertyMapping implements Constants {
                 || ((id & Constants.PROPERTY_MASK) == 0)) {
             return (String) s_htPropIds.get(new Integer(id));
         } else {
-            return (String) s_htPropIds.get(new Integer(
-                    id & Constants.PROPERTY_MASK)) + "." + s_htPropIds.get(
-                            new Integer(id & Constants.COMPOUND_MASK));
+            return s_htPropIds.get(new Integer(id & Constants.PROPERTY_MASK))
+                    + "." + s_htPropIds.get(new Integer(id & Constants.COMPOUND_MASK));
         }
     }
 
@@ -2019,8 +2018,10 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("internal-destination", m);
 
         // show-destination
-        m  = new ToBeImplementedProperty.Maker(PR_SHOW_DESTINATION);
+        m  = new EnumProperty.Maker(PR_SHOW_DESTINATION);
         m.setInherited(false);
+        m.addEnum("new", getEnumProperty(EN_NEW, "NEW"));
+        m.addEnum("replace", getEnumProperty(EN_REPLACE, "REPLACE"));
         m.setDefault("replace");
         addPropertyMaker("show-destination", m);
 
