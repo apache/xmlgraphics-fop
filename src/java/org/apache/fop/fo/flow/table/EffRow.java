@@ -165,55 +165,47 @@ public class EffRow {
     }
 
     /**
-     * Returns true if the enclosing (if any) fo:table-row element of this row, or if any
-     * of the cells starting on this row, have keep-with-previous set.
+     * Returns the strength of the keep constraint if the enclosing (if any) fo:table-row element
+     * of this row, or if any of the cells starting on this row, have keep-with-previous set.
      * 
-     * @return true if this row must be kept with the previous content
+     * @return the strength of the keep-with-previous constraint
      */
-    public boolean mustKeepWithPrevious() {
-        boolean keepWithPrevious = false;
+    public int getKeepWithPreviousStrength() {
+        int strength = BlockLevelLayoutManager.KEEP_AUTO;
         TableRow row = getTableRow();
         if (row != null) {
-            keepWithPrevious = row.mustKeepWithPrevious();
+            strength = Math.max(strength,
+                    KeepUtil.getCombinedBlockLevelKeepStrength(row.getKeepWithPrevious()));
         }
         for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
             GridUnit gu = (GridUnit) iter.next();
             if (gu.isPrimary()) {
-                keepWithPrevious |= gu.getPrimary().mustKeepWithPrevious();
+                strength = Math.max(strength, gu.getPrimary().getKeepWithPreviousStrength());
             }
         }
-        return keepWithPrevious;
+        return strength;
     }
 
     /**
-     * Returns true if the enclosing (if any) fo:table-row element of this row, or if any
-     * of the cells ending on this row, have keep-with-next set.
+     * Returns the strength of the keep constraint if the enclosing (if any) fo:table-row element
+     * of this row, or if any of the cells ending on this row, have keep-with-next set.
      * 
-     * @return true if this row must be kept with the next content
+     * @return the strength of the keep-with-next constraint
      */
-    public boolean mustKeepWithNext() {
-        boolean keepWithNext = false;
+    public int getKeepWithNextStrength() {
+        int strength = BlockLevelLayoutManager.KEEP_AUTO;
         TableRow row = getTableRow();
         if (row != null) {
-            keepWithNext = row.mustKeepWithNext();
+            strength = Math.max(strength,
+                    KeepUtil.getCombinedBlockLevelKeepStrength(row.getKeepWithNext()));
         }
         for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
             GridUnit gu = (GridUnit) iter.next();
             if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
-                keepWithNext |= gu.getPrimary().mustKeepWithNext();
+                strength = Math.max(strength, gu.getPrimary().getKeepWithNextStrength());
             }
         }
-        return keepWithNext;
-    }
-
-    /**
-     * Returns true if this row is enclosed by an fo:table-row element that has
-     * keep-together set.
-     * 
-     * @return true if this row must be kept together
-     */
-    public boolean mustKeepTogether() {
-        return getKeepTogetherStrength() != BlockLevelLayoutManager.KEEP_AUTO;
+        return strength;
     }
 
     /**

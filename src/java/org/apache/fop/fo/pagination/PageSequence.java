@@ -30,7 +30,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Abstract base implementation for page sequences.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-sequence">
+ * <code>fo:page-sequence</code></a> object.
  */
 public class PageSequence extends AbstractPageSequence {
     
@@ -70,9 +71,10 @@ public class PageSequence extends AbstractPageSequence {
     private Flow mainFlow = null;
 
     /**
-     * Create a page sequence FO node.
+     * Create a PageSequence instance that is a child of the
+     * given {@link FONode}.
      *
-     * @param parent the parent FO node
+     * @param parent the parent {@link FONode}
      */
     public PageSequence(FONode parent) {
         super(parent);
@@ -172,6 +174,9 @@ public class PageSequence extends AbstractPageSequence {
      * The flow-name is used to associate the flow with a region on a page,
      * based on the region-names given to the regions in the page-master
      * used to generate that page.
+     * @param flow  the {@link Flow} instance to be added
+     * @throws org.apache.fop.fo.ValidationException if the fo:flow maps
+     * to an invalid page-region
      */
      private void addFlow(Flow flow) throws ValidationException {
         String flowName = flow.getFlowName();
@@ -189,133 +194,6 @@ public class PageSequence extends AbstractPageSequence {
         }
     }
 
-//     /**
-//      * Returns true when there is more flow elements left to lay out.
-//      */
-//     private boolean flowsAreIncomplete() {
-//         boolean isIncomplete = false;
-
-//         for (Iterator e = flowMap.values().iterator(); e.hasNext(); ) {
-//             Flow flow = (Flow)e.next();
-//             if (flow instanceof StaticContent) {
-//                 continue;
-//             }
-
-//             Status status = flow.getStatus();
-//             isIncomplete |= status.isIncomplete();
-//         }
-//         return isIncomplete;
-//     }
-
-//     /**
-//      * Returns the flow that maps to the given region class for the current
-//      * page master.
-//      */
-//     private Flow getCurrentFlow(String regionClass) {
-//         Region region = getCurrentSimplePageMaster().getRegion(regionClass);
-//         if (region != null) {
-//             Flow flow = (Flow)flowMap.get(region.getRegionName());
-//             return flow;
-
-//         } else {
-
-//             getLogger().error("flow is null. regionClass = '" + regionClass
-//                                + "' currentSPM = "
-//                                + getCurrentSimplePageMaster());
-
-//             return null;
-//         }
-
-//     }
-
-//      private boolean isFlowForMasterNameDone(String masterName) {
-//          // parameter is master-name of PMR; we need to locate PM
-//          // referenced by this, and determine whether flow(s) are OK
-//          if (isForcing)
-//              return false;
-//          if (masterName != null) {
-
-//              SimplePageMaster spm =
-//                  root.getLayoutMasterSet().getSimplePageMaster(masterName);
-//              Region region = spm.getRegion(FO_REGION_BODY);
-
-
-//              Flow flow = (Flow)flowMap.get(region.getRegionName());
-//              /*if ((null == flow) || flow.getStatus().isIncomplete())
-//                  return false;
-//              else
-//                  return true;*/
-//          }
-//          return false;
-//      }
-
-//     private void forcePage(AreaTree areaTree, int firstAvailPageNumber) {
-//         boolean makePage = false;
-//         if (this.forcePageCount == ForcePageCount.AUTO) {
-//             PageSequence nextSequence =
-//                 this.root.getSucceedingPageSequence(this);
-//             if (nextSequence != null) {
-//                 if (nextSequence.getIpnValue().equals("auto")) {
-//                     // do nothing special
-//                 }
-//                 else if (nextSequence.getIpnValue().equals("auto-odd")) {
-//                     if (firstAvailPageNumber % 2 == 0) {
-//                         makePage = true;
-//                     }
-//                 } else if (nextSequence.getIpnValue().equals("auto-even")) {
-//                     if (firstAvailPageNumber % 2 != 0) {
-//                         makePage = true;
-//                     }
-//                 } else {
-//                     int nextSequenceStartPageNumber =
-//                         nextSequence.getCurrentPageNumber();
-//                     if ((nextSequenceStartPageNumber % 2 == 0)
-//                             && (firstAvailPageNumber % 2 == 0)) {
-//                         makePage = true;
-//                     } else if ((nextSequenceStartPageNumber % 2 != 0)
-//                                && (firstAvailPageNumber % 2 != 0)) {
-//                         makePage = true;
-//                     }
-//                 }
-//             }
-//         } else if ((this.forcePageCount == ForcePageCount.EVEN)
-//                    && (this.pageCount % 2 != 0)) {
-//             makePage = true;
-//         } else if ((this.forcePageCount == ForcePageCount.ODD)
-//                    && (this.pageCount % 2 == 0)) {
-//             makePage = true;
-//         } else if ((this.forcePageCount == ForcePageCount.END_ON_EVEN)
-//                    && (firstAvailPageNumber % 2 == 0)) {
-//             makePage = true;
-//         } else if ((this.forcePageCount == ForcePageCount.END_ON_ODD)
-//                    && (firstAvailPageNumber % 2 != 0)) {
-//             makePage = true;
-//         } else if (this.forcePageCount == ForcePageCount.NO_FORCE) {
-//             // do nothing
-//         }
-
-//         if (makePage) {
-//             try {
-//                 this.isForcing = true;
-//                 this.currentPageNumber++;
-//                 firstAvailPageNumber = this.currentPageNumber;
-//                 currentPage = makePage(areaTree, firstAvailPageNumber, false,
-//                                        true);
-//                 String formattedPageNumber =
-//                     pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
-//                 currentPage.setFormattedNumber(formattedPageNumber);
-//                 currentPage.setPageSequence(this);
-//                 formatStaticContent(areaTree);
-//                 log.debug("[forced-" + firstAvailPageNumber + "]");
-//                 areaTree.addPage(currentPage);
-//                 this.root.setRunningPageNumberCounter(this.currentPageNumber);
-//                 this.isForcing = false;
-//             } catch (FOPException fopex) {
-//                 log.debug("'force-page-count' failure");
-//             }
-//         }
-//     }
-
     /**
      * Get the static content FO node from the flow map.
      * This gets the static content flow for the given flow name.
@@ -328,7 +206,7 @@ public class PageSequence extends AbstractPageSequence {
     }
 
     /**
-     * Accessor method for titleFO
+     * Accessor method for the fo:title associated with this fo:page-sequence
      * @return titleFO for this object
      */
     public Title getTitleFO() {
@@ -425,7 +303,10 @@ public class PageSequence extends AbstractPageSequence {
         }
     }
     
-    /** @return the "master-reference" property. */
+    /**
+     * Get the value of the <code>master-reference</code> property.
+     * @return the "master-reference" property
+     */
     public String getMasterReference() {
         return masterReference;
     }
@@ -435,17 +316,26 @@ public class PageSequence extends AbstractPageSequence {
         return "page-sequence";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_PAGE_SEQUENCE}
+     */
     public int getNameId() {
         return FO_PAGE_SEQUENCE;
     }
     
-    /** @return the country property value */
+    /**
+     * Get the value of the <code>country</code> property.
+     * @return the country property value
+     */
     public String getCountry() {
         return this.country;
     }
     
-    /** @return the language property value */
+    /**
+     * Get the value of the <code>language</code> property.
+     * @return the language property value
+     */
     public String getLanguage() {
         return this.language;
     }

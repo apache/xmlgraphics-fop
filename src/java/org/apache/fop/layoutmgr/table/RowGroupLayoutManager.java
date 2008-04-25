@@ -33,7 +33,6 @@ import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
@@ -61,10 +60,8 @@ class RowGroupLayoutManager {
         LinkedList returnList = new LinkedList();
         createElementsForRowGroup(context, alignment, bodyType, returnList);
 
-        context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING,
-                rowGroup[0].mustKeepWithPrevious());
-        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING,
-                rowGroup[rowGroup.length - 1].mustKeepWithNext());
+        context.updateKeepWithPreviousPending(rowGroup[0].getKeepWithPreviousStrength());
+        context.updateKeepWithNextPending(rowGroup[rowGroup.length - 1].getKeepWithNextStrength());
 
         int breakBefore = Constants.EN_AUTO;
         TableRow firstRow = rowGroup[0].getTableRow();

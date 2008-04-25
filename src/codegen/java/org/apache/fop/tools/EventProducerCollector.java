@@ -63,15 +63,29 @@ public class EventProducerCollector {
     private DocletTagFactory tagFactory;
     private EventModel model = new EventModel();
 
+    /**
+     * Creates a new EventProducerCollector.
+     */
     public EventProducerCollector() {
         this.tagFactory = createDocletTagFactory();
     }
 
+    /**
+     * Creates the {@link DocletTagFactory} to be used by the collector.
+     * @return the doclet tag factory
+     */
     protected DocletTagFactory createDocletTagFactory() {
         return new DefaultDocletTagFactory();
     }
 
-    public void scanFile(File src, String filename)
+    /**
+     * Scans a file and processes it if it extends the {@link EventProducer} interface.
+     * @param src the source file (a Java source file)
+     * @throws IOException if an I/O error occurs
+     * @throws EventConventionException if the EventProducer conventions are violated
+     * @throws ClassNotFoundException if a required class cannot be found
+     */
+    public void scanFile(File src)
             throws IOException, EventConventionException, ClassNotFoundException {
         JavaDocBuilder builder = new JavaDocBuilder(this.tagFactory);
         builder.addSource(src);
@@ -79,7 +93,7 @@ public class EventProducerCollector {
         for (int i = 0, c = classes.length; i < c; i++) {
             JavaClass clazz = classes[i];
             if (clazz.isInterface() && implementsInterface(clazz, CLASSNAME_EVENT_PRODUCER)) {
-                processEventProducerInterface(clazz, filename);
+                processEventProducerInterface(clazz);
             }
         }
     }
@@ -98,11 +112,10 @@ public class EventProducerCollector {
     /**
      * Processes an EventProducer interface and creates an EventProducerModel from it.
      * @param clazz the EventProducer interface
-     * @param javaFilename the filename of the Java source of the interface
      * @throws EventConventionException if the event producer conventions are violated
      * @throws ClassNotFoundException if a required class cannot be found
      */
-    protected void processEventProducerInterface(JavaClass clazz, String javaFilename)
+    protected void processEventProducerInterface(JavaClass clazz)
                 throws EventConventionException, ClassNotFoundException {
         EventProducerModel prodMeta = new EventProducerModel(clazz.getFullyQualifiedName());
         JavaMethod[] methods = clazz.getMethods(true);
@@ -172,10 +185,19 @@ public class EventProducerCollector {
         return methodMeta;
     }
 
+    /**
+     * Returns the event model that has been accumulated.
+     * @return the event model.
+     */
     public EventModel getModel() {
         return this.model;
     }
     
+    /**
+     * Saves the accumulated event model to an XML file.
+     * @param modelFile the target model file
+     * @throws IOException if an I/O error occurs
+     */
     public void saveModelToXML(File modelFile) throws IOException {
         getModel().saveToXML(modelFile);
     }

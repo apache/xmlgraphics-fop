@@ -30,9 +30,11 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -198,11 +200,20 @@ public class TableStepper {
             }
 
             //Put all involved grid units into a list
+            int stepPenalty = 0;
             List cellParts = new java.util.ArrayList(columnCount);
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 CellPart part = activeCell.createCellPart();
                 cellParts.add(part);
+                
+                //Record highest penalty value of part
+                if (part.end >= 0) {
+                    KnuthElement endEl = (KnuthElement)part.pgu.getElements().get(part.end);
+                    if (endEl instanceof KnuthPenalty) {
+                        stepPenalty = Math.max(stepPenalty, endEl.getP());
+                    }
+                }
             }
 
             //Create elements for step
@@ -230,38 +241,36 @@ public class TableStepper {
                 }
             }
 
-            int p = 0;
-            boolean keepWithNext = false;
+            int strength = BlockLevelLayoutManager.KEEP_AUTO;
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
-                keepWithNext |= activeCell.keepWithNextSignal();
-            }
-            if (keepWithNext) {
-                p = KnuthPenalty.INFINITE;
+                strength = Math.max(strength, activeCell.getKeepWithNextStrength());
             }
             if (!rowFinished) {
-                p = Math.max(p, KeepUtil.getPenaltyForKeep(
-                        rowGroup[activeRowIndex].getKeepTogetherStrength()));
+                strength = Math.max(strength, rowGroup[activeRowIndex].getKeepTogetherStrength());
                 //The above call doesn't take the penalty from the table into account, so...
-                p = Math.max(p, KeepUtil.getPenaltyForKeep(
-                        getTableLM().getKeepTogetherStrength()));
+                strength = Math.max(strength, getTableLM().getKeepTogetherStrength());
             } else if (activeRowIndex < rowGroup.length - 1) {
-                if (rowGroup[activeRowIndex].mustKeepWithNext()
-                        || rowGroup[activeRowIndex + 1].mustKeepWithPrevious()) {
-                    p = KnuthPenalty.INFINITE;
-                }
+                strength = Math.max(strength,
+                        rowGroup[activeRowIndex].getKeepWithNextStrength());
+                strength = Math.max(strength,
+                        rowGroup[activeRowIndex + 1].getKeepWithPreviousStrength());
                 nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
                         rowGroup[activeRowIndex].getBreakAfter());
                 nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
                         rowGroup[activeRowIndex + 1].getBreakBefore());
             }
-            if (nextBreakClass != Constants.EN_AUTO) {
-                log.trace("Forced break encountered");
-                p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
-            }
+            int p = KeepUtil.getPenaltyForKeep(strength);
             if (rowHeightSmallerThanFirstStep) {
                 rowHeightSmallerThanFirstStep = false;
                 p = KnuthPenalty.INFINITE;
+            }
+            if (p > -KnuthElement.INFINITE) {
+                p = Math.max(p, stepPenalty);
+            }
+            if (nextBreakClass != Constants.EN_AUTO) {
+                log.trace("Forced break encountered");
+                p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
             }
             returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, nextBreakClass, context));
             if (penaltyOrGlueLen < 0) {

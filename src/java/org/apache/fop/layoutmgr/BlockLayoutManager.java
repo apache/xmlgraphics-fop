@@ -30,6 +30,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -209,26 +210,20 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public int getKeepTogetherStrength() {
-        int strength = KEEP_AUTO;
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getBlockFO().getKeepTogether().getWithinPage()));
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getBlockFO().getKeepTogether().getWithinColumn()));
+        KeepProperty keep = getBlockFO().getKeepTogether(); 
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(keep);
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
     
     /** {@inheritDoc} */
-    public boolean mustKeepWithPrevious() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return !getBlockFO().getKeepWithPrevious().getWithinPage().isAuto()
-                || !getBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
+    public int getKeepWithNextStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getBlockFO().getKeepWithNext());
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepWithNext() {
-        return !getBlockFO().getKeepWithNext().getWithinPage().isAuto()
-                || !getBlockFO().getKeepWithNext().getWithinColumn().isAuto();
+    public int getKeepWithPreviousStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getBlockFO().getKeepWithPrevious());
     }
 
     /** {@inheritDoc} */

@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -47,6 +48,29 @@ public class KeepUtil {
     }
     
     /**
+     * Returns the combined block-level keep strength from a keep property.
+     * <p>
+     * Note: This is a temporary method to be used until it is possible to differentiate between
+     * page and column keeps!
+     * @param keep the keep property
+     * @return the combined keep strength
+     */
+    public static int getCombinedBlockLevelKeepStrength(KeepProperty keep) {
+        return Math.max(
+                getKeepStrength(keep.getWithinPage()),
+                getKeepStrength(keep.getWithinColumn()));
+    }
+    
+    /**
+     * Indicates whether a keep strength indicates a keep constraint.
+     * @param strength the keep strength
+     * @return true if the keep is not "auto"
+     */
+    public static boolean hasKeep(int strength) {
+        return strength > BlockLevelLayoutManager.KEEP_AUTO;
+    }
+    
+    /**
      * Returns the penalty value to be used for a certain keep strength.
      * <ul>
      *   <li>"auto": returns 0</li>
@@ -65,6 +89,21 @@ public class KeepUtil {
             penalty--;
         }
         return penalty;
+    }
+    
+    /**
+     * Returns a string representation of a keep strength value.
+     * @param keepStrength the keep strength
+     * @return the string representation
+     */
+    public static String keepStrengthToString(int keepStrength) {
+        if (keepStrength == BlockLevelLayoutManager.KEEP_AUTO) {
+            return "auto";
+        } else if (keepStrength == BlockLevelLayoutManager.KEEP_ALWAYS) {
+            return "always";
+        } else {
+            return Integer.toString(keepStrength);
+        }
     }
     
 }

@@ -35,6 +35,7 @@ import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KeepUtil;
@@ -208,31 +209,37 @@ public class TableContentLayoutManager implements PercentBaseContext {
         LinkedList returnList = new LinkedList();
         EffRow[] rowGroup = iter.getNextRowGroup();
         // TODO homogenize the handling of keeps and breaks
-        context.unsetFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING
-                | LayoutContext.KEEP_WITH_NEXT_PENDING);
+        context.clearKeepsPending();
         context.setBreakBefore(Constants.EN_AUTO);
         context.setBreakAfter(Constants.EN_AUTO);
-        boolean keepWithPrevious = false;
+        int keepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
         int breakBefore = Constants.EN_AUTO;
         if (rowGroup != null) {
             RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
                     stepper);
             List nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
-            keepWithPrevious = context.isKeepWithPreviousPending();
-            boolean keepBetween = context.isKeepWithNextPending();
+            keepWithPrevious = Math.max(keepWithPrevious, context.getKeepWithPreviousPending());
             breakBefore = context.getBreakBefore();
             int breakBetween = context.getBreakAfter();
             returnList.addAll(nextRowGroupElems);
             while ((rowGroup = iter.getNextRowGroup()) != null) {
                 rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup, stepper);
+                
+                //Note previous pending keep-with-next and clear the strength
+                //(as the layout context is reused)
+                int keepWithNextPending = context.getKeepWithNextPending();
+                context.clearKeepWithNextPending();
+                
+                //Get elements for next row group
                 nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
-                int penaltyValue = 0;
-                keepBetween |= context.isKeepWithPreviousPending();
-                if (keepBetween) {
-                    penaltyValue = KnuthElement.INFINITE;
-                }
-                penaltyValue = Math.max(penaltyValue,
-                        KeepUtil.getPenaltyForKeep(getTableLM().getKeepTogetherStrength()));
+                
+                //Determine keep constraints
+                int penaltyStrength = BlockLevelLayoutManager.KEEP_AUTO;
+                penaltyStrength = Math.max(penaltyStrength, keepWithNextPending);
+                penaltyStrength = Math.max(penaltyStrength, context.getKeepWithPreviousPending());
+                context.clearKeepWithPreviousPending();
+                penaltyStrength = Math.max(penaltyStrength, getTableLM().getKeepTogetherStrength());
+                int penaltyValue = KeepUtil.getPenaltyForKeep(penaltyStrength);
                 
                 breakBetween = BreakUtil.compareBreakClasses(breakBetween,
                         context.getBreakBefore());
@@ -255,10 +262,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
                         penaltyLen, penaltyValue, breakBetween, context));
                 returnList.addAll(nextRowGroupElems);
                 breakBetween = context.getBreakAfter();
-                keepBetween = context.isKeepWithNextPending();
             }
         }
-        context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, keepWithPrevious);
+        context.updateKeepWithPreviousPending(keepWithPrevious);
         context.setBreakBefore(breakBefore);
 
         //fox:widow-content-limit

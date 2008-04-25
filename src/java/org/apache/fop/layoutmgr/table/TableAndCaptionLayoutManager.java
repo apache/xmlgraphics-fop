@@ -49,6 +49,14 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
+     * Returns the table-and-caption formatting object.
+     * @return the table-and-caption formatting object
+     */
+    public TableAndCaption getTableAndCaptionFO() {
+        return (TableAndCaption)this.fobj;
+    }
+    
+    /**
      * Get the next break possibility.
      *
      * @param context the layout context for getting breaks
@@ -196,13 +204,29 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
     public int getKeepTogetherStrength() {
         int strength = KEEP_AUTO;
         /* TODO Complete me!
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getTableAndCaption().getKeepTogether().getWithinPage()));
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getTableAndCaption().getKeepTogether().getWithinColumn()));
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableAndCaptionFO().getKeepTogether());
         */
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }    
     
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+        /* TODO Complete me!
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableAndCaptionFO().getKeepWithNext());
+        */
+    }
+
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
+        /* TODO Complete me!
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableAndCaptionFO().getKeepWithPrevious());
+        */
+    }
+
 }

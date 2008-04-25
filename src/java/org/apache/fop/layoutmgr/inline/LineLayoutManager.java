@@ -1281,23 +1281,27 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         return ((BlockLevelLayoutManager) getParent()).getKeepTogetherStrength();
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
-        return false;
+        return getKeepWithPreviousStrength() > KEEP_AUTO;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
-        return false;
+        return getKeepWithNextStrength() > KEEP_AUTO;
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+    }
+
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
+    }
+    
+    /** {@inheritDoc} */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         LeafPosition pos = (LeafPosition)lastElement.getPosition();
         int totalAdj = adj;

@@ -256,12 +256,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         log.debug(contentKnuthElements);
         wrapPositionElements(contentKnuthElements, returnList);
 
-        if (mustKeepWithPrevious() || childLC.isKeepWithPreviousPending()) {
-            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-        }
-        if (mustKeepWithNext() || childLC.isKeepWithNextPending()) {
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-        }
+        context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
+        context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+
+        context.updateKeepWithNextPending(getKeepWithNextStrength());
+        context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
 
         if (getTable().isSeparateBorderModel()) {
             addKnuthElementsForBorderPaddingAfter(returnList, true);
@@ -448,29 +447,19 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public int getKeepTogetherStrength() {
-        int strength = KEEP_AUTO;
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getTable().getKeepTogether().getWithinPage()));
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getTable().getKeepTogether().getWithinColumn()));
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepTogether());
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepWithPrevious() {
-        return !getTable().getKeepWithPrevious().getWithinPage().isAuto()
-                || !getTable().getKeepWithPrevious().getWithinColumn().isAuto();
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepWithNext());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepWithNext() {
-        return !getTable().getKeepWithNext().getWithinPage().isAuto()
-                || !getTable().getKeepWithNext().getWithinColumn().isAuto();
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepWithPrevious());
     }
 
     // --------- Property Resolution related functions --------- //

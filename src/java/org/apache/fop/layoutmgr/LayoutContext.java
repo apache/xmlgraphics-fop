@@ -63,12 +63,12 @@ public class LayoutContext {
      * This flag indicates that there's a keep-with-next that hasn't
      * been processed, yet.
      */
-    public static final int KEEP_WITH_NEXT_PENDING = 0x200;
+    //public static final int KEEP_WITH_NEXT_PENDING = 0x200;
     /**
      * This flag indicates that there's a keep-with-previous that hasn't
      * been processed, yet.
      */
-    public static final int KEEP_WITH_PREVIOUS_PENDING = 0x400;
+    //public static final int KEEP_WITH_PREVIOUS_PENDING = 0x400;
 
 
     private int flags; // Contains some set of flags defined above
@@ -135,7 +135,6 @@ public class LayoutContext {
     
     /** Amount of space before / start */
     private int spaceBefore = 0;
-    
     /** Amount of space after / end */
     private int spaceAfter = 0;
     
@@ -145,9 +144,11 @@ public class LayoutContext {
     private int lineEndBorderAndPaddingWidth = 0;
 
     private int breakBefore;
-
     private int breakAfter;
 
+    private int pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO; 
+    private int pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO; 
+    
     /**
      * Copy constructor for creating child layout contexts.
      * @param parentLC the parent layout context to copy from
@@ -167,6 +168,8 @@ public class LayoutContext {
         this.lineStartBorderAndPaddingWidth = parentLC.lineStartBorderAndPaddingWidth;
         this.lineEndBorderAndPaddingWidth = parentLC.lineEndBorderAndPaddingWidth;
         copyPendingMarksFrom(parentLC);
+        this.pendingKeepWithNext = parentLC.pendingKeepWithNext;
+        this.pendingKeepWithPrevious = parentLC.pendingKeepWithPrevious;
         // Copy other fields as necessary.
     }
 
@@ -228,12 +231,74 @@ public class LayoutContext {
         return ((this.flags & SUPPRESS_LEADING_SPACE) != 0);
     }
 
-    public boolean isKeepWithNextPending() {
-        return ((this.flags & KEEP_WITH_NEXT_PENDING) != 0);
+    /**
+     * Returns the strength of a keep-with-next currently pending.
+     * @return the keep-with-next strength
+     */
+    public int getKeepWithNextPending() {
+        return this.pendingKeepWithNext;
     }
     
+    /**
+     * Returns the strength of a keep-with-previous currently pending.
+     * @return the keep-with-previous strength
+     */
+    public int getKeepWithPreviousPending() {
+        return this.pendingKeepWithPrevious;
+    }
+    
+    /**
+     * Clears any pending keep-with-next strength.
+     */
+    public void clearKeepWithNextPending() {
+        this.pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
+    }
+
+    /**
+     * Clears any pending keep-with-previous strength.
+     */
+    public void clearKeepWithPreviousPending() {
+        this.pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+    }
+    
+    /**
+     * Clears both keep-with-previous and keep-with-next strengths.
+     */
+    public void clearKeepsPending() {
+        clearKeepWithPreviousPending();
+        clearKeepWithNextPending();
+    }
+
+    /**
+     * Updates the currently pending keep-with-next strength.
+     * @param strength the new strength to consider
+     */
+    public void updateKeepWithNextPending(int strength) {
+        this.pendingKeepWithNext = Math.max(this.pendingKeepWithNext, strength);
+    }
+
+    /**
+     * Updates the currently pending keep-with-previous strength.
+     * @param strength the new strength to consider
+     */
+    public void updateKeepWithPreviousPending(int strength) {
+        this.pendingKeepWithPrevious = Math.max(this.pendingKeepWithPrevious, strength);
+    }
+
+    /**
+     * Indicates whether a keep-with-next constraint is pending.
+     * @return true if a keep-with-next constraint is pending
+     */
+    public boolean isKeepWithNextPending() {
+        return getKeepWithNextPending() != BlockLevelLayoutManager.KEEP_AUTO;
+    }
+    
+    /**
+     * Indicates whether a keep-with-previous constraint is pending.
+     * @return true if a keep-with-previous constraint is pending
+     */
     public boolean isKeepWithPreviousPending() {
-        return ((this.flags & KEEP_WITH_PREVIOUS_PENDING) != 0);
+        return getKeepWithPreviousPending() != BlockLevelLayoutManager.KEEP_AUTO;
     }
     
     public void setLeadingSpace(SpaceSpecifier space) {
@@ -595,8 +660,9 @@ public class LayoutContext {
         + "\nStarts New Area: \t" + startsNewArea()
         + "\nIs Last Area: \t" + isLastArea()
         + "\nTry Hyphenate: \t" + tryHyphenate()
-        + "\nKeeps: \t[" + (isKeepWithNextPending() ? "keep-with-next" : "") + "][" 
-            + (isKeepWithPreviousPending() ? "keep-with-previous" : "") + "] pending"
+        + "\nKeeps: \t[keep-with-next=" + KeepUtil.keepStrengthToString(getKeepWithNextPending())
+                + "][keep-with-previous="
+                + KeepUtil.keepStrengthToString(getKeepWithPreviousPending()) + "] pending"
         + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "][" 
         + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }

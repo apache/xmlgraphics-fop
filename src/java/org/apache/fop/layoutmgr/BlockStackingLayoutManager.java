@@ -265,6 +265,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
         if (!firstVisibleMarkServed) {
             addKnuthElementsForSpaceBefore(returnList, alignment);
+            context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
         }
         
         addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
@@ -296,8 +297,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
-                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                //Propagate keep-with-previous up from the first child
+                context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+                childLC.clearKeepWithPreviousPending();
             }
             if (returnedList != null
                     && returnedList.size() == 1
@@ -364,9 +366,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 }
             }
             // propagate and clear
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, childLC.isKeepWithNextPending());
-            childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-            childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+            childLC.clearKeepsPending();
             prevLM = curLM;
         }
 
@@ -400,12 +401,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             wrapPositionElement(forcedBreakAfterLast, returnList, false);
         }
         
-        if (mustKeepWithNext()) {
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-        }
-        if (mustKeepWithPrevious()) {
-            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-        }
+        context.updateKeepWithNextPending(getKeepWithNextStrength());
         
         setFinished(true);
 
@@ -425,14 +421,15 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 || childLC.isKeepWithPreviousPending()) {
             
             int strength = getKeepTogetherStrength();
-            if (context.isKeepWithNextPending()) {
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                strength = KEEP_ALWAYS;
-            }
-            if (childLC.isKeepWithPreviousPending()) {
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
-                strength = KEEP_ALWAYS;
-            }
+            
+            //Handle pending keep-with-next
+            strength = Math.max(strength, context.getKeepWithNextPending());
+            context.clearKeepWithNextPending();
+            
+            //Handle pending keep-with-previous from child LM
+            strength = Math.max(strength, childLC.getKeepWithPreviousPending());
+            childLC.clearKeepWithPreviousPending();
+            
             int penalty = KeepUtil.getPenaltyForKeep(strength);
 
             // add a penalty to forbid or discourage a break between blocks
@@ -823,12 +820,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
-        return false;
+        return getKeepWithPreviousStrength() > KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
-        return false;
+        return getKeepWithNextStrength() > KEEP_AUTO;
     }
 
     /**
