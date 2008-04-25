@@ -5283,7 +5283,7 @@
           <li>[FOP Trunk] only has effect in PDF output, for external PDF destinations (links pointing to destinations
           in <i>another</i> PDF), and only works reliably when the PDF is viewed in a standalone PDF viewer.
           <p>Adobe's browser plugin, for example, ignores the <code>/NewWindow</code> flag.
-          <p>For links pointing to non-PDF destinations (e.g. </li>
+          </li>
         </ul>
       </td>
     </tr>
