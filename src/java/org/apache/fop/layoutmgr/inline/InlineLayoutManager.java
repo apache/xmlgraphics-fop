@@ -314,7 +314,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             // get KnuthElements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                childLC.clearKeepWithPreviousPending();
             }
             if (returnedList == null
                     || returnedList.size() == 0) {
@@ -324,7 +324,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             }
             
             if (curLM instanceof InlineLevelLayoutManager) {
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                context.clearKeepWithNextPending();
                 // "wrap" the Position stored in each element of returnedList
                 ListIterator seqIter = returnedList.listIterator();
                 while (seqIter.hasNext()) {
@@ -365,10 +365,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     returnList.add(sequence);
                 }
                 // propagate and clear
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING,
-                                 childLC.isKeepWithNextPending());
-                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+                childLC.clearKeepsPending();
             }
             lastSequence = (KnuthSequence) returnList.getLast();
             lastChildLM = curLM;

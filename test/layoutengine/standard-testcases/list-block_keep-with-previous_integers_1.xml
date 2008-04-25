@@ -23,9 +23,9 @@
     </p>
   </info>
   <fo>
-    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg" white-space-collapse="true" widows="0" orphans="0">
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" widows="0" orphans="0">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="4.5 * 14.4pt">
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="10 * 14.4pt">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
@@ -35,7 +35,7 @@
           <fo:list-block 
               provisional-distance-between-starts="25mm"
               provisional-label-separation="5mm" 
-              keep-with-previous.within-page="always">
+              keep-with-previous.within-column="1">
             <fo:list-item>
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>label1</fo:block>
@@ -57,15 +57,16 @@
           <fo:list-block 
               provisional-distance-between-starts="25mm"
               provisional-label-separation="5mm">
-            <fo:list-item>
+            <fo:list-item keep-with-previous.within-column="1">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>label1</fo:block>
               </fo:list-item-label>
               <fo:list-item-body start-indent="body-start()">
                 <fo:block>item1</fo:block>
+                <fo:block>item1</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item keep-with-previous.within-page="always">
+            <fo:list-item keep-with-previous.within-column="1">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>label2</fo:block>
               </fo:list-item-label>
@@ -75,23 +76,15 @@
             </fo:list-item>
           </fo:list-block>
           <fo:block>block3</fo:block>
-          <fo:list-block 
-              provisional-distance-between-starts="25mm"
-              provisional-label-separation="5mm">
-            <fo:list-item keep-with-previous.within-page="always">
+          <fo:list-block keep-with-previous.within-column="1"
+            provisional-distance-between-starts="25mm"
+            provisional-label-separation="5mm">
+            <fo:list-item keep-with-previous.within-column="2">
               <fo:list-item-label end-indent="label-end()">
-                <fo:block>label1</fo:block>
+                <fo:block keep-with-previous.within-column="always">label1</fo:block>
               </fo:list-item-label>
               <fo:list-item-body start-indent="body-start()">
                 <fo:block>item1</fo:block>
-              </fo:list-item-body>
-            </fo:list-item>
-            <fo:list-item>
-              <fo:list-item-label end-indent="label-end()">
-                <fo:block>label2</fo:block>
-              </fo:list-item-label>
-              <fo:list-item-body start-indent="body-start()">
-                <fo:block>item2</fo:block>
               </fo:list-item-body>
             </fo:list-item>
           </fo:list-block>
@@ -102,31 +95,32 @@
   </fo>
   <checks>
     <element-list category="breaker">
-      <box w="14400"/>
-      <penalty w="0" p="INF"/>
+      <box/>
+      <penalty w="0" p="999"/>
       <!-- list 1 starts -->
-      <box w="14400"/>
+      <box/>
       <penalty w="0" p="0"/>
-      <box w="14400"/>
+      <box/>
       <!-- list 1 end -->
       <penalty w="0" p="0"/>
-      <box w="14400"/>
-      <penalty w="0" p="0"/>
+      <box/>
+      <penalty w="0" p="999"/>
       <!-- list 2 starts -->
-      <box w="14400"/>
-      <penalty w="0" p="INF"/>
-      <box w="14400"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
       <!-- list 2 end -->
       <penalty w="0" p="0"/>
-      <box w="14400"/>
+      <box/>
       <penalty w="0" p="INF"/>
       <!-- list 3 starts -->
-      <box w="14400"/>
-      <penalty w="0" p="0"/>
-      <box w="14400"/>
+      <box/>
       <!-- list 3 end -->
       <penalty w="0" p="0"/>
-      <box w="14400"/>
+      <box/>
+      
       <skip>3</skip>
     </element-list>
   </checks>

@@ -32,6 +32,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
@@ -80,8 +81,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
     
-    private boolean keepWithNextPendingOnLabel;
-    private boolean keepWithNextPendingOnBody;
+    private int keepWithNextPendingOnLabel;
+    private int keepWithNextPendingOnBody;
 
     private int listItemHeight;
     
@@ -223,10 +224,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         SpaceResolver.resolveElementList(labelList);
         ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
         
-        if (childLC.isKeepWithPreviousPending()) {
-            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-        }
-        this.keepWithNextPendingOnLabel = childLC.isKeepWithNextPending();
+        context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+        this.keepWithNextPendingOnLabel = childLC.getKeepWithNextPending();
 
         // body
         childLC = new LayoutContext(0);
@@ -239,10 +238,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         SpaceResolver.resolveElementList(bodyList);
         ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
         
-        if (childLC.isKeepWithPreviousPending()) {
-            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-        }
-        this.keepWithNextPendingOnBody = childLC.isKeepWithNextPending();
+        context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+        this.keepWithNextPendingOnBody = childLC.getKeepWithNextPending();
 
         // create a combined list
         LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
@@ -254,12 +251,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         addKnuthElementsForSpaceAfter(returnList, alignment);
         addKnuthElementsForBreakAfter(returnList, context);
 
-        if (keepWithNextPendingOnLabel || keepWithNextPendingOnBody || mustKeepWithNext()) {
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-        }
-        if (mustKeepWithPrevious()) {
-            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-        }
+        context.updateKeepWithNextPending(this.keepWithNextPendingOnLabel);
+        context.updateKeepWithNextPending(this.keepWithNextPendingOnBody);
+        context.updateKeepWithNextPending(getKeepWithNextStrength());
+        context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
 
         setFinished(true);
         resetSpaces();
@@ -281,21 +276,17 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         int totalHeight = Math.max(fullHeights[0], fullHeights[1]);
         int step;
         int addedBoxHeight = 0;
-        boolean keepWithNextActive = false;
+        int keepWithNextActive = BlockLevelLayoutManager.KEEP_AUTO;
 
         LinkedList returnList = new LinkedList();
         while ((step = getNextStep(elementLists, start, end, partialHeights))
                > 0) {
             
             if (end[0] + 1 == elementLists[0].size()) {
-                if (keepWithNextPendingOnLabel) {
-                    keepWithNextActive = true;
-                }
+                keepWithNextActive = Math.max(keepWithNextActive, keepWithNextPendingOnLabel);
             }
             if (end[1] + 1 == elementLists[1].size()) {
-                if (keepWithNextPendingOnBody) {
-                    keepWithNextActive = true;
-                }
+                keepWithNextActive = Math.max(keepWithNextActive, keepWithNextPendingOnBody);
             }
             
             // compute penalty height and box height
@@ -327,12 +318,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                     start[0], end[0], start[1], end[1]);
             returnList.add(new KnuthBox(boxHeight, stepPosition, false));
             if (addedBoxHeight < totalHeight) {
+                int strength = BlockLevelLayoutManager.KEEP_AUTO;
+                strength = Math.max(strength, keepWithNextActive);
+                strength = Math.max(strength, getKeepTogetherStrength());
                 int p = stepPenalty;
-                if (keepWithNextActive) {
-                    p = KnuthPenalty.INFINITE;
-                }
-                if (mustKeepTogether()) {
-                    p = Math.max(p, KeepUtil.getPenaltyForKeep(getKeepTogetherStrength()));
+                if (p > -KnuthElement.INFINITE) {
+                    p = Math.max(p, KeepUtil.getPenaltyForKeep(strength));
                 }
                 returnList.add(new BreakElement(stepPosition, penaltyHeight, p, -1, context));
             }
@@ -637,26 +628,20 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public int getKeepTogetherStrength() {
-        int strength = KEEP_AUTO;
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getListItemFO().getKeepTogether().getWithinPage()));
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getListItemFO().getKeepTogether().getWithinColumn()));
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
+                getListItemFO().getKeepTogether());
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepWithPrevious() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return !getListItemFO().getKeepWithPrevious().getWithinPage().isAuto()
-            || !getListItemFO().getKeepWithPrevious().getWithinColumn().isAuto();
+    public int getKeepWithNextStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getListItemFO().getKeepWithNext());
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepWithNext() {
-        return !getListItemFO().getKeepWithNext().getWithinPage().isAuto()
-                || !getListItemFO().getKeepWithNext().getWithinColumn().isAuto();
+    public int getKeepWithPreviousStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getListItemFO().getKeepWithPrevious());
     }
 
     /** {@inheritDoc} */

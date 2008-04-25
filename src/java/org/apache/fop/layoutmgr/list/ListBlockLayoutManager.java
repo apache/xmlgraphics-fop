@@ -280,26 +280,20 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public int getKeepTogetherStrength() {
-        int strength = KEEP_AUTO;
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getListBlockFO().getKeepTogether().getWithinPage()));
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getListBlockFO().getKeepTogether().getWithinColumn()));
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
+                getListBlockFO().getKeepTogether());
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
     
     /** {@inheritDoc} */
-    public boolean mustKeepWithPrevious() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return !getListBlockFO().getKeepWithPrevious().getWithinPage().isAuto()
-            || !getListBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
+    public int getKeepWithNextStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getListBlockFO().getKeepWithNext());
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepWithNext() {
-        return !getListBlockFO().getKeepWithNext().getWithinPage().isAuto()
-                || !getListBlockFO().getKeepWithNext().getWithinColumn().isAuto();
+    public int getKeepWithPreviousStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getListBlockFO().getKeepWithPrevious());
     }
 
     /** {@inheritDoc} */

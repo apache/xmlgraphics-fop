@@ -165,18 +165,6 @@
     <reference>http://www.nabble.com/leaders-with-leader-pattern%3D%22use-content%22-t546244.html</reference>
   </testcase>
   <testcase>
-    <name>keep-with-previous doesn't work in lists</name>
-    <file>list-block_keep-with-previous.xml</file>
-    <description>Keep-with-previous doesn't work inside tables and
-    lists, yet.</description>
-  </testcase>
-  <testcase>
-    <name>keep-with-previous doesn't work in lists</name>
-    <file>list-item_block_keep-with-previous.xml</file>
-    <description>Keep-with-previous doesn't work inside tables and
-    lists, yet.</description>
-  </testcase>
-  <testcase>
     <name>Page breaking doesn't deal with IPD changes</name>
     <file>page-breaking_4.xml</file>
     <description>Page breaking currently doesn't support changing available IPD 

@@ -58,6 +58,11 @@
         Added SVG support for AFP (GOCA).
         </action>
       -->
+      <action context="Layout" dev="JM" type="add">
+        Added minimal support for integer keep values on the various keep properties on block-level
+        FOs. For now, all integer values are treated the same (i.e. without strength distinction).
+        Using integers allows to avoid overflows that can happen when "always" is used extensively.
+      </action>
       <action context="Renderers" dev="JM" type="add">
         Added support for rendering pages using JPS (Java Printing System). See new example:
         examples/embedding/java/ExamplesFO2JPSPrint.java

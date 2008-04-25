@@ -96,4 +96,14 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
         return getParentKeepTogetherStrength();
     }
     
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+    }
+
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
+    }
+    
 }

@@ -153,8 +153,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 log.debug("child LM signals pending keep with next");
             }
             if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
-                primaryGridUnit.setKeepWithPrevious();
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                primaryGridUnit.setKeepWithPreviousStrength(childLC.getKeepWithPreviousPending());
+                childLC.clearKeepWithPreviousPending();
             }
 
             if (prevLM != null) {
@@ -169,14 +169,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             }
             if (childLC.isKeepWithNextPending()) {
                 //Clear and propagate
-                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
+                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+                childLC.clearKeepWithNextPending();
             }
             prevLM = curLM;
         }
-        if (context.isKeepWithNextPending()) {
-            primaryGridUnit.setKeepWithNext();
-        }
+        primaryGridUnit.setKeepWithNextStrength(context.getKeepWithNextPending());
 
         returnedList = new LinkedList();
         if (contentList.size() > 0) {
@@ -569,24 +567,15 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
     
     /** {@inheritDoc} */
-    public boolean mustKeepWithPrevious() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return false; //TODO FIX ME
-        /*
-        return !fobj.getKeepWithPrevious().getWithinPage().isAuto()
-            || !fobj.getKeepWithPrevious().getWithinColumn().isAuto();
-            */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-next!)
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepWithNext() {
-        return false; //TODO FIX ME
-        /*
-        return !fobj.getKeepWithNext().getWithinPage().isAuto()
-            || !fobj.getKeepWithNext().getWithinColumn().isAuto();
-            */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-previous!)
     }
-
+    
     // --------- Property Resolution related functions --------- //
 
     /**

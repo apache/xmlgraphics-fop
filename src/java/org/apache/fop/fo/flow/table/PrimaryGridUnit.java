@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
 
@@ -53,8 +54,8 @@ public class PrimaryGridUnit extends GridUnit {
     private boolean isSeparateBorderModel;
     private int halfBorderSeparationBPD;
 
-    private boolean keepWithPrevious;
-    private boolean keepWithNext;
+    private int keepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+    private int keepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
     private int breakBefore = Constants.EN_AUTO;
     private int breakAfter = Constants.EN_AUTO;
 
@@ -328,37 +329,39 @@ public class PrimaryGridUnit extends GridUnit {
     }
 
     /**
-     * Returns true if the first child block (or its descendants) of this cell has
-     * keep-with-previous.
+     * Returns the strength of the keep constraint if the first child block (or its descendants)
+     * of this cell has keep-with-previous.
      * 
-     * @return the value of keep-with-previous
+     * @return the keep-with-previous strength
      */
-    public boolean mustKeepWithPrevious() {
+    public int getKeepWithPreviousStrength() {
         return keepWithPrevious;
     }
 
     /**
      * Don't use, reserved for TableCellLM. TODO
+     * @param strength the keep strength
      */
-    public void setKeepWithPrevious() {
-        this.keepWithPrevious = true;
+    public void setKeepWithPreviousStrength(int strength) {
+        this.keepWithPrevious = strength;
     }
 
     /**
-     * Returns true if the last child block (or its descendants) of this cell has
-     * keep-with-next.
+     * Returns the strength of the keep constraint if the last child block (or its descendants) of
+     * this cell has keep-with-next.
      * 
-     * @return the value of keep-with-next
+     * @return the keep-with-next strength
      */
-    public boolean mustKeepWithNext() {
+    public int getKeepWithNextStrength() {
         return keepWithNext;
     }
 
     /**
      * Don't use, reserved for TableCellLM. TODO
+     * @param strength the keep strength
      */
-    public void setKeepWithNext() {
-        this.keepWithNext = true;
+    public void setKeepWithNextStrength(int strength) {
+        this.keepWithNext = strength;
     }
 
     /**

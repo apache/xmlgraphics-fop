@@ -263,6 +263,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         if (!firstVisibleMarkServed) {
             addKnuthElementsForSpaceBefore(returnList, alignment);
+            context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
         }
         
         addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
@@ -284,6 +285,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+                    //Propagate keep-with-previous up from the first child
+                    context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+                    childLC.clearKeepWithPreviousPending();
+                }
                 if (returnedList.size() == 1
                         && ((ListElement)returnedList.getFirst()).isForcedBreak()) {
                     // a descendant of this block has break-before
@@ -329,6 +335,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                         return returnList;
                     }
                 }
+                // propagate and clear
+                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+                childLC.clearKeepsPending();
                 prevLM = curLM;
             }
 
@@ -376,6 +385,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         //All child content is processed. Only break-after can occur now, so...        
         context.clearPendingMarks();
         addKnuthElementsForBreakAfter(returnList, context);
+
+        context.updateKeepWithNextPending(getKeepWithNextStrength());
 
         setFinished(true);
         return returnList;
@@ -990,26 +1001,22 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public int getKeepTogetherStrength() {
-        int strength = KEEP_AUTO;
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getBlockContainerFO().getKeepTogether().getWithinPage()));
-        strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getBlockContainerFO().getKeepTogether().getWithinColumn()));
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
+                getBlockContainerFO().getKeepTogether());
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepWithPrevious() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return !getBlockContainerFO().getKeepWithPrevious().getWithinPage().isAuto()
-                || !getBlockContainerFO().getKeepWithPrevious().getWithinColumn().isAuto();
+    public int getKeepWithNextStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getBlockContainerFO().getKeepWithNext());
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepWithNext() {
-        return !getBlockContainerFO().getKeepWithNext().getWithinPage().isAuto()
-                || !getBlockContainerFO().getKeepWithNext().getWithinColumn().isAuto();
+    public int getKeepWithPreviousStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getBlockContainerFO().getKeepWithPrevious());
     }
 
     /**
@@ -1021,16 +1028,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
     // --------- Property Resolution related functions --------- //
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean getGeneratesReferenceArea() {
         return true;
     }
    
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean getGeneratesBlockArea() {
         return true;
     }
