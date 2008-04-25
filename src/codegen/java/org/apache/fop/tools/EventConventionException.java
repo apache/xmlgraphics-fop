@@ -19,8 +19,17 @@
 
 package org.apache.fop.tools;
 
+/**
+ * This exception is used to indicate a violation of the conventions for event producers.
+ */
 public class EventConventionException extends Exception {
 
+    private static final long serialVersionUID = 117244726033986628L;
+
+    /**
+     * Creates a new EventConventionException
+     * @param message the error message
+     */
     public EventConventionException(String message) {
         super(message);
     }
