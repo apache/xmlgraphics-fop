@@ -4764,7 +4764,8 @@
         <ul>
           <li>[0.20.5] works only in table rows</li>
 
-          <li>[0.94 and later] &lt;integer&gt; values are not supported.</li>
+          <li>[0.95 and earlier] &lt;integer&gt; values are not supported.</li>
+          <li>[Trunk] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
     </tr>
@@ -4793,7 +4794,8 @@
           <li>[0.94 and later] works on all implemented block-level FOs, but not on inline-level
           FOs.</li>
 
-          <li>[0.94 and later] &lt;integer&gt; values are not supported.</li>
+          <li>[0.95 and earlier] &lt;integer&gt; values are not supported.</li>
+          <li>[Trunk] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
     </tr>
@@ -4824,8 +4826,10 @@
 
           <li>[0.95] works on all implemented FOs, except list- and inline-level
           FOs.</li>
-
-          <li>[0.94 and later] &lt;integer&gt; values are not supported.</li>
+          <li>[Trunk] does not work on inline-level FOs.</li>
+          
+          <li>[0.95 and earlier] &lt;integer&gt; values are not supported.</li>
+          <li>[Trunk] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
     </tr>
@@ -5283,7 +5287,7 @@
           <li>[FOP Trunk] only has effect in PDF output, for external PDF destinations (links pointing to destinations
           in <i>another</i> PDF), and only works reliably when the PDF is viewed in a standalone PDF viewer.
           <p>Adobe's browser plugin, for example, ignores the <code>/NewWindow</code> flag.
-          <p>For links pointing to non-PDF destinations (e.g. </li>
+          </li>
         </ul>
       </td>
     </tr>

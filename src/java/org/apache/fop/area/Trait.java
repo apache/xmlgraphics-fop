@@ -461,21 +461,20 @@ public class Trait implements Serializable {
          * @return an <code>ExternalLink</code> instance corresponding to the given value
          */
         protected static ExternalLink makeFromTraitValue(String traitValue) {
-            if (traitValue.indexOf(ExternalLink.class.getName()) == -1
-                    || traitValue.indexOf("dest=") == -1) {
-                throw new IllegalArgumentException(
-                        "Malformed trait value for Trait.ExternalLink: " + traitValue);
+            String dest = null;
+            boolean newWindow = false;
+            String[] values = traitValue.split(",");
+            for (int i = 0, c = values.length; i < c; i++) {
+                String v = values[i];
+                if (v.startsWith("dest=")) {
+                    dest = v.substring(5);
+                } else if (v.startsWith("newWindow=")) {
+                    newWindow = Boolean.valueOf(v.substring(10)).booleanValue();
+                } else {
+                    throw new IllegalArgumentException(
+                            "Malformed trait value for Trait.ExternalLink: " + traitValue);
+                }
             }
-            int startIndex = traitValue.indexOf("dest=") + 5;
-            int endIndex = traitValue.indexOf(',', startIndex);
-            if (endIndex == -1) {
-                endIndex = traitValue.indexOf(']');
-            }
-            String dest = traitValue.substring(startIndex, endIndex);
-            startIndex = traitValue.indexOf("newWindow=", endIndex) + 10;
-            endIndex = traitValue.indexOf(']', startIndex);
-            boolean newWindow = Boolean.parseBoolean(
-                    traitValue.substring(startIndex, endIndex));
             return new ExternalLink(dest, newWindow);
         }
 
@@ -502,9 +501,8 @@ public class Trait implements Serializable {
          */
         public String toString() {
             StringBuffer sb = new StringBuffer(64);
-            sb.append(super.toString());
-            sb.append("[dest=").append(this.destination);
-            sb.append(",newWindow=").append(newWindow).append("]");
+            sb.append("newWindow=").append(newWindow);
+            sb.append(",dest=").append(this.destination);
             return sb.toString();
         }
     }

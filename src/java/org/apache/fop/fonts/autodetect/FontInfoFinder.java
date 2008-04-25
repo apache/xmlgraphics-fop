@@ -139,7 +139,7 @@ public class FontInfoFinder {
      * @param fontCache font cache (may be null)
      * @return
      */
-    private EmbedFontInfo fontInfoFromCustomFont(
+    private EmbedFontInfo getFontInfoFromCustomFont(
             URL fontUrl, CustomFont customFont, FontCache fontCache) {
         List fontTripletList = new java.util.ArrayList();
         generateTripletsFromFont(customFont, fontTripletList);
@@ -237,7 +237,7 @@ public class FontInfoFinder {
                     }
                     continue;
                 }
-                EmbedFontInfo fi = fontInfoFromCustomFont(fontUrl, customFont, fontCache);
+                EmbedFontInfo fi = getFontInfoFromCustomFont(fontUrl, customFont, fontCache);
                 if (fi != null) {
                     embedFontInfoList.add(fi);
                 } 
@@ -260,7 +260,7 @@ public class FontInfoFinder {
                 }
                 return null;
             }
-            EmbedFontInfo fi = fontInfoFromCustomFont(fontUrl, customFont, fontCache);
+            EmbedFontInfo fi = getFontInfoFromCustomFont(fontUrl, customFont, fontCache);
             if (fi != null) {
                 return new EmbedFontInfo[] {fi};
             } else {
