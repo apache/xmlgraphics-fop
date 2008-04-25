@@ -93,7 +93,7 @@ public class EventProducerCollector {
         for (int i = 0, c = classes.length; i < c; i++) {
             JavaClass clazz = classes[i];
             if (clazz.isInterface() && implementsInterface(clazz, CLASSNAME_EVENT_PRODUCER)) {
-                processEventProducerInterface(clazz, src.getName());
+                processEventProducerInterface(clazz);
             }
         }
     }
@@ -112,11 +112,10 @@ public class EventProducerCollector {
     /**
      * Processes an EventProducer interface and creates an EventProducerModel from it.
      * @param clazz the EventProducer interface
-     * @param javaFilename the filename of the Java source of the interface
      * @throws EventConventionException if the event producer conventions are violated
      * @throws ClassNotFoundException if a required class cannot be found
      */
-    protected void processEventProducerInterface(JavaClass clazz, String javaFilename)
+    protected void processEventProducerInterface(JavaClass clazz)
                 throws EventConventionException, ClassNotFoundException {
         EventProducerModel prodMeta = new EventProducerModel(clazz.getFullyQualifiedName());
         JavaMethod[] methods = clazz.getMethods(true);
