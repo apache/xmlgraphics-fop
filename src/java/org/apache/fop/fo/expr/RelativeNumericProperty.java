@@ -198,50 +198,61 @@ public class RelativeNumericProperty extends Property implements Length {
     }
 
     /**
-     * Return the number of table units which are included in this
-     * length specification.
-     * This will always be 0 unless the property specification used
-     * the proportional-column-width() function (only on table
-     * column FOs).
-     * <p>If this value is not 0, the actual value of the Length cannot
-     * be known without looking at all of the columns in the table to
-     * determine the value of a "table-unit".
-     * @return The number of table units which are included in this
-     * length specification.
+     * Return the number of table units which are included in this length
+     * specification. This will always be 0 unless the property specification
+     * used the proportional-column-width() function (only on table column FOs).
+     * <p>
+     * If this value is not 0, the actual value of the Length cannot be known
+     * without looking at all of the columns in the table to determine the value
+     * of a "table-unit".
+     * 
+     * @return The number of table units which are included in this length
+     *         specification.
      */
     public double getTableUnits() {
-    	double tu1 = 0.0, tu2 = 0.0;
-    	if (op1 instanceof RelativeNumericProperty) {
-    		tu1 = ((RelativeNumericProperty) op1).getTableUnits();
-    	} else if (op1 instanceof TableColLength) {
-    		tu1 = ((TableColLength) op1).getTableUnits();
-    	}
-    	if (op2 instanceof RelativeNumericProperty) {
-    		tu2 = ((RelativeNumericProperty) op2).getTableUnits();
-    	} else if (op2 instanceof TableColLength) {
-    		tu2 = ((TableColLength) op2).getTableUnits();
-    	}
-    	if (tu1 != 0.0 && tu2 != 0.0) {
-    		switch (operation) {
-    		case ADDITION: return tu1 + tu2;
-    		case SUBTRACTION: return tu1 - tu2;
-    		case MULTIPLY: return tu1 * tu2;
-    		case DIVIDE: return tu1 / tu2;
-    		case MODULO: return tu1 % tu2;
-    		case MIN: return Math.min(tu1, tu2);
-    		case MAX: return Math.max(tu1, tu2);
-    		default: assert false;
-    		}
-    	} else if (tu1 != 0.0) {
-    		switch (operation) {
-    		case NEGATE: return -tu1;
-    		case ABS: return Math.abs(tu1);
-    		default: return tu1;
-    		}
-    	} else if (tu2 != 0.0){
-    		return tu2;
-    	}
-    	return 0.0;
+        double tu1 = 0.0, tu2 = 0.0;
+        if (op1 instanceof RelativeNumericProperty) {
+            tu1 = ((RelativeNumericProperty) op1).getTableUnits();
+        } else if (op1 instanceof TableColLength) {
+            tu1 = ((TableColLength) op1).getTableUnits();
+        }
+        if (op2 instanceof RelativeNumericProperty) {
+            tu2 = ((RelativeNumericProperty) op2).getTableUnits();
+        } else if (op2 instanceof TableColLength) {
+            tu2 = ((TableColLength) op2).getTableUnits();
+        }
+        if (tu1 != 0.0 && tu2 != 0.0) {
+            switch (operation) {
+            case ADDITION:
+                return tu1 + tu2;
+            case SUBTRACTION:
+                return tu1 - tu2;
+            case MULTIPLY:
+                return tu1 * tu2;
+            case DIVIDE:
+                return tu1 / tu2;
+            case MODULO:
+                return tu1 % tu2;
+            case MIN:
+                return Math.min(tu1, tu2);
+            case MAX:
+                return Math.max(tu1, tu2);
+            default:
+                assert false;
+            }
+        } else if (tu1 != 0.0) {
+            switch (operation) {
+            case NEGATE:
+                return -tu1;
+            case ABS:
+                return Math.abs(tu1);
+            default:
+                return tu1;
+            }
+        } else if (tu2 != 0.0) {
+            return tu2;
+        }
+        return 0.0;
     }
 
     /**
