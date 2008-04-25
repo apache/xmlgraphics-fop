@@ -54,10 +54,13 @@
   <changes>
     <release version="FOP Trunk" date="TBD">
       <!-- change reverted, to be added back later
-        <action context="Renderers" dev="AC" importance="high" type="add">
+      <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
-        </action>
-      -->
+      </action -->
+      <action context="Code" dev="AD" type="add" fixes-bug="44634">
+        Add partial support for the "show-destination" property on fo:basic-link
+        (PDF output only; see limitations on the compliance page)
+      </action>
       <action context="Layout" dev="JM" type="add">
         Added minimal support for integer keep values on the various keep properties on block-level
         FOs. For now, all integer values are treated the same (i.e. without strength distinction).

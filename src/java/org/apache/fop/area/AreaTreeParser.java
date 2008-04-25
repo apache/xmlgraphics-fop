@@ -1018,7 +1018,7 @@ public class AreaTreeParser {
             Trait.IS_REFERENCE_AREA, Trait.IS_VIEWPORT_AREA};
 
         private void setTraits(Attributes attributes, Area area, Object[] traitSubset) {
-            for (int i = 0, c = traitSubset.length; i < c; i++) {
+            for (int i = traitSubset.length; --i >= 0;) {
                 Object trait = traitSubset[i];
                 String traitName = Trait.getTraitName(trait);
                 String value = attributes.getValue(traitName);
@@ -1044,6 +1044,8 @@ public class AreaTreeParser {
                         }
                     } else if (cl == InternalLink.class) {
                         area.addTrait(trait, new InternalLink(value));
+                    } else if (cl == Trait.ExternalLink.class) {
+                        area.addTrait(trait, Trait.ExternalLink.makeFromTraitValue(value));
                     } else if (cl == Background.class) {
                         Background bkg = new Background();
                         try {

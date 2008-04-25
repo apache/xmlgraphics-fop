@@ -68,8 +68,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     private static Log log = LogFactory.getLog(InlineLayoutManager.class);
 
-    private InlineLevel fobj;
-
     private CommonMarginInline inlineProps = null;
     private CommonBorderPaddingBackground borderProps = null;
 
@@ -105,7 +103,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     // The node should be FObjMixed
     public InlineLayoutManager(InlineLevel node) {
         super(node);
-        fobj = node;
     }
     
     private Inline getInlineFO() {
@@ -114,6 +111,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     
     /** {@inheritDoc} */
     public void initialize() {
+        InlineLevel fobj = (InlineLevel) this.fobj;
+
         int padding = 0;
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
         FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
@@ -555,7 +554,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         if (returnList instanceof BlockKnuthSequence) {
             return;
         }
-        CommonBorderPaddingBackground borderAndPadding = fobj.getCommonBorderPaddingBackground();
+        CommonBorderPaddingBackground borderAndPadding =
+                ((InlineLevel)fobj).getCommonBorderPaddingBackground();
         if (borderAndPadding != null) {
             int ipStart = borderAndPadding.getBorderStartWidth(false)
                          + borderAndPadding.getPaddingStart(false, this);
@@ -579,7 +579,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         if (returnList instanceof BlockKnuthSequence) {
             return;
         }
-        CommonBorderPaddingBackground borderAndPadding = fobj.getCommonBorderPaddingBackground();
+        CommonBorderPaddingBackground borderAndPadding =
+                ((InlineLevel)fobj).getCommonBorderPaddingBackground();
         if (borderAndPadding != null) {
             int ipEnd = borderAndPadding.getBorderEndWidth(false)
                         + borderAndPadding.getPaddingEnd(false, this);
