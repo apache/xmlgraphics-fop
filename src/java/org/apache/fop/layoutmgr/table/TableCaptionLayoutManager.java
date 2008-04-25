@@ -47,7 +47,7 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** @return the table-caption FO */
-    public TableCaption getTableCaption() {
+    public TableCaption getTableCaptionFO() {
         return (TableCaption)this.fobj;
     }
     
@@ -201,13 +201,31 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
         int strength = KEEP_AUTO;
         /* TODO Complete me!
         strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getTableCaption().getKeepTogether().getWithinPage()));
+                getTableCaptionFO().getKeepTogether().getWithinPage()));
         strength = Math.max(strength, KeepUtil.getKeepStrength(
-                getTableCaption().getKeepTogether().getWithinColumn()));
+                getTableCaptionFO().getKeepTogether().getWithinColumn()));
         */
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
     
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+        /* TODO Complete me!
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableCaptionFO().getKeepWithNext());
+        */
+    }
+
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
+        /* TODO Complete me!
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableCaptionFO().getKeepWithPrevious());
+        */
+    }
+
 }
 

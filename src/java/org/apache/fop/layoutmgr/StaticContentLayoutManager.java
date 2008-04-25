@@ -410,5 +410,15 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return KEEP_AUTO;
     }
     
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+    }
+
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
+    }
+    
 }
 

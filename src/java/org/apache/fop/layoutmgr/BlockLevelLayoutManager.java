@@ -56,10 +56,22 @@ public interface BlockLevelLayoutManager extends LayoutManager {
     boolean mustKeepTogether();
 
     /**
+     * Returns the keep-with-previous strength for this element.
+     * @return the keep-with-previous strength
+     */
+    int getKeepWithPreviousStrength();
+    
+    /**
      * @return true if this element must be kept with the previous element.
      */
     boolean mustKeepWithPrevious();
 
+    /**
+     * Returns the keep-with-next strength for this element.
+     * @return the keep-with-next strength
+     */
+    int getKeepWithNextStrength();
+    
     /**
      * @return true if this element must be kept with the next element.
      */

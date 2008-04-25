@@ -24,11 +24,13 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -70,7 +72,7 @@ class ActiveCell {
     /** True if the next CellPart that will be created will be the last one for this cell. */
     private boolean lastCellPart;
 
-    private boolean keepWithNextSignal;
+    private int keepWithNextStrength;
 
     private int spanIndex = 0;
 
@@ -202,7 +204,7 @@ class ActiveCell {
         includedLength = -1;  // Avoid troubles with cells having content of zero length
         totalLength = previousRowsLength + ElementListUtils.calcContentLength(elementList);
         endRowIndex = rowIndex + pgu.getCell().getNumberRowsSpanned() - 1;
-        keepWithNextSignal = false;
+        keepWithNextStrength = BlockLevelLayoutManager.KEEP_AUTO;
         remainingLength = totalLength - previousRowsLength;
 
         afterNextStep = new Step(previousRowsLength);
@@ -506,14 +508,14 @@ class ActiveCell {
      */
     CellPart createCellPart() {
         if (nextStep.end + 1 == elementList.size()) {
-            keepWithNextSignal = pgu.mustKeepWithNext();
+            keepWithNextStrength = pgu.getKeepWithNextStrength();
             // TODO if keep-with-next is set on the row, must every cell of the row
             // contribute some content from children blocks?
             // see http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-dev/200802.mbox/
             // %3c47BDA379.4050606@anyware-tech.com%3e
             // Assuming no, but if yes the following code should enable this behaviour
 //            if (pgu.getRow() != null && pgu.getRow().mustKeepWithNext()) {
-//                keepWithNextSignal = true;
+//                keepWithNextSignal = true; //to be converted to integer strengths
 //            }
         }
         int bpBeforeFirst;
@@ -536,8 +538,8 @@ class ActiveCell {
         }
     }
 
-    boolean keepWithNextSignal() {
-        return keepWithNextSignal;
+    int getKeepWithNextStrength() {
+        return keepWithNextStrength;
     }
 
     

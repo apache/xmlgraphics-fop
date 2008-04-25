@@ -107,8 +107,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             //log.debug("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
             if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
-                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+                childLC.clearKeepWithPreviousPending();
             }
 
             // "wrap" the Position inside each element
@@ -124,20 +124,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 return returnList;
             } else {
                 if (returnList.size() > 0) {
-                    // there is a block before this one
-                    if (context.isKeepWithNextPending()
-                            || childLC.isKeepWithPreviousPending()) {
-                        //Clear pending keep flag
-                        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                        childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
-                        // add an infinite penalty to forbid a break between blocks
-                        returnList.add(new BreakElement(
-                                new Position(this), KnuthElement.INFINITE, context));
-                    } else if (!((ListElement) returnList.getLast()).isGlue()) {
-                        // add a null penalty to allow a break between blocks
-                        returnList.add(new BreakElement(
-                                new Position(this), 0, context));
-                    }
+                    addInBetweenBreak(returnList, context, childLC);
                 }
                 if (returnedList.size() > 0) {
                     returnList.addAll(returnedList);
@@ -155,11 +142,12 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                     }
                 }
             }
-            if (childLC.isKeepWithNextPending()) {
-                //Clear and propagate
-                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-            }
+
+            //Propagate and clear
+            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+            childLC.clearKeepWithNextPending();
+            
+            context.updateKeepWithNextPending(getKeepWithNextStrength());
         }
 
         SpaceResolver.resolveElementList(returnList);
@@ -213,18 +201,16 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
     
     /** {@inheritDoc} */
-    public boolean mustKeepWithPrevious() {
-        return false;
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
-    public boolean mustKeepWithNext() {
-        return false;
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
     }
-
-    /**
-     * {@inheritDoc} 
-     */
+    
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/ int alignment) {
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement returnedElement;
@@ -357,6 +343,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     public int getContentAreaBPD() {
         return (int) getCurrentPV().getBodyRegion().getBPD();
     }
-    
+
 }
 
