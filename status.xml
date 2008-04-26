@@ -57,6 +57,11 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
       </action -->
+      <action context="Code" dev="AD" type="fix" fixed-bug="44203">
+        Fixed a logic error in Hyphenator.java:
+        If the source had an associated InputStream, an UnsupportedOperationException was
+        triggered.
+      </action>
       <action context="Code" dev="AD" type="add" fixes-bug="44634">
         Add partial support for the "show-destination" property on fo:basic-link
         (PDF output only; see limitations on the compliance page)
