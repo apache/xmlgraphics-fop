@@ -60,7 +60,6 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     
     /** child LM and child LM iterator during getNextKnuthElement phase */
     protected LayoutManager curChildLM = null;
-    /** child LM and child LM iterator during getNextKnuthElement phase */
     protected ListIterator childLMiter = null;
     
     private int lastGeneratedPosition = -1;
@@ -231,6 +230,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     
     /**
      * @see PageSequenceLayoutManager#getCurrentPage()
+     * @return the {@link Page} instance corresponding to the current page
      */
     public Page getCurrentPage() {
         return getPSLM().getCurrentPage();
@@ -344,7 +344,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * @param targetArea the area to set the attributes on
      */
     protected void transferForeignAttributes(Area targetArea) {
-        Map atts = getFObj().getForeignAttributes();
+        Map atts = fobj.getForeignAttributes();
         targetArea.setForeignAttributes(atts);
     }
     
@@ -373,7 +373,17 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             getPSLM().addIDToPage(fobj.getId());
         }
     }
-    
+
+    /**
+     * Notifies the {@link PageSequenceLayoutManager} that layout
+     * for this LM has ended.
+     */
+    protected void notifyEndOfLayout() {
+        if (fobj != null) {
+            getPSLM().notifyEndOfLayout(fobj.getId());
+        }
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));

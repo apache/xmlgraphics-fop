@@ -172,7 +172,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
         curBlockArea = null;
         
-        getPSLM().notifyEndOfLayout(fobj.getId());
+        notifyEndOfLayout();
     }
 
     /**
@@ -236,6 +236,6 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     public int getKeepWithPreviousStrength() {
         return KEEP_AUTO;
     }
-    
+
 }
 

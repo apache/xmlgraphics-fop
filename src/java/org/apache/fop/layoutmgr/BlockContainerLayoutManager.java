@@ -442,8 +442,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     }
                 }
             } else {
-                int maxbpd = context.getStackLimitBP().opt;
-                allocBPD = maxbpd;
+                allocBPD = context.getStackLimitBP().opt;
                 if (!switchedProgressionDirection) {
                     autoHeight = true;
                 }
@@ -601,13 +600,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
         
         public boolean isOverflow() {
-            if (isEmpty()) {
-                return false;
-            } else {
-                return (deferredAlg.getPageBreaks().size() > 1)
-                    || (deferredAlg.totalWidth - deferredAlg.totalShrink) 
-                            > deferredAlg.getLineWidth();
-            }
+            return !isEmpty()
+                    && ((deferredAlg.getPageBreaks().size() > 1)
+                        || (deferredAlg.totalWidth - deferredAlg.totalShrink)
+                            > deferredAlg.getLineWidth());
         }
         
         public int getOverflowAmount() {
@@ -879,8 +875,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         viewportBlockArea = null;
         referenceArea = null;
         resetSpaces();
-        
-        getPSLM().notifyEndOfLayout(fobj.getId());
+
+        notifyEndOfLayout();
     }
     
     /**
