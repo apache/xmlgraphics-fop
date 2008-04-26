@@ -35,22 +35,13 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Class modelling the fo:character object. 
- * Its use is defined by the spec: 
- * "The fo:character flow object represents a character that is mapped to
- *  a glyph for presentation. It is an atomic unit to the formatter.
- *  When the result tree is interpreted as a tree of formatting objects,
- *  a character in the result tree is treated as if it were an empty
- *  element of type fo:character with a character attribute
- *  equal to the Unicode representation of the character.
- *  The semantics of an "auto" value for character properties, which is
- *  typically their initial value,  are based on the Unicode codepoint.
- *  Overrides may be specified in an implementation-specific manner." (6.6.3)
- *
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_character">
+ * <code>fo:character</code></a> object.
  */
 public class Character extends FObj {
     // The value of properties relevant for fo:character.
@@ -63,8 +54,8 @@ public class Character extends FObj {
     private char character;
     private Color color;
     private int dominantBaseline;
-    // private ToBeImplementedProperty glyphOrientationHorizontal;
-    // private ToBeImplementedProperty glyphOrientationVertical;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
     private Property letterSpacing;
     private SpaceProperty lineHeight;
     /** Holds the text decoration values. May be null */
@@ -75,11 +66,11 @@ public class Character extends FObj {
     //     private CommonAural commonAural;
     //     private CommonMarginInline commonMarginInline;
     //     private CommonRelativePosition commonRelativePosition;
+    //     private ToBeImplementedProperty glyphOrientationHorizontal;
+    //     private ToBeImplementedProperty glyphOrientationVertical;
     //     private int treatAsWordSpace;
     //     private Length textDepth;
     //     private Length textAltitude;
-    //     private KeepProperty keepWithNext;
-    //     private KeepProperty keepWithPrevious;
     //     private int scoreSpaces;
     //     private int suppressAtLineBreak;
     //     private int textTransform;
@@ -92,15 +83,13 @@ public class Character extends FObj {
     public static final int DOESNOT_FIT = 1;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * @param parent {@link FONode} that is the parent of this object
      */
     public Character(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -113,18 +102,15 @@ public class Character extends FObj {
         character = pList.get(PR_CHARACTER).getCharacter();
         color = pList.get(PR_COLOR).getColor(getUserAgent());
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        // glyphOrientationHorizontal = pList.get(PR_GLYPH_ORIENTATION_HORIZONTAL);
-        // glyphOrientationVertical = pList.get(PR_GLYPH_ORIENTATION_VERTICAL);
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         textDecoration = pList.getTextDecorationProps();
-        // textShadow = pList.get(PR_TEXT_SHADOW);
         wordSpacing = pList.get(PR_WORD_SPACING);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().character(this);
@@ -132,7 +118,7 @@ public class Character extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -141,86 +127,62 @@ public class Character extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public CharIterator charIterator() {
         return new FOCharIterator(this);
     }
 
-    /**
-     * @return the Common Border, Padding, and Background Properties.
-     */
+    /** @return the Common Border, Padding, and Background Properties */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
-    /**
-     * @return the Common Font Properties.
-     */
+    /** @return the Common Font Properties */
     public CommonFont getCommonFont() {
         return commonFont;
     }
 
-    /**
-     * @return the Common Hyphenation Properties.
-     */
+    /** @return the Common Hyphenation Properties */
     public CommonHyphenation getCommonHyphenation() {
         return commonHyphenation;
     }
 
-    /**
-     * @return the "character" property.
-     */
+    /** @return the "character" property */
     public char getCharacter() {
         return character;
     }
 
-    /**
-     * @return the "color" property.
-     */
+    /** @return the "color" property */
     public Color getColor() {
         return color;
     }
 
-    /**
-     * @return the "alignment-adjust" property
-     */
+    /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
     
-    /**
-     * @return the "alignment-baseline" property
-     */
+    /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
     
-    /**
-     * @return the "baseline-shift" property
-     */
+    /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
     
-    /**
-     * @return the "dominant-baseline" property
-     */
+    /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
     
-    /**
-     * @return the "letter-spacing" property.
-     */
+    /** @return the "letter-spacing" property */
     public Property getLetterSpacing() {
         return letterSpacing; 
     }
 
-    /**
-     * @return the "line-height" property.
-     */
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
@@ -230,13 +192,21 @@ public class Character extends FObj {
         return textDecoration; 
     }
     
-    /**
-     * @return the "word-spacing" property.
-     */
+    /** @return the "word-spacing" property */
     public Property getWordSpacing() {
         return wordSpacing; 
     }
 
+    /** @return the "keep-with-next" property */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+    
+    /** @return the "keep-with-previous" property */
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+    
     /** {@inheritDoc} */
     public String getLocalName() {
         return "character";
@@ -244,6 +214,7 @@ public class Character extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_CHARACTER}
      */
     public int getNameId() {
         return FO_CHARACTER;
