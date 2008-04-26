@@ -21,7 +21,6 @@ package org.apache.fop.fo.pagination.bookmarks;
 
 // Java
 import java.util.ArrayList;
-import java.util.List;
 
 import org.xml.sax.Locator;
 
@@ -32,17 +31,18 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.pagination.Root;
 
 /**
- * The fo:bookmark-tree formatting object, first introduced in the 
- * XSL 1.1 WD.  Prototype version only, subject to change as XSL 1.1 WD
- * evolves.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_bookmark-tree">
+ * <code>fo:bookmark-tree</code></a> object, first introduced in the
+ * XSL 1.1 WD.
  */
 public class BookmarkTree extends FObj {
     private ArrayList bookmarks = new ArrayList();
 
     /**
-     * Creates a new bookmark-tree element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a new BookmarkTree object that is a child
+     * of the given {@link FONode}.
+     *
+     * @param parent the {@link FONode} parent
      */
     public BookmarkTree(FONode parent) {
         super(parent);
@@ -55,10 +55,8 @@ public class BookmarkTree extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected void endOfNode() throws FOPException {
+    /** {@inheritDoc} */
+        protected void endOfNode() throws FOPException {
         if (bookmarks == null) {
            missingChildElementError("(fo:bookmark+)");
         }
@@ -67,7 +65,7 @@ public class BookmarkTree extends FObj {
 
     /**
      * {@inheritDoc}
-        XSL/FOP: (bookmark+)
+     * <br>XSL/FOP: (bookmark+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -79,10 +77,10 @@ public class BookmarkTree extends FObj {
     }
 
     /**
-     * Returns the root bookmarks.
-     * @return the root bookmarks
+     * Get the descendant {@link Bookmark}s.
+     * @return an <code>ArrayList</code> containing the {@link Bookmark} objects.
      */
-    public List getBookmarks() {
+    public ArrayList getBookmarks() {
         return bookmarks;
     }
 
@@ -91,7 +89,10 @@ public class BookmarkTree extends FObj {
         return "bookmark-tree";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_BOOKMARK_TREE}
+     */
     public int getNameId() {
         return FO_BOOKMARK_TREE;
     }

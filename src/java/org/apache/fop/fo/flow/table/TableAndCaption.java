@@ -28,7 +28,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:table-and-caption property.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-and-caption">
+ * <code>fo:table-and-caption</code></a> property.
  * @todo needs implementation
  */
 public class TableAndCaption extends FObj {
@@ -56,6 +57,8 @@ public class TableAndCaption extends FObj {
     private boolean tableFound = false;
 
     /**
+     * Create a TableAndCaption instance with the given {@link FONode}
+     * as parent.
      * @param parent FONode that is the parent of this object
      */
     public TableAndCaption(FONode parent) {
@@ -81,7 +84,7 @@ public class TableAndCaption extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* table-caption? table
+     * <br>XSL Content Model: marker* table-caption? table
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -120,6 +123,7 @@ public class TableAndCaption extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_AND_CAPTION}
      */
     public int getNameId() {
         return FO_TABLE_AND_CAPTION;

@@ -23,7 +23,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 
 /**
- * Class modelling the fo:page-number-citation-last object from XSL 1.1.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation-last">
+ * <code>fo:page-number-citation-last</code></a> object from XSL 1.1.
  * This inline fo is replaced with the text for a page number.
  * The page number used is the page that contains the end of the
  * block referenced with the ref-id attribute.
@@ -33,7 +34,8 @@ public class PageNumberCitationLast extends AbstractPageNumberCitation {
 
     /**
      * Main constructor
-     * @param parent the parent FO node
+     * 
+     * @param parent the parent {@link FONode}
      */
     public PageNumberCitationLast(FONode parent) {
         super(parent);
@@ -56,7 +58,10 @@ public class PageNumberCitationLast extends AbstractPageNumberCitation {
         return "page-number-citation-last";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_PAGE_NUMBER_CITATION_LAST}
+     */
     public int getNameId() {
         return FO_PAGE_NUMBER_CITATION_LAST;
     }

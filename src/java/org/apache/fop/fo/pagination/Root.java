@@ -34,7 +34,9 @@ import org.apache.fop.fo.extensions.destination.Destination;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 
 /**
- * The fo:root formatting object. Contains page masters, page-sequences.
+ * Class modeling the <a href="http://www.w3.org/TR/xsl/#fo_root">
+ * <code>fo:root</code></a> formatting object.
+ * Contains page masters, page-sequences.
  */
 public class Root extends FObj {
     // The value of properties relevant for fo:root.
@@ -62,16 +64,14 @@ public class Root extends FObj {
     private FOEventHandler foEventHandler = null;
      
     /**
-     * Creates a new root element.
-     * @param parent the parent node (must be null)
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
+     * Note: parent should be null for the fo:root.
      */
     public Root(FONode parent) {
         super(parent);
         pageSequences = new java.util.ArrayList();
-        if (parent != null) {
-            //throw new FOPException("root must be root element");
-        }
     }
 
     /** {@inheritDoc} */
@@ -89,8 +89,8 @@ public class Root extends FObj {
 
     /**
      * {@inheritDoc}
-        XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
-        FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
+     * <br>XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
+     * <br>FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
@@ -137,6 +137,13 @@ public class Root extends FObj {
         }
     }
     
+
+    /** @inheritDoc */
+    protected void validateChildNode(Locator loc, FONode child) throws ValidationException {
+        if (child instanceof AbstractPageSequence) {
+            pageSequenceFound = true;
+        }
+    }
 
     /**
      * Sets the FOEventHandler object that this Root is attached to
@@ -295,7 +302,10 @@ public class Root extends FObj {
         return "root";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_ROOT}
+     */
     public int getNameId() {
         return FO_ROOT;
     }

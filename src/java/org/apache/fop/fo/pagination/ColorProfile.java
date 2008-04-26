@@ -19,16 +19,18 @@
 
 package org.apache.fop.fo.pagination;
 
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
+import org.xml.sax.Locator;
+
 /**
- * The fo:color-profile formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_color-profile">
+ * <code>fo:color-profile</code></a> object.
+ *
  * This loads the color profile when needed and resolves a requested color.
  */
 public class ColorProfile extends FObj {
@@ -39,9 +41,9 @@ public class ColorProfile extends FObj {
     // End of property values
 
     /**
-     * Creates a new color-profile element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public ColorProfile(FONode parent) {
         super(parent);
@@ -56,7 +58,7 @@ public class ColorProfile extends FObj {
 
     /**
      * {@inheritDoc}
-        XSL 1.0/FOP: EMPTY (no child nodes permitted)
+     * <br>XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -66,8 +68,7 @@ public class ColorProfile extends FObj {
     }
 
     /**
-     * Return the "color-profile-name" property.
-     * @return the color-profile-name property
+     * @return the "color-profile-name" property.
      */
     public String getColorProfileName() {
         return colorProfileName;
@@ -78,7 +79,10 @@ public class ColorProfile extends FObj {
         return "color-profile";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_COLOR_PROFILE}
+     */
     public int getNameId() {
         return FO_COLOR_PROFILE;
     }
@@ -86,7 +90,7 @@ public class ColorProfile extends FObj {
     /** 
      * Get src attribute
      * 
-     * @return Value of color-profile src attribute
+     * @return value of color-profile src attribute
      */
     public String getSrc() {
         return this.src;

@@ -29,7 +29,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * A conditional-page-master-reference formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_conditional-page-master-reference">
+ * <code>fo:conditional-page-master-reference</code></a> object.
+ * 
  * This is a reference to a page master with a set of conditions.
  * The conditions must be satisfied for the referenced master to
  * be used.
@@ -45,9 +47,10 @@ public class ConditionalPageMasterReference extends FObj {
     // End of property values
     
     /**
-     * Creates a new conditional-page-master-reference element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a ConditionalPageMasterReference instance that is a
+     * child of the given {@link FONode}.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public ConditionalPageMasterReference(FONode parent) {
         super(parent);
@@ -76,13 +79,11 @@ public class ConditionalPageMasterReference extends FObj {
     
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-                throws ValidationException {
-        if (FO_URI.equals(nsURI)) {
-            invalidChildError(loc, nsURI, localName);
-        }
+           throws ValidationException {
+       invalidChildError(loc, nsURI, localName);
     }
 
     /**
@@ -150,12 +151,18 @@ public class ConditionalPageMasterReference extends FObj {
         return true;
     }
 
-    /** @return the "master-reference" property. */
+    /**
+     * Get the value for the <code>master-reference</code> property.
+     * @return the "master-reference" property
+     */
     public String getMasterReference() {
         return masterReference;
     }
     
-    /** @return the page-position property value */
+    /**
+     * Get the value for the <code>page-position</code> property.
+     * @return the page-position property value
+     */
     public int getPagePosition() {
         return this.pagePosition;
     }
@@ -165,7 +172,10 @@ public class ConditionalPageMasterReference extends FObj {
         return "conditional-page-master-reference";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_CONDITIONAL_PAGE_MASTER_REFERENCE}
+     */
     public int getNameId() {
         return FO_CONDITIONAL_PAGE_MASTER_REFERENCE;
     }

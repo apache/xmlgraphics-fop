@@ -20,21 +20,19 @@
 package org.apache.fop.fo.pagination.bookmarks;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 
 /**
- * The fo:bookmark formatting object, first introduced in the 
- * XSL 1.1 WD.  Prototype version only, subject to change as
- * XSL 1.1 WD evolves.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_bookmark">
+ * <code>fo:bookmark</code></a> object, first introduced in the 
+ * XSL 1.1 WD.
  */
 public class Bookmark extends FObj {
     private BookmarkTitle bookmarkTitle;
@@ -50,7 +48,8 @@ public class Bookmark extends FObj {
 
 
     /**
-     * Create a new bookmark object.
+     * Create a new Bookmark object that is a child of the
+     * given {@link FONode}.
      *
      * @param parent the parent fo node
      */
@@ -58,9 +57,7 @@ public class Bookmark extends FObj {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
@@ -80,7 +77,7 @@ public class Bookmark extends FObj {
 
     /**
      * {@inheritDoc}
-        XSL/FOP: (bookmark-title, bookmark*)
+     * <br>XSL/FOP: (bookmark-title, bookmark*)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -99,18 +96,14 @@ public class Bookmark extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (bookmarkTitle == null) {
            missingChildElementError("(bookmark-title, bookmark*)");
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode obj) {
         if (obj instanceof BookmarkTitle) {
             bookmarkTitle = (BookmarkTitle)obj;
@@ -155,10 +148,10 @@ public class Bookmark extends FObj {
     }
 
     /**
-     * Returns a list of child bookmarks.
-     * @return the list of child bookmarks
+     * Get the child <code>Bookmark</code>s in an <code>java.util.ArrayList</code>.
+     * @return an <code>ArrayList</code> containing the child Bookmarks
      */
-    public List getChildBookmarks() {
+    public ArrayList getChildBookmarks() {
         return childBookmarks;
     }
 
@@ -167,7 +160,10 @@ public class Bookmark extends FObj {
         return "bookmark";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_BOOKMARK}
+     */
     public int getNameId() {
         return FO_BOOKMARK;
     }

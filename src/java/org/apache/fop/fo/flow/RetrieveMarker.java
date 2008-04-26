@@ -21,8 +21,6 @@ package org.apache.fop.fo.flow;
 
 import java.util.Iterator;
 
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
@@ -32,6 +30,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableFObj;
+import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:retrieve-marker object.
@@ -48,9 +47,10 @@ public class RetrieveMarker extends FObjMixed {
     private PropertyList propertyList;
 
     /**
-     * Create a retrieve marker object.
-     * @param parent FONode that is the parent of this object
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a new RetrieveMarker instance that is a
+     * child of the given {@link FONode}.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public RetrieveMarker(FONode parent) {
         super(parent);
@@ -59,26 +59,27 @@ public class RetrieveMarker extends FObjMixed {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_STATIC_CONTENT) < 0) {
-            invalidChildError(locator, getParent().getName(), FO_URI, getName(), 
+            invalidChildError(locator, getParent().getName(), FO_URI, getName(),
                 "rule.retrieveMarkerDescendatOfStaticContent");
         }
 
         retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();
         retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
         retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
-        
+
         if (retrieveClassName == null || retrieveClassName.equals("")) {
             missingPropertyError("retrieve-class-name");
         }
-        
+
         propertyList = pList.getParentPropertyList();
+        super.bind(pList);
     }
-    
+
     /**
      * {@inheritDoc}
      * XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -105,7 +106,7 @@ public class RetrieveMarker extends FObjMixed {
     public int getRetrieveBoundary() {
         return retrieveBoundary;
     }
-    
+
     private PropertyList createPropertyListFor(FObj fo, PropertyList parent) {
         return getFOEventHandler().getPropertyListMaker().make(fo, parent);
     }
@@ -120,7 +121,7 @@ public class RetrieveMarker extends FObjMixed {
                 Marker.MarkerPropertyList pList;
                 PropertyList newPropertyList = createPropertyListFor(
                             (FObj) newChild, parentPropertyList);
-                
+
                 pList = marker.getPropertyListFor(child);
                 newChild.processNode(
                         child.getLocalName(),
@@ -159,7 +160,7 @@ public class RetrieveMarker extends FObjMixed {
             }
         }
     }
-    
+
     /**
      * Clone the FO nodes in the parent iterator,
      * attach the new nodes to the new parent,
@@ -178,7 +179,7 @@ public class RetrieveMarker extends FObjMixed {
             FONode child;
             while (parentIter.hasNext()) {
                 child = (FONode) parentIter.next();
-                cloneSingleNode(child, newParent, 
+                cloneSingleNode(child, newParent,
                         marker, parentPropertyList);
             }
         }
@@ -191,14 +192,14 @@ public class RetrieveMarker extends FObjMixed {
             currentTextNode = null;
             firstChild = null;
         }
-        cloneSubtree(marker.getChildNodes(), this, 
+        cloneSubtree(marker.getChildNodes(), this,
                         marker, propertyList);
         handleWhiteSpaceFor(this);
     }
 
     /**
      * Clone the subtree of the given marker
-     * 
+     *
      * @param marker the marker that is to be cloned
      */
     public void bindMarker(Marker marker) {
@@ -213,7 +214,6 @@ public class RetrieveMarker extends FObjMixed {
         } else if (log.isDebugEnabled()) {
             log.debug("Empty marker retrieved...");
         }
-        return;
     }
 
     /** {@inheritDoc} */
@@ -221,7 +221,10 @@ public class RetrieveMarker extends FObjMixed {
         return "retrieve-marker";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_RETRIEVE_MARKER}
+     */
     public int getNameId() {
         return FO_RETRIEVE_MARKER;
     }    

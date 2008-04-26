@@ -22,20 +22,22 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
+// FOP
+import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
-import org.apache.fop.fo.FONode;
 
 /**
- * The fo:region-end element.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-end">
+ * <code>fo:region-end</code></a> object.
  */
 public class RegionEnd extends RegionSE {
 
     /**
-     * Creates a new region-end element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionEnd instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     public RegionEnd(FONode parent) {
         super(parent);
@@ -90,7 +92,10 @@ public class RegionEnd extends RegionSE {
         return "region-end";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REGION_END}
+     */
     public int getNameId() {
         return FO_REGION_END;
     }

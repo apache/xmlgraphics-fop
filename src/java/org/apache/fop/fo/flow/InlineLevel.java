@@ -25,8 +25,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginInline;
@@ -40,71 +38,69 @@ import org.apache.fop.fo.properties.SpaceProperty;
 public abstract class InlineLevel extends FObjMixed {
     
     // The value of properties relevant for inline-level FOs.
-    protected CommonBorderPaddingBackground commonBorderPaddingBackground;
-    protected CommonAccessibility commonAccessibility;
-    protected CommonMarginInline commonMarginInline;
-    protected CommonAural commonAural;
-    protected CommonFont commonFont;
-    protected Color color;
-    protected SpaceProperty lineHeight;
-    protected int visibility;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonMarginInline commonMarginInline;
+    private CommonFont commonFont;
+    private Color color;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    private SpaceProperty lineHeight;
     // End of property values
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     protected InlineLevel(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonAccessibility = pList.getAccessibilityProps();
         commonMarginInline = pList.getMarginInlineProps();
-        commonAural = pList.getAuralProps();
         commonFont = pList.getFontProps();
         color = pList.get(PR_COLOR).getColor(getUserAgent());
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
-        visibility = pList.get(PR_VISIBILITY).getEnum();
     }
 
-    /**
-     * @return the Common Margin Properties-Inline.
-     */
+    /** @return the {@link CommonMarginInline} */
     public CommonMarginInline getCommonMarginInline() {
         return commonMarginInline;
     }
 
-    /**
-     * @return the Common Border, Padding, and Background Properties.
-     */
+    /** @return the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     } 
 
-    /**
-     * @return the Common Font Properties.
-     */
+    /** @return the {@link CommonFont} */
     public CommonFont getCommonFont() {
         return commonFont;
     }
 
-    /**
-     * @return the "color" property.
-     */
+    /** @return the "color" property */
     public Color getColor() {
         return color;
     }
 
-    /**
-     * @return the "line-height" property
-     */
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
+    }
+    
+    /** @return the "keep-with-next" property */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+    
+    /** @return the "keep-with-previous" property */
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
     }
     
 }

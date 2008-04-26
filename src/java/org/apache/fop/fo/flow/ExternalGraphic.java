@@ -58,7 +58,8 @@ public class ExternalGraphic extends AbstractGraphics {
     private Length intrinsicAlignmentAdjust;
     
     /**
-     * Create a new External graphic node.
+     * Create a new ExternalGraphic node that is a child
+     * of the given {@link FONode}.
      *
      * @param parent the parent of this node
      */
@@ -134,7 +135,10 @@ public class ExternalGraphic extends AbstractGraphics {
         return "external-graphic";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_EXTERNAL_GRAPHIC}
+     */
     public int getNameId() {
         return FO_EXTERNAL_GRAPHIC;
     }
