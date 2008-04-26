@@ -32,7 +32,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 
 /**
- * A repeatable-page-master-alternatives formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_repeatable-page-master-alternatives">
+ * <code>fo:repeatable-page-master-alternatives</code></a> object.
  * This contains a list of conditional-page-master-reference
  * and the page master is found from the reference that
  * matches the page number and emptyness.
@@ -52,9 +53,9 @@ public class RepeatablePageMasterAlternatives extends FObj
     private boolean hasPagePositionOnly = false;
 
     /**
-     * Creates a new repeatable-page-master-alternatives element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public RepeatablePageMasterAlternatives(FONode parent) {
         super(parent);
@@ -69,7 +70,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     protected void startOfNode() throws FOPException {
         conditionalPageMasterRefs = new java.util.ArrayList();
 
-        assert parent.getName().equals("fo:page-sequence-master"); //Validation by the parent 
+        assert parent.getName().equals("fo:page-sequence-master"); //Validation by the parent
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
         pageSequenceMaster.addSubsequenceSpecifier(this);
     }
@@ -83,7 +84,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     /**
      * {@inheritDoc}
-        XSL/FOP: (conditional-page-master-reference+)
+     * <br>XSL/FOP: (conditional-page-master-reference+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -94,7 +95,10 @@ public class RepeatablePageMasterAlternatives extends FObj
         }
     }
 
-    /** @return the "maximum-repeats" property. */
+    /**
+     * Get the value of the <code>maximum-repeats</code> property?
+     * @return the "maximum-repeats" property
+     */
     public int getMaximumRepeats() {
         if (maximumRepeats.getEnum() == EN_NO_LIMIT) {
             return INFINITE;
@@ -180,7 +184,10 @@ public class RepeatablePageMasterAlternatives extends FObj
         return "repeatable-page-master-alternatives";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES}
+     */
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES;
     }

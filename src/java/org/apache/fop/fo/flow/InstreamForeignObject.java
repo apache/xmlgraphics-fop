@@ -33,7 +33,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.XMLObj;
 
 /**
- * Class modelling the fo:instream-foreign-object object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_instream-foreign-object">
+ * <code>fo:instream-foreign-object</code></a> object.
  * This is an atomic inline object that contains XML data.
  */
 public class InstreamForeignObject extends AbstractGraphics {
@@ -45,13 +46,14 @@ public class InstreamForeignObject extends AbstractGraphics {
     //Additional value
     private Point2D intrinsicDimensions;
     private boolean instrisicSizeDetermined;
-    
+
     private Length intrinsicAlignmentAdjust;
     
     /**
-     * constructs an instream-foreign-object object (called by Maker).
+     * Constructs an instream-foreign-object object 
+     * (called by {@link org.apache.fop.fo.ElementMapping.Maker}).
      *
-     * @param parent the parent formatting object
+     * @param parent the parent {@link FONode}
      */
     public InstreamForeignObject(FONode parent) {
         super(parent);
@@ -59,7 +61,8 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     /**
      * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
+     * {@link org.apache.fop.fo.FOEventHandler} that we are at 
+     * the end of the instream-foreign-object.
      * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
@@ -71,10 +74,10 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: one (1) non-XSL namespace child
+     * <br>XSL Content Model: one (1) non-XSL namespace child
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-                throws ValidationException {
+        throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
         } else if (firstChild != null) {
@@ -87,7 +90,10 @@ public class InstreamForeignObject extends AbstractGraphics {
         return "instream-foreign-object";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_INSTREAM_FOREIGN_OBJECT}
+     */
     public int getNameId() {
         return FO_INSTREAM_FOREIGN_OBJECT;
     }
@@ -139,7 +145,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         super.addChildNode(child);
     }
 
-    /** @return the XMLObj child node of the instream-foreign-object. */
+    /** @return the {@link XMLObj} child node of the instream-foreign-object. */
     public XMLObj getChildXMLObj() {
         return (XMLObj) firstChild;
     }

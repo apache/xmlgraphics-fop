@@ -33,7 +33,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
- * Class modelling the fo:table-body object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-body">
+ * <code>fo:table-body</code></a> object.
  */
 public class TableBody extends TableCellContainer {
     // The value of properties relevant for fo:table-body.
@@ -63,23 +64,21 @@ public class TableBody extends TableCellContainer {
     private List rowGroups = new LinkedList();
 
     /**
+     * Create a TableBody instance with the given {@link FONode}
+     * as parent.
      * @param parent FONode that is the parent of the object
      */
     public TableBody(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         super.bind(pList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList pList)
                     throws FOPException {
@@ -99,17 +98,13 @@ public class TableBody extends TableCellContainer {
         super.processNode(elementName, locator, attlist, pList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startBody(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
 
         if (!inMarker()) {
@@ -150,8 +145,8 @@ public class TableBody extends TableCellContainer {
     }
 
     /**
-     * {@inheritDoc} String, String)
-     * XSL Content Model: marker* (table-row+|table-cell+)
+     * {@inheritDoc}
+     * <br>XSL Content Model: marker* (table-row+|table-cell+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
@@ -180,9 +175,7 @@ public class TableBody extends TableCellContainer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
             switch (child.getNameId()) {
@@ -236,7 +229,9 @@ public class TableBody extends TableCellContainer {
     }
 
     /**
-     * @return the Common Border, Padding, and Background Properties.
+     * Get the {@link CommonBorderPaddingBackground} instance attached
+     * to this TableBody.
+     * @return the {@link CommonBorderPaddingBackground} instance.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
@@ -249,6 +244,7 @@ public class TableBody extends TableCellContainer {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_BODY}
      */
     public int getNameId() {
         return FO_TABLE_BODY;

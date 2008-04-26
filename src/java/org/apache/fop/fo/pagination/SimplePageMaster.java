@@ -36,7 +36,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
- * A simple-page-master formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_simple-page-master">
+ * <code>fo:simple-page-master</code></a> object.
  * This creates a simple page from the specified regions
  * and attributes.
  */
@@ -63,9 +64,9 @@ public class SimplePageMaster extends FObj {
     private boolean hasRegionEnd = false;
 
     /**
-     * Creates a new simple-page-master element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public SimplePageMaster(FONode parent) {
         super(parent);
@@ -109,7 +110,7 @@ public class SimplePageMaster extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (region-body,region-before?,region-after?,region-start?,region-end?)
+     * <br>XSL Content Model: (region-body,region-before?,region-after?,region-start?,region-end?)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
             throws ValidationException {
@@ -262,7 +263,10 @@ public class SimplePageMaster extends FObj {
         return "simple-page-master";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_SIMPLE_PAGE_MASTER}
+     */
     public int getNameId() {
         return FO_SIMPLE_PAGE_MASTER;
     }

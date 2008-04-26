@@ -39,7 +39,8 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.TableColLength;
 
 /**
- * Class modelling the fo:table object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table">
+ * <code>fo:table</code></a> object.
  */
 public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
@@ -96,7 +97,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     private PropertyList propList;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Construct a Table instance with the given {@link FONode}
+     * as parent.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public Table(FONode parent) {
         super(parent);
@@ -163,7 +167,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (marker*,table-column*,table-header?,table-footer?,table-body+)
+     * <br>XSL Content Model: (marker*,table-column*,table-header?,table-footer?,table-body+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
@@ -255,7 +259,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             if (!inMarker()) {
                 addColumnNode((TableColumn) child);
             } else {
-                columns.add((TableColumn) child);
+                columns.add(child);
             }
             break;
         case FO_TABLE_HEADER:
@@ -344,7 +348,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * used for determining initial values for column-number
      * 
      * @param col   the column to add
-     * @throws FOPException
      */
     private void addColumnNode(TableColumn col) {
 
@@ -518,7 +521,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         return "table";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE}
+     */
     public int getNameId() {
         return FO_TABLE;
     }

@@ -29,7 +29,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Class modelling the fo:bidi-override object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_bidi-override">
+ * <code>fo:bidi-override</code></a> object.
  */
 public class BidiOverride extends FObjMixed {
 
@@ -52,6 +53,8 @@ public class BidiOverride extends FObjMixed {
     // End of property values
 
     /**
+     * Base constructor
+     * 
      * @param parent FONode that is the parent of this object
      */
     public BidiOverride(FONode parent) {
@@ -77,9 +80,7 @@ public class BidiOverride extends FObjMixed {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         // prDirection = pList.get(PR_DIRECTION);
         // prLetterSpacing = pList.get(PR_LETTER_SPACING);
@@ -90,11 +91,11 @@ public class BidiOverride extends FObjMixed {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
-     * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
+     * <br>XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
+     * <br><i>Additionally: "An fo:bidi-override that is a descendant of an fo:leader
      *  or of the fo:inline child of an fo:footnote may not have block-level
      *  children, unless it has a nearer ancestor that is an 
-     *  fo:inline-container."
+     *  fo:inline-container."</i>
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -115,9 +116,7 @@ public class BidiOverride extends FObjMixed {
         }
     }
 
-    /**
-     * @return the "line-height" property.
-     */
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
@@ -129,6 +128,7 @@ public class BidiOverride extends FObjMixed {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_BIDI_OVERRIDE}
      */
     public int getNameId() {
         return FO_BIDI_OVERRIDE;

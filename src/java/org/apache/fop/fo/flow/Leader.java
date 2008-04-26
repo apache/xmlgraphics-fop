@@ -26,8 +26,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
- * Class modelling fo:leader object.
- * The main property of fo:leader is leader-pattern.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_leader">
+ * <code>fo:leader</code></a> object.
+ * The main property of <code>fo:leader</code> is leader-pattern.
  * The following patterns are treated: rule, space, dots and use-content.
  * @todo implement validateChildNode()
  */
@@ -53,15 +54,15 @@ public class Leader extends InlineLevel {
     // End of property values
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public Leader(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
@@ -95,72 +96,52 @@ public class Leader extends InlineLevel {
         // textShadow = pList.get(PR_TEXT_SHADOW);
     }
 
-    /**
-     * @return the "rule-style" property.
-     */
+    /** @return the "rule-style" property */
     public int getRuleStyle() {
         return ruleStyle;
     }
 
-    /**
-     * @return the "rule-thickness" property.
-     */
+    /** @return the "rule-thickness" property */
     public Length getRuleThickness() {
         return ruleThickness;
     }
 
-    /**
-     * @return the "leader-alignment" property.
-     */
+    /** @return the "leader-alignment" property */
     public int getLeaderAlignment() {
         return leaderAlignment;
     }
 
-    /**
-     * @return the "leader-length" property.
-     */
+    /** @return the "leader-length" property */
     public LengthRangeProperty getLeaderLength() {
         return leaderLength;
     }
 
-    /**
-     * @return the "leader-pattern" property.
-     */
+    /** @return the "leader-pattern" property */
     public int getLeaderPattern() {
         return leaderPattern;
     }
 
-    /**
-     * @return the "leader-pattern-width" property.
-     */
+    /** @return the "leader-pattern-width" property */
     public Length getLeaderPatternWidth() {
         return leaderPatternWidth;
     }
 
-    /**
-     * @return the "alignment-adjust" property
-     */
+    /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
     
-    /**
-     * @return the "alignment-baseline" property
-     */
+    /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
     
-    /**
-     * @return the "baseline-shift" property
-     */
+    /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
     
-    /**
-     * @return the "dominant-baseline" property
-     */
+    /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
@@ -172,6 +153,7 @@ public class Leader extends InlineLevel {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_LEADER}
      */
     public int getNameId() {
         return FO_LEADER;

@@ -32,7 +32,8 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
 
 /**
- * Class modelling the fo:list-block object.
+ * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_list-block">
+ * <code>fo:list-block</code></a> object.
  */
 public class ListBlock extends FObj {
     // The value of properties relevant for fo:list-block.
@@ -60,15 +61,15 @@ public class ListBlock extends FObj {
     private boolean hasListItem = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public ListBlock(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -83,17 +84,16 @@ public class ListBlock extends FObj {
         orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startList(this);
     }
     
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
+     * Make sure the content model is satisfied, if so then tell the
+     * {@link org.apache.fop.fo.FOEventHandler} that we are at the end 
+     * of the list-block.
      * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
@@ -105,7 +105,7 @@ public class ListBlock extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (list-item)+
+     * <br>XSL Content Model: marker* (list-item)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
             throws ValidationException {
@@ -122,30 +122,22 @@ public class ListBlock extends FObj {
         }
     }
 
-    /**
-     * @return the Common Margin Properties-Block.
-     */
+    /** @return the {@link CommonMarginBlock} */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
-    /**
-     * @return the Common Border, Padding, and Background Properties.
-     */
+    /** @return the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
-    /**
-     * @return the "break-after" property.
-     */
+    /** @return the "break-after" property */
     public int getBreakAfter() {
         return breakAfter;
     }
 
-    /**
-     * @return the "break-before" property.
-     */
+    /** @return the "break-before" property */
     public int getBreakBefore() {
         return breakBefore;
     }
@@ -180,7 +172,10 @@ public class ListBlock extends FObj {
         return "list-block";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_LIST_BLOCK}
+     */
     public int getNameId() {
         return FO_LIST_BLOCK;
     }

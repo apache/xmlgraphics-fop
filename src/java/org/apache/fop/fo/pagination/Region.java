@@ -30,10 +30,11 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
- * This is an abstract base class for pagination regions
+ * This is an abstract base class for pagination regions.
  */
 public abstract class Region extends FObj {
     // The value of properties relevant for fo:region
@@ -49,9 +50,9 @@ public abstract class Region extends FObj {
     private SimplePageMaster layoutMaster;
 
     /**
-     * Creates a new Region.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     protected Region(FONode parent) {
         super(parent);
@@ -81,7 +82,7 @@ public abstract class Region extends FObj {
         }
         
         //TODO do we need context for getBPPaddingAndBorder() and getIPPaddingAndBorder()?
-        if ((getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, null) != 0 
+        if ((getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, null) != 0
                 || getCommonBorderPaddingBackground().getIPPaddingAndBorder(false, null) != 0)) {
             getFOValidationEventProducer().nonZeroBorderPaddingOnRegion(this, getName(),
                     regionName, true, getLocator());
@@ -90,7 +91,7 @@ public abstract class Region extends FObj {
 
     /**
      * {@inheritDoc} String, String)
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {

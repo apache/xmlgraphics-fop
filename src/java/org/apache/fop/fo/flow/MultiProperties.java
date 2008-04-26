@@ -28,7 +28,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:multi-properties object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-properties">
+ * <code>fo:multi-properties</code></a> object.
  */
 public class MultiProperties extends FObj {
     // The value of properties relevant for fo:multi-properties.
@@ -43,7 +44,9 @@ public class MultiProperties extends FObj {
     boolean hasWrapper = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public MultiProperties(FONode parent) {
         super(parent);
@@ -55,9 +58,7 @@ public class MultiProperties extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!hasMultiPropertySet || !hasWrapper) {
             missingChildElementError("(multi-property-set+, wrapper)");
@@ -66,7 +67,7 @@ public class MultiProperties extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (multi-property-set+, wrapper)
+     * <br>XSL Content Model: (multi-property-set+, wrapper)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
@@ -96,6 +97,7 @@ public class MultiProperties extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_MULTI_PROPERTIES}
      */
     public int getNameId() {
         return FO_MULTI_PROPERTIES;

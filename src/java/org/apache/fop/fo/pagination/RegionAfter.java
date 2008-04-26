@@ -29,14 +29,15 @@ import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 
 /**
- * The fo:region-after element.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-after">
+ * <code>fo:region-after</code></a> object.
  */
 public class RegionAfter extends RegionBA {
 
     /**
-     * Creates a new region-after element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionAfter instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     public RegionAfter(FONode parent) {
         super(parent);
@@ -92,7 +93,10 @@ public class RegionAfter extends RegionBA {
         return "region-after";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REGION_AFTER}
+     */
     public int getNameId() {
         return FO_REGION_AFTER;
     }

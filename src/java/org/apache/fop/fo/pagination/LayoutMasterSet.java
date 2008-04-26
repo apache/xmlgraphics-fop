@@ -32,7 +32,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * The layout-master-set formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_layout-master-set">
+ * <code>fo:layout-master-set</code></a> object.
+ *
  * This class maintains the set of simple page master and
  * page sequence masters.
  * The masters are stored so that the page sequence can obtain
@@ -46,9 +48,10 @@ public class LayoutMasterSet extends FObj {
     private Map pageSequenceMasters;
 
     /**
-     * Creates a new layout-master-set element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a LayoutMasterSet instance that is a child of the given
+     * parent {@link FONode}.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public LayoutMasterSet(FONode parent) {
         super(parent);
@@ -76,7 +79,7 @@ public class LayoutMasterSet extends FObj {
 
     /**
      * {@inheritDoc}
-        XSL/FOP: (simple-page-master|page-sequence-master)+
+     * <br>XSL/FOP: (simple-page-master|page-sequence-master)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
             throws ValidationException {
@@ -205,7 +208,10 @@ public class LayoutMasterSet extends FObj {
         return "layout-master-set";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_LAYOUT_MASTER_SET}
+     */
     public int getNameId() {
         return FO_LAYOUT_MASTER_SET;
     }

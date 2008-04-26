@@ -32,7 +32,9 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 
 /**
- * The page-sequence-master formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-sequence-master">
+ * <code>fo:page-sequence-master</code></a> object.
+ *
  * This class handles a list of subsequence specifiers
  * which are simple or complex references to page-masters.
  */
@@ -54,17 +56,16 @@ public class PageSequenceMaster extends FObj {
     // but the actual FO's are MasterReferences.
 
     /**
-     * Creates a new page-sequence-master element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a PageSequenceMaster instance that is a child of the
+     * given {@link FONode}.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public PageSequenceMaster(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         masterName = pList.get(PR_MASTER_NAME).getString();
         
@@ -73,18 +74,14 @@ public class PageSequenceMaster extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         subSequenceSpecifiers = new java.util.ArrayList();
         layoutMasterSet = parent.getRoot().getLayoutMasterSet();
         layoutMasterSet.addPageSequenceMaster(masterName, this);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(single-page-master-reference|"
@@ -94,22 +91,22 @@ public class PageSequenceMaster extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL/FOP: (single-page-master-reference|repeatable-page-master-reference|
+     * <br>XSL/FOP: (single-page-master-reference|repeatable-page-master-reference|
      *     repeatable-page-master-alternatives)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-                throws ValidationException {
+        throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if (!localName.equals("single-page-master-reference") 
-                && !localName.equals("repeatable-page-master-reference")
-                && !localName.equals("repeatable-page-master-alternatives")) {   
+            if (!"single-page-master-reference".equals(localName) 
+                && !"repeatable-page-master-reference".equals(localName)
+                && !"repeatable-page-master-alternatives".equals(localName)) {   
                     invalidChildError(loc, nsURI, localName);
             }
         }
     }
 
     /**
-     * Adds a new subsequence specifier to the page sequence master.
+     * Adds a new suqsequence specifier to the page sequence master.
      * @param pageMasterReference the subsequence to add
      */
     protected void addSubsequenceSpecifier(SubSequenceSpecifier pageMasterReference) {
@@ -165,20 +162,14 @@ public class PageSequenceMaster extends FObj {
     
     /** @return true if the page-sequence-master has a page-master with page-position="last" */
     public boolean hasPagePositionLast() {
-        if (currentSubSequence != null) {
-            return currentSubSequence.hasPagePositionLast();
-        } else {
-            return false;
-        }
+        return (currentSubSequence != null
+                && currentSubSequence.hasPagePositionLast());
     }
     
     /** @return true if the page-sequence-master has a page-master with page-position="only" */
     public boolean hasPagePositionOnly() {
-        if (currentSubSequence != null) {
-            return currentSubSequence.hasPagePositionOnly();
-        } else {
-            return false;
-        }
+        return (currentSubSequence != null
+                && currentSubSequence.hasPagePositionOnly());
     }
     
     /**
@@ -240,7 +231,10 @@ public class PageSequenceMaster extends FObj {
         return "page-sequence-master";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_PAGE_SEQUENCE_MASTER}
+     */
     public int getNameId() {
         return FO_PAGE_SEQUENCE_MASTER;
     }

@@ -31,7 +31,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Declarations formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_declarations">
+ * <code>fo:declarations</code></a> object.
+ *
  * A declarations formatting object holds a set of color-profiles
  * and optionally additional non-XSL namespace elements.
  * The color-profiles are held in a hashmap for use with color-profile
@@ -42,7 +44,6 @@ public class Declarations extends FObj {
     private Map colorProfiles = null;
 
     /**
-     * Creates a new declarations element.
      * @param parent FONode that is the parent of this object
      */
     public Declarations(FONode parent) {
@@ -57,13 +58,13 @@ public class Declarations extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL 1.0: (color-profile)+ (and non-XSL NS nodes)
-     * FOP/XSL 1.1: (color-profile)* (and non-XSL NS nodes)
+     * <br>XSL 1.0: (color-profile)+ (and non-XSL NS nodes)
+     * <br>FOP/XSL 1.1: (color-profile)* (and non-XSL NS nodes)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if (!localName.equals("color-profile")) {   
+            if (!localName.equals("color-profile")) {
                 invalidChildError(loc, nsURI, localName);
             }
         } // anything outside of XSL namespace is OK.
@@ -112,7 +113,10 @@ public class Declarations extends FObj {
         return "declarations";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_DECLARATIONS}
+     */
     public int getNameId() {
         return FO_DECLARATIONS;
     }

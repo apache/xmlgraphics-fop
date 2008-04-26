@@ -25,36 +25,33 @@ import org.apache.fop.fo.FONode;
 
 
 /**
- * Class modelling the fo:table-footer object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-footer">
+ * <code>fo:table-footer</code></a> object.
  */
 public class TableFooter extends TableBody {
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a TableFooter instance with the given {@link FONode}
+     * as parent.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public TableFooter(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
         super.startOfNode();
-        //getFOEventHandler().startBody(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
-//      getFOEventHandler().endFooter(this);
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");
         } else {
             finishLastRowGroup();
         }
-//      convertCellsToRows();
     }
 
     /** {@inheritDoc} */
@@ -62,7 +59,10 @@ public class TableFooter extends TableBody {
         return "table-footer";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_FOOTER}
+     */
     public int getNameId() {
         return FO_TABLE_FOOTER;
     }
