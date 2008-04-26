@@ -23,14 +23,20 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Class modelling the fo:inline-container object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_inline-container">
+ * <code>fo:inline-container</code></a> object.
  */
 public class InlineContainer extends FObj {
     
@@ -38,52 +44,60 @@ public class InlineContainer extends FObj {
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
-    // private ToBeImplementedProperty clip;
+    private LengthRangeProperty blockProgressionDimension;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonMarginInline commonMarginInline;
+    private int clip;
     private int dominantBaseline;
+    private LengthRangeProperty inlineProgressionDimension;
+    private KeepProperty keepTogether;
     private SpaceProperty lineHeight;
+    private int overflow;
+    private Numeric referenceOrientation;
+    private int writingMode;
     // Unused but valid items, commented out for performance:
-    //     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    //     private CommonMarginInline commonMarginInline;
     //     private CommonRelativePosition commonRelativePosition;
-    //     private LengthRangeProperty blockProgressionDimension;
     //     private int displayAlign;
     //     private Length height;
-    //     private LengthRangeProperty inlineProgressionDimension;
-    //     private KeepProperty keepTogether;
     //     private KeepProperty keepWithNext;
     //     private KeepProperty keepWithPrevious;
-    //     private int overflow;
-    //     private Numeric referenceOrientation;
     //     private Length width;
-    //     private int writingMode;
     // End of property values
 
     /** used for FO validation */
     private boolean blockItemFound = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public InlineContainer(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
-        // clip = pList.get(PR_CLIP);
+        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonMarginInline = pList.getMarginInlineProps();
+        clip = pList.get(PR_CLIP).getEnum();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
+        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
+        overflow = pList.get(PR_OVERFLOW).getEnum();
+        referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
+        writingMode = pList.get(PR_WRITING_MODE).getEnum();
     }
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (%block;)+
+     * <br>XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -100,50 +114,83 @@ public class InlineContainer extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }
     }
 
-    /**
-     * @return the "alignment-adjust" property
-     */
+    /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
     
-    /**
-     * @return the "alignment-baseline" property
-     */
+    /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
     
-    /**
-     * @return the "baseline-shift" property
-     */
+    /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
     
-    /**
-     * @return the "dominant-baseline" property
-     */
+    /** @return the "block-progression-dimension" property */
+    public LengthRangeProperty getBlockProgressionDimension() {
+        return blockProgressionDimension;
+    }
+    
+    /** @return the "clip" property */
+    public int getClip() {
+        return clip;
+    }
+    
+    /**@return Returns the {@link CommonBorderPaddingBackground} */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return this.commonBorderPaddingBackground;
+    }
+
+    /** @return Returns the {@link CommonMarginInline} */
+    public CommonMarginInline getCommonMarginInline() {
+        return this.commonMarginInline;
+    }
+
+    /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
     
-    /**
-     * @return the "line-height" property.
-     */
+    /** @return the "keep-together" property */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+    
+    /** @return the "inline-progression-dimension" property */
+    public LengthRangeProperty getInlineProgressionDimension() {
+        return inlineProgressionDimension;
+    }
+    
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
+    /** @return the "overflow" property */
+    public int getOverflow() {
+        return overflow;
+    }
+    
+    /** @return the "reference-orientation" property */
+    public int getReferenceOrientation() {
+        return referenceOrientation.getValue();
+    }
+    
+    /** @return the "writing-mode" property */
+    public int getWritingMode() {
+        return writingMode;
+    }
+    
     /** {@inheritDoc} */
     public String getLocalName() {
         return "inline-container";
@@ -151,6 +198,7 @@ public class InlineContainer extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_INLINE_CONTAINER}
      */
     public int getNameId() {
         return FO_INLINE_CONTAINER;
