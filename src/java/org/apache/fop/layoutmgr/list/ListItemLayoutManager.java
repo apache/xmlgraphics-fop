@@ -288,7 +288,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             if (end[1] + 1 == elementLists[1].size()) {
                 keepWithNextActive = Math.max(keepWithNextActive, keepWithNextPendingOnBody);
             }
-            
+
             // compute penalty height and box height
             int penaltyHeight = step 
                 + getMaxRemainingHeight(fullHeights, partialHeights) 
@@ -557,7 +557,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         curBlockArea = null;
         resetSpaces();
         
-        getPSLM().notifyEndOfLayout(fobj.getId());
+        notifyEndOfLayout();
     }
 
     /**

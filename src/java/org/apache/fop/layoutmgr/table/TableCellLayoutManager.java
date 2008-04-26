@@ -199,7 +199,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             p.setP(0);
         }
 
-        getPSLM().notifyEndOfLayout(fobj.getId());
+        notifyEndOfLayout();
 
         setFinished(true);
         return returnList;
@@ -575,7 +575,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     public int getKeepWithPreviousStrength() {
         return KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-previous!)
     }
-    
+
     // --------- Property Resolution related functions --------- //
 
     /**

@@ -153,6 +153,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         }
 
         /**
+         * @param pos ...
          * @return true if new child lms were added
          */
         protected boolean createNextChildLMs(int pos) {
@@ -210,7 +211,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public int getKeepTogetherStrength() {
-        KeepProperty keep = getBlockFO().getKeepTogether(); 
+        KeepProperty keep = getBlockFO().getKeepTogether();
         int strength = KeepUtil.getCombinedBlockLevelKeepStrength(keep);
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
@@ -392,7 +393,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         resetSpaces();
         
         // Notify end of block layout manager to the PSLM
-        getPSLM().notifyEndOfLayout(getBlockFO().getId());
+        notifyEndOfLayout();
     }
 
     /**
