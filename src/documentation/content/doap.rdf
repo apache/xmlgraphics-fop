@@ -76,9 +76,16 @@
     </asfext:implements>
     <release>
       <Version>
-        <name>Previous release</name>
+        <name>Previous stable release</name>
         <created>2007-01-02</created>
         <revision>0.93</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Previous development release</name>
+        <created>2008-25-08</created>
+        <revision>0.95beta</revision>
       </Version>
     </release>
     <release>
