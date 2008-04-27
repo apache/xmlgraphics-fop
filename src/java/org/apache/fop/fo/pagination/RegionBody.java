@@ -65,8 +65,8 @@ public class RegionBody extends Region {
              * these cases, but we will need to be able to change Numeric
              * values in order to do this.
              */
-            attributeError("If overflow property is set to \"scroll\"," 
-                    + " a column-count other than \"1\" may not be specified.");
+            getFOValidationEventProducer().columnCountErrorOnRegionBodyOverflowScroll(this,
+                    getName(), getLocator());
         }
     }
 
