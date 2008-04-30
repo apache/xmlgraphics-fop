@@ -26,15 +26,18 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.GraphicsProperties;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Common base class for instream-foreign-object and external-graphics
- * flow formatting objects.
+ * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_instream-foreign-object">
+ * <code>fo:instream-foreign-object</code></a>
+ * and <a href="http://www.w3.org/TR/xsl/#fo_external-graphic">
+ * <code>fo:external-graphic</code></a> flow formatting objects.
  */
 public abstract class AbstractGraphics extends FObj implements GraphicsProperties {
-    
+
     // The value of properties relevant for fo:instream-foreign-object
     // and external-graphics.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
@@ -50,6 +53,8 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
     private Length height;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
     private SpaceProperty lineHeight;
     private int overflow;
     private int scaling;
@@ -61,8 +66,6 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
     //     private CommonMarginInline commonMarginInline;
     //     private CommonRelativePosition commonRelativePosition;
     //     private String contentType;
-    //     private KeepProperty keepWithNext;
-    //     private KeepProperty keepWithPrevious;
     //     private int scalingMethod;
     // End of property values
 
@@ -77,9 +80,7 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
@@ -94,6 +95,8 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         scaling = pList.get(PR_SCALING).getEnum();
@@ -108,60 +111,52 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         return id;
     }
 
-    /**
-     * @return the Common Border, Padding, and Background Properties.
-     */
+    /** @return the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
-    /**
-     * @return the "line-height" property.
-     */
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
-    /** {@inheritDoc} */
+    /** @return the "inline-progression-dimension" property */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
-    /** {@inheritDoc} */
+    /** @return the "block-progression-dimension" property */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
     }
 
-    /**
-     * @return the "height" property.
-     */
+    /** @return the "height" property */
     public Length getHeight() {
         return height;
     }
 
-    /**
-     * @return the "width" property.
-     */
+    /** @return the "width" property */
     public Length getWidth() {
         return width;
     }
 
-    /** {@inheritDoc} */
+    /** @return the "content-height" property */
     public Length getContentHeight() {
         return contentHeight;
     }
 
-    /** {@inheritDoc} */
+    /** @return the "content-width" property */
     public Length getContentWidth() {
         return contentWidth;
     }
 
-    /** {@inheritDoc} */
+    /** @return the "scaling" property */
     public int getScaling() {
         return scaling;
     }
 
-    /** {@inheritDoc} */
+    /** @return the "overflow" property */
     public int getOverflow() {
         return overflow;
     }
@@ -176,9 +171,7 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         return textAlign;
     }
 
-    /**
-     * @return the "alignment-adjust" property
-     */
+    /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         if (alignmentAdjust.getEnum() == EN_AUTO) {
             final Length intrinsicAlignmentAdjust = this.getIntrinsicAlignmentAdjust();
@@ -188,40 +181,38 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         }
         return alignmentAdjust;
     }
-    
-    /**
-     * @return the "alignment-baseline" property
-     */
+
+    /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
-    
-    /**
-     * @return the "baseline-shift" property
-     */
+
+    /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
-    
-    /**
-     * @return the "dominant-baseline" property
-     */
+
+    /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
-    
-    /**
-     * @return the graphics intrinsic width in millipoints
-     */
+
+    /** @return the "keep-with-next" property */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /** @return the "keep-with-previous" property */
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /** @return the graphic's intrinsic width in millipoints */
     public abstract int getIntrinsicWidth();
 
-    /**
-     * @return the graphics intrinsic height in millipoints
-     */
+    /** @return the graphic's intrinsic height in millipoints */
     public abstract int getIntrinsicHeight();
 
-    /**
-     * @return the graphics intrinsic alignment-adjust
-     */
+    /** @return the graphic's intrinsic alignment-adjust */
     public abstract Length getIntrinsicAlignmentAdjust();
 }

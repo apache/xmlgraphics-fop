@@ -28,7 +28,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:flow object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_flow">
+ * <code>fo:flow</code></a> object.
+ *
  */
 public class Flow extends FObj {
     // The value of properties relevant for fo:flow.
@@ -39,7 +41,8 @@ public class Flow extends FObj {
     private boolean blockItemFound = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a Flow instance that is a child of the given {@link FONode}.
+     * @param parent the {@link FONode} that is the parent of this object
      */
     public Flow(FONode parent) {
         super(parent);
@@ -86,7 +89,7 @@ public class Flow extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (%block;)+
+     * <br>XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -103,7 +106,10 @@ public class Flow extends FObj {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return true (Flow can generate reference areas)
+     */
     public boolean generatesReferenceAreas() {
         return true;
     }
@@ -118,7 +124,10 @@ public class Flow extends FObj {
         return "flow";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_FLOW}
+     */
     public int getNameId() {
         return FO_FLOW;
     }

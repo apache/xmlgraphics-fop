@@ -36,7 +36,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 
 /**
- * Class modelling the fo:marker object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_marker">
+ * <code>fo:marker<code></a> object.
  */
 public class Marker extends FObjMixed {
     // The value of properties relevant for fo:marker.
@@ -48,15 +49,14 @@ public class Marker extends FObjMixed {
 
     /**
      * Create a marker fo.
-     * @param parent the parent fo node
+     * 
+     * @param parent the parent {@link FONode}
      */
     public Marker(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_FLOW) < 0) {
             invalidChildError(locator, getParent().getName(), FO_URI, getName(), 
@@ -71,9 +71,11 @@ public class Marker extends FObjMixed {
     }
     
     /**
-     * retrieve the property list of foNode
-     * @param foNode the FO node whose property list is requested
-     * @return the MarkerPropertyList of foNode
+     * Retrieve the property list of the given {@link FONode} 
+     * descendant
+     * 
+     * @param foNode the {@link FONode} whose property list is requested
+     * @return the {@link MarkerPropertyList} for the given node
      */
     protected MarkerPropertyList getPropertyListFor(FONode foNode) {
         return (MarkerPropertyList) 
@@ -104,10 +106,10 @@ public class Marker extends FObjMixed {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (#PCDATA|%inline;|%block;)*
-     * Additionally: "An fo:marker may contain any formatting objects that 
+     * <br>XSL Content Model: (#PCDATA|%inline;|%block;)*
+     * <br><i>Additionally: "An fo:marker may contain any formatting objects that
      * are permitted as a replacement of any fo:retrieve-marker that retrieves
-     * the fo:marker's children."
+     * the fo:marker's children."</i>
      * @todo implement "additional" constraint, possibly within fo:retrieve-marker
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
@@ -119,13 +121,12 @@ public class Marker extends FObjMixed {
         }
     }
     
+    /** {@inheritDoc} */
     protected boolean inMarker() {
         return true;
     }
     
-    /**
-     * Return the "marker-class-name" property.
-     */
+    /** @return the "marker-class-name" property */
     public String getMarkerClassName() {
         return markerClassName;
     }
@@ -137,6 +138,7 @@ public class Marker extends FObjMixed {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_MARKER}
      */
     public int getNameId() {
         return FO_MARKER;
@@ -150,7 +152,7 @@ public class Marker extends FObjMixed {
     }
 
     /**
-     * An implementation of PropertyList which only stores the explicitly
+     * An implementation of {@link PropertyList} which only stores the explicitly
      * specified properties/attributes as bundles of name-value-namespace
      * strings
      */
@@ -163,7 +165,7 @@ public class Marker extends FObjMixed {
         /**
          * Overriding default constructor
          * 
-         * @param fobj  the FObj to attach
+         * @param fobj  the {@link FObj} to attach
          * @param parentPropertyList    ignored
          */
         public MarkerPropertyList(FObj fobj, PropertyList parentPropertyList) {
@@ -175,10 +177,10 @@ public class Marker extends FObjMixed {
         }
         
         /**
-         * Override that doesn't convert the attributes to Property instances,
-         * but simply stores the attributes for later processing;
+         * Override that doesn't convert the attributes to {@link Property}
+         * instances, but simply stores the attributes for later processing.
          * 
-         * @see org.apache.fop.fo.PropertyList#addAttributesToList(Attributes)
+         * {@inheritDoc}
          */
         public void addAttributesToList(Attributes attributes) 
                     throws ValidationException {
@@ -201,23 +203,17 @@ public class Marker extends FObjMixed {
             }
         }
         
-        /**
-         * Null implementation; not used by this type of PropertyList
-         */
+        /** Null implementation; not used by this type of {@link PropertyList} */
         public void putExplicit(int propId, Property value) {
             //nop
         }
 
-        /**
-         * Null implementation; not used by this type of PropertyList
-         */
+        /** Null implementation; not used by this type of {@link PropertyList} */
         public Property getExplicit(int propId) {
             return null;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public int getLength() {
             if (attribs == null) {
                 return 0;
@@ -226,9 +222,7 @@ public class Marker extends FObjMixed {
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getURI(int index) {
             if (attribs != null 
                     && index < attribs.length
@@ -240,9 +234,7 @@ public class Marker extends FObjMixed {
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getLocalName(int index) {
             if (attribs != null 
                     && index < attribs.length
@@ -254,9 +246,7 @@ public class Marker extends FObjMixed {
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getQName(int index) {
             if (attribs != null 
                     && index < attribs.length
@@ -268,16 +258,12 @@ public class Marker extends FObjMixed {
             }
         }
 
-        /**
-         * Default implementation; not used
-         */
+        /** Default implementation; not used */
         public String getType(int index) {
             return "CDATA";
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getValue(int index) {
             if (attribs != null 
                     && index < attribs.length
@@ -289,9 +275,7 @@ public class Marker extends FObjMixed {
             }
         }
 
-        /**
-         * {@inheritDoc} 
-         */
+        /** {@inheritDoc} */
         public int getIndex(String name, String namespace) {
             int index = -1;
             if (attribs != null && name != null && namespace != null) {
@@ -306,9 +290,7 @@ public class Marker extends FObjMixed {
             return index;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public int getIndex(String qname) {
             int index = -1;
             if (attribs != null && qname != null) {
@@ -322,23 +304,17 @@ public class Marker extends FObjMixed {
             return index;
         }
 
-        /**
-         * Default implementation; not used
-         */
+        /** Default implementation; not used */
         public String getType(String name, String namespace) {
             return "CDATA";
         }
 
-        /**
-         * Default implementation; not used
-         */
+        /** Default implementation; not used */
         public String getType(String qname) {
             return "CDATA";
         }
 
-        /**
-         * {@inheritDoc} 
-         */
+        /** {@inheritDoc} */
         public String getValue(String name, String namespace) {
             int index = getIndex(name, namespace);
             if (index > 0) {
@@ -347,9 +323,7 @@ public class Marker extends FObjMixed {
             return null;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getValue(String qname) {
             int index = getIndex(qname);
             if (index > 0) {
@@ -359,9 +333,7 @@ public class Marker extends FObjMixed {
         }
     }
     
-    /**
-     * Convenience inner class
-     */
+    /** Convenience inner class */
     private static final class MarkerAttribute {
         
         private static Map attributeCache = 
@@ -390,7 +362,9 @@ public class Marker extends FObjMixed {
         /**
          * Convenience method, reduces the number
          * of distinct MarkerAttribute instances
-         * 
+         *
+         * @param namespace the attribute namespace
+         * @param qname the fully qualified name of the attribute
          * @param name  the attribute name
          * @param value the attribute value
          * @return the single MarkerAttribute instance corresponding to 
@@ -409,9 +383,7 @@ public class Marker extends FObjMixed {
             }
         }
         
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public boolean equals(Object o) {
             if (o instanceof MarkerAttribute) {
                 MarkerAttribute attr = (MarkerAttribute) o;

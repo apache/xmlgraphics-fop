@@ -114,7 +114,8 @@ public class FOText extends FONode {
     private static final int IS_WORD_CHAR_MAYBE = 2;
 
     /**
-     * Creates a now FO text node.
+     * Creates a new FO text node.
+     *
      * @param parent FONode that is the parent of this object
      */
     public FOText(FONode parent) {
@@ -127,7 +128,7 @@ public class FOText extends FONode {
 
         int length = end - start;
         int calength = 0;
-        char[] nca = null;
+        char[] nca;
         if (ca != null) {
             calength = ca.length;
             nca = new char[calength + length];
@@ -223,6 +224,7 @@ public class FOText extends FONode {
      /**
      * This method is run as part of the ancestor Block's flushText(), to 
      * create xref pointers to the previous FOText objects within the same Block
+     * @param  ancestorBlock the ancestor fo:block
      */
     protected void createBlockPointers(Block ancestorBlock) {
         this.ancestorBlock = ancestorBlock;
@@ -236,7 +238,6 @@ public class FOText extends FONode {
                 prevFOTextThisBlock = null;
             }
         }
-        return;
     }
 
     /**
@@ -410,7 +411,7 @@ public class FOText extends FONode {
      * depending on whether the character should be considered part of a word
      * or not.
      */
-    public static int isWordChar(char inputChar) {
+    private static int isWordChar(char inputChar) {
         switch (Character.getType(inputChar)) {
         case Character.COMBINING_SPACING_MARK:
             return IS_WORD_CHAR_TRUE;

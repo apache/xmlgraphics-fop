@@ -33,7 +33,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
- * The fo:region-body element.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-body">
+ * <code>fo:region-body</code></a> object.
  */
 public class RegionBody extends Region {
     // The value of properties relevant for fo:region-body.
@@ -43,9 +44,9 @@ public class RegionBody extends Region {
     // End of property values
 
     /**
-     * Creates a new region-body element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionBody instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     public RegionBody(FONode parent) {
         super(parent);
@@ -58,7 +59,7 @@ public class RegionBody extends Region {
         columnCount = pList.get(PR_COLUMN_COUNT).getNumeric();
         columnGap = pList.get(PR_COLUMN_GAP).getLength();
         
-        if ((getColumnCount() != 1) && (getOverflow() == EN_SCROLL)) {
+        if ((getColumnCount() > 1) && (getOverflow() == EN_SCROLL)) {
             /* This is an error (See XSL Rec, fo:region-body description).
              * The Rec allows for acting as if "1" is chosen in
              * these cases, but we will need to be able to change Numeric
@@ -70,15 +71,16 @@ public class RegionBody extends Region {
     }
 
     /**
-     * Return the Common Margin Properties-Block.
-     * @return the Common Margin Properties-Block.
+     * Return the {@link CommonMarginBlock} instance attached to
+     * this instance.
+     * @return the {@link CommonMarginBlock} instance
      */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
     /**
-     * Return the "column-count" property.
+     * Return the value of the <code>column-count<code> property.
      * @return the "column-count" property.
      */
     public int getColumnCount() {
@@ -86,7 +88,7 @@ public class RegionBody extends Region {
     }
 
     /**
-     * Return the "column-gap" property.
+     * Return the value of the <code>column-gap</code> property.
      * @return the "column-gap" property.
      */
     public int getColumnGap() {
@@ -151,7 +153,10 @@ public class RegionBody extends Region {
         return "region-body";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REGION_BODY}
+     */
     public int getNameId() {
         return FO_REGION_BODY;
     }

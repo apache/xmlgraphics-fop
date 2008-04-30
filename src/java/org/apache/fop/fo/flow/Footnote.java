@@ -28,7 +28,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:footnote object.
+ * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_footnote">
+ * <code>fo:footnote</code></a> object.
  */
 public class Footnote extends FObj {
     // The value of properties relevant for fo:footnote (commented out for performance).
@@ -39,29 +40,28 @@ public class Footnote extends FObj {
     private FootnoteBody footnoteBody;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public Footnote(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         // No active properties -> do nothing.
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         getFOEventHandler().startFootnote(this);
     }
 
     /**
      * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
+     * {@link org.apache.fop.fo.FOEventHandler} that we are at the end of the footnote.
+     * 
      * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
@@ -74,7 +74,7 @@ public class Footnote extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (inline,footnote-body)
+     * <br>XSL Content Model: (inline,footnote-body)
      * @todo implement additional constraint: A fo:footnote is not permitted
      *      to have a fo:float, fo:footnote, or fo:marker as a descendant.
      * @todo implement additional constraint: A fo:footnote is not 
@@ -100,20 +100,19 @@ public class Footnote extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void addChildNode(FONode child) {
-        if (((FObj)child).getNameId() == FO_INLINE) {
+        if (child.getNameId() == FO_INLINE) {
             footnoteCitation = (Inline) child;
-        } else if (((FObj)child).getNameId() == FO_FOOTNOTE_BODY) {
+        } else if (child.getNameId() == FO_FOOTNOTE_BODY) {
             footnoteBody = (FootnoteBody) child;
         }
     }
 
     /**
      * Public accessor for inline FO
-     * @return the Inline child
+     * 
+     * @return the {@link Inline} child
      */
     public Inline getFootnoteCitation() {
         return footnoteCitation;
@@ -121,7 +120,8 @@ public class Footnote extends FObj {
 
     /**
      * Public accessor for footnote-body FO
-     * @return the FootnoteBody child
+     * 
+     * @return the {@link FootnoteBody} child
      */
     public FootnoteBody getFootnoteBody() {
         return footnoteBody;
@@ -134,6 +134,7 @@ public class Footnote extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_FOOTNOTE}
      */
     public int getNameId() {
         return FO_FOOTNOTE;

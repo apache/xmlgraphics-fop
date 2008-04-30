@@ -27,12 +27,12 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modeling the fo:static-content object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_static-content">
+ * <code>fo:static-content</code></a> object.
  */
 public class StaticContent extends Flow {
 
     /**
-     * Creates a new static-content element.
      * @param parent FONode that is the parent of this object
      */
     public StaticContent(FONode parent) {
@@ -61,7 +61,7 @@ public class StaticContent extends Flow {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (%block;)+
+     * <br>XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -77,7 +77,10 @@ public class StaticContent extends Flow {
         return "static-content";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_STATIC_CONTENT}
+     */
     public int getNameId() {
         return FO_STATIC_CONTENT;
     }

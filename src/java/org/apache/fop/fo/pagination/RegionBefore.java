@@ -29,14 +29,15 @@ import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.FONode;
 
 /**
- * The fo:region-before element.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-before">
+ * <code>fo:region-before</code></a> object.
  */
 public class RegionBefore extends RegionBA {
 
     /**
-     * Creates a new region-before element.
-     * @param parent the parent element
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionBefore instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     public RegionBefore(FONode parent) {
         super(parent);
@@ -90,7 +91,10 @@ public class RegionBefore extends RegionBA {
         return "region-before";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REGION_BEFORE}
+     */
     public int getNameId() {
         return FO_REGION_BEFORE;
     }

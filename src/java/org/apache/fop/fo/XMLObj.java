@@ -54,7 +54,9 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     protected String name;
 
     /**
-     * @param parent the parent formatting object
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public XMLObj(FONode parent) {
         super(parent);
@@ -62,7 +64,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     /**
      * {@inheritDoc}
-     * here, blocks XSL FO's from having non-FO parents.
+     * <br>Here, blocks XSL-FO's from having non-FO parents.
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
@@ -71,9 +73,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator, 
         Attributes attlist, PropertyList propertyList) throws FOPException {
             setLocator(locator);
@@ -90,6 +90,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     /**
      * Returns the dimensions of the generated area in pts.
+     * 
      * @param view Point2D instance to receive the dimensions
      * @return the requested dimensions in pts.
      */
@@ -99,6 +100,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     
     /**
      * Retrieve the intrinsic alignment-adjust of the child element.
+     * 
      * @return the intrinsic alignment-adjust.
      */
     public Length getIntrinsicAlignmentAdjust() {
@@ -150,6 +152,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     
     /**
      * Add the top-level element to the DOM document
+     * 
      * @param doc DOM document
      * @param svgRoot non-XSL-FO element to be added as the root of this document
      */
@@ -160,6 +163,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     /**
      * Create an empty DOM document
+     * 
      * @return DOM document
      */
     public Document createBasicDocument() {
@@ -187,9 +191,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
         return doc;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) {
         if (child instanceof XMLObj) {
             ((XMLObj)child).addElement(doc, element);
@@ -203,6 +205,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     /**
      * Add parsed characters to this object
+     * 
      * @param data array of characters contaning the text to add
      * @param start starting array element to add
      * @param length number of characters from the array to add

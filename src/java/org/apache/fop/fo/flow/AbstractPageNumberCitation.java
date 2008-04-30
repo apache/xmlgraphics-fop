@@ -36,7 +36,10 @@ import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Base class modelling the fo:page-number-citation object.
+ * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation">
+ * <code>fo:page-number-citation</code></a> and 
+ * <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation-last">
+ * <code>fo:page-number-citation-last</code></a> objects.
  */
 public abstract class AbstractPageNumberCitation extends FObj {
     
@@ -73,15 +76,15 @@ public abstract class AbstractPageNumberCitation extends FObj {
     private Color color;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public AbstractPageNumberCitation(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -110,7 +113,7 @@ public abstract class AbstractPageNumberCitation extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -119,7 +122,7 @@ public abstract class AbstractPageNumberCitation extends FObj {
         }
     }
 
-    /** @return the Common Font Properties. */
+    /** @return the {@link CommonFont} */
     public CommonFont getCommonFont() {
         return commonFont;
     }
@@ -134,42 +137,32 @@ public abstract class AbstractPageNumberCitation extends FObj {
         return textDecoration; 
     }
     
-    /**
-     * @return the "alignment-adjust" property
-     */
+    /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
     
-    /**
-     * @return the "alignment-baseline" property
-     */
+    /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
     
-    /**
-     * @return the "baseline-shift" property
-     */
+    /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
     
-    /**
-     * @return the "dominant-baseline" property
-     */
+    /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
     
-    /** @return the Common Border, Padding, and Background Properties. */
+    /** @return the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
-    /**
-     * @return the "line-height" property
-     */
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }

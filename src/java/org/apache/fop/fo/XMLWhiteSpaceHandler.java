@@ -220,8 +220,6 @@ public class XMLWhiteSpaceHandler {
      * firstTextNode (when a nested FO is encountered)
      * @param fo    the FO for which to handle white-space
      * @param firstTextNode the node at which to start
-     * @param nextChild the child-node that will be added to the list after
-     *                  the last text-node
      */
     public void handleWhiteSpace(FObjMixed fo, FONode firstTextNode) {
         handleWhiteSpace(fo, firstTextNode, null);

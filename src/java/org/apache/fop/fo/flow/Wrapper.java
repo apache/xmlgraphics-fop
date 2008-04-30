@@ -28,8 +28,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:wrapper object.
- * The wrapper object serves as a property holder for 
+ * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_wrapper">
+ * <code>fo:wrapper</code></a> object.
+ * The <code>fo:wrapper</code> object serves as a property holder for 
  * its child node objects.
  */
 public class Wrapper extends FObjMixed {
@@ -41,7 +42,9 @@ public class Wrapper extends FObjMixed {
     private boolean inlineChildrenAllowed = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public Wrapper(FONode parent) {
         super(parent);
@@ -101,7 +104,10 @@ public class Wrapper extends FObjMixed {
         return "wrapper";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_WRAPPER}
+     */
     public int getNameId() {
         return FO_WRAPPER;
     }

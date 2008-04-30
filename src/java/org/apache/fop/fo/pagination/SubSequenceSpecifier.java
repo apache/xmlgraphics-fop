@@ -21,8 +21,8 @@ package org.apache.fop.fo.pagination;
 
 
 /**
- * Classes that implement this interface can be added to a PageSequenceMaster,
- * and are capable of looking up an appropriate PageMaster.
+ * Classes that implement this interface can be added to a {@link PageSequenceMaster},
+ * and are capable of looking up an appropriate {@link SimplePageMaster}.
  */
 public interface SubSequenceSpecifier {
     

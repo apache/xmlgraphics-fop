@@ -29,14 +29,15 @@ import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 
 /**
- * The fo:region-start element.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-start">
+ * <code>fo:region-start</code></a> object.
  */
 public class RegionStart extends RegionSE {
 
     /**
-     * Creates a new region-start element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionStart instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     public RegionStart(FONode parent) {
         super(parent);
@@ -88,7 +89,10 @@ public class RegionStart extends RegionSE {
         return "region-start";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REGION_START}
+     */
     public int getNameId() {
         return FO_REGION_START;
     }

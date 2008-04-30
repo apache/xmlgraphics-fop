@@ -381,7 +381,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         resetSpaces();
         curBlockArea = null;
         
-        getPSLM().notifyEndOfLayout(fobj.getId());
+        notifyEndOfLayout();
     }
 
     /**

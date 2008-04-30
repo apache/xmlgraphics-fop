@@ -29,7 +29,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * A single-page-master-reference formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_single-page-master-reference">
+ * <code>fo:single-page-master-reference</code></a> object.
  * This is a reference for a single page. It returns the
  * master name only once until reset.
  */
@@ -46,9 +47,9 @@ public class SinglePageMasterReference extends FObj
     private int state;
 
     /**
-     * Creates a new single-page-master-reference element.
-     * @param parent the parent node
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Creates a new SinglePageMasterReference instance that is
+     * a child of the given {@link FONode}.
+     * @param parent {@link FONode} that is the parent of this object
      */
     public SinglePageMasterReference(FONode parent) {
         super(parent);
@@ -72,7 +73,7 @@ public class SinglePageMasterReference extends FObj
     
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
@@ -127,7 +128,10 @@ public class SinglePageMasterReference extends FObj
         return "single-page-master-reference";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_SINGLE_PAGE_MASTER_REFERENCE}
+     */
     public int getNameId() {
         return FO_SINGLE_PAGE_MASTER_REFERENCE;
     }

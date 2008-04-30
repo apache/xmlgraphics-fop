@@ -23,7 +23,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 
 /**
- * Class modelling the fo:page-number-citation object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation">
+ * <code>fo:page-number-citation</code></a> object.
  * This inline fo is replaced with the text for a page number.
  * The page number used is the page that contains the start of the
  * block referenced with the ref-id attribute.
@@ -32,7 +33,8 @@ public class PageNumberCitation extends AbstractPageNumberCitation {
 
     /**
      * Main constructor
-     * @param parent FONode that is the parent of this object
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public PageNumberCitation(FONode parent) {
         super(parent);
@@ -55,7 +57,10 @@ public class PageNumberCitation extends AbstractPageNumberCitation {
         return "page-number-citation";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_PAGE_NUMBER_CITATION}
+     */
     public int getNameId() {
         return FO_PAGE_NUMBER_CITATION;
     }
