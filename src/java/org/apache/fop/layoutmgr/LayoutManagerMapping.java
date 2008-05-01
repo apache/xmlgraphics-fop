@@ -51,6 +51,7 @@ import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
@@ -117,6 +118,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(Block.class, new BlockLayoutManagerMaker());
         makers.put(Leader.class, new LeaderLayoutManagerMaker());
         makers.put(RetrieveMarker.class, new RetrieveMarkerLayoutManagerMaker());
+        makers.put(RetrieveTableMarker.class, new Maker());
         makers.put(Character.class, new CharacterLayoutManagerMaker());
         makers.put(ExternalGraphic.class,
                    new ExternalGraphicLayoutManagerMaker());
@@ -207,9 +209,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         return new StaticContentLayoutManager(pslm, sc, reg);
     }
     
-    /*
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public StaticContentLayoutManager makeStaticContentLayoutManager(
         PageSequenceLayoutManager pslm, StaticContent sc, org.apache.fop.area.Block block) {
         return new StaticContentLayoutManager(pslm, sc, block);
@@ -218,7 +218,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public static class Maker {
         public void make(FONode node, List lms) {
             // no layout manager
-            return;
         }
     }
 
@@ -230,18 +229,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
             }
         }
     }
-
-    /*
-    public static class FObjMixedLayoutManagerMaker extends Maker {
-        public void make(FONode node, List lms) {
-            if (node.getChildNodes() != null) {
-                InlineStackingLayoutManager lm;
-                lm = new InlineStackingLayoutManager((FObjMixed) node);
-                lms.add(lm);
-            }
-        }       
-    }
-    */
 
     public static class BidiOverrideLayoutManagerMaker extends Maker {
         // public static class BidiOverrideLayoutManagerMaker extends FObjMixedLayoutManagerMaker {

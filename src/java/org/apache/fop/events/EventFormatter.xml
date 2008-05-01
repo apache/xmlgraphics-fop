@@ -19,7 +19,8 @@
 <catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
   <message key="rule.markerDescendantOfFlow">An fo:marker is permitted only as the descendant of an fo:flow.</message>
-  <message key="rule.retrieveMarkerDescendatOfStaticContent">An fo:retrieve-marker is permitted only as the descendant of an fo:static-content.</message>
+  <message key="rule.retrieveMarkerDescendantOfStaticContent">An fo:retrieve-marker is permitted only as the descendant of an fo:static-content.</message>
+  <message key="rule.retrieveTableMarkerDescendantOfHeaderOrFooter">An fo:retrieve-table-marker is permitted only as the descendant of an fo:table-header or an fo:table-footer.</message>
   <message key="rule.bidiOverrideContent">An fo:bidi-override that is a descendant of an fo:leader or of the fo:inline child of an fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
   <message key="rule.inlineContent">An fo:inline that is a descendant of an fo:leader or fo:footnote may not have block-level children, unless it has a nearer ancestor that is an fo:inline-container.</message>
   <message key="rule.childOfSPM">The element must be a child of fo:simple-page-master.</message>

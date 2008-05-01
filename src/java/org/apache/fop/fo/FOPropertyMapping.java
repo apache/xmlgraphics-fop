@@ -2097,6 +2097,25 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("document", getEnumProperty(EN_DOCUMENT, "DOCUMENT"));
         m.setDefault("page-sequence");
         addPropertyMaker("retrieve-boundary", m);
+
+        // retrieve-position-within-table
+        m  = new EnumProperty.Maker(PR_RETRIEVE_POSITION_WITHIN_TABLE);
+        m.setInherited(false);
+        m.addEnum("first-starting", getEnumProperty(EN_FIRST_STARTING, "FIRST_STARTING"));
+        m.addEnum("first-including-carryover", getEnumProperty(EN_FIC, "FIC"));
+        m.addEnum("last-starting", getEnumProperty(EN_LAST_STARTING, "LAST_STARTING"));
+        m.addEnum("last-ending", getEnumProperty(EN_LAST_ENDING, "LAST_ENDING"));
+        m.setDefault("first-starting");
+        addPropertyMaker("retrieve-position-within-table", m);
+
+        // retrieve-boundary-within-table
+        m  = new EnumProperty.Maker(PR_RETRIEVE_BOUNDARY_WITHIN_TABLE);
+        m.setInherited(false);
+        m.addEnum("table", getEnumProperty(EN_TABLE, "TABLE"));
+        m.addEnum("table-fragment", getEnumProperty(EN_TABLE_FRAGMENT, "TABLE_FRAGMENT"));
+        m.addEnum("page", getEnumProperty(EN_DOCUMENT, "PAGE"));
+        m.setDefault("table");
+        addPropertyMaker("retrieve-boundary-within-table", m);
     }
 
     private void createNumberToStringProperties() {
