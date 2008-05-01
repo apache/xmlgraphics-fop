@@ -1424,6 +1424,7 @@ public final class FOPropertyMapping implements Constants {
 
         // max-height
         m  = new LengthProperty.Maker(PR_MAX_HEIGHT);
+        m.addEnum("NONE", getEnumProperty(EN_NONE, "NONE"));
         m.setInherited(false);
         m.setDefault("0pt");
         m.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
@@ -1431,6 +1432,7 @@ public final class FOPropertyMapping implements Constants {
 
         // max-width
         m  = new LengthProperty.Maker(PR_MAX_WIDTH);
+        m.addEnum("NONE", getEnumProperty(EN_NONE, "NONE"));
         m.setInherited(false);
         m.setDefault("none");
         m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
