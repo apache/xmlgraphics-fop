@@ -1423,27 +1423,31 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("inline-progression-dimension", m);
 
         // max-height
-        m  = new ToBeImplementedProperty.Maker(PR_MAX_HEIGHT);
+        m  = new LengthProperty.Maker(PR_MAX_HEIGHT);
         m.setInherited(false);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         addPropertyMaker("max-height", m);
 
         // max-width
-        m  = new ToBeImplementedProperty.Maker(PR_MAX_WIDTH);
+        m  = new LengthProperty.Maker(PR_MAX_WIDTH);
         m.setInherited(false);
         m.setDefault("none");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("max-width", m);
 
         // min-height
-        m  = new ToBeImplementedProperty.Maker(PR_MIN_HEIGHT);
+        m  = new LengthProperty.Maker(PR_MIN_HEIGHT);
         m.setInherited(false);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         addPropertyMaker("min-height", m);
 
         // min-width
-        m  = new ToBeImplementedProperty.Maker(PR_MIN_WIDTH);
+        m  = new LengthProperty.Maker(PR_MIN_WIDTH);
         m.setInherited(false);
-        m.setDefault("");
+        m.setDefault(""); //UA dependent
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("min-width", m);
 
         // scaling
