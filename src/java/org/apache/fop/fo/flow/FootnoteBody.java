@@ -29,7 +29,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_footnote-body">
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_footnote-body">
  * <code>fo:footnote-body</code></a> object.
  */
 public class FootnoteBody extends FObj {

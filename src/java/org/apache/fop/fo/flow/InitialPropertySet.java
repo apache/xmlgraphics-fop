@@ -30,7 +30,7 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_initial-property-set">
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_initial-property-set">
  * <code>fo:initial-property-set</code></a> object.
  */
 public class InitialPropertySet extends FObj {
