@@ -324,6 +324,18 @@
           </li>
         </ul>
       </section>
+      <section id="imageio">
+        <title>Image I/O</title>
+        <p>
+          The image loading framework in <a href="ext:xmlgraphics.apache.org/commons">XML Graphics Commons</a>
+          provides a wrapper to load images through the 
+          <a class="fork" href="http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html">JDK's Image I/O API</a> (JSR 015).
+          Image I/O allows to dynamically add additional image codecs. An example of such an
+          add-on library are the
+          <a class="fork" href="http://java.sun.com/products/java-media/jai/">JAI Image I/O Tools</a>
+          available from Sun.
+        </p>
+      </section>
     </section>
     <section id="image-formats">
       <title>Details on image formats</title>
