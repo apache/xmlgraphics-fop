@@ -170,7 +170,10 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     /** Whether or not the safe set page device macro will be used or not */
     private boolean safeSetPageDevice = false;
 
-    /** Whether or not Dublin Core Standard (dsc) compliant output is enforced */
+    /**
+     * Whether or not PostScript Document Structuring Conventions (DSC) compliant output are
+     * enforced.
+     */
     private boolean dscCompliant = true;
 
     /** Is used to determine the document's bounding box */
@@ -181,9 +184,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
 
     /** This is a collection holding all document footer comments */
     private Collection footerComments;
-    /**
-     * {@inheritDoc}
-     */
+    
+    /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
         Object obj;
@@ -1703,13 +1705,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     }
 
     /**
-     * Sets whether or not Dublin Core Standard (dsc) compliance is enforced.
-     * 
-     * It can cause problems (unwanted postscript subsystem initgraphics/erasepage calls)
+     * Sets whether or not PostScript Document Structuring Conventions (dsc) compliance are
+     * enforced.
+     * <p>
+     * It can cause problems (unwanted PostScript subsystem initgraphics/erasepage calls)
      * on some printers when the pagedevice is set.  If this causes problems on a
      * particular implementation then use this setting with a 'false' value to try and
      * minimize the number of setpagedevice calls in the postscript document output. 
-     * 
+     * <p>
      * Set this value to false if you experience unwanted blank pages in your
      * postscript output.
      * @param dscCompliant boolean value (default is true)
