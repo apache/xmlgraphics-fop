@@ -57,6 +57,33 @@
             text with the marker
           </fo:block>
          </fo:block>
+         </fo:flow>
+       </fo:page-sequence>
+       <fo:page-sequence master-reference="all-pages">
+          <fo:static-content flow-name="xsl-region-before">
+          <fo:block color="blue" font-size="25pt">
+            <fo:block>marker1 content:
+              <fo:inline color="green"><fo:retrieve-marker 
+              retrieve-class-name="marker1" 
+              retrieve-boundary="page"					
+              /></fo:inline>
+            </fo:block>
+            <fo:block>marker1 content:
+              <fo:inline color="green"><fo:retrieve-marker 
+              retrieve-class-name="marker1" 
+              retrieve-boundary="page"					
+              /></fo:inline>
+            </fo:block>
+          </fo:block>
+          </fo:static-content>
+          <fo:flow flow-name="xsl-region-body">
+             <fo:block font-size="20pt">
+          <fo:block margin-top="2cm">
+            <fo:marker marker-class-name="marker1"> Block<fo:inline> with inline element </fo:inline>.
+            </fo:marker>
+            text with the marker
+          </fo:block>
+         </fo:block>
           </fo:flow>
        </fo:page-sequence>
     </fo:root>
@@ -64,5 +91,7 @@
   <checks>
     <eval expected="4" xpath="count((//regionBefore//inlineparent)[1]/text[1]/space)" />
     <eval expected="4" xpath="count((//regionBefore//inlineparent)[1]/text[2]/space)" />
+    <eval expected="4" xpath="count((//regionBefore//inlineparent)[2]/text[1]/space)" />
+    <eval expected="4" xpath="count((//regionBefore//inlineparent)[2]/text[2]/space)" />
   </checks>
 </testcase>
