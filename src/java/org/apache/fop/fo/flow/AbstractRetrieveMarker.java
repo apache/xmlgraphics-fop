@@ -18,14 +18,11 @@
 /* $Id$ */
 package org.apache.fop.fo.flow;
 
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.*;
 import org.apache.fop.fo.flow.table.TableFObj;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.apps.FOPException;
+import org.xml.sax.Locator;
 
 import java.util.Iterator;
 
@@ -40,6 +37,8 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
 
     private PropertyList propertyList;
 
+    private String retrieveClassName;
+
     /**
      * Create a new AbstractRetrieveMarker instance that
      * is a child of the given {@link FONode}
@@ -52,11 +51,26 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
 
     /**
      * {@inheritDoc}
+     * <p>XSL Content Model: empty
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      * Store a reference to the parent {@link PropertyList}
      * to be used when the retrieve-marker is resolved.
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        this.retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();
+        if (retrieveClassName == null || retrieveClassName.equals("")) {
+            missingPropertyError("retrieve-class-name");
+        }
         this.propertyList = pList.getParentPropertyList();
     }
 
@@ -167,6 +181,16 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
         } else if (log.isDebugEnabled()) {
             log.debug("Empty marker retrieved...");
         }
+    }
+
+    /**
+     * Return the value for the <code>retrieve-class-name</code>
+     * property
+     *
+     * @return the value for retrieve-class-name
+     */
+    public String getRetrieveClassName() {
+        return this.retrieveClassName;
     }
 
 }

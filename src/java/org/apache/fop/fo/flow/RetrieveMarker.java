@@ -19,12 +19,9 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.Iterator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.ValidationException;
 import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
 
@@ -37,7 +34,6 @@ import org.xml.sax.Attributes;
 public class RetrieveMarker extends AbstractRetrieveMarker {
 
     // The value of properties relevant for fo:retrieve-marker.
-    private String retrieveClassName;
     private int retrievePosition;
     private int retrieveBoundary;
     // End of property values
@@ -46,7 +42,7 @@ public class RetrieveMarker extends AbstractRetrieveMarker {
      * Create a new RetrieveMarker instance that is a
      * child of the given {@link FONode}.
      *
-     * @param parent {@link FONode} that is the parent of this object
+     * @param parent the parent {@link FONode}
      */
     public RetrieveMarker(FONode parent) {
         super(parent);
@@ -72,47 +68,34 @@ public class RetrieveMarker extends AbstractRetrieveMarker {
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
-
-        retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();
-        retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
-        retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
-
-        if (retrieveClassName == null || retrieveClassName.equals("")) {
-            missingPropertyError("retrieve-class-name");
-        }
         super.bind(pList);
+        this.retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
+        this.retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
     }
 
     /**
-     * {@inheritDoc}
-     * XSL Content Model: empty
-     */
-    protected void validateChildNode(Locator loc, String nsURI, String localName)
-                throws ValidationException {
-        if (FO_URI.equals(nsURI)) {
-            invalidChildError(loc, nsURI, localName);
-        }
-    }
-
-    /**
-     * @return the "retrieve-class-name" property.
-     */
-    public String getRetrieveClassName() {
-        return retrieveClassName;
-    }
-
-    /**
-     * @return the "retrieve-position" property (enum value).
+     * Return the value for the <code>retrieve-position</code>
+     * property
+     * @return  the value for retrieve-position-within-table; one of
+     *              {@link org.apache.fop.fo.Constants#EN_FSWP},
+     *              {@link org.apache.fop.fo.Constants#EN_FIC},
+     *              {@link org.apache.fop.fo.Constants#EN_LSWP},
+     *              {@link org.apache.fop.fo.Constants#EN_LEWP}.
      */
     public int getRetrievePosition() {
-        return retrievePosition;
+        return this.retrievePosition;
     }
 
     /**
-     * @return the "retrieve-boundary" property (enum value).
+     * Return the value for the <code>retrieve-boundary</code>
+     * property
+     * @return  the value for retrieve-boundary-within-table; one of
+     *              {@link org.apache.fop.fo.Constants#EN_PAGE},
+     *              {@link org.apache.fop.fo.Constants#EN_PAGE_SEQUENCE},
+     *              {@link org.apache.fop.fo.Constants#EN_DOCUMENT}.
      */
     public int getRetrieveBoundary() {
-        return retrieveBoundary;
+        return this.retrieveBoundary;
     }
 
     /** {@inheritDoc} */
