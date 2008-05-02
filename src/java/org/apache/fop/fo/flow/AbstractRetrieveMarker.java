@@ -18,7 +18,12 @@
 /* $Id$ */
 package org.apache.fop.fo.flow;
 
-import org.apache.fop.fo.*;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.flow.table.TableFObj;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.apps.FOPException;
