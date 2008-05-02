@@ -57,7 +57,14 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
       </action -->
-      <action context="Code" dev="AD" type="fix" fixed-bug="44203">
+      <action context="Code" dev="AD" type="fix" fixes-bug="42703">
+        Fixed a regression introduced by the fix for
+        <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=44286">Bugzilla 44286</a>.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="43591">
+        Activated min-height/max-height and min-width/max-width properties.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="44203">
         Fixed a logic error in Hyphenator.java:
         If the source had an associated InputStream, an UnsupportedOperationException was
         triggered.
