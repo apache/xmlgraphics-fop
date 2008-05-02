@@ -28,7 +28,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_footnote">
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_footnote">
  * <code>fo:footnote</code></a> object.
  */
 public class Footnote extends FObj {
@@ -40,7 +40,8 @@ public class Footnote extends FObj {
     private FootnoteBody footnoteBody;
 
     /**
-     * Base constructor
+     * Create a Footnote instance that is a child of the
+     * given {@link FONode}
      * 
      * @param parent {@link FONode} that is the parent of this object
      */

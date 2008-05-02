@@ -16,9 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/document-v12.dtd?view=co">
-
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>News</title>
@@ -87,7 +85,7 @@
       </p>
       <p>
         Please see also the 
-        <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/200511.mbox/%3c20051123002157.0EB0.JEREMIAS@apache.org%3e">announcement</link>.
+        <a href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/200511.mbox/%3c20051123002157.0EB0.JEREMIAS@apache.org%3e">announcement</a>.
         <!-- TODO re-enable and the <link href="relnotes.html#FOP+0.90+alpha+1">release notes</link>.-->
       </p>
     </section>
@@ -99,7 +97,7 @@
       <title>20 October 2004 - Creation of the Apache XML Graphics project</title>
       <p>
         The Apache Board of Directors agreed to the creation of the 
-        <link href="http://xmlgraphics.apache.org">Apache XML Graphics</link>
+        <a href="http://xmlgraphics.apache.org">Apache XML Graphics</a>
         project which will be comprised of Batik and FOP. Both former 
         Apache XML subprojects are in this way complying with the Board's desire
         to improve project oversight. Both project teams also see additional
@@ -152,8 +150,8 @@
       </ul>
       <p>
       See also the full text of the
-      <link href="http://mail-archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=6067">
-        announcement</link>.
+      <a href="http://mail-archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=6067">
+        announcement</a>.
       <!-- TODO re-enable  and the <link href="relnotes.html#FOP+0.20.5">release notes</link>.-->
       </p>
     </section>
@@ -164,15 +162,15 @@
     <section>
       <title>23 May 2003 - FOP 0.20.5 Release Candidate 3 available</title>
       <p>
-      See the full text of the <link
-      href="http://mail-archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=5429">announcement</link>.
+      See the full text of the <a
+      href="http://mail-archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=5429">announcement</a>.
       </p>
     </section>
     <section>
       <title>18 February 2003 - FOP 0.20.5 Release Candidate 2 available</title>
       <p>
-      See the full text of the <link
-      href="http://mail-archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=4509">announcement</link>.
+      See the full text of the <a
+      href="http://mail-archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=4509">announcement</a>.
       </p>
     </section>
     <section>
@@ -189,16 +187,16 @@
     <section>
       <title>23 December 2002 - Official FOP Wiki</title>
       <p>
-      See <link href="http://wiki.apache.org/xmlgraphics-fop/FOPProjectPages"
-      >FOP project pages</link> at the ApacheWiki.
+      See <a href="http://wiki.apache.org/xmlgraphics-fop/FOPProjectPages"
+      >FOP project pages</a> at the ApacheWiki.
       </p>
     </section>
     <section>
       <title>10 December 2002 - FOP 0.20.5 Release Candidate available</title>
       <p>
-      See the full text of the <link
+      See the full text of the <a
       href="http://marc.theaimsgroup.com/?l=fop-user&amp;m=103954279712704&amp;w=2"
-      >announcement</link>.
+      >announcement</a>.
       </p>
     </section>
     <section>
@@ -206,7 +204,7 @@
       <p>
       The EXSLFO project is a community effort to define functional extensions
       to thet XSL Formatting Objects specification. See the
-      <link href="http://exslfo.sourceforge.net">EXSLFO website</link> for details.
+      <a href="http://exslfo.sourceforge.net">EXSLFO website</a> for details.
       </p>
     </section>
     <section>

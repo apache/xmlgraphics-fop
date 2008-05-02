@@ -48,7 +48,6 @@ public class BlockContainer extends FObj {
     private int breakBefore;
     // private ToBeImplementedProperty clip;
     private int displayAlign;
-    private Length height;
     private LengthRangeProperty inlineProgressionDimension;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
@@ -56,7 +55,6 @@ public class BlockContainer extends FObj {
     private int overflow;
     private Numeric referenceOrientation;
     private int span;
-    private Length width;
     private int writingMode;
     // Unused but valid items, commented out for performance:
     //     private int intrusionDisplace;
@@ -87,7 +85,6 @@ public class BlockContainer extends FObj {
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         // clip = pList.get(PR_CLIP);
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
-        height = pList.get(PR_HEIGHT).getLength();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
@@ -95,7 +92,6 @@ public class BlockContainer extends FObj {
         overflow = pList.get(PR_OVERFLOW).getEnum();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         span = pList.get(PR_SPAN).getEnum();
-        width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
     }
 
@@ -225,16 +221,6 @@ public class BlockContainer extends FObj {
         return writingMode;
     }
     
-    /** @return the "width" property */
-    public Length getWidth() {
-        return width;
-    }
-
-    /** @return the "height" property */
-    public Length getHeight() {
-        return height;
-    }
-
     /** {@inheritDoc} */
     public String getLocalName() {
         return "block-container";

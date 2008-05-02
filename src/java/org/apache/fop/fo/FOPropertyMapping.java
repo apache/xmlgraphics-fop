@@ -1423,27 +1423,33 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("inline-progression-dimension", m);
 
         // max-height
-        m  = new ToBeImplementedProperty.Maker(PR_MAX_HEIGHT);
+        m  = new LengthProperty.Maker(PR_MAX_HEIGHT);
+        m.addEnum("NONE", getEnumProperty(EN_NONE, "NONE"));
         m.setInherited(false);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         addPropertyMaker("max-height", m);
 
         // max-width
-        m  = new ToBeImplementedProperty.Maker(PR_MAX_WIDTH);
+        m  = new LengthProperty.Maker(PR_MAX_WIDTH);
+        m.addEnum("NONE", getEnumProperty(EN_NONE, "NONE"));
         m.setInherited(false);
         m.setDefault("none");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("max-width", m);
 
         // min-height
-        m  = new ToBeImplementedProperty.Maker(PR_MIN_HEIGHT);
+        m  = new LengthProperty.Maker(PR_MIN_HEIGHT);
         m.setInherited(false);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         addPropertyMaker("min-height", m);
 
         // min-width
-        m  = new ToBeImplementedProperty.Maker(PR_MIN_WIDTH);
+        m  = new LengthProperty.Maker(PR_MIN_WIDTH);
         m.setInherited(false);
-        m.setDefault("");
+        m.setDefault(""); //UA dependent
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("min-width", m);
 
         // scaling
@@ -2091,6 +2097,25 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("document", getEnumProperty(EN_DOCUMENT, "DOCUMENT"));
         m.setDefault("page-sequence");
         addPropertyMaker("retrieve-boundary", m);
+
+        // retrieve-position-within-table
+        m  = new EnumProperty.Maker(PR_RETRIEVE_POSITION_WITHIN_TABLE);
+        m.setInherited(false);
+        m.addEnum("first-starting", getEnumProperty(EN_FIRST_STARTING, "FIRST_STARTING"));
+        m.addEnum("first-including-carryover", getEnumProperty(EN_FIC, "FIC"));
+        m.addEnum("last-starting", getEnumProperty(EN_LAST_STARTING, "LAST_STARTING"));
+        m.addEnum("last-ending", getEnumProperty(EN_LAST_ENDING, "LAST_ENDING"));
+        m.setDefault("first-starting");
+        addPropertyMaker("retrieve-position-within-table", m);
+
+        // retrieve-boundary-within-table
+        m  = new EnumProperty.Maker(PR_RETRIEVE_BOUNDARY_WITHIN_TABLE);
+        m.setInherited(false);
+        m.addEnum("table", getEnumProperty(EN_TABLE, "TABLE"));
+        m.addEnum("table-fragment", getEnumProperty(EN_TABLE_FRAGMENT, "TABLE_FRAGMENT"));
+        m.addEnum("page", getEnumProperty(EN_DOCUMENT, "PAGE"));
+        m.setDefault("table");
+        addPropertyMaker("retrieve-boundary-within-table", m);
     }
 
     private void createNumberToStringProperties() {
