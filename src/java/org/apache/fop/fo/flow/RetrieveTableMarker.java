@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id:$ */
+/* $Id$ */
 package org.apache.fop.fo.flow;
 
 import org.apache.fop.fo.FONode;
@@ -30,8 +30,7 @@ import org.xml.sax.Attributes;
  */
 public class RetrieveTableMarker extends AbstractRetrieveMarker {
 
-    // The value of properties relevant for fo:retrieve-marker.
-    private String retrieveClassName;
+    // The value of properties relevant for fo:retrieve-table-marker.
     private int retrievePositionWithinTable;
     private int retrieveBoundaryWithinTable;
     // end property values
@@ -46,7 +45,11 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
         super(parent);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * <i>NOTE: An <code>fo:retrieve-table-marker</code> is only permitted as a descendant
+     * of an <code>fo:table-header</code> or an <code>fo:table-footer</code>.</i>
+     */
     public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList pList) throws FOPException {
         if (findAncestor(FO_TABLE_HEADER) < 0
                 && findAncestor(FO_TABLE_FOOTER) < 0) {
@@ -59,16 +62,11 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
-        this.retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();
+        super.bind(pList);
         this.retrievePositionWithinTable
                 = pList.get(PR_RETRIEVE_POSITION_WITHIN_TABLE).getEnum();
         this.retrieveBoundaryWithinTable
                 = pList.get(PR_RETRIEVE_BOUNDARY_WITHIN_TABLE).getEnum();
-    }
-
-    /** {@inheritDoc} */
-    public String getRetrieveClassName() {
-        return this.retrieveClassName;
     }
 
     /**
