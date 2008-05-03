@@ -39,7 +39,7 @@ public abstract class AbstractBaseLayoutManager
     /** Indicator if this LM generates block areas */
     protected boolean generatesBlockArea = false;
     /** The formatting object for this LM */
-    protected final FObj fobj;
+    protected FObj fobj;
 
     /**
      * logging instance
