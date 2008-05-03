@@ -29,7 +29,7 @@ import org.apache.fop.fo.FObj;
  * The base class for nearly all LayoutManagers.
  * Provides the functionality for merging the {@link LayoutManager}
  * and the {@link org.apache.fop.datatypes.PercentBaseContext} interfaces
- * into a common base calls for all higher LayoutManagers.
+ * into a common base class for all higher LayoutManagers.
  */
 public abstract class AbstractBaseLayoutManager 
     implements LayoutManager, PercentBaseContext {
@@ -39,7 +39,7 @@ public abstract class AbstractBaseLayoutManager
     /** Indicator if this LM generates block areas */
     protected boolean generatesBlockArea = false;
     /** The formatting object for this LM */
-    protected FObj fobj = null;
+    protected final FObj fobj;
 
     /**
      * logging instance
@@ -50,6 +50,7 @@ public abstract class AbstractBaseLayoutManager
      * Abstract base layout manager.
      */
     public AbstractBaseLayoutManager() {
+        fobj = null;
     }
 
     /**
@@ -67,9 +68,7 @@ public abstract class AbstractBaseLayoutManager
 
     // --------- Property Resolution related functions --------- //
     
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public int getBaseLength(int lengthBase, FObj fobj) {
         if (fobj == this.fobj) {
             switch (lengthBase) {
@@ -82,7 +81,7 @@ public abstract class AbstractBaseLayoutManager
             case LengthBase.CONTAINING_REFAREA_WIDTH:
                 return getReferenceAreaIPD();
             default:
-                log.error(new Exception("Unknown base type for LengthBase:" + lengthBase));
+                log.error("Unknown base type for LengthBase:" + lengthBase);
                 return 0;
             }
         } else {
@@ -112,9 +111,7 @@ public abstract class AbstractBaseLayoutManager
             }
             lm = lm.getParent();
         }
-        if (lm == null) {
-            log.error("No parent LM found");
-        }
+        log.error("No parent LM found");
         return 0;
     }
 
@@ -131,9 +128,7 @@ public abstract class AbstractBaseLayoutManager
             }
             lm = lm.getParent();
         }
-        if (lm == null) {
-            log.error("No parent LM found");
-        }
+        log.error("No parent LM found");
         return 0;
     }
 
@@ -176,9 +171,7 @@ public abstract class AbstractBaseLayoutManager
             }
             lm = lm.getParent();
         }
-        if (lm == null) {
-            log.error("No parent LM found");
-        }
+        log.error("No parent LM found");
         return 0;
     }
 
@@ -195,31 +188,31 @@ public abstract class AbstractBaseLayoutManager
             }
             lm = lm.getParent();
         }
-        if (lm == null) {
-            log.error("No parent LM found");
-        }
+        log.error("No parent LM found");
         return 0;
     }
 
     /**
      * {@inheritDoc}
+     * <i>NOTE: Should be overridden by subclasses.
+     * Default implementation throws an <code>UnsupportedOperationException</code>.</i>
      */
     public int getContentAreaIPD() {
-        log.error("getContentAreaIPD called when it should have been overwritten");
-        return 0;
+        throw new UnsupportedOperationException(
+                "getContentAreaIPD() called when it should have been overridden");
     }
    
     /**
      * {@inheritDoc}
+     * <i>NOTE: Should be overridden by subclasses.
+     * Default implementation throws an <code>UnsupportedOperationException</code>.</i>
      */
     public int getContentAreaBPD() {
-        log.error("getContentAreaBPD called when it should have been overwritten");
-        return 0;
+        throw new UnsupportedOperationException(
+                "getContentAreaBPD() called when it should have been overridden");
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean getGeneratesReferenceArea() {
         return generatesReferenceArea;
     }
@@ -234,9 +227,7 @@ public abstract class AbstractBaseLayoutManager
         this.generatesReferenceArea = generatesReferenceArea;
     }
    
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean getGeneratesBlockArea() {
         return generatesBlockArea;
     }
@@ -250,9 +241,7 @@ public abstract class AbstractBaseLayoutManager
         this.generatesBlockArea = generatesBlockArea;
     }
    
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean getGeneratesLineArea() {
         return false;
     }
