@@ -203,7 +203,7 @@ public final class CommonHyphenation {
     
     /** {@inheritDoc} */
     public int hashCode() {
-        if (hash == 0) {
+        if (this.hash == 0) {
             int hash = 17;
             hash = 37 * hash + (language == null ? 0 : language.hashCode());
             hash = 37 * hash + (script == null ? 0 : script.hashCode());
@@ -215,8 +215,9 @@ public final class CommonHyphenation {
                 (hyphenationPushCharacterCount == null ? 0 : hyphenationPushCharacterCount.hashCode());
             hash = 37 * hash + 
                 (hyphenationRemainCharacterCount == null ? 0 : hyphenationRemainCharacterCount.hashCode());
+            this.hash = hash;
         }
-        return hash;
+        return this.hash;
     }
     
 }
