@@ -39,7 +39,7 @@ public abstract class AbstractBaseLayoutManager
     /** Indicator if this LM generates block areas */
     protected boolean generatesBlockArea = false;
     /** The formatting object for this LM */
-    protected FObj fobj;
+    protected final FObj fobj;
 
     /**
      * logging instance
@@ -59,7 +59,7 @@ public abstract class AbstractBaseLayoutManager
      * @param fo the formatting object for this layout manager
      */
     public AbstractBaseLayoutManager(FObj fo) {
-        fobj = fo;
+        this.fobj = fo;
         setGeneratesReferenceArea(fo.generatesReferenceAreas());
         if (getGeneratesReferenceArea()) {
             setGeneratesBlockArea(true);

@@ -83,7 +83,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      */
     public TableCellLayoutManager(TableCell node, PrimaryGridUnit pgu) {
         super(node);
-        fobj = node;
         this.primaryGridUnit = pgu;
     }
 
