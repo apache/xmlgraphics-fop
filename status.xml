@@ -57,11 +57,15 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
       </action -->
-      <action context="Code" dev="AD" type="fix" fixes-bug="42703">
-        Fixed a regression introduced by the fix for
-        <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=44286">Bugzilla 44286</a>.
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="43650">
+        PCL Renderer: Improved page format selection so it doesn't interfere with
+        duplex printing.
       </action>
-      <action context="Code" dev="AD" type="fix" fixes-bug="43591">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="42703">
+        Fixed a regression introduced by the fix for
+        <link href="https://issues.apache.org/bugzilla/show_bug.cgi?id=44286">Bugzilla 44286</link>.
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="43591">
         Activated min-height/max-height and min-width/max-width properties.
       </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="44203">
@@ -69,7 +73,7 @@
         If the source had an associated InputStream, an UnsupportedOperationException was
         triggered.
       </action>
-      <action context="Code" dev="AD" type="add" fixes-bug="44634">
+      <action context="Renderers" dev="AD" type="add" fixes-bug="44634">
         Add partial support for the "show-destination" property on fo:basic-link
         (PDF output only; see limitations on the compliance page)
       </action>
