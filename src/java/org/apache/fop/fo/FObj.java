@@ -427,12 +427,12 @@ public abstract class FObj extends FONode implements Constants {
      */
     protected boolean isBlockItem(String nsURI, String lName) {
         return (FO_URI.equals(nsURI) 
-                && (lName.equals("block") 
-                        || lName.equals("table") 
-                        || lName.equals("table-and-caption") 
-                        || lName.equals("block-container")
-                        || lName.equals("list-block") 
-                        || lName.equals("float")
+                && ("block".equals(lName)
+                        || "table".equals(lName)
+                        || "table-and-caption".equals(lName)
+                        || "block-container".equals(lName)
+                        || "list-block".equals(lName)
+                        || "float".equals(lName)
                         || isNeutralItem(nsURI, lName)));
     }
 
@@ -446,21 +446,21 @@ public abstract class FObj extends FONode implements Constants {
      */
     protected boolean isInlineItem(String nsURI, String lName) {
         return (FO_URI.equals(nsURI) 
-                && (lName.equals("bidi-override") 
-                        || lName.equals("character") 
-                        || lName.equals("external-graphic") 
-                        || lName.equals("instream-foreign-object")
-                        || lName.equals("inline") 
-                        || lName.equals("inline-container")
-                        || lName.equals("leader") 
-                        || lName.equals("page-number") 
-                        || lName.equals("page-number-citation")
-                        || lName.equals("page-number-citation-last")
-                        || lName.equals("basic-link")
-                        || (lName.equals("multi-toggle")
+                && ("bidi-override".equals(lName)
+                        || "character".equals(lName)
+                        || "external-graphic".equals(lName)
+                        || "instream-foreign-object".equals(lName)
+                        || "inline".equals(lName)
+                        || "inline-container".equals(lName)
+                        || "leader".equals(lName)
+                        || "page-number".equals(lName)
+                        || "page-number-citation".equals(lName)
+                        || "page-number-citation-last".equals(lName)
+                        || "basic-link".equals(lName)
+                        || ("multi-toggle".equals(lName)
                                 && (getNameId() == FO_MULTI_CASE
                                         || findAncestor(FO_MULTI_CASE) > 0))
-                        || (lName.equals("footnote") 
+                        || ("footnote".equals(lName)
                                 && !isOutOfLineFODescendant)
                         || isNeutralItem(nsURI, lName)));
     }
@@ -487,11 +487,12 @@ public abstract class FObj extends FONode implements Constants {
      */
     boolean isNeutralItem(String nsURI, String lName) {
         return (FO_URI.equals(nsURI) 
-                && (lName.equals("multi-switch") 
-                        || lName.equals("multi-properties")
-                        || lName.equals("wrapper") 
-                        || (!isOutOfLineFODescendant && lName.equals("float"))
-                        || lName.equals("retrieve-marker")));
+                && ("multi-switch".equals(lName)
+                        || "multi-properties".equals(lName)
+                        || "wrapper".equals(lName)
+                        || (!isOutOfLineFODescendant && "float".equals(lName))
+                        || "retrieve-marker".equals(lName)
+                        || "retrieve-table-marker".equals(lName)));
     }
     
     /**

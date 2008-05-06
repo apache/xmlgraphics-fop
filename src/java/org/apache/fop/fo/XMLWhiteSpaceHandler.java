@@ -116,6 +116,7 @@ public class XMLWhiteSpaceHandler {
             
             if (ancestor.getNameId() == Constants.FO_BLOCK) {
                 currentBlock = (Block) ancestor;
+                nestedBlockStack.push(currentBlock);
             }
         } else if (!nestedBlockStack.isEmpty()) {
             currentBlock = (Block) nestedBlockStack.peek();
@@ -206,9 +207,7 @@ public class XMLWhiteSpaceHandler {
                 /* end of block: clear the references and pop the 
                  * nested block stack */
                 if (!nestedBlockStack.empty()) {
-                    currentBlock = (Block) nestedBlockStack.pop();
-                } else {
-                    currentBlock = null;
+                    nestedBlockStack.pop();
                 }
                 charIter = null;
             }

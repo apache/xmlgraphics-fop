@@ -156,6 +156,11 @@ public class PCLRenderer extends PrintRenderer {
      */
     private boolean disabledPJL = false;
     
+    /** contains the pageWith of the last printed page */
+    private long pageWidth = 0;
+    /** contains the pageHeight of the last printed page */
+    private long pageHeight = 0;
+    
     /**
      * Create the PCL renderer
      */
@@ -416,29 +421,34 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     private void selectPageFormat(long pagewidth, long pageheight) throws IOException {
-        this.currentPageDefinition = PCLPageDefinition.getPageDefinition(
-                pagewidth, pageheight, 1000);
-        
-        if (this.currentPageDefinition == null) {
-            this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
-            PCLEventProducer eventProducer = PCLEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.paperTypeUnavailable(this, pagewidth, pageheight,
-                    this.currentPageDefinition.getName());
+        //Only set the page format if it changes (otherwise duplex printing won't work) 
+        if ((pagewidth != this.pageWidth) || (pageheight != this.pageHeight))  {
+            this.pageWidth = pagewidth;
+            this.pageHeight = pageheight;
+            
+            this.currentPageDefinition = PCLPageDefinition.getPageDefinition(
+                    pagewidth, pageheight, 1000);
+            
+            if (this.currentPageDefinition == null) {
+                this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
+                log.warn("Paper type could not be determined. Falling back to: " 
+                        + this.currentPageDefinition.getName());
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
+                log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
+            }
+            
+            if (this.currentPageDefinition.isLandscapeFormat()) {
+                gen.writeCommand("&l1O"); //Landscape Orientation
+            } else {
+                gen.writeCommand("&l0O"); //Portrait Orientation
+            }
+            gen.selectPageSize(this.currentPageDefinition.getSelector());
+            
+            gen.clearHorizontalMargins();
+            gen.setTopMargin(0);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
-            log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
-        }
-        if (this.currentPageDefinition.isLandscapeFormat()) {
-            gen.writeCommand("&l1O"); //Orientation
-        } else {
-            gen.writeCommand("&l0O"); //Orientation
-        }
-        gen.selectPageSize(this.currentPageDefinition.getSelector());
-        
-        gen.clearHorizontalMargins();
-        gen.setTopMargin(0);
     }
 
     /** Saves the current graphics state on the stack. */
