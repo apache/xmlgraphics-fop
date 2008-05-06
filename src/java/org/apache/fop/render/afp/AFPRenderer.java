@@ -279,8 +279,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
         int num = 1;
-        if (this.fontList != null && this.fontList.size() > 0) {
-            for (Iterator it = this.fontList.iterator(); it.hasNext();) {
+        if (super.embedFontInfoList != null && super.embedFontInfoList.size() > 0) {
+            for (Iterator it = super.embedFontInfoList.iterator(); it.hasNext();) {
                 AFPFontInfo afi = (AFPFontInfo)it.next();
                 AFPFont bf = (AFPFont)afi.getAFPFont();
                 for (Iterator it2 = afi.getFontTriplets().iterator(); it2.hasNext();) {

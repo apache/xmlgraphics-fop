@@ -15,81 +15,46 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.fonts;
+package org.apache.fop.fonts.base14;
 
-// FOP (base 14 fonts)
-import java.util.List;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fonts.base14.Courier;
-import org.apache.fop.fonts.base14.CourierBold;
-import org.apache.fop.fonts.base14.CourierBoldOblique;
-import org.apache.fop.fonts.base14.CourierOblique;
-import org.apache.fop.fonts.base14.Helvetica;
-import org.apache.fop.fonts.base14.HelveticaBold;
-import org.apache.fop.fonts.base14.HelveticaBoldOblique;
-import org.apache.fop.fonts.base14.HelveticaOblique;
-import org.apache.fop.fonts.base14.Symbol;
-import org.apache.fop.fonts.base14.TimesBold;
-import org.apache.fop.fonts.base14.TimesBoldItalic;
-import org.apache.fop.fonts.base14.TimesItalic;
-import org.apache.fop.fonts.base14.TimesRoman;
-import org.apache.fop.fonts.base14.ZapfDingbats;
-
-//TODO remove small dependency on and refactor this
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontCollection;
+import org.apache.fop.fonts.FontInfo;
 
 /**
- * Default fonts for FOP application; currently this uses PDF's fonts
- * by default.
- *
- * Assigns the font (with metrics) to internal names like "F1" and
- * assigns family-style-weight triplets to the fonts
+ * Sets up Base 14 fonts
  */
-public class FontSetup {
+public class Base14FontCollection implements FontCollection {
+    
+    private boolean kerning = false;
 
     /**
-     * logging instance
+     * Main constructor
+     * 
+     * @param kerning set to true when font kerning is enabled
      */
-    protected static Log log = LogFactory.getLog(FontSetup.class);
-
-    /**
-     * Sets up a font info
-     * @param fontInfo font info
-     */
-    public static void setup(FontInfo fontInfo) {
-        setup(fontInfo, null, null);
+    public Base14FontCollection(boolean kerning) {
+        this.kerning  = kerning;
     }
-
+    
     /**
-     * Sets up the font info object.
-     *
-     * Adds metrics for basic fonts and useful family-style-weight
-     * triplets for lookup.
-     *
-     * @param fontInfo the font info object to set up
-     * @param embedFontInfoList a list of EmbedFontInfo objects
-     * @param resolver the font resolver
+     * {@inheritDoc}
      */
-    public static void setup(FontInfo fontInfo, List embedFontInfoList, FontResolver resolver) {
-        final boolean base14Kerning = false;
-        fontInfo.addMetrics("F1", new Helvetica(base14Kerning));
-        fontInfo.addMetrics("F2", new HelveticaOblique(base14Kerning));
-        fontInfo.addMetrics("F3", new HelveticaBold(base14Kerning));
-        fontInfo.addMetrics("F4", new HelveticaBoldOblique(base14Kerning));
-        fontInfo.addMetrics("F5", new TimesRoman(base14Kerning));
-        fontInfo.addMetrics("F6", new TimesItalic(base14Kerning));
-        fontInfo.addMetrics("F7", new TimesBold(base14Kerning));
-        fontInfo.addMetrics("F8", new TimesBoldItalic(base14Kerning));
-        fontInfo.addMetrics("F9", new Courier(base14Kerning));
-        fontInfo.addMetrics("F10", new CourierOblique(base14Kerning));
-        fontInfo.addMetrics("F11", new CourierBold(base14Kerning));
-        fontInfo.addMetrics("F12", new CourierBoldOblique(base14Kerning));
+    public int setup(int start, FontInfo fontInfo) {
+        fontInfo.addMetrics("F1", new Helvetica(kerning));
+        fontInfo.addMetrics("F2", new HelveticaOblique(kerning));
+        fontInfo.addMetrics("F3", new HelveticaBold(kerning));
+        fontInfo.addMetrics("F4", new HelveticaBoldOblique(kerning));
+        fontInfo.addMetrics("F5", new TimesRoman(kerning));
+        fontInfo.addMetrics("F6", new TimesItalic(kerning));
+        fontInfo.addMetrics("F7", new TimesBold(kerning));
+        fontInfo.addMetrics("F8", new TimesBoldItalic(kerning));
+        fontInfo.addMetrics("F9", new Courier(kerning));
+        fontInfo.addMetrics("F10", new CourierOblique(kerning));
+        fontInfo.addMetrics("F11", new CourierBold(kerning));
+        fontInfo.addMetrics("F12", new CourierBoldOblique(kerning));
         fontInfo.addMetrics("F13", new Symbol());
         fontInfo.addMetrics("F14", new ZapfDingbats());
 
@@ -178,68 +143,7 @@ public class FontSetup {
         fontInfo.addFontProperties("F8", "Times Roman", Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
                                                         Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-
-        // All base 14 configured now, so any custom embedded fonts start from 15
-        final int startNum = 15;
         
-        /* Add configured fonts */
-        addConfiguredFonts(fontInfo, embedFontInfoList, startNum, resolver);
+        return 15;
     }
-
-    /**
-     * Add fonts from configuration file starting with internal name F<num>.
-     * @param fontInfo the font info to set up
-     * @param embedFontInfoList a list of EmbedFontInfo objects
-     * @param num starting index for internal font numbering
-     * @param resolver the font resolver
-     */
-    private static void addConfiguredFonts(FontInfo fontInfo,
-            List/*<EmbedFontInfo>*/ embedFontInfoList, int num, FontResolver resolver) {
-        if (embedFontInfoList == null) {
-            return; //No fonts to process
-        }
-
-        if (resolver == null) {
-            //Ensure that we have minimal font resolution capabilities
-            resolver = createMinimalFontResolver1();
-        }
-        
-        String internalName = null;
-        //FontReader reader = null;
-
-        for (int i = 0; i < embedFontInfoList.size(); i++) {
-            EmbedFontInfo embedFontInfo = (EmbedFontInfo)embedFontInfoList.get(i);
-
-            //String metricsFile = configFontInfo.getMetricsFile();
-            internalName = "F" + num;
-            num++;
-            /*
-            reader = new FontReader(metricsFile);
-            reader.useKerning(configFontInfo.getKerning());
-            reader.setFontEmbedPath(configFontInfo.getEmbedFile());
-            fontInfo.addMetrics(internalName, reader.getFont());
-            */
-            
-            LazyFont font = new LazyFont(embedFontInfo, resolver);
-            fontInfo.addMetrics(internalName, font);
-
-            List triplets = embedFontInfo.getFontTriplets();
-            for (int tripletIndex = 0; tripletIndex < triplets.size(); tripletIndex++) {
-                FontTriplet triplet = (FontTriplet) triplets.get(tripletIndex);
-                fontInfo.addFontProperties(internalName, triplet);
-            }
-        }
-    }
-
-    /** @return a new FontResolver to be used by the font subsystem */
-    public static FontResolver createMinimalFontResolver1() {
-        return new FontResolver() {
-
-            /** {@inheritDoc} */
-            public Source resolve(String href) {
-                //Minimal functionality here
-                return new StreamSource(href);
-            }
-        };
-    }       
 }

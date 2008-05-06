@@ -959,7 +959,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         preparePainting();
 
         FontInfo specialFontInfo = new FontInfo();
-        FontSetup.setup(specialFontInfo, null, null);
+        FontSetup.setup(specialFontInfo);
 
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);

@@ -28,6 +28,8 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fonts.FontManager;
+import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.util.LogUtil;
 import org.xml.sax.SAXException;
 
@@ -57,9 +59,6 @@ public class FopFactoryConfigurator {
     /** Defines the default target resolution (72dpi) for FOP */
     public static final float DEFAULT_TARGET_RESOLUTION = 72.0f; //dpi
     
-    /** Use cache (record previously detected font triplet info) */
-    public static final boolean DEFAULT_USE_CACHE = true;
-
     /** logger instance */
     private final Log log = LogFactory.getLog(FopFactoryConfigurator.class);
 
@@ -119,14 +118,6 @@ public class FopFactoryConfigurator {
                 LogUtil.handleException(log, mfue, strict);
             }
         }
-        if (cfg.getChild("font-base", false) != null) {
-            try {
-                factory.setFontBaseURL(
-                        cfg.getChild("font-base").getValue(null));
-            } catch (MalformedURLException mfue) {
-                LogUtil.handleException(log, mfue, strict);
-            }
-        }
         if (cfg.getChild("hyphenation-base", false) != null) {
             try {
                 factory.setHyphenBaseURL(
@@ -180,15 +171,10 @@ public class FopFactoryConfigurator {
             }
         }
 
-        // caching (fonts)
-        if (cfg.getChild("use-cache", false) != null) {
-            try {
-                factory.setUseCache(
-                        cfg.getChild("use-cache").getValueAsBoolean());
-            } catch (ConfigurationException mfue) {
-                LogUtil.handleException(log, mfue, strict);
-            }
-        }
+        // configure font manager
+        FontManager fontManager = factory.getFontManager();
+        FontManagerConfigurator fontManagerConfigurator = new FontManagerConfigurator(cfg);
+        fontManagerConfigurator.configure(fontManager);
     }
     
     /**

@@ -98,7 +98,7 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         if (!isTextStroked()) {
             FontInfo fontInfo = new FontInfo();   
             //TODO Do custom font configuration here somewhere/somehow 
-            FontSetup.setup(fontInfo, null, null);   
+            FontSetup.setup(fontInfo);   
             graphics.setCustomTextHandler(new NativeTextHandler(graphics, fontInfo));
         }
 

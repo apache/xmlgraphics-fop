@@ -89,7 +89,6 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.java2d.FontMetricsMapper;
-import org.apache.fop.render.java2d.FontSetup;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
@@ -202,11 +201,12 @@ public class PCLRenderer extends PrintRenderer {
         fontInfo = inFontInfo;
         BufferedImage fontImage = new BufferedImage(100, 100,
                 BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = fontImage.createGraphics();
+        Graphics2D graphics2D = fontImage.createGraphics();
         //The next line is important to get accurate font metrics!
-        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
+        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        FontSetup.setup(fontInfo, fontList, fontResolver, g);
+        
+        userAgent.getFactory().getFontManager().setupRenderer(this, graphics2D);
     }
 
     /**

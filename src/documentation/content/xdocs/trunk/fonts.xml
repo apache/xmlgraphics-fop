@@ -201,17 +201,20 @@
         support fonts. These fonts will then automatically be registered.
       </p>
       <source><![CDATA[
-<fonts>
-  <!-- register all the fonts found in a directory -->
-  <directory>C:\MyFonts1</directory>
+<renderers>
+   <renderer mime="application/pdf">
+      <fonts>
+         <!-- register all the fonts found in a directory -->
+         <directory>C:\MyFonts1</directory>
   
-  <!-- register all the fonts found in a directory
-       and all of its sub directories (use with care) -->
-  <directory recursive="true">C:\MyFonts2</directory>
+         <!-- register all the fonts found in a directory and all of its sub directories (use with care) -->
+         <directory recursive="true">C:\MyFonts2</directory>
 
-  <!-- automatically detect operating system installed fonts -->
-  <auto-detect/>  
-</fonts>]]></source>
+         <!-- automatically detect operating system installed fonts -->
+         <auto-detect/>  
+      </fonts>
+   </renderer>
+</renderers>]]></source>
       <note>
         Review the documentation for <a href="configuration.html">FOP Configuration</a>
         for instructions on making the FOP configuration available to FOP when it runs.
@@ -318,23 +321,25 @@
         <title>Register Fonts with FOP</title>
         <p>You must tell FOP how to find and use the font metrics files by registering them in the <a href="configuration.html">FOP Configuration</a>. Add entries for your custom fonts, regardless of font type, to the configuration file in a manner similar to the following:</p>
         <source><![CDATA[
-<fonts>
-  <!-- register a particular font -->
-  <font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes"
-      embed-url="file:///C:/myfonts/FTL_____.pfb">
-     <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
-  </font>
+<renderers>
+   <renderer mime="application/pdf">
+      <fonts>
+         <!-- register a particular font -->
+         <font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes" embed-url="file:///C:/myfonts/FTL_____.pfb">
+            <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
+         </font>
   
-  <!-- register all the fonts found in a directory -->
-  <directory>C:\MyFonts1</directory>
+         <!-- register all the fonts found in a directory -->
+         <directory>C:\MyFonts1</directory>
   
-  <!-- register all the fonts found in a directory
-       and all of its sub directories (use with care) -->
-  <directory recursive="true">C:\MyFonts2</directory>
+         <!-- register all the fonts found in a directory and all of its sub directories (use with care) -->
+         <directory recursive="true">C:\MyFonts2</directory>
 
-  <!-- automatically detect operating system installed fonts -->
-  <auto-detect/>  
-</fonts>]]></source>
+         <!-- automatically detect operating system installed fonts -->
+         <auto-detect/>  
+      </fonts>
+   </renderer>
+</renderers>]]></source>
         <ul>
           <li>
             URLs are used to access the font metric and font files.
@@ -359,7 +364,7 @@
         <!--note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note-->
       </section>
       <section id="autodetect">
-        <title>Auto-Detect and auto-embedd feature</title>
+        <title>Auto-Detect and auto-embed feature</title>
         <p>When the "auto-detect" flag is set in the configuration, FOP will automatically search for fonts in the default paths for your operating system.</p>
         <p>FOP will also auto-detect fonts which are available in the classpath, if they are described as "application/x-font" in the MANIFEST.MF file. For example, if your .jar file contains font/myfont.ttf:</p>
         <source>Manifest-Version: 1.0
@@ -384,6 +389,30 @@
         <p>When embedding PostScript fonts, the entire font is always embedded.</p>
         <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the
           original font, containing only the glyphs used, is embedded in the output document.</p>
+      </section>
+      <section id="substitution">
+         <title>Substitution</title>
+         <p>When a &lt;substitutions/&gt; section is defined in the configuration, FOP will re-map any font-family references found in your FO input to a given substitution font.</p>
+         <ul>
+            <li>If a &lt;substitution/&gt; is declared, it is mandatory that both a &lt;from/&gt; and &lt;to/&gt; child element is declared with a font-family attribute.</li>
+            <li>Both font-weight and font-style are optional attributes, if they are provided then a value of 'normal' is assumed.</li>
+         </ul>
+         <p>For example you could make all FO font-family references to 'Arial' with weights between 700 and 900 reference the normal 'Arial Black' font.</p>
+         <source><![CDATA[
+<fop version="1.0">
+   <fonts>
+      <substitutions>
+         <substitution>
+            <from font-family="Arial" font-weight="700..900"/>
+            <to font-family="Arial Black"/>
+         </substitution>
+         <substitution>
+            <from font-family="FrutigerLight"/>
+            <to font-family="Times" font-weight="bold" font-style="italic"/>
+         </substitution>
+      </substitutions>
+   </fonts>
+</fop>]]></source>
       </section>
       <!-- The following section should no longer be required
       <section id="embedding-base14">

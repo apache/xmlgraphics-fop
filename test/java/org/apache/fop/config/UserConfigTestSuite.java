@@ -44,6 +44,7 @@ public class UserConfigTestSuite {
         suite.addTest(new TestSuite(FontEmbedUrlMalformedTestCase.class));
         suite.addTest(new TestSuite(FontsDirectoryRecursiveTestCase.class));
         suite.addTest(new TestSuite(FontsAutoDetectTestCase.class));
+        suite.addTest(new TestSuite(FontsSubstitutionTestCase.class));
         //$JUnit-END$
         return suite;
     }

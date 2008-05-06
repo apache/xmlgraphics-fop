@@ -60,6 +60,34 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
     private boolean throwExceptions = false;
 
     /**
+     * Checks if the given base URL is acceptable. It also normalizes the URL.
+     * @param base the base URL to check
+     * @return the normalized URL
+     * @throws MalformedURLException if there's a problem with a file URL
+     */
+    public String checkBaseURL(String base) throws MalformedURLException {
+        if (!base.endsWith("/")) {
+            // The behavior described by RFC 3986 regarding resolution of relative
+            // references may be misleading for normal users:
+            // file://path/to/resources + myResource.res -> file://path/to/myResource.res
+            // file://path/to/resources/ + myResource.res -> file://path/to/resources/myResource.res
+            // We assume that even when the ending slash is missing, users have the second
+            // example in mind
+            base += "/";
+        }
+        File dir = new File(base);
+        try {
+            base = (dir.isDirectory() ? dir.toURL() : new URL(base)).toExternalForm(); 
+        } catch (MalformedURLException mfue) {
+            if (throwExceptions) {
+                throw mfue;
+            }
+            log.error(mfue.getMessage());
+        }
+        return base;
+    }
+
+    /**
      * Default constructor
      */
     public FOURIResolver() {

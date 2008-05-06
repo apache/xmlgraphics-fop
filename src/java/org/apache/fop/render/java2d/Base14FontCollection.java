@@ -15,83 +15,92 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
-package org.apache.fop.fonts;
+package org.apache.fop.render.java2d;
 
-// FOP (base 14 fonts)
-import java.util.List;
+import java.awt.Graphics2D;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fonts.base14.Courier;
-import org.apache.fop.fonts.base14.CourierBold;
-import org.apache.fop.fonts.base14.CourierBoldOblique;
-import org.apache.fop.fonts.base14.CourierOblique;
-import org.apache.fop.fonts.base14.Helvetica;
-import org.apache.fop.fonts.base14.HelveticaBold;
-import org.apache.fop.fonts.base14.HelveticaBoldOblique;
-import org.apache.fop.fonts.base14.HelveticaOblique;
-import org.apache.fop.fonts.base14.Symbol;
-import org.apache.fop.fonts.base14.TimesBold;
-import org.apache.fop.fonts.base14.TimesBoldItalic;
-import org.apache.fop.fonts.base14.TimesItalic;
-import org.apache.fop.fonts.base14.TimesRoman;
-import org.apache.fop.fonts.base14.ZapfDingbats;
-
-//TODO remove small dependency on and refactor this
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontCollection;
+import org.apache.fop.fonts.FontInfo;
 
 /**
- * Default fonts for FOP application; currently this uses PDF's fonts
- * by default.
- *
- * Assigns the font (with metrics) to internal names like "F1" and
- * assigns family-style-weight triplets to the fonts
+ * A base 14 font collection for graphics 2D
  */
-public class FontSetup {
+public class Base14FontCollection implements FontCollection {
 
+    private Graphics2D graphics2d = null;
+    
     /**
-     * logging instance
+     * Main constructor
+     * @param graphics2d a graphics 2D
      */
-    protected static Log log = LogFactory.getLog(FontSetup.class);
-
-    /**
-     * Sets up a font info
-     * @param fontInfo font info
-     */
-    public static void setup(FontInfo fontInfo) {
-        setup(fontInfo, null, null);
+    public Base14FontCollection(Graphics2D graphics2d) {
+        this.graphics2d = graphics2d;
     }
-
+    
     /**
-     * Sets up the font info object.
-     *
-     * Adds metrics for basic fonts and useful family-style-weight
-     * triplets for lookup.
-     *
-     * @param fontInfo the font info object to set up
-     * @param embedFontInfoList a list of EmbedFontInfo objects
-     * @param resolver the font resolver
+     * {@inheritDoc}
      */
-    public static void setup(FontInfo fontInfo, List embedFontInfoList, FontResolver resolver) {
-        final boolean base14Kerning = false;
-        fontInfo.addMetrics("F1", new Helvetica(base14Kerning));
-        fontInfo.addMetrics("F2", new HelveticaOblique(base14Kerning));
-        fontInfo.addMetrics("F3", new HelveticaBold(base14Kerning));
-        fontInfo.addMetrics("F4", new HelveticaBoldOblique(base14Kerning));
-        fontInfo.addMetrics("F5", new TimesRoman(base14Kerning));
-        fontInfo.addMetrics("F6", new TimesItalic(base14Kerning));
-        fontInfo.addMetrics("F7", new TimesBold(base14Kerning));
-        fontInfo.addMetrics("F8", new TimesBoldItalic(base14Kerning));
-        fontInfo.addMetrics("F9", new Courier(base14Kerning));
-        fontInfo.addMetrics("F10", new CourierOblique(base14Kerning));
-        fontInfo.addMetrics("F11", new CourierBold(base14Kerning));
-        fontInfo.addMetrics("F12", new CourierBoldOblique(base14Kerning));
-        fontInfo.addMetrics("F13", new Symbol());
-        fontInfo.addMetrics("F14", new ZapfDingbats());
+    public int setup(int start, FontInfo fontInfo) {
+        /*
+         * available java fonts are:
+         * Serif - bold, normal, italic, bold-italic
+         * SansSerif - bold, normal, italic, bold-italic
+         * MonoSpaced - bold, normal, italic, bold-italic
+         */
+        final int normal = java.awt.Font.PLAIN;
+        final int bold = java.awt.Font.BOLD;
+        final int italic = java.awt.Font.ITALIC;
+        final int bolditalic = java.awt.Font.BOLD + java.awt.Font.ITALIC;
+
+        FontMetricsMapper metric;
+        metric = new SystemFontMetricsMapper("SansSerif", normal, graphics2d);
+        // --> goes to  F1
+        fontInfo.addMetrics("F1", metric);
+        metric = new SystemFontMetricsMapper("SansSerif", italic, graphics2d);
+        // --> goes to  F2
+        fontInfo.addMetrics("F2", metric);
+        metric = new SystemFontMetricsMapper("SansSerif", bold, graphics2d);
+        // --> goes to  F3
+        fontInfo.addMetrics("F3", metric);
+        metric = new SystemFontMetricsMapper("SansSerif", bolditalic, graphics2d);
+        // --> goes to  F4
+        fontInfo.addMetrics("F4", metric);
+
+
+        metric = new SystemFontMetricsMapper("Serif", normal, graphics2d);
+        // --> goes to  F5
+        fontInfo.addMetrics("F5", metric);
+        metric = new SystemFontMetricsMapper("Serif", italic, graphics2d);
+        // --> goes to  F6
+        fontInfo.addMetrics("F6", metric);
+        metric = new SystemFontMetricsMapper("Serif", bold, graphics2d);
+        // --> goes to  F7
+        fontInfo.addMetrics("F7", metric);
+        metric = new SystemFontMetricsMapper("Serif", bolditalic, graphics2d);
+        // --> goes to  F8
+        fontInfo.addMetrics("F8", metric);
+
+        metric = new SystemFontMetricsMapper("MonoSpaced", normal, graphics2d);
+        // --> goes to  F9
+        fontInfo.addMetrics("F9", metric);
+        metric = new SystemFontMetricsMapper("MonoSpaced", italic, graphics2d);
+        // --> goes to  F10
+        fontInfo.addMetrics("F10", metric);
+        metric = new SystemFontMetricsMapper("MonoSpaced", bold, graphics2d);
+        // --> goes to  F11
+        fontInfo.addMetrics("F11", metric);
+        metric = new SystemFontMetricsMapper("MonoSpaced", bolditalic, graphics2d);
+        // --> goes to  F12
+        fontInfo.addMetrics("F12", metric);
+
+        metric = new SystemFontMetricsMapper("Serif", normal, graphics2d);
+        //"Symbol" doesn't seem to work here, but "Serif" does the job just fine. *shrug*
+        // --> goes to  F13 and F14
+        fontInfo.addMetrics("F13", metric);
+        fontInfo.addMetrics("F14", metric);
 
         // Custom type 1 fonts step 1/2
         // fontInfo.addMetrics("F15", new OMEP());
@@ -112,12 +121,6 @@ public class FontSetup {
         fontInfo.addFontProperties("F3", "sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F4", "sans-serif", Font.STYLE_OBLIQUE, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F4", "sans-serif", Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
-        fontInfo.addFontProperties("F1", "SansSerif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-        fontInfo.addFontProperties("F2", "SansSerif", Font.STYLE_OBLIQUE, Font.WEIGHT_NORMAL);
-        fontInfo.addFontProperties("F2", "SansSerif", Font.STYLE_ITALIC, Font.WEIGHT_NORMAL);
-        fontInfo.addFontProperties("F3", "SansSerif", Font.STYLE_NORMAL, Font.WEIGHT_BOLD);
-        fontInfo.addFontProperties("F4", "SansSerif", Font.STYLE_OBLIQUE, Font.WEIGHT_BOLD);
-        fontInfo.addFontProperties("F4", "SansSerif", Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F5", "serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F6", "serif", Font.STYLE_OBLIQUE, Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F6", "serif", Font.STYLE_ITALIC, Font.WEIGHT_NORMAL);
@@ -130,12 +133,6 @@ public class FontSetup {
         fontInfo.addFontProperties("F11", "monospace", Font.STYLE_NORMAL, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F12", "monospace", Font.STYLE_OBLIQUE, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F12", "monospace", Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
-        fontInfo.addFontProperties("F9", "Monospaced", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-        fontInfo.addFontProperties("F10", "Monospaced", Font.STYLE_OBLIQUE, Font.WEIGHT_NORMAL);
-        fontInfo.addFontProperties("F10", "Monospaced", Font.STYLE_ITALIC, Font.WEIGHT_NORMAL);
-        fontInfo.addFontProperties("F11", "Monospaced", Font.STYLE_NORMAL, Font.WEIGHT_BOLD);
-        fontInfo.addFontProperties("F12", "Monospaced", Font.STYLE_OBLIQUE, Font.WEIGHT_BOLD);
-        fontInfo.addFontProperties("F12", "Monospaced", Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
 
         fontInfo.addFontProperties("F1", "Helvetica", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
         fontInfo.addFontProperties("F2", "Helvetica", Font.STYLE_OBLIQUE, Font.WEIGHT_NORMAL);
@@ -177,69 +174,8 @@ public class FontSetup {
         fontInfo.addFontProperties("F8", "Times Roman", Font.STYLE_OBLIQUE, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F8", "Times Roman", Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
-                                                        Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-
-        // All base 14 configured now, so any custom embedded fonts start from 15
-        final int startNum = 15;
+                                   "normal", Font.WEIGHT_NORMAL);
         
-        /* Add configured fonts */
-        addConfiguredFonts(fontInfo, embedFontInfoList, startNum, resolver);
+        return 15;
     }
-
-    /**
-     * Add fonts from configuration file starting with internal name F<num>.
-     * @param fontInfo the font info to set up
-     * @param embedFontInfoList a list of EmbedFontInfo objects
-     * @param num starting index for internal font numbering
-     * @param resolver the font resolver
-     */
-    private static void addConfiguredFonts(FontInfo fontInfo,
-            List/*<EmbedFontInfo>*/ embedFontInfoList, int num, FontResolver resolver) {
-        if (embedFontInfoList == null) {
-            return; //No fonts to process
-        }
-
-        if (resolver == null) {
-            //Ensure that we have minimal font resolution capabilities
-            resolver = createMinimalFontResolver1();
-        }
-        
-        String internalName = null;
-        //FontReader reader = null;
-
-        for (int i = 0; i < embedFontInfoList.size(); i++) {
-            EmbedFontInfo embedFontInfo = (EmbedFontInfo)embedFontInfoList.get(i);
-
-            //String metricsFile = configFontInfo.getMetricsFile();
-            internalName = "F" + num;
-            num++;
-            /*
-            reader = new FontReader(metricsFile);
-            reader.useKerning(configFontInfo.getKerning());
-            reader.setFontEmbedPath(configFontInfo.getEmbedFile());
-            fontInfo.addMetrics(internalName, reader.getFont());
-            */
-            
-            LazyFont font = new LazyFont(embedFontInfo, resolver);
-            fontInfo.addMetrics(internalName, font);
-
-            List triplets = embedFontInfo.getFontTriplets();
-            for (int tripletIndex = 0; tripletIndex < triplets.size(); tripletIndex++) {
-                FontTriplet triplet = (FontTriplet) triplets.get(tripletIndex);
-                fontInfo.addFontProperties(internalName, triplet);
-            }
-        }
-    }
-
-    /** @return a new FontResolver to be used by the font subsystem */
-    public static FontResolver createMinimalFontResolver1() {
-        return new FontResolver() {
-
-            /** {@inheritDoc} */
-            public Source resolve(String href) {
-                //Minimal functionality here
-                return new StreamSource(href);
-            }
-        };
-    }       
 }

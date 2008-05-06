@@ -147,7 +147,7 @@ public class FOUserAgent {
         }
         this.factory = factory;
         setBaseURL(factory.getBaseURL());
-        setFontBaseURL(factory.getFontBaseURL());
+        setFontBaseURL(factory.getFontManager().getFontBaseURL());
         setTargetResolution(factory.getTargetResolution());
     }
     
