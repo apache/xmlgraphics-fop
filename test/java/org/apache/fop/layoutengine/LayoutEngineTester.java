@@ -95,8 +95,8 @@ public class LayoutEngineTester {
      */
     public LayoutEngineTester(File areaTreeBackupDir) {
         this.areaTreeBackupDir = areaTreeBackupDir;
-        fopFactory.setBase14KerningEnabled(false);
-        fopFactoryWithBase14Kerning.setBase14KerningEnabled(true);
+        fopFactory.getFontManager().setBase14KerningEnabled(false);
+        fopFactoryWithBase14Kerning.getFontManager().setBase14KerningEnabled(true);
     }
     
     private Templates getTestcase2FOStylesheet() throws TransformerConfigurationException {

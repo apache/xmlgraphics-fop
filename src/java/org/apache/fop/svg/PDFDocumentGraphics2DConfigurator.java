@@ -26,6 +26,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.pdf.PDFDocument;
@@ -53,17 +54,20 @@ public class PDFDocumentGraphics2DConfigurator {
         
         //Fonts
         try {
-            FontResolver fontResolver = FontSetup.createMinimalFontResolver();
+            FontResolver fontResolver = FontManager.createMinimalFontResolver();
             //TODO The following could be optimized by retaining the FontCache somewhere
             FontCache fontCache = FontCache.load();
             if (fontCache == null) {
                 fontCache = new FontCache();
             }
-            List fontList = PrintRendererConfigurator.buildFontListFromConfiguration(
-                    cfg, null, fontResolver, false, fontCache);
+            //TODO Provide fontBaseURL to this method call
+            final String fontBaseURL = null;
+            List/*<EmbedFontInfo>*/ embedFontInfoList
+                = PrintRendererConfigurator.buildFontListFromConfiguration(
+                    cfg, fontBaseURL, fontResolver, false, fontCache);
             fontCache.save();
             FontInfo fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo, fontList, fontResolver);
+            FontSetup.setup(fontInfo, embedFontInfoList, fontResolver);
             graphics.setFontInfo(fontInfo);
         } catch (FOPException e) {
             throw new ConfigurationException("Error while setting up fonts", e);

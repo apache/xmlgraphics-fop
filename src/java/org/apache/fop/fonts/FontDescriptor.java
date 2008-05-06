@@ -35,7 +35,7 @@ public interface FontDescriptor extends FontMetrics {
     
     /**
      * Returns the capital height of the font.
-     * @return the capiptal height
+     * @return the capital height
      */
     int getCapHeight();
     

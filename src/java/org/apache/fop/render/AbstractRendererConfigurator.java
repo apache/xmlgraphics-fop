@@ -45,7 +45,6 @@ public abstract class AbstractRendererConfigurator {
         super();
         this.userAgent = userAgent;
     }
-
     
     /**
      * Returns the configuration subtree for a specific renderer.
@@ -61,16 +60,15 @@ public abstract class AbstractRendererConfigurator {
             return null;
         }
         
-        return getRendererConfig(userAgent, mimeType);
+        return getRendererConfig(mimeType);
     }
 
     /**
      * Returns the configuration subtree for a specific renderer.
-     * @param userAgent the user agent containing the user configuration
      * @param mimeType the MIME type of the renderer
      * @return the requested configuration subtree, null if there's no configuration
      */
-    public static Configuration getRendererConfig(FOUserAgent userAgent, String mimeType) {
+    private Configuration getRendererConfig(String mimeType) {
         Configuration cfg = userAgent.getFactory().getUserConfig();
         if (cfg == null) {
             if (log.isDebugEnabled()) {

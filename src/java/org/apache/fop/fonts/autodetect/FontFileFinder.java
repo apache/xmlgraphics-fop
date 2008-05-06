@@ -156,7 +156,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * 
      * @param dir directory to search
      * @return list of font files
-     * @throws IOException io exception
+     * @throws IOException thrown if an I/O exception of some sort has occurred
      */
     public List find(String dir) throws IOException {
         List results = new java.util.ArrayList();

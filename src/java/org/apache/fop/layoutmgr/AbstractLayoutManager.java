@@ -58,8 +58,10 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
     
-    /** child LM and child LM iterator during getNextKnuthElement phase */
+    /** child LM during getNextKnuthElement phase */
     protected LayoutManager curChildLM = null;
+    
+    /** child LM iterator during getNextKnuthElement phase */
     protected ListIterator childLMiter = null;
     
     private int lastGeneratedPosition = -1;

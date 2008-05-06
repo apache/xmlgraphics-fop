@@ -66,7 +66,7 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
         final File baseDir = getBaseDir();
         final String fontFOFilePath = getFontFOFilePath();
         File foFile = new File(baseDir, fontFOFilePath);
-        final boolean dumpOutput = false;
+        final boolean dumpOutput = true;
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         convertFO(foFile, foUserAgent, dumpOutput);
     }

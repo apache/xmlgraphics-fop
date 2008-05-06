@@ -25,7 +25,6 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontResolver;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
 import org.w3c.dom.Document;
 
@@ -45,25 +44,32 @@ public abstract class PrintRenderer extends AbstractRenderer {
     protected FontResolver fontResolver = null;
 
     /** list of fonts */
-    protected List fontList = null;
+    protected List/*<EmbedFontInfo>*/ embedFontInfoList = null;
    
     /**
-     * adds a font list to current list of fonts
-     * @param fontInfoList font list
+     * Adds a font list to current list of fonts
+     * @param fontList a font info list
      */
-    public void addFontList(List fontInfoList) {
-        if (this.fontList == null) {
-            setFontList(fontInfoList);
+    public void addFontList(List/*<EmbedFontInfo>*/ fontList) {
+        if (embedFontInfoList == null) {
+            setFontList(fontList);
         } else {
-            this.fontList.addAll(fontInfoList);
+            fontList.addAll(fontList);
         }
     }
     
     /**
-     * @param fontList list of available fonts
+     * @param embedFontInfoList list of available fonts
      */
-    public void setFontList(List fontList) {
-        this.fontList = fontList;
+    public void setFontList(List/*<EmbedFontInfo>*/ embedFontInfoList) {
+        this.embedFontInfoList = embedFontInfoList;
+    }
+
+    /**
+     * @return list of available embedded fonts
+     */
+    public List/*<EmbedFontInfo>*/ getFontList() {
+        return this.embedFontInfoList;
     }
 
     /**
@@ -73,8 +79,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
-        FontSetup.setup(fontInfo, fontList, fontResolver, 
-                userAgent.getFactory().isBase14KerningEnabled());
+        userAgent.getFactory().getFontManager().setupRenderer(this);
     }
 
     /**
@@ -179,5 +184,12 @@ public abstract class PrintRenderer extends AbstractRenderer {
             this.fontResolver = new DefaultFontResolver(super.userAgent);
         }
         return this.fontResolver;
+    }
+    
+    /**
+     * @return the font info
+     */
+    public FontInfo getFontInfo() {
+        return this.fontInfo;
     }
 }
