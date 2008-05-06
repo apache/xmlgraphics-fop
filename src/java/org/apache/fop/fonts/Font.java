@@ -48,9 +48,18 @@ public class Font {
     /** Italic font style */
     public static final String STYLE_ITALIC = "italic";
 
+    /** Oblique font style */
+    public static final String STYLE_OBLIQUE = "oblique";
+
+    /** Inclined font style */
+    public static final String STYLE_INCLINED = "inclined";
+
+    /** Default selection priority */
+    public static final int PRIORITY_DEFAULT = 0;
+    
     /** Default fallback key */
     public static final FontTriplet DEFAULT_FONT = new FontTriplet(
-                    "any", STYLE_NORMAL, WEIGHT_NORMAL);
+                    "any", STYLE_NORMAL, WEIGHT_NORMAL, PRIORITY_DEFAULT);
 
     /** logger */
     private  static Log log = LogFactory.getLog(Font.class);

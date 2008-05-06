@@ -36,13 +36,14 @@ public class EmbedFontInfo implements Serializable {
     protected String embedFile;
     /** false, to disable kerning */
     protected boolean kerning;
-    /** the list of associated font triplets */
-    protected List fontTriplets;
     
     /** the PostScript name of the font */
     protected String postScriptName = null;
     /** the sub-fontname of the font (used for TrueType Collections, null otherwise) */
     protected String subFontName = null;
+
+    /** the list of associated font triplets */
+    private List/*<FontTriplet>*/ fontTriplets = null;
 
     /**
      * Main constructor
@@ -53,7 +54,7 @@ public class EmbedFontInfo implements Serializable {
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      */
     public EmbedFontInfo(String metricsFile, boolean kerning,
-                    List fontTriplets, String embedFile, String subFontName) {
+                    List/*<FontTriplet>*/ fontTriplets, String embedFile, String subFontName) {
         this.metricsFile = metricsFile;
         this.embedFile = embedFile;
         this.kerning = kerning;
@@ -84,19 +85,11 @@ public class EmbedFontInfo implements Serializable {
     public boolean getKerning() {
         return kerning;
     }
-
-    /**
-     * Returns the list of font triplets associated with this font.
-     * @return List of font triplets
-     */
-    public List getFontTriplets() {
-        return fontTriplets;
-    }
     
     /**
-     * Returns the sub-fontname name of the font. This is primarily used for TrueType Collections
+     * Returns the sub-font name name of the font. This is primarily used for TrueType Collections
      * to select one of the sub-fonts. For all other fonts, this is always null. 
-     * @return the sub-fontname (or null)
+     * @return the sub-font name (or null)
      */
     public String getSubFontName() {
         return this.subFontName;
@@ -118,10 +111,20 @@ public class EmbedFontInfo implements Serializable {
         this.postScriptName = postScriptName;
     }
     
-    /** {@inheritDoc} */
+    /**
+     * Returns the list of font triplets associated with this font.
+     * @return List of font triplets
+     */
+    public List/*<FontTriplet>*/ getFontTriplets() {
+        return fontTriplets;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return "metrics-url=" + metricsFile + ",embed-url=" + embedFile
-            + ", kerning=" + kerning + ", font-triplet=" + fontTriplets
+            + ", kerning=" + kerning + ", " + "font-triplet=" + fontTriplets
             + (getSubFontName() != null ? ", sub-font=" + getSubFontName() : ""); 
     }
 }

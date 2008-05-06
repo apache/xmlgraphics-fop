@@ -101,7 +101,7 @@ public class BasePDFTestCase extends AbstractFOPTestCase {
         }
     }
 
-    private static Exception extractOriginalException(Exception e) {
+    protected static Exception extractOriginalException(Exception e) {
         if (e.getCause() != null) {
             return extractOriginalException((Exception)e.getCause());
         } else if (e instanceof SAXException) {

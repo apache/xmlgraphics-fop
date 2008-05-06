@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -45,6 +44,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontCache;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
@@ -84,6 +84,9 @@ public class FopFactory implements ImageContext {
     /** Image manager for loading and caching image objects */
     private ImageManager imageManager;
 
+    /** Font manager for font substitution, autodetection and caching **/
+    private FontManager fontManager;
+    
     /** Configuration layer used to configure fop */
     private FopFactoryConfigurator config = null;
         
@@ -92,9 +95,6 @@ public class FopFactory implements ImageContext {
      *  external-graphics.
      */
     private String base = null;
-
-    /** The base URL for all font URL resolutions. */
-    private String fontBase = null;
 
     /** The base URL for all hyphen URL resolutions. */
     private String hyphenBase = null;
@@ -113,12 +113,6 @@ public class FopFactory implements ImageContext {
      */
     private boolean strictUserConfigValidation
         = FopFactoryConfigurator.DEFAULT_STRICT_USERCONFIG_VALIDATION;
-
-    /** Font cache to speed up auto-font configuration (null if disabled) */
-    private FontCache fontCache = null;
-
-    /** Allows enabling kerning on the base 14 fonts, default is false */
-    private boolean enableBase14Kerning = false;
     
     /** Source resolution in dpi */
     private float sourceResolution = FopFactoryConfigurator.DEFAULT_SOURCE_RESOLUTION;
@@ -155,7 +149,6 @@ public class FopFactory implements ImageContext {
         this.rendererFactory = new RendererFactory();
         this.xmlHandlers = new XMLHandlerRegistry();
         this.ignoredNamespaces = new java.util.HashSet();
-        setUseCache(FopFactoryConfigurator.DEFAULT_USE_CACHE);
     }
     
     /**
@@ -317,42 +310,14 @@ public class FopFactory implements ImageContext {
     public LayoutManagerMaker getLayoutManagerMakerOverride() {
         return this.lmMakerOverride;
     }
-
-    /**
-     * Checks if the given base URL is acceptable. It also normalizes the URL.
-     * @param base the base URL to check
-     * @return the normalized URL
-     * @throws MalformedURLException if there's a problem with a file URL
-     */
-    private String checkBaseURL(String base) throws MalformedURLException {
-        if (!base.endsWith("/")) {
-            // The behavior described by RFC 3986 regarding resolution of relative
-            // references may be misleading for normal users:
-            // file://path/to/resources + myResource.res -> file://path/to/myResource.res
-            // file://path/to/resources/ + myResource.res -> file://path/to/resources/myResource.res
-            // We assume that even when the ending slash is missing, users have the second
-            // example in mind
-            base += "/";
-        }
-        File dir = new File(base);
-        try {
-            base = (dir.isDirectory() ? dir.toURL() : new URL(base)).toExternalForm(); 
-        } catch (MalformedURLException mfue) {
-            if (strictUserConfigValidation) {
-                throw mfue;
-            }
-            log.error(mfue.getMessage());
-        }
-        return base;
-    }
     
     /**
      * Sets the base URL.
-     * @param base base URL
+     * @param base the base URL
      * @throws MalformedURLException if there's a problem with a file URL
      */
     public void setBaseURL(String base) throws MalformedURLException {
-        this.base = checkBaseURL(base);
+        this.base = foURIResolver.checkBaseURL(base);
     }
 
     /**
@@ -367,14 +332,18 @@ public class FopFactory implements ImageContext {
      * Sets the font base URL.
      * @param fontBase font base URL
      * @throws MalformedURLException if there's a problem with a file URL
+     * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
      */
     public void setFontBaseURL(String fontBase) throws MalformedURLException {
-        this.fontBase = checkBaseURL(fontBase);
+        getFontManager().setFontBaseURL(fontBase);
     }
 
-    /** @return the font base URL */
+    /**
+     * @return the font base URL
+     * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
+     */
     public String getFontBaseURL() {
-        return this.fontBase;
+        return getFontManager().getFontBaseURL();
     }
 
     /** @return the hyphen base URL */
@@ -396,7 +365,7 @@ public class FopFactory implements ImageContext {
                 }
             });
         }
-        this.hyphenBase = checkBaseURL(hyphenBase);
+        this.hyphenBase = foURIResolver.checkBaseURL(hyphenBase);
     }
     
     /**
@@ -413,6 +382,14 @@ public class FopFactory implements ImageContext {
      * @return the URI Resolver
      */
     public URIResolver getURIResolver() {
+        return foURIResolver;
+    }
+
+    /**
+     * Returns the FO URI Resolver.
+     * @return the FO URI Resolver
+     */
+    public FOURIResolver getFOURIResolver() {
         return foURIResolver;
     }
 
@@ -471,17 +448,21 @@ public class FopFactory implements ImageContext {
         this.breakIndentInheritanceOnReferenceAreaBoundary = value;
     }
     
-    /** @return true if kerning on base 14 fonts is enabled */
+    /**
+     * @return true if kerning on base 14 fonts is enabled
+     * @deprecated use getFontManager().isBase14KerningEnabled() instead
+     */
     public boolean isBase14KerningEnabled() {
-        return this.enableBase14Kerning;
+        return getFontManager().isBase14KerningEnabled();
     }
     
     /**
      * Controls whether kerning is activated on base 14 fonts.
      * @param value true if kerning should be activated
+     * @deprecated use getFontManager().setBase14KerningEnabled(boolean) instead
      */
     public void setBase14KerningEnabled(boolean value) {
-        this.enableBase14Kerning = value;
+        getFontManager().setBase14KerningEnabled(value);
     }
     
     /** @return the resolution for resolution-dependant input */
@@ -681,37 +662,44 @@ public class FopFactory implements ImageContext {
         return this.strictUserConfigValidation;
     }
 
-    //------------------------------------------- Cache related stuff
+    //------------------------------------------- Font related stuff
 
     /**
      * Whether or not to cache results of font triplet detection/auto-config
      * @param useCache use cache or not
+     * @deprecated use getFontManager().setUseCache(boolean) instead
      */
     public void setUseCache(boolean useCache) {
-        if (useCache) {
-            this.fontCache = FontCache.load();
-            if (this.fontCache == null) {
-                this.fontCache = new FontCache();
-            }
-        } else {
-            this.fontCache = null;
-        }
+        getFontManager().setUseCache(useCache);
     }
 
     /**
      * Cache results of font triplet detection/auto-config?
      * @return whether this factory is uses the cache
+     * @deprecated use getFontManager().useCache() instead
      */
     public boolean useCache() {
-        return (this.fontCache != null);
+        return getFontManager().useCache();
     }
 
     /**
      * Returns the font cache instance used by this factory.
      * @return the font cache
+     * @deprecated use getFontManager().getFontCache() instead
      */
     public FontCache getFontCache() {
-        return this.fontCache;
+        return getFontManager().getFontCache();
+    }
+    
+    /**
+     * Returns the font manager
+     * @return the font manager
+     */
+    public FontManager getFontManager() {
+        if (fontManager == null) {
+            this.fontManager = new FontManager(this);
+        }
+        return this.fontManager;
     }
     
     /**

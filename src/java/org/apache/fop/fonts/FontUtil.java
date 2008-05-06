@@ -59,25 +59,27 @@ public class FontUtil {
 
     /**
      * Removes all white space from a string (used primarily for font names)
-     * @param s the string
+     * @param str the string
      * @return the processed result
      */
-    public static String stripWhiteSpace(String s) {
-        StringBuffer sb = new StringBuffer(s.length());
-        for (int i = 0, c = s.length(); i < c; i++) {
-            final char ch = s.charAt(i);
-            if (ch != ' ' 
-                    && ch != '\r' 
-                    && ch != '\n'
-                    && ch != '\t') {
-                sb.append(ch);
+    public static String stripWhiteSpace(String str) {
+        if (str != null) {
+            StringBuffer stringBuffer = new StringBuffer(str.length());
+            for (int i = 0, strLen = str.length(); i < strLen; i++) {
+                final char ch = str.charAt(i);
+                if (ch != ' ' && ch != '\r' && ch != '\n' && ch != '\t') {
+                    stringBuffer.append(ch);
+                }
             }
+            return stringBuffer.toString();
         }
-        return sb.toString();
+        return str;
     }
 
     /** font constituent names which identify a font as being of "italic" style */
-    private static final String[] ITALIC_WORDS = {"italic", "oblique", "inclined"};
+    private static final String[] ITALIC_WORDS = {
+        Font.STYLE_ITALIC, Font.STYLE_OBLIQUE, Font.STYLE_INCLINED
+    };
 
     /** font constituent names which identify a font as being of "light" weight */
     private static final String[] LIGHT_WORDS = {"light"};
@@ -97,9 +99,11 @@ public class FontUtil {
      * @return "normal" or "italic"
      */
     public static String guessStyle(String fontName) {
-        for (int i = 0; i < ITALIC_WORDS.length; i++) {
-            if (fontName.indexOf(ITALIC_WORDS[i]) != -1) {
-                return Font.STYLE_ITALIC;          
+        if (fontName != null) {
+            for (int i = 0; i < ITALIC_WORDS.length; i++) {
+                if (fontName.indexOf(ITALIC_WORDS[i]) != -1) {
+                    return Font.STYLE_ITALIC;          
+                }
             }
         }
         return Font.STYLE_NORMAL;
@@ -148,6 +152,4 @@ public class FontUtil {
         }
         return weight;
     }
-    
-    
 }
