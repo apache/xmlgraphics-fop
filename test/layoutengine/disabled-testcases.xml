@@ -234,12 +234,6 @@
     case should be revisited.</description>
   </testcase>
   <testcase>
-    <name>fo:wrapper around block-level content (with id)</name>
-    <file>wrapper_block_id.xml</file>
-    <description>"id" attributes on fo:wrapper around block-level content don't get
-    added to the area tree.</description>
-  </testcase>
-  <testcase>
     <name>Soft hyphen with normal hyphenation enabled</name>
     <file>block_shy_linebreaking_hyph.xml</file>
     <description>A soft hyphen should be a preferred as break compared to a
