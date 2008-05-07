@@ -20,7 +20,12 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.fo.flow.Wrapper;
+import org.apache.fop.layoutmgr.BlockLayoutManager;
+import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -66,7 +71,19 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
         if (fobj.hasId()) {
             addId();
             InlineArea area = getEffectiveArea();
-            parentLM.addChildArea(area);
+            if (parentLM instanceof BlockStackingLayoutManager
+                    && !(parentLM instanceof BlockLayoutManager)) {
+                Block helperBlock = new Block();
+                LineArea helperLine = new LineArea();
+                InlineParent helperInline = new InlineParent();
+                helperInline.addChildArea(area);
+                helperLine.addInlineArea(helperInline);
+                helperLine.updateExtentsFromChildren();
+                helperBlock.addLineArea(helperLine);
+                parentLM.addChildArea(helperBlock);
+            } else {
+                parentLM.addChildArea(area);
+            }
         }
         while (posIter.hasNext()) {
             posIter.next();

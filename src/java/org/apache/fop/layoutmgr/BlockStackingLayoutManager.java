@@ -1527,10 +1527,20 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected void wrapPositionElements(List sourceList, List targetList, boolean force) {
           
         ListIterator listIter = sourceList.listIterator();
+        Object tempElement;
         while (listIter.hasNext()) {
-            ListElement tempElement;
-            tempElement = (ListElement) listIter.next();
-            wrapPositionElement(tempElement, targetList, force);
+            tempElement = listIter.next();
+            if (tempElement instanceof ListElement) {
+                wrapPositionElement(
+                        (ListElement) tempElement,
+                        targetList,
+                        force);
+            } else if (tempElement instanceof List) {
+                wrapPositionElements(
+                        (List) tempElement, 
+                        targetList,
+                        force);
+            }
         }
     }
 
