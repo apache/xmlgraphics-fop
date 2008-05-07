@@ -153,7 +153,7 @@ public final class FontCache implements Serializable {
                         + "). Discarding font cache file.");
                 try {
                 	cacheFile.delete();
-                } catch(SecurityException ex) {
+                } catch (SecurityException ex) {
                     log.warn("Failed to delete font cache file: " + cacheFile.getAbsolutePath());                	
                 }
             }
