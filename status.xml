@@ -57,11 +57,11 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
       </action -->
-      <action context="Code" dev="AD" type="fix" fixes-bug="42423">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="42423">
         Added support for the "id" attribute on fo:wrappers when used
         as a child of the fo:flow.
       </action>
-      <action context="Code" dev="AD" type="fix" fixes-bug="41500">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="41500">
         Fixed a ClassCastException when using an fo:wrapper as a child
         of an fo:block-container.
       </action>
