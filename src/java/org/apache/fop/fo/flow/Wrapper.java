@@ -67,8 +67,13 @@ public class Wrapper extends FObjMixed {
                         "(#PCDATA|%inline;|%block;)");
                 }
             } else if (isBlockOrInlineItem(nsURI, localName)) {
+                /* delegate validation to parent, but keep the error reporting
+                 * tidy. If we would simply call validateChildNode() on the
+                 * parent, the user would get a wrong impression, as only the
+                 * locator (if any) will contain a reference to the offending
+                 * fo:wrapper.
+                 */
                 try {
-                    //delegate validation to parent
                     FONode.validateChildNode(this.parent, loc, nsURI, localName);
                 } catch (ValidationException vex) {
                     invalidChildError(loc, getName(), FO_URI, localName, "rule.wrapperInvalidChildForParent");
