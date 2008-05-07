@@ -27,9 +27,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.NumberProperty;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
@@ -51,7 +49,7 @@ public abstract class TableFObj extends FObj {
 
     /**
      * Main constructor
-     * 
+     *
      * @param parent    the parent node
      */
     public TableFObj(FONode parent) {
@@ -76,7 +74,7 @@ public abstract class TableFObj extends FObj {
     }
 
     /**
-     * 
+     *
      * @param side  the side for which to return the border precedence
      * @return the "border-precedence" value for the given side
      */
@@ -98,9 +96,9 @@ public abstract class TableFObj extends FObj {
     /**
      * Convenience method to returns a reference
      * to the base Table instance
-     * 
+     *
      * @return  the base table instance
-     * 
+     *
      */
     public Table getTable() {
         // Will be overridden in Table; for any other Table-node, recursive call to
@@ -142,7 +140,7 @@ public abstract class TableFObj extends FObj {
          * Check the value of the column-number property.
          * Return the parent's column index (initial value) in case
          * of a negative or zero value
-         * 
+         *
          * @see org.apache.fop.fo.properties.PropertyMaker#make(PropertyList, String, FObj)
          */
         public Property make(PropertyList propertyList, String value, FObj fo)
@@ -155,19 +153,45 @@ public abstract class TableFObj extends FObj {
             int columnIndex = p.getNumeric().getValue();
             int colSpan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
                                 .getNumeric().getValue();
-            int i = -1;
-            while (++i < colSpan) {
-                if (columnIndexManager.isColumnNumberUsed(columnIndex + i)) {
+            
+            int i = columnIndex - 1;
+            int lastIndex = (columnIndex + colSpan) - 1;
+            while (++i < lastIndex) {
+                if (columnIndexManager.isColumnNumberUsed(i)) {
                     /* if column-number is already in use by another
                      * cell/column => error!
                      */
                     TableEventProducer eventProducer = TableEventProducer.Provider.get(
                             fo.getUserAgent().getEventBroadcaster());
-                    eventProducer.cellOverlap(this, fo.getName(), columnIndex + 1, fo.getLocator());
+                    eventProducer.cellOverlap(this, propertyList.getFObj().getName(),
+                                                i, fo.getLocator());
                 }
             }
 
             return p;
+        }
+
+        /**
+         * If the value is not positive, return a property with value of the next
+         * free column number 
+         *
+         * {@inheritDoc}
+         */
+        public Property convertProperty(Property p,
+                                        PropertyList propertyList, FObj fo)
+                    throws PropertyException {
+            if (p instanceof EnumProperty) {
+                return EnumNumber.getInstance(p);
+            }
+            Number val = p.getNumber();
+            if (val != null) {
+                int i = val.intValue();
+                if (i <= 0) {
+                    i = 1;
+                }
+                return NumberProperty.getInstance(i);
+            }
+            return convertPropertyDatatype(p, propertyList, fo);
         }
     }
 
