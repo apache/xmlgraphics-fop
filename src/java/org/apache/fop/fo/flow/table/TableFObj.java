@@ -170,29 +170,6 @@ public abstract class TableFObj extends FObj {
 
             return p;
         }
-
-        /**
-         * If the value is not positive, return a property with value of the next
-         * free column number 
-         *
-         * {@inheritDoc}
-         */
-        public Property convertProperty(Property p,
-                                        PropertyList propertyList, FObj fo)
-                    throws PropertyException {
-            if (p instanceof EnumProperty) {
-                return EnumNumber.getInstance(p);
-            }
-            Number val = p.getNumber();
-            if (val != null) {
-                int i = val.intValue();
-                if (i <= 0) {
-                    i = 1;
-                }
-                return NumberProperty.getInstance(i);
-            }
-            return convertPropertyDatatype(p, propertyList, fo);
-        }
     }
 
     /** {@inheritDoc} */
