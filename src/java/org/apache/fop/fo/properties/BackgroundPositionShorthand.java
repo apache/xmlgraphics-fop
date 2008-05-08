@@ -41,7 +41,11 @@ public class BackgroundPositionShorthand extends ListProperty {
      */
     public static class Maker extends ListProperty.Maker {
 
-        /** {@inheritDoc} */
+        /**
+         * Construct an instance of a Maker for the given property.
+         * 
+         * @param propId The Constant ID of the property to be made.
+         */
         public Maker(int propId) {
             super(propId);
         }
@@ -72,7 +76,7 @@ public class BackgroundPositionShorthand extends ListProperty {
          * Returns a {@link org.apache.fop.datatypes.PercentBase} whose
          * <code>getDimension()</code> returns 1.
          */
-        public PercentBase getPercentBase() {
+        public PercentBase getPercentBase(PropertyList pl) {
             return new PercentBase() {
                 /** {@inheritDoc} */
                 public int getBaseLength(PercentBaseContext context) throws PropertyException {
