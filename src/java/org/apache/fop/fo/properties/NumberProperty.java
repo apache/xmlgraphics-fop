@@ -103,7 +103,7 @@ public final class NumberProperty extends Property implements Numeric {
     }
     
     /** cache holding all canonical NumberProperty instances */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(NumberProperty.class);
     
     private final Number number;
 

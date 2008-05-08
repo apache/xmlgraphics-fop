@@ -42,7 +42,9 @@ public final class PropertyCache {
     /** the table of hash-buckets */
     private CacheEntry[] table = new CacheEntry[8];
     
-    boolean[] votesForRehash = new boolean[SEGMENT_MASK + 1];
+    private Class runtimeType;
+    
+    final boolean[] votesForRehash = new boolean[SEGMENT_MASK + 1];
     
     /* same hash function as used by java.util.HashMap */
     private static int hash(Object x) {
@@ -80,10 +82,10 @@ public final class PropertyCache {
     /* Wrapper objects to synchronize on */
     private final class CacheSegment {
         private int count = 0;
-        private ReferenceQueue staleEntries = new ReferenceQueue();
+        private volatile ReferenceQueue staleEntries = new ReferenceQueue();
     }    
     
-    private final void cleanSegment(int segmentIndex) {
+    private void cleanSegment(int segmentIndex) {
         CacheEntry entry;
         CacheSegment segment = segments[segmentIndex];
         int bucketIndex;
@@ -113,29 +115,26 @@ public final class PropertyCache {
         }
         synchronized (votesForRehash) {
             if (oldCount > segment.count) {
-                if (votesForRehash[segmentIndex]) {
-                    votesForRehash[segmentIndex] = false;
-                }
+                votesForRehash[segmentIndex] = false;
                 return;
-            } else {
-                /* cleanup had no effect */
-                if (!votesForRehash[segmentIndex]) {
-                    /* first time for this segment */
-                    votesForRehash[segmentIndex] = true;
-                    int voteCount = 0;
-                    for (int i = SEGMENT_MASK + 1; --i >= 0; ) {
-                        if (votesForRehash[i]) {
-                            voteCount++;
-                        }
+            }
+            /* cleanup had no effect */
+            if (!votesForRehash[segmentIndex]) {
+                /* first time for this segment */
+                votesForRehash[segmentIndex] = true;
+                int voteCount = 0;
+                for (int i = SEGMENT_MASK + 1; --i >= 0; ) {
+                    if (votesForRehash[i]) {
+                        voteCount++;
                     }
-                    if (voteCount > SEGMENT_MASK / 4) {
-                        rehash(SEGMENT_MASK);
-                        /* reset votes */
-                        for (int i = SEGMENT_MASK + 1; --i >= 0;) {
-                            votesForRehash[i] = false;
-                        }
-    
+                }
+                if (voteCount > SEGMENT_MASK / 4) {
+                    rehash(SEGMENT_MASK);
+                    /* reset votes */
+                    for (int i = SEGMENT_MASK + 1; --i >= 0;) {
+                        votesForRehash[i] = false;
                     }
+
                 }
             }
         }
@@ -148,7 +147,7 @@ public final class PropertyCache {
      * cleanup will be performed to try and remove obsolete
      * entries.
      */
-    private final void put(Object o) {
+    private void put(Object o) {
         
         int hash = hash(o);
         CacheSegment segment = segments[hash & SEGMENT_MASK];
@@ -180,7 +179,7 @@ public final class PropertyCache {
     
 
     /* Gets a cached instance. Returns null if not found */
-    private final Object get(Object o) {
+    private Object get(Object o) {
         
         int hash = hash(o);
         int index = hash & (table.length - 1);
@@ -219,7 +218,7 @@ public final class PropertyCache {
      * extends the cache and redistributes the entries.
      * 
      */
-    private final void rehash(int index) {
+    private void rehash(int index) {
         
         CacheSegment seg = segments[index];
         synchronized (seg) {
@@ -258,12 +257,15 @@ public final class PropertyCache {
     }
     
     /**
-     *  Default constructor. 
+     *  Default constructor.
+     *  
+     *  @param c    Runtime type of the objects that will be stored in the cache
      */
-    public PropertyCache() {
+    public PropertyCache(Class c) {
         for (int i = SEGMENT_MASK + 1; --i >= 0;) {
             segments[i] = new CacheSegment();
         }
+        this.runtimeType = c;
     }
     
     /**
@@ -275,7 +277,7 @@ public final class PropertyCache {
      *  @param obj   the Object to check for
      *  @return  the cached instance
      */
-    private final Object fetch(Object obj) {
+    private Object fetch(Object obj) {
         if (obj == null) {
             return null;
         }
@@ -339,4 +341,11 @@ public final class PropertyCache {
         
         return (CommonFont) fetch((Object) cf);
     }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return super.toString() + "[runtimeType=" + this.runtimeType + "]";
+    }
+    
+    
 }

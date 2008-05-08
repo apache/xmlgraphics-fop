@@ -37,7 +37,7 @@ public final class CommonFont {
 
     /** cache holding canonical CommonFont instances (only those with
      *  absolute font-size and font-size-adjust) */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(CommonFont.class);
     
     /**
      * Class holding canonical instances of bundles of the
@@ -47,7 +47,7 @@ public final class CommonFont {
     protected static final class CachedCommonFont {
         
         /** cache holding all canonical instances */
-        private static final PropertyCache cache = new PropertyCache();
+        private static final PropertyCache cache = new PropertyCache(CachedCommonFont.class);
         
         private int hash = 0;
         
