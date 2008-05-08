@@ -692,12 +692,19 @@ public class FopFactory implements ImageContext {
     }
     
     /**
-     * Returns the font manager
+     * Returns the font manager.
      * @return the font manager
      */
     public FontManager getFontManager() {
         if (fontManager == null) {
-            this.fontManager = new FontManager(this);
+            this.fontManager = new FontManager() {
+                
+                /** {@inheritDoc} */
+                public void setFontBaseURL(String fontBase) throws MalformedURLException {
+                    super.setFontBaseURL(getFOURIResolver().checkBaseURL(fontBase));
+                }
+                
+            };
         }
         return this.fontManager;
     }

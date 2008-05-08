@@ -95,8 +95,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         FontCache fontCache = fontManager.getFontCache();
 
         List/*<EmbedFontInfo>*/ embedFontInfoList = buildFontListFromConfiguration(cfg, 
-                userAgent.getFontBaseURL(), fontResolver, strict, 
-                fontCache);
+                fontResolver, strict, fontManager);
         
         if (fontCache != null && fontCache.hasChanged()) {
             fontCache.save();
@@ -108,16 +107,17 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      * Builds a list of EmbedFontInfo objects for use with the setup() method.
      * 
      * @param cfg Configuration object
-     * @param fontBaseURL the base URL to resolve relative font URLs with
      * @param fontResolver the FontResolver to use
      * @param strict true if an Exception should be thrown if an error is found.
-     * @param fontCache the font cache (or null if it is disabled)
+     * @param fontManager the font manager
      * @return a List of EmbedFontInfo objects.
      * @throws FOPException If an error occurs while processing the configuration
      */
     public static List/*<EmbedFontInfo>*/ buildFontListFromConfiguration(Configuration cfg, 
-            String fontBaseURL, FontResolver fontResolver, 
-            boolean strict, FontCache fontCache) throws FOPException {
+            FontResolver fontResolver, 
+            boolean strict, FontManager fontManager) throws FOPException {
+        FontCache fontCache = fontManager.getFontCache();
+        String fontBaseURL = fontManager.getFontBaseURL();
         List/*<EmbedFontInfo>*/ fontInfoList
             = new java.util.ArrayList/*<EmbedFontInfo>*/();
 
@@ -213,7 +213,10 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                     fontInfoList.add(embedFontInfo);
                 }
             }
-                        
+
+            // Update referenced fonts (fonts which are not to be embedded)
+            updateReferencedFonts(fontInfoList, fontManager.getReferencedFontsMatcher());
+            
             if (log.isDebugEnabled()) {
                 log.debug("Finished font configuration in " 
                         + (System.currentTimeMillis() - start) + "ms");
@@ -222,6 +225,25 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         return fontInfoList;
     }
 
+    private static void updateReferencedFonts(List fontInfoList, FontTriplet.Matcher matcher) {
+        if (matcher == null) {
+            return; //No referenced fonts
+        }
+        Iterator iter = fontInfoList.iterator();
+        while (iter.hasNext()) {
+            EmbedFontInfo fontInfo = (EmbedFontInfo)iter.next();
+            Iterator triplets = fontInfo.getFontTriplets().iterator();
+            while (triplets.hasNext()) {
+                FontTriplet triplet = (FontTriplet)triplets.next();
+                if (matcher.matches(triplet)) {
+                    fontInfo.setEmbedded(false);
+                    break;
+                }
+            }
+        }
+    }
+
+    
     /**
      * Iterates over font file list adding font info to list
      * @param fontFileList font file list

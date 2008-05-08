@@ -57,6 +57,10 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
       </action -->
+      <action context="Fonts" dev="JM" type="add">
+        For auto-detected fonts it is now possible to specify that a font needs to be referenced
+        rather than embedded (for the output formats that support this distinction).
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="42423">
         Added support for the "id" attribute on fo:wrappers when used
         as a child of the fo:flow.

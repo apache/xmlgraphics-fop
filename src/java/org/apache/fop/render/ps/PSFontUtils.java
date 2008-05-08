@@ -191,8 +191,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     }
 
     private static boolean isEmbeddable(CustomFont font) {
-        return font.isEmbeddable() 
-                && (font.getEmbedFileName() != null || font.getEmbedResourceName() != null);
+        return font.isEmbeddable();
     }
     
     private static InputStream getInputStreamOnFont(PSGenerator gen, CustomFont font) 
