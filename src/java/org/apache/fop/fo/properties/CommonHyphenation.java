@@ -38,7 +38,7 @@ public final class CommonHyphenation {
     /** Logger */
     protected static Log log = LogFactory.getLog(CommonHyphenation.class);
     
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(CommonHyphenation.class);
     
     private int hash = 0;
     

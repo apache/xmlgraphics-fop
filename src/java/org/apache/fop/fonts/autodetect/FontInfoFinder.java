@@ -223,7 +223,8 @@ public class FontInfoFinder {
                     log.debug("Loading " + fontName);
                 }
                 try {
-                    TTFFontLoader ttfLoader = new TTFFontLoader(fontFileURI, fontName, resolver);
+                    TTFFontLoader ttfLoader = new TTFFontLoader(
+                            fontFileURI, fontName, true, resolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);
@@ -247,7 +248,7 @@ public class FontInfoFinder {
         } else {
             // The normal case
             try {
-                customFont = FontLoader.loadFont(fontUrl, null, resolver);
+                customFont = FontLoader.loadFont(fontUrl, null, true, resolver);
                 if (this.eventListener != null) {
                     customFont.setEventListener(this.eventListener);
                 }

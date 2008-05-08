@@ -22,9 +22,10 @@ package org.apache.fop.fo.flow;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
@@ -39,25 +40,15 @@ public class Wrapper extends FObjMixed {
     
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
-    private boolean inlineChildrenAllowed = false;
 
     /**
-     * Base constructor
+     * Create a Wrapper instance that is a child of the
+     * given {@link FONode}
      * 
      * @param parent {@link FONode} that is the parent of this object
      */
     public Wrapper(FONode parent) {
         super(parent);
-        /* Check if the fo:wrapper is a child of a FO that allows mixed content
-         * (or a descendant in nested fo:wrapper sequence, the first of which
-         *  is a child of a FO that allows mixed content) */
-        FONode ancestor = this.parent;
-        while (ancestor instanceof Wrapper) {
-            ancestor = ancestor.getParent();
-        }
-        if (ancestor instanceof FObjMixed ) {
-            inlineChildrenAllowed = true;
-        }
     }
 
     /**
@@ -66,7 +57,6 @@ public class Wrapper extends FObjMixed {
      * <br><i>Additionally (unimplemented): "An fo:wrapper that is a child of an 
      * fo:multi-properties is only permitted to have children that would 
      * be permitted in place of the fo:multi-properties."</i>
-     * 
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
@@ -77,8 +67,17 @@ public class Wrapper extends FObjMixed {
                         "(#PCDATA|%inline;|%block;)");
                 }
             } else if (isBlockOrInlineItem(nsURI, localName)) {
-                //delegate validation to parent
-                FONode.validateChildNode(this.parent, loc, nsURI, localName);
+                /* delegate validation to parent, but keep the error reporting
+                 * tidy. If we would simply call validateChildNode() on the
+                 * parent, the user would get a wrong impression, as only the
+                 * locator (if any) will contain a reference to the offending
+                 * fo:wrapper.
+                 */
+                try {
+                    FONode.validateChildNode(this.parent, loc, nsURI, localName);
+                } catch (ValidationException vex) {
+                    invalidChildError(loc, getName(), FO_URI, localName, "rule.wrapperInvalidChildForParent");
+                }
                 blockOrInlineItemFound = true;
             } else {
                 invalidChildError(loc, nsURI, localName);
@@ -87,15 +86,27 @@ public class Wrapper extends FObjMixed {
     }
 
     /** {@inheritDoc} */
-    protected void addCharacters(
-                char[] data, 
-                int start, 
-                int end, 
-                PropertyList pList, 
-                Locator locator) throws FOPException {
-        /* Only add text if the fo:wrapper's parent allows inline children */
-        if (this.inlineChildrenAllowed) {
-            super.addCharacters(data, start, end, pList, locator);
+    protected void addChildNode(FONode child) throws FOPException {
+        super.addChildNode(child);
+        /* If the child is a text node, and it generates areas
+         * (i.e. contains either non-white-space or preserved
+         * white-space), then check whether the nearest non-wrapper
+         * ancestor allows this.
+         */
+        if (child instanceof FOText
+                && ((FOText)child).willCreateArea()) {
+            FONode ancestor = parent;
+            while (ancestor.getNameId() == Constants.FO_WRAPPER) {
+                ancestor = ancestor.getParent();
+            }
+            if (!(ancestor instanceof FObjMixed)) {
+                invalidChildError(
+                        getLocator(),
+                        getLocalName(),
+                        FONode.FO_URI,
+                        "#PCDATA",
+                        "rule.wrapperInvalidChildForParent");
+            }
         }
     }
 

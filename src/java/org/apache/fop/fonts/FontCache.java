@@ -151,6 +151,11 @@ public final class FontCache implements Serializable {
                 //We don't really care about the exception since it's just a cache file
                 log.warn("I/O exception while reading font cache (" + ioe.getMessage() 
                         + "). Discarding font cache file.");
+                try {
+                    cacheFile.delete();
+                } catch (SecurityException ex) {
+                    log.warn("Failed to delete font cache file: " + cacheFile.getAbsolutePath());
+                }
             }
         }
         return null;

@@ -45,7 +45,7 @@ public final class FixedLength extends LengthProperty {
     public static final String MPT = "mpt";
 
     /** cache holding all canonical FixedLength instances */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(FixedLength.class);
     
     /** canonical zero-length instance */
     public static final FixedLength ZERO_FIXED_LENGTH = new FixedLength(0, FixedLength.MPT, 1.0f);

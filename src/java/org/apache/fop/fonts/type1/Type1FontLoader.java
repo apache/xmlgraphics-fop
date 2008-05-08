@@ -44,12 +44,13 @@ public class Type1FontLoader extends FontLoader {
     /**
      * Constructs a new Type 1 font loader.
      * @param fontFileURI the URI to the PFB file of a Type 1 font
+     * @param embedded indicates whether the font is embedded or referenced
      * @param resolver the font resolver used to resolve URIs
      * @throws IOException In case of an I/O error
      */
-    public Type1FontLoader(String fontFileURI, FontResolver resolver) 
+    public Type1FontLoader(String fontFileURI, boolean embedded, FontResolver resolver) 
                 throws IOException {
-        super(fontFileURI, resolver);
+        super(fontFileURI, embedded, resolver);
     }
 
     private String getPFMURI(String pfbURI) {
@@ -119,7 +120,9 @@ public class Type1FontLoader extends FontLoader {
         singleFont = new SingleByteFont();
         singleFont.setFontType(FontType.TYPE1);
         singleFont.setResolver(this.resolver);
-        singleFont.setEmbedFileName(this.fontFileURI);
+        if (this.embedded) {
+            singleFont.setEmbedFileName(this.fontFileURI);
+        }
         returnFont = singleFont;
         
         handleEncoding(afm, pfm);

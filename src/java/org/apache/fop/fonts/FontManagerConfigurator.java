@@ -20,11 +20,14 @@
 package org.apache.fop.fonts;
 
 import java.net.MalformedURLException;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
@@ -51,9 +54,11 @@ public class FontManagerConfigurator {
     /**
      * Initializes font settings from the user configuration
      * @param fontManager a font manager
-     * @throws FOPException fop exception
+     * @param strict true if strict checking of the configuration is enabled
+     * @throws FOPException if an exception occurs while processing the configuration
      */
-    public void configure(FontManager fontManager) throws FOPException {
+    public void configure(FontManager fontManager, boolean strict) throws FOPException {
+        
         // caching (fonts)
         if (cfg.getChild("use-cache", false) != null) {
             try {
@@ -84,6 +89,68 @@ public class FontManagerConfigurator {
                 fontSubstitutionsConfigurator.configure(substitutions);
                 fontManager.setFontSubstitutions(substitutions);
             }
+            
+            // referenced fonts (fonts which are not to be embedded)
+            Configuration referencedFontsCfg = fontsCfg.getChild("referenced-fonts", false);
+            if (referencedFontsCfg != null) {
+                createReferencedFontsMatcher(referencedFontsCfg, strict, fontManager);
+            }
+
         }
-    }    
+    }
+
+    private static void createReferencedFontsMatcher(Configuration referencedFontsCfg,
+            boolean strict, FontManager fontManager) throws FOPException {
+        List matcherList = new java.util.ArrayList();
+        Configuration[] matches = referencedFontsCfg.getChildren("match");
+        for (int i = 0; i < matches.length; i++) {
+            try {
+                matcherList.add(new FontFamilyRegExFontTripletMatcher(
+                        matches[i].getAttribute("font-family")));
+            } catch (ConfigurationException ce) {
+                LogUtil.handleException(log, ce, strict);
+                continue;
+            }
+        }
+        FontTriplet.Matcher orMatcher = new OrFontTripletMatcher(
+                (FontTriplet.Matcher[])matcherList.toArray(
+                        new FontTriplet.Matcher[matcherList.size()]));
+        fontManager.setReferencedFontsMatcher(orMatcher);
+    }
+
+    private static class OrFontTripletMatcher implements FontTriplet.Matcher {
+
+        private FontTriplet.Matcher[] matchers;
+        
+        public OrFontTripletMatcher(FontTriplet.Matcher[] matchers) {
+            this.matchers = matchers;
+        }
+        
+        /** {@inheritDoc} */
+        public boolean matches(FontTriplet triplet) {
+            for (int i = 0, c = matchers.length; i < c; i++) {
+                if (matchers[i].matches(triplet)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+    }
+    
+    private static class FontFamilyRegExFontTripletMatcher implements FontTriplet.Matcher {
+
+        private Pattern regex;
+        
+        public FontFamilyRegExFontTripletMatcher(String regex) {
+            this.regex = Pattern.compile(regex);
+        }
+        
+        /** {@inheritDoc} */
+        public boolean matches(FontTriplet triplet) {
+            return regex.matcher(triplet.getName()).matches();
+        }
+        
+    }
+    
 }

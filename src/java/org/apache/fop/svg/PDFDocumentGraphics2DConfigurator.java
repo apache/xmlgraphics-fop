@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
@@ -55,17 +55,18 @@ public class PDFDocumentGraphics2DConfigurator {
         //Fonts
         try {
             FontResolver fontResolver = FontManager.createMinimalFontResolver();
-            //TODO The following could be optimized by retaining the FontCache somewhere
-            FontCache fontCache = FontCache.load();
-            if (fontCache == null) {
-                fontCache = new FontCache();
-            }
-            //TODO Provide fontBaseURL to this method call
-            final String fontBaseURL = null;
+            //TODO The following could be optimized by retaining the FontManager somewhere
+            FontManager fontManager = new FontManager();
+            
+            //TODO Make use of fontBaseURL, font substitution and referencing configuration
+            //Requires a change to the expected configuration layout
+            
             List/*<EmbedFontInfo>*/ embedFontInfoList
                 = PrintRendererConfigurator.buildFontListFromConfiguration(
-                    cfg, fontBaseURL, fontResolver, false, fontCache);
-            fontCache.save();
+                    cfg, fontResolver, false, fontManager);
+            if (fontManager.useCache()) {
+                fontManager.getFontCache().save();
+            }
             FontInfo fontInfo = new FontInfo();
             FontSetup.setup(fontInfo, embedFontInfoList, fontResolver);
             graphics.setFontInfo(fontInfo);

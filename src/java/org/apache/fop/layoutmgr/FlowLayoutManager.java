@@ -30,6 +30,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
+import org.apache.fop.layoutmgr.inline.WrapperLayoutManager;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -75,7 +76,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         LinkedList returnList = new LinkedList();
 
         while ((curLM = getChildLM()) != null) {
-            if (curLM instanceof InlineLevelLayoutManager) {
+            if (!(curLM instanceof WrapperLayoutManager)
+                && curLM instanceof InlineLevelLayoutManager) {
                 log.error("inline area not allowed under flow - ignoring");
                 curLM.setFinished(true);
                 continue;

@@ -19,6 +19,7 @@
  
 package org.apache.fop.fonts;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class EmbedFontInfo implements Serializable {
     /** the list of associated font triplets */
     private List/*<FontTriplet>*/ fontTriplets = null;
 
+    private transient boolean embedded = true;
+    
     /**
      * Main constructor
      * @param metricsFile Path to the xml file containing font metrics
@@ -120,11 +123,37 @@ public class EmbedFontInfo implements Serializable {
     }
     
     /**
-     * {@inheritDoc}
+     * Indicates whether the font is only referenced rather than embedded.
+     * @return true if the font is embedded, false if it is referenced.
      */
+    public boolean isEmbedded() {
+        if (metricsFile != null && embedFile == null) {
+            return false;
+        } else {
+            return this.embedded;
+        }
+    }
+    
+    /**
+     * Defines whether the font is embedded or not.
+     * @param value true to embed the font, false to reference it
+     */
+    public void setEmbedded(boolean value) {
+        this.embedded = value;
+    }
+    
+    private void readObject(java.io.ObjectInputStream in)
+                throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.embedded = true;
+    }
+    
+    /** {@inheritDoc} */
     public String toString() {
         return "metrics-url=" + metricsFile + ",embed-url=" + embedFile
             + ", kerning=" + kerning + ", " + "font-triplet=" + fontTriplets
-            + (getSubFontName() != null ? ", sub-font=" + getSubFontName() : ""); 
+            + (getSubFontName() != null ? ", sub-font=" + getSubFontName() : "")
+            + (isEmbedded() ? "" : ", NOT embedded"); 
     }
+
 }
