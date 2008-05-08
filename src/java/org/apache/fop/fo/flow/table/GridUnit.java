@@ -133,11 +133,11 @@ public class GridUnit {
     protected void setBordersFromCell() {
         borderBefore = cell.borderBefore.copy();
         if (rowSpanIndex > 0) {
-            borderBefore.nonLeadingTrailing = BorderSpecification.getDefaultBorder();
+            borderBefore.normal = BorderSpecification.getDefaultBorder();
         }
         borderAfter = cell.borderAfter.copy();
         if (!isLastGridUnitRowSpan()) {
-            borderAfter.nonLeadingTrailing = BorderSpecification.getDefaultBorder();
+            borderAfter.normal = BorderSpecification.getDefaultBorder();
         }
         if (colSpanIndex == 0) {
             borderStart = cell.borderStart;
@@ -235,7 +235,7 @@ public class GridUnit {
     public BorderInfo getBorderBefore(int which) {
         switch (which) {
         case ConditionalBorder.NORMAL:
-            return borderBefore.nonLeadingTrailing.getBorderInfo();
+            return borderBefore.normal.getBorderInfo();
         case ConditionalBorder.LEADING_TRAILING:
             return borderBefore.leadingTrailing.getBorderInfo();
         case ConditionalBorder.REST:
@@ -257,7 +257,7 @@ public class GridUnit {
     public BorderInfo getBorderAfter(int which) {
         switch (which) {
         case ConditionalBorder.NORMAL:
-            return borderAfter.nonLeadingTrailing.getBorderInfo();
+            return borderAfter.normal.getBorderInfo();
         case ConditionalBorder.LEADING_TRAILING:
             return borderAfter.leadingTrailing.getBorderInfo();
         case ConditionalBorder.REST:
@@ -299,10 +299,10 @@ public class GridUnit {
     void resolveBorder(GridUnit other, int side) {
         switch (side) {
         case CommonBorderPaddingBackground.BEFORE:
-            borderBefore.resolve(other.borderAfter, false, true, false);
+            borderBefore.resolve(other.borderAfter, true, false, false);
             break;
         case CommonBorderPaddingBackground.AFTER:
-            borderAfter.resolve(other.borderBefore, false, true, false);
+            borderAfter.resolve(other.borderBefore, true, false, false);
             break;
         case CommonBorderPaddingBackground.START:
             BorderSpecification resolvedBorder = collapsingBorderModel.determineWinner(
@@ -333,16 +333,16 @@ public class GridUnit {
      * @param parent a table element whose corresponding border coincides on the given
      * side
      */
-    void integrateBorderSegment(int side, TableFObj parent, boolean withLeadingTrailing,
-            boolean withNonLeadingTrailing, boolean withRest) {
+    void integrateBorderSegment(int side, TableFObj parent, boolean withNormal,
+            boolean withLeadingTrailing, boolean withRest) {
         switch (side) {
         case CommonBorderPaddingBackground.BEFORE:
-            borderBefore.integrateSegment(parent.borderBefore, withLeadingTrailing,
-                    withNonLeadingTrailing, withRest);
+            borderBefore.integrateSegment(parent.borderBefore, withNormal,
+                    withLeadingTrailing, withRest);
             break;
         case CommonBorderPaddingBackground.AFTER:
-            borderAfter.integrateSegment(parent.borderAfter, withLeadingTrailing,
-                    withNonLeadingTrailing, withRest);
+            borderAfter.integrateSegment(parent.borderAfter, withNormal,
+                    withLeadingTrailing, withRest);
             break;
         default: assert false;
         }
@@ -375,15 +375,15 @@ public class GridUnit {
     }
 
     void integrateCompetingBorder(int side, ConditionalBorder competitor,
-            boolean withLeadingTrailing, boolean withNonLeadingTrailing, boolean withRest) {
+            boolean withNormal, boolean withLeadingTrailing, boolean withRest) {
         switch (side) {
         case CommonBorderPaddingBackground.BEFORE:
-            borderBefore.integrateCompetingSegment(competitor, withLeadingTrailing,
-                    withNonLeadingTrailing, withRest);
+            borderBefore.integrateCompetingSegment(competitor, withNormal,
+                    withLeadingTrailing, withRest);
             break;
         case CommonBorderPaddingBackground.AFTER:
-            borderAfter.integrateCompetingSegment(competitor, withLeadingTrailing,
-                    withNonLeadingTrailing, withRest);
+            borderAfter.integrateCompetingSegment(competitor, withNormal,
+                    withLeadingTrailing, withRest);
             break;
         default: assert false;
         }
