@@ -25,7 +25,7 @@ import java.net.MalformedURLException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.fop.apps.FopFactory;
+import org.apache.fop.fonts.FontTriplet.Matcher;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.render.PrintRenderer;
 
@@ -34,7 +34,8 @@ import org.apache.fop.render.PrintRenderer;
 // and start using POJO config/properties type classes
 
 /**
- * The manager of fonts
+ * The manager of fonts. The class holds a reference to the font cache and information about
+ * font substitution, referenced fonts and similar.
  */
 public class FontManager {
     /** Use cache (record previously detected font triplet info) */
@@ -49,42 +50,31 @@ public class FontManager {
     /** Font substitutions */
     private FontSubstitutions fontSubstitutions = null;
 
-    private FopFactory fopFactory = null;
-
     /** Allows enabling kerning on the base 14 fonts, default is false */
     private boolean enableBase14Kerning = false;
 
+    /** FontTriplet matcher for fonts that shall be referenced rather than embedded. */
+    private FontTriplet.Matcher referencedFontsMatcher;
+
     /**
      * Main constructor
-     * 
-     * @param fopFactory the fo URI resolver
      */
-    public FontManager(FopFactory fopFactory) {
-        this(fopFactory, DEFAULT_USE_CACHE);
-    }
-    
-    /**
-     * Constructor
-     * 
-     * @param fopFactory the fo URI resolver
-     * @param useCache true if the FontCache should be used
-     */
-    public FontManager(FopFactory fopFactory, boolean useCache) {
-        this.fopFactory  = fopFactory;
-        setUseCache(useCache);
+    public FontManager() {
+        setUseCache(DEFAULT_USE_CACHE);
     }
     
     /**
      * Sets the font base URL.
      * @param fontBase font base URL
-     * @throws MalformedURLException if there's a problem with a file URL
+     * @throws MalformedURLException if there's a problem with a URL
      */
     public void setFontBaseURL(String fontBase) throws MalformedURLException {
-        this.fontBase = fopFactory.getFOURIResolver().checkBaseURL(fontBase);
+        this.fontBase = fontBase;
     }
 
     /**
-     * @return the font base URL
+     * Returns the font base URL.
+     * @return the font base URL (or null if none was set)
      */
     public String getFontBaseURL() {
         return this.fontBase;
@@ -217,5 +207,23 @@ public class FontManager {
                 return new StreamSource(href);
             }
         };
+    }
+
+    /**
+     * Sets the {@link FontTriplet.Matcher} that can be used to identify the fonts that shall
+     * be referenced rather than embedded.
+     * @param matcher the font triplet matcher
+     */
+    public void setReferencedFontsMatcher(FontTriplet.Matcher matcher) {
+        this.referencedFontsMatcher = matcher;
+    }
+
+    /**
+     * Gets the {@link FontTriplet.Matcher} that can be used to identify the fonts that shall
+     * be referenced rather than embedded.
+     * @return the font triplet matcher (or null if none is set)
+     */
+    public Matcher getReferencedFontsMatcher() {
+        return this.referencedFontsMatcher;
     }
 }

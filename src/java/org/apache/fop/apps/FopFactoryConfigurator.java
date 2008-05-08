@@ -23,15 +23,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import org.xml.sax.SAXException;
+
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.util.LogUtil;
-import org.xml.sax.SAXException;
 
 /**
  * FopFactory configurator
@@ -174,7 +176,7 @@ public class FopFactoryConfigurator {
         // configure font manager
         FontManager fontManager = factory.getFontManager();
         FontManagerConfigurator fontManagerConfigurator = new FontManagerConfigurator(cfg);
-        fontManagerConfigurator.configure(fontManager);
+        fontManagerConfigurator.configure(fontManager, strict);
     }
     
     /**

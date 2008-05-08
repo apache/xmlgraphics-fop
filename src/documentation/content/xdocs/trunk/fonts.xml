@@ -177,10 +177,8 @@
         if you wanted to add a custom font. This unconvenient step has been removed and in
         addition to that, FOP supports auto-registration of fonts, i.e. FOP can find fonts
         installed in your operating system or can scan user-specified directories for fonts.
-        Font registration via XML font metrics file is still supported and is still necessary
-        if you want to use a TrueType Collection (*.ttc). Direct support for TrueType
-        collections may be added later. Furthermore, the XML font metrics files are still
-        required if you don't want to embed, but only reference a font.
+        Font registration via XML font metrics file is still supported and may still be necessary
+        for some very special cases as fallback variant while we stabilize font auto-detection.
       </p>
       <p>
         Basic information about fonts can be found at:
@@ -375,20 +373,56 @@
       </section>
       <section id="embedding">
         <title>Embedding</title>
-        <note>The PostScript renderer does not yet support TrueType fonts, but can embed Type 1 fonts.</note>
-        <note>The font is simply embedded into the PDF file, it is not converted.</note>
-        <p>Font embedding is enabled in the userconfig.xml file and controlled by the embed-url attribute.
-          If you don't specify the embed-url attribute the font will not be embedded, but will only be referenced.</p>
-        <warning>
-          Omitting the embed-url attribute for CID-encoded TrueType fonts will currently produce invalid 
-          PDF files! If you create the XML font metric file using the "-enc ansi" option, you can omit 
-          the embed-url attribute for TrueType fonts but you're restricted to the WinAnsi character set.
-        </warning>
-        <p>When FOP embeds a font, it adds a prefix to the fontname to ensure that the name will not match the fontname of an installed font.
-          This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</p>
-        <p>When embedding PostScript fonts, the entire font is always embedded.</p>
-        <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the
-          original font, containing only the glyphs used, is embedded in the output document.</p>
+        <p>
+          By default, all fonts are embedded if an output format supports font embedding. In some
+          cases, however, it is preferred that some fonts are only referenced. When working
+          with referenced fonts it is important to be in control of the target environment where
+          the produced document is consumed, i.e. the necessary fonts have to be installed there.
+        </p>
+        <p>
+          There are two different ways how you can specify that a font should be referenced:
+        </p>
+        <ol>
+          <li>
+            When using the old-style "font" element to configure a single font, font referencing
+            is controlled by the embed-url attribute. If you don't specify the embed-url attribute
+            the font will not be embedded, but will only be referenced.
+          </li>
+          <li>
+            For automatically configured fonts there's a different mechanism to specify which
+            fonts should be referenced rather than embedded. This is done in the "referenced-fonts"
+            element in the configuration. Here's an example:
+          </li>
+        </ol>
+        <source><![CDATA[
+<fop version="1.0">
+   <fonts>
+      <referenced-fonts>
+        <match font-family="Helvetica"/>
+        <match font-family="DejaVu.*"/>
+      </referenced-fonts>
+   </fonts>
+</fop>]]></source>
+        <p>
+          At the moment, you can only match fonts against their font-family. It is possible to use
+          regular expressions as is shown in the second example above ("DejaVu.*"). The syntax for
+          the regular expressions used here are the one used by the
+          <a href="http://java.sun.com/j2se/1.4/docs/api/java/util/regex/package-summary.html"><code>java.util.regex</code> package</a>.
+          So, in the above snippet "Helvetica" and all variants of the "DejaVu" font family are
+          referenced. If you want to reference all fonts, just specify <code>font-family=".*"</code>.
+        </p>
+        <p>
+          Various notes related to embedded fonts:
+        </p>
+        <ul>
+          <li>The PostScript renderer does not yet support TrueType fonts, but can embed Type 1 fonts.</li>
+          <li>The font is simply embedded into the PDF file, it is not converted.</li>
+          <li>When FOP embeds a font, it adds a prefix to the fontname to ensure that the name will not match the fontname of an installed font.
+            This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</li>
+          <li>When embedding PostScript fonts, the entire font is always embedded.</li>
+          <li>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the
+          original font, containing only the glyphs used, is embedded in the output document.</li>
+        </ul>
       </section>
       <section id="substitution">
          <title>Substitution</title>

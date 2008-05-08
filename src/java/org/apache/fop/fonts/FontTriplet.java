@@ -128,5 +128,20 @@ public class FontTriplet implements Comparable, Serializable {
     public String toString() {
         return getKey();
     }
+    
+    
+    /**
+     * Matcher interface for {@link FontTriplet}.
+     */
+    public interface Matcher {
+        
+        /**
+         * Indicates whether the given {@link FontTriplet} matches a particular criterium.
+         * @param triplet the font triplet
+         * @return true if the font triplet is a match
+         */
+        boolean matches(FontTriplet triplet);
+    }
+    
 }
 

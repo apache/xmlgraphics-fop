@@ -27,6 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.CourierBold;
 import org.apache.fop.fonts.base14.CourierBoldOblique;
@@ -205,20 +206,12 @@ public class FontSetup {
         }
         
         String internalName = null;
-        //FontReader reader = null;
 
         for (int i = 0; i < embedFontInfoList.size(); i++) {
             EmbedFontInfo embedFontInfo = (EmbedFontInfo)embedFontInfoList.get(i);
 
-            //String metricsFile = configFontInfo.getMetricsFile();
             internalName = "F" + num;
             num++;
-            /*
-            reader = new FontReader(metricsFile);
-            reader.useKerning(configFontInfo.getKerning());
-            reader.setFontEmbedPath(configFontInfo.getEmbedFile());
-            fontInfo.addMetrics(internalName, reader.getFont());
-            */
             
             LazyFont font = new LazyFont(embedFontInfo, resolver);
             fontInfo.addMetrics(internalName, font);
