@@ -56,7 +56,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     private Map markers = null;
 
     /** True if this LayoutManager has handled all of its content. */
-    private boolean bFinished = false;
+    private boolean isFinished = false;
 
     /** child LM during getNextKnuthElement phase */
     protected LayoutManager curChildLM = null;
@@ -136,7 +136,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * ie. the last one returned represents the end of the content.
      */
     public boolean isFinished() {
-        return bFinished;
+        return isFinished;
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * @param fin the flag value to be set
      */
     public void setFinished(boolean fin) {
-        bFinished = fin;
+        isFinished = fin;
     }
 
     /**
@@ -302,6 +302,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         if (pos.getIndex() >= 0) {
             throw new IllegalStateException("Position already got its index");
         }
+        
         lastGeneratedPosition++;
         pos.setIndex(lastGeneratedPosition);
         return pos;
@@ -386,6 +387,21 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
+    /**
+     * Checks to see if the incoming {@link Position}
+     * is the last one for this LM, and if so, calls
+     * {@link #notifyEndOfLayout()}
+     * 
+     * @param pos   the {@link Position} to check
+     */
+    protected void checkEndOfLayout(Position pos) {
+        if (pos != null
+            && pos.getLM() == this
+            && this.isLast(pos)) {
+            notifyEndOfLayout();
+        }
+    }
+    
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks page-number-citations of list-block, list-item, 
+      list-item-label and list-item-body.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="2in" 
+              margin="20pt">
+          <fo:region-body background-color="yellow"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence id="page-sequence1" master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:list-block id="list1" provisional-distance-between-starts="50pt" provisional-label-separation="5pt">
+            <fo:list-item id="item1">
+              <fo:list-item-label id="item1-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item1-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item id="item2">
+              <fo:list-item-label id="item2-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item2-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item id="item3">
+              <fo:list-item-label id="item3-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item3-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item id="item4">
+              <fo:list-item-label id="item4-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item4-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item id="item5">
+              <fo:list-item-label id="item5-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item5-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item id="item6">
+              <fo:list-item-label id="item6-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item6-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item id="item7">
+              <fo:list-item-label id="item7-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item7-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+                <fo:block>here is text in the list item body</fo:block>
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item id="item8">
+              <fo:list-item-label id="item8-label" end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body id="item8-body" start-indent="body-start()">
+                <fo:block>here is text in the list item body</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body" font-size="8pt">
+          <fo:block><fo:page-number-citation ref-id="list1"/></fo:block>
+          <fo:block><fo:page-number-citation-last ref-id="list1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="item1"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="item1-label"/></fo:block>
+          <fo:block><fo:page-number-citation ref-id="item1-body"/></fo:block>
+          <fo:block><fo:page-number-citation-last ref-id="item7-body"/></fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <true fail-msg="Wrong page-number-citation for list-block" xpath="'1' = //pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]"/>
+    <true fail-msg="Wrong page-number-citation-last for list-block" xpath="'2' = //pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[2]"/>
+    <true fail-msg="Wrong page-number-citation for list-item" xpath="'1' = //pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[3]"/>
+    <true fail-msg="Wrong page-number-citation for list-item-label" xpath="'1' = //pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[4]"/>
+    <true fail-msg="Wrong page-number-citation for list-item-body" xpath="'1' = //pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[5]"/>
+    <true fail-msg="Wrong page-number-citation-last for list-item-body" xpath="'2' = //pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[6]"/>
+  </checks>
+</testcase>

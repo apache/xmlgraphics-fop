@@ -172,7 +172,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
         curBlockArea = null;
         
-        notifyEndOfLayout();
+        checkEndOfLayout(lastPos);
     }
 
     /**
