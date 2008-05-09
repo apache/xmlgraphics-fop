@@ -219,7 +219,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         curBlockArea = null;
         resetSpaces();
         
-        notifyEndOfLayout();
+        checkEndOfLayout(lastPos);
     }
 
     /**

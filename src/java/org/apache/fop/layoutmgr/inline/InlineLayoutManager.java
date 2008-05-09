@@ -518,6 +518,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         
         context.setFlags(LayoutContext.LAST_AREA, isLast);
         areaCreated = true;
+        checkEndOfLayout(lastPos);
     }
 
     /** {@inheritDoc} */

@@ -189,11 +189,6 @@
     placed correctly.</description>
   </testcase>
   <testcase>
-    <name>page-number-citation-last: FOs spanning multiple pages are not properly handled.</name>
-    <file>page-number-citation-last_basic.xml</file>
-    <description>Resolution of forward references does not wait until an FO is fully finished when an FO spans multiple pages.</description>
-  </testcase>
-  <testcase>
     <name>IDs are not working on all FO elements</name>
     <file>page-number-citation_complex_1.xml</file>
     <description>The "id" attributes are not properly handled for all block-level FO elements.</description>
