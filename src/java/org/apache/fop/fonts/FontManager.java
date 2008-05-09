@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts;
 
@@ -29,7 +29,7 @@ import org.apache.fop.fonts.FontTriplet.Matcher;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.render.PrintRenderer;
 
-// TODO: Refactor fonts package so major font activities (autodetection etc) 
+// TODO: Refactor fonts package so major font activities (autodetection etc)
 // are all centrally managed and delegated from this class, also remove dependency on FopFactory
 // and start using POJO config/properties type classes
 
@@ -62,7 +62,7 @@ public class FontManager {
     public FontManager() {
         setUseCache(DEFAULT_USE_CACHE);
     }
-    
+
     /**
      * Sets the font base URL.
      * @param fontBase font base URL
@@ -90,7 +90,7 @@ public class FontManager {
      * @param value true if kerning should be activated
      */
     public void setBase14KerningEnabled(boolean value) {
-        this.enableBase14Kerning = value;        
+        this.enableBase14Kerning = value;
     }
 
     /**
@@ -100,7 +100,7 @@ public class FontManager {
     public void setFontSubstitutions(FontSubstitutions substitutions) {
         this.fontSubstitutions = substitutions;
     }
-    
+
     /**
      * Returns the font substitution catalog
      * @return the font substitution catalog
@@ -142,7 +142,7 @@ public class FontManager {
     public FontCache getFontCache() {
         return this.fontCache;
     }
-    
+
     /**
      * Sets up the fonts on a given PrintRenderer
      * @param renderer a print renderer
@@ -151,7 +151,7 @@ public class FontManager {
         FontInfo fontInfo = renderer.getFontInfo();
 
         int startNum = 1;
-        
+
         // Configure base 14 fonts
         org.apache.fop.fonts.base14.Base14FontCollection base14FontCollection
             = new org.apache.fop.fonts.base14.Base14FontCollection(this.enableBase14Kerning);
@@ -161,7 +161,7 @@ public class FontManager {
         org.apache.fop.fonts.CustomFontCollection customFontCollection
             = new org.apache.fop.fonts.CustomFontCollection(renderer);
         startNum = customFontCollection.setup(startNum, fontInfo);
-                
+
         // Make any defined substitutions in the font info
         getFontSubstitutions().adjustFontInfo(fontInfo);
     }
@@ -179,7 +179,7 @@ public class FontManager {
         // setup base 14 fonts
         org.apache.fop.render.java2d.Base14FontCollection base14FontCollection
             = new org.apache.fop.render.java2d.Base14FontCollection(graphics2D);
-        
+
         // setup any custom font collection
         startNum = base14FontCollection.setup(startNum, fontInfo);
 
@@ -194,7 +194,7 @@ public class FontManager {
         startNum = configuredFontCollection.setup(startNum, fontInfo);
 
         // Make any defined substitutions in the font info
-        getFontSubstitutions().adjustFontInfo(fontInfo);        
+        getFontSubstitutions().adjustFontInfo(fontInfo);
     }
 
     /** @return a new FontResolver to be used by the font subsystem */

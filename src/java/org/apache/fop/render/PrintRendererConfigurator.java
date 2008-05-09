@@ -55,7 +55,7 @@ import org.apache.fop.util.LogUtil;
 /**
  * Base Print renderer configurator (mostly handles font configuration)
  */
-public class PrintRendererConfigurator extends AbstractRendererConfigurator 
+public class PrintRendererConfigurator extends AbstractRendererConfigurator
             implements RendererConfigurator {
 
     /** logger instance */
@@ -94,9 +94,9 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         boolean strict = factory.validateUserConfigStrictly();
         FontCache fontCache = fontManager.getFontCache();
 
-        List/*<EmbedFontInfo>*/ embedFontInfoList = buildFontListFromConfiguration(cfg, 
+        List/*<EmbedFontInfo>*/ embedFontInfoList = buildFontListFromConfiguration(cfg,
                 fontResolver, strict, fontManager);
-        
+
         if (fontCache != null && fontCache.hasChanged()) {
             fontCache.save();
         }
@@ -113,13 +113,13 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      * @return a List of EmbedFontInfo objects.
      * @throws FOPException If an error occurs while processing the configuration
      */
-    public static List/*<EmbedFontInfo>*/ buildFontListFromConfiguration(Configuration cfg, 
-            FontResolver fontResolver, 
+    public static List/*<EmbedFontInfo>*/ buildFontListFromConfiguration(Configuration cfg,
+            FontResolver fontResolver,
             boolean strict, FontManager fontManager) throws FOPException {
         FontCache fontCache = fontManager.getFontCache();
         String fontBaseURL = fontManager.getFontBaseURL();
         List/*<EmbedFontInfo>*/ fontInfoList
-            = new java.util.ArrayList/*<EmbedFontInfo>*/();
+                = new java.util.ArrayList/*<EmbedFontInfo>*/();
 
         Configuration fonts = cfg.getChild("fonts", false);
         if (fonts != null) {
@@ -128,7 +128,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                 log.debug("Starting font configuration...");
                 start = System.currentTimeMillis();
             }
-            
+
             // native o/s search (autodetect) configuration
             boolean autodetectFonts = (fonts.getChild("auto-detect", false) != null);
             if (autodetectFonts) {
@@ -203,7 +203,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                     LogUtil.handleException(log, e, strict);
                 }
             }
-            
+
             // font file (singular) configuration
             Configuration[] font = fonts.getChildren("font");
             for (int i = 0; i < font.length; i++) {
@@ -216,9 +216,9 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
 
             // Update referenced fonts (fonts which are not to be embedded)
             updateReferencedFonts(fontInfoList, fontManager.getReferencedFontsMatcher());
-            
+
             if (log.isDebugEnabled()) {
-                log.debug("Finished font configuration in " 
+                log.debug("Finished font configuration in "
                         + (System.currentTimeMillis() - start) + "ms");
             }
         }
@@ -243,7 +243,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         }
     }
 
-    
+
     /**
      * Iterates over font file list adding font info to list
      * @param fontFileList font file list
@@ -258,7 +258,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             // parse font to ascertain font info
             FontInfoFinder finder = new FontInfoFinder();
             //EmbedFontInfo fontInfo = finder.find(fontUrl, resolver, fontCache);
-            
+
             //List<EmbedFontInfo> embedFontInfoList = finder.find(fontUrl, resolver, fontCache);
             EmbedFontInfo[] embedFontInfos = finder.find(fontUrl, resolver, fontCache);
 
@@ -299,14 +299,14 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                 LogUtil.handleError(log, "font-triplet without name", strict);
                 return null;
             }
-            
+
             String weightStr = tripletCfg.getAttribute("weight");
             if (weightStr == null) {
                 LogUtil.handleError(log, "font-triplet without weight", strict);
                 return null;
             }
             int weight = FontUtil.parseCSS2FontWeight(FontUtil.stripWhiteSpace(weightStr));
-            
+
             String style = tripletCfg.getAttribute("style");
             if (style == null) {
                 LogUtil.handleError(log, "font-triplet without style", strict);
@@ -320,7 +320,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         }
         return null;
     }
-    
+
     /**
      * Returns a font info from a font node Configuration definition
      * 
@@ -337,7 +337,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         String metricsUrl = fontCfg.getAttribute("metrics-url", null);
         String embedUrl = fontCfg.getAttribute("embed-url", null);
         String subFont = fontCfg.getAttribute("sub-font", null);
-        
+
         if (metricsUrl == null && embedUrl == null) {
             LogUtil.handleError(log,
                     "Font configuration without metric-url or embed-url attribute",
@@ -366,13 +366,13 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                 }
             }
         }
-                        
+
         Configuration[] tripletCfg = fontCfg.getChildren("font-triplet");
-        
+
         // no font triplet info
         if (tripletCfg.length == 0) {
             LogUtil.handleError(log, "font without font-triplet", strict);
-            
+
             File fontFile = FontCache.getFileFromUrls(new String[] {embedUrl, metricsUrl});
             URL fontUrl;
             try {
@@ -384,28 +384,28 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             }
             if (fontFile != null) {
                 FontInfoFinder finder = new FontInfoFinder();
-                EmbedFontInfo[] infos = finder.find(fontUrl, fontResolver, fontCache); 
+                EmbedFontInfo[] infos = finder.find(fontUrl, fontResolver, fontCache);
                 return infos[0]; //When subFont is set, only one font is returned
             } else {
                 return null;
             }
         }
-        
+
         List/*<FontTriplet>*/ tripletList = new java.util.ArrayList/*<FontTriplet>*/();
         for (int j = 0; j < tripletCfg.length; j++) {
             FontTriplet fontTriplet = getFontTripletFromConfiguration(tripletCfg[j], strict);
             tripletList.add(fontTriplet);
         }
-        
+
         boolean useKerning = fontCfg.getAttributeAsBoolean("kerning", true);
         EmbedFontInfo embedFontInfo
-            = new EmbedFontInfo(metricsUrl, useKerning, tripletList, embedUrl, subFont);
+                = new EmbedFontInfo(metricsUrl, useKerning, tripletList, embedUrl, subFont);
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {
-                fontCache.addFont(embedFontInfo);                    
+                fontCache.addFont(embedFontInfo);
             }
         }
-        
+
         if (log.isDebugEnabled()) {
             String embedFile = embedFontInfo.getEmbedFile();
             log.debug("Adding font " + (embedFile != null ? embedFile + ", " : "")
@@ -417,8 +417,8 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                         + triplet.getStyle() + ", "
                         + triplet.getWeight());
             }
-        }            
+        }
         return embedFontInfo;
     }
-    
+
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts.base14;
 
@@ -27,7 +27,7 @@ import org.apache.fop.fonts.FontInfo;
  * Sets up Base 14 fonts
  */
 public class Base14FontCollection implements FontCollection {
-    
+
     private boolean kerning = false;
 
     /**
@@ -38,7 +38,7 @@ public class Base14FontCollection implements FontCollection {
     public Base14FontCollection(boolean kerning) {
         this.kerning  = kerning;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -143,7 +143,7 @@ public class Base14FontCollection implements FontCollection {
         fontInfo.addFontProperties("F8", "Times Roman", Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
                                                         Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-        
+
         return 15;
     }
 }

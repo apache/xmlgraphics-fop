@@ -45,7 +45,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /** list of fonts */
     protected List/*<EmbedFontInfo>*/ embedFontInfoList = null;
-   
+
     /**
      * Adds a font list to current list of fonts
      * @param fontList a font info list
@@ -57,7 +57,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
             fontList.addAll(fontList);
         }
     }
-    
+
     /**
      * @param embedFontInfoList list of available fonts
      */
@@ -91,7 +91,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
         FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
         return fontInfo.getInternalFontKey(triplet);
     }
-    
+
     /**
      * Returns a Font object constructed based on the font traits in an area
      * @param area the area from which to retrieve the font triplet information
@@ -102,7 +102,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
         int size = ((Integer)area.getTrait(Trait.FONT_SIZE)).intValue();
         return fontInfo.getFontInstance(triplet, size);
     }
-    
+
     /**
      * Lightens up a color for groove, ridge, inset and outset border effects.
      * @param col the color to lighten up
@@ -135,7 +135,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * @param foreignAttributes a Map or foreign attributes, may be null
      * @return the RendererContext
      */
-    protected RendererContext createRendererContext(int x, int y, int width, int height, 
+    protected RendererContext createRendererContext(int x, int y, int width, int height,
             Map foreignAttributes) {
         RendererContext context;
         context = new RendererContext(this, getMimeType());
@@ -149,7 +149,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
                             new Integer(x));
         context.setProperty(RendererContextConstants.YPOS,
                             new Integer(y));
-        context.setProperty(RendererContextConstants.PAGE_VIEWPORT, 
+        context.setProperty(RendererContextConstants.PAGE_VIEWPORT,
                             getCurrentPageViewport());
         if (foreignAttributes != null) {
             context.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, foreignAttributes);
@@ -165,12 +165,12 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * @param foreignAttributes the foreign attributes containing rendering hints, or null
      */
     public void renderDocument(Document doc, String ns, Rectangle2D pos, Map foreignAttributes) {
-        int x = currentIPPosition + (int) pos.getX(); 
+        int x = currentIPPosition + (int) pos.getX();
         int y = currentBPPosition + (int) pos.getY();
         int width = (int)pos.getWidth();
         int height = (int)pos.getHeight();
         RendererContext context = createRendererContext(x, y, width, height, foreignAttributes);
-        
+
         renderXML(context, doc, ns);
     }
 
@@ -185,7 +185,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
         }
         return this.fontResolver;
     }
-    
+
     /**
      * @return the font info
      */

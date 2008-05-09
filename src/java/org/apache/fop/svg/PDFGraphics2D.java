@@ -106,13 +106,13 @@ import org.apache.fop.util.ColorExt;
 public class PDFGraphics2D extends AbstractGraphics2D {
 
     private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
-    
-    /** The number of decimal places. */ 
+
+    /** The number of decimal places. */
     private static final int DEC = 8;
 
     /** Convenience constant for full opacity */
     static final int OPAQUE = 255;
-    
+
     /**
      * the PDF Document being created
      */
@@ -308,7 +308,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public String getPageReference() {
         return this.pageRef;
     }
-    
+
     /**
      * Set the Graphics context.
      * @param c the graphics context to use
@@ -319,10 +319,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     private void setPrivateHints() {
-        setRenderingHint(RenderingHintsKeyExt.KEY_AVOID_TILE_PAINTING, 
+        setRenderingHint(RenderingHintsKeyExt.KEY_AVOID_TILE_PAINTING,
                 RenderingHintsKeyExt.VALUE_AVOID_TILE_PAINTING_ON);
     }
-    
+
     /**
      * Set the override font state for drawing text.
      * This is used by the PDF text painter so that it can temporarily
@@ -362,7 +362,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             concatMatrix(matrix);
         }
     }
-    
+
     /**
      * This is mainly used for shading patterns which use the document-global coordinate system
      * instead of the local one.
@@ -372,7 +372,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         AffineTransform at = new AffineTransform(graphicsState.getTransform());
         return at;
     }
-    
+
     /**
      * This is a pdf specific method used to add a link to the
      * pdf document.
@@ -417,7 +417,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param width the width to draw the image
      * @param height the height to draw the image
      */
-    void addNativeImage(org.apache.xmlgraphics.image.loader.Image image, float x, float y, 
+    void addNativeImage(org.apache.xmlgraphics.image.loader.Image image, float x, float y,
                              float width, float height) {
         preparePainting();
         String key = image.getInfo().getOriginalURI();
@@ -425,10 +425,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             // Need to include hash code as when invoked from FO you
             // may have several 'independent' PDFGraphics2D so the
             // count is not enough.
-            key = "__AddNative_" + hashCode() + "_" + nativeCount; 
+            key = "__AddNative_" + hashCode() + "_" + nativeCount;
             nativeCount++;
         }
-        
+
         PDFImage pdfImage;
         if (image instanceof ImageRawJPEG) {
             pdfImage = new ImageRawJPEGAdapter((ImageRawJPEG)image, key);
@@ -438,7 +438,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             throw new IllegalArgumentException(
                     "Unsupported Image subclass: " + image.getClass().getName());
         }
-        
+
         PDFXObject xObject = this.pdfDoc.addImage(resourceContext, pdfImage);
         if (outputStream != null) {
             try {
@@ -649,7 +649,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             graphicsState.pop();
         }
     }
-    
+
 /*
     // in theory we could set the clip using these methods
     // it doesn't seem to improve the file sizes much
@@ -784,8 +784,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     (float) gpaint.getPoint1().getX(),
                     (float) gpaint.getPoint1().getY(),
                     (float) gpaint.getPoint2().getX(),
-                    (float) gpaint.getPoint2().getY(), 
-                    new float[] {0, 1}, 
+                    (float) gpaint.getPoint2().getY(),
+                    new float[] {0, 1},
                     new Color[] {gpaint.getColor1(), gpaint.getColor2()},
                     gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
@@ -927,7 +927,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     return false;  // PDF can't do alpha
                 }
 
-                someColors.add(new PDFColor(cc.getRed(), cc.getGreen(), 
+                someColors.add(new PDFColor(cc.getRed(), cc.getGreen(),
                                             cc.getBlue()));
             }
 
@@ -947,7 +947,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             currentStream.write(myPat.getColorSpaceOut(fill));
 
             return true;
-        } 
+        }
         if (paint instanceof PatternPaint) {
             PatternPaint pp = (PatternPaint)paint;
             return createPattern(pp, fill);
@@ -990,14 +990,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         //     double patMaxX = rect.getX() + rect.getWidth();
         //     double patMaxY = rect.getY() + rect.getHeight();
         //     double stepX = rect.getWidth();
-        //     double stepY = rect.getHeight();            
-        // 
+        //     double stepY = rect.getHeight();
+        //
         //     int startX = (int)((rect.getX() - gnMaxX)/stepX);
         //     int startY = (int)((rect.getY() - gnMaxY)/stepY);
-        // 
+        //
         //     int endX   = (int)((patMaxX - gnMinX)/stepX);
         //     int endY   = (int)((patMaxY - gnMinY)/stepY);
-        // 
+        //
         //     pattGraphic.translate(startX*stepX, startY*stepY);
         //     for (int yIdx=startY; yIdx<=endY; yIdx++) {
         //         for (int xIdx=startX; xIdx<=endX; xIdx++) {
@@ -1027,14 +1027,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         /** @todo see if pdfDoc and res can be linked here,
-        (currently res <> PDFDocument's resources) so addFonts() 
+        (currently res <> PDFDocument's resources) so addFonts()
         can be moved to PDFDocument class */
         res.addFonts(pdfDoc, specialFontInfo);
 
         PDFPattern myPat = pdfDoc.getFactory().makePattern(
                                 resourceContext, 1, res, 1, 1, bbox,
                                 rect.getWidth(), rect.getHeight(),
-                                theMatrix, null, 
+                                theMatrix, null,
                                 pattGraphic.getBuffer());
 
         currentStream.write(myPat.getColorSpaceOut(fill));
@@ -1094,7 +1094,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             (rgbCS, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000,
              false, DataBuffer.TYPE_BYTE);
 
-        PaintContext pctx = paint.createContext(rgbCM, devBounds, usrBounds, 
+        PaintContext pctx = paint.createContext(rgbCM, devBounds, usrBounds,
                                                 at, getRenderingHints());
         PDFXObject imageInfo = pdfDoc.getXObject
             ("TempImage:" + pctx.toString());
@@ -1112,7 +1112,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             final int[]  line = new int[devW];
             final byte[] mask;
             int x, y, val, rgbIdx = 0;
-        
+
             if (pcm.hasAlpha()) {
                 mask = new byte[devW * devH];
                 int maskIdx = 0;
@@ -1611,7 +1611,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 return;
             }
         }
-        
+
         AffineTransform trans = getTransform();
         double[] tranvals = new double[6];
         trans.getMatrix(tranvals);
@@ -1709,7 +1709,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             iter.next();
         }
     }
-    
+
     /**
      * Do the PDF drawing command.
      * This does the PDF drawing command according to fill

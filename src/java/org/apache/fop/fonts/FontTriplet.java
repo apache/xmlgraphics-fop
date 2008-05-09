@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts;
 
 import java.io.Serializable;
@@ -25,15 +25,15 @@ import java.io.Serializable;
  * FontTriplet contains information on name, style and weight of one font
  */
 public class FontTriplet implements Comparable, Serializable {
-    
+
     /** serial version UID */
     private static final long serialVersionUID = 1168991106658033508L;
-    
+
     private String name;
     private String style;
     private int weight;
     private int priority; // priority of this triplet/font mapping
-    
+
     //This is only a cache
     private transient String key;
 
@@ -78,7 +78,7 @@ public class FontTriplet implements Comparable, Serializable {
     public String getStyle() {
         return style;
     }
-    
+
     /** @return the font weight */
     public int getWeight() {
         return weight;
@@ -96,7 +96,7 @@ public class FontTriplet implements Comparable, Serializable {
         }
         return this.key;
     }
-    
+
     /** {@inheritDoc} */
     public int compareTo(Object o) {
         return getKey().compareTo(((FontTriplet)o).getKey());
@@ -117,7 +117,7 @@ public class FontTriplet implements Comparable, Serializable {
             if (obj instanceof FontTriplet) {
                 FontTriplet other = (FontTriplet)obj;
                 return (getName().equals(other.getName())
-                        && getStyle().equals(other.getStyle()) 
+                        && getStyle().equals(other.getStyle())
                         && (getWeight() == other.getWeight()));
             }
         }
@@ -128,13 +128,13 @@ public class FontTriplet implements Comparable, Serializable {
     public String toString() {
         return getKey();
     }
-    
-    
+
+
     /**
      * Matcher interface for {@link FontTriplet}.
      */
     public interface Matcher {
-        
+
         /**
          * Indicates whether the given {@link FontTriplet} matches a particular criterium.
          * @param triplet the font triplet
@@ -142,6 +142,6 @@ public class FontTriplet implements Comparable, Serializable {
          */
         boolean matches(FontTriplet triplet);
     }
-    
+
 }
 

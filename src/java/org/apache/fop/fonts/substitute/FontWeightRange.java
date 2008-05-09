@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts.substitute;
 
@@ -23,13 +23,12 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fonts.FontUtil;
 
 /**
  * Encapsulates a range of font weight values
  */
 public class FontWeightRange {
-    
+
     /** logging instance */
     protected static Log log = LogFactory.getLog("org.apache.fop.render.fonts");
 
@@ -68,7 +67,7 @@ public class FontWeightRange {
 
     /** the start range */
     private int start;
-    
+
     /** the end range */
     private int end;
 
@@ -81,7 +80,7 @@ public class FontWeightRange {
         this.start = start;
         this.end = end;
     }
-    
+
     /**
      * Returns true if the given integer value is within this integer range
      * @param value the integer value
@@ -90,7 +89,7 @@ public class FontWeightRange {
     public boolean isWithinRange(int value) {
         return (value >= start && value <= end);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -111,5 +110,5 @@ public class FontWeightRange {
             range[i] = start + (i * 100);
         }
         return range;
-    }    
+    }
 }

@@ -31,7 +31,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
 
     private File foBaseDir = new File("test/xml/pdf-a");
     private boolean dumpPDF = Boolean.getBoolean("PDFAConformanceTestCase.dumpPDF");
-    
+
     /**
      * Main constructor
      * @param name the name of the test case
@@ -40,7 +40,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
         super(name);
     }
 
-    /** create an FOUserAgent for our tests 
+    /** create an FOUserAgent for our tests
      *  @return an initialized FOUserAgent
      * */
     protected FOUserAgent getUserAgent() {
@@ -48,7 +48,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
         userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-1b");
         return userAgent;
     }
-    
+
     /**
      * Test exception when PDF/A-1 is enabled and everything is as it should.
      * @throws Exception if the test fails
@@ -57,7 +57,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
         File foFile = new File(foBaseDir, "minimal-pdf-a.fo");
         convertFO(foFile, getUserAgent(), dumpPDF);
     }
-    
+
     /**
      * Test exception when PDF/A-1 is enabled together with encryption.
      * @throws Exception if the test fails
@@ -73,7 +73,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
             //Good!
         }
     }
-    
+
     /**
      * Test exception when PDF/A-1 is enabled and a font is used which is not embedded.
      * @throws Exception if the test fails
@@ -87,7 +87,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
             //Good!
         }
     }
-    
+
     /**
      * Test exception when PDF/A-1 is enabled and images.
      * @throws Exception if the test fails
