@@ -182,7 +182,7 @@ public class FontSetup {
 
         // All base 14 configured now, so any custom embedded fonts start from 15
         final int startNum = 15;
-        
+
         /* Add configured fonts */
         addConfiguredFonts(fontInfo, embedFontInfoList, startNum, resolver);
     }
@@ -204,7 +204,7 @@ public class FontSetup {
             //Ensure that we have minimal font resolution capabilities
             resolver = createMinimalFontResolver1();
         }
-        
+
         String internalName = null;
 
         for (int i = 0; i < embedFontInfoList.size(); i++) {
@@ -212,7 +212,7 @@ public class FontSetup {
 
             internalName = "F" + num;
             num++;
-            
+
             LazyFont font = new LazyFont(embedFontInfo, resolver);
             fontInfo.addMetrics(internalName, font);
 
@@ -234,5 +234,5 @@ public class FontSetup {
                 return new StreamSource(href);
             }
         };
-    }       
+    }
 }

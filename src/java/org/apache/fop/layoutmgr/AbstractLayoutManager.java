@@ -38,7 +38,7 @@ import org.apache.fop.fo.flow.RetrieveMarker;
 /**
  * The base class for most LayoutManagers.
  */
-public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager 
+public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     implements Constants {
 
     /**
@@ -57,13 +57,13 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
-    
+
     /** child LM during getNextKnuthElement phase */
     protected LayoutManager curChildLM = null;
-    
+
     /** child LM iterator during getNextKnuthElement phase */
     protected ListIterator childLMiter = null;
-    
+
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;
 
@@ -154,7 +154,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
@@ -164,7 +164,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
@@ -229,20 +229,20 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     public PageSequenceLayoutManager getPSLM() {
         return parentLM.getPSLM();
     }
-    
+
     /**
      * @see PageSequenceLayoutManager#getCurrentPage()
      * @return the {@link Page} instance corresponding to the current page
      */
     public Page getCurrentPage() {
         return getPSLM().getCurrentPage();
-    }  
-    
+    }
+
     /** @return the current page viewport */
     public PageViewport getCurrentPV() {
         return getPSLM().getCurrentPage().getPageViewport();
-    }  
-    
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -306,7 +306,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         pos.setIndex(lastGeneratedPosition);
         return pos;
     }
-    
+
     /**
      * Indicates whether the given Position is the first area-generating Position of this LM.
      * @param pos the Position (must be one with a position index)
@@ -326,7 +326,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             return false;
         }
     }
-    
+
     /**
      * Indicates whether the given Position is the last area-generating Position of this LM.
      * @param pos the Position (must be one with a position index)
@@ -349,7 +349,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         Map atts = fobj.getForeignAttributes();
         targetArea.setForeignAttributes(atts);
     }
-    
+
     /**
      * Registers the FO's markers on the current PageViewport
      *
@@ -360,9 +360,9 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     protected void addMarkersToPage(boolean isStarting, boolean isFirst, boolean isLast) {
         if (this.markers != null) {
             getCurrentPV().addMarkers(
-                    this.markers, 
-                    isStarting, 
-                    isFirst, 
+                    this.markers,
+                    isStarting,
+                    isFirst,
                     isLast);
         }
     }
@@ -390,5 +390,5 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));
     }
-    
+
 }

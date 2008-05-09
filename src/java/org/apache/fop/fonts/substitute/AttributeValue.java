@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts.substitute;
 
@@ -25,7 +25,7 @@ import java.util.StringTokenizer;
  * Encapsulates a font attribute value
  */
 public class AttributeValue extends java.util.ArrayList {
-    
+
     private static final long serialVersionUID = 748610847500940557L;
 
     /**
@@ -38,15 +38,15 @@ public class AttributeValue extends java.util.ArrayList {
      */
     public static AttributeValue valueOf(String valuesString) {
         AttributeValue attribute = new AttributeValue();
-        StringTokenizer stringTokenzier = new StringTokenizer(valuesString, ",");
-        if (stringTokenzier.countTokens() > 1) {
-            while (stringTokenzier.hasMoreTokens()) {
-                String token = stringTokenzier.nextToken().trim();
+        StringTokenizer stringTokenizer = new StringTokenizer(valuesString, ",");
+        if (stringTokenizer.countTokens() > 1) {
+            while (stringTokenizer.hasMoreTokens()) {
+                String token = stringTokenizer.nextToken().trim();
                 AttributeValue tokenAttribute = AttributeValue.valueOf(token);
                 attribute.addAll(tokenAttribute);
             }
         } else {
-            String token = stringTokenzier.nextToken().trim();
+            String token = stringTokenizer.nextToken().trim();
             Object value = null;
             try {
                 value = Integer.valueOf(token);
@@ -60,6 +60,6 @@ public class AttributeValue extends java.util.ArrayList {
                 attribute.add(value);
             }
         }
-        return attribute;      
+        return attribute;
     }
 }

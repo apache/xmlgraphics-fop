@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts;
 
@@ -37,12 +37,12 @@ import org.apache.fop.util.LogUtil;
  * Configurator of the FontManager
  */
 public class FontManagerConfigurator {
-    
+
     /** logger instance */
     private static Log log = LogFactory.getLog(FontManagerConfigurator.class);
 
     private Configuration cfg;
-    
+
     /**
      * Main constructor
      * @param cfg the font manager configuration object
@@ -58,7 +58,7 @@ public class FontManagerConfigurator {
      * @throws FOPException if an exception occurs while processing the configuration
      */
     public void configure(FontManager fontManager, boolean strict) throws FOPException {
-        
+
         // caching (fonts)
         if (cfg.getChild("use-cache", false) != null) {
             try {
@@ -84,12 +84,12 @@ public class FontManagerConfigurator {
             Configuration substitutionsCfg = fontsCfg.getChild("substitutions", false);
             if (substitutionsCfg != null) {
                 FontSubstitutionsConfigurator fontSubstitutionsConfigurator
-                    = new FontSubstitutionsConfigurator(substitutionsCfg);
+                        = new FontSubstitutionsConfigurator(substitutionsCfg);
                 FontSubstitutions substitutions = new FontSubstitutions();
                 fontSubstitutionsConfigurator.configure(substitutions);
                 fontManager.setFontSubstitutions(substitutions);
             }
-            
+
             // referenced fonts (fonts which are not to be embedded)
             Configuration referencedFontsCfg = fontsCfg.getChild("referenced-fonts", false);
             if (referencedFontsCfg != null) {
@@ -121,11 +121,11 @@ public class FontManagerConfigurator {
     private static class OrFontTripletMatcher implements FontTriplet.Matcher {
 
         private FontTriplet.Matcher[] matchers;
-        
+
         public OrFontTripletMatcher(FontTriplet.Matcher[] matchers) {
             this.matchers = matchers;
         }
-        
+
         /** {@inheritDoc} */
         public boolean matches(FontTriplet triplet) {
             for (int i = 0, c = matchers.length; i < c; i++) {
@@ -135,22 +135,22 @@ public class FontManagerConfigurator {
             }
             return false;
         }
-        
+
     }
-    
+
     private static class FontFamilyRegExFontTripletMatcher implements FontTriplet.Matcher {
 
         private Pattern regex;
-        
+
         public FontFamilyRegExFontTripletMatcher(String regex) {
             this.regex = Pattern.compile(regex);
         }
-        
+
         /** {@inheritDoc} */
         public boolean matches(FontTriplet triplet) {
             return regex.matcher(triplet.getName()).matches();
         }
-        
+
     }
-    
+
 }

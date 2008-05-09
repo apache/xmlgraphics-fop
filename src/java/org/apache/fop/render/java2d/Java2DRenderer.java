@@ -129,17 +129,17 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     /** false: paints a non-transparent white background, true: for a transparent background */
     protected boolean transparentPageBackground = false;
-    
+
     /** The current state, holds a Graphics2D and its context */
     protected Java2DGraphicsState state;
-    
+
     private Stack stateStack = new Stack();
 
     /** true if the renderer has finished rendering all the pages */
     private boolean renderingDone;
 
     private GeneralPath currentPath = null;
-    
+
     /** Default constructor */
     public Java2DRenderer() {
     }
@@ -150,7 +150,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
         userAgent.setRendererOverride(this); // for document regeneration
-        
+
         String s = (String)userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
         if (s != null) {
             this.transparentPageBackground = "true".equalsIgnoreCase(s);
@@ -173,9 +173,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = fontImage.createGraphics();
         //The next line is important to get accurate font metrics!
-        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
+        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        
+
         userAgent.getFactory().getFontManager().setupRenderer(this, graphics2D);
     }
 
@@ -218,7 +218,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     public boolean isRenderingDone() {
         return this.renderingDone;
     }
-    
+
     /**
      * @return The 0-based current page number
      */
@@ -279,7 +279,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         assert pageViewport.getPageIndex() >= 0;
         pageViewportList.add(pageViewport);
     }
-    
+
     /**
      * Generates a desired page from the renderer's page viewport list.
      *
@@ -300,18 +300,18 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                             + " (pageWidth " + pageWidth + ", pageHeight "
                             + pageHeight + ")");
 
-            double scaleX = scaleFactor 
-                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION) 
+            double scaleX = scaleFactor
+                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             double scaleY = scaleFactor
                 * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
             int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
-                    
-            
+
+
             BufferedImage currentPageImage = getBufferedImage(bitmapWidth, bitmapHeight);
-            
+
             Graphics2D graphics = currentPageImage.createGraphics();
             graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                     RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -374,7 +374,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
        return new BufferedImage(
                 bitmapWidth, bitmapHeight, BufferedImage.TYPE_INT_ARGB);
     }
-    
+
     /**
      * Returns a page viewport.
      * @param pageIndex the page index (zero-based)
@@ -414,21 +414,21 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         state.dispose();
         state = (Java2DGraphicsState)stateStack.pop();
     }
-    
+
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         state.transform(at);
     }
-    
+
     /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
 
         saveGraphicsState();
 
         if (clippingRect != null) {
-            clipRect((float)clippingRect.getX() / 1000f, 
-                    (float)clippingRect.getY() / 1000f, 
-                    (float)clippingRect.getWidth() / 1000f, 
+            clipRect((float)clippingRect.getX() / 1000f,
+                    (float)clippingRect.getY() / 1000f,
+                    (float)clippingRect.getWidth() / 1000f,
                     (float)clippingRect.getHeight() / 1000f);
         }
 
@@ -465,7 +465,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         log.debug("Block.FIXED --> restoring context after break-out");
-        
+
         Iterator i = breakOutList.iterator();
         while (i.hasNext()) {
             Java2DGraphicsState s = (Java2DGraphicsState)i.next();
@@ -475,7 +475,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void updateColor(Color col, boolean fill) {
         state.updateColor(col);
@@ -500,7 +500,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void lineTo(float x, float y) {
         if (currentPath == null) {
@@ -510,7 +510,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void moveTo(float x, float y) {
         if (currentPath == null) {
@@ -520,26 +520,26 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void clipRect(float x, float y, float width, float height) {
         state.updateClip(new Rectangle2D.Float(x, y, width, height));
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void fillRect(float x, float y, float width, float height) {
         state.getGraph().fill(new Rectangle2D.Float(x, y, width, height));
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
-    protected void drawBorderLine(float x1, float y1, float x2, float y2, 
+    protected void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         Graphics2D g2d = state.getGraph();
-        drawBorderLine(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1), 
+        drawBorderLine(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1),
                 horz, startOrBefore, style, col, g2d);
     }
 
@@ -547,13 +547,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * Draw a border segment of an XSL-FO style border.
      * @param lineRect the line defined by its bounding rectangle
      * @param horz true for horizontal border segments, false for vertical border segments
-     * @param startOrBefore true for border segments on the start or before edge, 
+     * @param startOrBefore true for border segments on the start or before edge,
      *                      false for end or after.
      * @param style the border style (one of Constants.EN_DASHED etc.)
      * @param col the color for the border segment
      * @param g2d the Graphics2D instance to paint to
      */
-    public static void drawBorderLine(Rectangle2D.Float lineRect, 
+    public static void drawBorderLine(Rectangle2D.Float lineRect,
             boolean horz, boolean startOrBefore, int style, Color col, Graphics2D g2d) {
         float x1 = lineRect.x;
         float y1 = lineRect.y;
@@ -566,7 +566,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             return;
         }
         switch (style) {
-            case Constants.EN_DASHED: 
+            case Constants.EN_DASHED:
                 g2d.setColor(col);
                 if (horz) {
                     float unit = Math.abs(2 * h);
@@ -576,7 +576,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                     }
                     unit = w / rep;
                     float ym = y1 + (h / 2);
-                    BasicStroke s = new BasicStroke(h, BasicStroke.CAP_BUTT, 
+                    BasicStroke s = new BasicStroke(h, BasicStroke.CAP_BUTT,
                             BasicStroke.JOIN_MITER, 10.0f, new float[] {unit}, 0);
                     g2d.setStroke(s);
                     g2d.draw(new Line2D.Float(x1, ym, x2, ym));
@@ -588,7 +588,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                     }
                     unit = h / rep;
                     float xm = x1 + (w / 2);
-                    BasicStroke s = new BasicStroke(w, BasicStroke.CAP_BUTT, 
+                    BasicStroke s = new BasicStroke(w, BasicStroke.CAP_BUTT,
                             BasicStroke.JOIN_MITER, 10.0f, new float[] {unit}, 0);
                     g2d.setStroke(s);
                     g2d.draw(new Line2D.Float(xm, y1, xm, y2));
@@ -604,7 +604,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                     }
                     unit = w / rep;
                     float ym = y1 + (h / 2);
-                    BasicStroke s = new BasicStroke(h, BasicStroke.CAP_ROUND, 
+                    BasicStroke s = new BasicStroke(h, BasicStroke.CAP_ROUND,
                             BasicStroke.JOIN_MITER, 10.0f, new float[] {0, unit}, 0);
                     g2d.setStroke(s);
                     g2d.draw(new Line2D.Float(x1, ym, x2, ym));
@@ -616,7 +616,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                     }
                     unit = h / rep;
                     float xm = x1 + (w / 2);
-                    BasicStroke s = new BasicStroke(w, BasicStroke.CAP_ROUND, 
+                    BasicStroke s = new BasicStroke(w, BasicStroke.CAP_ROUND,
                             BasicStroke.JOIN_MITER, 10.0f, new float[] {0, unit}, 0);
                     g2d.setStroke(s);
                     g2d.draw(new Line2D.Float(xm, y1, xm, y2));
@@ -722,7 +722,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         state.transform(at);
         renderText(text, state.getGraph(), font);
         restoreGraphicsState();
-        
+
         currentIPPosition = saveIP + text.getAllocIPD();
         //super.renderText(text);
 
@@ -755,8 +755,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 int[] letterAdjust = word.getLetterAdjustArray();
                 GlyphVector gv = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), s);
                 double additionalWidth = 0.0;
-                if (letterAdjust == null 
-                        && text.getTextLetterSpaceAdjust() == 0 
+                if (letterAdjust == null
+                        && text.getTextLetterSpaceAdjust() == 0
                         && text.getTextWordSpaceAdjust() == 0) {
                     //nop
                 } else {
@@ -776,8 +776,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 SpaceArea space = (SpaceArea)child;
                 String s = space.getSpace();
                 char sp = s.charAt(0);
-                int tws = (space.isAdjustable() 
-                        ? text.getTextWordSpaceAdjust() 
+                int tws = (space.isAdjustable()
+                        ? text.getTextWordSpaceAdjust()
                                 + 2 * text.getTextLetterSpaceAdjust()
                         : 0);
 
@@ -787,8 +787,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             }
         }
     }
-    
-    private static int[] getGlyphOffsets(String s, Font font, TextArea text, 
+
+    private static int[] getGlyphOffsets(String s, Font font, TextArea text,
             int[] letterAdjust) {
         int textLen = s.length();
         int[] offsets = new int[textLen];
@@ -804,11 +804,11 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             }
             int cw = font.getWidth(mapped);
             int ladj = (letterAdjust != null && i < textLen - 1 ? letterAdjust[i + 1] : 0);
-            int tls = (i < textLen - 1 ? text.getTextLetterSpaceAdjust() : 0); 
+            int tls = (i < textLen - 1 ? text.getTextLetterSpaceAdjust() : 0);
             offsets[i] = cw + ladj + tls + wordSpace;
         }
         return offsets;
-    }    
+    }
 
     /**
      * Render leader area. This renders a leader area which is an area with a
@@ -824,7 +824,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
         float starty = ((currentBPPosition + area.getOffset()) / 1000f);
-        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
+        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                 + area.getIPD()) / 1000f;
 
         Color col = (Color) area.getTrait(Trait.COLOR);
@@ -839,7 +839,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         case EN_SOLID:
         case EN_DASHED:
         case EN_DOUBLE:
-            drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+            drawBorderLine(startx, starty, endx, starty + ruleThickness,
                     true, true, style, col);
             break;
         case EN_DOTTED:
@@ -905,7 +905,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         int x = currentIPPosition + (int)Math.round(pos.getX());
         int y = currentBPPosition + (int)Math.round(pos.getY());
         uri = URISpecification.getURL(uri);
-        
+
         ImageManager manager = getUserAgent().getFactory().getImageManager();
         ImageInfo info = null;
         try {
@@ -913,8 +913,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             info = manager.getImageInfo(uri, sessionContext);
             final ImageFlavor[] flavors = new ImageFlavor[]
                 {ImageFlavor.GRAPHICS2D,
-                    ImageFlavor.BUFFERED_IMAGE, 
-                    ImageFlavor.RENDERED_IMAGE, 
+                    ImageFlavor.BUFFERED_IMAGE,
+                    ImageFlavor.RENDERED_IMAGE,
                     ImageFlavor.XML_DOM};
             Map hints = ImageUtil.getDefaultHints(sessionContext);
             org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
@@ -958,7 +958,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /** {@inheritDoc} */
-    protected RendererContext createRendererContext(int x, int y, int width, int height, 
+    protected RendererContext createRendererContext(int x, int y, int width, int height,
             Map foreignAttributes) {
         RendererContext context = super.createRendererContext(
                 x, y, width, height, foreignAttributes);

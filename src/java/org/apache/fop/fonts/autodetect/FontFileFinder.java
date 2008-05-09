@@ -44,22 +44,22 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
 
     /** default depth limit of recursion when searching for font files **/
     public static final int DEFAULT_DEPTH_LIMIT = -1;
-    
+
     /**
-     * Default constructor 
+     * Default constructor
      */
     public FontFileFinder() {
         super(getDirectoryFilter(), getFileFilter(), DEFAULT_DEPTH_LIMIT);
     }
 
     /**
-     * Constructor 
+     * Constructor
      * @param depthLimit recursion depth limit
      */
     public FontFileFinder(int depthLimit) {
         super(getDirectoryFilter(), getFileFilter(), depthLimit);
     }
-    
+
     /**
      * Font directory filter.  Currently ignores hidden directories.
      * @return IOFileFilter font directory filter
@@ -70,7 +70,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
                 FileFilterUtils.notFileFilter(FileFilterUtils.prefixFileFilter("."))
         );
     }
-    
+
     /**
      * Font file filter.  Currently searches for files with .ttf, .ttc, .otf, and .pfb extensions.
      * @return IOFileFilter font file filter
@@ -83,13 +83,13 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
                         IOCase.INSENSITIVE)
         );
     }
-    
+
     /**
      * @param directory directory to handle
      * @param depth recursion depth
      * @param results collection
      * @return whether directory should be handled
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected boolean handleDirectory(File directory, int depth, Collection results) {
         return true;
@@ -99,7 +99,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @param file file to handle
      * @param depth recursion depth
      * @param results collection
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void handleFile(File file, int depth, Collection results) {
         try {
@@ -109,7 +109,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
             log.debug("MalformedURLException" + e.getMessage());
         }
     }
-      
+
     /**
      * @param directory the directory being processed
      * @param depth the current directory level
@@ -119,10 +119,10 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
     protected void handleDirectoryEnd(File directory, int depth, Collection results) {
         if (log.isDebugEnabled()) {
             log.debug(directory + ": found " + results.size() + " font"
-                    + ((results.size() == 1) ? "" : "s"));        
+                    + ((results.size() == 1) ? "" : "s"));
         }
-    }    
-    
+    }
+
     /**
      * Automagically finds a list of font files on local system
      * 
@@ -162,5 +162,5 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
         List results = new java.util.ArrayList();
         super.walk(new File(dir), results);
         return results;
-    }    
+    }
 }

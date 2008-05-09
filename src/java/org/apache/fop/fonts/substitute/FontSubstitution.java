@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts.substitute;
 
@@ -23,7 +23,7 @@ package org.apache.fop.fonts.substitute;
  * Encapsulates a pair of substitution qualifiers
  */
 public class FontSubstitution {
-    
+
     private FontQualifier fromQualifier;
     private FontQualifier toQualifier;
 
@@ -51,7 +51,7 @@ public class FontSubstitution {
     public FontQualifier getToQualifier() {
         return toQualifier;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts;
 
 import java.io.IOException;
@@ -27,17 +27,17 @@ import java.util.List;
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
  */
 public class EmbedFontInfo implements Serializable {
-    
+
     /** Serialization Version UID */
     private static final long serialVersionUID = 8755432068669997367L;
-    
+
     /** filename of the metrics file */
     protected String metricsFile;
     /** filename of the main font file */
     protected String embedFile;
     /** false, to disable kerning */
     protected boolean kerning;
-    
+
     /** the PostScript name of the font */
     protected String postScriptName = null;
     /** the sub-fontname of the font (used for TrueType Collections, null otherwise) */
@@ -47,7 +47,7 @@ public class EmbedFontInfo implements Serializable {
     private List/*<FontTriplet>*/ fontTriplets = null;
 
     private transient boolean embedded = true;
-    
+
     /**
      * Main constructor
      * @param metricsFile Path to the xml file containing font metrics
@@ -64,7 +64,7 @@ public class EmbedFontInfo implements Serializable {
         this.fontTriplets = fontTriplets;
         this.subFontName = subFontName;
     }
-        
+
     /**
      * Returns the path to the metrics file
      * @return the metrics file path
@@ -88,16 +88,16 @@ public class EmbedFontInfo implements Serializable {
     public boolean getKerning() {
         return kerning;
     }
-    
+
     /**
-     * Returns the sub-font name name of the font. This is primarily used for TrueType Collections
-     * to select one of the sub-fonts. For all other fonts, this is always null. 
+     * Returns the sub-font name of the font. This is primarily used for TrueType Collections
+     * to select one of the sub-fonts. For all other fonts, this is always null.
      * @return the sub-font name (or null)
      */
     public String getSubFontName() {
         return this.subFontName;
     }
-    
+
     /**
      * Returns the PostScript name of the font.
      * @return the PostScript name
@@ -105,7 +105,7 @@ public class EmbedFontInfo implements Serializable {
     public String getPostScriptName() {
         return postScriptName;
     }
-    
+
     /**
      * Sets the PostScript name of the font
      * @param postScriptName the PostScript name
@@ -113,7 +113,7 @@ public class EmbedFontInfo implements Serializable {
     public void setPostScriptName(String postScriptName) {
         this.postScriptName = postScriptName;
     }
-    
+
     /**
      * Returns the list of font triplets associated with this font.
      * @return List of font triplets
@@ -121,7 +121,7 @@ public class EmbedFontInfo implements Serializable {
     public List/*<FontTriplet>*/ getFontTriplets() {
         return fontTriplets;
     }
-    
+
     /**
      * Indicates whether the font is only referenced rather than embedded.
      * @return true if the font is embedded, false if it is referenced.
@@ -133,7 +133,7 @@ public class EmbedFontInfo implements Serializable {
             return this.embedded;
         }
     }
-    
+
     /**
      * Defines whether the font is embedded or not.
      * @param value true to embed the font, false to reference it
@@ -141,19 +141,19 @@ public class EmbedFontInfo implements Serializable {
     public void setEmbedded(boolean value) {
         this.embedded = value;
     }
-    
+
     private void readObject(java.io.ObjectInputStream in)
                 throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         this.embedded = true;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "metrics-url=" + metricsFile + ",embed-url=" + embedFile
             + ", kerning=" + kerning + ", " + "font-triplet=" + fontTriplets
             + (getSubFontName() != null ? ", sub-font=" + getSubFontName() : "")
-            + (isEmbedded() ? "" : ", NOT embedded"); 
+            + (isEmbedded() ? "" : ", NOT embedded");
     }
 
 }

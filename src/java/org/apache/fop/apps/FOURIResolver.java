@@ -52,7 +52,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
 
     /** URIResolver for RFC 2397 data URLs */
     private URIResolver dataURIResolver = new DataURIResolver();
-    
+
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
 
@@ -77,7 +77,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
         }
         File dir = new File(base);
         try {
-            base = (dir.isDirectory() ? dir.toURL() : new URL(base)).toExternalForm(); 
+            base = (dir.isDirectory() ? dir.toURL() : new URL(base)).toExternalForm();
         } catch (MalformedURLException mfue) {
             if (throwExceptions) {
                 throw mfue;
@@ -147,11 +147,11 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
      */
     public Source resolve(String href, String base) throws TransformerException {
         Source source = null;
-        
+
         // data URLs can be quite long so evaluate early and don't try to build a File
         // (can lead to problems)
         source = dataURIResolver.resolve(href, base);
-        
+
         // Custom uri resolution
         if (source == null && uriResolver != null) {
             source = uriResolver.resolve(href, base);

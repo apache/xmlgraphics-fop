@@ -16,12 +16,12 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts;
 
 /**
  * This interface enhances the font metrics interface with access methods to
- * value needed to register fonts in various target formats like PDF or 
+ * value needed to register fonts in various target formats like PDF or
  * PostScript.
  */
 public interface FontDescriptor extends FontMetrics {
@@ -31,55 +31,55 @@ public interface FontDescriptor extends FontMetrics {
      * @return the ascender
      */
     int getAscender();
-    
-    
+
+
     /**
      * Returns the capital height of the font.
      * @return the capital height
      */
     int getCapHeight();
-    
-    
+
+
     /**
      * Returns the descender value of the font. (Descent in pdf spec)
      * @return the descender value
      */
     int getDescender();
-    
-    
+
+
     /**
      * Returns the flags for the font. (See pdf spec)
      * @return the flags
      */
     int getFlags();
-    
-    
+
+
     /**
      * Returns the font's bounding box.
      * @return the bounding box
      */
     int[] getFontBBox();
-    
-    
+
+
     /**
      * Returns the italic angle for the font.
      * @return the italic angle
      */
     int getItalicAngle();
-    
-    
+
+
     /**
      * Returns the vertical stem width for the font.
      * @return the vertical stem width
      */
     int getStemV();
 
-    
+
     /**
      * Indicates if this font may be embedded.
      * @return True, if embedding is possible/permitted
      */
     boolean isEmbeddable();
-    
-    
+
+
 }

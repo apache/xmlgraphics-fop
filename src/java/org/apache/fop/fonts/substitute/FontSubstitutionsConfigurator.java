@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts.substitute;
 
@@ -37,7 +37,7 @@ public class FontSubstitutionsConfigurator {
     public FontSubstitutionsConfigurator(Configuration cfg) {
         this.cfg = cfg;
     }
-    
+
     private static FontQualifier getQualfierFromConfiguration(Configuration cfg)
     throws FOPException {
         String fontFamily = cfg.getAttribute("font-family", null);
@@ -56,7 +56,7 @@ public class FontSubstitutionsConfigurator {
         }
         return qualifier;
     }
-        
+
     /**
      * Configures a font substitution catalog
      * 
@@ -74,7 +74,7 @@ public class FontSubstitutionsConfigurator {
             if (fromCfg == null) {
                 throw new FOPException("'substitution' element without child 'to' element");
             }
-            FontQualifier fromQualifier = getQualfierFromConfiguration(fromCfg);                
+            FontQualifier fromQualifier = getQualfierFromConfiguration(fromCfg);
             FontQualifier toQualifier = getQualfierFromConfiguration(toCfg);
             FontSubstitution substitution = new FontSubstitution(fromQualifier, toQualifier);
             substitutions.add(substitution);

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts.substitute;
 
@@ -44,9 +44,9 @@ public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
     public void adjustFontInfo(FontInfo fontInfo) {
         for (Iterator/*<FontSubstitution>*/ subsIt = super.iterator(); subsIt.hasNext();) {
             FontSubstitution substitution = (FontSubstitution)subsIt.next();
-            
+
             // find the best matching font triplet
-            FontQualifier toQualifier = substitution.getToQualifier();            
+            FontQualifier toQualifier = substitution.getToQualifier();
             FontTriplet fontTriplet = toQualifier.bestMatch(fontInfo);
             if (fontTriplet == null) {
                 log.error("Unable to match font substitution for destination qualifier "
@@ -54,7 +54,7 @@ public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
                 continue;
             }
             String internalFontKey = fontInfo.getInternalFontKey(fontTriplet);
-            
+
             FontQualifier fromQualifier = substitution.getFromQualifier();
             List/*<FontTriplet>*/ tripletList = fromQualifier.getTriplets();
             for (Iterator tripletit = tripletList.iterator(); tripletit.hasNext();) {
@@ -62,5 +62,5 @@ public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
                 fontInfo.addFontProperties(internalFontKey, triplet);
             }
         }
-    }    
+    }
 }

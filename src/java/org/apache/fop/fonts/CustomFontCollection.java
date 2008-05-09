@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
+
 package org.apache.fop.fonts;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import org.apache.fop.render.PrintRenderer;
  * Sets up a set of custom (embedded) fonts
  */
 public class CustomFontCollection implements FontCollection {
-    
+
     private PrintRenderer renderer = null;
 
     /**
@@ -51,7 +52,7 @@ public class CustomFontCollection implements FontCollection {
             //Ensure that we have minimal font resolution capabilities
             resolver = FontManager.createMinimalFontResolver();
         }
-        
+
         String internalName = null;
         //FontReader reader = null;
 
@@ -67,7 +68,7 @@ public class CustomFontCollection implements FontCollection {
             reader.setFontEmbedPath(configFontInfo.getEmbedFile());
             fontInfo.addMetrics(internalName, reader.getFont());
             */
-            
+
             LazyFont font = new LazyFont(embedFontInfo, resolver);
             fontInfo.addMetrics(internalName, font);
 
@@ -78,5 +79,5 @@ public class CustomFontCollection implements FontCollection {
             }
         }
         return num;
-    }        
+    }
 }
