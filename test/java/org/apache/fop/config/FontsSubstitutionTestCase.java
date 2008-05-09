@@ -29,8 +29,16 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.PrintRenderer;
 
-public class FontsSubstitutionTestCase extends BaseConstructiveUserConfigTestCase {
+/**
+ * Tests the font substitution mechanism
+ */
+public class FontsSubstitutionTestCase extends
+        BaseConstructiveUserConfigTestCase {
 
+    /**
+     * Main constructor
+     * @param name test case name
+     */
     public FontsSubstitutionTestCase(String name) {
         super(name);
     }
@@ -38,13 +46,16 @@ public class FontsSubstitutionTestCase extends BaseConstructiveUserConfigTestCas
     /**
      * {@inheritDoc}
      */
-    protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile) throws Exception {
-        PrintRenderer renderer = (PrintRenderer)ua.getRendererFactory().createRenderer(ua, MimeConstants.MIME_PDF);
+    protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile)
+            throws Exception {
+        PrintRenderer renderer = (PrintRenderer) ua.getRendererFactory()
+                .createRenderer(ua, MimeConstants.MIME_PDF);
         FontInfo fontInfo = new FontInfo();
         renderer.setupFontInfo(fontInfo);
         FontManager fontManager = ua.getFactory().getFontManager();
         fontManager.setupRenderer(renderer);
-        FontTriplet triplet = new FontTriplet("Times", "italic", Font.WEIGHT_NORMAL);
+        FontTriplet triplet = new FontTriplet("Times", "italic",
+                Font.WEIGHT_NORMAL);
         String internalFontKey = fontInfo.getInternalFontKey(triplet);
         // Times italic should now be mapped to the 15th font (custom font)
         // not the original base 14 (F6)
