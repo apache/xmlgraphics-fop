@@ -144,6 +144,14 @@ public class FopFactory implements ImageContext {
         this.config = new FopFactoryConfigurator(this);
         this.elementMappingRegistry = new ElementMappingRegistry(this);
         this.foURIResolver = new FOURIResolver(validateUserConfigStrictly());
+        this.fontManager = new FontManager() {
+
+            /** {@inheritDoc} */
+            public void setFontBaseURL(String fontBase) throws MalformedURLException {
+                super.setFontBaseURL(getFOURIResolver().checkBaseURL(fontBase));
+            }
+
+        };
         this.colorSpaceCache = new ColorSpaceCache(foURIResolver);
         this.imageManager = new ImageManager(this);
         this.rendererFactory = new RendererFactory();
@@ -696,16 +704,6 @@ public class FopFactory implements ImageContext {
      * @return the font manager
      */
     public FontManager getFontManager() {
-        if (fontManager == null) {
-            this.fontManager = new FontManager() {
-
-                /** {@inheritDoc} */
-                public void setFontBaseURL(String fontBase) throws MalformedURLException {
-                    super.setFontBaseURL(getFOURIResolver().checkBaseURL(fontBase));
-                }
-
-            };
-        }
         return this.fontManager;
     }
 
