@@ -54,7 +54,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
         if (embedFontInfoList == null) {
             setFontList(fontList);
         } else {
-            fontList.addAll(fontList);
+            embedFontInfoList.addAll(fontList);
         }
     }
 
