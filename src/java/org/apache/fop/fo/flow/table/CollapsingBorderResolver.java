@@ -79,18 +79,18 @@ class CollapsingBorderResolver implements BorderResolver {
          * 
          * @param row the first row of the table (in the header, or in the body if the
          * table has no header)
+         * @param withNormal
          * @param withLeadingTrailing
-         * @param withNonLeadingTrailing
          * @param withRest
          */
-        void resolveBordersFirstRowInTable(List/*<GridUnit>*/ row, boolean withLeadingTrailing,
-                boolean withNonLeadingTrailing, boolean withRest) {
+        void resolveBordersFirstRowInTable(List/*<GridUnit>*/ row, boolean withNormal,
+                boolean withLeadingTrailing, boolean withRest) {
             assert firstInTable;
             for (int i = 0; i < row.size(); i++) {
                 TableColumn column = table.getColumn(i);
                 ((GridUnit) row.get(i)).integrateBorderSegment(
-                        CommonBorderPaddingBackground.BEFORE, column, withLeadingTrailing,
-                        withNonLeadingTrailing, withRest);
+                        CommonBorderPaddingBackground.BEFORE, column, withNormal,
+                        withLeadingTrailing, withRest);
             }
             firstInTable = false;
         }
@@ -113,11 +113,11 @@ class CollapsingBorderResolver implements BorderResolver {
         }
 
         /** Integrates the border-after of the part. */
-        void resolveBordersLastRowInPart(List/*<GridUnit>*/ row, boolean withLeadingTrailing,
-                boolean withNonLeadingTrailing, boolean withRest) {
+        void resolveBordersLastRowInPart(List/*<GridUnit>*/ row, boolean withNormal,
+                boolean withLeadingTrailing, boolean withRest) {
             for (int i = 0; i < row.size(); i++) {
                 ((GridUnit) row.get(i)).integrateBorderSegment(CommonBorderPaddingBackground.AFTER,
-                        tablePart, withLeadingTrailing, withNonLeadingTrailing, withRest);
+                        tablePart, withNormal, withLeadingTrailing, withRest);
             }
         }
 
@@ -126,16 +126,16 @@ class CollapsingBorderResolver implements BorderResolver {
          * 
          * @param row the last row of the footer, or of the last body if the table has no
          * footer
+         * @param withNormal
          * @param withLeadingTrailing
-         * @param withNonLeadingTrailing
          * @param withRest
          */
-        void resolveBordersLastRowInTable(List/*<GridUnit>*/ row, boolean withLeadingTrailing,
-                boolean withNonLeadingTrailing, boolean withRest) {
+        void resolveBordersLastRowInTable(List/*<GridUnit>*/ row, boolean withNormal,
+                boolean withLeadingTrailing, boolean withRest) {
             for (int i = 0; i < row.size(); i++) {
                 TableColumn column = table.getColumn(i);
                 ((GridUnit) row.get(i)).integrateBorderSegment(CommonBorderPaddingBackground.AFTER,
-                        column, withLeadingTrailing, withNonLeadingTrailing, withRest);
+                        column, withNormal, withLeadingTrailing, withRest);
             }
         }
 
@@ -151,7 +151,7 @@ class CollapsingBorderResolver implements BorderResolver {
                 GridUnit gu = (GridUnit) row.get(i);
                 ConditionalBorder border = (ConditionalBorder) leadingBorders.get(i);
                 gu.integrateCompetingBorder(CommonBorderPaddingBackground.BEFORE, border,
-                        true, false, true);
+                        false, true, true);
             }
         }
 
@@ -167,7 +167,7 @@ class CollapsingBorderResolver implements BorderResolver {
                 GridUnit gu = (GridUnit) row.get(i);
                 ConditionalBorder border = (ConditionalBorder) trailingBorders.get(i);
                 gu.integrateCompetingBorder(CommonBorderPaddingBackground.AFTER, border,
-                        true, false, true);
+                        false, true, true);
             }
         }
 
@@ -250,16 +250,15 @@ class CollapsingBorderResolver implements BorderResolver {
                  * The two only sensible values for border-before on the header's first row are:
                  * - at the beginning of the table (normal case)
                  * - if the header is repeated after each page break
-                 * To represent those values we (ab)use the nonLeadingTrailing and the rest
-                 * fields of ConditionalBorder. But strictly speaking this is not their
-                 * purposes.
+                 * To represent those values we (ab)use the normal and the rest fields of
+                 * ConditionalBorder. But strictly speaking this is not their purposes.
                  */
                 for (Iterator guIter = row.iterator(); guIter.hasNext();) {
                     ConditionalBorder borderBefore = ((GridUnit) guIter.next()).borderBefore;
-                    borderBefore.leadingTrailing = borderBefore.nonLeadingTrailing;
-                    borderBefore.rest = borderBefore.nonLeadingTrailing;
+                    borderBefore.leadingTrailing = borderBefore.normal;
+                    borderBefore.rest = borderBefore.normal;
                 }
-                resolveBordersFirstRowInTable(row, false, true, true);
+                resolveBordersFirstRowInTable(row, true, false, true);
             }
             previousRow = row;
         }
@@ -272,14 +271,14 @@ class CollapsingBorderResolver implements BorderResolver {
              * The border-after of a header is always the same. Leading and rest don't
              * apply to cells in the header since they are never broken. To ease
              * resolution we override the (normally unused) leadingTrailing and rest
-             * fields of ConditionalBorder with the only sensible nonLeadingTrailing
-             * field. That way grid units from the body will always resolve against the
-             * same, normal header border.
+             * fields of ConditionalBorder with the only sensible normal field. That way
+             * grid units from the body will always resolve against the same, normal
+             * header border.
              */
             for (Iterator guIter = previousRow.iterator(); guIter.hasNext();) {
                 ConditionalBorder borderAfter = ((GridUnit) guIter.next()).borderAfter;
-                borderAfter.leadingTrailing = borderAfter.nonLeadingTrailing;
-                borderAfter.rest = borderAfter.nonLeadingTrailing;
+                borderAfter.leadingTrailing = borderAfter.normal;
+                borderAfter.rest = borderAfter.normal;
                 leadingBorders.add(borderAfter);
             }
             /* TODO Temporary hack for resolved borders in header */
@@ -311,8 +310,8 @@ class CollapsingBorderResolver implements BorderResolver {
             // See same method in ResolverInHeader for an explanation of the hack
             for (Iterator guIter = footerFirstRow.iterator(); guIter.hasNext();) {
                 ConditionalBorder borderBefore = ((GridUnit) guIter.next()).borderBefore;
-                borderBefore.leadingTrailing = borderBefore.nonLeadingTrailing;
-                borderBefore.rest = borderBefore.nonLeadingTrailing;
+                borderBefore.leadingTrailing = borderBefore.normal;
+                borderBefore.rest = borderBefore.normal;
                 trailingBorders.add(borderBefore);
             }
         }
@@ -324,10 +323,10 @@ class CollapsingBorderResolver implements BorderResolver {
             // See endRow method in ResolverInHeader for an explanation of the hack
             for (Iterator guIter = footerLastRow.iterator(); guIter.hasNext();) {
                 ConditionalBorder borderAfter = ((GridUnit) guIter.next()).borderAfter;
-                borderAfter.leadingTrailing = borderAfter.nonLeadingTrailing;
-                borderAfter.rest = borderAfter.nonLeadingTrailing;
+                borderAfter.leadingTrailing = borderAfter.normal;
+                borderAfter.rest = borderAfter.normal;
             }
-            resolveBordersLastRowInTable(footerLastRow, false, true, true);
+            resolveBordersLastRowInTable(footerLastRow, true, false, true);
         }
     }
 
@@ -351,7 +350,7 @@ class CollapsingBorderResolver implements BorderResolver {
                 firstInBody = false;
                 for (Iterator iter = row.iterator(); iter.hasNext();) {
                     GridUnit gu = (GridUnit) iter.next();
-                    gu.borderBefore.leadingTrailing = gu.borderBefore.nonLeadingTrailing;
+                    gu.borderBefore.leadingTrailing = gu.borderBefore.normal;
                 }
             }
         }
@@ -361,11 +360,11 @@ class CollapsingBorderResolver implements BorderResolver {
                 resolverInFooter.endTable();
             } else {
                 // Trailing and rest borders already resolved with integrateTrailingBorders
-                resolveBordersLastRowInTable(previousRow, false, true, false);
+                resolveBordersLastRowInTable(previousRow, true, false, false);
             }
             for (Iterator iter = previousRow.iterator(); iter.hasNext();) {
                 GridUnit gu = (GridUnit) iter.next();
-                gu.borderAfter.leadingTrailing = gu.borderAfter.nonLeadingTrailing;
+                gu.borderAfter.leadingTrailing = gu.borderAfter.normal;
             }
         }
     }
@@ -428,13 +427,13 @@ class CollapsingBorderResolver implements BorderResolver {
         if (headerLastRow != null) {
             for (Iterator iter = headerLastRow.iterator(); iter.hasNext();) {
                 GridUnit gu = (GridUnit) iter.next();
-                gu.borderAfter.leadingTrailing = gu.borderAfter.nonLeadingTrailing;
+                gu.borderAfter.leadingTrailing = gu.borderAfter.normal;
             }
         }
         if (footerLastRow != null) {
             for (Iterator iter = footerLastRow.iterator(); iter.hasNext();) {
                 GridUnit gu = (GridUnit) iter.next();
-                gu.borderAfter.leadingTrailing = gu.borderAfter.nonLeadingTrailing;
+                gu.borderAfter.leadingTrailing = gu.borderAfter.normal;
             }
         }
         /* End of temporary hack */

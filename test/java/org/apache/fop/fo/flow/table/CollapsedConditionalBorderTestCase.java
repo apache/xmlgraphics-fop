@@ -141,12 +141,12 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
             GridUnit gu = getGridUnit(body);
 
             String errorMsge = baseErrorMsge + "border-before";
-            checkBorder(errorMsge, gu.borderBefore.nonLeadingTrailing, 8000, Color.black);
+            checkBorder(errorMsge, gu.borderBefore.normal, 8000, Color.black);
             checkBorder(errorMsge, gu.borderBefore.leadingTrailing, 8000, Color.black);
             checkBorder(errorMsge, gu.borderBefore.rest, resolvedBorders[tableNum][0]);
 
             errorMsge = baseErrorMsge + "border-after";
-            checkBorder(errorMsge, gu.borderAfter.nonLeadingTrailing, 8000, Color.black);
+            checkBorder(errorMsge, gu.borderAfter.normal, 8000, Color.black);
             checkBorder(errorMsge, gu.borderAfter.leadingTrailing, 8000, Color.black);
             checkBorder(errorMsge, gu.borderAfter.rest, resolvedBorders[tableNum][1]);
 
@@ -165,14 +165,14 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
 
             TableBody header = table.getTableHeader();
             GridUnit gu = getGridUnit(header);
-            checkBorder(errorMsge, gu.borderBefore.nonLeadingTrailing,
+            checkBorder(errorMsge, gu.borderBefore.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderBefore.rest,
                     resolvedBordersHF[tableNum][borderNum++]);
 
             TableBody footer = table.getTableFooter();
             gu = getGridUnit(footer);
-            checkBorder(errorMsge, gu.borderAfter.nonLeadingTrailing,
+            checkBorder(errorMsge, gu.borderAfter.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderAfter.rest,
                     resolvedBordersHF[tableNum][borderNum++]);
@@ -180,13 +180,13 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
             FONodeIterator bodyIter = table.getChildNodes();
             TableBody body = (TableBody) bodyIter.nextNode();
             gu = getGridUnit(body);
-            checkBorder(errorMsge, gu.borderBefore.nonLeadingTrailing,
+            checkBorder(errorMsge, gu.borderBefore.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderBefore.leadingTrailing,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderBefore.rest,
                     resolvedBordersHF[tableNum][borderNum++]);
-            checkBorder(errorMsge, gu.borderAfter.nonLeadingTrailing,
+            checkBorder(errorMsge, gu.borderAfter.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderAfter.leadingTrailing,
                     resolvedBordersHF[tableNum][borderNum++]);
@@ -195,13 +195,13 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
 
             body = (TableBody) bodyIter.nextNode();
             gu = getGridUnit(body);
-            checkBorder(errorMsge, gu.borderBefore.nonLeadingTrailing,
+            checkBorder(errorMsge, gu.borderBefore.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderBefore.leadingTrailing,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderBefore.rest,
                     resolvedBordersHF[tableNum][borderNum++]);
-            checkBorder(errorMsge, gu.borderAfter.nonLeadingTrailing,
+            checkBorder(errorMsge, gu.borderAfter.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderAfter.leadingTrailing,
                     resolvedBordersHF[tableNum][borderNum++]);
