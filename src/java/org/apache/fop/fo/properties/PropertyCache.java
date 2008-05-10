@@ -268,9 +268,13 @@ public final class PropertyCache {
      *  @param c    Runtime type of the objects that will be stored in the cache
      */
     public PropertyCache(Class c) {
-        this.useCache = Boolean.getBoolean("org.apache.fop.fo.properties.use-cache");
-        for (int i = SEGMENT_MASK + 1; --i >= 0;) {
-            segments[i] = new CacheSegment();
+        this.useCache = Boolean.valueOf(System.getProperty(
+                            "org.apache.fop.fo.properties.use-cache", "true")
+                        ).booleanValue();
+        if (useCache) {
+            for (int i = SEGMENT_MASK + 1; --i >= 0;) {
+                segments[i] = new CacheSegment();
+            }
         }
         this.runtimeType = c;
     }
