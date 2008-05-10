@@ -36,6 +36,12 @@ public final class PropertyCache {
     /** bitmask to apply to the hash to get to the 
      *  corresponding cache segment */
     private static final int SEGMENT_MASK = 0x1F;
+    /** 
+     * Indicates whether the cache should be used at all
+     * Can be controlled by the system property:
+     *   org.apache.fop.fo.properties.use-cache
+     */
+    private final boolean useCache;
     
     /** the segments array (length = 32) */
     private CacheSegment[] segments = new CacheSegment[SEGMENT_MASK + 1];
@@ -262,6 +268,7 @@ public final class PropertyCache {
      *  @param c    Runtime type of the objects that will be stored in the cache
      */
     public PropertyCache(Class c) {
+        this.useCache = Boolean.getBoolean("org.apache.fop.fo.properties.use-cache");
         for (int i = SEGMENT_MASK + 1; --i >= 0;) {
             segments[i] = new CacheSegment();
         }
@@ -278,6 +285,10 @@ public final class PropertyCache {
      *  @return  the cached instance
      */
     private Object fetch(Object obj) {
+        if (!this.useCache) {
+            return obj;
+        }
+        
         if (obj == null) {
             return null;
         }
@@ -291,7 +302,7 @@ public final class PropertyCache {
     }
     
     /**
-     *  Checks if the given <code>Property</code> is present in the cache - 
+     *  Checks if the given {@link Property} is present in the cache - 
      *  if so, returns a reference to the cached instance. 
      *  Otherwise the given object is added to the cache and returned.
      *  
@@ -304,7 +315,7 @@ public final class PropertyCache {
     }
     
     /**
-     *  Checks if the given <code>CommonHyphenation</code> is present in the cache - 
+     *  Checks if the given {@link CommonHyphenation} is present in the cache - 
      *  if so, returns a reference to the cached instance. 
      *  Otherwise the given object is added to the cache and returned.
      *  
@@ -317,20 +328,7 @@ public final class PropertyCache {
     }
     
     /**
-     *  Checks if the given <code>CachedCommonFont</code> is present in the cache - 
-     *  if so, returns a reference to the cached instance. 
-     *  Otherwise the given object is added to the cache and returned.
-     *  
-     *  @param ccf the CachedCommonFont instance to check for
-     *  @return the cached instance
-     */
-    public final CommonFont.CachedCommonFont fetch(CommonFont.CachedCommonFont ccf) {
-        
-        return (CommonFont.CachedCommonFont) fetch((Object) ccf);
-    }
-    
-    /**
-     *  Checks if the given <code>CommonFont</code> is present in the cache - 
+     *  Checks if the given {@link CommonFont} is present in the cache - 
      *  if so, returns a reference to the cached instance. 
      *  Otherwise the given object is added to the cache and returned.
      *  
