@@ -57,6 +57,9 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
       </action -->
+      <action context="Layout" dev="MB" type="add">
+        Support character-by-character font-selection strategy on fo:character element.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="44794">
         Added support for page-number-citation and page-number-citation-last 
         of fo:inline. Corrected behavior for page-number-citation-last
