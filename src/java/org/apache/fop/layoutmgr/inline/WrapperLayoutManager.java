@@ -74,12 +74,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
             if (parentLM instanceof BlockStackingLayoutManager
                     && !(parentLM instanceof BlockLayoutManager)) {
                 Block helperBlock = new Block();
-                LineArea helperLine = new LineArea();
-                InlineParent helperInline = new InlineParent();
-                helperInline.addChildArea(area);
-                helperLine.addInlineArea(helperInline);
-                helperLine.updateExtentsFromChildren();
-                helperBlock.addLineArea(helperLine);
+                TraitSetter.setProducerID(helperBlock, fobj.getId());
                 parentLM.addChildArea(helperBlock);
             } else {
                 parentLM.addChildArea(area);
