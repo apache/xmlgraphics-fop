@@ -212,7 +212,7 @@ public class Font {
             c = d;
         } else {
             log.warn("Glyph " + (int) c + " not available in font " + fontName);
-            c = '#';
+            c = Typeface.NOT_FOUND;
         }
 
         return c;

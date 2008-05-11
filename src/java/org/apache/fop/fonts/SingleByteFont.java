@@ -21,20 +21,14 @@ package org.apache.fop.fonts;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * Generic SingleByte font
  */
 public class SingleByteFont extends CustomFont {
-
-    /** Code point that is used if no code point for a specific character has been found. */
-    public static final char NOT_FOUND = '#';
 
     /** logger */
     private  static Log log = LogFactory.getLog(SingleByteFont.class);
@@ -42,8 +36,6 @@ public class SingleByteFont extends CustomFont {
     private SingleByteEncoding mapping;
 
     private int[] width = null;
-
-    private Set warnedChars;
 
     private Map unencodedCharacters;
     //Map<Character, UnencodedCharacter>
@@ -115,27 +107,8 @@ public class SingleByteFont extends CustomFont {
         if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
             return d;
         }
-        
-        //Give up, character is not available
-        Character ch = new Character(c);
-        if (warnedChars == null) {
-            warnedChars = new java.util.HashSet();
-        }
-        if (warnedChars.size() < 8 && !warnedChars.contains(ch)) {
-            warnedChars.add(ch);
-            if (this.eventListener != null) {
-                this.eventListener.glyphNotAvailable(this, c, getFontName());
-            } else {
-                if (warnedChars.size() == 8) {
-                    log.warn("Many requested glyphs are not available in font " + getFontName());
-                } else {
-                    log.warn("Glyph " + (int)c + " (0x" + Integer.toHexString(c) 
-                            + ", " + Glyphs.charToGlyphName(c)
-                            + ") not available in font " + getFontName());
-                }
-            }
-        }
-        return NOT_FOUND;
+        this.warnMissingGlyph(c);
+        return Typeface.NOT_FOUND;
     }
 
     private char mapUnencodedChar(char ch) {
