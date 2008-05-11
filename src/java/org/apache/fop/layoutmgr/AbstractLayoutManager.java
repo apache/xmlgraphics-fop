@@ -147,15 +147,11 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         isFinished = fin;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         log.warn("null implementation of getNextKnuthElements() called!");
@@ -163,9 +159,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         log.warn("null implementation of getChangeKnuthElement() called!");
@@ -390,7 +384,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     /**
      * Checks to see if the incoming {@link Position}
      * is the last one for this LM, and if so, calls
-     * {@link #notifyEndOfLayout()}
+     * {@link #notifyEndOfLayout()} and cleans up.
      * 
      * @param pos   the {@link Position} to check
      */
@@ -398,7 +392,32 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         if (pos != null
             && pos.getLM() == this
             && this.isLast(pos)) {
+            
             notifyEndOfLayout();
+            
+            /* References to the child LMs are no longer needed
+             */
+            childLMs = null;
+            curChildLM = null;
+            childLMiter = null;
+            
+            /* markers that qualify have been transferred to the page
+             */
+            markers = null;
+            
+            /* References to the FO's children can be released if the 
+             * LM is a descendant of the FlowLM. For static-content
+             * the FO may still be needed on following pages.
+             */
+            LayoutManager lm = this.parentLM;
+            while (!(lm instanceof FlowLayoutManager
+                        || lm instanceof PageSequenceLayoutManager)) {
+                lm = lm.getParent();
+            }
+            if (lm instanceof FlowLayoutManager) {
+                fobj.clearChildNodes();
+                fobjIter = null;
+            }
         }
     }
     
