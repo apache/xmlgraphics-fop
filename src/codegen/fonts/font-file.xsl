@@ -42,6 +42,7 @@ import java.util.Set;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CodePointMapping;
+import org.apache.fop.fonts.Typeface;;
 
 public class <xsl:value-of select="class-name"/> extends Base14Font {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
@@ -169,7 +170,8 @@ public class <xsl:value-of select="class-name"/> extends Base14Font {
         if (d != 0) {
             return d;
         } else {
-            return '#';
+            this.warnMissingGlyph(c);
+            return Typeface.NOT_FOUND;
         }
     }
 
