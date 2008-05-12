@@ -28,8 +28,11 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.EnumNumber;
+import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
@@ -117,7 +120,7 @@ public abstract class TableFObj extends FObj {
      * PropertyMaker subclass for the column-number property
      *
      */
-    public static class ColumnNumberPropertyMaker extends NumberProperty.PositiveIntegerMaker {
+    public static class ColumnNumberPropertyMaker extends PropertyMaker {
 
         /**
          * Constructor
@@ -172,6 +175,32 @@ public abstract class TableFObj extends FObj {
 
             return p;
         }
+        
+        /**
+         * If the value is not positive, return a property whose value is the next column number
+         * 
+         * {@inheritDoc}
+         */
+        public Property convertProperty(Property p, 
+                                        PropertyList propertyList, FObj fo) 
+                    throws PropertyException {
+            if (p instanceof EnumProperty) {
+                return EnumNumber.getInstance(p);
+            }
+            Number val = p.getNumber();
+            if (val != null) {
+                int i = Math.round(val.floatValue());
+                if (i <= 0) {
+                    ColumnNumberManagerHolder parent =
+                        (ColumnNumberManagerHolder) propertyList.getParentFObj();
+                    ColumnNumberManager columnIndexManager =  parent.getColumnNumberManager();
+                    i = columnIndexManager.getCurrentColumnNumber();
+                }
+                return NumberProperty.getInstance(i);
+            }
+            return convertPropertyDatatype(p, propertyList, fo);
+        }
+
     }
 
     /** {@inheritDoc} */
