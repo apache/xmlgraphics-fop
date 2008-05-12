@@ -200,20 +200,11 @@ public class TableStepper {
             }
 
             //Put all involved grid units into a list
-            int stepPenalty = 0;
             List cellParts = new java.util.ArrayList(columnCount);
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 CellPart part = activeCell.createCellPart();
                 cellParts.add(part);
-                
-                //Record highest penalty value of part
-                if (part.end >= 0) {
-                    KnuthElement endEl = (KnuthElement)part.pgu.getElements().get(part.end);
-                    if (endEl instanceof KnuthPenalty) {
-                        stepPenalty = Math.max(stepPenalty, endEl.getP());
-                    }
-                }
             }
 
             //Create elements for step
@@ -242,9 +233,11 @@ public class TableStepper {
             }
 
             int strength = BlockLevelLayoutManager.KEEP_AUTO;
+            int stepPenalty = 0;
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 strength = Math.max(strength, activeCell.getKeepWithNextStrength());
+                stepPenalty = Math.max(stepPenalty, activeCell.getPenaltyValue());
             }
             if (!rowFinished) {
                 strength = Math.max(strength, rowGroup[activeRowIndex].getKeepTogetherStrength());

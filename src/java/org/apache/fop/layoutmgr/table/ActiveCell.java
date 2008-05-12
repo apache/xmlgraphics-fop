@@ -99,6 +99,8 @@ class ActiveCell {
         private int totalLength;
         /** Length of the penalty ending this step, if any. */
         private int penaltyLength;
+        /** Value of the penalty ending this step, 0 if the step does not end on a penalty. */
+        private int penaltyValue;
         /**
          * One of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
          * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
@@ -127,6 +129,7 @@ class ActiveCell {
             this.contentLength = other.contentLength;
             this.totalLength   = other.totalLength;
             this.penaltyLength = other.penaltyLength;
+            this.penaltyValue  = other.penaltyValue;
             this.condBeforeContentLength = other.condBeforeContentLength;
             this.breakClass    = other.breakClass;
         }
@@ -287,6 +290,7 @@ class ActiveCell {
 
     private void gotoNextLegalBreak() {
         afterNextStep.penaltyLength = 0;
+        afterNextStep.penaltyValue = 0;
         afterNextStep.condBeforeContentLength = 0;
         afterNextStep.breakClass = Constants.EN_AUTO;
         boolean breakFound = false;
@@ -299,8 +303,9 @@ class ActiveCell {
                 if (el.getP() < KnuthElement.INFINITE) {
                     // First legal break point
                     breakFound = true;
-                    afterNextStep.penaltyLength = el.getW();
                     KnuthPenalty p = (KnuthPenalty) el;
+                    afterNextStep.penaltyLength = p.getW();
+                    afterNextStep.penaltyValue = p.getP();
                     if (p.isForcedBreak()) {
                         afterNextStep.breakClass = p.getBreakClass();
                     }
@@ -542,7 +547,14 @@ class ActiveCell {
         return keepWithNextStrength;
     }
 
-    
+    int getPenaltyValue() {
+        if (includedInLastStep()) {
+            return nextStep.penaltyValue;
+        } else {
+            return previousStep.penaltyValue;
+        }
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "Cell " + (pgu.getRowIndex() + 1) + "." + (pgu.getColIndex() + 1);
