@@ -8,7 +8,7 @@
   <fo:page-sequence master-reference="simpleA4">
     <fo:flow flow-name="xsl-region-body">
       <fo:block>Hello World!
-        <test:assert property="font-family" expected="[sans-serif]"/>
+        <test:assert property="font-family" expected="[sans-serif, Symbol, ZapfDingbats]"/>
         <test:assert property="font-size" expected="12000mpt"/>
       </fo:block>
       <fo:block font-family="ZapfDingbats">&#2702;</fo:block>

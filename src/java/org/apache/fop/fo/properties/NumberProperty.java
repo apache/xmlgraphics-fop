@@ -91,7 +91,7 @@ public final class NumberProperty extends Property implements Numeric {
             }
             Number val = p.getNumber();
             if (val != null) {
-                int i = val.intValue();
+                int i = Math.round(val.floatValue());
                 if (i <= 0) {
                     i = 1;
                 }

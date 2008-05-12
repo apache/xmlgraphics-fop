@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.java2d;
 
@@ -31,7 +31,7 @@ import org.apache.fop.fonts.FontInfo;
 public class Base14FontCollection implements FontCollection {
 
     private Graphics2D graphics2d = null;
-    
+
     /**
      * Main constructor
      * @param graphics2d a graphics 2D
@@ -39,7 +39,7 @@ public class Base14FontCollection implements FontCollection {
     public Base14FontCollection(Graphics2D graphics2d) {
         this.graphics2d = graphics2d;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -175,7 +175,7 @@ public class Base14FontCollection implements FontCollection {
         fontInfo.addFontProperties("F8", "Times Roman", Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
                                    "normal", Font.WEIGHT_NORMAL);
-        
+
         return 15;
     }
 }

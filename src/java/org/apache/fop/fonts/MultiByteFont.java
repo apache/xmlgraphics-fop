@@ -30,7 +30,7 @@ public class MultiByteFont extends CIDFont {
 
     private static int uniqueCounter = -1;
     private static final DecimalFormat COUNTER_FORMAT = new DecimalFormat("00000");
-
+    
     private String ttcName = null;
     private String encoding = "Identity-H";
 
@@ -158,7 +158,7 @@ public class MultiByteFont extends CIDFont {
      */
     private int findGlyphIndex(char c) {
         int idx = (int)c;
-        int retIdx = 0; //.notdef
+        int retIdx = SingleByteEncoding.NOT_FOUND_CODE_POINT;
 
         for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
             if (bfentries[i].getUnicodeStart() <= idx
@@ -176,17 +176,19 @@ public class MultiByteFont extends CIDFont {
     public char mapChar(char c) {
         notifyMapOperation();
         int glyphIndex = findGlyphIndex(c);
-
+        if (glyphIndex == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+            warnMissingGlyph(c);
+            glyphIndex = findGlyphIndex(Typeface.NOT_FOUND);
+        }
         if (isEmbeddable()) {
             glyphIndex = subset.mapSubsetChar(glyphIndex, c);
         }
-
         return (char)glyphIndex;
     }
 
     /** {@inheritDoc} */
     public boolean hasChar(char c) {
-        return (findGlyphIndex(c) > 0);
+        return (findGlyphIndex(c) != SingleByteEncoding.NOT_FOUND_CODE_POINT);
     }
 
     /**

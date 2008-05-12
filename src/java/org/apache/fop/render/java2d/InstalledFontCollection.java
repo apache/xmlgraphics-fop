@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.java2d;
 
@@ -67,7 +67,7 @@ public class InstalledFontCollection implements FontCollection {
     public InstalledFontCollection(Graphics2D graphics2D) {
         this.graphics2D  = graphics2D;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -49,12 +49,12 @@ import org.apache.fop.fonts.truetype.TTFFontLoader;
  * Attempts to determine correct FontInfo
  */
 public class FontInfoFinder {
-    
+
     /** logging instance */
     private Log log = LogFactory.getLog(FontInfoFinder.class);
 
     private FontEventListener eventListener;
-    
+
     /**
      * Sets the font event listener that can be used to receive events about particular events
      * in this class.
@@ -63,7 +63,7 @@ public class FontInfoFinder {
     public void setEventListener(FontEventListener listener) {
         this.eventListener = listener;
     }
-    
+
     /**
      * Attempts to determine FontTriplets from a given CustomFont.
      * It seems to be fairly accurate but will probably require some tweaking over time
@@ -73,9 +73,9 @@ public class FontInfoFinder {
      */
     private void generateTripletsFromFont(CustomFont customFont, Collection triplets) {
         if (log.isTraceEnabled()) {
-            log.trace("Font: " + customFont.getFullName() 
-                    + ", family: " + customFont.getFamilyNames() 
-                    + ", PS: " + customFont.getFontName() 
+            log.trace("Font: " + customFont.getFullName()
+                    + ", family: " + customFont.getFamilyNames()
+                    + ", PS: " + customFont.getFontName()
                     + ", EmbedName: " + customFont.getEmbedFontName());
         }
 
@@ -87,7 +87,7 @@ public class FontInfoFinder {
 
         String style = guessStyle(customFont, searchName);
         int weight; //= customFont.getWeight();
-        int guessedWeight = FontUtil.guessWeight(searchName); 
+        int guessedWeight = FontUtil.guessWeight(searchName);
         //We always take the guessed weight for now since it yield much better results.
         //OpenType's OS/2 usWeightClass value proves to be unreliable.
         weight = guessedWeight;
@@ -114,9 +114,9 @@ public class FontInfoFinder {
             }
         }
     }
-    
+
     private final Pattern quotePattern = Pattern.compile("'");
-    
+
     private String stripQuotes(String name) {
         return quotePattern.matcher(name).replaceAll("");
     }
@@ -125,13 +125,13 @@ public class FontInfoFinder {
         // style
         String style = Font.STYLE_NORMAL;
         if (customFont.getItalicAngle() > 0) {
-            style = Font.STYLE_ITALIC;  
+            style = Font.STYLE_ITALIC;
         } else {
             style = FontUtil.guessStyle(fontName);
         }
         return style;
     }
-    
+
     /**
      * Attempts to determine FontInfo from a given custom font
      * @param fontUrl the font URL
@@ -151,13 +151,13 @@ public class FontInfoFinder {
         }
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
                 fontTripletList, embedUrl, subFontName);
-        fontInfo.setPostScriptName(customFont.getFontName());        
+        fontInfo.setPostScriptName(customFont.getFontName());
         if (fontCache != null) {
             fontCache.addFont(fontInfo);
         }
         return fontInfo;
     }
-        
+
     /**
      * Attempts to determine EmbedFontInfo from a given font file.
      * 
@@ -170,7 +170,7 @@ public class FontInfoFinder {
     public EmbedFontInfo[] find(URL fontUrl, FontResolver resolver, FontCache fontCache) {
         String embedUrl = null;
         embedUrl = fontUrl.toExternalForm();
-        
+
         long fileLastModified = -1;
         if (fontCache != null) {
             fileLastModified = FontCache.getLastModified(fontUrl);
@@ -188,8 +188,8 @@ public class FontInfoFinder {
                 return null;
             }
         }
-        
-        
+
+
         // try to determine triplet information from font file
         CustomFont customFont = null;
         if (fontUrl.toExternalForm().endsWith(".ttc")) {
@@ -241,7 +241,7 @@ public class FontInfoFinder {
                 EmbedFontInfo fi = getFontInfoFromCustomFont(fontUrl, customFont, fontCache);
                 if (fi != null) {
                     embedFontInfoList.add(fi);
-                } 
+                }
             }
             return (EmbedFontInfo[])embedFontInfoList.toArray(
                     new EmbedFontInfo[embedFontInfoList.size()]);

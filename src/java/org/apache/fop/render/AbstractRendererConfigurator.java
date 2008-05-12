@@ -36,7 +36,7 @@ public abstract class AbstractRendererConfigurator {
 
     /** fop factory configuration */
     protected FOUserAgent userAgent = null;
-   
+
     /**
      * Default constructor
      * @param userAgent user agent
@@ -45,7 +45,7 @@ public abstract class AbstractRendererConfigurator {
         super();
         this.userAgent = userAgent;
     }
-    
+
     /**
      * Returns the configuration subtree for a specific renderer.
      * @param renderer the renderer
@@ -59,7 +59,7 @@ public abstract class AbstractRendererConfigurator {
             }
             return null;
         }
-        
+
         return getRendererConfig(mimeType);
     }
 
@@ -74,11 +74,11 @@ public abstract class AbstractRendererConfigurator {
             if (log.isDebugEnabled()) {
                 log.debug("userconfig is null");
             }
-            return null;            
+            return null;
         }
-    
+
         Configuration userRendererConfig = null;
-    
+
         Configuration[] cfgs
             = cfg.getChild("renderers").getChildren("renderer");
         for (int i = 0; i < cfgs.length; ++i) {

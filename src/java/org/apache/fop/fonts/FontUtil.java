@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts;
 
 /**
@@ -25,7 +25,7 @@ package org.apache.fop.fonts;
 public class FontUtil {
 
     /**
-     * Parses an CSS2 (SVG and XSL-FO) font weight (normal, bold, 100-900) to 
+     * Parses an CSS2 (SVG and XSL-FO) font weight (normal, bold, 100-900) to
      * an integer.
      * See http://www.w3.org/TR/REC-CSS2/fonts.html#propdef-font-weight
      * TODO: Implement "lighter" and "bolder".
@@ -47,7 +47,7 @@ public class FontUtil {
                 weight = 700;
             } else {
                 throw new IllegalArgumentException(
-                    "Illegal value for font weight: '" 
+                    "Illegal value for font weight: '"
                     + text
                     + "'. Use one of: 100, 200, 300, "
                     + "400, 500, 600, 700, 800, 900, "
@@ -90,7 +90,7 @@ public class FontUtil {
     /** font constituent names which identify a font as being of "bold" weight */
     private static final String[] BOLD_WORDS = {"bold"};
     /** font constituent names which identify a font as being of "extra bold" weight */
-    private static final String[] EXTRA_BOLD_WORDS = {"extrabold", "extra bold", "black", 
+    private static final String[] EXTRA_BOLD_WORDS = {"extrabold", "extra bold", "black",
         "heavy", "ultra", "super"};
 
     /**
@@ -102,7 +102,7 @@ public class FontUtil {
         if (fontName != null) {
             for (int i = 0; i < ITALIC_WORDS.length; i++) {
                 if (fontName.indexOf(ITALIC_WORDS[i]) != -1) {
-                    return Font.STYLE_ITALIC;          
+                    return Font.STYLE_ITALIC;
                 }
             }
         }
@@ -117,18 +117,18 @@ public class FontUtil {
     public static int guessWeight(String fontName) {
         // weight
         int weight = Font.WEIGHT_NORMAL;
-        
+
         for (int i = 0; i < BOLD_WORDS.length; i++) {
             if (fontName.indexOf(BOLD_WORDS[i]) != -1) {
                 weight = Font.WEIGHT_BOLD;
                 break;
-            }            
+            }
         }
         for (int i = 0; i < MEDIUM_WORDS.length; i++) {
             if (fontName.indexOf(MEDIUM_WORDS[i]) != -1) {
                 weight = Font.WEIGHT_NORMAL + 100; //500
                 break;
-            }            
+            }
         }
         //Search for "semi/demi" before "light", but after "bold"
         //(normally semi/demi-bold is meant, but it can also be semi/demi-light)
@@ -136,19 +136,19 @@ public class FontUtil {
             if (fontName.indexOf(DEMI_WORDS[i]) != -1) {
                 weight = Font.WEIGHT_BOLD - 100; //600
                 break;
-            }            
+            }
         }
         for (int i = 0; i < EXTRA_BOLD_WORDS.length; i++) {
             if (fontName.indexOf(EXTRA_BOLD_WORDS[i]) != -1) {
                 weight = Font.WEIGHT_EXTRA_BOLD;
                 break;
-            }            
+            }
         }
         for (int i = 0; i < LIGHT_WORDS.length; i++) {
             if (fontName.indexOf(LIGHT_WORDS[i]) != -1) {
                 weight = Font.WEIGHT_LIGHT;
                 break;
-            }            
+            }
         }
         return weight;
     }

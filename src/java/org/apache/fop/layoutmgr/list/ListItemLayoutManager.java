@@ -557,7 +557,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         curBlockArea = null;
         resetSpaces();
         
-        notifyEndOfLayout();
+        checkEndOfLayout(lastPos);
     }
 
     /**

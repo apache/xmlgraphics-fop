@@ -502,7 +502,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
             AffineTransform positionTransform = new AffineTransform();
             positionTransform.translate(bv.getXOffset(), bv.getYOffset());
-            
+
             //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
             positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
 
@@ -511,7 +511,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             //saveGraphicsState();
             //Viewport position
             //concatenateTransformationMatrix(mptToPt(positionTransform));
-            
+
             //Background and borders
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
             float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
@@ -542,7 +542,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             //concatenateTransformationMatrix(mptToPt(contentTransform));
             contentRect = new Rectangle2D.Double(0, 0, 1000 * width, 1000 * height);
             pushViewPortPos(new ViewPortPos(contentRect, new CTM(contentTransform)));
-            
+
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
@@ -600,7 +600,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         //Not used here since AFPRenderer defines its own renderBlockViewport() method.
         throw new UnsupportedOperationException("NYI");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -930,7 +930,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[]
                                                      {ImageFlavor.RAW_CCITTFAX,
                                                       ImageFlavor.GRAPHICS2D,
-                                                      ImageFlavor.BUFFERED_IMAGE, 
+                                                      ImageFlavor.BUFFERED_IMAGE,
                                                       ImageFlavor.RENDERED_IMAGE,
                                                       ImageFlavor.XML_DOM};
 
@@ -957,12 +957,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             try {
                 ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
                 info = manager.getImageInfo(uri, sessionContext);
-                
+
                 //Only now fully load/prepare the image
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
                 org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, FLAVORS, hints, sessionContext);
-                
+
                 //...and process the image
                 if (img instanceof ImageGraphics2D) {
                     ImageGraphics2D imageG2D = (ImageGraphics2D)img;
@@ -1066,7 +1066,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     IOUtils.closeQuietly(in);
                 }
             }
-            
+
             /*
             ImageFactory fact = userAgent.getFactory().getImageFactory();
             FopImage fopimage = fact.getImage(url, userAgent);
@@ -1139,7 +1139,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         if (!fopimage.load(FopImage.BITMAP)) {
                             return;
                         }
-                        convertToGrayScaleImage(io, fopimage.getBitmaps(), 
+                        convertToGrayScaleImage(io, fopimage.getBitmaps(),
                                 fopimage.getWidth(), fopimage.getHeight());
                     }
                 } else {
@@ -1474,9 +1474,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
 // UNUSED
 //     public void setOptions(Map options) {
-//    
+//
 //         this.afpOptions = options;
-//    
+//
 //     }
     /**
      * Determines the orientation from the string representation, this method
@@ -1543,7 +1543,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Sets the rotation to be used for landsacpe pages, valid values are 0, 90,
      * 180, 270 (default).
-     *  
+     * 
      * @param rotation
      *            The rotation in degrees.
      */
@@ -1714,7 +1714,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         io.setImageIDESize((byte) bitsPerPixel);
         io.setImageData(bw);
     }
-    
+
     private final class ViewPortPos {
         private int x = 0;
 
@@ -1882,7 +1882,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
         this.resolution = resolution;
     }
-    
+
     /**
      * Returns the output/device resolution.
      * @return the resolution in dpi

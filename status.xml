@@ -60,6 +60,14 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added de-duplication and externalization support for IOCA and GOCA data resource objects.
       </action -->
+      <action context="Layout" dev="MB" type="add">
+        Support character-by-character font-selection strategy on fo:character element.
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="44794">
+        Added support for page-number-citation and page-number-citation-last 
+        of fo:inline. Corrected behavior for page-number-citation-last
+        of fo:block: forward references now properly resolved.
+      </action>
       <action context="Fonts" dev="JM" type="add">
         For auto-detected fonts it is now possible to specify that a font needs to be referenced
         rather than embedded (for the output formats that support this distinction).

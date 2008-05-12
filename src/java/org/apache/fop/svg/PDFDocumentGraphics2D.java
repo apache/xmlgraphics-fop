@@ -56,7 +56,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
 
     private int width;
     private int height;
-    
+
     //for SVG scaling
     private float svgWidth;
     private float svgHeight;
@@ -65,7 +65,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     public static final int NORMAL_PDF_RESOLUTION = 72;
     /** Default device resolution (300dpi is a resonable quality for most purposes) */
     public static final int DEFAULT_NATIVE_DPI = 300;
-  
+
     /**
      * The device resolution may be different from the normal target resolution. See
      * http://issues.apache.org/bugzilla/show_bug.cgi?id=37305
@@ -96,7 +96,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     public PDFDocumentGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
 
-        this.pdfDoc = new PDFDocument("Apache FOP Version " + Version.getVersion() 
+        this.pdfDoc = new PDFDocument("Apache FOP Version " + Version.getVersion()
                 + ": PDFDocumentGraphics2D");
         this.pdfContext = new PDFContext();
     }
@@ -150,7 +150,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     }
 
     /**
-     * Setup a default FontInfo instance if none has been setup before. 
+     * Setup a default FontInfo instance if none has been setup before.
      */
     public void setupDefaultFontInfo() {
         if (fontInfo == null) {
@@ -160,7 +160,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             setFontInfo(fontInfo);
         }
     }
-    
+
     /**
      * Set the device resolution for rendering.  Will take effect at the
      * start of the next page.
@@ -184,7 +184,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     public void setFontInfo(FontInfo fontInfo) {
         this.fontInfo = fontInfo;
     }
-    
+
     /**
      * Get the font info for this pdf document.
      * @return the font information
@@ -208,7 +208,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     public PDFContext getPDFContext() {
         return this.pdfContext;
     }
-    
+
     /**
      * Set the dimensions of the svg document that will be drawn.
      * This is useful if the dimensions of the svg document are different
@@ -248,9 +248,9 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     public void nextPage() {
         closePage();
     }
-    
+
     /**
-     * Closes the current page and adds it to the PDF file. 
+     * Closes the current page and adds it to the PDF file.
      */
     protected void closePage() {
         if (!pdfContext.isPagePending()) {
@@ -270,7 +270,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         this.pdfDoc.addObject(pdfContext.getCurrentPage());
         pdfContext.clearCurrentPage();
     }
-    
+
     /** {@inheritDoc} */
     protected void preparePainting() {
         if (pdfContext.isPagePending()) {
@@ -300,7 +300,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         if (this.initialTransform == null) {
             //Save initial transformation matrix
             this.initialTransform = getTransform();
-            this.initialClip = getClip();      
+            this.initialClip = getClip();
         } else {
             //Reset transformation matrix
             setTransform(this.initialTransform);
@@ -313,7 +313,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         if (currentStream == null) {
             currentStream = new StringWriter();
         }
-        
+
         PDFResources pdfResources = this.pdfDoc.getResources();
         PDFPage page = this.pdfDoc.getFactory().makePage(pdfResources,
                 width, height);
@@ -321,7 +321,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         pdfContext.setCurrentPage(page);
         pageRef = page.referencePDF();
 
-        AffineTransform at = new AffineTransform(1.0, 0.0, 0.0, -1.0, 
+        AffineTransform at = new AffineTransform(1.0, 0.0, 0.0, -1.0,
                                                  0.0, (double)height);
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
         if (svgWidth != 0) {
@@ -336,7 +336,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             at.scale(s, s);
             currentStream.write("" + PDFNumber.doubleOut(s) + " 0 0 "
                                 + PDFNumber.doubleOut(s) + " 0 0 cm\n");
-            
+
             scale(1 / s, 1 / s);
         }
         // Remember the transform we installed.
@@ -344,8 +344,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
 
         pdfContext.increasePageCount();
     }
-        
-    
+
+
     /**
      * The rendering process has finished.
      * This should be called after the rendering has completed as there is

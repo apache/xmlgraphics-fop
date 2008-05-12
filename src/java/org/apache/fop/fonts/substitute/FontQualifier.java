@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.fonts.substitute;
 
@@ -32,7 +32,7 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUtil;
 
 /**
- * Encapsulates a font substitution qualifier 
+ * Encapsulates a font substitution qualifier
  */
 public class FontQualifier {
 
@@ -47,15 +47,15 @@ public class FontQualifier {
 
     /** font weight attribute value */
     private AttributeValue fontWeightAttributeValue = null;
-        
+
     /**
      * Default constructor
      */
     public FontQualifier() {
     }
-    
+
     /**
-     * Sets the font family 
+     * Sets the font family
      * @param fontFamily the font family
      */
     public void setFontFamily(String fontFamily) {
@@ -66,20 +66,20 @@ public class FontQualifier {
         }
         this.fontFamilyAttributeValue = fontFamilyAttribute;
     }
-    
+
     /**
-     * Sets the font style 
+     * Sets the font style
      * @param fontStyle the font style
      */
     public void setFontStyle(String fontStyle) {
         AttributeValue fontStyleAttribute = AttributeValue.valueOf(fontStyle);
         if (fontStyleAttribute != null) {
-            this.fontStyleAttributeValue = fontStyleAttribute; 
+            this.fontStyleAttributeValue = fontStyleAttribute;
         }
     }
 
     /**
-     * Sets the font weight 
+     * Sets the font weight
      * @param fontWeight the font weight
      */
     public void setFontWeight(String fontWeight) {
@@ -100,7 +100,7 @@ public class FontQualifier {
             this.fontWeightAttributeValue = fontWeightAttribute;
         }
     }
-    
+
     /**
      * @return the font family attribute
      */
@@ -117,7 +117,7 @@ public class FontQualifier {
         }
         return this.fontStyleAttributeValue;
     }
-    
+
     /**
      * @return the font weight attribute
      */
@@ -141,7 +141,7 @@ public class FontQualifier {
     public boolean hasFontStyle() {
         return this.fontStyleAttributeValue != null;
     }
-    
+
     /**
      * Returns a list of matching font triplet found in a given font info
      * 
@@ -154,7 +154,7 @@ public class FontQualifier {
         AttributeValue styleValue = getFontStyle();
 
         List/*<FontTriplet>*/ matchingTriplets = new java.util.ArrayList/*<FontTriplet>*/();
-        
+
         // try to find matching destination font triplet
         for (Iterator attrIt = fontFamilyValue.iterator(); attrIt.hasNext();) {
             String fontFamilyString = (String)attrIt.next();
@@ -165,7 +165,7 @@ public class FontQualifier {
                         tripletIt.hasNext();) {
                     FontTriplet triplet = (FontTriplet)tripletIt.next();
                     String fontName = triplet.getName();
-                    
+
                     // matched font family name
                     if (fontFamilyString.toLowerCase().equals(fontName.toLowerCase())) {
 
@@ -194,7 +194,7 @@ public class FontQualifier {
                                 }
                             }
                         }
-                        
+
                         // try and match font style
                         boolean styleMatched = false;
                         String fontStyleString = triplet.getStyle();
@@ -204,17 +204,17 @@ public class FontQualifier {
                                 styleMatched = true;
                             }
                         }
-                        
+
                         if (weightMatched && styleMatched) {
                             matchingTriplets.add(triplet);
                         }
                     }
                 }
-            }            
+            }
         }
         return matchingTriplets;
     }
-    
+
     /**
      * Returns the highest priority matching font triplet found in a given font info
      * @param fontInfo the font info
@@ -240,25 +240,25 @@ public class FontQualifier {
         }
         return bestTriplet;
     }
-    
+
     /**
      * @return a list of font triplets matching this qualifier
      */
     public List/*<FontTriplet>*/ getTriplets() {
         List/*<FontTriplet>*/ triplets = new java.util.ArrayList/*<FontTriplet>*/();
-        
+
         AttributeValue fontFamilyValue = getFontFamily();
         for (Iterator fontFamilyIt = fontFamilyValue.iterator(); fontFamilyIt.hasNext();) {
             String name = (String)fontFamilyIt.next();
-            
+
             AttributeValue styleValue = getFontStyle();
             for (Iterator styleIt = styleValue.iterator(); styleIt.hasNext();) {
                 String style = (String)styleIt.next();
-                
+
                 AttributeValue weightValue = getFontWeight();
                 for (Iterator weightIt = weightValue.iterator(); weightIt.hasNext();) {
                     Object weightObj = weightIt.next();
-                    
+
                     if (weightObj instanceof FontWeightRange) {
                         FontWeightRange fontWeightRange = (FontWeightRange)weightObj;
                         int[] weightRange = fontWeightRange.toArray();
@@ -292,13 +292,13 @@ public class FontQualifier {
             if (str.length() > 0) {
                 str += ", ";
             }
-            str += "font-style=" + fontStyleAttributeValue;            
+            str += "font-style=" + fontStyleAttributeValue;
         }
         if (fontWeightAttributeValue != null) {
             if (str.length() > 0) {
                 str += ", ";
             }
-            str += "font-weight=" + fontWeightAttributeValue;            
+            str += "font-weight=" + fontWeightAttributeValue;
         }
         return str;
     }

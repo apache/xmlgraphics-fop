@@ -33,7 +33,7 @@ import org.apache.fop.render.pdf.BasePDFTestCase;
 import org.xml.sax.SAXException;
 
 /**
- * Basic runtime test for FOP's font configuration. It is used to verify that 
+ * Basic runtime test for FOP's font configuration. It is used to verify that
  * nothing obvious is broken after compiling.
  */
 public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
@@ -59,7 +59,7 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
     }
 
     protected void initConfig() throws Exception {
-        fopFactory.setUserConfig(getUserConfig());                
+        fopFactory.setUserConfig(getUserConfig());
     }
 
     protected void convertFO() throws Exception {
@@ -70,7 +70,7 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         convertFO(foFile, foUserAgent, dumpOutput);
     }
-    
+
     /**
      * get test FOP config File
      * @return fo test filepath
@@ -82,9 +82,9 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
     /**
      * get test FOP Configuration
      * @return fo test filepath
-     * @throws IOException 
-     * @throws SAXException 
-     * @throws ConfigurationException 
+     * @throws IOException
+     * @throws SAXException
+     * @throws ConfigurationException
      */
     protected Configuration getUserConfig(String configString) throws ConfigurationException, SAXException, IOException {
         return cfgBuilder.build(new ByteArrayInputStream(configString.getBytes()));
@@ -114,11 +114,11 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
     /**
      * get test FOP Configuration
      * @return fo test filepath
-     * @throws IOException 
-     * @throws SAXException 
-     * @throws ConfigurationException 
+     * @throws IOException
+     * @throws SAXException
+     * @throws ConfigurationException
      */
     protected Configuration getUserConfig() throws ConfigurationException, SAXException, IOException {
         return cfgBuilder.buildFromFile(getUserConfigFile());
-    }        
+    }
 }

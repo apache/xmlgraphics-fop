@@ -68,26 +68,26 @@ import org.apache.fop.util.ConsoleEventListenerForTests;
 public class LayoutEngineTester {
 
     private static final Map CHECK_CLASSES = new java.util.HashMap();
-    
+
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
     private FopFactory fopFactoryWithBase14Kerning = FopFactory.newInstance();
-    
-    private SAXTransformerFactory tfactory 
+
+    private SAXTransformerFactory tfactory
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     private Templates testcase2fo;
     private Templates testcase2checks;
-    
+
     private File areaTreeBackupDir;
-    
+
     static {
         CHECK_CLASSES.put("true", TrueCheck.class);
         CHECK_CLASSES.put("eval", EvalCheck.class);
         CHECK_CLASSES.put("element-list", ElementListCheck.class);
         CHECK_CLASSES.put("result", ResultCheck.class);
     }
-    
+
     /**
      * Constructs a new instance.
      * @param areaTreeBackupDir Optional directory that receives the generated
@@ -98,7 +98,7 @@ public class LayoutEngineTester {
         fopFactory.getFontManager().setBase14KerningEnabled(false);
         fopFactoryWithBase14Kerning.getFontManager().setBase14KerningEnabled(true);
     }
-    
+
     private Templates getTestcase2FOStylesheet() throws TransformerConfigurationException {
         if (testcase2fo == null) {
             //Load and cache stylesheet
@@ -107,7 +107,7 @@ public class LayoutEngineTester {
         }
         return testcase2fo;
     }
-    
+
     private Templates getTestcase2ChecksStylesheet() throws TransformerConfigurationException {
         if (testcase2checks == null) {
             //Load and cache stylesheet
@@ -116,7 +116,7 @@ public class LayoutEngineTester {
         }
         return testcase2checks;
     }
-    
+
     /**
      * Runs a single layout engine test case.
      * @param testFile Test case to run
@@ -125,14 +125,14 @@ public class LayoutEngineTester {
      * @throws SAXException In case of a problem during SAX processing
      * @throws ParserConfigurationException In case of a problem with the XML parser setup
      */
-    public void runTest(File testFile) 
+    public void runTest(File testFile)
             throws TransformerException, SAXException, IOException, ParserConfigurationException {
-        
+
         DOMResult domres = new DOMResult();
 
         ElementListCollector elCollector = new ElementListCollector();
         ElementListObserver.addObserver(elCollector);
-        
+
         Fop fop;
 
         try {
@@ -141,47 +141,47 @@ public class LayoutEngineTester {
             dbf.setValidating(false);
             DocumentBuilder builder = dbf.newDocumentBuilder();
             Document testDoc = builder.parse(testFile);
-            
+
             XObject xo = XPathAPI.eval(testDoc, "/testcase/cfg/base14kerning");
             String s = xo.str();
             boolean base14kerning = ("true".equalsIgnoreCase(s));
             FopFactory effFactory = (base14kerning ? fopFactoryWithBase14Kerning : fopFactory);
-            
+
             //Setup Transformer to convert the testcase XML to XSL-FO
             Transformer transformer = getTestcase2FOStylesheet().newTransformer();
             Source src = new DOMSource(testDoc);
-            
+
             //Setup Transformer to convert the area tree to a DOM
             TransformerHandler athandler = tfactory.newTransformerHandler();
             athandler.setResult(domres);
-            
+
             //Setup FOP for area tree rendering
             FOUserAgent ua = effFactory.newFOUserAgent();
             ua.setBaseURL(testFile.getParentFile().toURL().toString());
             ua.getEventBroadcaster().addEventListener(
                     new ConsoleEventListenerForTests(testFile.getName()));
-            
+
             XMLRenderer atrenderer = new XMLRenderer();
             atrenderer.setUserAgent(ua);
             atrenderer.setContentHandler(athandler);
             ua.setRendererOverride(atrenderer);
             fop = effFactory.newFop(ua);
-            
+
             SAXResult fores = new SAXResult(fop.getDefaultHandler());
             transformer.transform(src, fores);
         } finally {
             ElementListObserver.removeObserver(elCollector);
         }
-        
+
         Document doc = (Document)domres.getNode();
         if (this.areaTreeBackupDir != null) {
             saveAreaTreeXML(doc, new File(this.areaTreeBackupDir, testFile.getName() + ".at.xml"));
         }
-        FormattingResults results = fop.getResults();        
+        FormattingResults results = fop.getResults();
         LayoutResult result = new LayoutResult(doc, elCollector, results);
         checkAll(testFile, result);
     }
-    
+
     /**
      * Factory method to create checks from DOM elements.
      * @param el DOM element to create the check from
@@ -196,14 +196,14 @@ public class LayoutEngineTester {
                 LayoutEngineCheck instance = (LayoutEngineCheck)c.newInstance(new Object[] {el});
                 return instance;
             } catch (Exception e) {
-                throw new RuntimeException("Error while instantiating check '" 
+                throw new RuntimeException("Error while instantiating check '"
                         + name + "': " + e.getMessage());
             }
         } else {
             throw new IllegalArgumentException("No check class found: " + name);
         }
     }
-    
+
     /**
      * Perform all checks on the area tree.
      * @param testFile Test case XML file
@@ -215,7 +215,7 @@ public class LayoutEngineTester {
         Source src = new StreamSource(testFile);
         DOMResult res = new DOMResult();
         transformer.transform(src, res);
-        
+
         List checks = new java.util.ArrayList();
         Document doc = (Document)res.getNode();
         NodeList nodes = doc.getDocumentElement().getChildNodes();
@@ -225,7 +225,7 @@ public class LayoutEngineTester {
                 checks.add(createCheck((Element)node));
             }
         }
-        
+
         if (checks.size() == 0) {
             throw new RuntimeException("No checks are available!");
         }
@@ -235,7 +235,7 @@ public class LayoutEngineTester {
             check.check(result);
         }
     }
-    
+
     /**
      * Save the area tree XML for later inspection.
      * @param doc area tree as a DOM document

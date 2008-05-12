@@ -32,10 +32,10 @@ public class Font {
 
     /** Extra Bold font weight */
     public static final int WEIGHT_EXTRA_BOLD = 800;
-    
+
     /** Bold font weight */
     public static final int WEIGHT_BOLD = 700;
-    
+
     /** Normal font weight */
     public static final int WEIGHT_NORMAL = 400;
 
@@ -56,7 +56,7 @@ public class Font {
 
     /** Default selection priority */
     public static final int PRIORITY_DEFAULT = 0;
-    
+
     /** Default fallback key */
     public static final FontTriplet DEFAULT_FONT = new FontTriplet(
                     "any", STYLE_NORMAL, WEIGHT_NORMAL, PRIORITY_DEFAULT);
@@ -96,7 +96,7 @@ public class Font {
     public FontMetrics getFontMetrics() {
         return this.metric;
     }
-    
+
     /**
      * Returns the font's ascender.
      * @return the ascender
@@ -128,7 +128,7 @@ public class Font {
     public String getFontName() {
         return fontName;
     }
-    
+
     /** @return the font triplet that selected this font */
     public FontTriplet getFontTriplet() {
         return this.triplet;
@@ -154,7 +154,7 @@ public class Font {
     public boolean hasKerning() {
         return metric.hasKerningInfo();
     }
-    
+
     /**
      * Returns the font's kerning table
      * @return the kerning table
@@ -166,7 +166,7 @@ public class Font {
             return java.util.Collections.EMPTY_MAP;
         }
     }
-    
+
     /**
      * Returns the amount of kerning between two characters.
      * @param ch1 first character
@@ -212,12 +212,12 @@ public class Font {
             c = d;
         } else {
             log.warn("Glyph " + (int) c + " not available in font " + fontName);
-            c = '#';
+            c = Typeface.NOT_FOUND;
         }
 
         return c;
     }
-    
+
     /**
      * Determines whether this font contains a particular character/glyph.
      * @param c character to check

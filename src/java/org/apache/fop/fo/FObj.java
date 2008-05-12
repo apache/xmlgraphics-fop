@@ -515,6 +515,13 @@ public abstract class FObj extends FONode implements Constants {
         return -1;
     }
     
+    /**
+     * Clears the list of child nodes.
+     */
+    public void clearChildNodes() {
+        this.firstChild = null;
+    }
+    
     /** @return the "id" property. */
     public String getId() {
         return id;
@@ -598,7 +605,7 @@ public abstract class FObj extends FONode implements Constants {
         return (super.toString() + "[@id=" + this.id + "]");
     }
 
-
+    /** Basic {@link FONodeIterator} implementation */
     public class FObjIterator implements FONodeIterator {
         
         private static final int F_NONE_ALLOWED = 0;

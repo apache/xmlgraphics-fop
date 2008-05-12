@@ -44,23 +44,23 @@ public class PDFDocumentGraphics2DConfigurator {
      * @param cfg the configuration
      * @throws ConfigurationException if an error occurs while configuring the object
      */
-    public void configure(PDFDocumentGraphics2D graphics, Configuration cfg) 
+    public void configure(PDFDocumentGraphics2D graphics, Configuration cfg)
             throws ConfigurationException {
         PDFDocument pdfDoc = graphics.getPDFDocument();
-        
+
         //Filter map
         pdfDoc.setFilterMap(
                 PDFRendererConfigurator.buildFilterMapFromConfiguration(cfg));
-        
+
         //Fonts
         try {
             FontResolver fontResolver = FontManager.createMinimalFontResolver();
             //TODO The following could be optimized by retaining the FontManager somewhere
             FontManager fontManager = new FontManager();
-            
+
             //TODO Make use of fontBaseURL, font substitution and referencing configuration
             //Requires a change to the expected configuration layout
-            
+
             List/*<EmbedFontInfo>*/ embedFontInfoList
                 = PrintRendererConfigurator.buildFontListFromConfiguration(
                     cfg, fontResolver, false, fontManager);
@@ -74,5 +74,5 @@ public class PDFDocumentGraphics2DConfigurator {
             throw new ConfigurationException("Error while setting up fonts", e);
         }
     }
-    
+
 }

@@ -42,25 +42,25 @@ public class FopFactoryConfigurator {
 
     /** Defines if FOP should use an alternative rule to determine text indents */
     public static final boolean DEFAULT_BREAK_INDENT_INHERITANCE = false;
-    
+
     /** Defines if FOP should validate the user config strictly */
     public static final boolean DEFAULT_STRICT_USERCONFIG_VALIDATION = true;
-    
+
     /** Defines if FOP should use strict validation for FO and user config */
     public static final boolean DEFAULT_STRICT_FO_VALIDATION = true;
-    
+
     /** Defines the default page-width */
     public static final String DEFAULT_PAGE_WIDTH = "8.26in";
-    
+
     /** Defines the default page-height */
     public static final String DEFAULT_PAGE_HEIGHT = "11in";
-    
+
     /** Defines the default source resolution (72dpi) for FOP */
     public static final float DEFAULT_SOURCE_RESOLUTION = 72.0f; //dpi
-    
+
     /** Defines the default target resolution (72dpi) for FOP */
     public static final float DEFAULT_TARGET_RESOLUTION = 72.0f; //dpi
-    
+
     /** logger instance */
     private final Log log = LogFactory.getLog(FopFactoryConfigurator.class);
 
@@ -78,7 +78,7 @@ public class FopFactoryConfigurator {
         super();
         this.factory = factory;
     }
-    
+
     /**
      * Initializes user agent settings from the user configuration
      * file, if present: baseURL, resolution, default page size,...
@@ -87,7 +87,7 @@ public class FopFactoryConfigurator {
      */
     public void configure(FopFactory factory) throws FOPException {
         if (log.isDebugEnabled()) {
-            log.debug("Initializing FopFactory Configuration");        
+            log.debug("Initializing FopFactory Configuration");
         }
 
         // strict configuration
@@ -98,9 +98,9 @@ public class FopFactoryConfigurator {
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e, false);
             }
-        }        
+        }
         boolean strict = factory.validateUserConfigStrictly();
-        
+
         // strict fo validation
         if (cfg.getChild("strict-validation", false) != null) {
             try {
@@ -128,14 +128,14 @@ public class FopFactoryConfigurator {
                 LogUtil.handleException(log, mfue, strict);
             }
         }
-        
+
         // renderer options
         if (cfg.getChild("source-resolution", false) != null) {
             factory.setSourceResolution(
                     cfg.getChild("source-resolution").getValueAsFloat(
                             FopFactoryConfigurator.DEFAULT_SOURCE_RESOLUTION));
             if (log.isDebugEnabled()) {
-                log.debug("source-resolution set to: " + factory.getSourceResolution() 
+                log.debug("source-resolution set to: " + factory.getSourceResolution()
                     + "dpi (px2mm=" + factory.getSourcePixelUnitToMillimeter() + ")");
             }
         }
@@ -144,9 +144,9 @@ public class FopFactoryConfigurator {
                     cfg.getChild("target-resolution").getValueAsFloat(
                             FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION));
             if (log.isDebugEnabled()) {
-                log.debug("target-resolution set to: " + factory.getTargetResolution() 
+                log.debug("target-resolution set to: " + factory.getTargetResolution()
                         + "dpi (px2mm=" + factory.getTargetPixelUnitToMillimeter()
-                        + ")");                
+                        + ")");
             }
         }
         if (cfg.getChild("break-indent-inheritance", false) != null) {
@@ -156,13 +156,13 @@ public class FopFactoryConfigurator {
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e, strict);
             }
-        }     
+        }
         Configuration pageConfig = cfg.getChild("default-page-settings");
         if (pageConfig.getAttribute("height", null) != null) {
             factory.setPageHeight(
                     pageConfig.getAttribute("height", FopFactoryConfigurator.DEFAULT_PAGE_HEIGHT));
             if (log.isInfoEnabled()) {
-                log.info("Default page-height set to: " + factory.getPageHeight());        
+                log.info("Default page-height set to: " + factory.getPageHeight());
             }
         }
         if (pageConfig.getAttribute("width", null) != null) {
@@ -178,7 +178,7 @@ public class FopFactoryConfigurator {
         FontManagerConfigurator fontManagerConfigurator = new FontManagerConfigurator(cfg);
         fontManagerConfigurator.configure(fontManager, strict);
     }
-    
+
     /**
      * Set the user configuration.
      * @param userConfigFile the configuration file
@@ -193,7 +193,7 @@ public class FopFactoryConfigurator {
             throw new FOPException(e);
         }
     }
-    
+
     /**
      * Set the user configuration from an URI.
      * @param uri the URI to the configuration file
@@ -208,22 +208,22 @@ public class FopFactoryConfigurator {
             throw new FOPException(e);
         }
     }
-    
+
     /**
      * Set the user configuration.
      * @param cfg avalon configuration
-     * @throws FOPException if a configuration problem occurs 
+     * @throws FOPException if a configuration problem occurs
      */
     public void setUserConfig(Configuration cfg) throws FOPException {
         this.cfg = cfg;
         configure(this.factory);
     }
-    
+
     /**
      * Get the avalon user configuration.
      * @return the user configuration
      */
     public Configuration getUserConfig() {
         return this.cfg;
-    }    
+    }
 }
