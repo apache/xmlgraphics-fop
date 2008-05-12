@@ -357,8 +357,9 @@ public class CommonBorderPaddingBackground {
         }
         
         /* for non-cached, or not-yet-cached instances, preload the image */
-        if (cachedInstance == null 
-                || (cachedInstance == newInstance)) {
+        if ((cachedInstance == null 
+                || cachedInstance == newInstance)
+                && !("".equals(newInstance.backgroundImage))) {
             //Additional processing: preload image
             String uri = URISpecification.getURL(newInstance.backgroundImage);
             FOUserAgent userAgent = pList.getFObj().getUserAgent();
