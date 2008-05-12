@@ -349,13 +349,10 @@ public abstract class PropertyList {
                         findBasePropertyName(propertyName));
         int subpropId = FOPropertyMapping.getSubPropertyId(
                         findSubPropertyName(propertyName));
-        
-        if (propId == -1 
-                || (subpropId == -1 
-                        && findSubPropertyName(propertyName) != null)) {
-            return false;
-        }
-        return true;
+
+        return !(propId == -1
+                || (subpropId == -1
+                && findSubPropertyName(propertyName) != null));
     }
 
     /**
@@ -574,7 +571,7 @@ public abstract class PropertyList {
      */
     public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() 
                 throws PropertyException {
-        return new CommonBorderPaddingBackground(this);
+        return CommonBorderPaddingBackground.getInstance(this);
     }
     
     /**
