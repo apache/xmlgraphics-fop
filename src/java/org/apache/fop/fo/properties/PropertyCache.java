@@ -344,6 +344,32 @@ public final class PropertyCache {
         return (CommonFont) fetch((Object) cf);
     }
 
+    /**
+     *  Checks if the given {@link CommonBorderPaddingBackground} is present in the cache - 
+     *  if so, returns a reference to the cached instance. 
+     *  Otherwise the given object is added to the cache and returned.
+     *  
+     *  @param cbpb the CommonBorderPaddingBackground instance to check for
+     *  @return the cached instance
+     */
+    public final CommonBorderPaddingBackground fetch(CommonBorderPaddingBackground cbpb) {
+        
+        return (CommonBorderPaddingBackground) fetch((Object) cbpb);
+    }
+
+    /**
+     *  Checks if the given {@link CommonBorderPaddingBackground.BorderInfo} is present in the cache - 
+     *  if so, returns a reference to the cached instance. 
+     *  Otherwise the given object is added to the cache and returned.
+     *  
+     *  @param bi the BorderInfo instance to check for
+     *  @return the cached instance
+     */
+    public final CommonBorderPaddingBackground.BorderInfo fetch(CommonBorderPaddingBackground.BorderInfo bi) {
+        
+        return (CommonBorderPaddingBackground.BorderInfo) fetch((Object) bi);
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return super.toString() + "[runtimeType=" + this.runtimeType + "]";
