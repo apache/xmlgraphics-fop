@@ -38,35 +38,44 @@ import org.apache.fop.fo.expr.PropertyException;
  * See Sec. 7.7 of the XSL-FO Standard.
  */
 public class CommonBorderPaddingBackground {
+
+    /** 
+     *  cache holding all canonical instances 
+     *  (w/ absolute background-position-* and padding-*)
+     */
+    private static final PropertyCache cache = new PropertyCache(CommonBorderPaddingBackground.class);
+    
+    private int hash = -1;
+    
     /**
      * The "background-attachment" property.
      */
-    public int backgroundAttachment;
+    public final int backgroundAttachment;
 
     /**
      * The "background-color" property.
      */
-    public Color backgroundColor;
+    public final Color backgroundColor;
 
     /**
      * The "background-image" property.
      */
-    public String backgroundImage;
+    public final String backgroundImage;
 
     /**
      * The "background-repeat" property.
      */
-    public int backgroundRepeat;
+    public final int backgroundRepeat;
 
     /**
      * The "background-position-horizontal" property.
      */
-    public Length backgroundPositionHorizontal;
+    public final Length backgroundPositionHorizontal;
 
     /**
      * The "background-position-vertical" property.
      */
-    public Length backgroundPositionVertical;
+    public final Length backgroundPositionVertical;
 
 
     private ImageInfo backgroundImageInfo;
@@ -81,29 +90,68 @@ public class CommonBorderPaddingBackground {
     /** the "end" edge */
     public static final int END = 3;
 
+    /**
+     * 
+     */
     public static class BorderInfo {
+        
+        /** cache holding all canonical instances */
+        private static final PropertyCache cache = new PropertyCache(BorderInfo.class);
+        
         private int mStyle; // Enum for border style
         private Color mColor; // Border color
         private CondLengthProperty mWidth;
+        
+        private int hash = -1;
 
-        BorderInfo(int style, CondLengthProperty width, Color color) {
+        /**
+         * Hidden constructor
+         */
+        private BorderInfo(int style, CondLengthProperty width, Color color) {
             mStyle = style;
             mWidth = width;
             mColor = color;
         }
 
+        /**
+         * Returns a BorderInfo instance corresponding to the given values
+         * 
+         * @param style the border-style
+         * @param width the border-width
+         * @param color the border-color
+         * @return a cached BorderInfo instance
+         */
+        public static BorderInfo getInstance(int style, CondLengthProperty width, Color color) {
+            return cache.fetch(new BorderInfo(style, width, color));
+        }
+
+        /**
+         * @return  the border-style
+         */
         public int getStyle() {
             return this.mStyle;
         }
 
+        /**
+         * @return the border-color
+         */
         public Color getColor() {
             return this.mColor;
         }
 
+        /**
+         * @return the border-width
+         */
         public CondLengthProperty getWidth() {
             return this.mWidth;
         }
 
+        /**
+         * Convenience method returning the border-width,
+         * taking into account values of "none" and "hidden"
+         * 
+         * @return  the retained border-width
+         */
         public int getRetainedWidth() {
             if ((mStyle == Constants.EN_NONE)
                     || (mStyle == Constants.EN_HIDDEN)) {
@@ -125,14 +173,43 @@ public class CommonBorderPaddingBackground {
             sb.append("}");
             return sb.toString();
         }
+        
+        /** {@inheritDoc} */
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            
+            if (obj instanceof BorderInfo) {
+                BorderInfo bi = (BorderInfo)obj;
+                return (this.mColor == bi.mColor
+                    && this.mStyle == bi.mStyle
+                    && this.mWidth == bi.mWidth);
+            }
+            
+            return false;
+        }
+        
+        /** {@inheritDoc} */
+        public int hashCode() {
+            if (this.hash == -1) {
+                int hash = 17;
+                hash = 37 * hash + (mColor == null ? 0 : mColor.hashCode());
+                hash = 37 * hash + mStyle;
+                hash = 37 * hash + (mWidth == null ? 0 : mWidth.hashCode());
+                this.hash = hash;
+            }
+            return this.hash;
+        }
     }
 
     /**
-     * A border info with style none. Used as a singleton, in the collapsing-border model,
+     * A border info with style "none". Used as a singleton, in the collapsing-border model,
      * for elements which don't specify any border on some of their sides.
      */
-    private static BorderInfo defaultBorderInfo;
-
+    private static final BorderInfo defaultBorderInfo 
+            = BorderInfo.getInstance(Constants.EN_NONE, new ConditionalNullLength(), null);
+    
     /**
      * A conditional length of value 0. Returned by the
      * {@link CommonBorderPaddingBackground#getBorderInfo(int)} method when the
@@ -191,12 +268,7 @@ public class CommonBorderPaddingBackground {
      * 
      * @return a BorderInfo instance with style set to {@link Constants#EN_NONE}
      */
-    public static synchronized BorderInfo getDefaultBorderInfo() {
-        if (defaultBorderInfo == null) {
-            /* It is enough to set color to null, as it should never be consulted */
-            defaultBorderInfo = new BorderInfo(Constants.EN_NONE,
-                    new ConditionalNullLength(), null);
-        }
+    public static BorderInfo getDefaultBorderInfo() {
         return defaultBorderInfo;
     }
 
@@ -205,29 +277,30 @@ public class CommonBorderPaddingBackground {
 
     /**
      * Construct a CommonBorderPaddingBackground object.
-     */
-    public CommonBorderPaddingBackground() {
-    }
-
-    /**
-     * Construct a CommonBorderPaddingBackground object.
      * 
      * @param pList The PropertyList to get properties from.
      * @throws PropertyException if there's an error while binding the properties
      */
-    public CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
+    private CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
 
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
-        backgroundColor = pList.get(Constants.PR_BACKGROUND_COLOR).getColor(
+        
+        Color bc = pList.get(Constants.PR_BACKGROUND_COLOR).getColor(
                                         pList.getFObj().getUserAgent());
-        if (backgroundColor.getAlpha() == 0) {
+        if (bc.getAlpha() == 0) {
             backgroundColor = null;
+        } else {
+            backgroundColor = bc;
         }
 
-        backgroundImage = pList.get(Constants.PR_BACKGROUND_IMAGE).getString();
-        if (backgroundImage == null || "none".equals(backgroundImage)) {
-            backgroundImage = null;
+        String img = pList.get(Constants.PR_BACKGROUND_IMAGE).getString();
+        if (img == null || "none".equals(img)) {
+            backgroundImage = "";
+            backgroundRepeat = -1;
+            backgroundPositionHorizontal = null;
+            backgroundPositionVertical = null;
         } else {
+            backgroundImage = img;
             backgroundRepeat = pList.get(Constants.PR_BACKGROUND_REPEAT).getEnum();
             backgroundPositionHorizontal = pList.get(
                     Constants.PR_BACKGROUND_POSITION_HORIZONTAL).getLength();
@@ -272,18 +345,48 @@ public class CommonBorderPaddingBackground {
 
     }
 
+    /**
+     * Obtain a CommonBorderPaddingBackground instance based on the 
+     * related property valus in the given {@link PropertyList}
+     * 
+     * @param pList the {@link PropertyList} to use
+     * @return a CommonBorderPaddingBackground instance (cached if possible)
+     * @throws PropertyException in case of an error
+     */
+    public static CommonBorderPaddingBackground getInstance(PropertyList pList) 
+        throws PropertyException {
+        
+        CommonBorderPaddingBackground newInstance
+                = new CommonBorderPaddingBackground(pList);
+        
+        /* if padding-* and background-position-* resolve to absolute lengths
+         * the whole instance can be cached */
+        if ((newInstance.padding[BEFORE] == null || newInstance.padding[BEFORE].getLength().isAbsolute())
+                && (newInstance.padding[AFTER] == null || newInstance.padding[AFTER].getLength().isAbsolute())
+                && (newInstance.padding[START] == null || newInstance.padding[START].getLength().isAbsolute())
+                && (newInstance.padding[END] == null || newInstance.padding[END].getLength().isAbsolute())
+                && (newInstance.backgroundPositionHorizontal == null || newInstance.backgroundPositionHorizontal.isAbsolute())
+                && (newInstance.backgroundPositionVertical == null || newInstance.backgroundPositionVertical.isAbsolute())) {
+            return cache.fetch(newInstance);
+        }
+        
+        return newInstance;
+    }
+
     private void initBorderInfo(PropertyList pList, int side,
                     int colorProp, int styleProp, int widthProp, int paddingProp)
                 throws PropertyException {
+        
         padding[side] = pList.get(paddingProp).getCondLength();
         // If style = none, force width to 0, don't get Color (spec 7.7.20)
         int style = pList.get(styleProp).getEnum();
         if (style != Constants.EN_NONE) {
             FOUserAgent ua = pList.getFObj().getUserAgent();
-            setBorderInfo(new BorderInfo(style,
+            setBorderInfo(BorderInfo.getInstance(style,
                 pList.get(widthProp).getCondLength(),
                 pList.get(colorProp).getColor(ua)), side);
         }
+        
     }
 
     /**
@@ -291,7 +394,7 @@ public class CommonBorderPaddingBackground {
      * @param info the border information
      * @param side the side to apply the info to
      */
-    public void setBorderInfo(BorderInfo info, int side) {
+    private void setBorderInfo(BorderInfo info, int side) {
         this.borderInfo[side] = info;
     }
 
@@ -308,14 +411,6 @@ public class CommonBorderPaddingBackground {
     }
 
     /**
-     * Set padding.
-     * @param source the padding info to copy from
-     */
-    public void setPadding(CommonBorderPaddingBackground source) {
-        this.padding = source.padding;
-    }
-
-    /**
      * @return the background image info object, null if there is
      *     no background image.
      */
@@ -324,64 +419,102 @@ public class CommonBorderPaddingBackground {
     }
 
     /**
-     * @param bDiscard indicates whether the .conditionality component should be
+     * @param discard indicates whether the .conditionality component should be
      * considered (start of a reference-area)
+     * @return the width of the start-border, taking into account the specified conditionality
      */
-    public int getBorderStartWidth(boolean bDiscard) {
-        return getBorderWidth(START, bDiscard);
+    public int getBorderStartWidth(boolean discard) {
+        return getBorderWidth(START, discard);
     }
 
     /**
-     * @param bDiscard indicates whether the .conditionality component should be
+     * @param discard indicates whether the .conditionality component should be
      * considered (end of a reference-area)
+     * @return the width of the end-border, taking into account the specified conditionality
      */
-    public int getBorderEndWidth(boolean bDiscard) {
-        return getBorderWidth(END, bDiscard);
+    public int getBorderEndWidth(boolean discard) {
+        return getBorderWidth(END, discard);
     }
 
     /**
-     * @param bDiscard indicates whether the .conditionality component should be
+     * @param discard indicates whether the .conditionality component should be
      * considered (start of a reference-area)
+     * @return the width of the before-border, taking into account the specified conditionality
      */
-    public int getBorderBeforeWidth(boolean bDiscard) {
-        return getBorderWidth(BEFORE, bDiscard);
+    public int getBorderBeforeWidth(boolean discard) {
+        return getBorderWidth(BEFORE, discard);
     }
 
     /**
-     * @param bDiscard indicates whether the .conditionality component should be
+     * @param discard indicates whether the .conditionality component should be
      * considered (end of a reference-area)
+     * @return the width of the after-border, taking into account the specified conditionality
      */
-    public int getBorderAfterWidth(boolean bDiscard) {
-        return getBorderWidth(AFTER, bDiscard);
+    public int getBorderAfterWidth(boolean discard) {
+        return getBorderWidth(AFTER, discard);
     }
 
-    public int getPaddingStart(boolean bDiscard, PercentBaseContext context) {
-        return getPadding(START, bDiscard, context);
+    /**
+     * @param discard indicates whether the .conditionality component should be
+     * considered (start of a reference-area)
+     * @param context the context to evaluate percentage values
+     * @return the width of the start-padding, taking into account the specified conditionality
+     */
+    public int getPaddingStart(boolean discard, PercentBaseContext context) {
+        return getPadding(START, discard, context);
     }
 
-    public int getPaddingEnd(boolean bDiscard, PercentBaseContext context) {
-        return getPadding(END, bDiscard, context);
+    /**
+     * @param discard indicates whether the .conditionality component should be
+     * considered (start of a reference-area)
+     * @param context the context to evaluate percentage values
+     * @return the width of the end-padding, taking into account the specified conditionality
+     */
+    public int getPaddingEnd(boolean discard, PercentBaseContext context) {
+        return getPadding(END, discard, context);
     }
 
-    public int getPaddingBefore(boolean bDiscard, PercentBaseContext context) {
-        return getPadding(BEFORE, bDiscard, context);
+    /**
+     * @param discard indicates whether the .conditionality component should be
+     * considered (start of a reference-area)
+     * @param context the context to evaluate percentage values
+     * @return the width of the before-padding, taking into account the specified conditionality
+     */
+    public int getPaddingBefore(boolean discard, PercentBaseContext context) {
+        return getPadding(BEFORE, discard, context);
     }
 
-    public int getPaddingAfter(boolean bDiscard, PercentBaseContext context) {
-        return getPadding(AFTER, bDiscard, context);
+    /**
+     * @param discard indicates whether the .conditionality component should be
+     * considered (start of a reference-area)
+     * @param context the context to evaluate percentage values
+     * @return the width of the after-padding, taking into account the specified conditionality
+     */
+    public int getPaddingAfter(boolean discard, PercentBaseContext context) {
+        return getPadding(AFTER, discard, context);
     }
 
-    public int getBorderWidth(int side, boolean bDiscard) {
+    /**
+     * @param discard indicates whether the .conditionality component should be
+     * considered (end of a reference-area)
+     * @return the width of the start-border, taking into account the specified conditionality
+     */
+    public int getBorderWidth(int side, boolean discard) {
         if ((borderInfo[side] == null)
                 || (borderInfo[side].mStyle == Constants.EN_NONE)
                 || (borderInfo[side].mStyle == Constants.EN_HIDDEN)
-                || (bDiscard && borderInfo[side].mWidth.isDiscard())) {
+                || (discard && borderInfo[side].mWidth.isDiscard())) {
             return 0;
         } else {
             return borderInfo[side].mWidth.getLengthValue();
         }
     }
 
+    /**
+     * 
+     * @param side
+     * @return
+     */
     public Color getBorderColor(int side) {
         if (borderInfo[side] != null) {
             return borderInfo[side].getColor();
@@ -390,6 +523,11 @@ public class CommonBorderPaddingBackground {
         }
     }
 
+    /**
+     * 
+     * @param side
+     * @return
+     */
     public int getBorderStyle(int side) {
         if (borderInfo[side] != null) {
             return borderInfo[side].mStyle;
@@ -398,8 +536,15 @@ public class CommonBorderPaddingBackground {
         }
     }
 
-    public int getPadding(int side, boolean bDiscard, PercentBaseContext context) {
-        if ((padding[side] == null) || (bDiscard && padding[side].isDiscard())) {
+    /**
+     * 
+     * @param side
+     * @param discard
+     * @param context
+     * @return
+     */
+    public int getPadding(int side, boolean discard, PercentBaseContext context) {
+        if ((padding[side] == null) || (discard && padding[side].isDiscard())) {
             return 0;
         } else {
             return padding[side].getLengthValue(context);
@@ -418,27 +563,27 @@ public class CommonBorderPaddingBackground {
     /**
      * Return all the border and padding width in the inline progression
      * dimension.
-     * @param bDiscard the discard flag.
+     * @param discard the discard flag.
      * @param context for percentage evaluation.
      * @return all the padding and border width.
      */
-    public int getIPPaddingAndBorder(boolean bDiscard, PercentBaseContext context) {
-        return getPaddingStart(bDiscard, context)
-            + getPaddingEnd(bDiscard, context)
-            + getBorderStartWidth(bDiscard)
-            + getBorderEndWidth(bDiscard);
+    public int getIPPaddingAndBorder(boolean discard, PercentBaseContext context) {
+        return getPaddingStart(discard, context)
+            + getPaddingEnd(discard, context)
+            + getBorderStartWidth(discard)
+            + getBorderEndWidth(discard);
     }
 
     /**
      * Return all the border and padding height in the block progression
      * dimension.
-     * @param bDiscard the discard flag.
+     * @param discard the discard flag.
      * @param context for percentage evaluation
      * @return all the padding and border height.
      */
-    public int getBPPaddingAndBorder(boolean bDiscard, PercentBaseContext context) {
-        return getPaddingBefore(bDiscard, context) + getPaddingAfter(bDiscard, context)
-               + getBorderBeforeWidth(bDiscard) + getBorderAfterWidth(bDiscard);
+    public int getBPPaddingAndBorder(boolean discard, PercentBaseContext context) {
+        return getPaddingBefore(discard, context) + getPaddingAfter(discard, context)
+               + getBorderBeforeWidth(discard) + getBorderAfterWidth(discard);
     }
 
     /** {@inheritDoc} */
@@ -478,5 +623,55 @@ public class CommonBorderPaddingBackground {
     public boolean hasBorderInfo() {
         return (borderInfo[BEFORE] != null || borderInfo[AFTER] != null
                 || borderInfo[START] != null || borderInfo[END] != null);
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof CommonBorderPaddingBackground) {
+            CommonBorderPaddingBackground cbpb = (CommonBorderPaddingBackground)obj;
+            return (this.backgroundAttachment == cbpb.backgroundAttachment
+                && this.backgroundColor == cbpb.backgroundColor
+                && this.backgroundImage.equals(cbpb.backgroundImage)
+                && this.backgroundPositionHorizontal == cbpb.backgroundPositionHorizontal
+                && this.backgroundPositionVertical == cbpb.backgroundPositionVertical
+                && this.backgroundRepeat == cbpb.backgroundRepeat
+                && this.borderInfo[BEFORE] == cbpb.borderInfo[BEFORE]
+                && this.borderInfo[AFTER] == cbpb.borderInfo[AFTER]
+                && this.borderInfo[START] == cbpb.borderInfo[START]
+                && this.borderInfo[END] == cbpb.borderInfo[END]
+                && this.padding[BEFORE] == cbpb.padding[BEFORE]
+                && this.padding[AFTER] == cbpb.padding[AFTER]
+                && this.padding[START] == cbpb.padding[START]
+                && this.padding[END] == cbpb.padding[END]);
+        }
+        
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        if (this.hash == -1) {
+            int hash = 17;
+            hash = 37 * hash + backgroundAttachment;
+            hash = 37 * hash + (backgroundColor == null ? 0 : backgroundColor.hashCode());
+            hash = 37 * hash + (backgroundImage == null ? 0 : backgroundImage.hashCode());
+            hash = 37 * hash + (backgroundPositionHorizontal == null ? 0 : backgroundPositionHorizontal.hashCode());
+            hash = 37 * hash + (backgroundPositionVertical == null ? 0 : backgroundPositionVertical.hashCode());
+            hash = 37 * hash + backgroundRepeat;
+            hash = 37 * hash + (borderInfo[BEFORE] == null ? 0 : borderInfo[BEFORE].hashCode());
+            hash = 37 * hash + (borderInfo[AFTER] == null ? 0 : borderInfo[AFTER].hashCode());
+            hash = 37 * hash + (borderInfo[START] == null ? 0 : borderInfo[START].hashCode());
+            hash = 37 * hash + (borderInfo[END] == null ? 0 : borderInfo[END].hashCode());
+            hash = 37 * hash + (padding[BEFORE] == null ? 0 : padding[BEFORE].hashCode());
+            hash = 37 * hash + (padding[AFTER] == null ? 0 : padding[AFTER].hashCode());
+            hash = 37 * hash + (padding[START] == null ? 0 : padding[START].hashCode());
+            hash = 37 * hash + (padding[END] == null ? 0 : padding[END].hashCode());
+            this.hash = hash;
+        }
+        
+        return this.hash;
     }
 }
