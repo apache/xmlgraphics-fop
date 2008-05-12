@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
  * A class that implements the border-collapsing model.
@@ -31,6 +32,8 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 class CollapsingBorderResolver implements BorderResolver {
 
     private Table table;
+
+    private CollapsingBorderModel collapsingBorderModel;
 
     /**
      * The previously registered row, either in the header or the body(-ies), but not in
@@ -73,6 +76,9 @@ class CollapsingBorderResolver implements BorderResolver {
         protected TableBody tablePart;
 
         protected boolean firstInPart;
+
+        private BorderSpecification borderStartTableAndBody;
+        private BorderSpecification borderEndTableAndBody;
 
         /**
          * Integrates border-before specified on the table and its column.
@@ -174,6 +180,10 @@ class CollapsingBorderResolver implements BorderResolver {
         void startPart(TableBody part) {
             tablePart = part;
             firstInPart = true;
+            borderStartTableAndBody = collapsingBorderModel.determineWinner(table.borderStart,
+                    tablePart.borderStart);
+            borderEndTableAndBody = collapsingBorderModel.determineWinner(table.borderEnd,
+                    tablePart.borderEnd);
         }
 
         /**
@@ -188,6 +198,8 @@ class CollapsingBorderResolver implements BorderResolver {
          * @param container the containing element
          */
         void endRow(List/*<GridUnit>*/ row, TableCellContainer container) {
+            BorderSpecification borderStart = borderStartTableAndBody;
+            BorderSpecification borderEnd = borderEndTableAndBody;
             // Resolve before- and after-borders for the table-row
             if (container instanceof TableRow) {
                 TableRow tableRow = (TableRow) container;
@@ -200,6 +212,10 @@ class CollapsingBorderResolver implements BorderResolver {
                     gu.integrateBorderSegment(CommonBorderPaddingBackground.AFTER, tableRow,
                             last, last, true);
                 }
+                borderStart = collapsingBorderModel.determineWinner(borderStart,
+                        tableRow.borderStart);
+                borderEnd = collapsingBorderModel.determineWinner(borderEnd,
+                        tableRow.borderEnd);
             }
             if (firstInPart) {
                 // Integrate the border-before of the part
@@ -215,7 +231,7 @@ class CollapsingBorderResolver implements BorderResolver {
             Iterator colIter = table.getColumns().iterator();
             TableColumn col = (TableColumn) colIter.next();
             gu.integrateBorderSegment(CommonBorderPaddingBackground.START, col);
-            gu.integrateBorderSegment(CommonBorderPaddingBackground.START, container);
+            gu.integrateBorderSegment(CommonBorderPaddingBackground.START, borderStart);
             while (guIter.hasNext()) {
                 GridUnit nextGU = (GridUnit) guIter.next();
                 TableColumn nextCol = (TableColumn) colIter.next();
@@ -228,7 +244,7 @@ class CollapsingBorderResolver implements BorderResolver {
                 col = nextCol;
             }
             gu.integrateBorderSegment(CommonBorderPaddingBackground.END, col);
-            gu.integrateBorderSegment(CommonBorderPaddingBackground.END, container);
+            gu.integrateBorderSegment(CommonBorderPaddingBackground.END, borderEnd);
         }
 
         void endPart() {
@@ -371,7 +387,26 @@ class CollapsingBorderResolver implements BorderResolver {
 
     CollapsingBorderResolver(Table table) {
         this.table = table;
+        collapsingBorderModel = CollapsingBorderModel.getBorderModelFor(table.getBorderCollapse());
         firstInTable = true;
+        // Resolve before and after borders between the table and each table-column
+        int index = 0;
+        do {
+            TableColumn col = table.getColumn(index);
+            // See endRow method in ResolverInHeader for an explanation of the hack
+            col.borderBefore.integrateSegment(table.borderBefore, true, false, true);
+            col.borderBefore.leadingTrailing = col.borderBefore.rest;
+            col.borderAfter.integrateSegment(table.borderAfter, true, false, true);
+            col.borderAfter.leadingTrailing = col.borderAfter.rest;
+            /*
+             * TODO The border resolution must be done only once for each table column,
+             * even if it's repeated; otherwise, re-resolving against the table's borders
+             * will lead to null border specifications.
+             * 
+             * Eventually table columns should probably be cloned instead.
+             */
+            index += col.getNumberColumnsRepeated();
+        } while (index < table.getNumberOfColumns());
     }
 
     /** {@inheritDoc} */
@@ -388,9 +423,7 @@ class CollapsingBorderResolver implements BorderResolver {
                 // No header, leading borders determined by the table
                 leadingBorders = new ArrayList(table.getNumberOfColumns());
                 for (Iterator colIter = table.getColumns().iterator(); colIter.hasNext();) {
-                    // See endRow method in ResolverInHeader for an explanation of the hack
                     ConditionalBorder border = ((TableColumn) colIter.next()).borderBefore;
-                    border.leadingTrailing = border.rest;
                     leadingBorders.add(border);
                 }
             }
@@ -402,9 +435,7 @@ class CollapsingBorderResolver implements BorderResolver {
                     // No footer, trailing borders determined by the table
                     trailingBorders = new ArrayList(table.getNumberOfColumns());
                     for (Iterator colIter = table.getColumns().iterator(); colIter.hasNext();) {
-                        // See endRow method in ResolverInHeader for an explanation of the hack
                         ConditionalBorder border = ((TableColumn) colIter.next()).borderAfter;
-                        border.leadingTrailing = border.rest;
                         trailingBorders.add(border);
                     }
                 }

@@ -211,15 +211,6 @@ public class TableBody extends TableCellContainer {
         super.addChildNode(child);
     }
 
-    /** {inheritDoc} */
-    protected void setCollapsedBorders() {
-        Table table = (Table) parent;
-        createBorder(CommonBorderPaddingBackground.START, table);
-        createBorder(CommonBorderPaddingBackground.END, table);
-        createBorder(CommonBorderPaddingBackground.BEFORE);
-        createBorder(CommonBorderPaddingBackground.AFTER);
-    }
-
     void addRowGroup(List rowGroup) {
         rowGroups.add(rowGroup);
     }
