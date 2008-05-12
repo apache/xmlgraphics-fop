@@ -134,14 +134,6 @@ public class TableCell extends TableFObj {
     }
 
     /** {@inheritDoc} */
-    protected void setCollapsedBorders() {
-        createBorder(CommonBorderPaddingBackground.BEFORE);
-        createBorder(CommonBorderPaddingBackground.AFTER);
-        createBorder(CommonBorderPaddingBackground.START);
-        createBorder(CommonBorderPaddingBackground.END);
-    }
-
-    /** {@inheritDoc} */
     public boolean generatesReferenceAreas() {
         return true;
     }

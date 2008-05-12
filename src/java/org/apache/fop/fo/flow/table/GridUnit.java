@@ -374,6 +374,24 @@ public class GridUnit {
         }
     }
 
+    /**
+     * For the given side, integrates in the conflict resolution the given border segment.
+     * 
+     * @param side the side to consider (one of CommonBorderPaddingBackground.START|END)
+     * @param segment a border specification to integrate at the given side
+     */
+    void integrateBorderSegment(int side, BorderSpecification segment) {
+        switch(side) {
+        case CommonBorderPaddingBackground.START:
+            borderStart = collapsingBorderModel.determineWinner(borderStart, segment);
+            break;
+        case CommonBorderPaddingBackground.END:
+            borderEnd = collapsingBorderModel.determineWinner(borderEnd, segment);
+            break;
+        default: assert false;
+        }
+    }
+
     void integrateCompetingBorder(int side, ConditionalBorder competitor,
             boolean withNormal, boolean withLeadingTrailing, boolean withRest) {
         switch (side) {
