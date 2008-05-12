@@ -306,20 +306,6 @@ public class CommonBorderPaddingBackground {
                     Constants.PR_BACKGROUND_POSITION_HORIZONTAL).getLength();
             backgroundPositionVertical = pList.get(
                     Constants.PR_BACKGROUND_POSITION_VERTICAL).getLength();
-
-            //Additional processing: preload image
-            String uri = URISpecification.getURL(backgroundImage);
-            FOUserAgent userAgent = pList.getFObj().getUserAgent();
-            ImageManager manager = userAgent.getFactory().getImageManager();
-            ImageSessionContext sessionContext = userAgent.getImageSessionContext();
-            ImageInfo info;
-            try {
-                info = manager.getImageInfo(uri, sessionContext);
-                this.backgroundImageInfo = info;
-            } catch (Exception e) {
-                Property.log.error("Background image not available: " + uri);
-            }
-            //TODO Report to caller so he can decide to throw an exception
         }
 
         initBorderInfo(pList, BEFORE,
@@ -358,7 +344,7 @@ public class CommonBorderPaddingBackground {
         
         CommonBorderPaddingBackground newInstance
                 = new CommonBorderPaddingBackground(pList);
-        
+        CommonBorderPaddingBackground cachedInstance = null;
         /* if padding-* and background-position-* resolve to absolute lengths
          * the whole instance can be cached */
         if ((newInstance.padding[BEFORE] == null || newInstance.padding[BEFORE].getLength().isAbsolute())
@@ -367,10 +353,28 @@ public class CommonBorderPaddingBackground {
                 && (newInstance.padding[END] == null || newInstance.padding[END].getLength().isAbsolute())
                 && (newInstance.backgroundPositionHorizontal == null || newInstance.backgroundPositionHorizontal.isAbsolute())
                 && (newInstance.backgroundPositionVertical == null || newInstance.backgroundPositionVertical.isAbsolute())) {
-            return cache.fetch(newInstance);
+            cachedInstance = cache.fetch(newInstance);
         }
         
-        return newInstance;
+        /* for non-cached, or not-yet-cached instances, preload the image */
+        if (cachedInstance == null 
+                || (cachedInstance == newInstance)) {
+            //Additional processing: preload image
+            String uri = URISpecification.getURL(newInstance.backgroundImage);
+            FOUserAgent userAgent = pList.getFObj().getUserAgent();
+            ImageManager manager = userAgent.getFactory().getImageManager();
+            ImageSessionContext sessionContext = userAgent.getImageSessionContext();
+            ImageInfo info;
+            try {
+                info = manager.getImageInfo(uri, sessionContext);
+                newInstance.backgroundImageInfo = info;
+            } catch (Exception e) {
+                Property.log.error("Background image not available: " + uri);
+            }
+            //TODO Report to caller so he can decide to throw an exception
+        }
+        
+        return (cachedInstance != null ? cachedInstance : newInstance);
     }
 
     private void initBorderInfo(PropertyList pList, int side,
@@ -511,9 +515,10 @@ public class CommonBorderPaddingBackground {
     }
 
     /**
+     * The border-color for the given side
      * 
-     * @param side
-     * @return
+     * @param side one of {@link #BEFORE}, {@link #AFTER}, {@link #START}, {@link #END}
+     * @return  the border-color for the given side
      */
     public Color getBorderColor(int side) {
         if (borderInfo[side] != null) {
@@ -524,9 +529,10 @@ public class CommonBorderPaddingBackground {
     }
 
     /**
+     * The border-style for the given side
      * 
-     * @param side
-     * @return
+     * @param side one of {@link #BEFORE}, {@link #AFTER}, {@link #START}, {@link #END}
+     * @return  the border-style for the given side
      */
     public int getBorderStyle(int side) {
         if (borderInfo[side] != null) {
@@ -537,11 +543,14 @@ public class CommonBorderPaddingBackground {
     }
 
     /**
+     * Return the padding for the given side, taking into account
+     * the conditionality and evaluating any percentages in the given
+     * context.
      * 
-     * @param side
-     * @param discard
-     * @param context
-     * @return
+     * @param side  one of {@link #BEFORE}, {@link #AFTER}, {@link #START}, {@link #END}
+     * @param discard   true if the conditionality component should be considered
+     * @param context   the context for percentage-resolution
+     * @return  the computed padding for the given side
      */
     public int getPadding(int side, boolean discard, PercentBaseContext context) {
         if ((padding[side] == null) || (discard && padding[side].isDiscard())) {
