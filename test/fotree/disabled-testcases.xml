@@ -28,14 +28,4 @@
     <description>The code currently evaluates this function according to the column in which the 
     marker appears in the source document, rather than the column it is retrieved in.</description>
   </testcase>
-  <testcase>
-    <name>column-number_negative-or-zero</name>
-    <file>column-number_negative-or-zero.fo</file>
-    <description></description>
-  </testcase>
-  <testcase>
-    <name>column-number_non-integer</name>
-    <file>column-number_non-integer.fo</file>
-    <description></description>
-  </testcase>
 </disabled-testcases>
