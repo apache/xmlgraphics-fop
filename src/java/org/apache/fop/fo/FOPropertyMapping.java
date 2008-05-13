@@ -2503,7 +2503,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("content-type", m);
 
         // id
-        m  = new StringProperty.IdMaker(PR_ID);
+        m  = new StringProperty.Maker(PR_ID);
         m.setInherited(false);
         m.setDefault("");
         addPropertyMaker("id", m);
