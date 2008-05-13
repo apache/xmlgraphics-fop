@@ -601,8 +601,8 @@ public final class FOPropertyMapping implements Constants {
         // background-position-horizontal
         m  = new LengthProperty.Maker(PR_BACKGROUND_POSITION_HORIZONTAL);
         m.setInherited(false);
-        m.setDefault("0%");
-        m.addKeyword("left", "0%");
+        m.setDefault("0pt");
+        m.addKeyword("left", "0pt");
         m.addKeyword("center", "50%");
         m.addKeyword("right", "100%");
         m.setPercentBase(LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL);
@@ -612,8 +612,8 @@ public final class FOPropertyMapping implements Constants {
         // background-position-vertical
         m  = new LengthProperty.Maker(PR_BACKGROUND_POSITION_VERTICAL);
         m.setInherited(false);
-        m.setDefault("0%");
-        m.addKeyword("top", "0%");
+        m.setDefault("0pt");
+        m.addKeyword("top", "0pt");
         m.addKeyword("center", "50%");
         m.addKeyword("bottom", "100%");
         m.setPercentBase(LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL);
@@ -2568,29 +2568,29 @@ public final class FOPropertyMapping implements Constants {
         // background-position
         m  = new BackgroundPositionShorthand.Maker(PR_BACKGROUND_POSITION);
         m.setInherited(false);
-        m.addKeyword("left", "0% 50%");
-        m.addKeyword("left center", "0% 50%");
-        m.addKeyword("center left", "0% 50%");
+        m.addKeyword("left", "0pt 50%");
+        m.addKeyword("left center", "0pt 50%");
+        m.addKeyword("center left", "0pt 50%");
         m.addKeyword("right", "100% 50%");
         m.addKeyword("right center", "100% 50%");
         m.addKeyword("center right", "100% 50%");
         m.addKeyword("center", "50% 50%");
         m.addKeyword("center center", "50% 50%");
-        m.addKeyword("top", "50% 0%");
-        m.addKeyword("top center", "50% 0%");
-        m.addKeyword("center top", "50% 0%");
+        m.addKeyword("top", "50% 0pt");
+        m.addKeyword("top center", "50% 0pt");
+        m.addKeyword("center top", "50% 0pt");
         m.addKeyword("bottom", "50% 100%");
         m.addKeyword("bottom center", "50% 100%");
         m.addKeyword("center bottom", "50% 100%");
-        m.addKeyword("top left", "0% 0%");
-        m.addKeyword("left top", "0% 0%");
-        m.addKeyword("top right", "100% 0%");
-        m.addKeyword("right top", "100% 0%");
-        m.addKeyword("bottom left", "0% 100%");
-        m.addKeyword("left bottom", "0% 100%");
+        m.addKeyword("top left", "0pt 0pt");
+        m.addKeyword("left top", "0pt 0pt");
+        m.addKeyword("top right", "100% 0pt");
+        m.addKeyword("right top", "100% 0pt");
+        m.addKeyword("bottom left", "0pt 100%");
+        m.addKeyword("left bottom", "0pt 100%");
         m.addKeyword("bottom right", "100% 100%");
         m.addKeyword("right bottom", "100% 100%");
-        m.setDefault("0% 0%");
+        m.setDefault("0pt 0pt");
         m.setPercentBase(LengthBase.CUSTOM_BASE);
         m.setDatatypeParser(new BackgroundPositionShorthand.Parser());
         addPropertyMaker("background-position", m);
