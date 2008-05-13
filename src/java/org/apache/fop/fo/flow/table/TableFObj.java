@@ -28,8 +28,11 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.EnumNumber;
+import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
@@ -117,7 +120,7 @@ public abstract class TableFObj extends FObj {
      * PropertyMaker subclass for the column-number property
      *
      */
-    public static class ColumnNumberPropertyMaker extends NumberProperty.PositiveIntegerMaker {
+    public static class ColumnNumberPropertyMaker extends PropertyMaker {
 
         /**
          * Constructor
@@ -172,6 +175,32 @@ public abstract class TableFObj extends FObj {
 
             return p;
         }
+        
+        /**
+         * If the value is not positive, return a property whose value is the next column number
+         * 
+         * {@inheritDoc}
+         */
+        public Property convertProperty(Property p, 
+                                        PropertyList propertyList, FObj fo) 
+                    throws PropertyException {
+            if (p instanceof EnumProperty) {
+                return EnumNumber.getInstance(p);
+            }
+            Number val = p.getNumber();
+            if (val != null) {
+                int i = Math.round(val.floatValue());
+                if (i <= 0) {
+                    ColumnNumberManagerHolder parent =
+                        (ColumnNumberManagerHolder) propertyList.getParentFObj();
+                    ColumnNumberManager columnIndexManager =  parent.getColumnNumberManager();
+                    i = columnIndexManager.getCurrentColumnNumber();
+                }
+                return NumberProperty.getInstance(i);
+            }
+            return convertPropertyDatatype(p, propertyList, fo);
+        }
+
     }
 
     /** {@inheritDoc} */
@@ -197,7 +226,12 @@ public abstract class TableFObj extends FObj {
      * Prepares the borders of this element if the collapsing-border model is in use.
      * Conflict resolution with parent elements is done where applicable.
      */
-    protected abstract void setCollapsedBorders();
+    protected void setCollapsedBorders() {
+        createBorder(CommonBorderPaddingBackground.START);
+        createBorder(CommonBorderPaddingBackground.END);
+        createBorder(CommonBorderPaddingBackground.BEFORE);
+        createBorder(CommonBorderPaddingBackground.AFTER);
+    }
 
     /**
      * Creates a BorderSpecification from the border set on the given side. If no border
@@ -205,7 +239,7 @@ public abstract class TableFObj extends FObj {
      * 
      * @param side one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END
      */
-    protected void createBorder(int side) {
+    private void createBorder(int side) {
         BorderSpecification borderSpec = new BorderSpecification(
                 getCommonBorderPaddingBackground().getBorderInfo(side), getNameId());
         switch (side) {
@@ -220,35 +254,6 @@ public abstract class TableFObj extends FObj {
             break;
         case CommonBorderPaddingBackground.END:
             borderEnd = borderSpec;
-            break;
-        default: assert false;
-        }
-    }
-
-    /**
-     * Creates a BorderSpecification from the border set on the given side, performing
-     * conflict resolution with the same border on the given object.
-     * 
-     * @param side one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END
-     * @param competitor a parent table element whose side coincides with the given side
-     * on this element
-     */
-    protected void createBorder(int side, TableFObj competitor) {
-        createBorder(side);
-        switch (side) {
-        case CommonBorderPaddingBackground.BEFORE:
-            borderBefore.integrateSegment(competitor.borderBefore, true, true, true);
-            break;
-        case CommonBorderPaddingBackground.AFTER:
-            borderAfter.integrateSegment(competitor.borderAfter, true, true, true);
-            break;
-        case CommonBorderPaddingBackground.START:
-            borderStart = collapsingBorderModel.determineWinner(borderStart,
-                    competitor.borderStart);
-            break;
-        case CommonBorderPaddingBackground.END:
-            borderEnd = collapsingBorderModel.determineWinner(borderEnd,
-                    competitor.borderEnd);
             break;
         default: assert false;
         }

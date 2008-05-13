@@ -79,7 +79,11 @@ public abstract class FOEventHandler {
      * This is used so we know if the FO tree contains duplicates.
      */
     private Set idReferences = new HashSet();
-
+    /**
+     * Keeps track of the last automatically generated id in the current document
+     */
+    private long lastGeneratedId = 1;
+    
     /**
      * The property list maker.
      */
@@ -131,13 +135,17 @@ public abstract class FOEventHandler {
 
     /**
      * Return the propertyListMaker.
-    */
+     * 
+     * @return the currently active {@link PropertyListMaker}
+     */
     public PropertyListMaker getPropertyListMaker() {
         return propertyListMaker;
     }
      
     /**
      * Set a new propertyListMaker.
+     * 
+     * @param propertyListMaker the new {@link PropertyListMaker} to use
      */
     public void setPropertyListMaker(PropertyListMaker propertyListMaker) {
         this.propertyListMaker = propertyListMaker;
@@ -155,6 +163,9 @@ public abstract class FOEventHandler {
      * Switch to or from marker context
      * (used by FOTreeBuilder when processing
      *  a marker)
+     * 
+     * @param inMarker  true if a marker is being processed; 
+     *                  false otherwise
      *
      */
     protected void switchMarkerContext(boolean inMarker) {
@@ -163,9 +174,20 @@ public abstract class FOEventHandler {
     
     /**
      * Check whether in marker context
+     * 
+     * @return true if a marker is being processed
      */
     protected boolean inMarker() {
         return this.inMarker;
+    }
+    
+    /**
+     * Return the next value for automatically generated ids
+     * 
+     * @return the next value to append to automatically generated ids
+     */
+    public long getNextId() {
+        return this.lastGeneratedId++;
     }
     
     /**

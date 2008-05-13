@@ -265,7 +265,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         case FO_TABLE_HEADER:
         case FO_TABLE_FOOTER:
         case FO_TABLE_BODY:
-            if (!columnsFinalized) {
+            if (!inMarker() && !columnsFinalized) {
                 columnsFinalized = true;
                 if (hasExplicitColumns) {
                     finalizeColumns();
@@ -289,14 +289,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         default:
             super.addChildNode(child);
         }
-    }
-
-    /** {@inheritDoc} */
-    protected void setCollapsedBorders() {
-        createBorder(CommonBorderPaddingBackground.START);
-        createBorder(CommonBorderPaddingBackground.END);
-        createBorder(CommonBorderPaddingBackground.BEFORE);
-        createBorder(CommonBorderPaddingBackground.AFTER);
     }
 
     private void finalizeColumns() throws FOPException {

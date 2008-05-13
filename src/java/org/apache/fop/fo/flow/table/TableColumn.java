@@ -134,15 +134,6 @@ public class TableColumn extends TableFObj {
     }
 
     /** {@inheritDoc} */
-    protected void setCollapsedBorders() {
-        Table table = (Table) parent;
-        createBorder(CommonBorderPaddingBackground.BEFORE, table);
-        createBorder(CommonBorderPaddingBackground.AFTER, table);
-        createBorder(CommonBorderPaddingBackground.START);
-        createBorder(CommonBorderPaddingBackground.END);
-    }
-
-    /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
         getFOEventHandler().endColumn(this);
     }

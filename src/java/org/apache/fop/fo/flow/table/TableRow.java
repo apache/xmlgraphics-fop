@@ -138,15 +138,6 @@ public class TableRow extends TableCellContainer {
         return true;
     }
 
-    /** {@inheritDoc} */
-    protected void setCollapsedBorders() {
-        TableBody body = (TableBody) parent;
-        createBorder(CommonBorderPaddingBackground.START, body);
-        createBorder(CommonBorderPaddingBackground.END, body);
-        createBorder(CommonBorderPaddingBackground.BEFORE);
-        createBorder(CommonBorderPaddingBackground.AFTER);
-    }
-
     /** @return the "break-after" property. */
     public int getBreakAfter() {
         return breakAfter;

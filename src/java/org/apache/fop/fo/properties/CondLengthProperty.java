@@ -31,8 +31,16 @@ import org.apache.fop.fo.expr.PropertyException;
  * Superclass for properties that have conditional lengths
  */
 public class CondLengthProperty extends Property implements CompoundDatatype {
+    
+    /** cache holding canonical instances (for absolute conditional lengths) */
+    private static final PropertyCache cache = new PropertyCache(CondLengthProperty.class);
+    
+    /** components */
     private Property length;
     private EnumProperty conditionality;
+    
+    private boolean isCached = false;
+    private int hash = -1;
 
     /**
      * Inner class for creating instances of CondLengthProperty
@@ -71,6 +79,11 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
+        if (isCached) {
+            throw new IllegalStateException(
+                    "CondLengthProperty.setComponent() called on a cached value!");
+        }
+        
         if (cmpId == CP_LENGTH) {
             length = cmpnValue;
         } else if (cmpId == CP_CONDITIONALITY) {
@@ -144,7 +157,15 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
      * @return this.condLength
      */
     public CondLengthProperty getCondLength() {
-        return this;
+        if (this.length.getLength().isAbsolute()) {
+            CondLengthProperty clp = (CondLengthProperty) cache.fetch(this);
+            if (clp == this) {
+                isCached = true;
+            }
+            return clp;
+        } else {
+            return this;
+        }
     }
 
     /**
@@ -162,4 +183,28 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
         return this;
     }
 
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (obj instanceof CondLengthProperty) {
+            CondLengthProperty clp = (CondLengthProperty)obj;
+            return (this.length == clp.length
+                    && this.conditionality == clp.conditionality);
+        }
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        if (this.hash == -1) {
+            int hash = 17;
+            hash = 37 * hash + (length == null ? 0 : length.hashCode());
+            hash = 37 * hash + (conditionality == null ? 0 : conditionality.hashCode());
+            this.hash = hash;
+        }
+        return this.hash;
+    }
 }
