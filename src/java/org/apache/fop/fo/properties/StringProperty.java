@@ -99,7 +99,7 @@ public final class StringProperty extends Property {
 
         /** {@inheritDoc} */
         public Property make(PropertyList propertyList) throws PropertyException {
-            String newId = "FO#";
+            String newId = "FO_";
             newId += propertyList.getFObj().getFOEventHandler().getNextId();
             return new StringProperty(newId);
         }
