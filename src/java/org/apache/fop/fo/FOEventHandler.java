@@ -96,6 +96,11 @@ public abstract class FOEventHandler {
     private boolean inMarker = false;
     
     /**
+     * Keeps track of automatically generated ids in the current document
+     */
+    private long lastGeneratedId = 1;
+    
+    /**
      * Main constructor
      * @param foUserAgent the apps.FOUserAgent instance for this process
      */
@@ -166,6 +171,13 @@ public abstract class FOEventHandler {
      */
     protected boolean inMarker() {
         return this.inMarker;
+    }
+    
+    /**
+     * Return the next value for automatically generated ids
+     */
+    public long getNextId() {
+        return this.lastGeneratedId++;
     }
     
     /**

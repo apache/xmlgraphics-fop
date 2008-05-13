@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <test:assert property="id" expected="FO#1" />
+  <fo:layout-master-set>
+    <test:assert property="id" expected="FO#2" />
+    <fo:simple-page-master master-name="simpleA4" page-height="29.7cm" page-width="21cm" margin-top="2cm" margin-bottom="2cm" margin-left="2cm" margin-right="2cm">
+      <test:assert property="id" expected="FO#3" />
+      <fo:region-body>
+        <test:assert property="id" expected="FO#4" />
+      </fo:region-body>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="simpleA4">
+    <test:assert property="id" expected="FO#5" />
+    <fo:flow flow-name="xsl-region-body">
+      <test:assert property="id" expected="FO#6" />
+      <fo:block font-size="14pt" id="block">Hello
+        <test:assert property="id" expected="block"/>
+        <fo:inline> World!
+          <test:assert property="id" expected="FO#7" />
+        </fo:inline>
+      </fo:block>
+      <fo:block font-family="ZapfDingbats">&#2702;
+        <test:assert property="id" expected="FO#8" />
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
