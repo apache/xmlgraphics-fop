@@ -41,6 +41,7 @@
   <checks>
     <!-- Just check if this really results in 1 line. -->
     <element-list category="breaker">
+      <skip>2</skip>
       <box w="14400"/>
       <skip>3</skip>
     </element-list>
