@@ -20,10 +20,15 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -32,7 +37,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.ps.ImageEncodingHelper;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Block;
@@ -49,6 +69,8 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
@@ -56,10 +78,6 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.base14.TimesRoman;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.TIFFImage;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -74,7 +92,6 @@ import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.ImageObject;
 import org.apache.fop.render.afp.modca.PageObject;
-import org.w3c.dom.Document;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -124,28 +141,23 @@ import org.w3c.dom.Document;
  * handle all types of inline area, text, image etc and draws various lines and
  * rectangles.
  * </p>
- * 
- * Note: There are specific extensions that have been added to the FO. They are
- * specific to their location within the FO and have to be processed accordingly
- * (ie. at the start or end of the page).
- * 
+ *
+ * Note: There are specific extensions that have been added to the
+ * FO. They are specific to their location within the FO and have to be
+ * processed accordingly (ie. at the start or end of the page).
+ *
  */
 public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
-     * 2400 dpi renderer resolution
+     * The default afp renderer output resolution
      */
-    protected static final int DPI_240_RESOLUTION = 240;
-
-    /**
-     * 14400 dpi renderer resolution
-     */
-    protected static final int DPI_1440_RESOLUTION = 1440;
+    private static final int DEFAULT_DPI_RESOLUTION = 240;
 
     /**
      * The afp factor for calculating resolutions (e.g. 72000/240 = 300)
      */
-    protected static final int DPI_CONVERSION_FACTOR = 72000;
+    private static final int DPI_CONVERSION_FACTOR = 72000;
 
     /**
      * The afp data stream object responsible for generating afp data
@@ -153,10 +165,45 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     private AFPDataStream afpDataStream = null;
 
     /**
+     * The map of afp root extensions
+     */
+    // UNUSED
+    // private HashMap rootExtensionMap = null;
+    /**
      * The map of page segments
      */
-    private Map pageSegmentsMap = null;
+    private HashMap pageSegmentsMap = null;
 
+    /**
+     * The fonts on the current page
+     */
+    private HashMap currentPageFonts = null;
+
+    /**
+     * The current color object
+     */
+    private Color currentColor = null;
+
+    /**
+     * The page font number counter, used to determine the next font reference
+     */
+    private int pageFontCounter = 0;
+
+    /**
+     * The current font family
+     */
+    // UNUSED
+    // private String currentFontFamily = "";
+    /**
+     * The current font size
+     */
+    private int currentFontSize = 0;
+
+    /**
+     * The Options to be set on the AFPRenderer
+     */
+    // UNUSED
+    // private Map afpOptions = null;
     /**
      * The page width
      */
@@ -168,6 +215,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     private int pageHeight = 0;
 
     /**
+     * The current page sequence id
+     */
+    // UNUSED
+    // private String pageSequenceId = null;
+    /**
      * The portrait rotation
      */
     private int portraitRotation = 0;
@@ -177,6 +229,21 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     private int landscapeRotation = 270;
 
+    /**
+     * The line cache, avoids drawing duplicate lines in tables.
+     */
+    // UNUSED
+    // private HashSet lineCache = null;
+    /**
+     * The current x position for line drawing
+     */
+    // UNUSED
+    // private float x;
+    /**
+     * The current y position for line drawing
+     */
+    // UNUSED
+    // private float y;
     /**
      * The map of saved incomplete pages
      */
@@ -195,10 +262,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * The output resolution
      */
-    private int resolution = DPI_240_RESOLUTION;
-
-    /** drawing state */
-    protected AFPState currentState = null;
+    private int resolution = DEFAULT_DPI_RESOLUTION;
 
     /**
      * Constructor for AFPRenderer.
@@ -209,60 +273,57 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Set up the font info
-     * 
-     * @param inFontInfo
-     *            font info to set up
+     *
+     * @param inFontInfo  font info to set up
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
         int num = 1;
-        if (this.fontList != null && this.fontList.size() > 0) {
-            for (Iterator it = this.fontList.iterator(); it.hasNext();) {
-                AFPFontInfo afi = (AFPFontInfo) it.next();
-                AFPFont bf = (AFPFont) afi.getAFPFont();
-                for (Iterator it2 = afi.getFontTriplets().iterator(); it2
-                        .hasNext();) {
-                    FontTriplet ft = (FontTriplet) it2.next();
-                    this.fontInfo.addFontProperties("F" + num, ft.getName(), ft
-                            .getStyle(), ft.getWeight());
+        if (super.embedFontInfoList != null && super.embedFontInfoList.size() > 0) {
+            for (Iterator it = super.embedFontInfoList.iterator(); it.hasNext();) {
+                AFPFontInfo afi = (AFPFontInfo)it.next();
+                AFPFont bf = (AFPFont)afi.getAFPFont();
+                for (Iterator it2 = afi.getFontTriplets().iterator(); it2.hasNext();) {
+                    FontTriplet ft = (FontTriplet)it2.next();
+                    this.fontInfo.addFontProperties("F" + num, ft.getName()
+                                                    , ft.getStyle(), ft.getWeight());
                     this.fontInfo.addMetrics("F" + num, bf);
                     num++;
                 }
             }
         } else {
-            log.warn("No AFP fonts configured - using default setup");
+            AFPEventProducer eventProducer = AFPEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.warnDefaultFontSetup(this);
         }
         if (this.fontInfo.fontLookup("sans-serif", "normal", 400) == null) {
-            CharacterSet cs = new FopCharacterSet("T1V10500", "Cp500",
-                    "CZH200  ", 1, new Helvetica());
+            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZH200  ",
+                    1, new Helvetica());
             AFPFont bf = new OutlineFont("Helvetica", cs);
-            this.fontInfo.addFontProperties("F" + num, "sans-serif", "normal",
-                    400);
+            this.fontInfo.addFontProperties("F" + num, "sans-serif", "normal", 400);
             this.fontInfo.addMetrics("F" + num, bf);
             num++;
         }
         if (this.fontInfo.fontLookup("serif", "normal", 400) == null) {
-            CharacterSet cs = new FopCharacterSet("T1V10500", "Cp500",
-                    "CZN200  ", 1, new TimesRoman());
+            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZN200  ",
+                    1, new TimesRoman());
             AFPFont bf = new OutlineFont("Helvetica", cs);
             this.fontInfo.addFontProperties("F" + num, "serif", "normal", 400);
             this.fontInfo.addMetrics("F" + num, bf);
             num++;
         }
         if (this.fontInfo.fontLookup("monospace", "normal", 400) == null) {
-            CharacterSet cs = new FopCharacterSet("T1V10500", "Cp500",
-                    "CZ4200  ", 1, new Courier());
+            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZ4200  ",
+                    1, new Courier());
             AFPFont bf = new OutlineFont("Helvetica", cs);
-            this.fontInfo.addFontProperties("F" + num, "monospace", "normal",
-                    400);
+            this.fontInfo.addFontProperties("F" + num, "monospace", "normal", 400);
             this.fontInfo.addMetrics("F" + num, bf);
             num++;
         }
         if (this.fontInfo.fontLookup("any", "normal", 400) == null) {
-            FontTriplet ft = this.fontInfo.fontLookup("sans-serif", "normal",
-                    400);
-            this.fontInfo.addFontProperties(this.fontInfo
-                    .getInternalFontKey(ft), "any", "normal", 400);
+            FontTriplet ft = this.fontInfo.fontLookup("sans-serif", "normal", 400);
+            this.fontInfo.addFontProperties(
+                    this.fontInfo.getInternalFontKey(ft), "any", "normal", 400);
         }
     }
 
@@ -277,49 +338,57 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * {@inheritDoc}
      */
     public void startRenderer(OutputStream outputStream) throws IOException {
-        this.currentState = new AFPState();
-        this.afpDataStream = new AFPDataStream();
-        this.afpDataStream.setPortraitRotation(portraitRotation);
-        this.afpDataStream.setLandscapeRotation(landscapeRotation);
-        this.afpDataStream.startDocument(outputStream);
+        currentPageFonts = new HashMap();
+        currentColor = new Color(255, 255, 255);
+        afpDataStream = new AFPDataStream();
+        afpDataStream.setPortraitRotation(portraitRotation);
+        afpDataStream.setLandscapeRotation(landscapeRotation);
+        afpDataStream.startDocument(outputStream);
     }
 
     /**
      * {@inheritDoc}
      */
     public void stopRenderer() throws IOException {
-        this.afpDataStream.endDocument();
+        afpDataStream.endDocument();
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean supportsOutOfOrder() {
-        // return false;
+        //return false;
         return true;
     }
 
     /**
-     * Prepare a page for rendering. This is called if the renderer supports out
-     * of order rendering. The renderer should prepare the page so that a page
-     * further on in the set of pages can be rendered. The body of the page
-     * should not be rendered. The page will be rendered at a later time by the
-     * call to render page.
-     * 
+     * Prepare a page for rendering. This is called if the renderer supports
+     * out of order rendering. The renderer should prepare the page so that a
+     * page further on in the set of pages can be rendered. The body of the
+     * page should not be rendered. The page will be rendered at a later time
+     * by the call to render page.
+     *
      * {@inheritDoc}
      */
     public void preparePage(PageViewport page) {
+        // initializeRootExtensions(page);
 
-        this.currentState.reset();
+        // this.currentFontFamily = "";
+        this.currentFontSize = 0;
+        this.pageFontCounter = 0;
+        this.currentPageFonts.clear();
+        // this.lineCache = new HashSet();
 
         Rectangle2D bounds = page.getViewArea();
 
         this.pageWidth = mpts2units(bounds.getWidth());
         this.pageHeight = mpts2units(bounds.getHeight());
 
+        // renderPageGroupExtensions(page);
+
         final int pageRotation = 0;
         this.afpDataStream.startPage(pageWidth, pageHeight, pageRotation,
-                this.resolution, this.resolution);
+                getResolution(), getResolution());
 
         renderPageObjectExtensions(page);
 
@@ -357,15 +426,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Renders a region viewport.
-     * <p>
-     * 
-     * The region may clip the area and it establishes a position from where the
-     * region is placed.
-     * </p>
-     * 
-     * @param port
-     *            The region viewport to be rendered
+     * Renders a region viewport. <p>
+     *
+     * The region may clip the area and it establishes a position from where
+     * the region is placed.</p>
+     *
+     * @param port  The region viewport to be rendered
      */
     public void renderRegionViewport(RegionViewport port) {
         if (port != null) {
@@ -380,9 +446,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             handleRegionTraits(port);
 
             /*
-             * _afpDataStream.startOverlay(mpts2units(view.getX()) ,
-             * mpts2units(view.getY()) , mpts2units(view.getWidth()) ,
-             * mpts2units(view.getHeight()) , rotation);
+            _afpDataStream.startOverlay(mpts2units(view.getX())
+                , mpts2units(view.getY())
+                , mpts2units(view.getWidth())
+                , mpts2units(view.getHeight())
+                , rotation);
              */
 
             pushViewPortPos(new ViewPortPos(view, regionReference.getCTM()));
@@ -393,7 +461,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 renderRegion(regionReference);
             }
             /*
-             * _afpDataStream.endOverlay();
+            _afpDataStream.endOverlay();
              */
             popViewPortPos();
         }
@@ -408,65 +476,77 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         // save positions
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
-        // String saveFontName = currentFontName;
 
         CTM ctm = bv.getCTM();
         int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-        float x, y;
-        x = (float) (bv.getXOffset() + containingIPPosition) / 1000f;
-        y = (float) (bv.getYOffset() + containingBPPosition) / 1000f;
-        // This is the content-rect
-        float width = (float) bv.getIPD() / 1000f;
-        float height = (float) bv.getBPD() / 1000f;
+        //This is the content-rect
+        float width = (float)bv.getIPD() / 1000f;
+        float height = (float)bv.getBPD() / 1000f;
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
 
-            currentIPPosition = bv.getXOffset();
-            currentBPPosition = bv.getYOffset();
-
-            // For FIXED, we need to break out of the current viewports to the
-            // one established by the page. We save the state stack for
-            // restoration
-            // after the block-container has been painted. See below.
+            //For FIXED, we need to break out of the current viewports to the
+            //one established by the page. We save the state stack for restoration
+            //after the block-container has been painted. See below.
             List breakOutList = null;
             if (bv.getPositioning() == Block.FIXED) {
                 breakOutList = breakOutOfStateStack();
             }
 
-            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
-            ctm = tempctm.multiply(ctm);
+            AffineTransform positionTransform = new AffineTransform();
+            positionTransform.translate(bv.getXOffset(), bv.getYOffset());
 
-            // Adjust for spaces (from margin or indirectly by start-indent etc.
-            x += bv.getSpaceStart() / 1000f;
-            currentIPPosition += bv.getSpaceStart();
+            //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
+            positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
 
-            y += bv.getSpaceBefore() / 1000f;
-            currentBPPosition += bv.getSpaceBefore();
+            //skipping fox:transform here
 
-            float bpwidth = (borderPaddingStart + bv
-                    .getBorderAndPaddingWidthEnd()) / 1000f;
-            float bpheight = (borderPaddingBefore + bv
-                    .getBorderAndPaddingWidthAfter()) / 1000f;
+            //saveGraphicsState();
+            //Viewport position
+            //concatenateTransformationMatrix(mptToPt(positionTransform));
 
-            drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
+            //Background and borders
+            float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
+            float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
+            Point2D ptSrc = new Point(0, 0);
+            Point2D ptDst = positionTransform.transform(ptSrc, null);
+            Rectangle2D borderRect = new Rectangle2D.Double(ptDst.getX(), ptDst.getY(),
+                    1000 * (width + bpwidth), 1000 * (height + bpheight));
+            pushViewPortPos(new ViewPortPos(borderRect, new CTM(positionTransform)));
+            drawBackAndBorders(bv, 0, 0, width + bpwidth, height + bpheight);
 
-            // Now adjust for border/padding
-            currentIPPosition += borderPaddingStart;
-            currentBPPosition += borderPaddingBefore;
+            //Shift to content rectangle after border painting
+            AffineTransform contentRectTransform = new AffineTransform();
+            contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
+            //concatenateTransformationMatrix(mptToPt(contentRectTransform));
+            ptSrc = new Point(0, 0);
+            ptDst = contentRectTransform.transform(ptSrc, null);
+            Rectangle2D contentRect = new Rectangle2D.Double(ptDst.getX(), ptDst.getY(),
+                    1000 * width, 1000 * height);
+            pushViewPortPos(new ViewPortPos(contentRect, new CTM(contentRectTransform)));
 
-            Rectangle2D clippingRect = null;
-            clippingRect = new Rectangle(currentIPPosition, currentBPPosition,
-                    bv.getIPD(), bv.getBPD());
+            //Clipping is not supported, yet
+            //Rectangle2D clippingRect = null;
+            //clippingRect = new Rectangle(0, 0, bv.getIPD(), bv.getBPD());
 
-            // startVParea(ctm, clippingRect);
-            pushViewPortPos(new ViewPortPos(clippingRect, ctm));
+            //saveGraphicsState();
+            //Set up coordinate system for content rectangle
+            AffineTransform contentTransform = ctm.toAffineTransform();
+            //concatenateTransformationMatrix(mptToPt(contentTransform));
+            contentRect = new Rectangle2D.Double(0, 0, 1000 * width, 1000 * height);
+            pushViewPortPos(new ViewPortPos(contentRect, new CTM(contentTransform)));
+
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
-            // endVParea();
+
             popViewPortPos();
+            popViewPortPos();
+            //restoreGraphicsState();
+            popViewPortPos();
+            //restoreGraphicsState();
 
             if (breakOutList != null) {
                 restoreStateStackAfterBreakOut(breakOutList);
@@ -478,37 +558,42 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
             currentBPPosition += bv.getSpaceBefore();
 
-            // borders and background in the old coordinate system
+            //borders and background in the old coordinate system
             handleBlockTraits(bv);
 
-            // Advance to start of content area
+            //Advance to start of content area
             currentIPPosition += bv.getStartIndent();
 
             CTM tempctm = new CTM(containingIPPosition, currentBPPosition);
             ctm = tempctm.multiply(ctm);
 
-            // Now adjust for border/padding
+            //Now adjust for border/padding
             currentBPPosition += borderPaddingBefore;
 
             Rectangle2D clippingRect = null;
             clippingRect = new Rectangle(currentIPPosition, currentBPPosition,
                     bv.getIPD(), bv.getBPD());
 
-            // startVParea(ctm, clippingRect);
+            //startVParea(ctm, clippingRect);
             pushViewPortPos(new ViewPortPos(clippingRect, ctm));
 
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
-            // endVParea();
+            //endVParea();
             popViewPortPos();
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
 
-            currentBPPosition += (int) (bv.getAllocBPD());
+            currentBPPosition += (int)(bv.getAllocBPD());
         }
-        // currentFontName = saveFontName;
+    }
+
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        //Not used here since AFPRenderer defines its own renderBlockViewport() method.
+        throw new UnsupportedOperationException("NYI");
     }
 
     /**
@@ -516,7 +601,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void renderPage(PageViewport pageViewport) {
 
-        currentState.reset();
+        // initializeRootExtensions(page);
+
+        // this.currentFontFamily = "";
+        this.currentFontSize = 0;
+        this.pageFontCounter = 0;
+        this.currentPageFonts.clear();
+        // this.lineCache = new HashSet();
 
         Rectangle2D bounds = pageViewport.getViewArea();
 
@@ -525,14 +616,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         if (pages != null && pages.containsKey(pageViewport)) {
 
-            this.afpDataStream.restorePage((PageObject) pages
-                    .remove(pageViewport));
+            this.afpDataStream.restorePage((PageObject) pages.remove(pageViewport));
 
         } else {
+            // renderPageGroupExtensions(page);
 
             final int pageRotation = 0;
             this.afpDataStream.startPage(pageWidth, pageHeight, pageRotation,
-                    this.resolution, this.resolution);
+                    getResolution(), getResolution());
 
             renderPageObjectExtensions(pageViewport);
 
@@ -542,7 +633,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         renderPageAreas(pageViewport.getPage());
 
-        this.afpDataStream.addFontsToCurrentPage(currentState.getPageFonts());
+        Iterator i = currentPageFonts.values().iterator();
+        while (i.hasNext()) {
+            AFPFontAttributes afpFontAttributes = (AFPFontAttributes) i.next();
+
+            afpDataStream.createFont(
+                (byte)afpFontAttributes.getFontReference(),
+                afpFontAttributes.getFont(),
+                afpFontAttributes.getPointSize());
+
+        }
 
         try {
             afpDataStream.endPage();
@@ -594,12 +694,22 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void fillRect(float x, float y, float width, float height) {
         /*
-         * afpDataStream.createShading( pts2units(x), pts2units(y),
-         * pts2units(width), pts2units(height), currentColor.getRed(),
-         * currentColor.getGreen(), currentColor.getBlue());
+        afpDataStream.createShading(
+            pts2units(x),
+            pts2units(y),
+            pts2units(width),
+            pts2units(height),
+            currentColor.getRed(),
+            currentColor.getGreen(),
+            currentColor.getBlue());
          */
-        afpDataStream.createLine(pts2units(x), pts2units(y), pts2units(x
-                + width), pts2units(y), pts2units(height), currentState.getColor());
+        afpDataStream.createLine(
+            pts2units(x),
+            pts2units(y),
+            pts2units(x + width),
+            pts2units(y),
+            pts2units(height),
+            currentColor);
     }
 
     /**
@@ -614,141 +724,313 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             return;
         }
         switch (style) {
-        case Constants.EN_DOUBLE:
-            if (horz) {
-                float h3 = h / 3;
-                float ym1 = y1;
-                float ym2 = ym1 + h3 + h3;
-                afpDataStream.createLine(pts2units(x1), pts2units(ym1),
-                        pts2units(x2), pts2units(ym1), pts2units(h3), col);
-                afpDataStream.createLine(pts2units(x1), pts2units(ym2),
-                        pts2units(x2), pts2units(ym2), pts2units(h3), col);
-            } else {
-                float w3 = w / 3;
-                float xm1 = x1;
-                float xm2 = xm1 + w3 + w3;
-                afpDataStream.createLine(pts2units(xm1), pts2units(y1),
-                        pts2units(xm1), pts2units(y2), pts2units(w3), col);
-                afpDataStream.createLine(pts2units(xm2), pts2units(y1),
-                        pts2units(xm2), pts2units(y2), pts2units(w3), col);
-            }
-            break;
-        case Constants.EN_DASHED:
-            if (horz) {
-                float w2 = 2 * h;
-                while (x1 + w2 < x2) {
-                    afpDataStream.createLine(pts2units(x1), pts2units(y1),
-                            pts2units(x1 + w2), pts2units(y1), pts2units(h),
-                            col);
-                    x1 += 2 * w2;
+            case Constants.EN_DOUBLE:
+                if (horz) {
+                    float h3 = h / 3;
+                    float ym1 = y1;
+                    float ym2 = ym1 + h3 + h3;
+                    afpDataStream.createLine(
+                        pts2units(x1),
+                        pts2units(ym1),
+                        pts2units(x2),
+                        pts2units(ym1),
+                        pts2units(h3),
+                        col
+                    );
+                    afpDataStream.createLine(
+                        pts2units(x1),
+                        pts2units(ym2),
+                        pts2units(x2),
+                        pts2units(ym2),
+                        pts2units(h3),
+                        col
+                    );
+                } else {
+                    float w3 = w / 3;
+                    float xm1 = x1;
+                    float xm2 = xm1 + w3 + w3;
+                    afpDataStream.createLine(
+                        pts2units(xm1),
+                        pts2units(y1),
+                        pts2units(xm1),
+                        pts2units(y2),
+                        pts2units(w3),
+                        col
+                    );
+                    afpDataStream.createLine(
+                        pts2units(xm2),
+                        pts2units(y1),
+                        pts2units(xm2),
+                        pts2units(y2),
+                        pts2units(w3),
+                        col
+                    );
                 }
-            } else {
-                float h2 = 2 * w;
-                while (y1 + h2 < y2) {
-                    afpDataStream.createLine(pts2units(x1), pts2units(y1),
-                            pts2units(x1), pts2units(y1 + h2), pts2units(w),
-                            col);
-                    y1 += 2 * h2;
+                break;
+            case Constants.EN_DASHED:
+                if (horz) {
+                    float w2 = 2 * h;
+                    while (x1 + w2 < x2) {
+                        afpDataStream.createLine(
+                            pts2units(x1),
+                            pts2units(y1),
+                            pts2units(x1 + w2),
+                            pts2units(y1),
+                            pts2units(h),
+                            col
+                        );
+                        x1 += 2 * w2;
+                    }
+                } else {
+                    float h2 = 2 * w;
+                    while (y1 + h2 < y2) {
+                        afpDataStream.createLine(
+                            pts2units(x1),
+                            pts2units(y1),
+                            pts2units(x1),
+                            pts2units(y1 + h2),
+                            pts2units(w),
+                            col
+                        );
+                        y1 += 2 * h2;
+                    }
                 }
-            }
-            break;
-        case Constants.EN_DOTTED:
-            if (horz) {
-                while (x1 + h < x2) {
-                    afpDataStream
-                            .createLine(pts2units(x1), pts2units(y1),
-                                    pts2units(x1 + h), pts2units(y1),
-                                    pts2units(h), col);
-                    x1 += 2 * h;
+                break;
+            case Constants.EN_DOTTED:
+                if (horz) {
+                    while (x1 + h < x2) {
+                        afpDataStream.createLine(
+                            pts2units(x1),
+                            pts2units(y1),
+                            pts2units(x1 + h),
+                            pts2units(y1),
+                            pts2units(h),
+                            col
+                        );
+                        x1 += 2 * h;
+                    }
+                } else {
+                    while (y1 + w < y2) {
+                        afpDataStream.createLine(
+                            pts2units(x1),
+                            pts2units(y1),
+                            pts2units(x1),
+                            pts2units(y1 + w),
+                            pts2units(w),
+                            col
+                        );
+                        y1 += 2 * w;
+                    }
                 }
-            } else {
-                while (y1 + w < y2) {
-                    afpDataStream
-                            .createLine(pts2units(x1), pts2units(y1),
-                                    pts2units(x1), pts2units(y1 + w),
-                                    pts2units(w), col);
-                    y1 += 2 * w;
+                break;
+            case Constants.EN_GROOVE:
+            case Constants.EN_RIDGE:
+            {
+                float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
+                if (horz) {
+                    Color uppercol = lightenColor(col, -colFactor);
+                    Color lowercol = lightenColor(col, colFactor);
+                    float h3 = h / 3;
+                    float ym1 = y1;
+                    afpDataStream.createLine(
+                        pts2units(x1),
+                        pts2units(ym1),
+                        pts2units(x2),
+                        pts2units(ym1),
+                        pts2units(h3),
+                        uppercol
+                    );
+                    afpDataStream.createLine(
+                        pts2units(x1),
+                        pts2units(ym1 + h3),
+                        pts2units(x2),
+                        pts2units(ym1 + h3),
+                        pts2units(h3),
+                        col
+                    );
+                    afpDataStream.createLine(
+                        pts2units(x1),
+                        pts2units(ym1 + h3 + h3),
+                        pts2units(x2),
+                        pts2units(ym1 + h3 + h3),
+                        pts2units(h3),
+                        lowercol
+                    );
+                } else {
+                    Color leftcol = lightenColor(col, -colFactor);
+                    Color rightcol = lightenColor(col, colFactor);
+                    float w3 = w / 3;
+                    float xm1 = x1 + (w3 / 2);
+                    afpDataStream.createLine(
+                        pts2units(xm1),
+                        pts2units(y1),
+                        pts2units(xm1),
+                        pts2units(y2),
+                        pts2units(w3),
+                        leftcol
+                    );
+                    afpDataStream.createLine(
+                        pts2units(xm1 + w3),
+                        pts2units(y1),
+                        pts2units(xm1 + w3),
+                        pts2units(y2),
+                        pts2units(w3),
+                        col
+                    );
+                    afpDataStream.createLine(
+                        pts2units(xm1 + w3 + w3),
+                        pts2units(y1),
+                        pts2units(xm1 + w3 + w3),
+                        pts2units(y2),
+                        pts2units(w3),
+                        rightcol
+                    );
                 }
+                break;
             }
-            break;
-        case Constants.EN_GROOVE:
-        case Constants.EN_RIDGE: {
-            float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
-            if (horz) {
-                Color uppercol = lightenColor(col, -colFactor);
-                Color lowercol = lightenColor(col, colFactor);
-                float h3 = h / 3;
-                float ym1 = y1;
-                afpDataStream.createLine(pts2units(x1), pts2units(ym1),
-                        pts2units(x2), pts2units(ym1), pts2units(h3), uppercol);
-                afpDataStream.createLine(pts2units(x1), pts2units(ym1 + h3),
-                        pts2units(x2), pts2units(ym1 + h3), pts2units(h3), col);
-                afpDataStream.createLine(pts2units(x1),
-                        pts2units(ym1 + h3 + h3), pts2units(x2), pts2units(ym1
-                                + h3 + h3), pts2units(h3), lowercol);
-            } else {
-                Color leftcol = lightenColor(col, -colFactor);
-                Color rightcol = lightenColor(col, colFactor);
-                float w3 = w / 3;
-                float xm1 = x1 + (w3 / 2);
-                afpDataStream.createLine(pts2units(xm1), pts2units(y1),
-                        pts2units(xm1), pts2units(y2), pts2units(w3), leftcol);
-                afpDataStream.createLine(pts2units(xm1 + w3), pts2units(y1),
-                        pts2units(xm1 + w3), pts2units(y2), pts2units(w3), col);
-                afpDataStream.createLine(pts2units(xm1 + w3 + w3),
-                        pts2units(y1), pts2units(xm1 + w3 + w3), pts2units(y2),
-                        pts2units(w3), rightcol);
-            }
-            break;
-        }
-        case Constants.EN_HIDDEN:
-            break;
-        case Constants.EN_INSET:
-        case Constants.EN_OUTSET:
-        default:
-            afpDataStream.createLine(pts2units(x1), pts2units(y1),
-                    pts2units(horz ? x2 : x1), pts2units(horz ? y1 : y2),
-                    pts2units(Math.abs(horz ? (y2 - y1) : (x2 - x1))), col);
+            case Constants.EN_HIDDEN:
+                break;
+            case Constants.EN_INSET:
+            case Constants.EN_OUTSET:
+            default:
+                afpDataStream.createLine(
+                    pts2units(x1),
+                    pts2units(y1),
+                    pts2units(horz ? x2 : x1),
+                    pts2units(horz ? y1 : y2),
+                    pts2units(Math.abs(horz ? (y2 - y1) : (x2 - x1))),
+                    col
+                );
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    protected RendererContext createRendererContext(int x, int y, int width,
-            int height, Map foreignAttributes) {
+    protected RendererContext createRendererContext(int x, int y, int width, int height,
+            Map foreignAttributes) {
         RendererContext context;
-        context = super.createRendererContext(x, y, width, height,
-                foreignAttributes);
+        context = super.createRendererContext(x, y, width, height, foreignAttributes);
         context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE,
-                new Boolean(!this.colorImages));
-        context.setProperty(AFPRendererContextConstants.AFP_FONT_INFO,
-                this.fontInfo);
-        context.setProperty(AFPRendererContextConstants.AFP_RESOLUTION,
-                new Integer(this.resolution));
-        context.setProperty(AFPRendererContextConstants.AFP_BITS_PER_PIXEL,
-                new Integer(this.bitsPerPixel));
-        context.setProperty(AFPRendererContextConstants.AFP_DATASTREAM,
-                this.afpDataStream);
-        context.setProperty(AFPRendererContextConstants.AFP_STATE,
-                this.currentState);
+                Boolean.valueOf(!this.colorImages));
         return context;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[]
+                                                     {ImageFlavor.RAW_CCITTFAX,
+                                                      ImageFlavor.GRAPHICS2D,
+                                                      ImageFlavor.BUFFERED_IMAGE,
+                                                      ImageFlavor.RENDERED_IMAGE,
+                                                      ImageFlavor.XML_DOM};
+
+    /** {@inheritDoc} */
+    public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+        uri = URISpecification.getURL(uri);
+        Rectangle posInt = new Rectangle(
+                (int)pos.getX(),
+                (int)pos.getY(),
+                (int)pos.getWidth(),
+                (int)pos.getHeight());
+        Point origin = new Point(currentIPPosition, currentBPPosition);
+        int x = origin.x + posInt.x;
+        int y = origin.y + posInt.y;
+
         String name = null;
         if (pageSegmentsMap != null) {
-            name = (String) pageSegmentsMap.get(url);
+            name = (String) pageSegmentsMap.get(uri);
         }
         if (name != null) {
-            int x = mpts2units(pos.getX() + currentIPPosition);
-            int y = mpts2units(pos.getY() + currentBPPosition);
-            afpDataStream.createIncludePageSegment(name, x, y);
+            afpDataStream.createIncludePageSegment(name, mpts2units(x), mpts2units(y));
         } else {
-            url = ImageFactory.getURL(url);
+            ImageManager manager = getUserAgent().getFactory().getImageManager();
+            ImageInfo info = null;
+            try {
+                ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+                info = manager.getImageInfo(uri, sessionContext);
+
+                //Only now fully load/prepare the image
+                Map hints = ImageUtil.getDefaultHints(sessionContext);
+                org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
+                        info, FLAVORS, hints, sessionContext);
+
+                //...and process the image
+                if (img instanceof ImageGraphics2D) {
+                    ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                    RendererContext context = createRendererContext(
+                            posInt.x, posInt.y,
+                            posInt.width, posInt.height, foreignAttributes);
+                    getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                            context,
+                            origin.x + posInt.x, origin.y + posInt.y,
+                            posInt.width, posInt.height);
+                } else if (img instanceof ImageRendered) {
+                    ImageRendered imgRend = (ImageRendered)img;
+                    RenderedImage ri = imgRend.getRenderedImage();
+
+                    drawBufferedImage(ri, getResolution(),
+                            posInt.x + currentIPPosition,
+                            posInt.y + currentBPPosition,
+                            posInt.width,
+                            posInt.height);
+                } else if (img instanceof ImageRawCCITTFax) {
+                    ImageRawCCITTFax ccitt = (ImageRawCCITTFax)img;
+                    int afpx = mpts2units(posInt.x + currentIPPosition);
+                    int afpy = mpts2units(posInt.y + currentBPPosition);
+                    int afpw = mpts2units(posInt.getWidth());
+                    int afph = mpts2units(posInt.getHeight());
+                    int afpres = getResolution();
+                    ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw, afph,
+                            afpres, afpres);
+                    io.setImageParameters(
+                            (int) (ccitt.getSize().getDpiHorizontal() * 10),
+                            (int) (ccitt.getSize().getDpiVertical() * 10),
+                            ccitt.getSize().getWidthPx(),
+                            ccitt.getSize().getHeightPx());
+                    int compression = ccitt.getCompression();
+                    switch (compression) {
+                    case TIFFImage.COMP_FAX_G3_1D :
+                        io.setImageEncoding((byte) 0x80);
+                        break;
+                    case TIFFImage.COMP_FAX_G3_2D :
+                        io.setImageEncoding((byte) 0x81);
+                        break;
+                    case TIFFImage.COMP_FAX_G4_2D :
+                        io.setImageEncoding((byte) 0x82);
+                        break;
+                    default:
+                        throw new IllegalStateException(
+                                "Invalid compression scheme: " + compression);
+                    }
+                    InputStream in = ccitt.createInputStream();
+                    try {
+                        byte[] buf = IOUtils.toByteArray(in);
+                        io.setImageData(buf);
+                    } finally {
+                        IOUtils.closeQuietly(in);
+                    }
+                } else if (img instanceof ImageXMLDOM) {
+                    ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                    renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                            pos, foreignAttributes);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported image type: " + img);
+                }
+
+            } catch (ImageException ie) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+            } catch (FileNotFoundException fe) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
+            } catch (IOException ioe) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
+            }
+
+            /*
             ImageFactory fact = userAgent.getFactory().getImageFactory();
             FopImage fopimage = fact.getImage(url, userAgent);
             if (fopimage == null) {
@@ -768,6 +1050,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 renderDocument(doc, ns, pos, foreignAttributes);
             } else if (MimeConstants.MIME_EPS.equals(mime)) {
                 log.warn("EPS images are not supported by this renderer");
+                */
                 /*
                  * } else if (MimeConstants.MIME_JPEG.equals(mime)) { if
                  * (!fopimage.load(FopImage.ORIGINAL_DATA)) { return; }
@@ -785,48 +1068,49 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                  * io.setImageIDESize((byte)fopimage.getBitsPerPixel());
                  * io.setImageEncoding((byte)0x83);
                  * io.setImageData(fopimage.getRessourceBytes());
-                 */
+                 *//*
             } else if (MimeConstants.MIME_TIFF.equals(mime)
-                    && fopimage instanceof TIFFImage) {
+                        && fopimage instanceof TIFFImage) {
                 TIFFImage tiffImage = (TIFFImage) fopimage;
                 int x = mpts2units(pos.getX() + currentIPPosition);
                 int y = mpts2units(pos.getY() + currentBPPosition);
                 int w = mpts2units(pos.getWidth());
                 int h = mpts2units(pos.getHeight());
-                int res = getResolution();
-                ImageObject io = afpDataStream.getImageObject(x, y, w, h, res,
-                        res);
+                ImageObject io = afpDataStream.getImageObject(x, y, w, h,
+                        getResolution(), getResolution());
                 io.setImageParameters(
-                        (int) (fopimage.getHorizontalResolution() * 10),
-                        (int) (fopimage.getVerticalResolution() * 10), fopimage
-                                .getWidth(), fopimage.getHeight());
+                    (int)(fopimage.getHorizontalResolution() * 10),
+                    (int)(fopimage.getVerticalResolution() * 10),
+                    fopimage.getWidth(),
+                    fopimage.getHeight()
+                );
                 if (tiffImage.getStripCount() == 1) {
                     int comp = tiffImage.getCompression();
                     if (comp == 3) {
                         if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
                             return;
                         }
-                        io.setImageEncoding((byte) 0x81);
+                        io.setImageEncoding((byte)0x81);
                         io.setImageData(fopimage.getRessourceBytes());
                     } else if (comp == 4) {
                         if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
                             return;
                         }
-                        io.setImageEncoding((byte) 0x82);
+                        io.setImageEncoding((byte)0x82);
                         io.setImageData(fopimage.getRessourceBytes());
                     } else {
                         if (!fopimage.load(FopImage.BITMAP)) {
                             return;
                         }
                         convertToGrayScaleImage(io, fopimage.getBitmaps(),
-                                fopimage.getWidth(), fopimage.getHeight(), this.bitsPerPixel);
+                                fopimage.getWidth(), fopimage.getHeight());
                     }
                 } else {
                     if (!fopimage.load(FopImage.BITMAP)) {
                         return;
                     }
-                    convertToGrayScaleImage(io, fopimage.getBitmaps(), fopimage
-                            .getWidth(), fopimage.getHeight(), this.bitsPerPixel);
+                    convertToGrayScaleImage(io, fopimage.getBitmaps(),
+                            fopimage.getWidth(), fopimage.getHeight());
                 }
             } else {
                 if (!fopimage.load(FopImage.BITMAP)) {
@@ -838,57 +1122,45 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 int y = mpts2units(pos.getY() + currentBPPosition);
                 int w = mpts2units(pos.getWidth());
                 int h = mpts2units(pos.getHeight());
-                int res = getResolution();
-                ImageObject io = afpDataStream.getImageObject(x, y, w, h, res,
-                        res);
+                ImageObject io = afpDataStream.getImageObject(x, y, w, h,
+                        getResolution(), getResolution());
                 io.setImageParameters(
-                        (int) (fopimage.getHorizontalResolution() * 10),
-                        (int) (fopimage.getVerticalResolution() * 10), fopimage
-                                .getWidth(), fopimage.getHeight());
+                    (int)(fopimage.getHorizontalResolution() * 10),
+                    (int)(fopimage.getVerticalResolution() * 10),
+                    fopimage.getWidth(),
+                    fopimage.getHeight()
+                );
                 if (colorImages) {
-                    io.setImageIDESize((byte) 24);
+                    io.setImageIDESize((byte)24);
                     io.setImageData(fopimage.getBitmaps());
                 } else {
-                    convertToGrayScaleImage(io, fopimage.getBitmaps(), fopimage
-                            .getWidth(), fopimage.getHeight(), this.bitsPerPixel);
+                    convertToGrayScaleImage(io, fopimage.getBitmaps(),
+                            fopimage.getWidth(), fopimage.getHeight());
                 }
-            }
+            }*/
         }
     }
 
     /**
-     * Writes a BufferedImage to an OutputStream as raw sRGB bitmaps.
+     * Writes a RenderedImage to an OutputStream as raw sRGB bitmaps.
      * 
-     * @param img
-     *            the BufferedImage
+     * @param image
+     *            the RenderedImage
      * @param out
      *            the OutputStream
      * @throws IOException
      *             In case of an I/O error.
      */
-    public static void writeImage(BufferedImage img, OutputStream out)
+    public static void writeImage(RenderedImage image, OutputStream out)
             throws IOException {
-        int w = img.getWidth();
-        int h = img.getHeight();
-        int[] tmpMap = img.getRGB(0, 0, w, h, null, 0, w);
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                int p = tmpMap[i * w + j];
-                int r = (p >> 16) & 0xFF;
-                int g = (p >> 8) & 0xFF;
-                int b = (p) & 0xFF;
-                out.write((byte) (r & 0xFF));
-                out.write((byte) (g & 0xFF));
-                out.write((byte) (b & 0xFF));
-            }
-        }
+        ImageEncodingHelper.encodeRenderedImageAsRGB(image, out);
     }
 
     /**
      * Draws a BufferedImage to AFP.
      * 
-     * @param bi
-     *            the BufferedImage
+     * @param image
+     *            the RenderedImage
      * @param imageResolution
      *            the resolution of the BufferedImage
      * @param x
@@ -900,7 +1172,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * @param h
      *            the height of the viewport (in mpt)
      */
-    public void drawBufferedImage(BufferedImage bi, int imageResolution, int x,
+    public void drawBufferedImage(RenderedImage image, int imageResolution, int x,
             int y, int w, int h) {
         int afpx = mpts2units(x);
         int afpy = mpts2units(y);
@@ -910,42 +1182,45 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         try {
             // Serialize image
-            writeImage(bi, baout);
+            //TODO Eventually, this should be changed not to buffer as this increases the
+            //memory consumption (see PostScript output)
+            writeImage(image, baout);
             byte[] buf = baout.toByteArray();
 
             // Generate image
             ImageObject io = afpDataStream.getImageObject(afpx, afpy, afpw,
                     afph, afpres, afpres);
             io.setImageParameters(imageResolution, imageResolution,
-                    bi.getWidth(), bi.getHeight());
+                    image.getWidth(), image.getHeight());
             if (colorImages) {
                 io.setImageIDESize((byte)24);
                 io.setImageData(buf);
             } else {
                 // TODO Teach it how to handle grayscale BufferedImages directly
                 // because this is pretty inefficient
-                convertToGrayScaleImage(io, buf, bi.getWidth(), bi.getHeight(), this.bitsPerPixel);
+                convertToGrayScaleImage(io, buf,
+                        image.getWidth(), image.getHeight(), this.bitsPerPixel);
             }
         } catch (IOException ioe) {
-            log.error("Error while serializing bitmap: " + ioe.getMessage(),
-                    ioe);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageWritingError(this, ioe);
         }
     }
 
     /**
-     * Establishes a new foreground or fill color. {@inheritDoc}
+     * Establishes a new foreground or fill color.
+     * {@inheritDoc}
      */
     public void updateColor(Color col, boolean fill) {
         if (fill) {
-            currentState.setColor(col);
+            currentColor = col;
         }
     }
 
     /**
      * Restores the state stack after a break out.
-     * 
-     * @param breakOutList
-     *            the state stack to restore.
+     * @param breakOutList the state stack to restore.
      */
     public void restoreStateStackAfterBreakOut(List breakOutList) {
 
@@ -953,7 +1228,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Breaks out of the state stack to handle fixed block-containers.
-     * 
      * @return the saved state stack to recreate later
      */
     public List breakOutOfStateStack() {
@@ -994,58 +1268,77 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
 
-        String internalFontName = getInternalFontNameForArea(text);
-        this.currentState.setFontName(internalFontName);
-        int currentFontSize = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
-        this.currentState.setFontSize(currentFontSize); 
-        AFPFont font = (AFPFont) fontInfo.getFonts().get(internalFontName);
+        String name = getInternalFontNameForArea(text);
+        currentFontSize = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
+        AFPFont tf = (AFPFont) fontInfo.getFonts().get(name);
 
         Color col = (Color) text.getTrait(Trait.COLOR);
 
-        int vsci = mpts2units(font.getWidth(' ', currentFontSize) / 1000
-                + text.getTextWordSpaceAdjust()
-                + text.getTextLetterSpaceAdjust());
+        int vsci = mpts2units(tf.getWidth(' ', currentFontSize) / 1000
+                                + text.getTextWordSpaceAdjust()
+                                + text.getTextLetterSpaceAdjust());
 
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
-        // where previous line area failed to take up entire allocated space
+        //  where previous line area failed to take up entire allocated space
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset()
-                + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
         // Set letterSpacing
-        // float ls = fs.getLetterSpacing() / this.currentFontSize;
+        //float ls = fs.getLetterSpacing() / this.currentFontSize;
 
         String worddata = text.getText();
 
-        AFPPageFonts pageFonts = this.currentState.getPageFonts();
-        AFPFontAttributes afpFontAttributes = pageFonts.registerFont(
-                internalFontName, font, currentFontSize);
+        // Create an AFPFontAttributes object from the current font details
+        AFPFontAttributes afpFontAttributes = new AFPFontAttributes(name, tf, currentFontSize);
+
+        if (!currentPageFonts.containsKey(afpFontAttributes.getFontKey())) {
+            // Font not found on current page, so add the new one
+            pageFontCounter++;
+            afpFontAttributes.setFontReference(pageFontCounter);
+            currentPageFonts.put(
+               afpFontAttributes.getFontKey(),
+               afpFontAttributes);
+
+        } else {
+            // Use the previously stored font attributes
+            afpFontAttributes = (AFPFontAttributes) currentPageFonts.get(
+                    afpFontAttributes.getFontKey());
+        }
 
         // Try and get the encoding to use for the font
         String encoding = null;
 
         try {
-            encoding = font.getCharacterSet(currentFontSize).getEncoding();
+            encoding = tf.getCharacterSet(currentFontSize).getEncoding();
         } catch (Throwable ex) {
             encoding = AFPConstants.EBCIDIC_ENCODING;
-            log.warn("renderText():: Error getting encoding for font "
-                    + " - using default encoding " + encoding);
+            log.warn(
+                "renderText():: Error getting encoding for font '"
+                + tf.getFullName()
+                + "' - using default encoding "
+                + encoding);
         }
 
         try {
-            afpDataStream.createText(afpFontAttributes.getFontReference(),
-                    mpts2units(rx), pts2units(bl), col, vsci, mpts2units(text
-                            .getTextLetterSpaceAdjust()), worddata
-                            .getBytes(encoding));
+            afpDataStream.createText(
+                afpFontAttributes.getFontReference(),
+                mpts2units(rx),
+                mpts2units(bl),
+                col,
+                vsci,
+                mpts2units(text.getTextLetterSpaceAdjust()),
+                worddata.getBytes(encoding));
         } catch (UnsupportedEncodingException usee) {
-            log.error("renderText:: Font " + afpFontAttributes.getFontKey()
-                    + " caused UnsupportedEncodingException");
+            log.error(
+                "renderText:: Font "
+                + afpFontAttributes.getFontKey()
+                + " caused UnsupportedEncodingException");
         }
 
         super.renderText(text);
 
-        renderTextDecoration(font, currentFontSize, text, bl, rx);
+        renderTextDecoration(tf, currentFontSize, text, bl, rx);
     }
 
     /**
@@ -1083,40 +1376,87 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Render leader area. This renders a leader area which is an area with a
-     * rule.
-     * 
-     * @param area
-     *            the leader area to render
+     * Render leader area.
+     * This renders a leader area which is an area with a rule.
+     * @param area the leader area to render
      */
     public void renderLeader(Leader area) {
         renderInlineAreaBackAndBorders(area);
 
         int style = area.getRuleStyle();
-        float startx = (currentIPPosition + area
-                .getBorderAndPaddingWidthStart()) / 1000f;
+        float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
         float starty = (currentBPPosition + area.getOffset()) / 1000f;
-        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() + area
-                .getIPD()) / 1000f;
+        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
+                        + area.getIPD()) / 1000f;
         float ruleThickness = area.getRuleThickness() / 1000f;
-        Color col = (Color) area.getTrait(Trait.COLOR);
+        Color col = (Color)area.getTrait(Trait.COLOR);
 
         switch (style) {
-        case EN_SOLID:
-        case EN_DASHED:
-        case EN_DOUBLE:
-        case EN_DOTTED:
-        case EN_GROOVE:
-        case EN_RIDGE:
-            drawBorderLine(startx, starty, endx, starty + ruleThickness, true,
-                    true, style, col);
-            break;
-        default:
-            throw new UnsupportedOperationException("rule style not supported");
+            case EN_SOLID:
+            case EN_DASHED:
+            case EN_DOUBLE:
+            case EN_DOTTED:
+            case EN_GROOVE:
+            case EN_RIDGE:
+                drawBorderLine(startx, starty, endx, starty + ruleThickness,
+                        true, true, style, col);
+                break;
+            default:
+                throw new UnsupportedOperationException("rule style not supported");
         }
         super.renderLeader(area);
     }
 
+    /**
+     * Sets the AFPRenderer options
+     * @param options   the <code>Map</code> containing the options
+     */
+// UNUSED
+//     public void setOptions(Map options) {
+//
+//         this.afpOptions = options;
+//
+//     }
+    /**
+     * Determines the orientation from the string representation, this method
+     * guarantees to return a value of either 0, 90, 180 or 270.
+     *
+     * @return the orientation
+     */
+// UNUSED
+//     private int getOrientation(String orientationString) {
+//
+//        int orientation = 0;
+//        if (orientationString != null && orientationString.length() > 0) {
+//            try {
+//                orientation = Integer.parseInt(orientationString);
+//            } catch (NumberFormatException nfe) {
+//                log.error("Cannot use orientation of " + orientation
+//                        + " defaulting to zero.");
+//                orientation = 0;
+//            }
+//        } else {
+//            orientation = 0;
+//        }
+//        switch (orientation) {
+//        case 0:
+//            break;
+//        case 90:
+//            break;
+//        case 180:
+//            break;
+//        case 270:
+//            break;
+//        default:
+//            log.error("Cannot use orientation of " + orientation
+//                    + " defaulting to zero.");
+//            orientation = 0;
+//            break;
+//        }
+//
+//        return orientation;
+//
+//    }
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
      * (default), 90, 180, 270.
@@ -1126,13 +1466,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void setPortraitRotation(int rotation) {
 
-        if (rotation == 0 || rotation == 90 || rotation == 180
-                || rotation == 270) {
+        if (rotation == 0
+            || rotation == 90
+            || rotation == 180
+            || rotation == 270) {
             portraitRotation = rotation;
         } else {
-            throw new IllegalArgumentException(
-                    "The portrait rotation must be one"
-                            + " of the values 0, 90, 180, 270");
+            throw new IllegalArgumentException("The portrait rotation must be one"
+                + " of the values 0, 90, 180, 270");
 
         }
 
@@ -1147,13 +1488,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void setLandscapeRotation(int rotation) {
 
-        if (rotation == 0 || rotation == 90 || rotation == 180
-                || rotation == 270) {
+        if (rotation == 0
+            || rotation == 90
+            || rotation == 180
+            || rotation == 270) {
             landscapeRotation = rotation;
         } else {
-            throw new IllegalArgumentException(
-                    "The landscape rotation must be one"
-                            + " of the values 0, 90, 180, 270");
+            throw new IllegalArgumentException("The landscape rotation must be one"
+                + " of the values 0, 90, 180, 270");
         }
 
     }
@@ -1161,7 +1503,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Get the MIME type of the renderer.
      * 
-     * @return The MIME type of the renderer
+     * @return   The MIME type of the renderer
      */
     public String getMimeType() {
         return MimeConstants.MIME_AFP;
@@ -1171,8 +1513,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * Method to render the page extension.
      * <p>
      * 
-     * @param pageViewport
-     *            the page object
+     * @param pageViewport the page object
      */
     private void renderPageObjectExtensions(PageViewport pageViewport) {
 
@@ -1183,7 +1524,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             // the s-p-m
             Iterator i = pageViewport.getExtensionAttachments().iterator();
             while (i.hasNext()) {
-                ExtensionAttachment attachment = (ExtensionAttachment) i.next();
+                ExtensionAttachment attachment = (ExtensionAttachment)i.next();
                 if (AFPPageSetup.CATEGORY.equals(attachment.getCategory())) {
                     AFPPageSetup aps = (AFPPageSetup) attachment;
                     String element = aps.getElementName();
@@ -1222,9 +1563,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Converts FOP mpt measurement to afp measurement units
-     * 
-     * @param mpt
-     *            the millipoints value
+     * @param mpt the millipoints value
      */
     private int mpts2units(int mpt) {
         return mpts2units((double) mpt);
@@ -1232,9 +1571,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Converts FOP pt measurement to afp measurement units
-     * 
-     * @param mpt
-     *            the millipoints value
+     * @param mpt the millipoints value
      */
     private int pts2units(float mpt) {
         return mpts2units(mpt * 1000d);
@@ -1248,8 +1585,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * @return afp measurement unit value
      */
     private int mpts2units(double mpt) {
-        return (int) Math
-                .round(mpt / (DPI_CONVERSION_FACTOR / getResolution()));
+        return (int)Math.round(mpt / (DPI_CONVERSION_FACTOR / getResolution()));
     }
 
     /**
@@ -1422,8 +1758,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     private void popViewPortPos() {
         viewPortPositions.remove(viewPortPositions.size() - 1);
         if (viewPortPositions.size() > 0) {
-            ViewPortPos vpp = (ViewPortPos) viewPortPositions
-                    .get(viewPortPositions.size() - 1);
+            ViewPortPos vpp = (ViewPortPos)viewPortPositions.get(viewPortPositions.size() - 1);
             afpDataStream.setOffsets(vpp.x, vpp.y, vpp.rot);
         }
     }
@@ -1437,9 +1772,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public void setBitsPerPixel(int bitsPerPixel) {
         this.bitsPerPixel = bitsPerPixel;
         switch (bitsPerPixel) {
-        case 1:
-        case 4:
-        case 8:
+            case 1:
+            case 4:
+            case 8:
             break;
         default:
             log.warn("Invalid bits_per_pixel value, must be 1, 4 or 8.");
@@ -1459,36 +1794,20 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Returns the AFPDataStream
-     * 
-     * @return the AFPDataStream
-     */
-    public AFPDataStream getAFPDataStream() {
-        return afpDataStream;
-    }
-
-    /**
      * Sets the output/device resolution
      * 
      * @param resolution
      *            the output resolution (dpi)
      */
     public void setResolution(int resolution) {
-        if (resolution == DPI_240_RESOLUTION
-                || resolution == DPI_1440_RESOLUTION) {
-            this.resolution = resolution;
-            if (log.isDebugEnabled()) {
-                log.debug("renderer-resolution set to: " + resolution + " dpi");
-            }
-        } else {
-            log.error("invalid resolution, can only be " + DPI_240_RESOLUTION
-                    + " or " + DPI_1440_RESOLUTION + " dpi");
+        if (log.isDebugEnabled()) {
+            log.debug("renderer-resolution set to: " + resolution + "dpi");
         }
+        this.resolution = resolution;
     }
 
     /**
      * Returns the output/device resolution.
-     * 
      * @return the resolution in dpi
      */
     public int getResolution() {

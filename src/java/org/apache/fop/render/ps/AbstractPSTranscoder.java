@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.ps;
 
 
@@ -91,28 +91,28 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
      * @exception TranscoderException if an error occured while transcoding
      */
     protected void transcode(Document document, String uri,
-                             TranscoderOutput output) 
+                             TranscoderOutput output)
         throws TranscoderException {
 
         graphics = createDocumentGraphics2D();
         if (!isTextStroked()) {
-            FontInfo fontInfo = new FontInfo();   
-            //TODO Do custom font configuration here somewhere/somehow 
-            FontSetup.setup(fontInfo, null, null);   
+            FontInfo fontInfo = new FontInfo();
+            //TODO Do custom font configuration here somewhere/somehow
+            FontSetup.setup(fontInfo);
             graphics.setCustomTextHandler(new NativeTextHandler(graphics, fontInfo));
         }
 
         super.transcode(document, uri, output);
 
         getLogger().trace("document size: " + width + " x " + height);
-        
+
         // prepare the image to be painted
-        UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, 
+        UnitProcessor.Context uctx = UnitProcessor.createContext(ctx,
                     document.getDocumentElement());
-        float widthInPt = UnitProcessor.userSpaceToSVG(width, SVGLength.SVG_LENGTHTYPE_PT, 
+        float widthInPt = UnitProcessor.userSpaceToSVG(width, SVGLength.SVG_LENGTHTYPE_PT,
                     UnitProcessor.HORIZONTAL_LENGTH, uctx);
         int w = (int)(widthInPt + 0.5);
-        float heightInPt = UnitProcessor.userSpaceToSVG(height, SVGLength.SVG_LENGTHTYPE_PT, 
+        float heightInPt = UnitProcessor.userSpaceToSVG(height, SVGLength.SVG_LENGTHTYPE_PT,
                 UnitProcessor.HORIZONTAL_LENGTH, uctx);
         int h = (int)(heightInPt + 0.5);
         getLogger().trace("document size: " + w + "pt x " + h + "pt");
@@ -140,7 +140,7 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
             throw new TranscoderException(ex);
         }
     }
-    
+
     /** {@inheritDoc} */
     protected BridgeContext createBridgeContext() {
 
@@ -148,7 +148,7 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         if (!isTextStroked()) {
             TextHandler handler = graphics.getCustomTextHandler();
             if (handler instanceof NativeTextHandler) {
-                NativeTextHandler nativeTextHandler = (NativeTextHandler)handler; 
+                NativeTextHandler nativeTextHandler = (NativeTextHandler)handler;
                 PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
                 ctx.setTextPainter(textPainter);
                 ctx.putBridge(new PSTextElementBridge(textPainter));

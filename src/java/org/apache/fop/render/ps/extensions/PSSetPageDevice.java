@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.ps.extensions;
 
@@ -96,7 +96,7 @@ public class PSSetPageDevice extends PSExtensionAttachment {
      * Generates SAX events representing the object's state.
      * @param handler ContentHandler instance to send the SAX events to
      * @throws SAXException if there's a problem generating the SAX events
-     * @see org.apache.fop.util.XMLizable#toSAX(org.xml.sax.ContentHandler)
+     * @see org.apache.xmlgraphics.util.XMLizable#toSAX(org.xml.sax.ContentHandler)
      */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();

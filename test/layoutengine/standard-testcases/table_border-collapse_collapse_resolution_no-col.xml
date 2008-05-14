@@ -20,7 +20,8 @@
 <!--
   NOTE: this test is a copy of table_border-collapse_collapse_resolution.xml, with all of the
   fo:table-column elements removed. The checks for the borders in the second column of the first
-  table have been changed accordingly (no more column which plays in the resolution).
+  table have been changed accordingly (no more column which plays in the resolution), and the third
+  table has been removed (not applicable when there are no columns).
 -->
 <testcase>
   <info>

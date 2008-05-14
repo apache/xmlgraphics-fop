@@ -25,6 +25,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
 
@@ -197,11 +198,11 @@ public abstract class AbstractBreaker {
     }
     
     /**
-     * Returns a PageBreakingLayoutListener for the PageBreakingAlgorithm to notify about layout
-     * problems.
+     * Creates and returns a PageBreakingLayoutListener for the PageBreakingAlgorithm to
+     * notify about layout problems.
      * @return the listener instance or null if no notifications are needed
      */
-    protected PageBreakingAlgorithm.PageBreakingLayoutListener getLayoutListener() {
+    protected PageBreakingAlgorithm.PageBreakingLayoutListener createLayoutListener() {
         return null;
     }
     
@@ -271,7 +272,7 @@ public abstract class AbstractBreaker {
      */
     public void doLayout(int flowBPD, boolean autoHeight) {
         LayoutContext childLC = createLayoutContext();
-        childLC.setStackLimit(new MinOptMax(flowBPD));
+        childLC.setStackLimitBP(new MinOptMax(flowBPD));
 
         if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
             //EN_X_FILL is non-standard (by LF)
@@ -319,7 +320,7 @@ public abstract class AbstractBreaker {
                 log.debug("PLM> start of algorithm (" + this.getClass().getName() 
                         + "), flow BPD =" + flowBPD);
                 PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
-                        getPageProvider(), getLayoutListener(),
+                        getPageProvider(), createLayoutListener(),
                         alignment, alignmentLast, footnoteSeparatorLength,
                         isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
                 int iOptPageCount;
@@ -494,7 +495,7 @@ public abstract class AbstractBreaker {
                     int averageLineLength = optimizeLineLength(effectiveList, 
                             startElementIndex, endElementIndex);
                     if (averageLineLength != 0) {
-                        childLC.setStackLimit(new MinOptMax(averageLineLength));
+                        childLC.setStackLimitBP(new MinOptMax(averageLineLength));
                     }
                 }
                 /* *** *** non-standard extension *** *** */
@@ -560,10 +561,8 @@ public abstract class AbstractBreaker {
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
             
             Position breakPosition = null;
-            if (((KnuthElement) returnedList.getLast()).isPenalty()
-                    && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
-                KnuthPenalty breakPenalty = (KnuthPenalty) returnedList
-                        .removeLast();
+            if (((KnuthElement) returnedList.getLast()).isForcedBreak()) {
+                KnuthPenalty breakPenalty = (KnuthPenalty)returnedList.removeLast();
                 breakPosition = breakPenalty.getPosition();
                 switch (breakPenalty.getBreakClass()) {
                 case Constants.EN_PAGE:

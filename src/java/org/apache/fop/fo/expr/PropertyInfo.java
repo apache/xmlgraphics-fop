@@ -21,6 +21,7 @@ package org.apache.fop.fo.expr;
 
 import java.util.Stack;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.Constants;
@@ -114,6 +115,17 @@ public class PropertyInfo {
         }
     }
 
+    /**
+     * Convenience shortcut to get a reference to the FOUserAgent
+     * 
+     * @return  the FOUserAgent
+     */
+    protected FOUserAgent getUserAgent() {
+        return (plist.getFObj() != null) 
+            ? plist.getFObj().getUserAgent() 
+                    : null;
+    }
+    
     private PercentBase getFunctionPercentBase() {
         if (stkFunction != null) {
             Function f = (Function)stkFunction.peek();

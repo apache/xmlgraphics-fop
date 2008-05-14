@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts;
 
 import java.io.Serializable;
@@ -25,17 +25,26 @@ import java.io.Serializable;
  * FontTriplet contains information on name, style and weight of one font
  */
 public class FontTriplet implements Comparable, Serializable {
-    
+
     /** serial version UID */
     private static final long serialVersionUID = 1168991106658033508L;
-    
+
     private String name;
     private String style;
     private int weight;
-    
+    private int priority; // priority of this triplet/font mapping
+
     //This is only a cache
     private transient String key;
-    
+
+    /**
+     * Creates a new font triplet (for base14 use).
+     * @param name font name
+     */
+    public FontTriplet(String name) {
+        this.name = name;
+    }
+
     /**
      * Creates a new font triplet.
      * @param name font name
@@ -43,9 +52,21 @@ public class FontTriplet implements Comparable, Serializable {
      * @param weight font weight (100, 200, 300...800, 900)
      */
     public FontTriplet(String name, String style, int weight) {
-        this.name = name;
+        this(name, style, weight, Font.PRIORITY_DEFAULT);
+    }
+
+    /**
+     * Creates a new font triplet.
+     * @param name font name
+     * @param style font style (normal, italic etc.)
+     * @param weight font weight (100, 200, 300...800, 900)
+     * @param priority priority of this triplet/font mapping
+     */
+    public FontTriplet(String name, String style, int weight, int priority) {
+        this(name);
         this.style = style;
         this.weight = weight;
+        this.priority = priority;
     }
 
     /** @return the font name */
@@ -57,10 +78,15 @@ public class FontTriplet implements Comparable, Serializable {
     public String getStyle() {
         return style;
     }
-    
+
     /** @return the font weight */
     public int getWeight() {
         return weight;
+    }
+
+    /** @return the priority of this triplet/font mapping */
+    public int getPriority() {
+        return priority;
     }
 
     private String getKey() {
@@ -70,7 +96,7 @@ public class FontTriplet implements Comparable, Serializable {
         }
         return this.key;
     }
-    
+
     /** {@inheritDoc} */
     public int compareTo(Object o) {
         return getKey().compareTo(((FontTriplet)o).getKey());
@@ -91,7 +117,7 @@ public class FontTriplet implements Comparable, Serializable {
             if (obj instanceof FontTriplet) {
                 FontTriplet other = (FontTriplet)obj;
                 return (getName().equals(other.getName())
-                        && getStyle().equals(other.getStyle()) 
+                        && getStyle().equals(other.getStyle())
                         && (getWeight() == other.getWeight()));
             }
         }
@@ -101,6 +127,20 @@ public class FontTriplet implements Comparable, Serializable {
     /** {@inheritDoc} */
     public String toString() {
         return getKey();
+    }
+
+
+    /**
+     * Matcher interface for {@link FontTriplet}.
+     */
+    public interface Matcher {
+
+        /**
+         * Indicates whether the given {@link FontTriplet} matches a particular criterium.
+         * @param triplet the font triplet
+         * @return true if the font triplet is a match
+         */
+        boolean matches(FontTriplet triplet);
     }
 
 }

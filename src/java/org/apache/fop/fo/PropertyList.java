@@ -25,6 +25,8 @@ import org.xml.sax.Attributes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
@@ -39,7 +41,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
-import org.apache.fop.util.QName;
 
 /**
  * Class containing the collection of properties for a given FObj.
@@ -148,7 +149,7 @@ public abstract class PropertyList {
      * the default value.
      * @param propId The Constants ID of the property whose value is desired.
      * @return the Property corresponding to that name
-     * @throws PropertyException ...
+     * @throws PropertyException if there is a problem evaluating the property 
      */
     public Property get(int propId) throws PropertyException {
         return get(propId, true, true);
@@ -164,7 +165,7 @@ public abstract class PropertyList {
      *                      value is needed
      * @param bTryDefault   true when the default value may be used as a last resort
      * @return the property
-     * @throws PropertyException ...
+     * @throws PropertyException if there is a problem evaluating the property 
      */
     public Property get(int propId, boolean bTryInherit,
                          boolean bTryDefault) throws PropertyException {
@@ -308,29 +309,29 @@ public abstract class PropertyList {
         String attributeNS;
         FopFactory factory = getFObj().getUserAgent().getFactory(); 
         for (int i = 0; i < attributes.getLength(); i++) {
-            /* convert all attributes with the same namespace as the fo element for this fObj */
+            /* convert all attributes with the same namespace as the fo element
+             * the "xml:lang" property is a special case */
             attributeNS = attributes.getURI(i);
             attributeName = attributes.getQName(i);
             attributeValue = attributes.getValue(i);
-            if (attributeNS == null || attributeNS.length() == 0) {
+            if (attributeNS == null || attributeNS.length() == 0 
+                    || "xml:lang".equals(attributeName)) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
             } else if (!factory.isNamespaceIgnored(attributeNS)) {
                 ElementMapping mapping = factory.getElementMappingRegistry().getElementMapping(
                         attributeNS);
+                QName attr = new QName(attributeNS, attributeName);
                 if (mapping != null) {
-                    QName attName = new QName(attributeNS, attributeName);
-                    if (mapping.isAttributeProperty(attName) 
+                    if (mapping.isAttributeProperty(attr) 
                             && mapping.getStandardPrefix() != null) {
                         convertAttributeToProperty(attributes, 
-                                mapping.getStandardPrefix() + ":" + attName.getLocalName(), 
+                                mapping.getStandardPrefix() + ":" + attr.getLocalName(), 
                                 attributeValue);
                     } else {
-                        getFObj().addForeignAttribute(attName, attributeValue);
+                        getFObj().addForeignAttribute(attr, attributeValue);
                     }
                 } else {
-                    handleInvalidProperty(
-                            "Error processing foreign attribute: "
-                            + attributeNS + "/@" + attributeName, attributeName);
+                    handleInvalidProperty(attr);
                 }
             }
         }
@@ -341,26 +342,17 @@ public abstract class PropertyList {
      * @param propertyName  the property name to check
      * @return true if the base property name and the subproperty name (if any)
      *           can be correctly mapped to an id
-     * @throws ValidationException in case the property name
-     *          is invalid for the FO namespace
      */
-    protected boolean isValidPropertyName(String propertyName) 
-                throws ValidationException {
+    protected boolean isValidPropertyName(String propertyName) {
 
         int propId = FOPropertyMapping.getPropertyId(
                         findBasePropertyName(propertyName));
         int subpropId = FOPropertyMapping.getSubPropertyId(
                         findSubPropertyName(propertyName));
-        
-        if (propId == -1 
-                || (subpropId == -1 
-                        && findSubPropertyName(propertyName) != null)) {
-            StringBuffer errorMessage = new StringBuffer().append(
-                        "Invalid property name \'").append(propertyName);
-            handleInvalidProperty(errorMessage.toString(), propertyName);
-            return false;
-        }
-        return true;
+
+        return !(propId == -1
+                || (subpropId == -1
+                && findSubPropertyName(propertyName) != null));
     }
 
     /**
@@ -378,19 +370,23 @@ public abstract class PropertyList {
         
         if (attributeValue != null) {
 
-            if (!isValidPropertyName(attributeName)) {
-                //will log an error or throw an exception
+            if (attributeName.startsWith("xmlns:")) {
+                //Ignore namespace declarations
                 return;
             }
-            FObj parentFO = fobj.findNearestAncestorFObj();
             
-    
             /* Handle "compound" properties, ex. space-before.minimum */
             String basePropertyName = findBasePropertyName(attributeName);
             String subPropertyName = findSubPropertyName(attributeName);
 
             int propId = FOPropertyMapping.getPropertyId(basePropertyName);
             int subpropId = FOPropertyMapping.getSubPropertyId(subPropertyName);
+            
+            if (propId == -1 
+                    || (subpropId == -1 && subPropertyName != null)) {
+                handleInvalidProperty(new QName(null, attributeName));
+            }
+            FObj parentFO = fobj.findNearestAncestorFObj();
     
             PropertyMaker propertyMaker = findMaker(propId);
             if (propertyMaker == null) {
@@ -413,8 +409,8 @@ public abstract class PropertyList {
                     }
                     prop = propertyMaker.make(this, attributeValue, parentFO);
                 } else { // e.g. "leader-length.maximum"
-                    Property baseProperty = 
-                        findBaseProperty(attributes, parentFO, propId, 
+                    Property baseProperty
+                        = findBaseProperty(attributes, parentFO, propId, 
                                 basePropertyName, propertyMaker);
                     prop = propertyMaker.make(baseProperty, subpropId,
                             this, attributeValue, parentFO);
@@ -423,8 +419,8 @@ public abstract class PropertyList {
                     putExplicit(propId, prop);
                 }
             } catch (PropertyException e) {
-                log.error("Ignoring property: " 
-                        + attributeName + "=\"" + attributeValue + "\" (" + e.getMessage() + ")");
+                fobj.getFOValidationEventProducer().invalidPropertyValue(this, fobj.getName(),
+                        attributeName, attributeValue, e, fobj.locator);
             }
         }
     }
@@ -461,18 +457,16 @@ public abstract class PropertyList {
     }
 
     /**
-     * @param message ...
-     * @param propName ...
-     * @throws ValidationException ...
+     * Handles an invalid property.
+     * @param attr the invalid attribute
+     * @throws ValidationException if an exception needs to be thrown depending on the
+     *                  validation settings
      */
-    protected void handleInvalidProperty(String message, String propName) 
+    protected void handleInvalidProperty(QName attr) 
                     throws ValidationException {
-        if (!propName.startsWith("xmlns")) {
-            if (fobj.getUserAgent().validateStrictly()) {
-                fobj.attributeError(message);
-            } else {
-                log.error(message + " Property ignored.");
-            }
+        if (!attr.getQName().startsWith("xmlns")) {
+            fobj.getFOValidationEventProducer().invalidProperty(this, fobj.getName(),
+                    attr, true, fobj.locator);
         }
     }
 
@@ -577,7 +571,7 @@ public abstract class PropertyList {
      */
     public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() 
                 throws PropertyException {
-        return new CommonBorderPaddingBackground(this);
+        return CommonBorderPaddingBackground.getInstance(this);
     }
     
     /**

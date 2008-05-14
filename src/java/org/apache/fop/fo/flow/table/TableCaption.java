@@ -30,7 +30,8 @@ import org.apache.fop.fo.ValidationException;
 
 
 /**
- * Class modelling the fo:table-caption object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-caption">
+ * <code>fo:table-caption</code></a> object.
  */
 public class TableCaption extends FObj {
     // The value of properties relevant for fo:table-caption.
@@ -51,27 +52,26 @@ public class TableCaption extends FObj {
     static boolean notImplementedWarningGiven = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a TableCaption instance with the given {@link FONode}
+     * as parent.
+     * @param parent {@link FONode} that is the parent of this object
      */
     public TableCaption(FONode parent) {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:table-caption is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "fo:table-caption", getLocator());
             notImplementedWarningGiven = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("marker* (%block;)");
@@ -80,18 +80,20 @@ public class TableCaption extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (%block;)
+     * <br>XSL Content Model: marker* (%block;)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+            throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 
@@ -102,6 +104,7 @@ public class TableCaption extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_CAPTION}
      */
     public int getNameId() {
         return FO_TABLE_CAPTION;

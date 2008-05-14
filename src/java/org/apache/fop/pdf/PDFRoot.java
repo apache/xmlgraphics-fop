@@ -19,12 +19,10 @@
  
 package org.apache.fop.pdf;
 
-import java.util.List;
-
 /**
- * class representing a Root (/Catalog) object
+ * Class representing a Root (/Catalog) object.
  */
-public class PDFRoot extends PDFObject {
+public class PDFRoot extends PDFDictionary {
 
     /**
      * Use no page mode setting, default
@@ -46,27 +44,13 @@ public class PDFRoot extends PDFObject {
      */
     public static final int PAGEMODE_FULLSCREEN = 3;
 
-    /**
-     * the /Pages object that is root of the Pages hierarchy
-     */
-    protected PDFPages rootPages;
-
-    /**
-     * Root outline object
-     */
-    private PDFOutline outline;
-
-    /** Optional Metadata object */
-    private PDFMetadata metadata;
+    private static final PDFName[] PAGEMODE_NAMES = new PDFName[] {
+        new PDFName("UseNone"),
+        new PDFName("UseOutlines"),
+        new PDFName("UseThumbs"),
+        new PDFName("FullScreen"),
+    };
     
-    /** The array of OutputIntents */
-    private List outputIntents;
-    
-    /** the /Dests object, if this PDF has a Names Dictionary */
-    private PDFNames names;
-
-    private int pageMode = PAGEMODE_USENONE;
-
     /**
      * create a Root (/Catalog) object. NOTE: The PDFRoot
      * object must be created before the PDF document is
@@ -80,25 +64,45 @@ public class PDFRoot extends PDFObject {
     public PDFRoot(int objnum, PDFPages pages) {
         super();
         setObjectNumber(objnum);
+        put("Type", new PDFName("Catalog"));
         setRootPages(pages);
     }
 
     /**
      * Set the page mode for the PDF document.
      *
-     * @param mode the page mode
+     * @param mode the page mode (one of PAGEMODE_*)
      */
     public void setPageMode(int mode) {
-        pageMode = mode;
+        put("PageMode", PAGEMODE_NAMES[mode]);
     }
 
+    /**
+     * Returns the currently active /PageMode.
+     * @return the /PageMode (one of PAGEMODE_*)
+     */
+    public int getPageMode() {
+        PDFName mode = (PDFName)get("PageMode");
+        if (mode != null) {
+            for (int i = 0; i < PAGEMODE_NAMES.length; i++) {
+                if (PAGEMODE_NAMES[i].equals(mode)) {
+                    return i;
+                }
+            }
+            throw new IllegalStateException("Unknown /PageMode encountered: " + mode);
+        } else {
+            return PAGEMODE_USENONE;
+        }
+    }
+    
     /**
      * add a /Page object to the root /Pages object
      *
      * @param page the /Page object to add
      */
     public void addPage(PDFPage page) {
-        this.rootPages.addPage(page);
+        PDFPages pages = getRootPages();
+        pages.addPage(page);
     }
 
     /**
@@ -107,16 +111,50 @@ public class PDFRoot extends PDFObject {
      * @param pages the /Pages object to set as root
      */
     public void setRootPages(PDFPages pages) {
-        this.rootPages = pages;
+        put("Pages", pages.makeReference());
     }
 
+    /**
+     * Returns the /PageLabels object.
+     * @return the /PageLabels object if set, null otherwise.
+     * @since PDF 1.3
+     */
+    public PDFPages getRootPages() {
+        PDFReference ref = (PDFReference)get("Pages");
+        return (ref != null ? (PDFPages)ref.getObject() : null);
+    }
+    
+    /**
+     * Sets the /PageLabels object.
+     * @param pageLabels the /PageLabels object
+     */
+    public void setPageLabels(PDFPageLabels pageLabels) {
+        put("PageLabels", pageLabels.makeReference());
+    }
+    
+    /**
+     * Returns the /PageLabels object.
+     * @return the /PageLabels object if set, null otherwise.
+     * @since PDF 1.3
+     */
+    public PDFPageLabels getPageLabels() {
+        PDFReference ref = (PDFReference)get("PageLabels");
+        return (ref != null ? (PDFPageLabels)ref.getObject() : null);
+    }
+    
     /**
      * Set the root outline for the PDF document.
      *
      * @param out the root PDF Outline
      */
     public void setRootOutline(PDFOutline out) {
-        outline = out;
+        put("Outlines", out.makeReference());
+        
+        //Set /PageMode to /UseOutlines by default if no other mode has been set
+        PDFName mode = (PDFName)get("PageMode");
+        if (mode == null) {
+            setPageMode(PAGEMODE_USEOUTLINES);
+        }
     }
 
     /**
@@ -125,24 +163,27 @@ public class PDFRoot extends PDFObject {
      * @return the root PDF Outline
      */
     public PDFOutline getRootOutline() {
-        return outline;
+        PDFReference ref = (PDFReference)get("Outlines");
+        return (ref != null ? (PDFOutline)ref.getObject() : null);
     }
     
     /**
-     * Set the Names object.
+     * Set the /Names object.
      * @param names the Names object
      * @since PDF 1.2
      */
     public void setNames(PDFNames names) {
-        this.names = names;
+        put("Names", names.makeReference());
     }
     
     /**
+     * Returns the /Names object.
      * @return the Names object if set, null otherwise.
      * @since PDF 1.2
      */
     public PDFNames getNames() {
-        return this.names;
+        PDFReference ref = (PDFReference)get("Names");
+        return (ref != null ? (PDFNames)ref.getObject() : null);
     }
     
     /**
@@ -151,78 +192,64 @@ public class PDFRoot extends PDFObject {
      * @since PDF 1.4
      */
     public void setMetadata(PDFMetadata meta) {
-        this.metadata = meta;
+        if (getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
+            put("Metadata", meta.makeReference());
+        }
     }
     
     /**
-     * @return the Metadata object if set, null otherwise.
+     * Returns the /Metadata object
+     * @return the /Metadata object if set, null otherwise.
      * @since PDF 1.4
      */
     public PDFMetadata getMetadata() {
-        return this.metadata;
+        PDFReference ref = (PDFReference)get("Metadata");
+        return (ref != null ? (PDFMetadata)ref.getObject() : null);
     }
 
     /**
-     * Adds an OutputIntent to the PDF
-     * @param outputIntent the OutputIntent dictionary
+     * Returns the /OutputIntents array.
+     * @return the /OutputIntents array or null if it doesn't exist
+     * @since PDF 1.4
      */
-    public void addOutputIntent(PDFOutputIntent outputIntent) {
-        if (this.outputIntents == null) {
-            this.outputIntents = new java.util.ArrayList();
-        }
-        this.outputIntents.add(outputIntent);
+    public PDFArray getOutputIntents() {
+        return (PDFArray)get("OutputIntents");
     }
     
     /**
-     * {@inheritDoc}
+     * Adds an OutputIntent to the PDF
+     * @param outputIntent the OutputIntent dictionary
+     * @since PDF 1.4
      */
-    public String toPDFString() {
-        StringBuffer p = new StringBuffer(128);
-        p.append(getObjectID());
-        p.append("<< /Type /Catalog\n /Pages "
-                + this.rootPages.referencePDF()
-                + "\n");
-        if (outline != null) {
-            p.append(" /Outlines " + outline.referencePDF() + "\n");
-            p.append(" /PageMode /UseOutlines\n");
-        } else {
-            switch (pageMode) {
-                case PAGEMODE_USEOUTLINES:
-                    p.append(" /PageMode /UseOutlines\n");
-                break;
-                case PAGEMODE_USETHUMBS:
-                    p.append(" /PageMode /UseThumbs\n");
-                break;
-                case PAGEMODE_FULLSCREEN:
-                    p.append(" /PageMode /FullScreen\n");
-                break;
-                case PAGEMODE_USENONE:
-                default:
-                break;
+    public void addOutputIntent(PDFOutputIntent outputIntent) {
+        if (getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
+            PDFArray outputIntents = getOutputIntents(); 
+            if (outputIntents == null) {
+                outputIntents = new PDFArray(this);
+                put("OutputIntents", outputIntents);
             }
+            outputIntents.add(outputIntent);
         }
-        if (getDocumentSafely().hasDestinations() && getNames() != null) {
-            p.append(" /Names " + getNames().referencePDF() + "\n");
-        }
-        if (getMetadata() != null 
-                && getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
-            p.append(" /Metadata " + getMetadata().referencePDF() + "\n");
-        }
-        if (this.outputIntents != null 
-                && this.outputIntents.size() > 0
-                && getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
-            p.append(" /OutputIntents [");
-            for (int i = 0, c = this.outputIntents.size(); i < c; i++) {
-                PDFOutputIntent outputIntent = (PDFOutputIntent)this.outputIntents.get(i);
-                if (i > 0) {
-                    p.append(" ");
-                }
-                p.append(outputIntent.referencePDF());
-            }
-            p.append("]\n");
-        }
-        p.append(">>\nendobj\n");
-        return p.toString();
     }
-
+    
+    /**
+     * Returns the language identifier of the document.
+     * @return the language identifier of the document (or null if not set or undefined)
+     * @since PDF 1.4
+     */
+    public String getLanguage() {
+        return (String)get("Lang");
+    }
+    
+    /**
+     * Sets the language identifier of the document.
+     * @param lang the language identifier of the document.
+     */
+    public void setLanguage(String lang) {
+        if (lang == null) {
+            throw new NullPointerException("lang must not be null");
+        }
+        put("Lang", lang);
+    }
+    
 }

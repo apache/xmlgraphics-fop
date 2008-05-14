@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE testsuite  SYSTEM "testsuite.dtd">
 <testsuite profile="Basic Conformance Tests">
    <testcases profile="Example">
       <testcases profile="simpleblock" >
-         <test id="1" interaction="none" fo="block" xml="xml/1.xml" xsl="xsl/doc.xsl" level="basic">
+         <test id="xml1" interaction="none" fo="block" xml="xml/1.xml" xsl="xsl/doc.xsl" level="basic">
 simple test
 </test>
       <testresult id="1" agreement="full">

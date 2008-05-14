@@ -25,31 +25,22 @@ import java.util.Map;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Implementation of the fo:page-sequence formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-sequence">
+ * <code>fo:page-sequence</code></a> object.
  */
-public class PageSequence extends FObj {
+public class PageSequence extends AbstractPageSequence {
     
     // The value of properties relevant for fo:page-sequence.
     private String country;
-    private String format;
     private String language;
-    private int letterValue;
-    private char groupingSeparator;
-    private int groupingSize;
-    private Numeric initialPageNumber;
-    private int forcePageCount;
     private String masterReference;
+    //private int writingMode; //XSL 1.1
     // End of property values
-
-    /** The parent root object */
-    private Root root;
 
     // There doesn't seem to be anything in the spec requiring flows
     // to be in the order given, only that they map to the regions
@@ -58,9 +49,6 @@ public class PageSequence extends FObj {
 
     /** Map of flows to their flow name (flow-name, Flow) */
     private Map flowMap;
-
-    private int startingPageNumber = 0;
-    private PageNumberGenerator pageNumberGenerator;
 
     /**
      * The currentSimplePageMaster is either the page master for the
@@ -83,55 +71,42 @@ public class PageSequence extends FObj {
     private Flow mainFlow = null;
 
     /**
-     * Create a page sequence FO node.
+     * Create a PageSequence instance that is a child of the
+     * given {@link FONode}.
      *
-     * @param parent the parent FO node
+     * @param parent the parent {@link FONode}
      */
     public PageSequence(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         country = pList.get(PR_COUNTRY).getString();
-        format = pList.get(PR_FORMAT).getString();
         language = pList.get(PR_LANGUAGE).getString();
-        letterValue = pList.get(PR_LETTER_VALUE).getEnum();
-        groupingSeparator = pList.get(PR_GROUPING_SEPARATOR).getCharacter();
-        groupingSize = pList.get(PR_GROUPING_SIZE).getNumber().intValue();
-        initialPageNumber = pList.get(PR_INITIAL_PAGE_NUMBER).getNumeric();
-        forcePageCount = pList.get(PR_FORCE_PAGE_COUNT).getEnum();
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
+        //writingMode = pList.getWritingMode();
         
         if (masterReference == null || masterReference.equals("")) {
             missingPropertyError("master-reference");
         }        
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        this.root = (Root) parent;
         flowMap = new java.util.HashMap();
 
-        this.simplePageMaster = root.getLayoutMasterSet().getSimplePageMaster(masterReference);
+        this.simplePageMaster = getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
         if (this.simplePageMaster == null) {
             this.pageSequenceMaster
-                    = root.getLayoutMasterSet().getPageSequenceMaster(masterReference);
+                    = getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
             if (this.pageSequenceMaster == null) {
-                throw new ValidationException("master-reference '" + masterReference
-                   + "' for fo:page-sequence matches no"
-                   + " simple-page-master or page-sequence-master", locator);
+                getFOValidationEventProducer().masterNotFound(this, getName(),
+                        masterReference, getLocator());
             }
         }
-
-        this.pageNumberGenerator = new PageNumberGenerator(
-                format, groupingSeparator, groupingSize, letterValue);
 
         getFOEventHandler().startPageSequence(this);
     }
@@ -150,7 +125,7 @@ public class PageSequence extends FObj {
         XSL Content Model: (title?,static-content*,flow)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("title")) {
                 if (titleFO != null) {
@@ -171,8 +146,6 @@ public class PageSequence extends FObj {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -201,186 +174,25 @@ public class PageSequence extends FObj {
      * The flow-name is used to associate the flow with a region on a page,
      * based on the region-names given to the regions in the page-master
      * used to generate that page.
+     * @param flow  the {@link Flow} instance to be added
+     * @throws org.apache.fop.fo.ValidationException if the fo:flow maps
+     * to an invalid page-region
      */
      private void addFlow(Flow flow) throws ValidationException {
         String flowName = flow.getFlowName();
 
         if (hasFlowName(flowName)) {
-            throw new ValidationException("duplicate flow-name \""
-                + flowName
-                + "\" found within fo:page-sequence", flow.getLocator());
+            getFOValidationEventProducer().duplicateFlowNameInPageSequence(this, flow.getName(),
+                    flowName, flow.getLocator());
         }
 
-        if (!root.getLayoutMasterSet().regionNameExists(flowName) 
+        if (!getRoot().getLayoutMasterSet().regionNameExists(flowName) 
             && !flowName.equals("xsl-before-float-separator") 
             && !flowName.equals("xsl-footnote-separator")) {
-                throw new ValidationException("flow-name \""
-                    + flowName
-                    + "\" could not be mapped to a region-name in the"
-                    + " layout-master-set", flow.getLocator());
+            getFOValidationEventProducer().flowNameNotMapped(this, flow.getName(),
+                    flowName, flow.getLocator());
         }
     }
-
-    /**
-     * Initialize the current page number for the start of the page sequence.
-     */
-    public void initPageNumber() {
-        int pageNumberType = 0;
-        
-        if (initialPageNumber.getEnum() != 0) {
-            // auto | auto-odd | auto-even.
-            startingPageNumber = root.getEndingPageNumberOfPreviousSequence() + 1;
-            pageNumberType = initialPageNumber.getEnum();
-            if (pageNumberType == EN_AUTO_ODD) {
-                if (startingPageNumber % 2 == 0) {
-                    startingPageNumber++;
-                }
-            } else if (pageNumberType == EN_AUTO_EVEN) {
-                if (startingPageNumber % 2 == 1) {
-                    startingPageNumber++;
-                }
-            }
-        } else { // <integer> for explicit page number
-            int pageStart = initialPageNumber.getValue();
-            startingPageNumber = (pageStart > 0) ? pageStart : 1; // spec rule
-        }
-    }
-
-//     /**
-//      * Returns true when there is more flow elements left to lay out.
-//      */
-//     private boolean flowsAreIncomplete() {
-//         boolean isIncomplete = false;
-
-//         for (Iterator e = flowMap.values().iterator(); e.hasNext(); ) {
-//             Flow flow = (Flow)e.next();
-//             if (flow instanceof StaticContent) {
-//                 continue;
-//             }
-
-//             Status status = flow.getStatus();
-//             isIncomplete |= status.isIncomplete();
-//         }
-//         return isIncomplete;
-//     }
-
-//     /**
-//      * Returns the flow that maps to the given region class for the current
-//      * page master.
-//      */
-//     private Flow getCurrentFlow(String regionClass) {
-//         Region region = getCurrentSimplePageMaster().getRegion(regionClass);
-//         if (region != null) {
-//             Flow flow = (Flow)flowMap.get(region.getRegionName());
-//             return flow;
-
-//         } else {
-
-//             getLogger().error("flow is null. regionClass = '" + regionClass
-//                                + "' currentSPM = "
-//                                + getCurrentSimplePageMaster());
-
-//             return null;
-//         }
-
-//     }
-
-//      private boolean isFlowForMasterNameDone(String masterName) {
-//          // parameter is master-name of PMR; we need to locate PM
-//          // referenced by this, and determine whether flow(s) are OK
-//          if (isForcing)
-//              return false;
-//          if (masterName != null) {
-
-//              SimplePageMaster spm =
-//                  root.getLayoutMasterSet().getSimplePageMaster(masterName);
-//              Region region = spm.getRegion(FO_REGION_BODY);
-
-
-//              Flow flow = (Flow)flowMap.get(region.getRegionName());
-//              /*if ((null == flow) || flow.getStatus().isIncomplete())
-//                  return false;
-//              else
-//                  return true;*/
-//          }
-//          return false;
-//      }
-
-    /**
-     * Get the starting page number for this page sequence.
-     *
-     * @return the starting page number
-     */
-    public int getStartingPageNumber() {
-        return startingPageNumber;
-    }
-
-//     private void forcePage(AreaTree areaTree, int firstAvailPageNumber) {
-//         boolean makePage = false;
-//         if (this.forcePageCount == ForcePageCount.AUTO) {
-//             PageSequence nextSequence =
-//                 this.root.getSucceedingPageSequence(this);
-//             if (nextSequence != null) {
-//                 if (nextSequence.getIpnValue().equals("auto")) {
-//                     // do nothing special
-//                 }
-//                 else if (nextSequence.getIpnValue().equals("auto-odd")) {
-//                     if (firstAvailPageNumber % 2 == 0) {
-//                         makePage = true;
-//                     }
-//                 } else if (nextSequence.getIpnValue().equals("auto-even")) {
-//                     if (firstAvailPageNumber % 2 != 0) {
-//                         makePage = true;
-//                     }
-//                 } else {
-//                     int nextSequenceStartPageNumber =
-//                         nextSequence.getCurrentPageNumber();
-//                     if ((nextSequenceStartPageNumber % 2 == 0)
-//                             && (firstAvailPageNumber % 2 == 0)) {
-//                         makePage = true;
-//                     } else if ((nextSequenceStartPageNumber % 2 != 0)
-//                                && (firstAvailPageNumber % 2 != 0)) {
-//                         makePage = true;
-//                     }
-//                 }
-//             }
-//         } else if ((this.forcePageCount == ForcePageCount.EVEN)
-//                    && (this.pageCount % 2 != 0)) {
-//             makePage = true;
-//         } else if ((this.forcePageCount == ForcePageCount.ODD)
-//                    && (this.pageCount % 2 == 0)) {
-//             makePage = true;
-//         } else if ((this.forcePageCount == ForcePageCount.END_ON_EVEN)
-//                    && (firstAvailPageNumber % 2 == 0)) {
-//             makePage = true;
-//         } else if ((this.forcePageCount == ForcePageCount.END_ON_ODD)
-//                    && (firstAvailPageNumber % 2 != 0)) {
-//             makePage = true;
-//         } else if (this.forcePageCount == ForcePageCount.NO_FORCE) {
-//             // do nothing
-//         }
-
-//         if (makePage) {
-//             try {
-//                 this.isForcing = true;
-//                 this.currentPageNumber++;
-//                 firstAvailPageNumber = this.currentPageNumber;
-//                 currentPage = makePage(areaTree, firstAvailPageNumber, false,
-//                                        true);
-//                 String formattedPageNumber =
-//                     pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
-//                 currentPage.setFormattedNumber(formattedPageNumber);
-//                 currentPage.setPageSequence(this);
-//                 formatStaticContent(areaTree);
-//                 log.debug("[forced-" + firstAvailPageNumber + "]");
-//                 areaTree.addPage(currentPage);
-//                 this.root.setRunningPageNumberCounter(this.currentPageNumber);
-//                 this.isForcing = false;
-//             } catch (FOPException fopex) {
-//                 log.debug("'force-page-count' failure");
-//             }
-//         }
-//     }
 
     /**
      * Get the static content FO node from the flow map.
@@ -394,7 +206,7 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Accessor method for titleFO
+     * Accessor method for the fo:title associated with this fo:page-sequence
      * @return titleFO for this object
      */
     public Title getTitleFO() {
@@ -433,14 +245,17 @@ public class PageSequence extends FObj {
      *      page sequence
      * @param isLastPage indicator whether this page is the last page of the
      *      page sequence
+     * @param isOnlyPage indicator whether this page is the only page of the
+     *      page sequence
      * @param isBlank indicator whether the page will be blank
      * @return the SimplePageMaster to use for this page
-     * @throws FOPException if there's a problem determining the page master
+     * @throws PageProductionException if there's a problem determining the page master
      */
     public SimplePageMaster getNextSimplePageMaster(int page, 
             boolean isFirstPage,  
             boolean isLastPage,  
-            boolean isBlank) throws FOPException {
+            boolean isOnlyPage,
+            boolean isBlank) throws PageProductionException {
 
         if (pageSequenceMaster == null) {
             return simplePageMaster;
@@ -450,11 +265,12 @@ public class PageSequence extends FObj {
             log.debug("getNextSimplePageMaster(page=" + page
                     + " isOdd=" + isOddPage 
                     + " isFirst=" + isFirstPage 
-                    + " isLast=" + isLastPage 
+                    + " isLast=" + isLastPage
+                    + " isOnly=" + isOnlyPage
                     + " isBlank=" + isBlank + ")");
         }
         return pageSequenceMaster.getNextSimplePageMaster(isOddPage, 
-            isFirstPage, isLastPage, isBlank);
+            isFirstPage, isLastPage, isOnlyPage, isBlank);
     }
 
     /**
@@ -478,25 +294,19 @@ public class PageSequence extends FObj {
         }
     }
     
-    /**
-     * Retrieves the string representation of a page number applicable
-     * for this page sequence
-     * @param pageNumber the page number
-     * @return string representation of the page number
-     */
-    public String makeFormattedPageNumber(int pageNumber) {
-        return pageNumberGenerator.makeFormattedPageNumber(pageNumber);
+    /** @return true if the page-sequence has a page-master with page-position="only" */
+    public boolean hasPagePositionOnly() {
+        if (pageSequenceMaster == null) {
+            return false;
+        } else {
+            return pageSequenceMaster.hasPagePositionOnly();
+        }
     }
-
+    
     /**
-     * Public accessor for the ancestor Root.
-     * @return the ancestor Root
+     * Get the value of the <code>master-reference</code> property.
+     * @return the "master-reference" property
      */
-    public Root getRoot() {
-        return root;
-    }
-
-    /** @return the "master-reference" property. */
     public String getMasterReference() {
         return masterReference;
     }
@@ -506,27 +316,26 @@ public class PageSequence extends FObj {
         return "page-sequence";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_PAGE_SEQUENCE}
+     */
     public int getNameId() {
         return FO_PAGE_SEQUENCE;
     }
     
-    /** @return the force-page-count value */
-    public int getForcePageCount() {
-        return forcePageCount;
-    }
-
-    /** @return the initial-page-number property value */
-    public Numeric getInitialPageNumber() {
-        return initialPageNumber;
-    }
-    
-    /** @return the country property value */
+    /**
+     * Get the value of the <code>country</code> property.
+     * @return the country property value
+     */
     public String getCountry() {
         return this.country;
     }
     
-    /** @return the language property value */
+    /**
+     * Get the value of the <code>language</code> property.
+     * @return the language property value
+     */
     public String getLanguage() {
         return this.language;
     }

@@ -61,53 +61,100 @@ public final class NumberProperty extends Property implements Numeric {
             }
             Number val = p.getNumber();
             if (val != null) {
-                return new NumberProperty(val);
+                return getInstance(val.doubleValue());
             }
             return convertPropertyDatatype(p, propertyList, fo);
         }
 
     }
 
+    public static class PositiveIntegerMaker extends PropertyMaker {
+
+        /**
+         * Constructor for NumberProperty.PositiveIntegerMaker
+         * @param propId the id of the property for which a PositiveIntegerMaker should be created
+         */
+        public PositiveIntegerMaker(int propId) {
+            super(propId);
+        }
+
+        /**
+         * If the value is not positive, return a property with value 1 
+         * 
+         * {@inheritDoc}
+         */
+        public Property convertProperty(Property p, 
+                                        PropertyList propertyList, FObj fo) 
+                    throws PropertyException {
+            if (p instanceof EnumProperty) {
+                return EnumNumber.getInstance(p);
+            }
+            Number val = p.getNumber();
+            if (val != null) {
+                int i = Math.round(val.floatValue());
+                if (i <= 0) {
+                    i = 1;
+                }
+                return getInstance(i);
+            }
+            return convertPropertyDatatype(p, propertyList, fo);
+        }
+
+    }
+    
     /** cache holding all canonical NumberProperty instances */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(NumberProperty.class);
     
     private final Number number;
-
-    /**
-     * Constructor for Number input
-     * @param num Number object value for property
-     */
-    private NumberProperty(Number num) {
-        this.number = num;
-    }
 
     /**
      * Constructor for double input
      * @param num double numeric value for property
      */
-    protected NumberProperty(double num) {
-        this.number = new Double(num);
+    private NumberProperty(double num) {
+        //Store the number as an int or a long,
+        //if possible
+        if (num == Math.floor(num)) {
+            if (num < Integer.MAX_VALUE) {
+                this.number = new Integer((int)num);
+            } else {
+                this.number = new Long((long)num);
+            }
+        } else {
+            this.number = new Double(num);
+        }
     }
 
     /**
      * Constructor for integer input
      * @param num integer numeric value for property
      */
-    protected NumberProperty(int num) {
+    private NumberProperty(int num) {
         this.number = new Integer(num);
     }
     
     /**
      * Returns the canonical NumberProperty instance
      * corresponding to the given Number
-     * @param num   the base Number
+     * @param num   the base Double
      * @return  the canonical NumberProperty
      */
-    public static NumberProperty getInstance(Number num) {
+    public static NumberProperty getInstance(Double num) {
         return (NumberProperty)cache.fetch(
-                    new NumberProperty(num));
+                    new NumberProperty(num.doubleValue()));
     }
     
+    /**
+     * Returns the canonical NumberProperty instance
+     * corresponding to the given Integer
+     * @param num   the base Integer
+     * @return  the canonical NumberProperty
+     */
+    public static NumberProperty getInstance(Integer num) {
+        return (NumberProperty)cache.fetch(
+                    new NumberProperty(num.intValue()));
+    }
+
     /**
      * Returns the canonical NumberProperty instance
      * corresponding to the given double

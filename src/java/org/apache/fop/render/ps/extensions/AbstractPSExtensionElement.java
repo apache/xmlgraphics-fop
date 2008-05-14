@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-/* $Id: AbstractPSExtensionObject.java 426576 2006-07-28 15:44:37Z jeremias $ */
+/* $Id$ */
  
 package org.apache.fop.render.ps.extensions;
 
 // FOP
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-
-import org.xml.sax.Locator;
 
 /**
  * Base class for the PostScript-specific extension elements.
@@ -98,7 +98,7 @@ public abstract class AbstractPSExtensionElement extends FONode {
      * @see org.apache.fop.fo.FONode#getNormalNamespacePrefix()
      */
     public String getNormalNamespacePrefix() {
-        return "fox";
+        return "ps";
     }
 
     /**

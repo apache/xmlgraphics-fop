@@ -15,6 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+<!-- $Id$ -->
 <site label="FOP" href="" xmlns="http://apache.org/forrest/linkmap/1.0" tab="home">
   <!--
   BEGIN Home tab
@@ -22,6 +23,7 @@
   <about label="About">
     <index label="Introduction" href="index.html"/>
     <download label="Download" href="download.html"/>
+    <quickstartguide label="Quick Start Guide" href="quickstartguide.html"/>
     <compliance label="Compliance" href="compliance.html" description="FOP Compliance"/>
     <help label="Getting Help" href="gethelp.html"/>
     <faqs label="FAQs" href="faq.html"/>
@@ -34,7 +36,6 @@
     <all_sitePDF label="Full PDF" href="wholesite.pdf"/>
     -->
   </about>
-   
 
   <resources label="Resources">
     <xsl-fo label="XSL-FO" href="fo.html"/>
@@ -57,45 +58,9 @@
   -->
 
   <!--
-  BEGIN Version 0.93 documentation tab
-  -->
-  <trunk label="FOP 0.93" href="0.93/" tab="oldstableversion">
-    <about label="About" href="index.html"/>
-    <release label="Release Notes" href="releaseNotes_0.93.html"/>
-    <changes label="Changes" href="changes_0.93.html"/>
-    <knownissues label="Known Issues" href="knownissues_overview.html"/>
-    <upgrading label="Upgrading" href="upgrading.html"/>
-    
-    <using label="Using FOP">
-      <build label="Build" href="compiling.html"/>
-      <config label="Configure" href="configuration.html"/>
-      <run label="Run" href="running.html"/>
-      <embed label="Embed" href="embedding.html"/>
-      <servlet label="Servlets" href="servlets.html"/>
-      <ant label="Ant Task" href="anttask.html"/>
-    </using>
-
-    <features label="Features">
-      <output label="Output Targets" href="output.html"/>
-      <if label="Intermediate Format" href="intermediate.html"/>
-      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
-      <pdfa label="PDF/A" href="pdfa.html"/>
-      <pdfx label="PDF/X" href="pdfx.html"/>
-      <graphics label="Graphics" href="graphics.html"/>
-      <fonts label="Fonts" href="fonts.html"/>
-      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
-      <extensions label="Extensions" href="extensions.html"/>
-    </features>
-    
-  </trunk>
-  <!--
-  END Version 0.93 documentation tab
-  -->
-  
-  <!--
   BEGIN Version 0.94 documentation tab
   -->
-  <trunk label="FOP 0.94" href="0.94/" tab="stableversion">
+  <trunk label="FOP 0.94" href="0.94/" tab="previousversion">
     <about label="About" href="index.html"/>
     <release label="Release Notes" href="releaseNotes_0.94.html"/>
     <changes label="Changes" href="changes_0.94.html"/>
@@ -129,6 +94,42 @@
   -->
   
   <!--
+  BEGIN Version 0.95 documentation tab
+  -->
+  <trunk label="FOP 0.95beta" href="0.95/" tab="stableversion">
+    <about label="About" href="index.html"/>
+    <release label="Release Notes" href="releaseNotes_0.95beta.html"/>
+    <changes label="Changes" href="changes_0.95beta.html"/>
+    <knownissues label="Known Issues" href="knownissues_overview.html"/>
+    <upgrading label="Upgrading" href="upgrading.html"/>
+    
+    <using label="Using FOP">
+      <build label="Build" href="compiling.html"/>
+      <config label="Configure" href="configuration.html"/>
+      <run label="Run" href="running.html"/>
+      <embed label="Embed" href="embedding.html"/>
+      <servlet label="Servlets" href="servlets.html"/>
+      <ant label="Ant Task" href="anttask.html"/>
+    </using>
+
+    <features label="Features">
+      <output label="Output Targets" href="output.html"/>
+      <if label="Intermediate Format" href="intermediate.html"/>
+      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
+      <pdfa label="PDF/A" href="pdfa.html"/>
+      <pdfx label="PDF/X" href="pdfx.html"/>
+      <graphics label="Graphics" href="graphics.html"/>
+      <fonts label="Fonts" href="fonts.html"/>
+      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
+      <extensions label="Extensions" href="extensions.html"/>
+    </features>
+    
+  </trunk>
+  <!--
+  END Version 0.95 documentation tab
+  -->
+
+  <!--
   BEGIN Trunk documentation tab
   -->
   <trunk label="FOP Trunk (dev)" href="trunk/" tab="develversion">
@@ -154,6 +155,7 @@
       <fonts label="Fonts" href="fonts.html"/>
       <hyphenation label="Hyphenation" href="hyphenation.html"/>    
       <extensions label="Extensions" href="extensions.html"/>
+      <events label="Events" href="events.html"/>
     </features>
     
   </trunk>
@@ -231,37 +233,20 @@
   END Development tab
   -->
 
-  <!-- references label="Related Projects">
-    <forrest label="Apache Forrest" href="http://forrest.apache.org/"/>
-    <gump label="Apache Gump" href="http://jakarta.apache.org/gump/"/>
-    <cocoon label="Apache Cocoon" href="http://cocoon.apache.org/"/>
-    <lenya label="Apache Lenya" href="http://cocoon.apache.org/lenya/"/>
-    <centipede label="Krysalis Centipede" href="http://www.krysalis.org/"/>
-  </references -->
-
   <external-refs>
-    <!--cocoon href="http://cocoon.apache.org/2.1/">
-      <ml href="mail-lists.html"/>
-      <actions href="userdocs/concepts/actions.html"/>
-      <catalogs href="userdocs/concepts/catalog.html"/>
-      <sitemap href="userdocs/concepts/sitemap.html"/>
-      <input-modules href="userdocs/concepts/modules.html"/>
-      <views href="userdocs/concepts/views.html"/>
-    </cocoon-->
     <xmlgraphics.apache.org href="http://xmlgraphics.apache.org/">
       <fop href="fop/"/>
       <batik href="batik/"/>
+      <commons href="commons/"/>
     </xmlgraphics.apache.org>
     <svn-repo href="http://svn.apache.org/repos/asf/xmlgraphics/fop/">
       <trunk href="trunk/"/>
-      <stable href="tags/fop-0_93"/>
+      <stable href="tags/fop-0_94"/>
       <maintenance href="branches/fop-0_20_2-maintain/"/>
     </svn-repo>
+    <forrest.apache.org href="http://forrest.apache.org/"/>
     <xml.apache.org href="http://xml.apache.org/">
-      <forrest href="forrest/"/>
       <xindice href="xindice/"/>
-      <fop href="fop/"/>
-      <batik href="batik/"/>
       <commons href="commons/">
         <resolver href="components/resolver/"/>
       </commons>
@@ -270,6 +255,8 @@
     <xerces href="http://xerces.apache.org"/>
     <mail-archive href="http://marc.theaimsgroup.com"/>
     <xpath-tut href="http://www.w3schools.com/xpath/"/>
+    <commons-logging href="http://commons.apache.org/logging/"/>
+    <commons-io href="http://commons.apache.org/io/"/>
     <jakarta href="http://jakarta.apache.org/">
       <commons href="commons/">
         <io href="io/"/>

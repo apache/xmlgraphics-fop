@@ -26,19 +26,17 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import org.apache.commons.io.IOUtils;
-import org.apache.fop.render.rtf.rtflib.tools.ImageConstants;
-import org.apache.fop.render.rtf.rtflib.tools.ImageUtil;
-//import org.apache.fop.render.rtf.rtflib.tools.jpeg.Encoder;
-//import org.apache.fop.render.rtf.rtflib.tools.jpeg.JPEGException;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-
-import java.io.File;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.apache.commons.io.IOUtils;
+
+import org.apache.fop.render.rtf.rtflib.tools.ImageConstants;
+import org.apache.fop.render.rtf.rtflib.tools.ImageUtil;
 
 /**
  * Creates an RTF image from an external graphic file.
@@ -342,13 +340,13 @@ public class RtfExternalGraphic extends RtfElement {
         }
 
 
-        if (url == null) {
-            throw new ExternalGraphicException("The attribute 'url' of "
-                    + "<fo:external-graphic> is null.");
+        if (url == null && imagedata == null) {
+            throw new ExternalGraphicException(
+                    "No image data is available (neither URL, nor in-memory)");
         }
 
         String linkToRoot = System.getProperty("jfor_link_to_root");
-        if (linkToRoot != null) {
+        if (url != null && linkToRoot != null) {
             writer.write("{\\field {\\* \\fldinst { INCLUDEPICTURE \"");
             writer.write(linkToRoot);
             File urlFile = new File(url.getFile());
@@ -380,7 +378,7 @@ public class RtfExternalGraphic extends RtfElement {
         }
 
         // Determine image file format
-        String file = url.getFile ();
+        String file = (url != null ? url.getFile() : "<unknown>");
         imageformat = FormatBase.determineFormat(imagedata);
         if (imageformat != null) {
             imageformat = imageformat.convert(imageformat, imagedata);

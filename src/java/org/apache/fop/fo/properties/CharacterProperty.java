@@ -48,7 +48,7 @@ public final class CharacterProperty extends Property {
     }
 
     /** cache containing all canonical CharacterProperty instances */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(CharacterProperty.class);
 
     private final char character;
 

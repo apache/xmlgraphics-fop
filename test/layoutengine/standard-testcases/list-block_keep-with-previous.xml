@@ -63,7 +63,6 @@
               </fo:list-item-label>
               <fo:list-item-body start-indent="body-start()">
                 <fo:block>item1</fo:block>
-                <fo:block>item1</fo:block>
               </fo:list-item-body>
             </fo:list-item>
             <fo:list-item keep-with-previous.within-page="always">
@@ -114,8 +113,6 @@
       <box w="14400"/>
       <penalty w="0" p="0"/>
       <!-- list 2 starts -->
-      <box w="14400"/>
-      <penalty w="0" p="INF"/>
       <box w="14400"/>
       <penalty w="0" p="INF"/>
       <box w="14400"/>

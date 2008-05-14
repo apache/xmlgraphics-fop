@@ -24,33 +24,43 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
-import org.apache.fop.render.Graphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
-import org.apache.fop.render.RendererContext;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
+
+import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.RendererContext;
 
 /**
  * Graphics2DAdapter implementation for PostScript.
  */
 public class PSGraphics2DAdapter implements Graphics2DAdapter {
 
-    private PSRenderer renderer;
+    private PSGenerator gen;
+    private boolean clip = true;
 
     /**
      * Main constructor
      * @param renderer the Renderer instance to which this instance belongs
      */
     public PSGraphics2DAdapter(PSRenderer renderer) {
-        this.renderer = renderer;
+        this(renderer.gen, true);
+    }
+    
+    /**
+     * Constructor for use without a PSRenderer instance.
+     * @param gen the PostScript generator
+     * @param clip true if the image should be clipped
+     */
+    public PSGraphics2DAdapter(PSGenerator gen, boolean clip) {
+        this.gen = gen;
+        this.clip = clip;
     }
     
     /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter, 
             RendererContext context,
             int x, int y, int width, int height) throws IOException {
-        PSGenerator gen = renderer.gen;
-        
         float fwidth = width / 1000f;
         float fheight = height / 1000f;
         float fx = x / 1000f;
@@ -66,10 +76,12 @@ public class PSGraphics2DAdapter implements Graphics2DAdapter {
 
         gen.commentln("%FOPBeginGraphics2D");
         gen.saveGraphicsState();
-        // Clip to the image area.
-        gen.writeln("newpath");
-        gen.defineRect(fx, fy, fwidth, fheight);
-        gen.writeln("clip");
+        if (clip) {
+            // Clip to the image area.
+            gen.writeln("newpath");
+            gen.defineRect(fx, fy, fwidth, fheight);
+            gen.writeln("clip");
+        }
         
         // transform so that the coordinates (0,0) is from the top left
         // and positive is down and to the right. (0,0) is where the

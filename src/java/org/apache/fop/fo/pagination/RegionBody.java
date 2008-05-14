@@ -33,7 +33,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
- * The fo:region-body element.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-body">
+ * <code>fo:region-body</code></a> object.
  */
 public class RegionBody extends Region {
     // The value of properties relevant for fo:region-body.
@@ -43,15 +44,15 @@ public class RegionBody extends Region {
     // End of property values
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionBody instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     public RegionBody(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonMarginBlock = pList.getMarginBlockProps();
@@ -64,21 +65,22 @@ public class RegionBody extends Region {
              * these cases, but we will need to be able to change Numeric
              * values in order to do this.
              */
-            attributeError("If overflow property is set to \"scroll\"," 
-                    + " a column-count other than \"1\" may not be specified.");
+            getFOValidationEventProducer().columnCountErrorOnRegionBodyOverflowScroll(this,
+                    getName(), getLocator());
         }
     }
 
     /**
-     * Return the Common Margin Properties-Block.
-     * @return the Common Margin Properties-Block.
+     * Return the {@link CommonMarginBlock} instance attached to
+     * this instance.
+     * @return the {@link CommonMarginBlock} instance
      */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
     /**
-     * Return the "column-count" property.
+     * Return the value of the <code>column-count<code> property.
      * @return the "column-count" property.
      */
     public int getColumnCount() {
@@ -86,16 +88,14 @@ public class RegionBody extends Region {
     }
 
     /**
-     * Return the "column-gap" property.
+     * Return the value of the <code>column-gap</code> property.
      * @return the "column-gap" property.
      */
     public int getColumnGap() {
         return columnGap.getValue();
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving margins in the page context.
          * Contrary to normal margins in this case top and bottom margin
@@ -143,9 +143,7 @@ public class RegionBody extends Region {
                     reldims.bpd - before - after);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String getDefaultRegionName() {
         return "xsl-region-body";
     }
@@ -157,6 +155,7 @@ public class RegionBody extends Region {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REGION_BODY}
      */
     public int getNameId() {
         return FO_REGION_BODY;

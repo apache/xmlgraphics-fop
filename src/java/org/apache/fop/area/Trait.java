@@ -22,9 +22,10 @@ package org.apache.fop.area;
 import java.awt.Color;
 import java.io.Serializable;
 
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 
@@ -193,7 +194,7 @@ public class Trait implements Serializable {
     public static final Integer OVERLINE_COLOR = new Integer(35);
     /** Trait for color of linethrough decorations when rendering inline parent. */
     public static final Integer LINETHROUGH_COLOR = new Integer(36);
-    
+
     /** Maximum value used by trait keys */
     public static final int MAX_TRAIT_KEY = 36;
     
@@ -225,7 +226,7 @@ public class Trait implements Serializable {
         // Create a hashmap mapping trait code to name for external representation
         //put(ID_LINK, new TraitInfo("id-link", String.class));
         put(INTERNAL_LINK, new TraitInfo("internal-link", InternalLink.class));
-        put(EXTERNAL_LINK, new TraitInfo("external-link", String.class));
+        put(EXTERNAL_LINK, new TraitInfo("external-link", ExternalLink.class));
         put(FONT,         new TraitInfo("font", FontTriplet.class));
         put(FONT_SIZE,    new TraitInfo("font-size", Integer.class));
         put(COLOR, new TraitInfo("color", Color.class));
@@ -276,7 +277,7 @@ public class Trait implements Serializable {
                 new TraitInfo("is-reference-area", Boolean.class));
         put(IS_VIEWPORT_AREA,
                 new TraitInfo("is-viewport-area", Boolean.class));
-        
+
     }
 
     /**
@@ -290,25 +291,6 @@ public class Trait implements Serializable {
     }
 
     /**
-     * Get the trait code for a trait name.
-     *
-     * @param sTraitName the name of the trait to find
-     * @return the trait code object
-     */
-    /*
-    public static Object getTraitCode(String sTraitName) {
-        Iterator iter = TRAIT_INFO.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            TraitInfo ti = (TraitInfo) entry.getValue();
-            if (ti != null && ti.getName().equals(sTraitName)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }*/
-
-    /**
      * Get the data storage class for the trait.
      *
      * @param traitCode the trait code to lookup
@@ -317,99 +299,6 @@ public class Trait implements Serializable {
     public static Class getTraitClass(Object traitCode) {
         return TRAIT_INFO[((Integer)traitCode).intValue()].getClazz();
     }
-
-    /**
-     * The type of trait for an area.
-     */
-    private Object propType;
-
-    /**
-     * The data value of the trait.
-     */
-    private Object data;
-
-    /**
-     * Create a new empty trait.
-     */
-    public Trait() {
-        this.propType = null;
-        this.data = null;
-    }
-
-    /**
-     * Create a trait with the value and type.
-     *
-     * @param propType the type of trait
-     * @param data the data value
-     */
-    public Trait(Object propType, Object data) {
-        this.propType = propType;
-        this.data = data;
-    }
-
-    /**
-     * Returns the trait data value.
-     * @return the trait data value
-     */
-    public Object getData() {
-        return this.data;
-    }
-
-    /**
-     * Returns the property type.
-     * @return the property type
-     */
-    public Object getPropType() {
-        return this.propType;
-    }
-
-    /**
-     * Return the string for debugging.
-     * {@inheritDoc}
-     */
-    public String toString() {
-        return data.toString();
-    }
-
-    /**
-     * Make a trait value.
-     *
-     * @param oCode trait code
-     * @param sTraitValue trait value as String
-     * @return the trait value as object
-     */
-    /*
-    public static Object makeTraitValue(Object oCode, String sTraitValue) {
-        // Get the code from the name
-        // See what type of object it is
-        // Convert string value to an object of that type
-        Class tclass = getTraitClass(oCode);
-        if (tclass == null) {
-            return null;
-        }
-        if (tclass.equals(String.class)) {
-            return sTraitValue;
-        }
-        if (tclass.equals(Integer.class)) {
-            return new Integer(sTraitValue);
-        }
-        // See if the class has a constructor from string or can read from a string
-        try {
-            Object o = tclass.newInstance();
-            //return o.fromString(sTraitValue);
-        } catch (IllegalAccessException e1) {
-            log.error("Can't create instance of "
-                               + tclass.getName());
-            return null;
-        } catch (InstantiationException e2) {
-            log.error("Can't create instance of "
-                               + tclass.getName());
-            return null;
-        }
-
-
-        return null;
-    }*/
 
     /**
      * Class for internal link traits.
@@ -547,6 +436,78 @@ public class Trait implements Serializable {
     }
 
     /**
+     * External Link trait structure
+     */
+    public static class ExternalLink implements Serializable {
+
+        private String destination;
+        private boolean newWindow;
+
+        /**
+         * Constructs an ExternalLink object with the given destination
+         *
+         * @param destination   target of the link
+         * @param newWindow     true if the target should be opened in a new window
+         */
+        public ExternalLink(String destination, boolean newWindow) {
+            this.destination = destination;
+            this.newWindow = newWindow;
+        }
+
+        /**
+         * Create an <code>ExternalLink</code> from a trait value/attribute value in the
+         * area tree
+         * @param traitValue    the value to use (should match the result of {@link #toString()}
+         * @return an <code>ExternalLink</code> instance corresponding to the given value
+         */
+        protected static ExternalLink makeFromTraitValue(String traitValue) {
+            String dest = null;
+            boolean newWindow = false;
+            String[] values = traitValue.split(",");
+            for (int i = 0, c = values.length; i < c; i++) {
+                String v = values[i];
+                if (v.startsWith("dest=")) {
+                    dest = v.substring(5);
+                } else if (v.startsWith("newWindow=")) {
+                    newWindow = Boolean.valueOf(v.substring(10)).booleanValue();
+                } else {
+                    throw new IllegalArgumentException(
+                            "Malformed trait value for Trait.ExternalLink: " + traitValue);
+                }
+            }
+            return new ExternalLink(dest, newWindow);
+        }
+
+        /**
+         * Get the target/destination of the link
+         * @return  the destination of the link
+         */
+        public String getDestination() {
+            return this.destination;
+        }
+
+        /**
+         * Check if the target has to be displayed in a new window
+         * @return  <code>true</code> if the target has to be displayed in a new window
+         */
+        public boolean newWindow() {
+            return this.newWindow;
+        }
+
+        /**
+         * Return a String representation of the object.
+         * @return  a <code>String</code> of the form
+         *          "org.apache.fop.area.Trait.ExternalLink[dest=someURL,newWindow=false]"
+         */
+        public String toString() {
+            StringBuffer sb = new StringBuffer(64);
+            sb.append("newWindow=").append(newWindow);
+            sb.append(",dest=").append(this.destination);
+            return sb.toString();
+        }
+    }
+
+    /**
      * Background trait structure.
      * Used for storing back trait information which are related.
      */
@@ -559,7 +520,7 @@ public class Trait implements Serializable {
         private String url = null;
         
         /** The background image if any. */
-        private FopImage fopimage = null;
+        private ImageInfo imageInfo = null;
 
         /** Background repeat enum for images. */
         private int repeat;
@@ -603,11 +564,11 @@ public class Trait implements Serializable {
         }
 
         /**
-         * Returns the FopImage representing the background image
+         * Returns the ImageInfo object representing the background image
          * @return the background image, null if n/a
          */
-        public FopImage getFopImage() {
-            return fopimage;
+        public ImageInfo getImageInfo() {
+            return imageInfo;
         }
 
         /**
@@ -659,11 +620,11 @@ public class Trait implements Serializable {
         }
 
         /**
-         * Sets the FopImage to use as the background image.
-         * @param fopimage The FopImage to use
+         * Sets the ImageInfo of the image to use as the background image.
+         * @param info The background image's info object
          */
-        public void setFopImage(FopImage fopimage) {
-            this.fopimage = fopimage;
+        public void setImageInfo(ImageInfo info) {
+            this.imageInfo = info;
         }
 
         /**

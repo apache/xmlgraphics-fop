@@ -19,8 +19,13 @@
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.commons.io.output.CountingOutputStream;
 
 /**
  * Class representing an array object.
@@ -33,20 +38,28 @@ public class PDFArray extends PDFObject {
 
     /**
      * Create a new, empty array object
+     * @param parent the array's parent if any
      */
-    public PDFArray() {
+    public PDFArray(PDFObject parent) {
         /* generic creation of PDF object */
-        super();
+        super(parent);
     }
 
     /**
-     * Create the array object
-     *
+     * Create a new, empty array object with no parent.
+     */
+    public PDFArray() {
+        this(null);
+    }
+
+    /**
+     * Create an array object.
+     * @param parent the array's parent if any
      * @param values the actual array wrapped by this object
      */
-    public PDFArray(int[] values) {
+    public PDFArray(PDFObject parent, int[] values) {
         /* generic creation of PDF object */
-        super();
+        super(parent);
 
         for (int i = 0, c = values.length; i < c; i++) {
             this.values.add(new Integer(values[i]));
@@ -54,25 +67,39 @@ public class PDFArray extends PDFObject {
     }
 
     /**
-     * Create the array object
-     *
+     * Create an array object.
+     * @param parent the array's parent if any
+     * @param values the actual array wrapped by this object
+     */
+    public PDFArray(PDFObject parent, double[] values) {
+        /* generic creation of PDF object */
+        super(parent);
+
+        for (int i = 0, c = values.length; i < c; i++) {
+            this.values.add(new Double(values[i]));
+        }
+    }
+
+    /**
+     * Create an array object.
+     * @param parent the array's parent if any
      * @param values the actual values wrapped by this object
      */
-    public PDFArray(Collection values) {
+    public PDFArray(PDFObject parent, Collection values) {
         /* generic creation of PDF object */
-        super();
+        super(parent);
         
         this.values.addAll(values);
     }
     
     /**
      * Create the array object
-     *
+     * @param parent the array's parent if any
      * @param values the actual array wrapped by this object
      */
-    public PDFArray(Object[] values) {
+    public PDFArray(PDFObject parent, Object[] values) {
         /* generic creation of PDF object */
-        super();
+        super(parent);
         
         for (int i = 0, c = values.length; i < c; i++) {
             this.values.add(values[i]);
@@ -119,6 +146,12 @@ public class PDFArray extends PDFObject {
      * @param obj the value
      */
     public void add(Object obj) {
+        if (obj instanceof PDFObject) {
+            PDFObject pdfObj = (PDFObject)obj;
+            if (!pdfObj.hasObjectNumber()) {
+                pdfObj.setParent(this);
+            }
+        }
         this.values.add(obj);
     }
     
@@ -130,27 +163,30 @@ public class PDFArray extends PDFObject {
         this.values.add(new Double(value));
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public String toPDFString() {
-        StringBuffer p = new StringBuffer(64);
+    /** {@inheritDoc} */
+    protected int output(OutputStream stream) throws IOException {
+        CountingOutputStream cout = new CountingOutputStream(stream);
+        Writer writer = PDFDocument.getWriterFor(cout);
         if (hasObjectNumber()) {
-            p.append(getObjectID());
+            writer.write(getObjectID());
         }
-        p.append("[");
+        
+        writer.write('[');
         for (int i = 0; i < values.size(); i++) {
             if (i > 0) {
-                p.append(" ");
+                writer.write(' ');
             }
             Object obj = this.values.get(i);
-            formatObject(obj, p);
+            formatObject(obj, cout, writer);
         }
-        p.append("]");
+        writer.write(']');
+        
         if (hasObjectNumber()) {
-            p.append("\nendobj\n");
+            writer.write("\nendobj\n");
         }
-        return p.toString();
+        
+        writer.flush();
+        return cout.getCount();
     }
-
+    
 }

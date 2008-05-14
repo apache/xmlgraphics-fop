@@ -35,7 +35,9 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+
 import org.apache.fop.DebugHelper;
+import org.apache.fop.fo.flow.table.CollapsedConditionalBorderTestCase;
 import org.apache.fop.fo.flow.table.IllegalRowSpanTestCase;
 import org.apache.fop.fo.flow.table.RowGroupBuilderTestCase;
 import org.apache.fop.fo.flow.table.TableColumnColumnNumberTestCase;
@@ -103,9 +105,14 @@ public final class FOTreeTestSuite {
                 final FOTreeTester tester, final File f) {
         suite.addTest(new FOTreeTestCase(f.getName()) {
             public void runTest() throws Exception {
-                org.apache.commons.logging.LogFactory.getLog(this.getClass()).info("Starting " + f.getName());
-                prepare(tester, f);
-                testMain();
+                try {
+                    prepare(tester, f);
+                    testMain();
+                } catch (Exception e) {
+                    org.apache.commons.logging.LogFactory.getLog(this.getClass()).info(
+                            "Error on " + f.getName());
+                    throw e;
+                }
             }
         });
     }
@@ -115,6 +122,7 @@ public final class FOTreeTestSuite {
         suite.addTestSuite(IllegalRowSpanTestCase.class);
         suite.addTestSuite(RowGroupBuilderTestCase.class);
         suite.addTestSuite(TableColumnColumnNumberTestCase.class);
+        suite.addTestSuite(CollapsedConditionalBorderTestCase.class);
     }
 
     private static class FOTreeTestCase extends TestCase {

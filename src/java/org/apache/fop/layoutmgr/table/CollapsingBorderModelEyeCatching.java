@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.BorderSpecification;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 
 /**
@@ -29,6 +30,27 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
  * TODO Column groups are not yet checked in this algorithm!
  */
 public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
+
+    /** {@inheritDoc} */
+    public BorderSpecification determineWinner(BorderSpecification border1,
+            BorderSpecification border2, boolean discard) {
+        BorderInfo bi1 = border1.getBorderInfo();
+        BorderInfo bi2 = border2.getBorderInfo();
+        if (discard) {
+            if (bi1.getWidth().isDiscard()) {
+                if (bi2.getWidth().isDiscard()) {
+                    return new BorderSpecification(
+                            CommonBorderPaddingBackground.getDefaultBorderInfo(), 0/*TODO*/);
+                } else {
+                    return border2;
+                }
+            } else if (bi2.getWidth().isDiscard()) {
+                return border1;
+            }
+        }
+        // Otherwise, fall back to the default resolution algorithm
+        return determineWinner(border1, border2);
+    }
 
     /** {@inheritDoc} */
     public BorderSpecification determineWinner(BorderSpecification border1,

@@ -23,22 +23,29 @@ package org.apache.fop.apps;
 import java.io.File;
 import java.util.Date;
 import java.util.Map;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 
-// commons logging
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// FOP
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
+
 import org.apache.fop.Version;
+import org.apache.fop.events.DefaultEventBroadcaster;
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventBroadcaster;
+import org.apache.fop.events.EventListener;
+import org.apache.fop.events.FOPEventListenerProxy;
+import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
-import org.apache.fop.render.pdf.PDFRenderer;
 
 /**
  * This is the user agent for FOP.
@@ -63,12 +70,13 @@ import org.apache.fop.render.pdf.PDFRenderer;
 public class FOUserAgent {
 
     /** Defines the default target resolution (72dpi) for FOP */
-    public static final float DEFAULT_TARGET_RESOLUTION = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
+    public static final float DEFAULT_TARGET_RESOLUTION
+            = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
 
     private static Log log = LogFactory.getLog("FOP");
 
     private FopFactory factory;
-    
+
     /**
      *  The base URL for all URL resolutions, especially for
      *  external-graphics.
@@ -80,14 +88,15 @@ public class FOUserAgent {
 
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
-    
+
     private float targetResolution = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
     private Map rendererOptions = new java.util.HashMap();
     private File outputFile = null;
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
     private boolean locatorEnabled = true; // true by default (for error messages).
-    
+    private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
+
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
@@ -98,30 +107,36 @@ public class FOUserAgent {
      */
     protected String creator = null;
 
-    /** Creation Date:  Override of the date the document was created. 
+    /** Creation Date:  Override of the date the document was created.
      * (Some renderers can store this in the document.)
      */
     protected Date creationDate = null;
-    
+
     /** Author of the content of the document. */
     protected String author = null;
     /** Title of the document. */
     protected String title = null;
     /** Set of keywords applicable to this document. */
     protected String keywords = null;
-    
+
+    private ImageSessionContext imageSessionContext = new AbstractImageSessionContext() {
+
+        public ImageContext getParentContext() {
+            return getFactory();
+        }
+
+        public float getTargetResolution() {
+            return FOUserAgent.this.getTargetResolution();
+        }
+
+        public Source resolveURI(String uri) {
+            return FOUserAgent.this.resolveURI(uri);
+        }
+
+    };
+
     /**
-     * Default constructor
-     * @see org.apache.fop.apps.FopFactory
-     * @deprecated Provided for compatibility only. Please use the methods from 
-     *             FopFactory to construct FOUserAgent instances!
-     */
-    public FOUserAgent() throws FOPException {
-        this(FopFactory.newInstance());
-    }
-    
-    /**
-     * Main constructor. <b>This constructor should not be called directly. Please use the 
+     * Main constructor. <b>This constructor should not be called directly. Please use the
      * methods from FopFactory to construct FOUserAgent instances!</b>
      * @param factory the factory that provides environment-level information
      * @see org.apache.fop.apps.FopFactory
@@ -132,20 +147,20 @@ public class FOUserAgent {
         }
         this.factory = factory;
         setBaseURL(factory.getBaseURL());
-        setFontBaseURL(factory.getFontBaseURL());
+        setFontBaseURL(factory.getFontManager().getFontBaseURL());
         setTargetResolution(factory.getTargetResolution());
     }
-    
+
     /** @return the associated FopFactory instance */
     public FopFactory getFactory() {
         return this.factory;
     }
-    
+
     // ---------------------------------------------- rendering-run dependent stuff
-    
+
     /**
-     * Sets an explicit renderer to use which overrides the one defined by the 
-     * render type setting.  
+     * Sets an explicit renderer to use which overrides the one defined by the
+     * render type setting.
      * @param renderer the Renderer instance to use
      */
     public void setRendererOverride(Renderer renderer) {
@@ -162,7 +177,7 @@ public class FOUserAgent {
 
     /**
      * Sets an explicit FOEventHandler instance which overrides the one
-     * defined by the render type setting.  
+     * defined by the render type setting.
      * @param handler the FOEventHandler instance
      */
     public void setFOEventHandlerOverride(FOEventHandler handler) {
@@ -178,7 +193,7 @@ public class FOUserAgent {
     }
 
     /**
-     * Sets the producer of the document.  
+     * Sets the producer of the document.
      * @param producer source of document
      */
     public void setProducer(String producer) {
@@ -194,7 +209,7 @@ public class FOUserAgent {
     }
 
     /**
-     * Sets the creator of the document.  
+     * Sets the creator of the document.
      * @param creator of document
      */
     public void setCreator(String creator) {
@@ -210,7 +225,7 @@ public class FOUserAgent {
     }
 
     /**
-     * Sets the creation date of the document.  
+     * Sets the creation date of the document.
      * @param creationDate date of document
      */
     public void setCreationDate(Date creationDate) {
@@ -226,7 +241,7 @@ public class FOUserAgent {
     }
 
     /**
-     * Sets the author of the document.  
+     * Sets the author of the document.
      * @param author of document
      */
     public void setAuthor(String author) {
@@ -243,7 +258,7 @@ public class FOUserAgent {
 
     /**
      * Sets the title of the document. This will override any title coming from
-     * an fo:title element.  
+     * an fo:title element.
      * @param title of document
      */
     public void setTitle(String title) {
@@ -259,7 +274,7 @@ public class FOUserAgent {
     }
 
     /**
-     * Sets the keywords for the document.  
+     * Sets the keywords for the document.
      * @param keywords for the document
      */
     public void setKeywords(String keywords) {
@@ -281,7 +296,7 @@ public class FOUserAgent {
     public Map getRendererOptions() {
         return rendererOptions;
     }
-    
+
     /**
      * Sets the base URL.
      * @param baseUrl base URL
@@ -323,35 +338,12 @@ public class FOUserAgent {
     }
 
     /**
-     * Returns the parameters for PDF encryption.
-     * @return the PDF encryption parameters, null if not applicable
-     * @deprecated Use (PDFEncryptionParams)getRendererOptions().get("encryption-params") 
-     *             instead.
-     */
-    public PDFEncryptionParams getPDFEncryptionParams() {
-        return (PDFEncryptionParams)getRendererOptions().get(PDFRenderer.ENCRYPTION_PARAMS);
-    }
-
-    /**
-     * Sets the parameters for PDF encryption.
-     * @param pdfEncryptionParams the PDF encryption parameters, null to
-     * disable PDF encryption
-     * @deprecated Use getRendererOptions().put("encryption-params", 
-     *             new PDFEncryptionParams(..)) instead or set every parameter separately: 
-     *             getRendererOptions().put("noprint", Boolean.TRUE).
-     */
-    public void setPDFEncryptionParams(PDFEncryptionParams pdfEncryptionParams) {
-        getRendererOptions().put(PDFRenderer.ENCRYPTION_PARAMS, pdfEncryptionParams);
-    }
-
-
-    /**
      * Attempts to resolve the given URI.
      * Will use the configured resolver and if not successful fall back
      * to the default resolver.
      * @param uri URI to access
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
-     * cannot be resolved. 
+     * cannot be resolved.
      * @see org.apache.fop.apps.FOURIResolver
      */
     public Source resolveURI(String uri) {
@@ -365,7 +357,7 @@ public class FOUserAgent {
      * @param href URI to access
      * @param base the base URI to resolve against
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
-     * cannot be resolved. 
+     * cannot be resolved.
      * @see org.apache.fop.apps.FOURIResolver
      */
     public Source resolveURI(String href, String base) {
@@ -410,9 +402,9 @@ public class FOUserAgent {
      * @see #getTargetResolution()
      */
     public float getTargetPixelUnitToMillimeter() {
-        return 25.4f / this.targetResolution; 
+        return 25.4f / this.targetResolution;
     }
-    
+
     /** @return the resolution for resolution-dependant output */
     public float getTargetResolution() {
         return this.targetResolution;
@@ -427,7 +419,7 @@ public class FOUserAgent {
     public void setTargetResolution(float dpi) {
         this.targetResolution = dpi;
         if (log.isDebugEnabled()) {
-            log.debug("target-resolution set to: " + targetResolution 
+            log.debug("target-resolution set to: " + targetResolution
                     + "dpi (px2mm=" + getTargetPixelUnitToMillimeter() + ")");
         }
     }
@@ -441,7 +433,15 @@ public class FOUserAgent {
     public void setTargetResolution(int dpi) {
         setTargetResolution((float)dpi);
     }
-    
+
+    /**
+     * Returns the image session context for the image package.
+     * @return the ImageSessionContext instance for this rendering run
+     */
+    public ImageSessionContext getImageSessionContext() {
+        return this.imageSessionContext;
+    }
+
     // ---------------------------------------------- environment-level stuff
     //                                                (convenience access to FopFactory methods)
 
@@ -457,9 +457,9 @@ public class FOUserAgent {
      * @see #getSourceResolution()
      */
     public float getSourcePixelUnitToMillimeter() {
-        return getFactory().getSourcePixelUnitToMillimeter(); 
+        return getFactory().getSourcePixelUnitToMillimeter();
     }
-    
+
     /** @return the resolution for resolution-dependant input */
     public float getSourceResolution() {
         return getFactory().getSourceResolution();
@@ -475,7 +475,7 @@ public class FOUserAgent {
     public String getPageHeight() {
         return getFactory().getPageHeight();
     }
-    
+
     /**
      * Gets the default page-width to use as fallback,
      * in case page-width="auto"
@@ -486,7 +486,7 @@ public class FOUserAgent {
     public String getPageWidth() {
         return getFactory().getPageWidth();
     }
-    
+
     /**
      * Returns whether FOP is strictly validating input XSL
      * @return true of strict validation turned on, false otherwise
@@ -497,7 +497,7 @@ public class FOUserAgent {
     }
 
     /**
-     * @return true if the indent inheritance should be broken when crossing reference area 
+     * @return true if the indent inheritance should be broken when crossing reference area
      *         boundaries (for more info, see the javadoc for the relative member variable)
      * @see FopFactory#isBreakIndentInheritanceOnReferenceAreaBoundary()
      */
@@ -518,7 +518,7 @@ public class FOUserAgent {
     public XMLHandlerRegistry getXMLHandlerRegistry() {
         return getFactory().getXMLHandlerRegistry();
     }
-    
+
     /**
      * Controls the use of SAXLocators to provide location information in error
      * messages.
@@ -535,6 +535,46 @@ public class FOUserAgent {
      */
     public boolean isLocatorEnabled() {
         return locatorEnabled;
+    }
+
+    /**
+     * Returns the event broadcaster that control events sent inside a processing run. Clients
+     * can register event listeners with the event broadcaster to listen for events that occur
+     * while a document is being processed.
+     * @return the event broadcaster.
+     */
+    public EventBroadcaster getEventBroadcaster() {
+        return this.eventBroadcaster;
+    }
+
+    private class FOPEventBroadcaster extends DefaultEventBroadcaster {
+
+        private EventListener rootListener;
+
+        public FOPEventBroadcaster() {
+            //Install a temporary event listener that catches the first event to
+            //do some initialization.
+            this.rootListener = new EventListener() {
+                public void processEvent(Event event) {
+                    if (!listeners.hasEventListeners()) {
+                        //Backwards-compatibility: Make sure at least the LoggingEventListener is
+                        //plugged in so no events are just silently swallowed.
+                        addEventListener(
+                                new LoggingEventListener(LogFactory.getLog(FOUserAgent.class)));
+                    }
+                    //Replace with final event listener
+                    rootListener = new FOPEventListenerProxy(
+                            listeners, FOUserAgent.this);
+                    rootListener.processEvent(event);
+                }
+            };
+        }
+
+        /** {@inheritDoc} */
+        public void broadcastEvent(Event event) {
+            rootListener.processEvent(event);
+        }
+
     }
 
 }

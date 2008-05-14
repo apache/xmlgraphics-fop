@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.apps;
 
@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -36,15 +35,17 @@ import javax.xml.transform.URIResolver;
 import org.xml.sax.SAXException;
 
 import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageManager;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontCache;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
@@ -57,53 +58,53 @@ import org.apache.fop.util.ContentHandlerFactoryRegistry;
  * Information that may potentially be different for each rendering run can be
  * found and managed in the FOUserAgent.
  */
-public class FopFactory {
-    
+public class FopFactory implements ImageContext {
+
     /** logger instance */
     private static Log log = LogFactory.getLog(FopFactory.class);
-    
+
     /** Factory for Renderers and FOEventHandlers */
     private RendererFactory rendererFactory;
-    
+
     /** Registry for XML handlers */
     private XMLHandlerRegistry xmlHandlers;
-    
+
     /** The registry for ElementMapping instances */
     private ElementMappingRegistry elementMappingRegistry;
 
-    /** The registry for ContentHandlerFactory instance */ 
-    private ContentHandlerFactoryRegistry contentHandlerFactoryRegistry 
+    /** The registry for ContentHandlerFactory instance */
+    private ContentHandlerFactoryRegistry contentHandlerFactoryRegistry
                 = new ContentHandlerFactoryRegistry();
-    
+
     /** The resolver for user-supplied hyphenation patterns */
     private HyphenationTreeResolver hyphResolver = null;
 
     private ColorSpaceCache colorSpaceCache = null;
-    
-    /** Image factory for creating fop image objects */
-    private ImageFactory imageFactory;
+
+    /** Image manager for loading and caching image objects */
+    private ImageManager imageManager;
+
+    /** Font manager for font substitution, autodetection and caching **/
+    private FontManager fontManager;
 
     /** Configuration layer used to configure fop */
     private FopFactoryConfigurator config = null;
-        
+
     /**
      *  The base URL for all URL resolutions, especially for
      *  external-graphics.
      */
     private String base = null;
 
-    /** The base URL for all font URL resolutions. */
-    private String fontBase = null;
-
     /** The base URL for all hyphen URL resolutions. */
     private String hyphenBase = null;
 
     /**
      * FOP has the ability, for some FO's, to continue processing even if the
-     * input XSL violates that FO's content model.  This is the default  
+     * input XSL violates that FO's content model.  This is the default
      * behavior for FOP.  However, this flag, if set, provides the user the
      * ability for FOP to halt on all content model violations if desired.
-     */ 
+     */
     private boolean strictFOValidation = FopFactoryConfigurator.DEFAULT_STRICT_FO_VALIDATION;
 
     /**
@@ -113,12 +114,6 @@ public class FopFactory {
     private boolean strictUserConfigValidation
         = FopFactoryConfigurator.DEFAULT_STRICT_USERCONFIG_VALIDATION;
 
-    /** Font cache to speed up auto-font configuration (null if disabled) */
-    private FontCache fontCache = null;
-
-    /** Allows enabling kerning on the base 14 fonts, default is false */
-    private boolean enableBase14Kerning = false;
-    
     /** Source resolution in dpi */
     private float sourceResolution = FopFactoryConfigurator.DEFAULT_SOURCE_RESOLUTION;
 
@@ -127,7 +122,7 @@ public class FopFactory {
 
     /** Page height */
     private String pageHeight = FopFactoryConfigurator.DEFAULT_PAGE_HEIGHT;
-    
+
     /** Page width */
     private String pageWidth = FopFactoryConfigurator.DEFAULT_PAGE_WIDTH;
 
@@ -141,7 +136,7 @@ public class FopFactory {
     private Set ignoredNamespaces;
 
     private FOURIResolver foURIResolver;
-    
+
     /**
      * Main constructor.
      */
@@ -149,14 +144,21 @@ public class FopFactory {
         this.config = new FopFactoryConfigurator(this);
         this.elementMappingRegistry = new ElementMappingRegistry(this);
         this.foURIResolver = new FOURIResolver(validateUserConfigStrictly());
+        this.fontManager = new FontManager() {
+
+            /** {@inheritDoc} */
+            public void setFontBaseURL(String fontBase) throws MalformedURLException {
+                super.setFontBaseURL(getFOURIResolver().checkBaseURL(fontBase));
+            }
+
+        };
         this.colorSpaceCache = new ColorSpaceCache(foURIResolver);
-        this.imageFactory = new ImageFactory();        
+        this.imageManager = new ImageManager(this);
         this.rendererFactory = new RendererFactory();
         this.xmlHandlers = new XMLHandlerRegistry();
         this.ignoredNamespaces = new java.util.HashSet();
-        setUseCache(FopFactoryConfigurator.DEFAULT_USE_CACHE);
     }
-    
+
     /**
      * Returns a new FopFactory instance.
      * @return the requested FopFactory instance.
@@ -164,13 +166,13 @@ public class FopFactory {
     public static FopFactory newInstance() {
         return new FopFactory();
     }
-    
+
     /**
      * Returns a new FOUserAgent instance. Use the FOUserAgent to configure special values that
      * are particular to a rendering run. Don't reuse instances over multiple rendering runs but
      * instead create a new one each time and reuse the FopFactory.
      * @return the newly created FOUserAgent instance initialized with default values
-     * @throws FOPException 
+     * @throws FOPException
      */
     public FOUserAgent newFOUserAgent() {
         FOUserAgent userAgent = new FOUserAgent(this);
@@ -178,52 +180,49 @@ public class FopFactory {
     }
 
     /**
-     * Returns a new {@link Fop} instance. FOP will be configured with a default user agent 
+     * Returns a new {@link Fop} instance. FOP will be configured with a default user agent
      * instance.
      * <p>
      * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
      * use the constants defined in {@link MimeConstants}.
-     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").     
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @return the new Fop instance
      * @throws FOPException when the constructor fails
      */
     public Fop newFop(String outputFormat) throws FOPException {
-        return new Fop(outputFormat, newFOUserAgent());
+        return newFop(outputFormat, newFOUserAgent());
     }
 
     /**
-     * Returns a new {@link Fop} instance. Use this factory method if you want to configure this 
+     * Returns a new {@link Fop} instance. Use this factory method if you want to configure this
      * very rendering run, i.e. if you want to set some metadata like the title and author of the
-     * document you want to render. In that case, create a new {@link FOUserAgent} 
+     * document you want to render. In that case, create a new {@link FOUserAgent}
      * instance using {@link #newFOUserAgent()}.
      * <p>
      * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
      * use the constants defined in {@link MimeConstants}.
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @param userAgent the user agent that will be used to control the rendering run     
+     * @param userAgent the user agent that will be used to control the rendering run
      * @return the new Fop instance
      * @throws FOPException  when the constructor fails
      */
     public Fop newFop(String outputFormat, FOUserAgent userAgent) throws FOPException {
-        if (userAgent == null) {
-            throw new NullPointerException("The userAgent parameter must not be null!");
-        }
-        return new Fop(outputFormat, userAgent);
+        return newFop(outputFormat, userAgent, null);
     }
-    
+
     /**
-     * Returns a new {@link Fop} instance. FOP will be configured with a default user agent 
+     * Returns a new {@link Fop} instance. FOP will be configured with a default user agent
      * instance. Use this factory method if your output type requires an output stream.
      * <p>
      * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
      * use the constants defined in {@link MimeConstants}.
-     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf"). 
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param stream the output stream
      * @return the new Fop instance
      * @throws FOPException when the constructor fails
      */
     public Fop newFop(String outputFormat, OutputStream stream) throws FOPException {
-        return new Fop(outputFormat, newFOUserAgent(), stream);
+        return newFop(outputFormat, newFOUserAgent(), stream);
     }
 
     /**
@@ -236,30 +235,30 @@ public class FopFactory {
      * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
      * use the constants defined in {@link MimeConstants}.
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @param userAgent the user agent that will be used to control the rendering run     
+     * @param userAgent the user agent that will be used to control the rendering run
      * @param stream the output stream
      * @return the new Fop instance
      * @throws FOPException when the constructor fails
      */
-    public Fop newFop(String outputFormat, FOUserAgent userAgent, OutputStream stream) 
+    public Fop newFop(String outputFormat, FOUserAgent userAgent, OutputStream stream)
                 throws FOPException {
         if (userAgent == null) {
             throw new NullPointerException("The userAgent parameter must not be null!");
         }
         return new Fop(outputFormat, userAgent, stream);
     }
-    
+
     /**
      * Returns a new {@link Fop} instance. Use this factory method if you want to supply your
-     * own {@link org.apache.fop.render.Renderer Renderer} or 
-     * {@link org.apache.fop.fo.FOEventHandler FOEventHandler} 
+     * own {@link org.apache.fop.render.Renderer Renderer} or
+     * {@link org.apache.fop.fo.FOEventHandler FOEventHandler}
      * instance instead of the default ones created internally by FOP.
-     * @param userAgent the user agent that will be used to control the rendering run     
+     * @param userAgent the user agent that will be used to control the rendering run
      * @return the new Fop instance
      * @throws FOPException when the constructor fails
      */
     public Fop newFop(FOUserAgent userAgent) throws FOPException {
-        if (userAgent.getRendererOverride() == null 
+        if (userAgent.getRendererOverride() == null
                 && userAgent.getFOEventHandlerOverride() == null) {
             throw new IllegalStateException("Either the overriding renderer or the overriding"
                     + " FOEventHandler must be set when this factory method is used!");
@@ -276,7 +275,7 @@ public class FopFactory {
     public XMLHandlerRegistry getXMLHandlerRegistry() {
         return this.xmlHandlers;
     }
-    
+
     /** @return the element mapping registry */
     public ElementMappingRegistry getElementMappingRegistry() {
         return this.elementMappingRegistry;
@@ -287,9 +286,12 @@ public class FopFactory {
         return this.contentHandlerFactoryRegistry;
     }
 
-    /** @return the image factory */
-    public ImageFactory getImageFactory() {
-        return this.imageFactory;
+    /**
+     * Returns the image manager.
+     * @return the image manager
+     */
+    public ImageManager getImageManager() {
+        return this.imageManager;
     }
 
     /**
@@ -318,42 +320,12 @@ public class FopFactory {
     }
 
     /**
-     * cleans the base url
-     * @param base
-     * @return
-     * @throws MalformedURLException
-     * @throws URISyntaxException 
-     */
-    private String checkBaseURL(String base) throws MalformedURLException {
-        if (!base.endsWith("/")) {
-            // The behavior described by RFC 3986 regarding resolution of relative
-            // references may be misleading for normal users:
-            // file://path/to/resources + myResource.res -> file://path/to/myResource.res
-            // file://path/to/resources/ + myResource.res -> file://path/to/resources/myResource.res
-            // We assume that even when the ending slash is missing, users have the second
-            // example in mind
-            base += "/";
-        }
-        File dir = new File(base);
-        try {
-            base = (dir.isDirectory() ? dir.toURL() : new URL(base)).toExternalForm(); 
-        } catch (MalformedURLException mfue) {
-            if (strictUserConfigValidation) {
-                throw mfue;
-            }
-            log.error(mfue.getMessage());
-        }
-        return base;
-    }
-    
-    /**
      * Sets the base URL.
-     * @param base base URL
-     * @throws MalformedURLException 
-     * @throws URISyntaxException 
+     * @param base the base URL
+     * @throws MalformedURLException if there's a problem with a file URL
      */
     public void setBaseURL(String base) throws MalformedURLException {
-        this.base = checkBaseURL(base);
+        this.base = foURIResolver.checkBaseURL(base);
     }
 
     /**
@@ -363,20 +335,23 @@ public class FopFactory {
     public String getBaseURL() {
         return this.base;
     }
-    
+
     /**
      * Sets the font base URL.
      * @param fontBase font base URL
-     * @throws MalformedURLException 
-     * @throws URISyntaxException 
+     * @throws MalformedURLException if there's a problem with a file URL
+     * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
      */
     public void setFontBaseURL(String fontBase) throws MalformedURLException {
-        this.fontBase = checkBaseURL(fontBase);
+        getFontManager().setFontBaseURL(fontBase);
     }
 
-    /** @return the font base URL */
+    /**
+     * @return the font base URL
+     * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
+     */
     public String getFontBaseURL() {
-        return this.fontBase;
+        return getFontManager().getFontBaseURL();
     }
 
     /** @return the hyphen base URL */
@@ -387,8 +362,7 @@ public class FopFactory {
     /**
      * Sets the hyphen base URL.
      * @param hyphenBase hythen base URL
-     * @throws MalformedURLException 
-     * @throws URISyntaxException 
+     * @throws MalformedURLException if there's a problem with a file URL
      * */
     public void setHyphenBaseURL(final String hyphenBase) throws MalformedURLException {
         if (hyphenBase != null) {
@@ -399,12 +373,12 @@ public class FopFactory {
                 }
             });
         }
-        this.hyphenBase = checkBaseURL(hyphenBase);
+        this.hyphenBase = foURIResolver.checkBaseURL(hyphenBase);
     }
-    
+
     /**
      * Sets the URI Resolver. It is used for resolving factory-level URIs like hyphenation
-     * patterns and as backup for URI resolution performed during a rendering run. 
+     * patterns and as backup for URI resolution performed during a rendering run.
      * @param uriResolver the new URI resolver
      */
     public void setURIResolver(URIResolver uriResolver) {
@@ -419,14 +393,22 @@ public class FopFactory {
         return foURIResolver;
     }
 
+    /**
+     * Returns the FO URI Resolver.
+     * @return the FO URI Resolver
+     */
+    public FOURIResolver getFOURIResolver() {
+        return foURIResolver;
+    }
+
     /** @return the HyphenationTreeResolver for resolving user-supplied hyphenation patterns. */
     public HyphenationTreeResolver getHyphenationTreeResolver() {
         return this.hyphResolver;
     }
-    
+
     /**
-     * sets the HyphenationTreeResolver
-     * @param hyphResolver
+     * Sets the HyphenationTreeResolver to be used for resolving user-supplied hyphenation files.
+     * @param hyphResolver the HyphenationTreeResolver instance
      */
     public void setHyphenationTreeResolver(HyphenationTreeResolver hyphResolver) {
         this.hyphResolver = hyphResolver;
@@ -450,7 +432,7 @@ public class FopFactory {
     }
 
     /**
-     * @return true if the indent inheritance should be broken when crossing reference area 
+     * @return true if the indent inheritance should be broken when crossing reference area
      *         boundaries (for more info, see the javadoc for the relative member variable)
      */
     public boolean isBreakIndentInheritanceOnReferenceAreaBoundary() {
@@ -473,20 +455,24 @@ public class FopFactory {
     public void setBreakIndentInheritanceOnReferenceAreaBoundary(boolean value) {
         this.breakIndentInheritanceOnReferenceAreaBoundary = value;
     }
-    
-    /** @return true if kerning on base 14 fonts is enabled */
+
+    /**
+     * @return true if kerning on base 14 fonts is enabled
+     * @deprecated use getFontManager().isBase14KerningEnabled() instead
+     */
     public boolean isBase14KerningEnabled() {
-        return this.enableBase14Kerning;
+        return getFontManager().isBase14KerningEnabled();
     }
-    
+
     /**
      * Controls whether kerning is activated on base 14 fonts.
      * @param value true if kerning should be activated
+     * @deprecated use getFontManager().setBase14KerningEnabled(boolean) instead
      */
     public void setBase14KerningEnabled(boolean value) {
-        this.enableBase14Kerning = value;
+        getFontManager().setBase14KerningEnabled(value);
     }
-    
+
     /** @return the resolution for resolution-dependant input */
     public float getSourceResolution() {
         return this.sourceResolution;
@@ -499,7 +485,7 @@ public class FopFactory {
      * @see #getSourceResolution()
      */
     public float getSourcePixelUnitToMillimeter() {
-        return 25.4f / getSourceResolution(); 
+        return 25.4f / getSourceResolution();
     }
 
     /**
@@ -510,7 +496,7 @@ public class FopFactory {
     public void setSourceResolution(float dpi) {
         this.sourceResolution = dpi;
         if (log.isDebugEnabled()) {
-            log.debug("source-resolution set to: " + sourceResolution 
+            log.debug("source-resolution set to: " + sourceResolution
                     + "dpi (px2mm=" + getSourcePixelUnitToMillimeter() + ")");
         }
     }
@@ -527,7 +513,7 @@ public class FopFactory {
      * @see #getTargetResolution()
      */
     public float getTargetPixelUnitToMillimeter() {
-        return 25.4f / this.targetResolution; 
+        return 25.4f / this.targetResolution;
     }
 
     /**
@@ -547,7 +533,7 @@ public class FopFactory {
     public void setSourceResolution(int dpi) {
         setSourceResolution((float)dpi);
     }
-    
+
     /**
      * Gets the default page-height to use as fallback,
      * in case page-height="auto"
@@ -557,7 +543,7 @@ public class FopFactory {
     public String getPageHeight() {
         return this.pageHeight;
     }
-    
+
     /**
      * Sets the page-height to use as fallback, in case
      * page-height="auto"
@@ -570,7 +556,7 @@ public class FopFactory {
             log.debug("Default page-height set to: " + pageHeight);
         }
     }
-    
+
     /**
      * Gets the default page-width to use as fallback,
      * in case page-width="auto"
@@ -580,7 +566,7 @@ public class FopFactory {
     public String getPageWidth() {
         return this.pageWidth;
     }
-    
+
     /**
      * Sets the page-width to use as fallback, in case
      * page-width="auto"
@@ -593,27 +579,27 @@ public class FopFactory {
             log.debug("Default page-width set to: " + pageWidth);
         }
     }
-    
+
     /**
      * Adds a namespace to the set of ignored namespaces.
-     * If FOP encounters a namespace which it cannot handle, it issues a warning except if this 
+     * If FOP encounters a namespace which it cannot handle, it issues a warning except if this
      * namespace is in the ignored set.
      * @param namespaceURI the namespace URI
      */
     public void ignoreNamespace(String namespaceURI) {
         this.ignoredNamespaces.add(namespaceURI);
     }
-    
+
     /**
      * Adds a collection of namespaces to the set of ignored namespaces.
-     * If FOP encounters a namespace which it cannot handle, it issues a warning except if this 
+     * If FOP encounters a namespace which it cannot handle, it issues a warning except if this
      * namespace is in the ignored set.
      * @param namespaceURIs the namespace URIs
      */
     public void ignoreNamespaces(Collection namespaceURIs) {
         this.ignoredNamespaces.addAll(namespaceURIs);
     }
-    
+
     /**
      * Indicates whether a namespace URI is on the ignored list.
      * @param namespaceURI the namespace URI
@@ -622,14 +608,14 @@ public class FopFactory {
     public boolean isNamespaceIgnored(String namespaceURI) {
         return this.ignoredNamespaces.contains(namespaceURI);
     }
-    
+
     /** @return the set of namespaces that are ignored by FOP */
     public Set getIgnoredNamespace() {
         return Collections.unmodifiableSet(this.ignoredNamespaces);
     }
 
     //------------------------------------------- Configuration stuff
-    
+
     /**
      * Set the user configuration.
      * @param userConfigFile the configuration file
@@ -649,11 +635,11 @@ public class FopFactory {
     public void setUserConfig(String uri) throws SAXException, IOException {
         config.setUserConfig(uri);
     }
-    
+
     /**
      * Set the user configuration.
      * @param userConfig configuration
-     * @throws FOPException if a configuration problem occurs 
+     * @throws FOPException if a configuration problem occurs
      */
     public void setUserConfig(Configuration userConfig) throws FOPException {
         config.setUserConfig(userConfig);
@@ -684,35 +670,43 @@ public class FopFactory {
         return this.strictUserConfigValidation;
     }
 
-    //------------------------------------------- Cache related stuff
+    //------------------------------------------- Font related stuff
 
     /**
      * Whether or not to cache results of font triplet detection/auto-config
      * @param useCache use cache or not
+     * @deprecated use getFontManager().setUseCache(boolean) instead
      */
     public void setUseCache(boolean useCache) {
-        if (useCache) {
-            this.fontCache = FontCache.load();
-            if (this.fontCache == null) {
-                this.fontCache = new FontCache();
-            }
-        } else {
-            this.fontCache = null;
-        }
+        getFontManager().setUseCache(useCache);
     }
 
     /**
      * Cache results of font triplet detection/auto-config?
      * @return whether this factory is uses the cache
+     * @deprecated use getFontManager().useCache() instead
      */
     public boolean useCache() {
-        return (this.fontCache != null);
+        return getFontManager().useCache();
     }
 
+    /**
+     * Returns the font cache instance used by this factory.
+     * @return the font cache
+     * @deprecated use getFontManager().getFontCache() instead
+     */
     public FontCache getFontCache() {
-        return this.fontCache;
+        return getFontManager().getFontCache();
     }
-    
+
+    /**
+     * Returns the font manager.
+     * @return the font manager
+     */
+    public FontManager getFontManager() {
+        return this.fontManager;
+    }
+
     /**
      * Attempts to resolve the given URI.
      * Will use the configured resolver and if not successful fall back
@@ -720,7 +714,7 @@ public class FopFactory {
      * @param href URI to access
      * @param baseUri the base URI to resolve against
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
-     * cannot be resolved. 
+     * cannot be resolved.
      * @see org.apache.fop.apps.FOURIResolver
      */
     public Source resolveURI(String href, String baseUri) {
@@ -732,21 +726,22 @@ public class FopFactory {
         }
         return source;
     }
-        
+
     /**
      * Create (if needed) and return an ICC ColorSpace instance.
      * 
      * The ICC profile source is taken from the src attribute of the color-profile FO element.
      * If the ICC ColorSpace is not yet in the cache a new one is created and stored in the cache.
      * 
-     * The FOP URI resolver is used to try and locate the ICC file. 
+     * The FOP URI resolver is used to try and locate the ICC file.
      * If that fails null is returned.
      * 
      * @param baseUri a base URI to resolve relative URIs
      * @param iccProfileSrc ICC Profile source to return a ColorSpace for
-     * @return ICC ColorSpace object or null if ColorSpace could not be created 
+     * @return ICC ColorSpace object or null if ColorSpace could not be created
      */
     public ColorSpace getColorSpace(String baseUri, String iccProfileSrc) {
         return colorSpaceCache.get(baseUri, iccProfileSrc);
-    }    
+    }
+
 }

@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts;
 
 /**
@@ -25,7 +25,7 @@ package org.apache.fop.fonts;
 public class FontUtil {
 
     /**
-     * Parses an CSS2 (SVG and XSL-FO) font weight (normal, bold, 100-900) to 
+     * Parses an CSS2 (SVG and XSL-FO) font weight (normal, bold, 100-900) to
      * an integer.
      * See http://www.w3.org/TR/REC-CSS2/fonts.html#propdef-font-weight
      * TODO: Implement "lighter" and "bolder".
@@ -47,7 +47,7 @@ public class FontUtil {
                 weight = 700;
             } else {
                 throw new IllegalArgumentException(
-                    "Illegal value for font weight: '" 
+                    "Illegal value for font weight: '"
                     + text
                     + "'. Use one of: 100, 200, 300, "
                     + "400, 500, 600, 700, 800, 900, "
@@ -59,32 +59,38 @@ public class FontUtil {
 
     /**
      * Removes all white space from a string (used primarily for font names)
-     * @param s the string
+     * @param str the string
      * @return the processed result
      */
-    public static String stripWhiteSpace(String s) {
-        StringBuffer sb = new StringBuffer(s.length());
-        for (int i = 0, c = s.length(); i < c; i++) {
-            final char ch = s.charAt(i);
-            if (ch != ' ' 
-                    && ch != '\r' 
-                    && ch != '\n'
-                    && ch != '\t') {
-                sb.append(ch);
+    public static String stripWhiteSpace(String str) {
+        if (str != null) {
+            StringBuffer stringBuffer = new StringBuffer(str.length());
+            for (int i = 0, strLen = str.length(); i < strLen; i++) {
+                final char ch = str.charAt(i);
+                if (ch != ' ' && ch != '\r' && ch != '\n' && ch != '\t') {
+                    stringBuffer.append(ch);
+                }
             }
+            return stringBuffer.toString();
         }
-        return sb.toString();
+        return str;
     }
 
     /** font constituent names which identify a font as being of "italic" style */
-    private static final String[] ITALIC_WORDS = {"italic", "oblique"};
+    private static final String[] ITALIC_WORDS = {
+        Font.STYLE_ITALIC, Font.STYLE_OBLIQUE, Font.STYLE_INCLINED
+    };
 
     /** font constituent names which identify a font as being of "light" weight */
     private static final String[] LIGHT_WORDS = {"light"};
+    /** font constituent names which identify a font as being of "medium" weight */
+    private static final String[] MEDIUM_WORDS = {"medium"};
+    /** font constituent names which identify a font as being of "demi/semi" weight */
+    private static final String[] DEMI_WORDS = {"demi", "semi"};
     /** font constituent names which identify a font as being of "bold" weight */
     private static final String[] BOLD_WORDS = {"bold"};
-    /** font constituent names which identify a font as being of "bold" weight */
-    private static final String[] EXTRA_BOLD_WORDS = {"extrabold", "black", 
+    /** font constituent names which identify a font as being of "extra bold" weight */
+    private static final String[] EXTRA_BOLD_WORDS = {"extrabold", "extra bold", "black",
         "heavy", "ultra", "super"};
 
     /**
@@ -93,9 +99,11 @@ public class FontUtil {
      * @return "normal" or "italic"
      */
     public static String guessStyle(String fontName) {
-        for (int i = 0; i < ITALIC_WORDS.length; i++) {
-            if (fontName.indexOf(ITALIC_WORDS[i]) != -1) {
-                return Font.STYLE_ITALIC;          
+        if (fontName != null) {
+            for (int i = 0; i < ITALIC_WORDS.length; i++) {
+                if (fontName.indexOf(ITALIC_WORDS[i]) != -1) {
+                    return Font.STYLE_ITALIC;
+                }
             }
         }
         return Font.STYLE_NORMAL;
@@ -109,26 +117,39 @@ public class FontUtil {
     public static int guessWeight(String fontName) {
         // weight
         int weight = Font.WEIGHT_NORMAL;
+
         for (int i = 0; i < BOLD_WORDS.length; i++) {
             if (fontName.indexOf(BOLD_WORDS[i]) != -1) {
                 weight = Font.WEIGHT_BOLD;
                 break;
-            }            
+            }
+        }
+        for (int i = 0; i < MEDIUM_WORDS.length; i++) {
+            if (fontName.indexOf(MEDIUM_WORDS[i]) != -1) {
+                weight = Font.WEIGHT_NORMAL + 100; //500
+                break;
+            }
+        }
+        //Search for "semi/demi" before "light", but after "bold"
+        //(normally semi/demi-bold is meant, but it can also be semi/demi-light)
+        for (int i = 0; i < DEMI_WORDS.length; i++) {
+            if (fontName.indexOf(DEMI_WORDS[i]) != -1) {
+                weight = Font.WEIGHT_BOLD - 100; //600
+                break;
+            }
         }
         for (int i = 0; i < EXTRA_BOLD_WORDS.length; i++) {
             if (fontName.indexOf(EXTRA_BOLD_WORDS[i]) != -1) {
                 weight = Font.WEIGHT_EXTRA_BOLD;
                 break;
-            }            
+            }
         }
         for (int i = 0; i < LIGHT_WORDS.length; i++) {
             if (fontName.indexOf(LIGHT_WORDS[i]) != -1) {
                 weight = Font.WEIGHT_LIGHT;
                 break;
-            }            
+            }
         }
         return weight;
     }
-    
-    
 }

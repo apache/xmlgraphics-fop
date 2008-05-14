@@ -28,9 +28,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * The fo:page-sequence-wrapper formatting object, first introduced
- * in the XSL 1.1 WD.  Prototype version only, subject to change as
- * XSL 1.1 WD evolves.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-sequence-wrapper">
+ * <code>fo:page-sequence-wrapper</code></a> object, first introduced
+ * in the XSL 1.1 WD.
  */
 public class PageSequenceWrapper extends FObj {
     // The value of properties relevant for this FO
@@ -39,15 +39,16 @@ public class PageSequenceWrapper extends FObj {
     // End of property values
     
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a PageSequenceWrapper instance that is a child of
+     * the given parent {@link FONode}.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public PageSequenceWrapper(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         indexClass = pList.get(PR_INDEX_CLASS).getString();
@@ -56,22 +57,30 @@ public class PageSequenceWrapper extends FObj {
 
     /**
      * {@inheritDoc}
-        XSL/FOP: (bookmark+)
+     *  <br>XSL/FOP: (bookmark+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!(FO_URI.equals(nsURI) && (localName.equals("page-sequence") || 
-            localName.equals("page-sequence-wrapper")))) {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!(localName.equals("page-sequence")
+                    || localName.equals("page-sequence-wrapper"))) {
                 invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 
-    /** @return the "index-class" property. */
+    /**
+     * Get the value of the <code>index-class</code> property.
+     * @return the "index-class" property
+     */
     public String getIndexClass() {
         return indexClass;
     }
 
-    /** @return the "index-key" property. */
+    /**
+     * Get the value of the <code>index-key</code> property.
+     * @return the "index-key" property
+     */
     public String getIndexKey() {
         return indexKey;
     }
@@ -83,6 +92,7 @@ public class PageSequenceWrapper extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_PAGE_SEQUENCE_WRAPPER}
      */
     public int getNameId() {
         return FO_PAGE_SEQUENCE_WRAPPER;

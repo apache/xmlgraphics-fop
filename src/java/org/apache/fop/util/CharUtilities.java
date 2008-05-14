@@ -68,7 +68,10 @@ public class CharUtilities {
     public static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
     /** soft hyphen */
     public static final char SOFT_HYPHEN = '\u00AD';
-
+    /** missing ideograph */
+    public static final char MISSING_IDEOGRAPH = '\u25A1';
+    /** Unicode value indicating the the character is "not a character". */
+    public static final char NOT_A_CHARACTER = '\uFFFF';
 
     /**
      * Utility class: Constructor prevents instantiating when subclassed.

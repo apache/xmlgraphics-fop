@@ -427,8 +427,8 @@ public class PropertyMaker implements Cloneable {
                     }
                 }
             } else {
-                // Check for keyword shorthand values to be substituted. 
-                pvalue = checkValueKeywords(pvalue);
+                // Check for keyword shorthand values to be substituted.
+                pvalue = checkValueKeywords(pvalue.trim());
                 newProp = checkEnumValues(pvalue);
             }
             if (newProp == null) {

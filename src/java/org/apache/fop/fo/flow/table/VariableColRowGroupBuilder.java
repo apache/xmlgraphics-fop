@@ -64,19 +64,28 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void startRow(final TableRow tableRow) {
+    void startTableRow(final TableRow tableRow) {
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) {
-                rowGroupBuilder.startRow(tableRow);
+                rowGroupBuilder.startTableRow(tableRow);
             }
         });
     }
 
     /** {@inheritDoc} */
-    void endRow(final TableCellContainer container) {
+    void endTableRow() {
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) {
-                rowGroupBuilder.endRow(container);
+                rowGroupBuilder.endTableRow();
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    void endRow(final TableBody part) {
+        events.add(new Event() {
+            public void play(RowGroupBuilder rowGroupBuilder) {
+                rowGroupBuilder.endRow(part);
             }
         });
     }
@@ -91,21 +100,21 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endTablePart(final TableBody tableBody) throws ValidationException {
+    void endTablePart() throws ValidationException {
         // TODO catch the ValidationException sooner?
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) throws ValidationException {
-                rowGroupBuilder.endTablePart(tableBody);
+                rowGroupBuilder.endTablePart();
             }
         });
     }
 
     /** {@inheritDoc} */
-    void endTable(final TableBody lastTablePart) throws ValidationException {
+    void endTable() throws ValidationException {
         RowGroupBuilder delegate = new FixedColRowGroupBuilder(table);
         for (Iterator eventIter = events.iterator(); eventIter.hasNext();) {
             ((Event) eventIter.next()).play(delegate);
         }
-        delegate.endTable(lastTablePart);
+        delegate.endTable();
     }
 }

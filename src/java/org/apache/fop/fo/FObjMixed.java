@@ -24,23 +24,25 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 
 /**
- * Base class for representation of mixed content formatting objects
- * (i.e., those that can contain both child FO's and text nodes/PCDATA).
- * It should not be instantiated directly.
+ * Abstract base class for representation of mixed content formatting objects
+ * (= those that can contain both child {@link FONode}s and <code>#PCDATA</code>).
  */
 public abstract class FObjMixed extends FObj {
     
-    /** Represents accumulated, pending FO text. See flushText(). */
+    /** Represents accumulated, pending FO text. See {@link #flushText()}. */
     protected FOText ft = null;
     
     /** Used for white-space handling; start CharIterator at node ... */
     protected FONode currentTextNode;
     
-    /** Used in creating pointers between subsequent FOText nodes
-     *  in the same Block (for handling text-transform) */
+    /** Used in creating pointers between subsequent {@link FOText} nodes
+     *  in the same {@link org.apache.fop.fo.flow.Block} 
+     *  (for handling text-transform) */
     protected FOText lastFOTextProcessed = null;
     
     /**
+     * Base constructor
+     * 
      * @param parent FONode that is the parent of this object
      */
     protected FObjMixed(FONode parent) {
@@ -75,8 +77,9 @@ public abstract class FObjMixed extends FObj {
     /**
      * Handles white-space for the node that is passed in, 
      * starting at its current text-node
-     * (used by RetrieveMarker to trigger 'end-of-node' white-space
-     *  handling)
+     * (used by {@link org.apache.fop.fo.flow.RetrieveMarker} 
+     *  to trigger 'end-of-node' white-space handling)
+     *  
      * @param fobj  the node for which to handle white-space
      */
     protected static void handleWhiteSpaceFor(FObjMixed fobj) {
@@ -86,8 +89,8 @@ public abstract class FObjMixed extends FObj {
     
     /**
      * Adds accumulated text as one FOText instance, unless
-     * the one instance's char array contains more than 
-     * Short.MAX_VALUE characters. In the latter case the 
+     * the one instance's <code>char</code> array contains more than 
+     * <code>Short.MAX_VALUE</code> characters. In the latter case the 
      * instance is split up into more manageable chunks.
      * 
      * @throws FOPException if there is a problem during processing
@@ -131,7 +134,8 @@ public abstract class FObjMixed extends FObj {
                     if (foNameId == FO_BLOCK) {
                         tmpText.createBlockPointers((org.apache.fop.fo.flow.Block) fo);
                         ((FObjMixed) fo).lastFOTextProcessed = tmpText;
-                    } else if (foNameId == FO_PAGE_SEQUENCE) {
+                    } else if (foNameId == FO_PAGE_SEQUENCE
+                                && tmpText.willCreateArea()) {
                         log.error("Could not create block pointers."
                                 + " FOText w/o Block ancestor.");
                     }
@@ -145,9 +149,7 @@ public abstract class FObjMixed extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         flushText();
         if (!inMarker()) {
@@ -166,6 +168,8 @@ public abstract class FObjMixed extends FObj {
     }
     
     /**
+     * Returns a {@link CharIterator} over this FO's character content
+     * 
      * @return iterator for this object
      */
     public CharIterator charIterator() {

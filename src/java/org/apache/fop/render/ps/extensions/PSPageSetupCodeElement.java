@@ -22,13 +22,13 @@ package org.apache.fop.render.ps.extensions;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ValidationException;
 
 /**
  * Extension element for fox:ps-page-setup-code. 
  */
 public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
 
+    /** The element name */
     protected static final String ELEMENT = "ps-page-setup-code";
     
     /**
@@ -43,7 +43,8 @@ public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
-            throw new ValidationException(getName() + " must be a child of fo:simple-page-master.");
+            invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                "rule.childOfSPM");
         }
     }
     

@@ -19,32 +19,29 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
+import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListObserver;
-import org.apache.fop.layoutmgr.ElementListUtils;
-import org.apache.fop.layoutmgr.KnuthElement;
-import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.BreakUtil;
 
 class RowGroupLayoutManager {
 
-    private static Log log = LogFactory.getLog(TableContentLayoutManager.class);
+    private static Log log = LogFactory.getLog(RowGroupLayoutManager.class);
 
     private EffRow[] rowGroup;
 
@@ -59,66 +56,28 @@ class RowGroupLayoutManager {
         this.tableStepper = tableStepper;
     }
 
-    /**
-     * 
-     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
-     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
-     * {@link Constants#EN_ODD_PAGE}
-     */
-    int getBreakBefore() {
-        TableRow rowFO = rowGroup[0].getTableRow();
-        if (rowFO == null) {
-            return Constants.EN_AUTO;
-        } else {
-            return rowFO.getBreakBefore(); 
-        }
-    }
-
-    /**
-     * 
-     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
-     * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
-     * {@link Constants#EN_ODD_PAGE}
-     */
-    int getBreakAfter() {
-        TableRow rowFO = rowGroup[rowGroup.length - 1].getTableRow();
-        if (rowFO == null) {
-            return Constants.EN_AUTO;
-        } else {
-            return rowFO.getBreakAfter(); 
-        }
-    }
-
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment, int bodyType) {
         LinkedList returnList = new LinkedList();
-
-        //Reset keep-with-next when remaining inside the table.
-        //The context flag is only used to propagate keep-with-next to the outside.
-        //The clearing is ok here because createElementsForRowGroup already handles
-        //the keep when inside a table.
-        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-
-        //Element list creation
         createElementsForRowGroup(context, alignment, bodyType, returnList);
 
-        //Handle keeps
-        if (context.isKeepWithNextPending()) {
-            log.debug("child LM (row group) signals pending keep-with-next");
+        context.updateKeepWithPreviousPending(rowGroup[0].getKeepWithPreviousStrength());
+        context.updateKeepWithNextPending(rowGroup[rowGroup.length - 1].getKeepWithNextStrength());
+
+        int breakBefore = Constants.EN_AUTO;
+        TableRow firstRow = rowGroup[0].getTableRow();
+        if (firstRow != null) {
+            breakBefore = firstRow.getBreakBefore(); 
         }
-        if (context.isKeepWithPreviousPending()) {
-            log.debug("child LM (row group) signals pending keep-with-previous");
-            if (returnList.size() > 0) {
-                //Modify last penalty
-                ListElement last = (ListElement)returnList.getLast();
-                if (last.isPenalty()) {
-                    BreakElement breakPoss = (BreakElement)last;
-                    //Only honor keep if there's no forced break
-                    if (!breakPoss.isForcedBreak()) {
-                        breakPoss.setPenaltyValue(KnuthPenalty.INFINITE);
-                    }
-                }
-            }
+        context.setBreakBefore(BreakUtil.compareBreakClasses(breakBefore,
+                rowGroup[0].getBreakBefore()));
+
+        int breakAfter = Constants.EN_AUTO;
+        TableRow lastRow = rowGroup[rowGroup.length - 1].getTableRow();
+        if (lastRow != null) {
+            breakAfter = lastRow.getBreakAfter(); 
         }
+        context.setBreakAfter(BreakUtil.compareBreakClasses(breakAfter,
+                rowGroup[rowGroup.length - 1].getBreakAfter()));
 
         return returnList;
     }
@@ -134,173 +93,123 @@ class RowGroupLayoutManager {
     private void createElementsForRowGroup(LayoutContext context, int alignment, 
             int bodyType, LinkedList returnList) {
         log.debug("Handling row group with " + rowGroup.length + " rows...");
-        MinOptMax[] rowHeights = new MinOptMax[rowGroup.length];
-        MinOptMax[] explicitRowHeights = new MinOptMax[rowGroup.length];
         EffRow row;
-        int maxColumnCount = 0;
-        List pgus = new java.util.ArrayList(); //holds a list of a row's primary grid units
         for (int rgi = 0; rgi < rowGroup.length; rgi++) {
             row = rowGroup[rgi];
-            rowHeights[rgi] = new MinOptMax(0, 0, Integer.MAX_VALUE);
-            explicitRowHeights[rgi] = new MinOptMax(0, 0, Integer.MAX_VALUE);
-            
-            pgus.clear();
-            TableRow tableRow = null;
-            // The row's minimum content height; 0 if the row's height is auto, otherwise
-            // the .minimum component of the explicitly specified value
-            int minContentHeight = 0;
-            int maxCellHeight = 0;
-            int effRowContentHeight = 0;
-            for (int j = 0; j < row.getGridUnits().size(); j++) {
-                assert maxColumnCount == 0 || maxColumnCount == row.getGridUnits().size();
-                maxColumnCount = Math.max(maxColumnCount, row.getGridUnits().size());
-                GridUnit gu = row.getGridUnit(j);
-                if ((gu.isPrimary() || (gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan())) 
-                        && !gu.isEmpty()) {
+            for (Iterator iter = row.getGridUnits().iterator(); iter.hasNext();) {
+                GridUnit gu = (GridUnit) iter.next();
+                if (gu.isPrimary()) {
                     PrimaryGridUnit primary = gu.getPrimary();
-                    
-                    if (gu.isPrimary()) {
-                        primary.createCellLM(); // TODO a new LM must be created for every new static-content
-                        primary.getCellLM().setParent(tableLM);
-                     
-                        //Determine the table-row if any
-                        if (tableRow == null && primary.getRow() != null) {
-                            tableRow = primary.getRow();
-                            
-                            //Check for bpd on row, see CSS21, 17.5.3 Table height algorithms
-                            LengthRangeProperty bpd = tableRow.getBlockProgressionDimension();
-                            if (!bpd.getMinimum(tableLM).isAuto()) {
-                                minContentHeight = Math.max(
-                                        minContentHeight, 
-                                        bpd.getMinimum(
-                                                tableLM).getLength().getValue(tableLM));
-                            }
-                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd, tableLM);
-                            
-                        }
-
-                        //Calculate width of cell
-                        int spanWidth = 0;
-                        for (int i = primary.getStartCol(); 
-                                i < primary.getStartCol() 
-                                        + primary.getCell().getNumberColumnsSpanned();
-                                i++) {
-                            if (tableLM.getColumns().getColumn(i + 1) != null) {
-                                spanWidth += tableLM.getColumns().getColumn(i + 1)
-                                    .getColumnWidth().getValue(tableLM);
-                            }
-                        }
-                        LayoutContext childLC = new LayoutContext(0);
-                        childLC.setStackLimit(context.getStackLimit()); //necessary?
-                        childLC.setRefIPD(spanWidth);
-                        
-                        //Get the element list for the cell contents
-                        LinkedList elems = primary.getCellLM().getNextKnuthElements(
-                                                childLC, alignment);
-                        ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
-
-                        if ((elems.size() > 0) 
-                                && ((KnuthElement)elems.getLast()).isForcedBreak()) {
-                            // a descendant of this block has break-after
-                            log.debug("Descendant of table-cell signals break: " 
-                                    + primary.getCellLM().isFinished());
-                        }
-                        
-                        primary.setElements(elems);
-                        
-                        if (childLC.isKeepWithNextPending()) {
-                            log.debug("child LM signals pending keep-with-next");
-                            primary.setFlag(GridUnit.KEEP_WITH_NEXT_PENDING, true);
-                        }
-                        if (childLC.isKeepWithPreviousPending()) {
-                            log.debug("child LM signals pending keep-with-previous");
-                            primary.setFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING, true);
-                        }
+                    // TODO a new LM must be created for every new static-content
+                    primary.createCellLM();
+                    primary.getCellLM().setParent(tableLM);
+                    //Calculate width of cell
+                    int spanWidth = 0;
+                    Iterator colIter = tableLM.getTable().getColumns().listIterator(
+                            primary.getColIndex());
+                    for (int i = 0, c = primary.getCell().getNumberColumnsSpanned(); i < c; i++) {
+                        spanWidth += ((TableColumn) colIter.next()).getColumnWidth().getValue(
+                                tableLM);
                     }
-
+                    LayoutContext childLC = new LayoutContext(0);
+                    childLC.setStackLimitBP(context.getStackLimitBP()); //necessary?
+                    childLC.setRefIPD(spanWidth);
                     
-                    //Calculate height of cell contents
-                    primary.setContentLength(ElementListUtils.calcContentLength(
-                            primary.getElements()));
-                    maxCellHeight = Math.max(maxCellHeight, primary.getContentLength());
+                    //Get the element list for the cell contents
+                    LinkedList elems = primary.getCellLM().getNextKnuthElements(
+                                            childLC, alignment);
+                    ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
+                    primary.setElements(elems);
+                }
+            }
+        }
+        computeRowHeights();
+        LinkedList elements = tableStepper.getCombinedKnuthElementsForRowGroup(context,
+                rowGroup, bodyType);
+        returnList.addAll(elements);
+    }
 
-                    //Calculate height of row, see CSS21, 17.5.3 Table height algorithms
-                    if (gu.isLastGridUnitRowSpan()) {
-                        int effCellContentHeight = minContentHeight;
-                        LengthRangeProperty bpd = primary.getCell().getBlockProgressionDimension();
-                        if (!bpd.getMinimum(tableLM).isAuto()) {
-                            effCellContentHeight = Math.max(
-                                effCellContentHeight,
-                                bpd.getMinimum(tableLM).getLength().getValue(tableLM));
-                        }
-                        if (!bpd.getOptimum(tableLM).isAuto()) {
-                            effCellContentHeight = Math.max(
-                                effCellContentHeight,
-                                bpd.getOptimum(tableLM).getLength().getValue(tableLM));
-                        }
-                        if (gu.getRowSpanIndex() == 0) {
-                            //TODO ATM only non-row-spanned cells are taken for this
-                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd, tableLM);
-                        }
-                        effCellContentHeight = Math.max(effCellContentHeight, 
-                                primary.getContentLength());
-                        
-                        int borderWidths;
-                        if (tableLM.getTable().isSeparateBorderModel()) {
-                            borderWidths = primary.getBorders().getBorderBeforeWidth(false)
-                                    + primary.getBorders().getBorderAfterWidth(false);
-                        } else {
-                            borderWidths = primary.getHalfMaxBorderWidth();
-                        }
-                        int padding = 0;
-                        effRowContentHeight = Math.max(effRowContentHeight,
-                                effCellContentHeight);
-                        CommonBorderPaddingBackground cbpb 
-                            = primary.getCell().getCommonBorderPaddingBackground(); 
-                        padding += cbpb.getPaddingBefore(false, primary.getCellLM());
-                        padding += cbpb.getPaddingAfter(false, primary.getCellLM());
-                        int effRowHeight = effCellContentHeight 
-                                + padding + borderWidths
-                                + 2 * tableLM.getHalfBorderSeparationBPD();
-                        for (int previous = 0; previous < gu.getRowSpanIndex(); previous++) {
-                            effRowHeight -= rowHeights[rgi - previous - 1].opt;
-                        }
-                        if (effRowHeight > rowHeights[rgi].min) {
-                            //This is the new height of the (grid) row
-                            MinOptMaxUtil.extendMinimum(rowHeights[rgi], effRowHeight, false);
-                        }
+    /**
+     * Calculate the heights of the rows in the row group, see CSS21, 17.5.3 Table height
+     * algorithms.
+     * 
+     * TODO this method will need to be adapted once clarification has been made by the
+     * W3C regarding whether borders or border-separation must be included or not
+     */
+    private void computeRowHeights() {
+        log.debug("rowGroup:");
+        MinOptMax[] rowHeights = new MinOptMax[rowGroup.length];
+        EffRow row;
+        for (int rgi = 0; rgi < rowGroup.length; rgi++) {
+            row = rowGroup[rgi];
+            // The BPD of the biggest cell in the row
+//            int maxCellBPD = 0;
+            MinOptMax explicitRowHeight;
+            TableRow tableRowFO = rowGroup[rgi].getTableRow();
+            if (tableRowFO == null) {
+                rowHeights[rgi] = new MinOptMax(0, 0, Integer.MAX_VALUE);
+                explicitRowHeight = new MinOptMax(0, 0, Integer.MAX_VALUE);
+            } else {
+                LengthRangeProperty rowBPD = tableRowFO.getBlockProgressionDimension();
+                rowHeights[rgi] = MinOptMaxUtil.toMinOptMax(rowBPD, tableLM);
+                explicitRowHeight = MinOptMaxUtil.toMinOptMax(rowBPD, tableLM);
+            }
+            for (Iterator iter = row.getGridUnits().iterator(); iter.hasNext();) {
+                GridUnit gu = (GridUnit) iter.next();
+                if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
+                    PrimaryGridUnit primary = gu.getPrimary();
+                    int effectiveCellBPD = 0;
+                    LengthRangeProperty cellBPD = primary.getCell().getBlockProgressionDimension();
+                    if (!cellBPD.getMinimum(tableLM).isAuto()) {
+                        effectiveCellBPD = cellBPD.getMinimum(tableLM).getLength()
+                                .getValue(tableLM);
                     }
-                    
-                    if (gu.isPrimary()) {
-                        pgus.add(primary);
+                    if (!cellBPD.getOptimum(tableLM).isAuto()) {
+                        effectiveCellBPD = cellBPD.getOptimum(tableLM).getLength()
+                                .getValue(tableLM);
+                    }
+                    if (gu.getRowSpanIndex() == 0) {
+                        effectiveCellBPD = Math.max(effectiveCellBPD, explicitRowHeight.opt);
+                    }
+                    effectiveCellBPD = Math.max(effectiveCellBPD, primary.getContentLength());
+                    int borderWidths = primary.getBeforeAfterBorderWidth();
+                    int padding = 0;
+                    CommonBorderPaddingBackground cbpb = primary.getCell()
+                            .getCommonBorderPaddingBackground(); 
+                    padding += cbpb.getPaddingBefore(false, primary.getCellLM());
+                    padding += cbpb.getPaddingAfter(false, primary.getCellLM());
+                    int effRowHeight = effectiveCellBPD + padding + borderWidths;
+                    for (int prev = rgi - 1; prev >= rgi - gu.getRowSpanIndex(); prev--) {
+                        effRowHeight -= rowHeights[prev].opt;
+                    }
+                    if (effRowHeight > rowHeights[rgi].min) {
+                        // This is the new height of the (grid) row
+                        MinOptMaxUtil.extendMinimum(rowHeights[rgi], effRowHeight);
                     }
                 }
             }
 
             row.setHeight(rowHeights[rgi]);
-            row.setExplicitHeight(explicitRowHeights[rgi]);
-            if (effRowContentHeight > row.getExplicitHeight().max) {
-                log.warn(FONode.decorateWithContextInfo(
-                        "The contents of row " + (row.getIndex() + 1) 
-                        + " are taller than they should be (there is a"
-                        + " block-progression-dimension or height constraint on the indicated row)."
-                        + " Due to its contents the row grows"
-                        + " to " + effRowContentHeight + " millipoints, but the row shouldn't get"
-                        + " any taller than " + row.getExplicitHeight() + " millipoints.", 
-                        row.getTableRow()));
-            }
+            row.setExplicitHeight(explicitRowHeight);
+            // TODO re-enable and improve after clarification
+            //See http://markmail.org/message/h25ycwwu7qglr4k4
+//            if (maxCellBPD > row.getExplicitHeight().max) {
+//old:
+//                log.warn(FONode.decorateWithContextInfo(
+//                        "The contents of row " + (row.getIndex() + 1) 
+//                        + " are taller than they should be (there is a"
+//                        + " block-progression-dimension or height constraint
+//                        + " on the indicated row)."
+//                        + " Due to its contents the row grows"
+//                        + " to " + maxCellBPD + " millipoints, but the row shouldn't get"
+//                        + " any taller than " + row.getExplicitHeight() + " millipoints.", 
+//                        row.getTableRow()));
+//new (with events):
+//                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(
+//                        tableRow.getUserAgent().getEventBroadcaster());
+//                eventProducer.rowTooTall(this, row.getIndex() + 1,
+//                        maxCellBPD, row.getExplicitHeight().max, tableRow.getLocator());
+//            }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("rowGroup:");
-            for (int i = 0; i < rowHeights.length; i++) {
-                log.debug("  height=" + rowHeights[i] + " explicit=" + explicitRowHeights[i]);
-            }
-        }
-        LinkedList returnedList = tableStepper.getCombinedKnuthElementsForRowGroup(
-                context, rowGroup, maxColumnCount, bodyType);
-        if (returnedList != null) {
-            returnList.addAll(returnedList);
-        }
-        
     }
 }

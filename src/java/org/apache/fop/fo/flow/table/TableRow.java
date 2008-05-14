@@ -19,6 +19,9 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -27,11 +30,10 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
- * Class modelling the fo:table-row object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-row">
+ * <code>fo:table-row</code></a> object.
  */
 public class TableRow extends TableCellContainer {
     // The value of properties relevant for fo:table-row.
@@ -51,7 +53,9 @@ public class TableRow extends TableCellContainer {
     // End of property values
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a TableRow instance with the given {@link FONode}
+     * as parent.
+     * @param parent {@link FONode} that is the parent of this object
      */
     public TableRow(FONode parent) {
         super(parent);
@@ -82,9 +86,7 @@ public class TableRow extends TableCellContainer {
         super.processNode(elementName, locator, attlist, pList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
             TableCell cell = (TableCell) child;
@@ -94,17 +96,13 @@ public class TableRow extends TableCellContainer {
         super.addChildNode(child);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startRow(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(table-cell+)");
@@ -118,13 +116,15 @@ public class TableRow extends TableCellContainer {
 
     /**
      * {@inheritDoc} String, String)
-     * XSL Content Model: (table-cell+)
+     * <br>XSL Content Model: (table-cell+)
      */
     protected void validateChildNode(Locator loc, String nsURI,
                                      String localName)
-        throws ValidationException {
-        if (!(FO_URI.equals(nsURI) && localName.equals("table-cell"))) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!localName.equals("table-cell")) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 
@@ -136,15 +136,6 @@ public class TableRow extends TableCellContainer {
     /** {@inheritDoc} */
     boolean isTableRow() {
         return true;
-    }
-
-    /** {inheritDoc} */
-    protected void setCollapsedBorders() {
-        TableBody body = (TableBody) parent;
-        createBorder(CommonBorderPaddingBackground.START, body);
-        createBorder(CommonBorderPaddingBackground.END, body);
-        createBorder(CommonBorderPaddingBackground.BEFORE);
-        createBorder(CommonBorderPaddingBackground.AFTER);
     }
 
     /** @return the "break-after" property. */
@@ -228,7 +219,10 @@ public class TableRow extends TableCellContainer {
         return "table-row";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_ROW}
+     */
     public int getNameId() {
         return FO_TABLE_ROW;
     }

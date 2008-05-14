@@ -27,6 +27,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  */
 public class PSCommentAfterElement extends AbstractPSCommentElement {
 
+    /** the element name */
     protected static final String ELEMENT = "ps-comment-after";
 
     /**

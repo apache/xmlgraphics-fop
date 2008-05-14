@@ -21,11 +21,13 @@ package org.apache.fop.render.pdf;
 
 // Java
 import java.awt.Color;
-import java.awt.color.ColorSpace;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.color.ICC_Profile;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,6 +40,16 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.xmp.Metadata;
+import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
+import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -49,8 +61,8 @@ import org.apache.fop.area.DestinationData;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.Image;
@@ -60,19 +72,21 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
+import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -85,14 +99,16 @@ import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFText;
+import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
@@ -100,10 +116,6 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorProfileUtil;
-import org.apache.xmlgraphics.xmp.Metadata;
-import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
-import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
-import org.w3c.dom.Document;
 
 /**
  * Renderer that renders areas to PDF.
@@ -138,6 +150,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public static final String PDF_X_MODE = "pdf-x-mode";
     /** Rendering Options key for the ICC profile for the output intent. */
     public static final String KEY_OUTPUT_PROFILE = "output-profile";
+    /**
+     * Rendering Options key for disabling the sRGB color space (only possible if no PDF/A or
+     * PDF/X profile is active).
+     */
+    public static final String KEY_DISABLE_SRGB_COLORSPACE = "disable-srgb-colorspace";
 
     /** Controls whether comments are written to the PDF stream. */
     protected static final boolean WRITE_COMMENTS = true;
@@ -224,10 +241,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     /** the ICC stream used as output profile by this document for PDF/A and PDF/X functionality. */
     protected PDFICCStream outputProfile;
-    /** the ICC stream for the sRGB color space. */
-    //protected PDFICCStream sRGBProfile;
     /** the default sRGB color space. */
     protected PDFICCBasedColorSpace sRGBColorSpace;
+    /** controls whether the sRGB color space should be installed */
+    protected boolean disableSRGBColorSpace = false;
     
     /** Optional URI to an output profile to be used. */
     protected String outputProfileURI; 
@@ -235,20 +252,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** drawing state */
     protected PDFState currentState = null;
 
-    /** Name of currently selected font */
-    protected String currentFontName = "";
-    /** Size of currently selected font */
-    protected int currentFontSize = 0;
+    /** Text generation utility holding the current font status */
+    protected PDFTextUtil textutil;
     /** page height */
     protected int pageHeight;
 
     /** Registry of PDF filters */
     protected Map filterMap;
-
-    /**
-     * true if a BT command has been written. 
-     */
-    protected boolean inTextMode = false;
 
     /** Image handler registry */
     private PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
@@ -335,6 +345,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         if (s != null) {
             this.outputProfileURI = s;
         }
+        setting = agent.getRendererOptions().get(KEY_DISABLE_SRGB_COLORSPACE);
+        if (setting != null) {
+            this.disableSRGBColorSpace = booleanValueOf(setting);
+        }
     }
 
     /**
@@ -355,7 +369,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         this.pdfDoc.getInfo().setTitle(userAgent.getTitle());
         this.pdfDoc.getInfo().setKeywords(userAgent.getKeywords());
         this.pdfDoc.setFilterMap(filterMap);
-        this.pdfDoc.outputHeader(stream);
+        this.pdfDoc.outputHeader(ostream);
 
         //Setup encryption if necessary
         PDFEncryptionManager.setupPDFEncryption(encryptionParams, this.pdfDoc);
@@ -378,27 +392,21 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     private void addsRGBColorSpace() throws IOException {
-        if (this.sRGBColorSpace != null) {
-            return;
-        }
-        ICC_Profile profile;
-        PDFICCStream sRGBProfile = pdfDoc.getFactory().makePDFICCStream();
-        InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
-        if (in != null) {
-            try {
-                profile = ICC_Profile.getInstance(in);
-            } finally {
-                IOUtils.closeQuietly(in);
+        if (disableSRGBColorSpace) {
+            if (this.pdfAMode != PDFAMode.DISABLED
+                    || this.pdfXMode != PDFXMode.DISABLED
+                    || this.outputProfileURI != null) {
+                throw new IllegalStateException("It is not possible to disable the sRGB color"
+                        + " space if PDF/A or PDF/X functionality is enabled or an"
+                        + " output profile is set!");
             }
         } else {
-            //Fallback: Use the sRGB profile from the JRE (about 140KB)
-            profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
+            if (this.sRGBColorSpace != null) {
+                return;
+            }
+            //Map sRGB as default RGB profile for DeviceRGB
+            this.sRGBColorSpace = PDFICCBasedColorSpace.setupsRGBAsDefaultRGBColorSpace(pdfDoc);
         }
-        sRGBProfile.setColorSpace(profile, null);
-        
-        //Map sRGB as default RGB profile for DeviceRGB
-        this.sRGBColorSpace = pdfDoc.getFactory().makeICCBasedColorSpace(
-                null, "DefaultRGB", sRGBProfile);
     }
     
     private void addDefaultOutputProfile() throws IOException {
@@ -483,13 +491,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 PDFGoTo gt = (PDFGoTo) unfinishedGoTos.get(0);
                 finishIDGoTo(gt, defaultPos);
             }
-            boolean one = count == 1;
-            String pl = one ? ""    : "s";
-            String ww = one ? "was" : "were";
-            String ia = one ? "is"  : "are";
-            log.warn("" + count + " link target" + pl + " could not be fully resolved and "
-                        + ww + " now point to the top of the page or "
-                        + ia + " dysfunctional.");  // dysfunctional if pageref is null
+            PDFEventProducer eventProducer = PDFEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.nonFullyResolvedLinkTargets(this, count);
+            // dysfunctional if pageref is null
         }
     }
 
@@ -514,7 +519,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentContext = null;
         currentPage = null;
         currentState = null;
-        currentFontName = "";
+        this.textutil = null;
 
         idPositions.clear();
         idGoTos.clear();
@@ -548,16 +553,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     private void renderDestination(DestinationData dd) {
         String targetID = dd.getIDRef();
-        if (targetID != null && targetID.length() > 0) {
-            PageViewport pv = dd.getPageViewport();
-            if (pv == null) {
-                log.warn("Unresolved destination item received: " + dd.getIDRef());
-            }
+        if (targetID == null || targetID.length() == 0) {
+            throw new IllegalArgumentException("DestinationData must contain a ID reference");
+        }
+        PageViewport pv = dd.getPageViewport();
+        if (pv != null) {
             PDFGoTo gt = getPDFGoToForID(targetID, pv.getKey());
             pdfDoc.getFactory().makeDestination(
                     dd.getIDRef(), gt.makeReference());
         } else {
-            log.warn("DestinationData item with null or empty IDRef received.");
+            //Warning already issued by AreaTreeHandler (debug level is sufficient)
+            log.debug("Unresolved destination item received: " + dd.getIDRef());
         }
     }
 
@@ -577,22 +583,22 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         PDFOutline pdfOutline = null;
 
         String targetID = bookmarkItem.getIDRef();
-        if (targetID != null && targetID.length() > 0) {
-            PageViewport pv = bookmarkItem.getPageViewport();
-            if (pv != null) {
-                String pvKey = pv.getKey();
-                PDFGoTo gt = getPDFGoToForID(targetID, pvKey);
-                // create outline object:
-                PDFOutline parent = parentBookmarkItem != null
-                    ? parentBookmarkItem
-                    : pdfDoc.getOutlineRoot();
-                pdfOutline = pdfDoc.getFactory().makeOutline(parent,
-                        bookmarkItem.getBookmarkTitle(), gt, bookmarkItem.showChildItems());
-            } else {
-                log.warn("Bookmark with IDRef \"" + targetID + "\" has a null PageViewport.");
-            }
+        if (targetID == null || targetID.length() == 0) {
+            throw new IllegalArgumentException("DestinationData must contain a ID reference");
+        }
+        PageViewport pv = bookmarkItem.getPageViewport();
+        if (pv != null) {
+            String pvKey = pv.getKey();
+            PDFGoTo gt = getPDFGoToForID(targetID, pvKey);
+            // create outline object:
+            PDFOutline parent = parentBookmarkItem != null
+                ? parentBookmarkItem
+                : pdfDoc.getOutlineRoot();
+            pdfOutline = pdfDoc.getFactory().makeOutline(parent,
+                    bookmarkItem.getBookmarkTitle(), gt, bookmarkItem.showChildItems());
         } else {
-            log.warn("Bookmark item with null or empty IDRef received.");
+            //Warning already issued by AreaTreeHandler (debug level is sufficient)
+            log.debug("Bookmark with IDRef \"" + targetID + "\" has a null PageViewport.");
         }
 
         for (int i = 0; i < bookmarkItem.getCount(); i++) {
@@ -602,7 +608,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
     private void renderXMPMetadata(XMPMetadata metadata) {
         Metadata docXMP = metadata.getMetadata();
-        Metadata fopXMP = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+        Metadata fopXMP = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
         //Merge FOP's own metadata into the one from the XSL-FO document
         fopXMP.mergeInto(docXMP);
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
@@ -630,45 +636,51 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /** Saves the graphics state of the rendering engine. */
+    /** {@inheritDoc} */
     protected void saveGraphicsState() {
         endTextObject();
+        currentState.push();
         currentStream.add("q\n");
     }
 
-    /** Restores the last graphics state of the rendering engine. */
-    protected void restoreGraphicsState() {
+    private void restoreGraphicsState(boolean popState) {
         endTextObject();
         currentStream.add("Q\n");
+        if (popState) {
+            currentState.pop();
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void restoreGraphicsState() {
+        restoreGraphicsState(true);
     }
 
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
-        if (!inTextMode) {
-            currentStream.add("BT\n");
-            currentFontName = "";
-            inTextMode = true;
+        if (!textutil.isInTextObject()) {
+            textutil.beginTextObject();
         }
     }
 
     /** Indicates the end of a text object. */
     protected void endTextObject() {
-        closeText();
-        if (inTextMode) {
-            currentStream.add("ET\n");
-            inTextMode = false;
+        if (textutil.isInTextObject()) {
+            textutil.endTextObject();
         }
     }
 
     /**
      * Start the next page sequence.
-     * For the pdf renderer there is no concept of page sequences
+     * For the PDF renderer there is no concept of page sequences
      * but it uses the first available page sequence title to set
-     * as the title of the pdf document.
-     *
-     * @param seqTitle the title of the page sequence
+     * as the title of the PDF document, and the language of the
+     * document.
+     * @param pageSequence the page sequence
      */
-    public void startPageSequence(LineArea seqTitle) {
+    public void startPageSequence(PageSequence pageSequence) {
+        super.startPageSequence(pageSequence);
+        LineArea seqTitle = pageSequence.getTitle();
         if (seqTitle != null) {
             String str = convertTitleToString(seqTitle);
             PDFInfo info = this.pdfDoc.getInfo();
@@ -676,10 +688,20 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 info.setTitle(str);
             }
         }
+        if (pageSequence.getLanguage() != null) {
+            String lang = pageSequence.getLanguage();
+            String country = pageSequence.getCountry();
+            String langCode = lang + (country != null ? "-" + country : "");
+            if (pdfDoc.getRoot().getLanguage() == null) {
+                //Only set if not set already (first non-null is used)
+                //Note: No checking is performed whether the values are valid!
+                pdfDoc.getRoot().setLanguage(langCode);
+            }
+        }
         if (pdfDoc.getRoot().getMetadata() == null) {
             //If at this time no XMP metadata for the overall document has been set, create it
             //from the PDFInfo object.
-            Metadata xmp = PDFMetadata.createXMPFromUserAgent(pdfDoc);
+            Metadata xmp = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
             PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
                     xmp, true);
             pdfDoc.getRoot().setMetadata(pdfMetadata);
@@ -715,6 +737,20 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             page.getPageIndex());
         pageReferences.put(page.getKey(), currentPage.referencePDF());
         pvReferences.put(page.getKey(), page);
+        
+        //Produce page labels
+        PDFPageLabels pageLabels = this.pdfDoc.getRoot().getPageLabels();
+        if (pageLabels == null) {
+            //Set up PageLabels
+            pageLabels = this.pdfDoc.getFactory().makePageLabels();
+            this.pdfDoc.getRoot().setPageLabels(pageLabels);
+        }
+        PDFNumsArray nums = pageLabels.getNums(); 
+        PDFDictionary dict = new PDFDictionary(nums);
+        dict.put("P", page.getPageNumberString());
+        //TODO If the sequence of generated page numbers were inspected, this could be
+        //expressed in a more space-efficient way
+        nums.put(page.getPageIndex(), dict);
     }
     
     /**
@@ -740,6 +776,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         currentStream = this.pdfDoc.getFactory()
             .makeStream(PDFFilterList.CONTENT_FILTER, false);
+        this.textutil = new PDFTextUtil() {
+            protected void write(String code) {
+                currentStream.add(code);
+            }
+        };
 
         currentState = new PDFState();
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFRenderer's
@@ -748,9 +789,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentState.concatenate(basicPageTransform);
         currentStream.add(CTMHelper.toPDFString(basicPageTransform, false) + " cm\n");
         
-        
-        currentFontName = "";
-
         super.renderPage(page);
 
         this.pdfDoc.registerObject(currentStream);
@@ -761,18 +799,16 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
         this.pdfDoc.addObject(currentPage);
         this.pdfDoc.output(ostream);
+        this.textutil = null;
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+        saveGraphicsState();
         // Set the given CTM in the graphics state
-        currentState.push();
         currentState.concatenate(
                 new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
-        saveGraphicsState();
         if (clippingRect != null) {
             clipRect((float)clippingRect.getX() / 1000f, 
                     (float)clippingRect.getY() / 1000f, 
@@ -783,31 +819,25 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endVParea() {
         restoreGraphicsState();
-        currentState.pop();
     }
 
-    /**
-     * Handle the traits for a region
-     * This is used to draw the traits for the given page region.
-     * (See Sect. 6.4.1.2 of XSL-FO spec.)
-     * @param region the RegionViewport whose region is to be drawn
-     */
-    protected void handleRegionTraits(RegionViewport region) {
-        currentFontName = "";
-        super.handleRegionTraits(region);
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        if (!at.isIdentity()) {
+            currentState.concatenate(at);
+            currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
+        }
     }
-
+    
     /**
      * Formats a float value (normally coordinates) as Strings.
      * @param value the value
      * @return the formatted value
      */
-    protected static final String format(float value) {
+    protected static String format(float value) {
         return PDFNumber.doubleOut(value);
     }
     
@@ -817,7 +847,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
-            log.error("Negative extent received (w=" + w + ", h=" + h + "). Border won't be painted.");
+            log.error("Negative extent received (w=" + w + ", h=" + h
+                    + "). Border won't be painted.");
             return;
         }
         switch (style) {
@@ -992,15 +1023,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
     
-    /**
-     * Clip a rectangular area.
-     * write a clipping operation given coordinates in the current
-     * transform.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width of the area
-     * @param height the height of the area
-     */
+    /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
         currentStream.add(format(x) + " " + format(y) + " " 
                 + format(width) + " " + format(height) + " re ");
@@ -1081,7 +1104,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 comment("------ break out!");
             }
             breakOutList.add(0, data); //Insert because of stack-popping
-            restoreGraphicsState();
+            restoreGraphicsState(false);
         }
         return breakOutList;
     }
@@ -1091,23 +1114,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param breakOutList the state stack to restore.
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
-        CTM tempctm;
         comment("------ restoring context after break-out...");
         PDFState.Data data;
         Iterator i = breakOutList.iterator();
-        double[] matrix = new double[6];
         while (i.hasNext()) {
             data = (PDFState.Data)i.next();
-            currentState.push();
             saveGraphicsState();
             AffineTransform at = data.getTransform();
-            if (!at.isIdentity()) {
-                currentState.concatenate(at);
-                at.getMatrix(matrix);
-                tempctm = new CTM(matrix[0], matrix[1], matrix[2], matrix[3], 
-                                  matrix[4] * 1000, matrix[5] * 1000);
-                currentStream.add(CTMHelper.toPDFString(tempctm) + " cm\n");
-            }
+            concatenateTransformationMatrix(at);
             //TODO Break-out: Also restore items such as line width and color
             //Left out for now because all this painting stuff is very
             //inconsistent. Some values go over PDFState, some don't.
@@ -1120,9 +1134,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * (i.e. if the area qualifies as a link target).
      * Otherwise, or if the area has no id, null is returned.
      *
-     * NOTE : area must be on currentPageViewport, otherwise result may be wrong!
+     * <i>NOTE</i>: area must be on currentPageViewport, otherwise result may be wrong!
      *
      * @param area the area for which to return the id
+     * @return the area's id (null if the area has no id or
+     *              other preceding areas have the same id)
      */
     protected String getTargetableID(Area area) {
         String id = (String) area.getTrait(Trait.PROD_ID);
@@ -1297,12 +1313,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         super.renderBlock(block);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void renderLineArea(LineArea line) {
         super.renderLineArea(line);
-        closeText();
     }
 
     /**
@@ -1356,25 +1369,21 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 if (annotsAllowed) {
                     action = getPDFGoToForID(idRef, pvKey);
                 }
-            } else if (pvKeyOK) {
-                log.warn("Internal link trait with PageViewport key " + pvKey 
-                         + " contains no ID reference.");
-            } else if (idRefOK) {
-                log.warn("Internal link trait with ID reference " + idRef 
-                         + " contains no PageViewport key.");
             } else {
-                log.warn("Internal link trait received with neither PageViewport key"
-                         + " nor ID reference.");
+                //Warnings already issued by AreaTreeHandler
             }
         }
 
         // no INTERNAL_LINK, look for EXTERNAL_LINK
         if (!linkTraitFound) {
-            String extDest = (String) ip.getTrait(Trait.EXTERNAL_LINK);
-            if (extDest != null && extDest.length() > 0) {
-                linkTraitFound = true;
-                if (annotsAllowed) {
-                    action = factory.getExternalAction(extDest);
+            Trait.ExternalLink extLink = (Trait.ExternalLink) ip.getTrait(Trait.EXTERNAL_LINK);
+            if (extLink != null) {
+                String extDest = extLink.getDestination();
+                if (extDest != null && extDest.length() > 0) {
+                    linkTraitFound = true;
+                    if (annotsAllowed) {
+                        action = factory.getExternalAction(extDest, extLink.newWindow());
+                    }
                 }
             }
         }
@@ -1391,11 +1400,20 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    private Typeface getTypeface(String fontName) {
+        Typeface tf = (Typeface) fontInfo.getFonts().get(fontName);
+        if (tf instanceof LazyFont) {
+            tf = ((LazyFont)tf).getRealFont();
+        }
+        return tf;
+    }
+    
+    /** {@inheritDoc} */
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
+        Color ct = (Color) text.getTrait(Trait.COLOR);
+        updateColor(ct, true);
+        
         beginTextObject();
         StringBuffer pdf = new StringBuffer();
 
@@ -1403,12 +1421,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
         
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface tf = (Typeface) fontInfo.getFonts().get(fontName);
-        boolean useMultiByte = tf.isMultiByte();
+        Typeface tf = getTypeface(fontName);
         
-        updateFont(fontName, size, pdf);
-        Color ct = (Color) text.getTrait(Trait.COLOR);
-        updateColor(ct, true, pdf);
+        textutil.updateTf(fontName, size / 1000f, tf.isMultiByte());
+        
 
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
@@ -1416,65 +1432,45 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
-        pdf.append("1 0 0 -1 " + format(rx / 1000f) + " " + format(bl / 1000f) + " Tm "
-                   /*+ format(text.getTextLetterSpaceAdjust() / 1000f) + " Tc\n"*/
-                   /*+ format(text.getTextWordSpaceAdjust() / 1000f) + " Tw ["*/);
+        textutil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, rx / 1000f, bl / 1000f));
 
-        pdf.append("[");
         currentStream.add(pdf.toString());
 
         super.renderText(text);
 
-        currentStream.add("] TJ\n");
+        textutil.writeTJ();
         
         renderTextDecoration(tf, size, text, bl, rx);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     public void renderWord(WordArea word) {
         Font font = getFontFromArea(word.getParentArea());
-        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
-        boolean useMultiByte = tf.isMultiByte();
-
-        StringBuffer pdf = new StringBuffer();
-        
         String s = word.getWord();
-        escapeText(s, word.getLetterAdjustArray(), 
-                font, (AbstractTextArea)word.getParentArea(), useMultiByte, pdf);
 
-        currentStream.add(pdf.toString());
+        escapeText(s, word.getLetterAdjustArray(), 
+                font, (AbstractTextArea)word.getParentArea());
 
         super.renderWord(word);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderSpace(SpaceArea space) {
         Font font = getFontFromArea(space.getParentArea());
-        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
-        boolean useMultiByte = tf.isMultiByte();
-
         String s = space.getSpace();
         
-        StringBuffer pdf = new StringBuffer();
-
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
-        escapeText(s, null, font, textArea, useMultiByte, pdf);
+        escapeText(s, null, font, textArea);
 
         if (space.isAdjustable()) {
             int tws = -((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
                          - 2 * textArea.getTextLetterSpaceAdjust();
 
             if (tws != 0) {
-                pdf.append(format(tws / (font.getFontSize() / 1000f)));
-                pdf.append(" ");
+                float adjust = tws / (font.getFontSize() / 1000f);
+                textutil.adjustGlyphTJ(adjust);
             }
         }
-
-        currentStream.add(pdf.toString());
 
         super.renderSpace(space);
     }
@@ -1483,101 +1479,77 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * Escapes text according to PDF rules.
      * @param s Text to escape
      * @param letterAdjust an array of widths for letter adjustment (may be null)
-     * @param fs Font state
+     * @param font to font in use
      * @param parentArea the parent text area to retrieve certain traits from
-     * @param useMultiByte Indicates the use of multi byte convention
-     * @param pdf target buffer for the escaped text
      */
-    public void escapeText(String s, int[] letterAdjust,
-                           Font fs, AbstractTextArea parentArea,
-                           boolean useMultiByte, StringBuffer pdf) {
-        String startText = useMultiByte ? "<" : "(";
-        String endText = useMultiByte ? "> " : ") ";
-
-        /*
-        boolean kerningAvailable = false;
-        Map kerning = fs.getKerning();
-        if (kerning != null && !kerning.isEmpty()) {
-            //kerningAvailable = true;
-            //TODO Reenable me when the layout engine supports kerning, too
-            log.warn("Kerning support is disabled until it is supported by the layout engine!");
+    protected void escapeText(String s,
+                           int[] letterAdjust,
+                           Font font, AbstractTextArea parentArea) {
+        escapeText(s, 0, s.length(), letterAdjust, font, parentArea);
+    }
+    
+    /**
+     * Escapes text according to PDF rules.
+     * @param s Text to escape
+     * @param start the start position in the text
+     * @param end the end position in the text
+     * @param letterAdjust an array of widths for letter adjustment (may be null)
+     * @param font to font in use
+     * @param parentArea the parent text area to retrieve certain traits from
+     */
+    protected void escapeText(String s, int start, int end,
+                           int[] letterAdjust,
+                           Font font, AbstractTextArea parentArea) {
+        String fontName = font.getFontName();
+        float fontSize = font.getFontSize() / 1000f;
+        Typeface tf = getTypeface(fontName);
+        SingleByteFont singleByteFont = null;
+        if (tf instanceof SingleByteFont) {
+            singleByteFont = (SingleByteFont)tf;
         }
-        */
 
         int l = s.length();
-
-        float fontSize = fs.getFontSize() / 1000f;
-        boolean startPending = true;
-        for (int i = 0; i < l; i++) {
+        
+        for (int i = start; i < end; i++) {
             char orgChar = s.charAt(i);
             char ch;
             float glyphAdjust = 0;
-            if (fs.hasChar(orgChar)) {
-                ch = fs.mapChar(orgChar);
+            if (font.hasChar(orgChar)) {
+                ch = font.mapChar(orgChar);
+                if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
+                    int encoding = ch / 256;
+                    if (encoding == 0) {
+                        textutil.updateTf(fontName, fontSize, tf.isMultiByte());
+                    } else {
+                        textutil.updateTf(fontName + "_" + Integer.toString(encoding),
+                                fontSize, tf.isMultiByte());
+                        ch = (char)(ch % 256);
+                    }
+                }
                 int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
                 glyphAdjust -= tls;
             } else {
                 if (CharUtilities.isFixedWidthSpace(orgChar)) {
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
-                    ch = fs.mapChar(CharUtilities.SPACE);
-                    glyphAdjust = fs.getCharWidth(ch) - fs.getCharWidth(orgChar);
+                    ch = font.mapChar(CharUtilities.SPACE);
+                    glyphAdjust = font.getCharWidth(ch) - font.getCharWidth(orgChar);
                 } else {
-                    ch = fs.mapChar(orgChar);
+                    ch = font.mapChar(orgChar);
                 }
             }
             if (letterAdjust != null && i < l - 1) {
                 glyphAdjust -= letterAdjust[i + 1];
             }
 
-            if (startPending) {
-                pdf.append(startText);
-                startPending = false;
-            }
-            if (!useMultiByte) {
-                if (ch > 127) {
-                    pdf.append("\\");
-                    pdf.append(Integer.toOctalString((int) ch));
-                } else {
-                    switch (ch) {
-                        case '(':
-                        case ')':
-                        case '\\':
-                            pdf.append("\\");
-                            break;
-                        default:
-                    }
-                    pdf.append(ch);
-                }
-            } else {
-                pdf.append(PDFText.toUnicodeHex(ch));
-            }
+            textutil.writeTJMappedChar(ch);
 
             float adjust = glyphAdjust / fontSize;
 
             if (adjust != 0) {
-                pdf.append(endText).append(format(adjust)).append(' ');
-                startPending = true;
+                textutil.adjustGlyphTJ(adjust);
             }
 
         }
-        if (!startPending) {
-            pdf.append(endText);
-        }
-    }
-
-    /**
-     * Checks to see if we have some text rendering commands open
-     * still and writes out the TJ command to the stream if we do
-     */
-    protected void closeText() {
-        /*
-        if (textOpen) {
-            currentStream.add("] TJ\n");
-            textOpen = false;
-            prevWordX = 0;
-            prevWordY = 0;
-            currentFontName = "";
-        }*/
     }
 
     /**
@@ -1591,8 +1563,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected void setColor(Color col, boolean fill, StringBuffer pdf) {
         PDFColor color = new PDFColor(this.pdfDoc, col);
 
-        closeText();
-        
         if (pdf != null) {
             pdf.append(color.getColorSpaceOut(fill));
         } else {
@@ -1624,45 +1594,48 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected  void updateColor(Color col, boolean fill) {
+    protected void updateColor(Color col, boolean fill) {
         updateColor(col, fill, null);
     }
     
-    private void updateFont(String name, int size, StringBuffer pdf) {
-        if ((!name.equals(this.currentFontName))
-                || (size != this.currentFontSize)) {
-            closeText();
-
-            this.currentFontName = name;
-            this.currentFontSize = size;
-            pdf = pdf.append("/" + name + " " + format((float) size / 1000f)
-                              + " Tf\n");
-        }
-    }
-
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public void renderImage(Image image, Rectangle2D pos) {
         endTextObject();
         String url = image.getURL();
-        putImage(url, pos);
+        putImage(url, pos, image.getForeignAttributes());
     }
 
     /** {@inheritDoc} */
     protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
-        putImage(url, pos);
+        putImage(url, pos, foreignAttributes);
     }
     
     /**
      * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
-     * @param url URL of the bitmap
+     * @param uri URL of the bitmap
      * @param pos Position of the bitmap
+     * @deprecated Use {@link #putImage(String, Rectangle2D, Map)} instead.
      */
-    protected void putImage(String url, Rectangle2D pos) {
-        url = ImageFactory.getURL(url);
-        PDFXObject xobject = pdfDoc.getXObject(url);
+    protected void putImage(String uri, Rectangle2D pos) {
+        putImage(uri, pos, null);
+    }
+    
+    /**
+     * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
+     * @param uri URL of the bitmap
+     * @param pos Position of the bitmap
+     * @param foreignAttributes foreign attributes associated with the image
+     */
+    protected void putImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+        Rectangle posInt = new Rectangle(
+                (int)pos.getX(),
+                (int)pos.getY(),
+                (int)pos.getWidth(),
+                (int)pos.getHeight());
+
+        uri = URISpecification.getURL(uri);
+        PDFXObject xobject = pdfDoc.getXObject(uri);
         if (xobject != null) {
             float w = (float) pos.getWidth() / 1000f;
             float h = (float) pos.getHeight() / 1000f;
@@ -1670,79 +1643,53 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                        (float)pos.getY() / 1000f, w, h, xobject);
             return;
         }
+        Point origin = new Point(currentIPPosition, currentBPPosition);
+        int x = origin.x + posInt.x;
+        int y = origin.y + posInt.y;
 
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(url, userAgent);
-        if (fopimage == null) {
-            return;
-        }
-        if (!fopimage.load(FopImage.DIMENSIONS)) {
-            return;
-        }
-        String mime = fopimage.getMimeType();
-        
-        //First check for a dynamically registered handler
-        PDFImageHandler handler = imageHandlerRegistry.getHandler(mime);
-        if (handler != null) {
-            PDFXObject xobj;
-            try {
-                xobj = handler.generateImage(fopimage, url, pdfDoc);
-            } catch (IOException ioe) {
-                log.error("I/O error while handling " + mime + " image", ioe);
-                return;
-            }
-            fact.releaseImage(url, userAgent);
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageInfo info = null;
+        try {
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            info = manager.getImageInfo(uri, sessionContext);
             
-            float w = (float)pos.getWidth() / 1000f;
-            float h = (float)pos.getHeight() / 1000f;
-            placeImage((float) pos.getX() / 1000,
-                       (float) pos.getY() / 1000, w, h, xobj);
-        } else if ("text/xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-
-            renderDocument(doc, ns, pos, null);
-        } else if ("image/svg+xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
-
-            renderDocument(doc, ns, pos, null);
-        } else if ("image/eps".equals(mime)) {
-            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-            fact.releaseImage(url, userAgent);
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
+            org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
+                        info, imageHandlerRegistry.getSupportedFlavors(), hints, sessionContext);
             
-            float w = (float)pos.getWidth() / 1000f;
-            float h = (float)pos.getHeight() / 1000f;
-            placeImage((float) pos.getX() / 1000,
-                       (float) pos.getY() / 1000, w, h, xobj);
-        } else if ("image/jpeg".equals(mime) || "image/tiff".equals(mime)) {
-            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-            fact.releaseImage(url, userAgent);
-
-            float w = (float)pos.getWidth() / 1000f;
-            float h = (float)pos.getHeight() / 1000f;
-            placeImage((float) pos.getX() / 1000,
-                       (float) pos.getY() / 1000, w, h, xobj);
-        } else {
-            if (!fopimage.load(FopImage.BITMAP)) {
-                return;
+            //First check for a dynamically registered handler
+            PDFImageHandler handler = imageHandlerRegistry.getHandler(img.getClass());
+            if (handler != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Using PDFImageHandler: " + handler.getClass().getName());
+                }
+                try {
+                    RendererContext context = createRendererContext(
+                            x, y, posInt.width, posInt.height, foreignAttributes);
+                    handler.generateImage(context, img, origin, posInt);
+                } catch (IOException ioe) {
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.imageWritingError(this, ioe);
+                    return;
+                }
+            } else {
+                throw new UnsupportedOperationException(
+                        "No PDFImageHandler available for image: "
+                            + info + " (" + img.getClass().getName() + ")");
             }
-            FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
-            PDFXObject xobj = pdfDoc.addImage(currentContext, pdfimage);
-            fact.releaseImage(url, userAgent);
-
-            float w = (float) pos.getWidth() / 1000f;
-            float h = (float) pos.getHeight() / 1000f;
-            placeImage((float) pos.getX() / 1000f,
-                       (float) pos.getY() / 1000f, w, h, xobj);
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
 
         // output new data
@@ -1761,7 +1708,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param h height for image
      * @param xobj the image XObject
      */
-    protected void placeImage(float x, float y, float w, float h, PDFXObject xobj) {
+    public void placeImage(float x, float y, float w, float h, PDFXObject xobj) {
         saveGraphicsState();
         currentStream.add(format(w) + " 0 0 "
                           + format(-h) + " "
@@ -1771,10 +1718,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         restoreGraphicsState();
     }
 
-    /**
-     * {@inheritDoc}
-     *          int, int, int, int, java.util.Map)
-     */
+    /** {@inheritDoc} */
     protected RendererContext createRendererContext(int x, int y, int width, int height, 
             Map foreignAttributes) {
         RendererContext context = super.createRendererContext(
@@ -1788,9 +1732,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         context.setProperty(PDFRendererContextConstants.PDF_CONTEXT, currentContext);
         context.setProperty(PDFRendererContextConstants.PDF_STREAM, currentStream);
         context.setProperty(PDFRendererContextConstants.PDF_FONT_INFO, fontInfo);
-        context.setProperty(PDFRendererContextConstants.PDF_FONT_NAME, currentFontName);
-        context.setProperty(PDFRendererContextConstants.PDF_FONT_SIZE,
-                            new Integer(currentFontSize));
+        context.setProperty(PDFRendererContextConstants.PDF_FONT_NAME, "");
+        context.setProperty(PDFRendererContextConstants.PDF_FONT_SIZE, new Integer(0));
         return context;
     }
 
@@ -1870,18 +1813,34 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         return MIME_TYPE;
     }
     
+    /**
+     * Sets the PDF/A mode for the PDF renderer.
+     * @param mode the PDF/A mode
+     */
     public void setAMode(PDFAMode mode) {
         this.pdfAMode = mode;
     }
 
+    /**
+     * Sets the PDF/X mode for the PDF renderer.
+     * @param mode the PDF/X mode
+     */
     public void setXMode(PDFXMode mode) {
         this.pdfXMode = mode;        
     }
 
+    /**
+     * Sets the output color profile for the PDF renderer.
+     * @param outputProfileURI the URI to the output color profile
+     */
     public void setOutputProfileURI(String outputProfileURI) {
         this.outputProfileURI = outputProfileURI;
     }
 
+    /**
+     * Sets the filter map to be used by the PDF renderer.
+     * @param filterMap the filter map
+     */
     public void setFilterMap(Map filterMap) {
         this.filterMap = filterMap;
     }

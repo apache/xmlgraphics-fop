@@ -28,13 +28,15 @@ public class PageSequence {
 
     private List pages = new java.util.ArrayList();
     private LineArea title;
+    private String language;
+    private String country;
     
     /**
      * Main constructor
      * @param title the title for the page-sequence, may be null
      */
     public PageSequence(LineArea title) {
-        this.title = title;
+        setTitle(title);
     }
     
     /**
@@ -42,6 +44,14 @@ public class PageSequence {
      */
     public LineArea getTitle() {
         return this.title;
+    }
+    
+    /**
+     * Sets the page sequence's title.
+     * @param title the title
+     */
+    public void setTitle(LineArea title) {
+        this.title = title;
     }
     
     /**
@@ -76,4 +86,45 @@ public class PageSequence {
     public boolean isFirstPage(PageViewport page) {
         return page.equals(getPage(0));
     }
+
+    /**
+     * Returns the language of the page-sequence.
+     * @return the language (the value of the language property, "none" is mapped to null)
+     */
+    public String getLanguage() {
+        return this.language;
+    }
+
+    /**
+     * Sets the language that applies to this page-sequence.
+     * @param language the language to set ("none" is mapped to null)
+     */
+    public void setLanguage(String language) {
+        if ("none".equals(language)) {
+            this.language = null;
+        } else {
+            this.language = language;
+        }
+    }
+    
+    /**
+     * Returns the country of the page-sequence.
+     * @return the country (the value of the country property, "none" is mapped to null)
+     */
+    public String getCountry() {
+        return this.country;
+    }
+
+    /**
+     * Sets the country that applies to this page-sequence.
+     * @param country the country to set ("none" is mapped to null)
+     */
+    public void setCountry(String country) {
+        if ("none".equals(country)) {
+            this.country = null;
+        } else {
+            this.country = country;
+        }
+    }
+    
 }

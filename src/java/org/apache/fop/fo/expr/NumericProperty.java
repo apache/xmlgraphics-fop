@@ -25,6 +25,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -121,7 +122,7 @@ public class NumericProperty extends Property implements Numeric, Length {
     /** {@inheritDoc} */
     public String toString() {
         if (dim == 1) {
-            return (int) value + "mpt";
+            return (int) value + FixedLength.MPT;
         } else {
             return value + "^" + dim;
         }

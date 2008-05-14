@@ -29,7 +29,7 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class EnumProperty extends Property {
     
     /** cache holding all canonical EnumProperty instances */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(EnumProperty.class);
 
     /**
      * Inner class for creating EnumProperty instances

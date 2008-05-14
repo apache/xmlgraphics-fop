@@ -19,10 +19,10 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.LinkedList;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.fo.flow.FootnoteBody;
-
-import java.util.LinkedList;
 
 /**
  * Layout manager for footnote bodies.
@@ -91,4 +91,19 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
         return (FootnoteBody) fobj;
     }
 
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        return getParentKeepTogetherStrength();
+    }
+    
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+    }
+
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
+    }
+    
 }

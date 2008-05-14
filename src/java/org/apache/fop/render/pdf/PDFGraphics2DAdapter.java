@@ -28,8 +28,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+
 import org.apache.fop.render.AbstractGraphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.svg.PDFGraphics2D;
@@ -88,8 +89,8 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
         PDFGraphics2D graphics = new PDFGraphics2D(textAsShapes, 
                 pdfInfo.fi, pdfInfo.pdfDoc,
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
-                renderer.currentFontName,
-                renderer.currentFontSize);
+                pdfInfo.currentFontName,
+                pdfInfo.currentFontSize);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         
         AffineTransform transform = new AffineTransform();

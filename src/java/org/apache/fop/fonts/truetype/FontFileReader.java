@@ -19,9 +19,9 @@
  
 package org.apache.fop.fonts.truetype;
 
-import java.io.InputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 
@@ -310,6 +310,26 @@ public class FontFileReader {
         } else {
             encoding = "ISO-8859-1";
         }
+        return new String(tmp, encoding);
+    }
+
+    /**
+     * Read an ISO-8859-1 string of len bytes.
+     *
+     * @param len The length of the string to read
+     * @return A String
+     * @throws IOException If EOF is reached
+     */
+    public final String readTTFString(int len, int encodingID) throws IOException {
+        if ((len + current) > fsize) {
+            throw new java.io.EOFException("Reached EOF, file size=" + fsize);
+        }
+
+        byte[] tmp = new byte[len];
+        System.arraycopy(file, current, tmp, 0, len);
+        current += len;
+        final String encoding;
+        encoding = "UTF-16BE"; //Use this for all known encoding IDs for now
         return new String(tmp, encoding);
     }
 

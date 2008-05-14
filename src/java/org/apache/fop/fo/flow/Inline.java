@@ -28,7 +28,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:inline formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_inline">
+ * <code>fo:inline</code></a> formatting object.
  */
 public class Inline extends InlineLevel {
     // The value of properties relevant for fo:inline.
@@ -50,15 +51,15 @@ public class Inline extends InlineLevel {
     private boolean canHaveBlockLevelChildren = true;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public Inline(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
@@ -67,9 +68,7 @@ public class Inline extends InlineLevel {
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
        super.startOfNode();
        
@@ -81,8 +80,8 @@ public class Inline extends InlineLevel {
        int lvlInCntr = findAncestor(FO_INLINE_CONTAINER);
 
        if (lvlLeader > 0) {
-           if (lvlInCntr < 0 ||
-               (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
+           if (lvlInCntr < 0
+               || (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
                canHaveBlockLevelChildren = false;
            }
        } else if (lvlFootnote > 0) {
@@ -94,9 +93,7 @@ public class Inline extends InlineLevel {
        getFOEventHandler().startInline(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endInline(this);
@@ -104,56 +101,45 @@ public class Inline extends InlineLevel {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
-     * Additionally: " An fo:inline that is a descendant of an fo:leader
+     * <br>XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
+     * <br><i>Additionally: " An fo:inline that is a descendant of an fo:leader
      *  or fo:footnote may not have block-level children, unless it has a
-     *  nearer ancestor that is an fo:inline-container." (paraphrased)
+     *  nearer ancestor that is an fo:inline-container." (paraphrased)</i>
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockOrInlineItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", 
-                    "(#PCDATA|%inline;|%block;)");
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockOrInlineItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", 
+                        "(#PCDATA|%inline;|%block;)");
+                }
+            } else if (!isBlockOrInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, getParent().getName(), nsURI, getName(), "rule.inlineContent");
+            } else {
+                blockOrInlineItemFound = true;
             }
-        } else if (!isBlockOrInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
-            String ruleViolated = 
-                " An fo:inline that is a descendant of an fo:leader" +
-                " or fo:footnote may not have block-level children," +
-                " unless it has a nearer ancestor that is an" +
-                " fo:inline-container.";
-            invalidChildError(loc, nsURI, localName, ruleViolated);
-        } else {
-            blockOrInlineItemFound = true;
         }
     }
 
-    /**
-     * @return the "alignment-adjust" property
-     */
+    /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
     
-    /**
-     * @return the "alignment-baseline" property
-     */
+    /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
     
-    /**
-     * @return the "baseline-shift" property
-     */
+    /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
     
-    /**
-     * @return the "dominant-baseline" property
-     */
+    /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
@@ -163,7 +149,10 @@ public class Inline extends InlineLevel {
         return "inline";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_INLINE}
+     */
     public int getNameId() {
         return FO_INLINE;
     }

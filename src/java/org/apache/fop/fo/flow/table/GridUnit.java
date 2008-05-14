@@ -19,9 +19,6 @@
 
 package org.apache.fop.fo.flow.table;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
@@ -31,37 +28,23 @@ import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
  */
 public class GridUnit {
 
-    private static Log log = LogFactory.getLog(GridUnit.class);
-
-    /** Indicates that the grid unit is in the first column. */
-    public static final int IN_FIRST_COLUMN = 0;
-
-    /** Indicates that the grid unit is in the last column. */
-    public static final int IN_LAST_COLUMN = 1;
-
-    /** Indicates that the grid unit is in the first row of the table. */
-    public static final int FIRST_IN_TABLE = 2;
-
     /**
      * Indicates that the grid unit is in the first row of the table part (header, footer,
      * body).
      */
-    public static final int FIRST_IN_PART = 3;
+    public static final int FIRST_IN_PART = 0;
 
     /**
      * Indicates that the grid unit is in the last row of the table part (header, footer,
      * body).
      */
-    public static final int LAST_IN_PART = 4;
-
-    /** Indicates that the grid unit is in the last row of the table. */
-    public static final int LAST_IN_TABLE = 5;
+    public static final int LAST_IN_PART = 1;
 
     /** Indicates that the primary grid unit has a pending keep-with-next. */
-    public static final int KEEP_WITH_NEXT_PENDING = 6;
+    public static final int KEEP_WITH_NEXT_PENDING = 2;
 
     /** Indicates that the primary grid unit has a pending keep-with-previous. */
-    public static final int KEEP_WITH_PREVIOUS_PENDING = 7;
+    public static final int KEEP_WITH_PREVIOUS_PENDING = 3;
 
     /** Primary grid unit */
     private PrimaryGridUnit primary;
@@ -72,41 +55,36 @@ public class GridUnit {
     /** Table row occupied by this grid unit (may be null). */
     private TableRow row;
 
-    /** Table column that this grid unit belongs to */
-    private TableColumn column;
-
-    /** start index of grid unit within row in column direction */
-    private int startCol;
-
     /** index of grid unit within cell in column direction */
     private int colSpanIndex;
 
     /** index of grid unit within cell in row direction */
     private int rowSpanIndex;
 
-    /** effective borders for a cell slot */
-    private CommonBorderPaddingBackground effectiveBorders;
-
     /** flags for the grid unit */
     private byte flags = 0;
 
-    protected BorderSpecification[] resolvedBorders;
+    /** the border-before specification */
+    ConditionalBorder borderBefore;
+    /** the border-after specification */
+    ConditionalBorder borderAfter;
+    /** the border-start specification */
+    BorderSpecification borderStart;
+    /** the border-end specification */
+    BorderSpecification borderEnd;
 
-    private CollapsingBorderModel collapsingBorderModel;
+    /** The border model helper associated with the table */
+    protected CollapsingBorderModel collapsingBorderModel;
 
     /**
      * Creates a new grid unit.
      * 
      * @param table the containing table
-     * @param row the table-row element this grid unit belongs to (if any)
-     * @param column table column this grid unit belongs to
-     * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    protected GridUnit(Table table, TableRow row, TableColumn column, int startCol,
-            int colSpanIndex, int rowSpanIndex) {
-        this(row, column, startCol, colSpanIndex, rowSpanIndex);
+    protected GridUnit(Table table, int colSpanIndex, int rowSpanIndex) {
+        this(colSpanIndex, rowSpanIndex);
         setBorders(table);
     }
 
@@ -114,15 +92,11 @@ public class GridUnit {
      * Creates a new grid unit.
      * 
      * @param cell table cell which occupies this grid unit
-     * @param row the table-row element this grid unit belongs to (if any)
-     * @param column table column this grid unit belongs to
-     * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    protected GridUnit(TableCell cell, TableRow row, TableColumn column, int startCol,
-            int colSpanIndex, int rowSpanIndex) {
-        this(row, column, startCol, colSpanIndex, rowSpanIndex);
+    protected GridUnit(TableCell cell, int colSpanIndex, int rowSpanIndex) {
+        this(colSpanIndex, rowSpanIndex);
         this.cell = cell;
         setBorders(cell.getTable());
     }
@@ -131,59 +105,58 @@ public class GridUnit {
      * Creates a new grid unit.
      * 
      * @param primary the before-start grid unit of the cell containing this grid unit
-     * @param row the table-row element this grid unit belongs to (if any)
-     * @param column table column this grid unit belongs to
-     * @param startCol index of the column this grid unit belongs to
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
      */
-    GridUnit(PrimaryGridUnit primary, TableRow row, TableColumn column, int startCol,
-            int colSpanIndex, int rowSpanIndex) {
-        this(primary.getCell(), row, column, startCol, colSpanIndex, rowSpanIndex);
+    GridUnit(PrimaryGridUnit primary, int colSpanIndex, int rowSpanIndex) {
+        this(primary.getCell(), colSpanIndex, rowSpanIndex);
         this.primary = primary;
     }
 
-    private GridUnit(TableRow row, TableColumn column, int startCol, int colSpanIndex,
-            int rowSpanIndex) {
-        this.row = row;
-        this.column = column;
-        this.startCol = startCol;
+    private GridUnit(int colSpanIndex, int rowSpanIndex) {
         this.colSpanIndex = colSpanIndex;
         this.rowSpanIndex = rowSpanIndex;
     }
 
     private void setBorders(Table table/*TODO*/) {
-        if (table.isSeparateBorderModel()) {
-            assignBorderForSeparateBorderModel();
-        } else {
-            resolvedBorders = new BorderSpecification[4];
+        if (!table.isSeparateBorderModel()) {
             collapsingBorderModel = CollapsingBorderModel.getBorderModelFor(table
                     .getBorderCollapse());
-            if (rowSpanIndex == 0) {
-                setBorder(CommonBorderPaddingBackground.BEFORE);
-            }
-            if (isLastGridUnitRowSpan()) {
-                setBorder(CommonBorderPaddingBackground.AFTER);
-            }
-            if (colSpanIndex == 0) {
-                setBorder(CommonBorderPaddingBackground.START);
-            }
-            if (isLastGridUnitColSpan()) {
-                setBorder(CommonBorderPaddingBackground.END);
-            }
+            setBordersFromCell();
         }
     }
 
-    protected void setBorder(int side) {
-        resolvedBorders[side] = cell.resolvedBorders[side];
+    /**
+     * Prepares the borders of this grid unit for upcoming resolution, in the collapsing
+     * model.
+     */
+    protected void setBordersFromCell() {
+        borderBefore = cell.borderBefore.copy();
+        if (rowSpanIndex > 0) {
+            borderBefore.normal = BorderSpecification.getDefaultBorder();
+        }
+        borderAfter = cell.borderAfter.copy();
+        if (!isLastGridUnitRowSpan()) {
+            borderAfter.normal = BorderSpecification.getDefaultBorder();
+        }
+        if (colSpanIndex == 0) {
+            borderStart = cell.borderStart;
+        } else {
+            borderStart = BorderSpecification.getDefaultBorder();
+        }
+        if (isLastGridUnitColSpan()) {
+            borderEnd = cell.borderEnd;
+        } else {
+            borderEnd = BorderSpecification.getDefaultBorder();
+        }
     }
 
+    /**
+     * Returns the table cell associated with this grid unit.
+     * @return the table cell
+     */
     public TableCell getCell() {
         return cell;
-    }
-
-    public TableColumn getColumn() {
-        return column;
     }
 
     /**
@@ -196,12 +169,8 @@ public class GridUnit {
         return row;
     }
 
-    public TableBody getBody() {
-        FONode node = getCell();
-        while (node != null && !(node instanceof TableBody)) {
-            node = node.getParent();
-        }
-        return (TableBody) node;
+    void setRow(TableRow row) {
+        this.row = row;
     }
 
     /**
@@ -231,10 +200,6 @@ public class GridUnit {
         return cell == null;
     }
 
-    public int getStartCol() {
-        return startCol;
-    }
-
     /** @return true if the grid unit is the last in column spanning direction */
     public boolean isLastGridUnitColSpan() {
         return (colSpanIndex == cell.getNumberColumnsSpanned() - 1);
@@ -260,67 +225,67 @@ public class GridUnit {
     }
 
     /**
-     * Returns a BorderInfo instance for a side of the currently applicable cell before
-     * border resolution (i.e. the value from the FO). A return value of null indicates an
-     * empty cell. See CollapsingBorderModel(EyeCatching) where this method is used.
+     * Returns the resolved border-before of this grid unit, in the collapsing-border
+     * model.
      * 
-     * @param side for which side to return the BorderInfo
-     * @return the requested BorderInfo instance or null if the grid unit is an empty cell
+     * @param which one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @return the corresponding border
      */
-    public BorderInfo getOriginalBorderInfoForCell(int side) {
-        if (cell != null) {
-            return cell.getCommonBorderPaddingBackground().getBorderInfo(side);
-        } else {
+    public BorderInfo getBorderBefore(int which) {
+        switch (which) {
+        case ConditionalBorder.NORMAL:
+            return borderBefore.normal.getBorderInfo();
+        case ConditionalBorder.LEADING_TRAILING:
+            return borderBefore.leadingTrailing.getBorderInfo();
+        case ConditionalBorder.REST:
+            return borderBefore.rest.getBorderInfo();
+        default:
+            assert false;
             return null;
         }
     }
 
     /**
-     * @return the resolved normal borders for this grid unit
+     * Returns the resolved border-after of this grid unit, in the collapsing-border
+     * model.
+     * 
+     * @param which one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @return the corresponding border
      */
-    public CommonBorderPaddingBackground getBorders() {
-        // TODO
-        if (effectiveBorders == null) {
-            effectiveBorders = new CommonBorderPaddingBackground();
-            setBorderInfo(CommonBorderPaddingBackground.BEFORE);
-            setBorderInfo(CommonBorderPaddingBackground.AFTER);
-            setBorderInfo(CommonBorderPaddingBackground.START);
-            setBorderInfo(CommonBorderPaddingBackground.END);
-            if (cell != null) {
-                effectiveBorders.setPadding(cell.getCommonBorderPaddingBackground());
-            }
-            if (log.isDebugEnabled()) {
-                log.debug(this + " resolved borders: " + "before="
-                        + effectiveBorders.getBorderBeforeWidth(false) + ", " + "after="
-                        + effectiveBorders.getBorderAfterWidth(false) + ", " + "start="
-                        + effectiveBorders.getBorderStartWidth(false) + ", " + "end="
-                        + effectiveBorders.getBorderEndWidth(false));
-            }
-        }
-        return effectiveBorders;
-    }
-
-    private void setBorderInfo(int side) {
-        if (resolvedBorders[side] != null) {
-            effectiveBorders.setBorderInfo(resolvedBorders[side].getBorderInfo(), side);
+    public BorderInfo getBorderAfter(int which) {
+        switch (which) {
+        case ConditionalBorder.NORMAL:
+            return borderAfter.normal.getBorderInfo();
+        case ConditionalBorder.LEADING_TRAILING:
+            return borderAfter.leadingTrailing.getBorderInfo();
+        case ConditionalBorder.REST:
+            return borderAfter.rest.getBorderInfo();
+        default:
+            assert false;
+            return null;
         }
     }
 
     /**
-     * @return true if the grid unit has any borders.
+     * Returns the resolved border-start of this grid unit, in the collapsing-border
+     * model.
+     * 
+     * @return the corresponding border
      */
-    public boolean hasBorders() {
-        return (getBorders() != null) && getBorders().hasBorder();
+    public BorderInfo getBorderStart() {
+        return borderStart.getBorderInfo();
     }
 
     /**
-     * Assigns the borders from the given cell to this cell info. Used in case of separate
-     * border model.
+     * Returns the resolved border-end of this grid unit, in the collapsing-border
+     * model.
+     * 
+     * @return the corresponding border
      */
-    void assignBorderForSeparateBorderModel() {
-        if (cell != null) {
-            effectiveBorders = cell.getCommonBorderPaddingBackground();
-        }
+    public BorderInfo getBorderEnd() {
+        return borderEnd.getBorderInfo();
     }
 
     /**
@@ -332,26 +297,114 @@ public class GridUnit {
      * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
      */
     void resolveBorder(GridUnit other, int side) {
-        BorderSpecification resolvedBorder = collapsingBorderModel.determineWinner(
-                resolvedBorders[side], other.resolvedBorders[CollapsingBorderModel
-                        .getOtherSide(side)]);
-        if (resolvedBorder != null) {
-            this.resolvedBorders[side] = resolvedBorder;
-            other.resolvedBorders[CollapsingBorderModel.getOtherSide(side)] = resolvedBorder;
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore.resolve(other.borderAfter, true, false, false);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter.resolve(other.borderBefore, true, false, false);
+            break;
+        case CommonBorderPaddingBackground.START:
+            BorderSpecification resolvedBorder = collapsingBorderModel.determineWinner(
+                    borderStart, other.borderEnd);
+            if (resolvedBorder != null) {
+                this.borderStart = resolvedBorder;
+                other.borderEnd = resolvedBorder;
+            }
+            break;
+        case CommonBorderPaddingBackground.END:
+            resolvedBorder = collapsingBorderModel.determineWinner(
+                    borderEnd, other.borderStart);
+            if (resolvedBorder != null) {
+                this.borderEnd = resolvedBorder;
+                other.borderStart = resolvedBorder;
+            }
+            break;
+        default: assert false;
         }
     }
 
     /**
-     * Resolves the border on the given side of this grid unit, comparing it against the
-     * same border of the given parent element.
+     * For the given side, integrates in the conflict resolution the border segment of the
+     * given parent element.
      * 
-     * @param side the side to resolve (one of
-     * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
-     * @param parent the parent element holding a competing border
+     * @param side the side to consider (either CommonBorderPaddingBackground.BEFORE or
+     * AFTER)
+     * @param parent a table element whose corresponding border coincides on the given
+     * side
      */
-    void resolveBorder(int side, TableFObj parent) {
-        resolvedBorders[side] = collapsingBorderModel.determineWinner(resolvedBorders[side],
-                parent.resolvedBorders[side]);
+    void integrateBorderSegment(int side, TableFObj parent, boolean withNormal,
+            boolean withLeadingTrailing, boolean withRest) {
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore.integrateSegment(parent.borderBefore, withNormal,
+                    withLeadingTrailing, withRest);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter.integrateSegment(parent.borderAfter, withNormal,
+                    withLeadingTrailing, withRest);
+            break;
+        default: assert false;
+        }
+    }
+
+    /**
+     * For the given side, integrates in the conflict resolution the border segment of the
+     * given parent element.
+     * 
+     * @param side the side to consider (one of
+     * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
+     * @param parent a table element whose corresponding border coincides on the given side
+     */
+    void integrateBorderSegment(int side, TableFObj parent) {
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+        case CommonBorderPaddingBackground.AFTER:
+            integrateBorderSegment(side, parent, true, true, true);
+            break;
+        case CommonBorderPaddingBackground.START:
+            borderStart = collapsingBorderModel.determineWinner(borderStart,
+                    parent.borderStart);
+            break;
+        case CommonBorderPaddingBackground.END:
+            borderEnd = collapsingBorderModel.determineWinner(borderEnd,
+                    parent.borderEnd);
+            break;
+        default: assert false;
+        }
+    }
+
+    /**
+     * For the given side, integrates in the conflict resolution the given border segment.
+     * 
+     * @param side the side to consider (one of CommonBorderPaddingBackground.START|END)
+     * @param segment a border specification to integrate at the given side
+     */
+    void integrateBorderSegment(int side, BorderSpecification segment) {
+        switch(side) {
+        case CommonBorderPaddingBackground.START:
+            borderStart = collapsingBorderModel.determineWinner(borderStart, segment);
+            break;
+        case CommonBorderPaddingBackground.END:
+            borderEnd = collapsingBorderModel.determineWinner(borderEnd, segment);
+            break;
+        default: assert false;
+        }
+    }
+
+    void integrateCompetingBorder(int side, ConditionalBorder competitor,
+            boolean withNormal, boolean withLeadingTrailing, boolean withRest) {
+        switch (side) {
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore.integrateCompetingSegment(competitor, withNormal,
+                    withLeadingTrailing, withRest);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter.integrateCompetingSegment(competitor, withNormal,
+                    withLeadingTrailing, withRest);
+            break;
+        default: assert false;
+        }
     }
 
     /**
@@ -408,10 +461,9 @@ public class GridUnit {
                 buffer.append("(last)");
             }
         }
-        buffer.append(" startCol=").append(startCol);
         if (!isPrimary() && getPrimary() != null) {
-            buffer.append(" primary=").append(getPrimary().getStartRow());
-            buffer.append("/").append(getPrimary().getStartCol());
+            buffer.append(" primary=").append(getPrimary().getRowIndex());
+            buffer.append("/").append(getPrimary().getColIndex());
             if (getPrimary().getCell() != null) {
                 buffer.append(" id=" + getPrimary().getCell().getId());
             }

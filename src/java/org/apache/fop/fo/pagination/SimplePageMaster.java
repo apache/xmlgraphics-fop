@@ -36,7 +36,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
- * A simple-page-master formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_simple-page-master">
+ * <code>fo:simple-page-master</code></a> object.
  * This creates a simple page from the specified regions
  * and attributes.
  */
@@ -63,15 +64,15 @@ public class SimplePageMaster extends FObj {
     private boolean hasRegionEnd = false;
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public SimplePageMaster(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonMarginBlock = pList.getMarginBlockProps();
         masterName = pList.get(PR_MASTER_NAME).getString();
@@ -85,9 +86,7 @@ public class SimplePageMaster extends FObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         LayoutMasterSet layoutMasterSet = (LayoutMasterSet) parent;
 
@@ -101,9 +100,7 @@ public class SimplePageMaster extends FObj {
         regions = new HashMap(5);
     }
 
-    /**
-     * Make sure content model satisfied.
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!hasRegionBody) {
             missingChildElementError(
@@ -113,75 +110,73 @@ public class SimplePageMaster extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (region-body,region-before?,region-after?,region-start?,region-end?)
+     * <br>XSL Content Model: (region-body,region-before?,region-after?,region-start?,region-end?)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("region-body")) {
-            if (hasRegionBody) {
-                tooManyNodesError(loc, "fo:region-body");
+            throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("region-body")) {
+                if (hasRegionBody) {
+                    tooManyNodesError(loc, "fo:region-body");
+                } else {
+                    hasRegionBody = true;
+                }
+            } else if (localName.equals("region-before")) {
+                if (!hasRegionBody) {
+                    nodesOutOfOrderError(loc, "fo:region-body", "fo:region-before");
+                } else if (hasRegionBefore) {
+                    tooManyNodesError(loc, "fo:region-before");
+                } else if (hasRegionAfter) {
+                    nodesOutOfOrderError(loc, "fo:region-before", "fo:region-after");
+                } else if (hasRegionStart) {
+                    nodesOutOfOrderError(loc, "fo:region-before", "fo:region-start");
+                } else if (hasRegionEnd) {
+                    nodesOutOfOrderError(loc, "fo:region-before", "fo:region-end");
+                } else {
+                    hasRegionBody = true;
+                }
+            } else if (localName.equals("region-after")) {
+                if (!hasRegionBody) {
+                    nodesOutOfOrderError(loc, "fo:region-body", "fo:region-after");
+                } else if (hasRegionAfter) {
+                    tooManyNodesError(loc, "fo:region-after");
+                } else if (hasRegionStart) {
+                    nodesOutOfOrderError(loc, "fo:region-after", "fo:region-start");
+                } else if (hasRegionEnd) {
+                    nodesOutOfOrderError(loc, "fo:region-after", "fo:region-end");
+                } else {
+                    hasRegionAfter = true;
+                }
+            } else if (localName.equals("region-start")) {
+                if (!hasRegionBody) {
+                    nodesOutOfOrderError(loc, "fo:region-body", "fo:region-start");
+                } else if (hasRegionStart) {
+                    tooManyNodesError(loc, "fo:region-start");
+                } else if (hasRegionEnd) {
+                    nodesOutOfOrderError(loc, "fo:region-start", "fo:region-end");
+                } else {
+                    hasRegionStart = true;
+                }
+            } else if (localName.equals("region-end")) {
+                if (!hasRegionBody) {
+                    nodesOutOfOrderError(loc, "fo:region-body", "fo:region-end");
+                } else if (hasRegionEnd) {
+                    tooManyNodesError(loc, "fo:region-end");
+                } else {
+                    hasRegionEnd = true;
+                }
             } else {
-                hasRegionBody = true;
+                invalidChildError(loc, nsURI, localName);
             }
-        } else if (FO_URI.equals(nsURI) && localName.equals("region-before")) {
-            if (!hasRegionBody) {
-                nodesOutOfOrderError(loc, "fo:region-body", "fo:region-before");
-            } else if (hasRegionBefore) {
-                tooManyNodesError(loc, "fo:region-before");
-            } else if (hasRegionAfter) {
-                nodesOutOfOrderError(loc, "fo:region-before", "fo:region-after");
-            } else if (hasRegionStart) {
-                nodesOutOfOrderError(loc, "fo:region-before", "fo:region-start");
-            } else if (hasRegionEnd) {
-                nodesOutOfOrderError(loc, "fo:region-before", "fo:region-end");
-            } else {
-                hasRegionBody = true;
-            }
-        } else if (FO_URI.equals(nsURI) && localName.equals("region-after")) {
-            if (!hasRegionBody) {
-                nodesOutOfOrderError(loc, "fo:region-body", "fo:region-after");
-            } else if (hasRegionAfter) {
-                tooManyNodesError(loc, "fo:region-after");
-            } else if (hasRegionStart) {
-                nodesOutOfOrderError(loc, "fo:region-after", "fo:region-start");
-            } else if (hasRegionEnd) {
-                nodesOutOfOrderError(loc, "fo:region-after", "fo:region-end");
-            } else {
-                hasRegionAfter = true;
-            }
-        } else if (FO_URI.equals(nsURI) && localName.equals("region-start")) {
-            if (!hasRegionBody) {
-                nodesOutOfOrderError(loc, "fo:region-body", "fo:region-start");
-            } else if (hasRegionStart) {
-                tooManyNodesError(loc, "fo:region-start");
-            } else if (hasRegionEnd) {
-                nodesOutOfOrderError(loc, "fo:region-start", "fo:region-end");
-            } else {
-                hasRegionStart = true;
-            }
-        } else if (FO_URI.equals(nsURI) && localName.equals("region-end")) {
-            if (!hasRegionBody) {
-                nodesOutOfOrderError(loc, "fo:region-body", "fo:region-end");
-            } else if (hasRegionEnd) {
-                tooManyNodesError(loc, "fo:region-end");
-            } else {
-                hasRegionEnd = true;
-            }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean generatesReferenceAreas() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         if (child instanceof Region) {
             addRegion((Region)child);
@@ -270,6 +265,7 @@ public class SimplePageMaster extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_SIMPLE_PAGE_MASTER}
      */
     public int getNameId() {
         return FO_SIMPLE_PAGE_MASTER;

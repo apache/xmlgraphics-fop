@@ -26,24 +26,71 @@ import org.apache.fop.datatypes.PercentBaseContext;
  */
 public final class FixedLength extends LengthProperty {
     
+    /** Describes the unit pica. */
+    public static final String PICA = "pc";
+
+    /** Describes the unit point. */
+    public static final String POINT = "pt";
+
+    /** Describes the unit millimeter. */
+    public static final String MM = "mm";
+
+    /** Describes the unit centimeter. */
+    public static final String CM = "cm";
+
+    /** Describes the unit inch. */
+    public static final String INCH = "in";
+
+    /** Describes the unit millipoint. */
+    public static final String MPT = "mpt";
+
     /** cache holding all canonical FixedLength instances */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(FixedLength.class);
+    
+    /** canonical zero-length instance */
+    public static final FixedLength ZERO_FIXED_LENGTH = new FixedLength(0, FixedLength.MPT, 1.0f);
     
     private int millipoints;
 
     /**
-     * Set the length given a number of units and a unit name.
+     * Set the length given a number of units, a unit name and
+     * an assumed resolution (used in case the units are pixels)
      * 
-     * @param numUnits quantity of input units
-     * @param units input unit specifier (in, cm, etc.)
+     * @param numUnits  quantity of input units
+     * @param units     input unit specifier
+     * @param res       input/source resolution
      */
-    private FixedLength(double numUnits, String units) {
-        convert(numUnits, units);
+    private FixedLength(double numUnits, String units, float res) {
+        this.millipoints = convert(numUnits, units, res);
     }
     
     /**
-     * Return the cached FixedLength instance corresponding
+     * Return the cached {@link FixedLength} instance corresponding
+     * to the computed value in base-units (millipoints).
+     * 
+     * @param numUnits  quantity of input units
+     * @param units     input unit specifier
+     * @param sourceResolution input/source resolution (= ratio of pixels per pt)
+     * @return  the canonical FixedLength instance corresponding
+     *          to the given number of units and unit specifier
+     *          in the given resolution
+     */
+    public static FixedLength getInstance(double numUnits, 
+                                          String units,
+                                          float sourceResolution) {
+        if (numUnits == 0.0) {
+            return ZERO_FIXED_LENGTH;
+        } else {
+            return (FixedLength)cache.fetch(
+                new FixedLength(numUnits, units, sourceResolution));
+        }
+        
+    }
+    
+    /**
+     * Return the cached {@link FixedLength} instance corresponding
      * to the computed value
+     * This method assumes a source-resolution of 1 (1px = 1pt)
      * 
      * @param numUnits  input units
      * @param units     unit specifier
@@ -52,118 +99,103 @@ public final class FixedLength extends LengthProperty {
      */
     public static FixedLength getInstance(double numUnits, 
                                           String units) {
-        return (FixedLength) cache.fetch(new FixedLength(numUnits, units));
+        return getInstance(numUnits, units, 1.0f);
         
     }
     
     /**
-     * @param baseUnits the length as a number of base units (millipoints)
+     * Return the cached {@link FixedLength} instance corresponding
+     * to the computed value.
+     * This method assumes 'millipoints' (non-standard) as units, 
+     * and an implied source-resolution of 1 (1px = 1pt).
+     * 
+     * @param numUnits  input units
+     * @return  the canonical FixedLength instance corresponding
+     *          to the given number of units and unit specifier
      */
-    public FixedLength(int baseUnits) {
-        millipoints = baseUnits;
+    public static FixedLength getInstance(double numUnits) {
+        return getInstance(numUnits, FixedLength.MPT, 1.0f);
+        
     }
-
+    
     /**
      * Convert the given length to a dimensionless integer representing
      * a whole number of base units (milli-points).
+     * 
      * @param dvalue quantity of input units
      * @param unit input unit specifier (in, cm, etc.)
+     * @param res   the input/source resolution (in case the unit spec is "px")
      */
-    protected void convert(double dvalue, String unit) {
-        // TODO: the whole routine smells fishy.
+    private static int convert(double dvalue, String unit, float res) {
+        // TODO: Maybe this method has a better place in org.apache.fop.util.UnitConv?.
 
-        int assumedResolution = 1;    // points/pixel = 72dpi
-
-        if (unit.equals("in")) {
-            dvalue = dvalue * 72;
-        } else if (unit.equals("cm")) {
-            dvalue = dvalue * 28.3464567;
-        } else if (unit.equals("mm")) {
-            dvalue = dvalue * 2.83464567;
-        } else if (unit.equals("pt")) {
-            // Do nothing.
-            // dvalue = dvalue;
-        } else if (unit.equals("mpt")) { //mpt is non-standard!!! mpt=millipoints
-            // TODO: this seems to be wrong.
-            // Do nothing.
-            // dvalue = dvalue;
-        } else if (unit.equals("pc")) {
-            dvalue = dvalue * 12;
-            /*
-             * } else if (unit.equals("em")) {
-             * dvalue = dvalue * fontsize;
-             */
-        } else if (unit.equals("px")) {
-            // TODO: get resolution from user agent?
-            dvalue = dvalue * assumedResolution;
+        if ("px".equals(unit)) {
+            //device-dependent units, take the resolution into account
+            dvalue *= (res * 1000);
         } else {
-            dvalue = 0;
-            log.error("Unknown length unit '" + unit + "'");
+            if (FixedLength.INCH.equals(unit)) {
+                dvalue *= 72000;
+            } else if (FixedLength.CM.equals(unit)) {
+                dvalue *= 28346.4567;
+            } else if (FixedLength.MM.equals(unit)) {
+                dvalue *= 2834.64567;
+            } else if (FixedLength.POINT.equals(unit)) {
+                dvalue *= 1000;
+            } else if (FixedLength.PICA.equals(unit)) {
+                dvalue *= 12000;
+            } else if (!FixedLength.MPT.equals(unit)) {
+                dvalue = 0;
+                log.error("Unknown length unit '" + unit + "'");
+            }
         }
-        if (unit.equals("mpt")) {
-            millipoints = (int)dvalue;
-        } else {
-            millipoints = (int)(dvalue * 1000);
-        }
+        return (int)dvalue;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getValue() {
         return millipoints;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getValue(PercentBaseContext context) {
         return millipoints;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public double getNumericValue() {
         return millipoints;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public double getNumericValue(PercentBaseContext context) {
         return millipoints;
     }
 
     /**
-     * Return true since FixedLength are always absolute.
+     * Return true since a FixedLength is always absolute.
      * {@inheritDoc}
      */
     public boolean isAbsolute() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
-        return millipoints + "mpt";
+        return millipoints + FixedLength.MPT;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj instanceof FixedLength) {
             return (((FixedLength)obj).millipoints == this.millipoints);
-        } else {
-            return false;
         }
+        return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int hashCode() {
         return millipoints;
     }

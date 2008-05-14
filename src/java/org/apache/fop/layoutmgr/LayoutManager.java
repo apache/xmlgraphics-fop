@@ -59,13 +59,6 @@ public interface LayoutManager extends PercentBaseContext {
     PageSequenceLayoutManager getPSLM();
 
     /**
-     * Reset to the position.
-     *
-     * @param position the Position to reset to
-     */
-    void resetPosition(Position position);
-
-    /**
      * Return a value indicating whether this LayoutManager has laid out
      * all its content (or generated BreakPossibilities for all content.)
      *

@@ -23,9 +23,10 @@ import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.pdf.PDFDocument;
@@ -43,31 +44,35 @@ public class PDFDocumentGraphics2DConfigurator {
      * @param cfg the configuration
      * @throws ConfigurationException if an error occurs while configuring the object
      */
-    public void configure(PDFDocumentGraphics2D graphics, Configuration cfg) 
+    public void configure(PDFDocumentGraphics2D graphics, Configuration cfg)
             throws ConfigurationException {
         PDFDocument pdfDoc = graphics.getPDFDocument();
-        
+
         //Filter map
         pdfDoc.setFilterMap(
                 PDFRendererConfigurator.buildFilterMapFromConfiguration(cfg));
-        
+
         //Fonts
         try {
-            FontResolver fontResolver = FontSetup.createMinimalFontResolver();
-            //TODO The following could be optimized by retaining the FontCache somewhere
-            FontCache fontCache = FontCache.load();
-            if (fontCache == null) {
-                fontCache = new FontCache();
+            FontResolver fontResolver = FontManager.createMinimalFontResolver();
+            //TODO The following could be optimized by retaining the FontManager somewhere
+            FontManager fontManager = new FontManager();
+
+            //TODO Make use of fontBaseURL, font substitution and referencing configuration
+            //Requires a change to the expected configuration layout
+
+            List/*<EmbedFontInfo>*/ embedFontInfoList
+                = PrintRendererConfigurator.buildFontListFromConfiguration(
+                    cfg, fontResolver, false, fontManager);
+            if (fontManager.useCache()) {
+                fontManager.getFontCache().save();
             }
-            List fontList = PrintRendererConfigurator.buildFontListFromConfiguration(
-                    cfg, null, fontResolver, false, fontCache);
-            fontCache.save();
             FontInfo fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo, fontList, fontResolver);
+            FontSetup.setup(fontInfo, embedFontInfoList, fontResolver);
             graphics.setFontInfo(fontInfo);
         } catch (FOPException e) {
             throw new ConfigurationException("Error while setting up fonts", e);
         }
     }
-    
+
 }

@@ -25,6 +25,7 @@ import java.util.Set;
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -47,6 +48,7 @@ import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 
 /**
@@ -77,7 +79,7 @@ public abstract class FOEventHandler {
      * This is used so we know if the FO tree contains duplicates.
      */
     private Set idReferences = new HashSet();
-
+    
     /**
      * The property list maker.
      */
@@ -100,6 +102,7 @@ public abstract class FOEventHandler {
     public FOEventHandler(FOUserAgent foUserAgent) {
         this.foUserAgent = foUserAgent;
         this.fontInfo = new FontInfo();
+        this.fontInfo.setEventListener(new FontEventAdapter(foUserAgent.getEventBroadcaster()));
     }
 
     /**
@@ -128,13 +131,17 @@ public abstract class FOEventHandler {
 
     /**
      * Return the propertyListMaker.
-    */
+     * 
+     * @return the currently active {@link PropertyListMaker}
+     */
     public PropertyListMaker getPropertyListMaker() {
         return propertyListMaker;
     }
      
     /**
      * Set a new propertyListMaker.
+     * 
+     * @param propertyListMaker the new {@link PropertyListMaker} to use
      */
     public void setPropertyListMaker(PropertyListMaker propertyListMaker) {
         this.propertyListMaker = propertyListMaker;
@@ -152,6 +159,9 @@ public abstract class FOEventHandler {
      * Switch to or from marker context
      * (used by FOTreeBuilder when processing
      *  a marker)
+     * 
+     * @param inMarker  true if a marker is being processed; 
+     *                  false otherwise
      *
      */
     protected void switchMarkerContext(boolean inMarker) {
@@ -160,6 +170,8 @@ public abstract class FOEventHandler {
     
     /**
      * Check whether in marker context
+     * 
+     * @return true if a marker is being processed
      */
     protected boolean inMarker() {
         return this.inMarker;
@@ -555,6 +567,20 @@ public abstract class FOEventHandler {
      * @param length Portion of array to process.
      */
     public void characters(char data[], int start, int length) {
+    }
+
+    /**
+     * Process the start of the external-document extension.
+     * @param document the external-document node
+     */
+    public void startExternalDocument(ExternalDocument document) {
+    }
+
+    /**
+     * Process the end of the external-document extension.
+     * @param document the external-document node
+     */
+    public void endExternalDocument(ExternalDocument document) {
     }
 
 }

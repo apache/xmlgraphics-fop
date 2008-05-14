@@ -21,14 +21,15 @@ package org.apache.fop.area;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -123,6 +124,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         if (original.extensionAttachments != null) {
             this.extensionAttachments = new java.util.ArrayList(original.extensionAttachments);
         }
+        this.pageIndex = original.pageIndex;
         this.pageNumber = original.pageNumber;
         this.pageNumberString = original.pageNumberString;
         this.page = (Page)original.page.clone();
@@ -516,9 +518,9 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * The map of unresolved references are set on the page so that
      * the resolvers can be properly serialized and reloaded.
      * @param out the object output stream to write the contents
-     * @throws Exception if there is a problem saving the page
+     * @throws IOException in case of an I/O error while serializing the page
      */
-    public void savePage(ObjectOutputStream out) throws Exception {
+    public void savePage(ObjectOutputStream out) throws IOException {
         // set the unresolved references so they are serialized
         page.setUnresolvedReferences(unresolvedIDRefs);
         out.writeObject(page);
@@ -531,9 +533,10 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * if there are any unresolved references that were resolved
      * while saved they will be resolved on the page contents.
      * @param in the object input stream to read the page from
-     * @throws Exception if there is an error loading the page
+     * @throws ClassNotFoundException if a class was not found while loading the page
+     * @throws IOException if an I/O error occurred while loading the page
      */
-    public void loadPage(ObjectInputStream in) throws Exception {
+    public void loadPage(ObjectInputStream in) throws IOException, ClassNotFoundException {
         page = (Page) in.readObject();
         unresolvedIDRefs = page.getUnresolvedReferences();
         if (unresolvedIDRefs != null && pendingResolved != null) {

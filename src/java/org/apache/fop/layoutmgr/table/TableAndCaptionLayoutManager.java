@@ -19,13 +19,12 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.table.TableAndCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 
 /**
  * LayoutManager for a table-and-caption FO.
@@ -36,8 +35,7 @@ import org.apache.fop.area.Block;
  * @todo Implement getNextKnuthElements()
  */
 public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
-    private TableAndCaption fobj;
-    
+
     private Block curBlockArea;
 
     //private List childBreaks = new java.util.ArrayList();
@@ -48,9 +46,16 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
      */
     public TableAndCaptionLayoutManager(TableAndCaption node) {
         super(node);
-        fobj = node;
     }
 
+    /**
+     * Returns the table-and-caption formatting object.
+     * @return the table-and-caption formatting object
+     */
+    public TableAndCaption getTableAndCaptionFO() {
+        return (TableAndCaption)this.fobj;
+    }
+    
     /**
      * Get the next break possibility.
      *
@@ -134,7 +139,7 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        getPSLM().addIDToPage(fobj.getId());
+        addId();
 
         /* TODO: Reimplement using Knuth approach
         LayoutManager childLM;
@@ -194,16 +199,34 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
             curBlockArea.addBlock((Block) childArea);
         }
     }
-
-    /**
-     * Reset the position of this layout manager.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
+    
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        /* TODO Complete me!
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableAndCaptionFO().getKeepTogether());
+        */
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
+    }    
+    
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+        /* TODO Complete me!
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableAndCaptionFO().getKeepWithNext());
+        */
     }
-}
 
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
+        /* TODO Complete me!
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableAndCaptionFO().getKeepWithPrevious());
+        */
+    }
+
+}

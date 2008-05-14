@@ -23,28 +23,27 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 
 /**
- * Class modelling the fo:list-item-label object.
+ * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_list-item-label">
+ * <code>fo:list-item-label</code></a> object.
  */
 public class ListItemLabel extends AbstractListItemPart {
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public ListItemLabel(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startListLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endListLabel();
@@ -57,6 +56,7 @@ public class ListItemLabel extends AbstractListItemPart {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_LIST_ITEM_LABEL}
      */
     public int getNameId() {
         return FO_LIST_ITEM_LABEL;

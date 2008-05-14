@@ -15,15 +15,17 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.ps.extensions;
 
-import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.util.XMLizable;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import org.apache.xmlgraphics.util.XMLizable;
+
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
  * This is the pass-through value object for the PostScript extension.

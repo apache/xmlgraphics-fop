@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -239,8 +239,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
             
             Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
             if (rendererResolutionCfg != null) {
-                afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(
-                        AFPRenderer.DPI_240_RESOLUTION));
+                afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(240));
             }
         }
     }

@@ -31,7 +31,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Declarations formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_declarations">
+ * <code>fo:declarations</code></a> object.
+ *
  * A declarations formatting object holds a set of color-profiles
  * and optionally additional non-XSL namespace elements.
  * The color-profiles are held in a hashmap for use with color-profile
@@ -49,22 +51,20 @@ public class Declarations extends FObj {
         ((Root) parent).setDeclarations(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         // No properties defined for fo:declarations
     }
 
     /**
      * {@inheritDoc}
-     * XSL 1.0: (color-profile)+ (and non-XSL NS nodes)
-     * FOP/XSL 1.1: (color-profile)* (and non-XSL NS nodes)
+     * <br>XSL 1.0: (color-profile)+ (and non-XSL NS nodes)
+     * <br>FOP/XSL 1.1: (color-profile)* (and non-XSL NS nodes)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if (!localName.equals("color-profile")) {   
+            if (!localName.equals("color-profile")) {
                 invalidChildError(loc, nsURI, localName);
             }
         } // anything outside of XSL namespace is OK.
@@ -73,6 +73,7 @@ public class Declarations extends FObj {
     /**
      * At the end of this element sort out the children into
      * a hashmap of color profiles and a list of extension attachments.
+     * @throws FOPException if there's a problem during processing
      */
     protected void endOfNode() throws FOPException {
         if (firstChild != null) {
@@ -83,7 +84,8 @@ public class Declarations extends FObj {
                     if (!"".equals(cp.getColorProfileName())) {
                         addColorProfile(cp);
                     } else {
-                        log.warn("color-profile-name required for color profile");
+                        getFOValidationEventProducer().missingProperty(this,
+                                cp.getName(), "color-profile-name", locator);
                     }
                 } else {
                     log.debug("Ignoring element " + node.getName() 
@@ -100,21 +102,20 @@ public class Declarations extends FObj {
         }
         if (colorProfiles.get(cp.getColorProfileName()) != null) {
             // duplicate names
-            log.warn("Duplicate fo:color-profile profile name: "
-                    + cp.getColorProfileName());
+            getFOValidationEventProducer().colorProfileNameNotUnique(this,
+                    cp.getName(), cp.getColorProfileName(), locator);
         }
         colorProfiles.put(cp.getColorProfileName(), cp);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "declarations";
     }
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_DECLARATIONS}
      */
     public int getNameId() {
         return FO_DECLARATIONS;

@@ -19,42 +19,42 @@
 
 package org.apache.fop.render.pdf;
 
+import java.awt.Color;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
 
 import org.w3c.dom.Document;
 
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.util.SVGConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.util.QName;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFPage;
-import org.apache.fop.pdf.PDFState;
-import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
+import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.fop.util.QName;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.fonts.FontInfo;
-
-// Commons-Logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.avalon.framework.configuration.Configuration;
-
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.util.SVGConstants;
 
 /**
  * PDF XML handler for SVG (uses Apache Batik).
@@ -146,19 +146,23 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             try {
                 super.renderSVGDocument(context, doc);
             } catch (IOException ioe) {
-                log.error("I/O error while rendering SVG graphic: "
-                                       + ioe.getMessage(), ioe);
+                SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                        context.getUserAgent().getEventBroadcaster());
+                eventProducer.svgRenderingError(this, ioe, getDocumentURI(doc));
             }
             return;
         }
         int xOffset = pdfInfo.currentXPosition;
         int yOffset = pdfInfo.currentYPosition;
 
-        final float deviceResolution = context.getUserAgent().getTargetResolution();
-        log.debug("Generating SVG at " + deviceResolution + "dpi.");
+        FOUserAgent userAgent = context.getUserAgent(); 
+        final float deviceResolution = userAgent.getTargetResolution();
+        if (log.isDebugEnabled()) {
+            log.debug("Generating SVG at " + deviceResolution + "dpi.");
+        }
         
-        final float uaResolution = context.getUserAgent().getSourceResolution();
-        SVGUserAgent ua = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
+        final float uaResolution = userAgent.getSourceResolution();
+        SVGUserAgent ua = new SVGUserAgent(userAgent, new AffineTransform());
 
         //Scale for higher resolution on-the-fly images from Batik
         double s = uaResolution / deviceResolution;
@@ -176,6 +180,8 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         
         BridgeContext ctx = new PDFBridgeContext(ua, 
                 (strokeText ? null : pdfInfo.fi),
+                userAgent.getFactory().getImageManager(),
+                userAgent.getImageSessionContext(),
                 new AffineTransform());
         
         GraphicsNode root;
@@ -183,8 +189,9 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             root = builder.build(ctx, doc);
             builder = null;
         } catch (Exception e) {
-            log.error("svg graphic could not be built: "
-                                   + e.getMessage(), e);
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;
         }
         // get the 'width' and 'height' attributes of the SVG document
@@ -256,8 +263,9 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
             root.paint(graphics);
             pdfInfo.currentStream.add(graphics.getString());
         } catch (Exception e) {
-            log.error("svg graphic could not be rendered: "
-                                   + e.getMessage(), e);
+            SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                    context.getUserAgent().getEventBroadcaster());
+            eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }
         pdfInfo.pdfState.pop();
         renderer.restoreGraphicsState();

@@ -25,14 +25,15 @@
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg" white-space-collapse="true" widows="0" orphans="0">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="4.5 * 14.4pt">
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="20 * 14.4pt">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block1</fo:block>
-          <fo:list-block 
+          <!-- Keeps on list-block level -->
+          <fo:list-block background-color="rgb(150,150,255)"
               provisional-distance-between-starts="25mm"
               provisional-label-separation="5mm" 
               keep-together.within-page="always">
@@ -54,15 +55,15 @@
             </fo:list-item>
           </fo:list-block>
           <fo:block>block2</fo:block>
-          <fo:list-block 
-              provisional-distance-between-starts="25mm"
-              provisional-label-separation="5mm">
-            <fo:list-item keep-together.within-page="always">
+          <fo:list-block background-color="rgb(230,230,255)" 
+            provisional-distance-between-starts="25mm"
+            provisional-label-separation="5mm" 
+            keep-together.within-column="1">
+            <fo:list-item>
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>label1</fo:block>
               </fo:list-item-label>
               <fo:list-item-body start-indent="body-start()">
-                <fo:block>item1</fo:block>
                 <fo:block>item1</fo:block>
               </fo:list-item-body>
             </fo:list-item>
@@ -76,10 +77,43 @@
             </fo:list-item>
           </fo:list-block>
           <fo:block>block3</fo:block>
+          <!-- Keeps on list-item level -->
           <fo:list-block 
               provisional-distance-between-starts="25mm"
               provisional-label-separation="5mm">
+            <fo:list-item keep-together.within-page="always" background-color="rgb(150,150,255)">
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>label1</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item1</fo:block>
+                <fo:block>item1</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item keep-together.within-column="1" background-color="rgb(230,230,255)">
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>label1</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item1</fo:block>
+                <fo:block>item1</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
             <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>label3</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item3</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+          <fo:block>block4</fo:block>
+          <!-- Keeps on list-item-body level -->
+          <fo:list-block 
+              provisional-distance-between-starts="25mm"
+              provisional-label-separation="5mm">
+            <fo:list-item background-color="rgb(150,150,255)">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>label1</fo:block>
               </fo:list-item-label>
@@ -88,47 +122,80 @@
                 <fo:block>item1</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item>
+            <fo:list-item background-color="rgb(230,230,255)">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>label2</fo:block>
               </fo:list-item-label>
-              <fo:list-item-body start-indent="body-start()">
+              <fo:list-item-body start-indent="body-start()" keep-together.within-column="1">
+                <fo:block>item2</fo:block>
                 <fo:block>item2</fo:block>
               </fo:list-item-body>
             </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>label3</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item3</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
           </fo:list-block>
-          <fo:block>block4</fo:block>
+          <fo:block>block5</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
     <element-list category="breaker">
-      <box w="14400"/>
+      <box/> <!-- block1 -->
       <penalty w="0" p="0"/>
+      
       <!-- list 1 starts -->
       <box w="14400"/>
       <penalty w="0" p="INF"/>
       <box w="14400"/>
       <!-- list 1 end -->
+      
       <penalty w="0" p="0"/>
-      <box w="14400"/>
+      <box/> <!-- block2 -->
       <penalty w="0" p="0"/>
+      
       <!-- list 2 starts -->
-      <box w="28800"/>
-      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="999"/>
       <box w="14400"/>
       <!-- list 2 end -->
+      
       <penalty w="0" p="0"/>
-      <box w="14400"/>
+      <box/> <!-- block3 -->
       <penalty w="0" p="0"/>
+      
       <!-- list 3 starts -->
       <box w="28800"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>
-      <!-- list 3 end -->
+      <penalty w="0" p="999"/>
+      <box w="14400"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>
+      <!-- list 3 end -->
+      
+      <penalty w="0" p="0"/>
+      <box/> <!-- block4 -->
+      <penalty w="0" p="0"/>
+      
+      <!-- list 4 starts -->
+      <box w="28800"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="999"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <!-- list 4 end -->
+      
+      <penalty w="0" p="0"/>
+      <box/> <!-- block5 -->
       <skip>3</skip>
     </element-list>
   </checks>

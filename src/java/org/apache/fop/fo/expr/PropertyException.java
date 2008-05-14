@@ -36,11 +36,22 @@ public class PropertyException extends FOPException {
     }
 
     /**
+     * Constructor
+     * @param the Exception causing this PropertyException
+     */
+    public PropertyException(Exception cause) {
+        super(cause);
+        if (cause instanceof PropertyException) {
+            this.propertyName = ((PropertyException)cause).propertyName;
+        }
+    }
+    
+    /**
      * Sets the property context information.
      * @param propInfo the property info instance
      */
     public void setPropertyInfo(PropertyInfo propInfo) {
-        setLocator(propInfo.getFO().getLocator());
+        setLocator(propInfo.getPropertyList().getFObj().getLocator());
         propertyName = propInfo.getPropertyMaker().getName();
     }
 

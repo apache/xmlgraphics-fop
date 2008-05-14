@@ -21,10 +21,13 @@ package org.apache.fop.cli;
 
 // Imported java.io classes
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
-// Imported TraX classes
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -32,11 +35,17 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -50,7 +59,8 @@ import org.apache.fop.render.awt.viewer.Renderable;
  */
 public class InputHandler implements ErrorListener, Renderable {
      
-    private File sourcefile = null;  // either FO or XML/XSLT usage
+    /** original source file */
+    protected File sourcefile = null;
     private File stylesheet = null;  // for XML/XSLT usage
     private Vector xsltParams = null; // for XML/XSLT usage
 
@@ -132,6 +142,45 @@ public class InputHandler implements ErrorListener, Renderable {
     }
     
     /**
+     * Creates a Source for the main input file. Processes XInclude if
+     * available in the XML parser.
+     * 
+     * @return the Source for the main input file
+     */
+    protected Source createMainSource() {
+        Source result;
+        try {
+            InputSource is = new InputSource(new FileInputStream(
+                    this.sourcefile));
+            is.setSystemId(this.sourcefile.toURI().toASCIIString());
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setFeature("http://xml.org/sax/features/namespaces", true);
+            spf.setFeature("http://apache.org/xml/features/xinclude", true);
+            XMLReader xr = spf.newSAXParser().getXMLReader();
+            result = new SAXSource(xr, is);
+        } catch (SAXException e) {
+            result = new StreamSource(this.sourcefile);
+        } catch (IOException e) {
+            result = new StreamSource(this.sourcefile);
+        } catch (ParserConfigurationException e) {
+            result = new StreamSource(this.sourcefile);
+        }
+        return result;
+    }
+    
+    /**
+     * Creates a Source for the selected stylesheet.
+     * @return the Source for the selected stylesheet or null if there's no stylesheet
+     */
+    protected Source createXSLTSource() {
+        if (this.stylesheet != null) {
+            return new StreamSource(this.stylesheet);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Transforms the input document to the input format expected by FOP using XSLT.
      * @param result the Result object where the result of the XSL transformation is sent to
      * @throws FOPException in case of an error during processing
@@ -142,11 +191,11 @@ public class InputHandler implements ErrorListener, Renderable {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer;
             
-            if (stylesheet == null) {   // FO Input
+            Source xsltSource = createXSLTSource();
+            if (xsltSource == null) {   // FO Input
                 transformer = factory.newTransformer();
             } else {    // XML/XSLT input
-                transformer = factory.newTransformer(new StreamSource(
-                    stylesheet));
+                transformer = factory.newTransformer(xsltSource);
             
                 // Set the value of parameters, if any, defined for stylesheet
                 if (xsltParams != null) { 
@@ -159,7 +208,7 @@ public class InputHandler implements ErrorListener, Renderable {
             transformer.setErrorListener(this);
 
             // Create a SAXSource from the input Source file
-            Source src = new StreamSource(sourcefile);
+            Source src = createMainSource();
 
             // Start XSLT transformation and FOP processing
             transformer.transform(src, result);
@@ -175,7 +224,7 @@ public class InputHandler implements ErrorListener, Renderable {
      * {@inheritDoc}
      */
     public void warning(TransformerException exc) {
-        log.warn(exc.toString());
+        log.warn(exc.getLocalizedMessage());
     }
 
     /**

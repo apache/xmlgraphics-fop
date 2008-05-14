@@ -29,6 +29,11 @@ import java.util.Vector;
 
 import javax.swing.UIManager;
 
+import org.xml.sax.SAXException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -38,18 +43,13 @@ import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFXMode;
-import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.pdf.PDFRenderer;
+import org.apache.fop.render.print.PagesMode;
+import org.apache.fop.render.print.PrintRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.CommandLineLogger;
-
-// commons logging
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-// SAX
-import org.xml.sax.SAXException;
 
 /**
  * Options parses the commandline arguments
@@ -71,6 +71,8 @@ public class CommandLineOptions {
     public static final int XSLT_INPUT = 2;
     /** input: Area Tree XML file */
     public static final int AREATREE_INPUT = 3;
+    /** input: Image file */
+    public static final int IMAGE_INPUT = 4;
 
     /* show configuration information */
     private Boolean showConfiguration = Boolean.FALSE;
@@ -86,6 +88,8 @@ public class CommandLineOptions {
     private File xmlfile = null;
     /* area tree input file */
     private File areatreefile = null;
+    /* area tree input file */
+    private File imagefile = null;
     /* output file */
     private File outfile = null;
     /* input mode */
@@ -131,8 +135,9 @@ public class CommandLineOptions {
      * @throws FOPException for general errors
      * @throws FileNotFoundException if an input file wasn't found
      * @throws IOException if the the configuration file could not be loaded
+     * @return true if the processing can continue, false to abort
      */
-    public void parse(String[] args)
+    public boolean parse(String[] args)
             throws FOPException, IOException {
         boolean optionsParsed = true;
 
@@ -153,6 +158,8 @@ public class CommandLineOptions {
                 }
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
+            } else {
+                return false;
             }
         } catch (FOPException e) {
             printUsage();
@@ -191,6 +198,7 @@ public class CommandLineOptions {
             //Make sure the prepared XMLRenderer is used
             foUserAgent.setRendererOverride(xmlRenderer);
         }
+        return true;
     }
 
     /**
@@ -249,6 +257,8 @@ public class CommandLineOptions {
                 i = i + parseXMLInputOption(args, i);
             } else if (args[i].equals("-atin")) {
                 i = i + parseAreaTreeInputOption(args, i);
+            } else if (args[i].equals("-imagein")) {
+                i = i + parseImageInputOption(args, i);
             } else if (args[i].equals("-awt")) {
                 i = i + parseAWTOutputOption(args, i);
             } else if (args[i].equals("-pdf")) {
@@ -264,7 +274,6 @@ public class CommandLineOptions {
             } else if (args[i].equals("-png")) {
                 i = i + parsePNGOutputOption(args, i);
             } else if (args[i].equals("-print")) {
-                i = i + parsePrintOutputOption(args, i);
                 // show print help
                 if (i + 1 < args.length) {
                     if (args[i + 1].equals("help")) {
@@ -272,6 +281,9 @@ public class CommandLineOptions {
                         return false;
                     }
                 }
+                i = i + parsePrintOutputOption(args, i);
+            } else if (args[i].equals("-copies")) {
+                i = i + parseCopiesOption(args, i);
             } else if (args[i].equals("-pcl")) {
                 i = i + parsePCLOutputOption(args, i);
             } else if (args[i].equals("-ps")) {
@@ -298,7 +310,7 @@ public class CommandLineOptions {
                       String expression = args[++i];
                       addXSLTParameter(name, expression);
                   } else {
-                    throw new FOPException("invalid param usage: use -param <name> <value>");
+                      throw new FOPException("invalid param usage: use -param <name> <value>");
                   }
             } else if (args[i].equals("-o")) {
                 i = i + parsePDFOwnerPassword(args, i);
@@ -457,7 +469,37 @@ public class CommandLineOptions {
 
     private int parsePrintOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_FOP_PRINT);
-        return 0;
+        if ((i + 1 <= args.length)
+                && (args[i + 1].charAt(0) != '-')) {
+            String arg = args[i + 1];
+            String[] parts = arg.split(",");
+            for (int j = 0; j < parts.length; j++) {
+                String s = parts[j];
+                if (s.matches("\\d+")) {
+                    renderingOptions.put(PrintRenderer.START_PAGE, new Integer(s));
+                } else if (s.matches("\\d+-\\d+")) {
+                    String[] startend = s.split("-");
+                    renderingOptions.put(PrintRenderer.START_PAGE, new Integer(startend[0]));
+                    renderingOptions.put(PrintRenderer.END_PAGE, new Integer(startend[1]));
+                } else {
+                    PagesMode mode = PagesMode.byName(s);
+                    renderingOptions.put(PrintRenderer.PAGES_MODE, mode);
+                }
+            }
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    private int parseCopiesOption(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the number of copies");
+        } else {
+            renderingOptions.put(PrintRenderer.COPIES, new Integer(args[i + 1]));
+            return 1;
+        }
     }
 
     private int parsePCLOutputOption(String[] args, int i) throws FOPException {
@@ -590,6 +632,17 @@ public class CommandLineOptions {
             throw new FOPException("you must specify the Area Tree file for the '-atin' option");
         } else {
             areatreefile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseImageInputOption(String[] args, int i) throws FOPException {
+        inputmode = IMAGE_INPUT;
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the image file for the '-imagein' option");
+        } else {
+            imagefile = new File(args[i + 1]);
             return 1;
         }
     }
@@ -768,6 +821,20 @@ public class CommandLineOptions {
                                               + areatreefile.getAbsolutePath()
                                               + " not found ");
             }
+        } else if (inputmode == IMAGE_INPUT) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
+                throw new FOPException(
+                        "FO output mode is only available if you use -xml and -xsl");
+            }
+            if (xmlfile != null) {
+                log.warn("image input mode, but XML file is set:");
+                log.error("XML file: " + xmlfile.toString());
+            }
+            if (!imagefile.exists()) {
+                throw new FileNotFoundException("Error: image file "
+                                              + imagefile.getAbsolutePath()
+                                              + " not found ");
+            }
         }
     }    // end checkSettings
 
@@ -814,6 +881,8 @@ public class CommandLineOptions {
                 return new AreaTreeInputHandler(areatreefile);
             case XSLT_INPUT:
                 return new InputHandler(xmlfile, xsltfile, xsltParams);
+            case IMAGE_INPUT:
+                return new ImageInputHandler(imagefile, xsltfile, xsltParams);
             default:
                 throw new IllegalArgumentException("Error creating InputHandler object.");
         }
@@ -920,6 +989,7 @@ public class CommandLineOptions {
             + "  -fo  infile       xsl:fo input file  \n"
             + "  -xml infile       xml input file, must be used together with -xsl \n"
             + "  -atin infile      area tree input file \n"
+            + "  -imagein infile   image input file \n"
             + "  -xsl stylesheet   xslt stylesheet \n \n"
             + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
             + "                    (repeat '-param name value' for each parameter)\n \n"
@@ -959,18 +1029,21 @@ public class CommandLineOptions {
             + "  Fop -xml foo.xml -xsl foo.xsl -foout foo.fo\n"
             + "  Fop foo.fo -mif foo.mif\n"
             + "  Fop foo.fo -rtf foo.rtf\n"
-            + "  Fop foo.fo -print or Fop -print foo.fo \n"
-            + "  Fop foo.fo -awt \n");
+            + "  Fop foo.fo -print\n"
+            + "  Fop foo.fo -awt\n");
     }
 
     /**
      * shows the options for print output
      */
     private void printUsagePrintOutput() {
-        System.err.println("USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] "
-                           + " org.apache.fop.apps.Fop (..) -print \n"
-                           + "Example:\n"
-                           + "java -Dstart=1 -Dend=2 org.apache.Fop.apps.Fop infile.fo -print ");
+        System.err.println("USAGE: -print [from[-to][,even|odd]] [-copies numCopies]\n\n"
+           + "Example:\n"
+           + "all pages:                        Fop infile.fo -print\n"
+           + "all pages with two copies:        Fop infile.fo -print -copies 2\n"
+           + "all pages starting with page 7:   Fop infile.fo -print 7\n"
+           + "pages 2 to 3:                     Fop infile.fo -print 2-3\n"
+           + "only even page between 10 and 20: Fop infile.fo -print 10-20,even\n");
     }
 
     /**

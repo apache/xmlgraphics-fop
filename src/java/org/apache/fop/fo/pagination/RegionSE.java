@@ -28,22 +28,24 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 
 /**
- * Abstract base class for fo:region-start and fo:region-end.
+ * Abstract base class for <a href="http://www.w3.org/TR/xsl/#fo_region-start">
+ * <code>fo:region-start</code></a> and <a href="http://www.w3.org/TR/xsl/#fo_region-end">
+ * <code>fo:region-end</code></a>.
  */
 public abstract class RegionSE extends SideRegion {
     // The value of properties relevant for fo:region-[start|end].
     // End of property values
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionSE instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     protected RegionSE(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
     }

@@ -45,7 +45,6 @@ import org.apache.fop.util.CharUtilities;
  * LayoutManager for the fo:character formatting object
  */
 public class CharacterLayoutManager extends LeafNodeLayoutManager {
-    private Character fobj;
     private MinOptMax letterSpaceIPD;
     private int hyphIPD;
     private Font font;
@@ -57,16 +56,13 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
      * @param node the fo:character formatting object
      */
     public CharacterLayoutManager(Character node) {
-        // @todo better null checking of node
         super(node);
-        fobj = node;
     }
     
     /** {@inheritDoc} */
     public void initialize() {
-        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
-        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
+        Character fobj = (Character)this.fobj;        
+        font = this.selectFontForCharacter(fobj);
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
         letterSpaceIPD = ls.getSpace();
         hyphIPD = fobj.getCommonHyphenation().getHyphIPD(font);
@@ -75,6 +71,33 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         org.apache.fop.area.inline.TextArea chArea = getCharacterInlineArea(fobj);
         chArea.setBaselineOffset(font.getAscender());
         setCurrentArea(chArea);
+    }
+    
+    /**
+     * Selects a font which is able to display the given character.
+     * <p>
+     * Please note: this implements the font-selection-strategy
+     * character-by-character.
+     * <p>
+     * TODO: The same function could apply to other elements as well.
+     * 
+     * @param fobj
+     *            a Character object containing the character and its
+     *            attributed.
+     * @return a Font object.
+     */
+    private Font selectFontForCharacter(Character fobj) {
+        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+        for (int i = 0; i < fontkeys.length; i++) {
+            font = fi.getFontInstance(fontkeys[i],
+                    fobj.getCommonFont().fontSize.getValue(this));
+            if (font.hasChar(fobj.getCharacter())) {
+                return font;
+            }
+        }
+        return fi.getFontInstance(fontkeys[0],
+                fobj.getCommonFont().fontSize.getValue(this));
     }
 
     private org.apache.fop.area.inline.TextArea getCharacterInlineArea(Character node) {
@@ -90,7 +113,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             text.addWord(String.valueOf(ch), 0);
         }
         TraitSetter.setProducerID(text, node.getId());
-        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
+        TraitSetter.addTextDecoration(text, node.getTextDecoration());
         return text;
     }
 
@@ -105,6 +128,8 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             return null;
         }
 
+        Character fobj = (Character)this.fobj;
+        
         ipd = new MinOptMax(font.getCharWidth(fobj.getCharacter()));
 
         curArea.setIPD(ipd.opt);
@@ -178,14 +203,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         setFinished(false);
-        if (isSomethingChanged) {
-            // there is nothing to do,
-            // possible changes have already been applied
-            // in the hyphenate() method
-            return true;
-        } else {
-            return false;
-        }
+        return isSomethingChanged;
     }
 
     /** {@inheritDoc} */
@@ -236,11 +254,6 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
         setFinished(true);
         return returnList;
-    }
-
-    /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
     }
 
 }

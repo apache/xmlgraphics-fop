@@ -27,7 +27,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.flow.InlineLevel;
 
 /**
- * Class modelling the fo:title object.
+ * Class modeling the <a href="http://www.w3.org/TR/xsl/#fo_title">
+ * <code>fo:title</code></a> object.
  */
 public class Title extends InlineLevel {
     // The value of properties relevant for fo:title.
@@ -43,24 +44,25 @@ public class Title extends InlineLevel {
 
     /**
      * {@inheritDoc} String, String)
-        XSL/FOP: (#PCDATA|%inline;)*
+     * <br>XSL/FOP: (#PCDATA|%inline;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (!isInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+        if (FO_URI.equals(nsURI)) {
+            if (!isInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "title";
     }
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TITLE}
      */
     public int getNameId() {
         return FO_TITLE;

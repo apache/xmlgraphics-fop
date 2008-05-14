@@ -19,6 +19,8 @@
  
 package org.apache.fop.pdf;
 
+import java.awt.geom.Rectangle2D;
+
 /**
  * Class representing a /Page object.
  * <p>
@@ -29,39 +31,9 @@ package org.apache.fop.pdf;
  */
 public class PDFPage extends PDFResourceContext {
 
-    /**
-     * Holds a reference on the parent PDFPages object.
-     */
-    private String parentRef;
-
-    /**
-     * the contents stream
-     */
-    protected PDFStream contents;
-
-    /**
-     * the width of the page in points
-     */
-    protected int pagewidth;
-
-    /**
-     * the height of the page in points
-     */
-    protected int pageheight;
-
     /** the page index (zero-based) */
     protected int pageIndex;
     
-    /**
-     * Duration to display page
-     */
-    protected int duration = -1;
-
-    /**
-     * Transition dictionary
-     */
-    protected TransitionDictionary trDictionary = null;
-
     /**
      * Create a /Page object
      *
@@ -77,10 +49,10 @@ public class PDFPage extends PDFResourceContext {
         /* generic creation of object */
         super(resources);
 
+        put("Type", new PDFName("Page"));
         /* set fields using parameters */
-        this.contents = contents;
-        this.pagewidth = pageWidth;
-        this.pageheight = pageHeight;
+        setContents(contents);
+        setSimplePageSize(pageWidth, pageHeight);
         this.pageIndex = pageIndex;
     }
 
@@ -97,13 +69,51 @@ public class PDFPage extends PDFResourceContext {
         this(resources, null, pageWidth, pageHeight, pageIndex);
     }
 
+    private void setSimplePageSize(int width, int height) {
+        Rectangle2D box = new Rectangle2D.Double(0, 0, width, height);
+        setMediaBox(box);
+        setBleedBox(box); //Recommended by PDF/X
+        setTrimBox(box); //Needed for PDF/X
+    }
+    
+    private PDFArray toPDFArray(Rectangle2D box) {
+        return new PDFArray(this, new double[] {
+                box.getX(), box.getY(), box.getMaxX(), box.getMaxY()});
+    }
+    
+    /**
+     * Sets the "MediaBox" entry
+     * @param box the media rectangle
+     */
+    public void setMediaBox(Rectangle2D box) {
+        put("MediaBox", toPDFArray(box));
+    }
+    
+    /**
+     * Sets the "TrimBox" entry
+     * @param box the trim rectangle
+     */
+    public void setTrimBox(Rectangle2D box) {
+        put("TrimBox", toPDFArray(box));
+    }
+    
+    /**
+     * Sets the "BleedBox" entry
+     * @param box the bleed rectangle
+     */
+    public void setBleedBox(Rectangle2D box) {
+        put("BleedBox", toPDFArray(box));
+    }
+    
     /**
      * set this page contents
      *
      * @param contents the contents of the page
      */
     public void setContents(PDFStream contents) {
-        this.contents = contents;
+        if (contents != null) {
+            put("Contents", new PDFReference(contents));
+        }
     }
 
     /**
@@ -112,7 +122,7 @@ public class PDFPage extends PDFResourceContext {
      * @param parent the /Pages object that is this page's parent
      */
     public void setParent(PDFPages parent) {
-        this.parentRef = parent.referencePDF();
+        put("Parent", new PDFReference(parent));
     }
 
     /**
@@ -124,24 +134,8 @@ public class PDFPage extends PDFResourceContext {
      * @param tr the transition dictionary
      */
     public void setTransition(int dur, TransitionDictionary tr) {
-        duration = dur;
-        trDictionary = tr;
-    }
-
-    /**
-     * Returns the page width.
-     * @return the page width
-     */
-    public int getWidth() {
-        return this.pagewidth;
-    }
-
-    /**
-     * Returns the page height.
-     * @return the page height
-     */
-    public int getHeight() {
-        return this.pageheight;
+        put("Dur", new Integer(dur));
+        put("Trans", tr);
     }
 
     /**
@@ -150,35 +144,6 @@ public class PDFPage extends PDFResourceContext {
      */
     public int getPageIndex() {
         return this.pageIndex;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String toPDFString() {
-        StringBuffer sb = new StringBuffer();
-
-        String box = "[ 0 0 " + getWidth() + " " + getHeight() + " ]";
-        sb = sb.append(getObjectID()
-                       + "<< /Type /Page\n" 
-                       + "/Parent " + this.parentRef + "\n"
-                       + "/MediaBox " + box + "\n" 
-                       + "/TrimBox " + box + "\n" //Needed for PDF/X
-                       + "/BleedBox " + box + "\n" //Recommended by PDF/X
-                       + "/Resources " + this.resources.referencePDF() + "\n" 
-                       + "/Contents " + this.contents.referencePDF() + "\n");
-        if (this.annotList != null) {
-            sb = sb.append("/Annots " + this.annotList.referencePDF() + "\n");
-        }
-        if (this.duration != -1) {
-            sb = sb.append("/Dur " + this.duration + "\n");
-        }
-        if (this.trDictionary != null) {
-            sb = sb.append("/Trans << " + this.trDictionary.getDictionary() + " >>\n");
-        }
-
-        sb = sb.append(">>\nendobj\n");
-        return sb.toString();
     }
 
 }

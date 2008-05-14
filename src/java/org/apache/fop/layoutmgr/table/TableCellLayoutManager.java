@@ -23,30 +23,34 @@ import java.util.LinkedList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
-import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;
+import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.BreakElement;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -65,14 +69,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
     private Block curBlockArea;
 
-    private int inRowIPDOffset;
-
     private int xoffset;
     private int yoffset;
     private int cellIPD;
-    private int rowHeight;
+    private int totalHeight;
     private int usedBPD;
-    private int borderAndPaddingBPD;
     private boolean emptyCell = true;
 
     /**
@@ -82,7 +83,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      */
     public TableCellLayoutManager(TableCell node, PrimaryGridUnit pgu) {
         super(node);
-        fobj = node;
         this.primaryGridUnit = pgu;
     }
 
@@ -95,31 +95,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         return getTable().isSeparateBorderModel();
     }
 
-    /** {@inheritDoc} */
-    public void initialize() {
-        borderAndPaddingBPD = 0;
-        borderAndPaddingBPD += getTableCell()
-            .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        borderAndPaddingBPD += getTableCell()
-            .getCommonBorderPaddingBackground().getBorderAfterWidth(false);
-        if (!isSeparateBorderModel()) {
-            borderAndPaddingBPD /= 2;
-        }
-        borderAndPaddingBPD += getTableCell().getCommonBorderPaddingBackground()
-                .getPaddingBefore(false, this);
-        borderAndPaddingBPD += getTableCell().getCommonBorderPaddingBackground()
-                .getPaddingAfter(false, this);
-    }
-
     /**
      * @return the table owning this cell
      */
     public Table getTable() {
-        FONode node = fobj.getParent();
-        while (!(node instanceof Table)) {
-            node = node.getParent();
-        }
-        return (Table)node;
+        return getTableCell().getTable();
     }
 
 
@@ -137,7 +117,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             startIndent /= 2;
             endIndent /= 2;
         }
-        startIndent += getTableCell().getCommonBorderPaddingBackground().getPaddingStart(false, this);
+        startIndent += getTableCell().getCommonBorderPaddingBackground().getPaddingStart(false,
+                this);
         endIndent += getTableCell().getCommonBorderPaddingBackground().getPaddingEnd(false, this);
         return startIndent + endIndent;
     }
@@ -146,13 +127,13 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * {@inheritDoc}
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        MinOptMax stackLimit = new MinOptMax(context.getStackLimit());
+        MinOptMax stackLimit = new MinOptMax(context.getStackLimitBP());
 
         referenceIPD = context.getRefIPD();
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
 
-        LinkedList returnedList = null;
+        LinkedList returnedList;
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
 
@@ -161,8 +142,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
             LayoutContext childLC = new LayoutContext(0);
             // curLM is a ?
-            childLC.setStackLimit(MinOptMax.subtract(context
-                    .getStackLimit(), stackLimit));
+            childLC.setStackLimitBP(MinOptMax.subtract(context
+                    .getStackLimitBP(), stackLimit));
             childLC.setRefIPD(cellIPD);
 
             // get elements from curLM
@@ -171,53 +152,14 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 log.debug("child LM signals pending keep with next");
             }
             if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
-                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                primaryGridUnit.setKeepWithPreviousStrength(childLC.getKeepWithPreviousPending());
+                childLC.clearKeepWithPreviousPending();
             }
 
             if (prevLM != null) {
                 // there is a block handled by prevLM
                 // before the one handled by curLM
-                if (mustKeepTogether()
-                        || context.isKeepWithNextPending()
-                        || childLC.isKeepWithPreviousPending()) {
-                    //Clear keep pending flag
-                    context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                    childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
-                    // add an infinite penalty to forbid a break between
-                    // blocks
-                    contentList.add(new BreakElement(
-                            new Position(this), KnuthElement.INFINITE, context));
-                    //contentList.add(new KnuthPenalty(0,
-                    //        KnuthElement.INFINITE, false,
-                    //        new Position(this), false));
-                } else if (!(((ListElement) contentList.getLast()).isGlue()
-                        || (((ListElement)contentList.getLast()).isPenalty()
-                                && ((KnuthPenalty)contentList.getLast()).getP() < KnuthElement.INFINITE)
-                                || (contentList.getLast() instanceof BreakElement
-                                        && ((BreakElement)contentList.getLast()).getPenaltyValue() < KnuthElement.INFINITE))) {
-                    // TODO vh: this is hacky
-                    // The getNextKnuthElements method of TableCellLM must not be called
-                    // twice, otherwise some settings like indents or borders will be
-                    // counted several times and lead to a wrong output. Anyway the
-                    // getNextKnuthElements methods should be called only once eventually
-                    // (i.e., when multi-threading the code), even when there are forced
-                    // breaks.
-                    // If we add a break possibility after a forced break the
-                    // AreaAdditionUtil.addAreas method will act on a sequence starting
-                    // with a SpaceResolver.SpaceHandlingBreakPosition element, having no
-                    // LM associated to it. Thus it will stop early instead of adding
-                    // areas for following Positions. The above test aims at preventing
-                    // such a situation from occuring. add a null penalty to allow a break
-                    // between blocks
-                    contentList.add(new BreakElement(
-                            new Position(this), 0, context));
-                    //contentList.add(new KnuthPenalty(0, 0, false,
-                    //        new Position(this), false));
-                } else {
-                    // the last element in contentList is a feasible breakpoint, there is
-                    // no need to add a penalty
-                }
+                addInBetweenBreak(contentList, context, childLC);
             }
             contentList.addAll(returnedList);
             if (returnedList.size() == 0) {
@@ -226,11 +168,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             }
             if (childLC.isKeepWithNextPending()) {
                 //Clear and propagate
-                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
+                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+                childLC.clearKeepWithNextPending();
             }
             prevLM = curLM;
         }
+        primaryGridUnit.setKeepWithNextStrength(context.getKeepWithNextPending());
 
         returnedList = new LinkedList();
         if (contentList.size() > 0) {
@@ -244,8 +187,18 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         }
         //Space resolution
         SpaceResolver.resolveElementList(returnList);
+        if (((KnuthElement) returnList.getFirst()).isForcedBreak()) {
+            primaryGridUnit.setBreakBefore(((KnuthPenalty) returnList.getFirst()).getBreakClass());
+            returnList.removeFirst();
+            assert !returnList.isEmpty();
+        }
+        if (((KnuthElement) returnList.getLast()).isForcedBreak()) {
+            KnuthPenalty p = (KnuthPenalty) returnList.getLast();
+            primaryGridUnit.setBreakAfter(p.getBreakClass());
+            p.setP(0);
+        }
 
-        getPSLM().notifyEndOfLayout(((TableCell)getFObj()).getId());
+        notifyEndOfLayout();
 
         setFinished(true);
         return returnList;
@@ -272,15 +225,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * Set the IPD offset of this cell inside the table-row.
-     * This offset is used to determine the absolute position of the cell.
-     * @param off the IPD offset
-     */
-    public void setInRowIPDOffset(int off) {
-        this.inRowIPDOffset = off;
-    }
-
-    /**
      * Set the content height for this cell. This method is used during
      * addAreas() stage.
      *
@@ -291,34 +235,13 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * Set the row height that contains this cell. This method is used during
-     * addAreas() stage.
-     *
-     * @param h the height of the row
+     * Sets the total height of this cell on the current page. That is, the cell's bpd
+     * plus before and after borders and paddings, plus the table's border-separation.
+     * 
+     * @param h the height of cell
      */
-    public void setRowHeight(int h) {
-        rowHeight = h;
-    }
-
-    /**
-     * Returns the bpd of the given grid unit.
-     * @param gu a grid unit belonging to this cell
-     * @return the content height of the grid unit
-     */
-    private int getContentHeight(GridUnit gu) {
-        int bpd = rowHeight;
-        if (isSeparateBorderModel()) {
-            bpd -= gu.getPrimary().getBorders().getBorderBeforeWidth(false);
-            bpd -= gu.getPrimary().getBorders().getBorderAfterWidth(false);
-        } else {
-            bpd -= gu.getPrimary().getHalfMaxBorderWidth();
-        }
-        CommonBorderPaddingBackground cbpb
-            = gu.getCell().getCommonBorderPaddingBackground();
-        bpd -= cbpb.getPaddingBefore(false, this);
-        bpd -= cbpb.getPaddingAfter(false, this);
-        bpd -= 2 * ((TableLayoutManager)getParent()).getHalfBorderSeparationBPD();
-        return bpd;
+    public void setTotalHeight(int h) {
+        totalHeight = h;
     }
 
     /**
@@ -336,116 +259,241 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * of each spanned grid row
      * @param startRow first grid row on the current page spanned over by the cell,
      * inclusive
-     * @param endRow last grid row on the current page spanned over by the cell, exclusive
+     * @param endRow last grid row on the current page spanned over by the cell, inclusive
+     * @param borderBeforeWhich one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @param borderAfterWhich one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @param firstOnPage true if the cell will be the very first one on the page, in
+     * which case collapsed before borders must be drawn in the outer mode
+     * @param lastOnPage true if the cell will be the very last one on the page, in which
+     * case collapsed after borders must be drawn in the outer mode
+     * @param painter painter
+     * @param firstRowHeight height of the first row spanned by this cell (may be zero if
+     * this row is placed on a previous page). Used to calculate the placement of the
+     * row's background image if any
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext,
                          int[] spannedGridRowHeights,
                          int startRow,
-                         int endRow) {
+                         int endRow,
+                         int borderBeforeWhich,
+                         int borderAfterWhich,
+                         boolean firstOnPage,
+                         boolean lastOnPage,
+                         RowPainter painter,
+                         int firstRowHeight) {
         getParentArea(null);
 
-        getPSLM().addIDToPage(getTableCell().getId());
+        addId();
+
+        int borderBeforeWidth = primaryGridUnit.getBeforeBorderWidth(startRow, borderBeforeWhich);
+        int borderAfterWidth = primaryGridUnit.getAfterBorderWidth(endRow, borderAfterWhich);
+
+        CommonBorderPaddingBackground padding = primaryGridUnit.getCell()
+                .getCommonBorderPaddingBackground();
+        int paddingRectBPD = totalHeight - borderBeforeWidth - borderAfterWidth; 
+        int cellBPD = paddingRectBPD;
+        cellBPD -= padding.getPaddingBefore(borderBeforeWhich == ConditionalBorder.REST, this);
+        cellBPD -= padding.getPaddingAfter(borderAfterWhich == ConditionalBorder.REST, this);
+
+        addBackgroundAreas(painter, firstRowHeight, borderBeforeWidth, paddingRectBPD);
 
         if (isSeparateBorderModel()) {
             if (!emptyCell || getTableCell().showEmptyCells()) {
-                TraitSetter.addBorders(curBlockArea, getTableCell().getCommonBorderPaddingBackground(),
-                        false, false, false, false, this);
-                TraitSetter.addPadding(curBlockArea, getTableCell().getCommonBorderPaddingBackground(),
-                        false, false, false, false, this);
+                if (borderBeforeWidth > 0) {
+                    int halfBorderSepBPD = getTableCell().getTable().getBorderSeparation().getBPD()
+                            .getLength().getValue() / 2;
+                    adjustYOffset(curBlockArea, halfBorderSepBPD);
+                }
+                TraitSetter.addBorders(curBlockArea,
+                        getTableCell().getCommonBorderPaddingBackground(),
+                        borderBeforeWidth == 0, borderAfterWidth == 0,
+                        false, false, this);
             }
         } else {
+            boolean inFirstColumn = (primaryGridUnit.getColIndex() == 0);
+            boolean inLastColumn = (primaryGridUnit.getColIndex()
+                    + getTableCell().getNumberColumnsSpanned() == getTable()
+                    .getNumberOfColumns());
             if (!primaryGridUnit.hasSpanning()) {
+                adjustYOffset(curBlockArea, -borderBeforeWidth);
                 //Can set the borders directly if there's no span
-                boolean[] outer = new boolean[] {
-                        primaryGridUnit.getFlag(GridUnit.FIRST_IN_TABLE),
-                        primaryGridUnit.getFlag(GridUnit.LAST_IN_TABLE),
-                        primaryGridUnit.getFlag(GridUnit.IN_FIRST_COLUMN),
-                        primaryGridUnit.getFlag(GridUnit.IN_LAST_COLUMN)};
+                boolean[] outer = new boolean[] {firstOnPage, lastOnPage, inFirstColumn,
+                        inLastColumn};
                 TraitSetter.addCollapsingBorders(curBlockArea,
-                        primaryGridUnit.getBorders(), outer, this);
+                        primaryGridUnit.getBorderBefore(borderBeforeWhich),
+                        primaryGridUnit.getBorderAfter(borderAfterWhich),
+                        primaryGridUnit.getBorderStart(),
+                        primaryGridUnit.getBorderEnd(), outer);
             } else {
-                boolean[] outer = new boolean[4];
+                adjustYOffset(curBlockArea, borderBeforeWidth);
+                Block[][] blocks = new Block[getTableCell().getNumberRowsSpanned()][getTableCell()
+                        .getNumberColumnsSpanned()];
+                GridUnit[] gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(startRow);
+                for (int x = 0; x < getTableCell().getNumberColumnsSpanned(); x++) {
+                    GridUnit gu = gridUnits[x];
+                    BorderInfo border = gu.getBorderBefore(borderBeforeWhich);
+                    int borderWidth = border.getRetainedWidth() / 2;
+                    if (borderWidth > 0) {
+                        addBorder(blocks, startRow, x, Trait.BORDER_BEFORE, border, firstOnPage);
+                        adjustYOffset(blocks[startRow][x], -borderWidth);
+                        adjustBPD(blocks[startRow][x], -borderWidth);
+                    }
+                }
+                gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(endRow);
+                for (int x = 0; x < getTableCell().getNumberColumnsSpanned(); x++) {
+                    GridUnit gu = gridUnits[x];
+                    BorderInfo border = gu.getBorderAfter(borderAfterWhich);
+                    int borderWidth = border.getRetainedWidth() / 2;
+                    if (borderWidth > 0) {
+                        addBorder(blocks, endRow, x, Trait.BORDER_AFTER, border, lastOnPage);
+                        adjustBPD(blocks[endRow][x], -borderWidth);
+                    }
+                }
+                for (int y = startRow; y <= endRow; y++) {
+                    gridUnits = (GridUnit[]) primaryGridUnit.getRows().get(y);
+                    BorderInfo border = gridUnits[0].getBorderStart();
+                    int borderWidth = border.getRetainedWidth() / 2;
+                    if (borderWidth > 0) {
+                        addBorder(blocks, y, 0, Trait.BORDER_START, border, inFirstColumn);
+                        adjustXOffset(blocks[y][0], borderWidth);
+                        adjustIPD(blocks[y][0], -borderWidth);
+                    }
+                    border = gridUnits[gridUnits.length - 1].getBorderEnd();
+                    borderWidth = border.getRetainedWidth() / 2;
+                    if (borderWidth > 0) {
+                        addBorder(blocks, y, gridUnits.length - 1, Trait.BORDER_END, border,
+                                inLastColumn);
+                        adjustIPD(blocks[y][gridUnits.length - 1], -borderWidth);
+                    }
+                }
                 int dy = yoffset;
-                for (int y = startRow; y < endRow; y++) {
-                    GridUnit[] gridUnits = (GridUnit[])primaryGridUnit.getRows().get(y);
+                for (int y = startRow; y <= endRow; y++) {
+                    int bpd = spannedGridRowHeights[y - startRow];
                     int dx = xoffset;
                     for (int x = 0; x < gridUnits.length; x++) {
-                        GridUnit gu = gridUnits[x];
-                        if (gu.hasBorders()) {
-                            //Blocks for painting grid unit borders
-                            Block block = new Block();
-                            block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-                            block.setPositioning(Block.ABSOLUTE);
-    
-                            int bpd = spannedGridRowHeights[y - startRow];
-                            bpd -= gu.getBorders().getBorderBeforeWidth(false) / 2;
-                            bpd -= gu.getBorders().getBorderAfterWidth(false) / 2;
-                            block.setBPD(bpd);
-                            if (log.isTraceEnabled()) {
-                                log.trace("pgu: " + primaryGridUnit + "; gu: " + gu + "; yoffset: "
-                                        + (dy - gu.getBorders().getBorderBeforeWidth(false) / 2)
-                                        + "; bpd: " + bpd);
-                            }
-                            int ipd = gu.getColumn().getColumnWidth().getValue(
-                                    (PercentBaseContext) getParent());
-                            int borderStartWidth = gu.getBorders().getBorderStartWidth(false) / 2;
-                            ipd -= borderStartWidth;
-                            ipd -= gu.getBorders().getBorderEndWidth(false) / 2;
-                            block.setIPD(ipd);
-                            block.setXOffset(dx + borderStartWidth);
-                            block.setYOffset(dy - gu.getBorders().getBorderBeforeWidth(false) / 2);
-                            outer[0] = gu.getFlag(GridUnit.FIRST_IN_TABLE);
-                            outer[1] = gu.getFlag(GridUnit.LAST_IN_TABLE);
-                            outer[2] = gu.getFlag(GridUnit.IN_FIRST_COLUMN);
-                            outer[3] = gu.getFlag(GridUnit.IN_LAST_COLUMN);
-                            TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer, this);
+                        int ipd = getTable().getColumn(primaryGridUnit.getColIndex() + x)
+                                .getColumnWidth().getValue(getParent());
+                        if (blocks[y][x] != null) {
+                            Block block = blocks[y][x];
+                            adjustYOffset(block, dy);
+                            adjustXOffset(block, dx);
+                            adjustIPD(block, ipd);
+                            adjustBPD(block, bpd);
                             parentLM.addChildArea(block);
                         }
-                        dx += gu.getColumn().getColumnWidth().getValue(
-                                (PercentBaseContext) getParent());
+                        dx += ipd;
                     }
-                    dy += spannedGridRowHeights[y - startRow];
+                    dy += bpd;
                 }
             }
         }
-        TraitSetter.addPadding(curBlockArea, primaryGridUnit.getBorders(),
-                false, false, false, false, this);
+
+        TraitSetter.addPadding(curBlockArea,
+                padding,
+                borderBeforeWhich == ConditionalBorder.REST,
+                borderAfterWhich == ConditionalBorder.REST,
+                false, false, this);
 
         //Handle display-align
-        int contentBPD = getContentHeight(primaryGridUnit);
-        if (usedBPD < contentBPD) {
+        if (usedBPD < cellBPD) {
             if (getTableCell().getDisplayAlign() == EN_CENTER) {
                 Block space = new Block();
-                space.setBPD((contentBPD - usedBPD) / 2);
+                space.setBPD((cellBPD - usedBPD) / 2);
                 curBlockArea.addBlock(space);
             } else if (getTableCell().getDisplayAlign() == EN_AFTER) {
                 Block space = new Block();
-                space.setBPD((contentBPD - usedBPD));
+                space.setBPD(cellBPD - usedBPD);
                 curBlockArea.addBlock(space);
             }
         }
 
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
-
-        curBlockArea.setBPD(contentBPD);
+        // Re-adjust the cell's bpd as it may have been modified by the previous call
+        // for some reason (?)
+        curBlockArea.setBPD(cellBPD);
 
         // Add background after we know the BPD
-        if (isSeparateBorderModel()) {
-            if (!emptyCell || getTableCell().showEmptyCells()) {
-                TraitSetter.addBackground(curBlockArea,
-                        getTableCell().getCommonBorderPaddingBackground(),
-                        this);
-            }
-        } else {
+        if (!isSeparateBorderModel() || !emptyCell || getTableCell().showEmptyCells()) {
             TraitSetter.addBackground(curBlockArea,
-                    getTableCell().getCommonBorderPaddingBackground(),
-                    this);
+                    getTableCell().getCommonBorderPaddingBackground(), this);
         }
 
         flush();
 
         curBlockArea = null;
+    }
+
+    /** Adds background areas for the column, body and row, if any. */
+    private void addBackgroundAreas(RowPainter painter, int firstRowHeight, int borderBeforeWidth,
+            int paddingRectBPD) {
+        TableColumn column = getTable().getColumn(primaryGridUnit.getColIndex());
+        if (column.getCommonBorderPaddingBackground().hasBackground()) {
+            Block colBackgroundArea = getBackgroundArea(paddingRectBPD, borderBeforeWidth);
+            ((TableLayoutManager) parentLM).registerColumnBackgroundArea(column, colBackgroundArea,
+                    -startIndent);
+        }
+
+        TableBody body = primaryGridUnit.getTableBody();
+        if (body.getCommonBorderPaddingBackground().hasBackground()) {
+            painter.registerPartBackgroundArea(
+                    getBackgroundArea(paddingRectBPD, borderBeforeWidth));
+        }
+
+        TableRow row = primaryGridUnit.getRow();
+        if (row != null && row.getCommonBorderPaddingBackground().hasBackground()) {
+            Block rowBackgroundArea = getBackgroundArea(paddingRectBPD, borderBeforeWidth);
+            ((TableLayoutManager) parentLM).addBackgroundArea(rowBackgroundArea);
+            TraitSetter.addBackground(rowBackgroundArea, row.getCommonBorderPaddingBackground(),
+                    parentLM,
+                    -xoffset - startIndent, -borderBeforeWidth,
+                    parentLM.getContentAreaIPD(), firstRowHeight);
+        }
+    }
+
+    private void addBorder(Block[][] blocks, int i, int j, Integer side, BorderInfo border,
+            boolean outer) {
+        if (blocks[i][j] == null) {
+            blocks[i][j] = new Block();
+            blocks[i][j].addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            blocks[i][j].setPositioning(Block.ABSOLUTE);
+        }
+        blocks[i][j].addTrait(side, new BorderProps(border.getStyle(),
+                border.getRetainedWidth(), border.getColor(),
+                outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
+    }
+
+    private static void adjustXOffset(Block block, int amount) {
+        block.setXOffset(block.getXOffset() + amount);
+    }
+
+    private static void adjustYOffset(Block block, int amount) {
+        block.setYOffset(block.getYOffset() + amount);
+    }
+
+    private static void adjustIPD(Block block, int amount) {
+        block.setIPD(block.getIPD() + amount);
+    }
+
+    private static void adjustBPD(Block block, int amount) {
+        block.setBPD(block.getBPD() + amount);
+    }
+
+    private Block getBackgroundArea(int bpd, int borderBeforeWidth) {
+        CommonBorderPaddingBackground padding = getTableCell().getCommonBorderPaddingBackground();
+        int paddingStart = padding.getPaddingStart(false, this);
+        int paddingEnd = padding.getPaddingEnd(false, this);
+        
+        Block block = new Block();
+        TraitSetter.setProducerID(block, getTable().getId());
+        block.setPositioning(Block.ABSOLUTE);
+        block.setIPD(cellIPD + paddingStart + paddingEnd);
+        block.setBPD(bpd);
+        block.setXOffset(xoffset + startIndent - paddingStart);
+        block.setYOffset(yoffset + borderBeforeWidth);
+        return block;
     }
 
     /**
@@ -467,25 +515,10 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             TraitSetter.setProducerID(curBlockArea, getTableCell().getId());
             curBlockArea.setPositioning(Block.ABSOLUTE);
-            // set position
-            int borderAdjust = 0;
-            if (!isSeparateBorderModel()) {
-                if (primaryGridUnit.hasSpanning()) {
-                    borderAdjust -= primaryGridUnit.getHalfMaxBeforeBorderWidth();
-                } else {
-                    borderAdjust += primaryGridUnit.getHalfMaxBeforeBorderWidth();
-                }
-            } else {
-                //borderAdjust += primaryGridUnit.getBorders().getBorderBeforeWidth(false);
-            }
-            TableLayoutManager tableLM = (TableLayoutManager)getParent();
-            curBlockArea.setXOffset(xoffset + inRowIPDOffset + startIndent);
-            curBlockArea.setYOffset(yoffset - borderAdjust
-                    + tableLM.getHalfBorderSeparationBPD());
+            curBlockArea.setXOffset(xoffset + startIndent);
+            curBlockArea.setYOffset(yoffset);
             curBlockArea.setIPD(cellIPD);
-            //curBlockArea.setHeight();
 
-            // Set up dimensions
             /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
@@ -505,17 +538,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * Reset the position of the layout.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
@@ -530,38 +552,27 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         // TODO Auto-generated method stub
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        boolean keep = ((BlockLevelLayoutManager)getParent()).mustKeepTogether();
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
         if (primaryGridUnit.getRow() != null) {
-            keep |= primaryGridUnit.getRow().mustKeepTogether();
+            strength = Math.max(strength, KeepUtil.getKeepStrength(
+                    primaryGridUnit.getRow().getKeepTogether().getWithinPage()));
+            strength = Math.max(strength, KeepUtil.getKeepStrength(
+                    primaryGridUnit.getRow().getKeepTogether().getWithinColumn()));
         }
-        return keep;
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
+    }
+    
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-next!)
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepWithPrevious() {
-        return false; //TODO FIX ME
-        /*
-        return !fobj.getKeepWithPrevious().getWithinPage().isAuto()
-            || !fobj.getKeepWithPrevious().getWithinColumn().isAuto();
-            */
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepWithNext() {
-        return false; //TODO FIX ME
-        /*
-        return !fobj.getKeepWithNext().getWithinPage().isAuto()
-            || !fobj.getKeepWithNext().getWithinColumn().isAuto();
-            */
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-previous!)
     }
 
     // --------- Property Resolution related functions --------- //

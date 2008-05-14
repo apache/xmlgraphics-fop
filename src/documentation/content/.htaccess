@@ -18,8 +18,8 @@ RedirectMatch Permanent ^/fop/upgrading(.*) http://xmlgraphics.apache.org/fop/0.
 
 # redirect to versioned documentation
 Redirect Temp /fop/stable http://xmlgraphics.apache.org/fop/0.94
-Redirect Temp /fop/current http://xmlgraphics.apache.org/fop/0.94
-Redirect Temp /fop/unstable http://xmlgraphics.apache.org/fop/trunk
+Redirect Temp /fop/current http://xmlgraphics.apache.org/fop/0.95
+Redirect Temp /fop/unstable http://xmlgraphics.apache.org/fop/0.95
 Redirect Temp /fop/latest http://xmlgraphics.apache.org/fop/trunk
 Redirect Temp /fop/maintenance http://xmlgraphics.apache.org/fop/0.93
 Redirect Temp /fop/previous http://xmlgraphics.apache.org/fop/0.93

@@ -29,7 +29,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:float object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_float">
+ * <code>fo:float</code></a> object.
  */
 public class Float extends FObj {
     // The value of properties relevant for fo:float (commented out for performance.
@@ -40,38 +41,39 @@ public class Float extends FObj {
     static boolean notImplementedWarningGiven = false;
     
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     * 
+     * @param parent    the parent {@link FONode}
      */
     public Float(FONode parent) {
         super(parent);
         
         if (!notImplementedWarningGiven) {
-            log.warn("fo:float is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         // No active properties -> Nothing to do.
     }
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (%block;)+
+     * <br>XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             if (!isBlockItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
             }
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(%block;)+");
@@ -85,6 +87,7 @@ public class Float extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_FLOAT}
      */
     public int getNameId() {
         return FO_FLOAT;

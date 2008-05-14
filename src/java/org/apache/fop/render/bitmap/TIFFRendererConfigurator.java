@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.bitmap;
 
@@ -68,5 +68,6 @@ public class TIFFRendererConfigurator extends PrintRendererConfigurator {
                 log.info("TIFF compression set to " + name);
             }
         }
+        super.configure(renderer);
     }
 }

@@ -210,6 +210,7 @@
     </xsd:sequence>
     <xsd:attribute name="metrics-url" type="xsd:anyURI" use="optional"/>
     <xsd:attribute name="embed-url" type="xsd:anyURI" use="optional"/>
+    <xsd:attribute name="sub-font" type="xsd:string" use="optional"/>
     <xsd:attribute name="kerning" use="optional" default="no">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">

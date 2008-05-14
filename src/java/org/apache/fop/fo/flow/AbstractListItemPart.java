@@ -29,7 +29,9 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.KeepProperty;
 
 /**
- * Common superclass for list-item-label and list-item-body.
+ * Common superclass for <a href="http://www.w3.org/TR/xsl/#fo_list-item-label">
+ * <code>fo:list-item-label</code></a> and <a href="http://www.w3.org/TR/xsl/#fo_list-item-body">
+ * <code>fo:list-item-body</code></a>.
  */
 public abstract class AbstractListItemPart extends FObj {
     // The value of properties relevant for fo:list-item-label and fo:list-item-body.
@@ -42,15 +44,15 @@ public abstract class AbstractListItemPart extends FObj {
     private boolean blockItemFound = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public AbstractListItemPart(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
@@ -58,38 +60,29 @@ public abstract class AbstractListItemPart extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (%block;)+
+     * <br>XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!this.blockItemFound) {
             String contentModel = "marker* (%block;)+";
-            if (getUserAgent().validateStrictly()) {
-                missingChildElementError(contentModel);
-            } else {
-                StringBuffer message = new StringBuffer(
-                        errorText(getLocator()));
-                message.append(getName())
-                    .append(" is missing child elements. ")
-                    .append("Required Content Model: ")
-                    .append(contentModel);
-                log.warn(message.toString());
-            }
+            getFOValidationEventProducer().missingChildElement(this, getName(),
+                    contentModel, true, getLocator());
         }
     }
 

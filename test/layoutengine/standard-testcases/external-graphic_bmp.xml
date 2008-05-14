@@ -45,13 +45,13 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="46091" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
-    <eval expected="46091" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
-    <eval expected="46091" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
-    <eval expected="46091" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
-    <eval expected="192043" xpath="//flow/block[4]/lineArea/viewport/@ipd"/>
-    <eval expected="192043" xpath="//flow/block[4]/lineArea/viewport/@ipda"/>
-    <eval expected="192043" xpath="//flow/block[4]/lineArea/viewport/@bpd"/>
-    <eval expected="192043" xpath="//flow/block[4]/lineArea/viewport/@bpda"/>
+    <eval expected="46091" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
+    <eval expected="46091" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
+    <eval expected="46091" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
+    <eval expected="46091" tolerance="5" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
+    <eval expected="192043" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@ipd"/>
+    <eval expected="192043" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@ipda"/>
+    <eval expected="192043" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@bpd"/>
+    <eval expected="192043" tolerance="5" xpath="//flow/block[4]/lineArea/viewport/@bpda"/>
   </checks>
 </testcase>

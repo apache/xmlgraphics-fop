@@ -22,24 +22,14 @@ package org.apache.fop.pdf;
 // based on work by Takayuki Takeuchi
 
 /**
- * class representing a font descriptor for CID fonts.
+ * Class representing a font descriptor for CID fonts.
  *
  * Font descriptors for CID fonts are specified on page 227 and onwards of the PDF 1.3 spec.
  */
 public class PDFCIDFontDescriptor extends PDFFontDescriptor {
 
     /**
-     * The language for the font
-     */
-    protected String lang;
-
-    /**
-     * The cid set stream
-     */
-    protected PDFStream cidSet;
-
-    /**
-     * create the /FontDescriptor object
+     * Create a /FontDescriptor object.
      *
      * @param basefont the base font name
      * @param fontBBox the bounding box for the described font
@@ -56,31 +46,19 @@ public class PDFCIDFontDescriptor extends PDFFontDescriptor {
         super(basefont, fontBBox[3], fontBBox[1], capHeight, flags,
               new PDFRectangle(fontBBox), italicAngle, stemV);
 
-        this.lang = lang;
+        put("MissingWidth", new Integer(500));
+        if (lang != null) {
+            put("Lang", lang);
+        }
     }
 
     /**
      * Set the CID set stream.
-     * @param cidSet the pdf stream cotnaining the CID set
+     * @param cidSet the PDF stream containing the CID set
      */
     public void setCIDSet(PDFStream cidSet) {
-        this.cidSet = cidSet;
-    }
-
-    /**
-     * Fill in the pdf data for this font descriptor.
-     * The charset specific dictionary entries are output.
-     * @param p the string buffer to append the data
-     */
-    protected void fillInPDF(StringBuffer p) {
-        p.append("\n/MissingWidth 500\n");
-        if (lang != null) {
-            p.append("\n/Lang /");
-            p.append(lang);
-        }
         if (cidSet != null) {
-            p.append("\n/CIDSet /");
-            p.append(this.cidSet.referencePDF());
+            put("CIDSet", cidSet);
         }
     }
 

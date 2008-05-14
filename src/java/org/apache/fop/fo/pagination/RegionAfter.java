@@ -29,20 +29,21 @@ import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 
 /**
- * The fo:region-after element.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-after">
+ * <code>fo:region-after</code></a> object.
  */
 public class RegionAfter extends RegionBA {
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionAfter instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     public RegionAfter(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving extent as values are resolved relative 
          * to the page size and reference orientation.
@@ -82,9 +83,7 @@ public class RegionAfter extends RegionBA {
         return vpRect;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String getDefaultRegionName() {
         return "xsl-region-after";
     }
@@ -96,6 +95,7 @@ public class RegionAfter extends RegionBA {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REGION_AFTER}
      */
     public int getNameId() {
         return FO_REGION_AFTER;

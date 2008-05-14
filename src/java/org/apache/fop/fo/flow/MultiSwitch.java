@@ -29,7 +29,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:multi-switch object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-switch">
+ * <code>fo:multi-switch</code></a> object.
  */
 public class MultiSwitch extends FObj {
     // The value of properties relevant for fo:multi-switch.
@@ -41,29 +42,28 @@ public class MultiSwitch extends FObj {
     static boolean notImplementedWarningGiven = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public MultiSwitch(FONode parent) {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:multi-switch is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         // autoRestore = pList.get(PR_AUTO_RESTORE);
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(multi-case+)");
@@ -72,12 +72,14 @@ public class MultiSwitch extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (multi-case+)
+     * <br>XSL Content Model: (multi-case+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!(FO_URI.equals(nsURI) && localName.equals("multi-case"))) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!localName.equals("multi-case")) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 
@@ -88,6 +90,7 @@ public class MultiSwitch extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_MULTI_SWITCH}
      */
     public int getNameId() {
         return FO_MULTI_SWITCH;

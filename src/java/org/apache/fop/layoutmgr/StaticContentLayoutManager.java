@@ -25,13 +25,16 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.area.RegionReference;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.fo.FONode;
+import org.apache.fop.area.RegionReference;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.TextLayoutManager;
 import org.apache.fop.traits.MinOptMax;
@@ -92,7 +95,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         //TODO Empty this method?!?
         // set layout dimensions
         setContentAreaIPD(context.getRefIPD());
-        setContentAreaBPD(context.getStackLimit().opt);
+        setContentAreaBPD(context.getStackLimitBP().opt);
 
         //TODO Copied from elsewhere. May be worthwhile to factor out the common parts. 
         // currently active LM
@@ -110,10 +113,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             }
 
             // Set up a LayoutContext
-            MinOptMax bpd = context.getStackLimit();
+            MinOptMax bpd = context.getStackLimitBP();
 
             LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
+            childLC.setStackLimitBP(MinOptMax.subtract(bpd, stackSize));
             childLC.setRefIPD(context.getRefIPD());
 
             // get elements from curLM
@@ -239,12 +242,17 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         breaker.doLayout(targetBPD, autoHeight);
         if (breaker.isOverflow()) {
             if (!autoHeight) {
-                //Overflow handling
-                if (regionFO.getOverflow() == EN_ERROR_IF_OVERFLOW) {
-                    //TODO throw layout exception
-                }
-                log.warn(FONode.decorateWithContextInfo(
-                        "static-content overflows the available area.", fobj));
+                String page = getPSLM().getCurrentPage().getPageViewport().getPageNumberString();
+                
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                        getStaticContentFO().getUserAgent().getEventBroadcaster());
+                boolean canRecover = (regionFO.getOverflow() != EN_ERROR_IF_OVERFLOW); 
+                boolean needClip = (regionFO.getOverflow() == Constants.EN_HIDDEN
+                        || regionFO.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW);
+                eventProducer.regionOverflow(this, regionFO.getName(),
+                        page,
+                        breaker.getOverflowAmount(), needClip, canRecover,
+                        getStaticContentFO().getLocator());
             }
         }
     }
@@ -261,7 +269,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         private StaticContentLayoutManager lm;
         private int displayAlign;
         private int ipd;
-        private boolean overflow = false;
+        private int overflow = 0;
         
         public StaticContentBreaker(StaticContentLayoutManager lm, int ipd, 
                 int displayAlign) {
@@ -287,9 +295,26 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         }
 
         public boolean isOverflow() {
+            return (this.overflow != 0);
+        }
+        
+        public int getOverflowAmount() {
             return this.overflow;
         }
         
+        /** {@inheritDoc} */
+        protected PageBreakingLayoutListener createLayoutListener() {
+            return new PageBreakingLayoutListener() {
+
+                public void notifyOverflow(int part, int amount, FObj obj) {
+                    if (StaticContentBreaker.this.overflow == 0) {
+                        StaticContentBreaker.this.overflow = amount;
+                    }
+                }
+                
+            };
+        }
+
         protected LayoutManager getTopLevelLM() {
             return lm;
         }
@@ -306,7 +331,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
             while ((curLM = getChildLM()) != null) {
                 LayoutContext childLC = new LayoutContext(0);
-                childLC.setStackLimit(context.getStackLimit());
+                childLC.setStackLimitBP(context.getStackLimitBP());
                 childLC.setRefIPD(context.getRefIPD());
                 childLC.setWritingMode(context.getWritingMode());
 
@@ -339,11 +364,11 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
                 BlockSequence originalList, BlockSequence effectiveList) {
+            //Rendering all parts (not just the first) at once for the case where the parts that 
+            //overflow should be visible.
+            alg.removeAllPageBreaks();
             //Directly add areas after finding the breaks
-            this.addAreas(alg, partCount, originalList, effectiveList);
-            if (partCount > 1) {
-                overflow = true;
-            }
+            this.addAreas(alg, 1, originalList, effectiveList);
         }
         
         protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
@@ -378,6 +403,21 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     
     private void setContentAreaBPD(int contentAreaBPD) {
         this.contentAreaBPD = contentAreaBPD;
+    }
+    
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        return KEEP_AUTO;
+    }
+    
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+    }
+
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
     }
     
 }

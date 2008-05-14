@@ -65,7 +65,7 @@ public class PDFEncodingTestCase extends BasePDFTestCase {
          *  The following array is used to look for these patterns
          */ 
         final String[] testPatterns = { 
-                TEST_MARKER + "1", "(Standard)",
+                TEST_MARKER + "1", "Standard",
                 TEST_MARKER + "2", "XX_\\351_XX", 
                 TEST_MARKER + "3", "XX_\\342\\352\\356\\364\\373_XX" 
               };
@@ -75,7 +75,9 @@ public class PDFEncodingTestCase extends BasePDFTestCase {
 
     /**
      * TODO test disabled for now, fails due (probably) do different PDF
-     * encoding when custom font is used
+     * encoding when custom font is used.
+     * TODO This should be tested using PDFBox. If PDFBox can extract the text correctly,
+     * everything is fine. The tests here are too unstable.
      * 
      * @throws Exception
      *             checkstyle wants a comment here, even a silly one

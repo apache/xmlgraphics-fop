@@ -28,7 +28,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:table-and-caption property.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-and-caption">
+ * <code>fo:table-and-caption</code></a> property.
  * @todo needs implementation
  */
 public class TableAndCaption extends FObj {
@@ -56,13 +57,16 @@ public class TableAndCaption extends FObj {
     private boolean tableFound = false;
 
     /**
+     * Create a TableAndCaption instance with the given {@link FONode}
+     * as parent.
      * @param parent FONode that is the parent of this object
      */
     public TableAndCaption(FONode parent) {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:table-and-caption is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "fo:table-and-caption", getLocator());
             notImplementedWarningGiven = true;
         }
     }
@@ -80,33 +84,35 @@ public class TableAndCaption extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* table-caption? table
+     * <br>XSL Content Model: marker* table-caption? table
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
 
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (tableCaptionFound) {
-                nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
-            } else if (tableFound) {
-                nodesOutOfOrderError(loc, "fo:marker", "fo:table");
-            }
-        } else if (FO_URI.equals(nsURI) && localName.equals("table-caption")) {
-            if (tableCaptionFound) {
-                tooManyNodesError(loc, "fo:table-caption");
-            } else if (tableFound) {
-                nodesOutOfOrderError(loc, "fo:table-caption", "fo:table");
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (tableCaptionFound) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
+                } else if (tableFound) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:table");
+                }
+            } else if (localName.equals("table-caption")) {
+                if (tableCaptionFound) {
+                    tooManyNodesError(loc, "fo:table-caption");
+                } else if (tableFound) {
+                    nodesOutOfOrderError(loc, "fo:table-caption", "fo:table");
+                } else {
+                    tableCaptionFound = true;
+                }
+            } else if (localName.equals("table")) {
+                if (tableFound) {
+                    tooManyNodesError(loc, "fo:table");
+                } else {
+                    tableFound = true;
+                }
             } else {
-                tableCaptionFound = true;
+                invalidChildError(loc, nsURI, localName);
             }
-        } else if (FO_URI.equals(nsURI) && localName.equals("table")) {
-            if (tableFound) {
-                tooManyNodesError(loc, "fo:table");
-            } else {
-                tableFound = true;
-            }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -117,6 +123,7 @@ public class TableAndCaption extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_AND_CAPTION}
      */
     public int getNameId() {
         return FO_TABLE_AND_CAPTION;

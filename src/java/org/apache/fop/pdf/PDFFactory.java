@@ -39,19 +39,26 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.xmp.Metadata;
+
 import org.apache.fop.fonts.CIDFont;
+import org.apache.fop.fonts.CIDSubset;
+import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.SimpleSingleByteEncoding;
+import org.apache.fop.fonts.SingleByteEncoding;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
-import org.apache.xmlgraphics.xmp.Metadata;
 
 /**
  * This class provides method to create and register PDF objects.
@@ -717,6 +724,7 @@ public class PDFFactory {
      * @param theColors the list of colors for the gradient
      * @param theBounds the list of bounds associated with the colors
      * @param theCoords the coordinates for the gradient
+     * @param theMatrix the coordinate-transformation matrix
      * @return the PDF pattern that was created
      */
     public PDFPattern makeGradient(PDFResourceContext res, boolean radial,
@@ -730,7 +738,7 @@ public class PDFFactory {
         List theCone;
         PDFPattern myPattern;
         //PDFColorSpace theColorSpace;
-        double interpolation = (double)1.000;
+        double interpolation = 1.000;
         List theFunctions = new ArrayList();
 
         int currentPosition;
@@ -849,6 +857,17 @@ public class PDFFactory {
     }
 
     /**
+     * Make a names dictionary (the /PageLabels object).
+     * @return the new PDFPageLabels object
+     */
+    public PDFPageLabels makePageLabels() {
+        PDFPageLabels pageLabels = new PDFPageLabels();
+        getDocument().assignObjectNumber(pageLabels);
+        getDocument().addTrailerObject(pageLabels);
+        return pageLabels;
+    }
+
+    /**
      * Make a the head object of the name dictionary (the /Dests object).
      *
      * @param destinationList a list of PDFDestination instances
@@ -856,12 +875,13 @@ public class PDFFactory {
      */
     public PDFDests makeDests(List destinationList) {
         PDFDests dests;
-        
+
+        //TODO: Check why the below conditional branch is needed. Condition is always true...
         final boolean deep = true;
         //true for a "deep" structure (one node per entry), true for a "flat" structure
         if (deep) {
             dests = new PDFDests();
-            PDFArray kids = new PDFArray();
+            PDFArray kids = new PDFArray(dests);
             Iterator iter = destinationList.iterator();
             while (iter.hasNext()) {
                 PDFDestination dest = (PDFDestination)iter.next();
@@ -869,8 +889,9 @@ public class PDFFactory {
                 getDocument().registerObject(node);
                 node.setLowerLimit(dest.getIDRef());
                 node.setUpperLimit(dest.getIDRef());
-                node.setNames(new PDFArray());
-                node.getNames().add(dest);
+                node.setNames(new PDFArray(node));
+                PDFArray names = node.getNames();
+                names.add(dest);
                 kids.add(node);
             }
             dests.setLowerLimit(((PDFNameTreeNode)kids.get(0)).getLowerLimit());
@@ -942,7 +963,7 @@ public class PDFFactory {
     }
 
     /**
-     * make a link object
+     * Make a {@link PDFLink} object
      *
      * @param rect   the clickable rectangle
      * @param destination  the destination file
@@ -957,7 +978,7 @@ public class PDFFactory {
         PDFLink link = new PDFLink(rect);
 
         if (linkType == PDFLink.EXTERNAL) {
-            link.setAction(getExternalAction(destination));
+            link.setAction(getExternalAction(destination, false));
         } else {
             // linkType is internal
             String goToReference = getGoToReference(destination, yoffset);
@@ -980,9 +1001,11 @@ public class PDFFactory {
      *
      * @param target The external target. This may be a PDF file name
      * (optionally with internal page number or destination) or any type of URI.
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
      * @return the PDFAction thus created or found
      */
-    public PDFAction getExternalAction(String target) {
+    public PDFAction getExternalAction(String target, boolean newWindow) {
         int index;
         String targetLo = target.toLowerCase();
         // HTTP URL?
@@ -990,17 +1013,17 @@ public class PDFFactory {
             return new PDFUri(target);
         // Bare PDF file name?
         } else if (targetLo.endsWith(".pdf")) {
-            return getGoToPDFAction(target, null, -1);
+            return getGoToPDFAction(target, null, -1, newWindow);
         // PDF file + page?
         } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) {
             String filename = target.substring(0, index + 4);
             int page = Integer.parseInt(target.substring(index + 10));
-            return getGoToPDFAction(filename, null, page);
+            return getGoToPDFAction(filename, null, page, newWindow);
         // PDF file + destination?
         } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) {
             String filename = target.substring(0, index + 4);
             String dest = target.substring(index + 10);
-            return getGoToPDFAction(filename, dest, -1);
+            return getGoToPDFAction(filename, dest, -1, newWindow);
         // None of the above? Default to URI:
         } else {
             return new PDFUri(target);
@@ -1050,9 +1073,11 @@ public class PDFFactory {
      * @param file the pdf file name
      * @param dest the remote name destination, may be null
      * @param page the remote page number, -1 means not specified
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
      * @return the pdf goto remote object
      */
-    private PDFGoToRemote getGoToPDFAction(String file, String dest, int page) {
+    private PDFGoToRemote getGoToPDFAction(String file, String dest, int page, boolean newWindow) {
         getDocument().getProfile().verifyActionAllowed();
         PDFFileSpec fileSpec = new PDFFileSpec(file);
         PDFFileSpec oldspec = getDocument().findFileSpec(fileSpec);
@@ -1064,11 +1089,11 @@ public class PDFFactory {
         PDFGoToRemote remote;
 
         if (dest == null && page == -1) {
-            remote = new PDFGoToRemote(fileSpec);
+            remote = new PDFGoToRemote(fileSpec, newWindow);
         } else if (dest != null) {
-            remote = new PDFGoToRemote(fileSpec, dest);
+            remote = new PDFGoToRemote(fileSpec, dest, newWindow);
         } else {
-            remote = new PDFGoToRemote(fileSpec, page);
+            remote = new PDFGoToRemote(fileSpec, page, newWindow);
         }
         PDFGoToRemote oldremote = getDocument().findGoToRemote(remote);
         if (oldremote == null) {
@@ -1150,7 +1175,7 @@ public class PDFFactory {
     }
 
     /**
-     * make a Type1 /Font object
+     * Make a Type1 /Font object.
      *
      * @param fontname internal name to use for this font (eg "F1")
      * @param basefont name of the base font (eg "Helvetica")
@@ -1168,6 +1193,7 @@ public class PDFFactory {
         }
 
         if (descriptor == null) {
+            //Usually Base 14 fonts
             PDFFont font = new PDFFont(fontname, FontType.TYPE1, basefont, encoding);
             getDocument().registerObject(font);
             return font;
@@ -1176,29 +1202,9 @@ public class PDFFactory {
 
             PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
 
-            PDFFontNonBase14 font = null;
-            if (fonttype == FontType.TYPE0) {
-                /*
-                 * Temporary commented out - customized CMaps
-                 * isn't needed until /ToUnicode support is added
-                 * PDFCMap cmap = new PDFCMap(++this.objectcount,
-                 * "fop-ucs-H",
-                 * new PDFCIDSystemInfo("Adobe",
-                 * "Identity",
-                 * 0));
-                 * cmap.addContents();
-                 * this.objects.add(cmap);
-                 */
-                font = (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
-                                                            basefont, "Identity-H");
-            } else {
-
-                font = (PDFFontNonBase14)PDFFont.createFont(fontname, fonttype,
-                                                            basefont, encoding);
-            }
+            PDFFont font = null;
+            font = PDFFont.createFont(fontname, fonttype, basefont, encoding);
             getDocument().registerObject(font);
-
-            font.setDescriptor(pdfdesc);
 
             if (fonttype == FontType.TYPE0) {
                 CIDFont cidMetrics;
@@ -1219,39 +1225,137 @@ public class PDFFactory {
                                    (PDFCIDFontDescriptor)pdfdesc);
                 getDocument().registerObject(cidFont);
 
-                PDFCMap cmap = new PDFToUnicodeCMap(cidMetrics, "fop-ucs-H",
-                    new PDFCIDSystemInfo("Adobe",
-                        "Identity",
-                        0));
+                PDFCMap cmap = new PDFToUnicodeCMap(
+                        cidMetrics.getCIDSubset().getSubsetChars(),
+                        "fop-ucs-H",
+                        new PDFCIDSystemInfo("Adobe",
+                            "Identity",
+                            0));
                 getDocument().registerObject(cmap);
                 ((PDFFontType0)font).setCMAP(cmap);
                 ((PDFFontType0)font).setDescendantFonts(cidFont);
             } else {
-                int firstChar = 0;
-                int lastChar = 255;
-                if (metrics instanceof CustomFont) {
-                    CustomFont cf = (CustomFont)metrics;
-                    firstChar = cf.getFirstChar();
-                    lastChar = cf.getLastChar();
+                PDFFontNonBase14 nonBase14 = (PDFFontNonBase14)font;
+                nonBase14.setDescriptor(pdfdesc);
+
+                SingleByteFont singleByteFont;
+                if (metrics instanceof LazyFont) {
+                    singleByteFont = (SingleByteFont)((LazyFont)metrics).getRealFont();
+                } else {
+                    singleByteFont = (SingleByteFont)metrics;
                 }
-                font.setWidthMetrics(firstChar,
+                int firstChar = singleByteFont.getFirstChar();
+                int lastChar = singleByteFont.getLastChar();
+                nonBase14.setWidthMetrics(firstChar,
                                      lastChar,
-                                     makeArray(metrics.getWidths()));
+                                     new PDFArray(null, metrics.getWidths()));
+                
+                //Handle encoding
+                SingleByteEncoding mapping = singleByteFont.getEncoding();
+                if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
+                    font.setEncoding(mapping.getName());
+                } else {
+                    Object pdfEncoding = createPDFEncoding(mapping,
+                            singleByteFont.getFontName());
+                    if (pdfEncoding instanceof PDFEncoding) {
+                        font.setEncoding((PDFEncoding)pdfEncoding);
+                    } else {
+                        font.setEncoding((String)pdfEncoding);
+                    }
+                    
+                    /* JM: What I thought would be a necessity with custom encodings turned out to
+                     * be a bug in Adobe Acrobat 8. The following section just demonstrates how
+                     * to generate a ToUnicode CMap for a Type 1 font. 
+                    PDFCMap cmap = new PDFToUnicodeCMap(mapping.getUnicodeCharMap(),
+                            "fop-ucs-H",
+                            new PDFCIDSystemInfo("Adobe", "Identity", 0));
+                    getDocument().registerObject(cmap);
+                    nonBase14.setToUnicode(cmap);
+                    */
+                }
+                
+                //Handle additional encodings (characters outside the primary encoding)
+                if (singleByteFont.hasAdditionalEncodings()) {
+                    for (int i = 0, c = singleByteFont.getAdditionalEncodingCount(); i < c; i++) {
+                        SimpleSingleByteEncoding addEncoding
+                            = singleByteFont.getAdditionalEncoding(i);
+                        String name = fontname + "_" + (i + 1);
+                        Object pdfenc = createPDFEncoding(addEncoding,
+                                singleByteFont.getFontName());
+                        PDFFontNonBase14 addFont = (PDFFontNonBase14)PDFFont.createFont(
+                                name, fonttype,
+                                basefont, pdfenc);
+                        addFont.setDescriptor(pdfdesc);
+                        addFont.setWidthMetrics(
+                                addEncoding.getFirstChar(),
+                                addEncoding.getLastChar(),
+                                new PDFArray(null, singleByteFont.getAdditionalWidths(i)));
+                        getDocument().registerObject(addFont);
+                        getDocument().getResources().addFont(addFont);
+                    }
+                }
             }
 
             return font;
         }
     }
 
+    /**
+     * Creates a PDFEncoding instance from a CodePointMapping instance.
+     * @param encoding the code point mapping (encoding)
+     * @param fontNameHint ...
+     * @return the PDF Encoding dictionary (or a String with the predefined encoding)
+     */
+    public Object createPDFEncoding(SingleByteEncoding encoding, String fontNameHint) {
+        SingleByteEncoding baseEncoding;
+        if (fontNameHint.indexOf("Symbol") >= 0) {
+            baseEncoding = CodePointMapping.getMapping(
+                    CodePointMapping.SYMBOL_ENCODING);
+        } else {
+            baseEncoding = CodePointMapping.getMapping(
+                    CodePointMapping.STANDARD_ENCODING);
+        }
+        PDFEncoding pdfEncoding = new PDFEncoding(baseEncoding.getName());
+        PDFEncoding.DifferencesBuilder builder
+                = pdfEncoding.createDifferencesBuilder();
+        int start = -1;
+        String[] baseNames = baseEncoding.getCharNameMap();
+        String[] charNameMap = encoding.getCharNameMap();
+        for (int i = 0, ci = charNameMap.length; i < ci; i++) {
+            String basec = baseNames[i];
+            String c = charNameMap[i];
+            if (!basec.equals(c)) {
+                if (start != i) {
+                    builder.addDifference(i);
+                    start = i;
+                }
+                builder.addName(c);
+                start++;
+            }
+        }
+        if (builder.hasDifferences()) {
+            pdfEncoding.setDifferences(builder.toPDFArray());
+            return pdfEncoding;
+        } else {
+            return baseEncoding.getName();
+        }
+    }
+
+    /**
+     * Creates and returns a width array with the widths of all the characters in the subset.
+     * @param cidFont the font
+     * @return the width array
+     */
     public PDFWArray getSubsetWidths(CIDFont cidFont) {
         // Create widths for reencoded chars
         PDFWArray warray = new PDFWArray();
-        int[] tmpWidth = new int[cidFont.usedGlyphsCount];
+        int[] widths = cidFont.getWidths();
+        CIDSubset subset = cidFont.getCIDSubset();
+        int[] tmpWidth = new int[subset.getSubsetSize()];
 
-        for (int i = 0; i < cidFont.usedGlyphsCount; i++) {
-            Integer nw = (Integer)cidFont.usedGlyphsIndex.get(new Integer(i));
-            int nwx = (nw == null) ? 0 : nw.intValue();
-            tmpWidth[i] = cidFont.width[nwx];
+        for (int i = 0, c = subset.getSubsetSize(); i < c; i++) {
+            int nwx = Math.max(0, subset.getGlyphIndexForSubsetIndex(i));
+            tmpWidth[i] = widths[nwx];
         }
         warray.addEntry(0, tmpWidth);
         return warray;
@@ -1304,12 +1408,7 @@ public class PDFFactory {
     }
 
     private void buildCIDSet(PDFFontDescriptor descriptor, CIDFont cidFont) {
-        BitSet cidSubset = new BitSet();
-        Iterator iter = cidFont.usedGlyphs.keySet().iterator();
-        while (iter.hasNext()) {
-            Integer cid = (Integer)iter.next();
-            cidSubset.set(cid.intValue());
-        }
+        BitSet cidSubset = cidFont.getCIDSubset().getGlyphIndexBitSet();
         PDFStream cidSet = makeStream(null, true);
         ByteArrayOutputStream baout = new ByteArrayOutputStream(cidSubset.length() / 8 + 1);
         int value = 0;
@@ -1365,6 +1464,7 @@ public class PDFFactory {
                 try {
                     in = new java.net.URL(source.getSystemId()).openStream();
                 } catch (MalformedURLException e) {
+                    //TODO: Why construct a new exception here, when it is not thrown?
                     new FileNotFoundException(
                             "File not found. URL could not be resolved: "
                                     + e.getMessage());
@@ -1421,7 +1521,7 @@ public class PDFFactory {
             log.error(
                     "Failed to embed font [" + desc + "] "
                     + desc.getEmbedFontName(), ioe);
-            return (PDFStream) null;
+            return null;
         }
     }
 
@@ -1470,15 +1570,11 @@ public class PDFFactory {
     /**
      * Create a PDFICCStream
      * @see PDFImageXObject
-     * @see org.apache.fop.image.JpegImage
      * @see org.apache.fop.pdf.PDFDeviceColorSpace     
      * @return the new PDF ICC stream object
      */
     public PDFICCStream makePDFICCStream() {
         PDFICCStream iccStream = new PDFICCStream();
-        iccStream.getFilterList().addDefaultFilters(
-                getDocument().getFilterMap(),
-                PDFFilterList.CONTENT_FILTER);
 
         getDocument().registerObject(iccStream);
         //getDocument().applyEncryption(iccStream);
@@ -1510,14 +1606,13 @@ public class PDFFactory {
     }
 
     /**
-     * make an Array object (ex. Widths array for a font)
+     * Make an Array object (ex. Widths array for a font).
      *
      * @param values the int array values
      * @return the PDF Array with the int values
      */
     public PDFArray makeArray(int[] values) {
-        PDFArray array = new PDFArray(values);
-
+        PDFArray array = new PDFArray(null, values);
         getDocument().registerObject(array);
         return array;
     }

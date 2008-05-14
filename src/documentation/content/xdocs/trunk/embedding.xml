@@ -166,7 +166,7 @@ try {
       <title>Logging</title>
       <p>
         Logging is now a little different than it was in FOP 0.20.5. We've switched from
-        Avalon Logging to <a href="ext:jakarta/commons/logging">Jakarta Commons Logging</a>.
+        Avalon Logging to <a href="ext:commons-logging">Jakarta Commons Logging</a>.
         While with Avalon Logging the loggers were directly given to FOP, FOP now retrieves
         its logger(s) through a statically available LogFactory. This is similar to the
         general pattern that you use when you work with Apache Log4J directly, for example.
@@ -175,23 +175,33 @@ try {
         processing run anymore. The log output of multiple, simultaneously running FOP instances
         is sent to the same logger.
       </p>
-      <note>
-        We know this may be an issue in multi-threaded server environments if you'd like to 
-        know what's going on in every single FOP processing run. We're planning to add an
-        additional feedback facility to FOP which can be used to obtain all sorts of specific
-        feedback (validation messages, layout problems etc.). "Static logging" is mainly 
-        interesting for a developer working on FOP and for advanced users who are debugging 
-        FOP. We don't consider the logging output to be useful to normal FOP users. Please
-        have some patience until we can add this feature or jump in and help us build it. We've
-        set up a <a href="http://wiki.apache.org/xmlgraphics-fop/ProcessingFeedback">Wiki page</a>
-        which documents what we're going to build.
-      </note>
       <p>
-        By default, <a href="ext:jakarta/commons/logging">Jakarta Commons Logging</a> uses
+        By default, <a href="ext:commons-logging">Jakarta Commons Logging</a> uses
         JDK logging (available in JDKs 1.4 or higher) as its backend. You can configure Commons
         Logging to use an alternative backend, for example Log4J. Please consult the
-        <a href="ext:jakarta/commons/logging">documentation for Jakarta Commons Logging</a> on
+        <a href="ext:commons-logging">documentation for Jakarta Commons Logging</a> on
         how to configure alternative backends.
+      </p>
+      <p>
+        As a result of the above we differentiate between two kinds of "logging":
+      </p>
+      <ul>
+        <li>(FOP-)Developer-oriented logging</li>
+        <li><a href="events.html">User/Integrator-oriented feedback</a> (NEW!)</li>
+      </ul>
+      <p>
+        The use of "feedback" instead of "logging" is intentional. Most people were using
+        log output as a means to get feedback from events within FOP. Therefore, FOP now
+        includes an <code>event</code> package which can be used to receive feedback from
+        the layout engine and other components within FOP <strong>per rendering run</strong>.
+        This feedback is not just some
+        text but event objects with parameters so these events can be interpreted by code.
+        Of course, there is a facility to turn these events into normal human-readable
+        messages. For details, please read on on the <a href="events.html">Events page</a>.
+        This leaves normal logging to be mostly a thing used by the FOP developers
+        although anyone can surely activate certain logging categories but the feedback
+        from the loggers won't be separated by processing runs. If this is required,
+        the <a href="events.html">Events subsystem</a> is the right approach.
       </p>
     </section>
   

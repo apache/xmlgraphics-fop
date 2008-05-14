@@ -159,8 +159,10 @@ public interface Constants {
     int FO_PAGE_SEQUENCE_WRAPPER = 60;
     /** FO element constant - XSL 1.1 */
     int FO_PAGE_NUMBER_CITATION_LAST = 61;
+    /** FO element constant - XSL 1.1 */
+    int FO_RETRIEVE_TABLE_MARKER = 62;
     /** Number of FO element constants defined */
-    int FRM_OBJ_COUNT = 61;
+    int FRM_OBJ_COUNT = 62;
 
     // Masks
     /**
@@ -688,8 +690,12 @@ public interface Constants {
     int PR_X_WIDOW_CONTENT_LIMIT = 252;
     /** Property constant - FOP proprietary: limit for orphan content in lists and tables */
     int PR_X_ORPHAN_CONTENT_LIMIT = 253;
+    /** Property constant */
+    int PR_RETRIEVE_POSITION_WITHIN_TABLE = 254;
+    /** Property constant */
+    int PR_RETRIEVE_BOUNDARY_WITHIN_TABLE = 255;
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 253;
+    int PROPERTY_COUNT = 255;
 
     // compound property constants
 
@@ -1087,6 +1093,26 @@ public interface Constants {
     int EN_SMALL_CAPTION = 184;
     /** Enumeration constant -- font shorthand */
     int EN_STATUS_BAR = 185;
+    /** Enumeration constant -- for page-position, XSL 1.1 */
+    int EN_ONLY = 186; 
+    /** Enumeration constant -- for instream-foreign-object and external-graphic, XSL 1.1 */
+    int EN_SCALE_DOWN_TO_FIT = 187; 
+    /** Enumeration constant -- for instream-foreign-object and external-graphic, XSL 1.1 */
+    int EN_SCALE_UP_TO_FIT = 188;
+    /** Enumeration constant -- for fo:basic-link show-destination */
+    int EN_REPLACE = 189;
+    /** Enumeration constant -- for fo:basic-link show-destination */
+    int EN_NEW = 190;
+    /** Enumeration constant -- for fo:retrieve-table-marker */
+    int EN_FIRST_STARTING = 191;
+    /** Enumeration constant -- for fo:retrieve-table-marker */
+    int EN_LAST_STARTING = 192;
+    /** Enumeration constant -- for fo:retrieve-table-marker */
+    int EN_LAST_ENDING = 193;
+    /** Enumeration constant -- for fo:retrieve-table-marker */
+    int EN_TABLE = 194;
+    /** Enumeration constant -- for fo:retrieve-table-marker */
+    int EN_TABLE_FRAGMENT = 195;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 185;
+    int ENUM_COUNT = 195;
 }

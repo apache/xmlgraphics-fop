@@ -29,7 +29,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * A conditional-page-master-reference formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_conditional-page-master-reference">
+ * <code>fo:conditional-page-master-reference</code></a> object.
+ * 
  * This is a reference to a page master with a set of conditions.
  * The conditions must be satisfied for the referenced master to
  * be used.
@@ -45,15 +47,16 @@ public class ConditionalPageMasterReference extends FObj {
     // End of property values
     
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a ConditionalPageMasterReference instance that is a
+     * child of the given {@link FONode}.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public ConditionalPageMasterReference(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         pagePosition = pList.get(PR_PAGE_POSITION).getEnum();
@@ -65,9 +68,7 @@ public class ConditionalPageMasterReference extends FObj {
         }        
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         getConcreteParent().addConditionalPageMasterReference(this);
     }
@@ -78,7 +79,7 @@ public class ConditionalPageMasterReference extends FObj {
     
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
            throws ValidationException {
@@ -93,14 +94,20 @@ public class ConditionalPageMasterReference extends FObj {
      * @param isFirstPage True if page is first page
      * @param isLastPage True if page is last page
      * @param isBlankPage True if page is blank
+     * @param isOnlyPage True if page is the only page
      * @return True if the conditions for this reference are met
      */
     protected boolean isValid(boolean isOddPage,
                               boolean isFirstPage,
                               boolean isLastPage,
+                              boolean isOnlyPage,
                               boolean isBlankPage) {
         // page-position
-        if (isFirstPage) {
+        if (isOnlyPage) {
+            if (pagePosition != EN_ONLY) {
+                return false;
+            }
+        } else if (isFirstPage) {
             if (pagePosition == EN_REST) {
                 return false;
             } else if (pagePosition == EN_LAST) {
@@ -144,12 +151,18 @@ public class ConditionalPageMasterReference extends FObj {
         return true;
     }
 
-    /** @return the "master-reference" property. */
+    /**
+     * Get the value for the <code>master-reference</code> property.
+     * @return the "master-reference" property
+     */
     public String getMasterReference() {
         return masterReference;
     }
     
-    /** @return the page-position property value */
+    /**
+     * Get the value for the <code>page-position</code> property.
+     * @return the page-position property value
+     */
     public int getPagePosition() {
         return this.pagePosition;
     }
@@ -159,7 +172,10 @@ public class ConditionalPageMasterReference extends FObj {
         return "conditional-page-master-reference";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_CONDITIONAL_PAGE_MASTER_REFERENCE}
+     */
     public int getNameId() {
         return FO_CONDITIONAL_PAGE_MASTER_REFERENCE;
     }

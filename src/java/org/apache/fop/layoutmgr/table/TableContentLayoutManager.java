@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,27 +27,27 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.area.Block;
-import org.apache.fop.area.Trait;
+
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.EffRow;
-import org.apache.fop.fo.flow.table.GridUnit;
+import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
-import org.apache.fop.fo.flow.table.TableRow;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * Layout manager for table contents, particularly managing the creation of combined element lists.
@@ -68,13 +69,13 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private int startXOffset;
     private int usedBPD;
     
-    private TableStepper stepper = new TableStepper(this);
+    private TableStepper stepper;
         
     /**
      * Main constructor
      * @param parent Parent layout manager
      */
-    public TableContentLayoutManager(TableLayoutManager parent) {
+    TableContentLayoutManager(TableLayoutManager parent) {
         this.tableLM = parent;
         Table table = getTableLM().getTable();
         this.bodyIter = new TableRowIterator(table, TableRowIterator.BODY);
@@ -84,12 +85,13 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (table.getTableFooter() != null) {
             footerIter = new TableRowIterator(table, TableRowIterator.FOOTER);
         }
+        stepper = new TableStepper(this);
     }
     
     /**
      * @return the table layout manager
      */
-    public TableLayoutManager getTableLM() {
+    TableLayoutManager getTableLM() {
         return this.tableLM;
     }
     
@@ -101,10 +103,10 @@ public class TableContentLayoutManager implements PercentBaseContext {
     /**
      * @return the column setup of this table
      */
-    public ColumnSetup getColumns() {
+    ColumnSetup getColumns() {
         return getTableLM().getColumns();
     }
-    
+
     /** @return the net header height */
     protected int getHeaderNetHeight() {
         return this.headerNetHeight;
@@ -125,7 +127,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         return this.footerList;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         if (log.isDebugEnabled()) {
             log.debug("==> Columns: " + getTableLM().getColumns());
@@ -136,7 +138,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (headerIter != null && headerList == null) {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
-            ElementListUtils.removeLegalBreaks(this.headerList);
             this.headerNetHeight
                     = ElementListUtils.calcContentLength(this.headerList);
             if (log.isDebugEnabled()) {
@@ -157,7 +158,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (footerIter != null && footerList == null) {
             this.footerList = getKnuthElementsForRowIterator(
                     footerIter, context, alignment, TableRowIterator.FOOTER);
-            ElementListUtils.removeLegalBreaks(this.footerList);
             this.footerNetHeight
                     = ElementListUtils.calcContentLength(this.footerList);
             if (log.isDebugEnabled()) {
@@ -207,52 +207,65 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private LinkedList getKnuthElementsForRowIterator(TableRowIterator iter, 
             LayoutContext context, int alignment, int bodyType) {
         LinkedList returnList = new LinkedList();
-        EffRow[] rowGroup = null;
-        int breakBetween = Constants.EN_AUTO;
-        while ((rowGroup = iter.getNextRowGroup()) != null) {
+        EffRow[] rowGroup = iter.getNextRowGroup();
+        // TODO homogenize the handling of keeps and breaks
+        context.clearKeepsPending();
+        context.setBreakBefore(Constants.EN_AUTO);
+        context.setBreakAfter(Constants.EN_AUTO);
+        int keepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+        int breakBefore = Constants.EN_AUTO;
+        if (rowGroup != null) {
             RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
                     stepper);
-            if (breakBetween == Constants.EN_AUTO) {
-                // TODO improve
-                breakBetween = rowGroupLM.getBreakBefore();
-            }
-            if (breakBetween != Constants.EN_AUTO) {
-                if (returnList.size() > 0) {
-                    BreakElement breakPoss = (BreakElement) returnList.getLast();
-                    breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
-                    breakPoss.setBreakClass(breakBetween);
-                } else {
-                    returnList.add(new BreakElement(new Position(tableLM),
-                            0, -KnuthPenalty.INFINITE, breakBetween, context));
+            List nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
+            keepWithPrevious = Math.max(keepWithPrevious, context.getKeepWithPreviousPending());
+            breakBefore = context.getBreakBefore();
+            int breakBetween = context.getBreakAfter();
+            returnList.addAll(nextRowGroupElems);
+            while ((rowGroup = iter.getNextRowGroup()) != null) {
+                rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup, stepper);
+                
+                //Note previous pending keep-with-next and clear the strength
+                //(as the layout context is reused)
+                int keepWithNextPending = context.getKeepWithNextPending();
+                context.clearKeepWithNextPending();
+                
+                //Get elements for next row group
+                nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
+                
+                //Determine keep constraints
+                int penaltyStrength = BlockLevelLayoutManager.KEEP_AUTO;
+                penaltyStrength = Math.max(penaltyStrength, keepWithNextPending);
+                penaltyStrength = Math.max(penaltyStrength, context.getKeepWithPreviousPending());
+                context.clearKeepWithPreviousPending();
+                penaltyStrength = Math.max(penaltyStrength, getTableLM().getKeepTogetherStrength());
+                int penaltyValue = KeepUtil.getPenaltyForKeep(penaltyStrength);
+                
+                breakBetween = BreakUtil.compareBreakClasses(breakBetween,
+                        context.getBreakBefore());
+                if (breakBetween != Constants.EN_AUTO) {
+                    penaltyValue = -KnuthElement.INFINITE;
                 }
-            }
-            returnList.addAll(rowGroupLM.getNextKnuthElements(context, alignment, bodyType));
-            breakBetween = rowGroupLM.getBreakAfter();
-        }
-        // Break after the table's last row
-        // TODO should eventually be handled at the table level
-        if (breakBetween != Constants.EN_AUTO) {
-            if (returnList.size() > 0 && ((ListElement) returnList.getLast()).isPenalty()) {
-                // May be a glue if the unbroken height is greater than the broken heights
-                BreakElement breakPoss = (BreakElement) returnList.getLast();
-                breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
-                breakPoss.setBreakClass(breakBetween);
-            } else {
-                returnList.add(new BreakElement(new Position(tableLM),
-                        0, -KnuthPenalty.INFINITE, breakBetween, context));
-            }
-        }
-        if (returnList.size() > 0) {
-            //Remove the last penalty produced by the combining algorithm (see TableStepper), 
-            //for the last step
-            ListElement last = (ListElement)returnList.getLast();
-            if (last.isPenalty() || last instanceof BreakElement) {
-                if (!last.isForcedBreak()) {
-                    //Only remove if we don't signal a forced break
-                    returnList.removeLast();
+                TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
+                int penaltyLen = 0;
+                if (bodyType == TableRowIterator.BODY) {
+                    if (!getTableLM().getTable().omitHeaderAtBreak()) {
+                        penaltyLen += getHeaderNetHeight();
+                        penaltyPos.headerElements = getHeaderElements();
+                    }
+                    if (!getTableLM().getTable().omitFooterAtBreak()) {
+                        penaltyLen += getFooterNetHeight();
+                        penaltyPos.footerElements = getFooterElements();
+                    }
                 }
+                returnList.add(new BreakElement(penaltyPos, 
+                        penaltyLen, penaltyValue, breakBetween, context));
+                returnList.addAll(nextRowGroupElems);
+                breakBetween = context.getBreakAfter();
             }
         }
+        context.updateKeepWithPreviousPending(keepWithPrevious);
+        context.setBreakBefore(breakBefore);
 
         //fox:widow-content-limit
         int widowContentLimit = getTableLM().getTable().getWidowContentLimit().getValue(); 
@@ -273,8 +286,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param gu the grid unit
      * @return the requested X offset
      */
-    protected int getXOffsetOfGridUnit(GridUnit gu) {
-        int col = gu.getStartCol();
+    protected int getXOffsetOfGridUnit(PrimaryGridUnit gu) {
+        int col = gu.getColIndex();
         return startXOffset + getTableLM().getColumns().getXOffset(col + 1, getTableLM());
     }
     
@@ -283,11 +296,11 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas
      */
-    public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
+    void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         this.usedBPD = 0;
         RowPainter painter = new RowPainter(this, layoutContext);
 
-        List positions = new java.util.ArrayList();
+        List tablePositions = new ArrayList();
         List headerElements = null;
         List footerElements = null;
         Position firstPos = null;
@@ -323,9 +336,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
             } else if (pos instanceof TableHFPenaltyPosition) {
                 //ignore for now, see special handling below if break is at a penalty
                 //Only if the last position in this part/page us such a position it will be used 
+            } else if (pos instanceof TableContentPosition) {
+                tablePositions.add(pos);
             } else {
-                //leave order as is for the rest
-                positions.add(pos);
+                if (log.isDebugEnabled()) {
+                    log.debug("Ignoring position: " + pos);
+                }
             }
         }
         if (lastPos instanceof TableHFPenaltyPosition) {
@@ -350,18 +366,23 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (headerElements != null) {
             //header positions for the last part are the second-to-last element and need to
             //be handled first before all other TableContentPositions
-            PositionIterator nestedIter = new KnuthPossPosIter(headerElements);
-            iterateAndPaintPositions(nestedIter, painter);
+            addHeaderFooterAreas(headerElements, tableLM.getTable().getTableHeader(), painter,
+                    false);
         }
         
-        //Iterate over all steps
-        Iterator posIter = positions.iterator();
-        iterateAndPaintPositions(posIter, painter);
+        if (tablePositions.isEmpty()) {
+            // TODO make sure this actually never happens
+            log.error("tablePositions empty."
+                    + " Please send your FO file to fop-users@xmlgraphics.apache.org");
+        } else {
+            // Here we are sure that posIter iterates only over TableContentPosition instances
+            addBodyAreas(tablePositions.iterator(), painter, footerElements == null);
+        }
 
         if (footerElements != null) {
             //Positions for footers are simply added at the end
-            PositionIterator nestedIter = new KnuthPossPosIter(footerElements);
-            iterateAndPaintPositions(nestedIter, painter);
+            addHeaderFooterAreas(footerElements, tableLM.getTable().getTableFooter(), painter,
+                    true);
         }
         
         this.usedBPD += painter.getAccumulatedBPD();
@@ -372,118 +393,85 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
     }
 
-    /**
-     * Iterates over a part of the table (header, footer, body) and paints the related
-     * elements.
-     * 
-     * @param iterator iterator over Position elements. Those positions correspond to the
-     * elements of the table present on the current page
-     * @param painter
-     */
-    private void iterateAndPaintPositions(Iterator iterator, RowPainter painter) {
-        List lst = new java.util.ArrayList();
-        boolean firstPos = false;
-        TableBody body = null;
-        while (iterator.hasNext()) {
-            Position pos = (Position)iterator.next();
+    private void addHeaderFooterAreas(List elements, TableBody part, RowPainter painter,
+            boolean lastOnPage) {
+        List lst = new ArrayList(elements.size());
+        for (Iterator iter = new KnuthPossPosIter(elements); iter.hasNext();) {
+            Position pos = (Position) iter.next();
+            /*
+             * Unlike for the body the Positions associated to the glues generated by
+             * TableStepper haven't been removed yet.
+             */
             if (pos instanceof TableContentPosition) {
-                TableContentPosition tcpos = (TableContentPosition)pos;
-                lst.add(tcpos);
-                GridUnitPart part = (GridUnitPart)tcpos.gridUnitParts.get(0);
-                if (body == null) {
-                    body = part.pgu.getBody();
-                }
-                if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
-                        && tcpos.row.getFlag(EffRow.FIRST_IN_PART)) {
-                    firstPos = true;
-
-                }
-                if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
-                        && tcpos.row.getFlag(EffRow.LAST_IN_PART)) {
-                    log.trace("LAST_IN_ROWGROUP + LAST_IN_PART");
-                    handleMarkersAndPositions(lst, body, firstPos, true, painter);
-                    //reset
-                    firstPos = false;
-                    body = null;
-                    lst.clear();
-                }
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Ignoring position: " + pos);
-                }
+                lst.add((TableContentPosition) pos);
             }
         }
-        if (body != null) {
-            // Entering this block means that the end of the current table-part hasn't
-            // been reached (otherwise it would have been caught by the test above). So
-            // lastPos is necessarily false
-            handleMarkersAndPositions(lst, body, firstPos, false, painter);
-        }
-        painter.addAreasAndFlushRow(true);
-    }
-
-    private void handleMarkersAndPositions(List positions, TableBody body, boolean firstPos,
-            boolean lastPos, RowPainter painter) {
-        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
-                true, firstPos, lastPos);
-        int size = positions.size();
-        for (int i = 0; i < size; i++) {
-            painter.handleTableContentPosition((TableContentPosition)positions.get(i));
-        }
-        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
-                false, firstPos, lastPos);
+        addTablePartAreas(lst, painter, part, true, true, true, lastOnPage);
     }
 
     /**
-     * Get the area for a row for background.
-     * @param row the table-row object or null
-     * @return the row area or null if there's no background to paint
+     * Iterates over the positions corresponding to the table's body (which may contain
+     * several table-body elements!) and adds the corresponding areas.
+     * 
+     * @param iterator iterator over TableContentPosition elements. Those positions
+     * correspond to the elements of the body present on the current page
+     * @param painter
+     * @param lastOnPage true if the table has no footer (then the last line of the table
+     * that will be present on the page belongs to the body)
      */
-    public Block getRowArea(TableRow row) {
-        if (row == null || !row.getCommonBorderPaddingBackground().hasBackground()) {
-            return null;
-        } else {
-            Block block = new Block();
-            block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-            block.setPositioning(Block.ABSOLUTE);
-            return block;
+    private void addBodyAreas(Iterator iterator, RowPainter painter,
+            boolean lastOnPage) {
+        painter.startBody();
+        List lst = new ArrayList();
+        TableContentPosition pos = (TableContentPosition) iterator.next();
+        boolean isFirstPos = pos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
+                && pos.getRow().getFlag(EffRow.FIRST_IN_PART);
+        TableBody body = pos.getTableBody();
+        lst.add(pos);
+        while (iterator.hasNext()) {
+            pos = (TableContentPosition) iterator.next();
+            if (pos.getTableBody() != body) {
+                addTablePartAreas(lst, painter, body, isFirstPos, true, false, false);
+                isFirstPos = true;
+                lst.clear();
+                body = pos.getTableBody();
+            }
+            lst.add(pos);
         }
+        boolean isLastPos = pos.getFlag(TableContentPosition.LAST_IN_ROWGROUP)
+                && pos.getRow().getFlag(EffRow.LAST_IN_PART);
+        addTablePartAreas(lst, painter, body, isFirstPos, isLastPos, true, lastOnPage);
+        painter.endBody();
     }
 
     /**
-     * Adds the area for the row background if any.
-     * @param row row for which to generate the background
-     * @param bpd block-progression-dimension of the row
-     * @param ipd inline-progression-dimension of the row
-     * @param yoffset Y offset at which to paint
+     * Adds the areas corresponding to a single fo:table-header/footer/body element.
      */
-    public void addRowBackgroundArea(TableRow row, int bpd, int ipd, int yoffset) {
-        //Add row background if any
-        Block rowBackground = getRowArea(row);
-        if (rowBackground != null) {
-            rowBackground.setBPD(bpd);
-            rowBackground.setIPD(ipd);
-            rowBackground.setXOffset(this.startXOffset);
-            rowBackground.setYOffset(yoffset);
-            getTableLM().addChildArea(rowBackground);
-            TraitSetter.addBackground(rowBackground, 
-                    row.getCommonBorderPaddingBackground(), getTableLM());
+    private void addTablePartAreas(List positions, RowPainter painter, TableBody body,
+            boolean isFirstPos, boolean isLastPos, boolean lastInBody, boolean lastOnPage) {
+        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                true, isFirstPos, isLastPos);
+        painter.startTablePart(body);
+        for (Iterator iter = positions.iterator(); iter.hasNext();) {
+            painter.handleTableContentPosition((TableContentPosition) iter.next());
         }
+        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                false, isFirstPos, isLastPos);
+        painter.endTablePart(lastInBody, lastOnPage);
     }
-    
-    
+
     /**
      * Sets the overall starting x-offset. Used for proper placement of cells.
      * @param startXOffset starting x-offset (table's start-indent)
      */
-    public void setStartXOffset(int startXOffset) {
+    void setStartXOffset(int startXOffset) {
         this.startXOffset = startXOffset;
     }
 
     /**
      * @return the amount of block-progression-dimension used by the content
      */
-    public int getUsedBPD() {
+    int getUsedBPD() {
         return this.usedBPD;
     }
 

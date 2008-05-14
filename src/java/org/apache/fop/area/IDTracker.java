@@ -78,7 +78,11 @@ public class IDTracker {
                 tryIDResolution(id, pv, pvList);
             }
         } else {
-            pvList.add(pv);
+            /* TODO: The check is a quick-fix to avoid a waste 
+             * when adding inline-ids to the page */
+            if (!pvList.contains(pv)) {
+                pvList.add(pv);
+            }
         }
     }
 
@@ -140,7 +144,7 @@ public class IDTracker {
      * 
      * @param id ID to resolve
      * @param pv page viewport whose ID refs to resolve
-     * @param List of PageViewports
+     * @param pvList of PageViewports
      */
     private void tryIDResolution(String id, PageViewport pv, List pvList) {
         Set todo = (Set) unresolvedIDRefs.get(id);

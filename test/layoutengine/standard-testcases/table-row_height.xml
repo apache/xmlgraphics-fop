@@ -81,27 +81,37 @@
     <eval expected="14400" xpath="//flow/block[1]/block[2]/@bpd"/>
 
     <!-- row 2 -->
-    <eval expected="360000" xpath="//flow/block[1]/block[3]/@ipd"/>
-    <eval expected="20000" xpath="//flow/block[1]/block[3]/@bpd"/> <!-- background-area generated for the row -->
+    <eval expected="144000" xpath="//flow/block[1]/block[3]/@ipd"/> <!-- background-area generated for the row -->
+    <eval expected="20000" xpath="//flow/block[1]/block[3]/@bpd"/>
     <eval expected="color=#ffff00" xpath="//flow/block[1]/block[3]/@background"/>
+    <eval expected="" xpath="//flow/block[1]/block[3]/@left-offset"/>
     <eval expected="144000" xpath="//flow/block[1]/block[4]/@ipd"/>
     <eval expected="20000" xpath="//flow/block[1]/block[4]/@bpd"/>
-    <eval expected="216000" xpath="//flow/block[1]/block[5]/@ipd"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[5]/@ipd"/> <!-- background-area generated for the row -->
     <eval expected="20000" xpath="//flow/block[1]/block[5]/@bpd"/>
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/block[5]/@background"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[5]/@left-offset"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[6]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/block[6]/@bpd"/>
 
     <!-- row 3 -->
-    <eval expected="360000" xpath="//flow/block[1]/block[6]/@ipd"/>
-    <eval expected="20000" xpath="//flow/block[1]/block[6]/@bpd"/> <!-- background-area generated for the row -->
-    <eval expected="color=#ffa500" xpath="//flow/block[1]/block[6]/@background"/>
-    <eval expected="144000" xpath="//flow/block[1]/block[7]/@ipd"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[7]/@ipd"/> <!-- background-area generated for the row -->
     <eval expected="20000" xpath="//flow/block[1]/block[7]/@bpd"/>
-    <eval expected="216000" xpath="//flow/block[1]/block[8]/@ipd"/>
+    <eval expected="color=#ffa500" xpath="//flow/block[1]/block[7]/@background"/>
+    <eval expected="" xpath="//flow/block[1]/block[7]/@left-offset"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[8]/@ipd"/>
     <eval expected="20000" xpath="//flow/block[1]/block[8]/@bpd"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[9]/@ipd"/> <!-- background-area generated for the row -->
+    <eval expected="20000" xpath="//flow/block[1]/block[9]/@bpd"/>
+    <eval expected="color=#ffa500" xpath="//flow/block[1]/block[9]/@background"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[9]/@left-offset"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[10]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/block[10]/@bpd"/>
 
     <!-- row 4 -->
-    <eval expected="144000" xpath="//flow/block[1]/block[9]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[1]/block[9]/@bpd"/>
-    <eval expected="216000" xpath="//flow/block[1]/block[10]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[1]/block[10]/@bpd"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[11]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[11]/@bpd"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[12]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[12]/@bpd"/>
   </checks>
 </testcase>

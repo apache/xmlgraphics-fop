@@ -42,7 +42,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
      * Constructor
      *
      * @param node the fo:page-number formatting object that creates the area
-     * @todo better null checking of node, font
+     * TODO better null checking of node, font
      */
     public PageNumberLayoutManager(PageNumber node) {
         super(node);
@@ -131,9 +131,5 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         return width;
     }
     
-    /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
-    }
 }
 

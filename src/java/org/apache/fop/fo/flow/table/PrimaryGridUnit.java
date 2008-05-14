@@ -22,8 +22,11 @@ package org.apache.fop.fo.flow.table;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
+import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
 
 /**
@@ -32,31 +35,55 @@ import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
  */
 public class PrimaryGridUnit extends GridUnit {
 
-    private static Log log = LogFactory.getLog(PrimaryGridUnit.class);
-
     /** Cell layout manager. */
     private TableCellLayoutManager cellLM;
     /** List of Knuth elements representing the contents of the cell. */
     private LinkedList elements;
-    /** Index of row where this cell starts */
-    private int startRow;
+
+    /** Index of the row where this cell starts. */
+    private int rowIndex;
+
+    /** Index of the column where this cell starts. */
+    private int colIndex;
+
     /** Links to the spanned grid units. (List of GridUnit arrays, one array represents a row) */
     private List rows;
     /** The calculated size of the cell's content. (cached value) */
     private int contentLength = -1;
 
+    private boolean isSeparateBorderModel;
+    private int halfBorderSeparationBPD;
+
+    private int keepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+    private int keepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
+    private int breakBefore = Constants.EN_AUTO;
+    private int breakAfter = Constants.EN_AUTO;
+
     /**
      * Creates a new primary grid unit.
      *
      * @param cell table cell which occupies this grid unit
-     * @param row the table-row element this grid unit belongs to (if any)
-     * @param column table column this grid unit belongs to
-     * @param startCol index of the column this grid unit belongs to, zero-based
-     * @param startRow index of the row this grid unit belongs to, zero-based
+     * @param colIndex index of the column this grid unit belongs to, zero-based
      */
-    PrimaryGridUnit(TableCell cell, TableRow row, TableColumn column, int startCol) {
-        super(cell, row, column, startCol, 0, 0);
-        log.trace("PrimaryGridUnit created, row " + startRow + " col " + startCol);
+    PrimaryGridUnit(TableCell cell, int colIndex) {
+        super(cell, 0, 0);
+        this.colIndex = colIndex;
+        this.isSeparateBorderModel = cell.getTable().isSeparateBorderModel(); // TODO
+        this.halfBorderSeparationBPD = cell.getTable().getBorderSeparation().getBPD().getLength()
+                .getValue() / 2;  // TODO
+    }
+
+    /**
+     * Returns the fo:table-header/footer/body element containing this cell.
+     * 
+     * @return the enclosing table part
+     */
+    public TableBody getTableBody() {
+        FONode node = cell.getParent();
+        if (node instanceof TableRow) {
+            node = node.getParent();
+        }
+        return (TableBody) node;
     }
 
     public TableCellLayoutManager getCellLM() {
@@ -88,80 +115,128 @@ public class PrimaryGridUnit extends GridUnit {
     }
 
     /**
-     * @return half the maximum before border width of this cell.
+     * Returns the widths of the border-before and -after for this cell. In the separate
+     * border model the border-separation is included. In the collapsing model only half
+     * of them is counted, since the other halves belong to the neighbouring cells; also,
+     * the returned value is the maximum of the segments of each applicable grid unit.
+     * 
+     * @return the sum of the before and after border widths
      */
-    public int getHalfMaxBeforeBorderWidth() {
-        int value = 0;
-        if (getRows() != null) {
-            int before = 0;
-            //first row for before borders
-            GridUnit[] row = (GridUnit[])getRows().get(0);
-            for (int i = 0; i < row.length; i++) {
-                if (row[i].hasBorders()) {
-                    before = Math.max(before,
-                            row[i].getBorders().getBorderBeforeWidth(false));
-                }
-            }
-            value += before / 2;
-        } else {
-            if (hasBorders()) {
-                value += getBorders().getBorderBeforeWidth(false) / 2;
-            }
-        }
-        return value;
+    public int getBeforeAfterBorderWidth() {
+        return getBeforeBorderWidth(0, ConditionalBorder.NORMAL)
+                + getAfterBorderWidth(ConditionalBorder.NORMAL);
     }
 
     /**
-     * @return half the maximum after border width of this cell.
+     * Returns the width of the before-border for the given row-span of this cell. In the
+     * separate border model half of the border-separation is included. In the collapsing
+     * model only half of the border is counted, since the other half belongs to the
+     * preceding cell; also, the returned value is the maximum of the segments of each
+     * applicable grid unit.
+     * 
+     * @param rowIndex index of the span for which the border must be computed, 0-based
+     * @param which one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @return the before border width
      */
-    public int getHalfMaxAfterBorderWidth() {
-        int value = 0;
-        if (getRows() != null) {
-            //Last row for after borders
-            int after = 0;
-            GridUnit[] row = (GridUnit[])getRows().get(getRows().size() - 1);
-            for (int i = 0; i < row.length; i++) {
-                if (row[i].hasBorders()) {
-                    after = Math.max(after, row[i].getBorders().getBorderAfterWidth(false));
+    public int getBeforeBorderWidth(int rowIndex, int which) {
+        if (isSeparateBorderModel) {
+            if (getCell() == null) {
+                return 0;
+            } else {
+                CommonBorderPaddingBackground cellBorders = getCell()
+                        .getCommonBorderPaddingBackground();
+                switch (which) {
+                case ConditionalBorder.NORMAL:
+                case ConditionalBorder.LEADING_TRAILING:
+                    return cellBorders.getBorderBeforeWidth(false) + halfBorderSeparationBPD;
+                case ConditionalBorder.REST:
+                    if (cellBorders.getBorderInfo(CommonBorderPaddingBackground.BEFORE).getWidth()
+                            .isDiscard()) {
+                        return 0;
+                    } else {
+                        return cellBorders.getBorderBeforeWidth(true) + halfBorderSeparationBPD;
+                    }
+                default:
+                    assert false;
+                    return 0;
                 }
             }
-            value += after / 2;
         } else {
-            if (hasBorders()) {
-                value += getBorders().getBorderAfterWidth(false) / 2;
+            int width = 0;
+            GridUnit[] row = (GridUnit[]) rows.get(rowIndex);
+            for (int i = 0; i < row.length; i++) {
+                width = Math.max(width,
+                        row[i].getBorderBefore(which).getRetainedWidth());
             }
+            return width / 2;
         }
-        return value;
     }
 
     /**
-     * @return the sum of half the maximum before and after border
-     * widths of this cell.
+     * Returns the width of the before-after for the given row-span of this cell. In the
+     * separate border model half of the border-separation is included. In the collapsing
+     * model only half of the border is counted, since the other half belongs to the
+     * following cell; also, the returned value is the maximum of the segments of each
+     * applicable grid unit.
+     * 
+     * @param rowIndex index of the span for which the border must be computed, 0-based
+     * @param which one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @return the after border width
      */
-    public int getHalfMaxBorderWidth() {
-        return getHalfMaxBeforeBorderWidth() + getHalfMaxAfterBorderWidth();
+    public int getAfterBorderWidth(int rowIndex, int which) {
+        if (isSeparateBorderModel) {
+            if (getCell() == null) {
+                return 0;
+            } else {
+                CommonBorderPaddingBackground cellBorders = getCell()
+                        .getCommonBorderPaddingBackground();
+                switch (which) {
+                case ConditionalBorder.NORMAL:
+                case ConditionalBorder.LEADING_TRAILING:
+                    return cellBorders.getBorderAfterWidth(false) + halfBorderSeparationBPD;
+                case ConditionalBorder.REST:
+                    if (cellBorders.getBorderInfo(CommonBorderPaddingBackground.AFTER).getWidth()
+                            .isDiscard()) {
+                        return 0;
+                    } else {
+                        return cellBorders.getBorderAfterWidth(true) + halfBorderSeparationBPD;
+                    }
+                default:
+                    assert false;
+                    return 0;
+                }
+            }
+        } else {
+            int width = 0;
+            GridUnit[] row = (GridUnit[]) rows.get(rowIndex);
+            for (int i = 0; i < row.length; i++) {
+                width = Math.max(width,
+                        row[i].getBorderAfter(which).getRetainedWidth());
+            }
+            return width / 2;
+        }
     }
 
-    /** @param value The length of the cell content to remember. */
-    public void setContentLength(int value) {
-        this.contentLength = value;
+    /**
+     * Returns the width of the before-after for the last row-span of this cell. See
+     * {@link #getAfterBorderWidth(int, int)}.
+     * 
+     * @param which one of {@link ConditionalBorder#NORMAL},
+     * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
+     * @return the after border width
+     */
+    public int getAfterBorderWidth(int which) {
+        return getAfterBorderWidth(getCell().getNumberRowsSpanned() - 1, which);
     }
 
     /** @return the length of the cell content. */
     public int getContentLength() {
+        if (contentLength < 0) {
+            contentLength = ElementListUtils.calcContentLength(elements);
+        }
         return contentLength;
-    }
-
-    /** @return true if cell/row has an explicit BPD/height */
-    public boolean hasBPD() {
-        if (!getCell().getBlockProgressionDimension().getOptimum(null).isAuto()) {
-            return true;
-        }
-        if (getRow() != null
-                && !getRow().getBlockProgressionDimension().getOptimum(null).isAuto()) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -180,17 +255,29 @@ public class PrimaryGridUnit extends GridUnit {
         rows.add(row);
     }
 
-    void setStartRow(int startRow) {
-        this.startRow = startRow;
+    void setRowIndex(int rowIndex) {
+        this.rowIndex = rowIndex;
     }
 
     /**
-     * Returns the index of the row this grid unit belongs to.
-     *
-     * @return the index of the row this grid unit belongs to.
+     * Returns the index of the row this grid unit belongs to. This is the index, in the
+     * enclosing table part, of the first row spanned by the cell. Note that if the table
+     * has several table-body children, then the index grows continuously across them;
+     * they are considered to form one single part, the "body of the table".
+     * 
+     * @return the index of the row this grid unit belongs to, 0-based.
      */
-    public int getStartRow() {
-        return this.startRow;
+    public int getRowIndex() {
+        return rowIndex;
+    }
+
+    /**
+     * Returns the index of the column this grid unit belongs to.
+     * 
+     * @return the column index, 0-based
+     */
+    public int getColIndex() {
+        return colIndex;
     }
 
     /**
@@ -202,18 +289,18 @@ public class PrimaryGridUnit extends GridUnit {
      */
     public int[] getStartEndBorderWidths() {
         int[] widths = new int[2];
-        if (rows == null) {
-            widths[0] = getBorders().getBorderStartWidth(false);
-            widths[1] = getBorders().getBorderEndWidth(false);
+        if (getCell() == null) {
+            return widths;
+        } else if (getCell().getTable().isSeparateBorderModel()) {
+            widths[0] = getCell().getCommonBorderPaddingBackground().getBorderStartWidth(false);
+            widths[1] = getCell().getCommonBorderPaddingBackground().getBorderEndWidth(false);
         } else {
             for (int i = 0; i < rows.size(); i++) {
                 GridUnit[] gridUnits = (GridUnit[])rows.get(i);
                 widths[0] = Math.max(widths[0],
-                        (gridUnits[0]).
-                            getBorders().getBorderStartWidth(false));
-                widths[1] = Math.max(widths[1],
-                        (gridUnits[gridUnits.length - 1]).
-                            getBorders().getBorderEndWidth(false));
+                        gridUnits[0].borderStart.getBorderInfo().getRetainedWidth());
+                widths[1] = Math.max(widths[1], gridUnits[gridUnits.length - 1].borderEnd
+                        .getBorderInfo().getRetainedWidth());
             }
         }
         return widths;
@@ -222,7 +309,8 @@ public class PrimaryGridUnit extends GridUnit {
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
-        sb.append(" startRow=").append(startRow);
+        sb.append(" rowIndex=").append(rowIndex);
+        sb.append(" colIndex=").append(colIndex);
         return sb.toString();
     }
 
@@ -238,6 +326,80 @@ public class PrimaryGridUnit extends GridUnit {
      */
     public void createCellLM() {
         cellLM = new TableCellLayoutManager(cell, this);
+    }
+
+    /**
+     * Returns the strength of the keep constraint if the first child block (or its descendants)
+     * of this cell has keep-with-previous.
+     * 
+     * @return the keep-with-previous strength
+     */
+    public int getKeepWithPreviousStrength() {
+        return keepWithPrevious;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     * @param strength the keep strength
+     */
+    public void setKeepWithPreviousStrength(int strength) {
+        this.keepWithPrevious = strength;
+    }
+
+    /**
+     * Returns the strength of the keep constraint if the last child block (or its descendants) of
+     * this cell has keep-with-next.
+     * 
+     * @return the keep-with-next strength
+     */
+    public int getKeepWithNextStrength() {
+        return keepWithNext;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     * @param strength the keep strength
+     */
+    public void setKeepWithNextStrength(int strength) {
+        this.keepWithNext = strength;
+    }
+
+    /**
+     * Returns the class of the before break for the first child element of this cell.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakBefore() {
+        return breakBefore;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     * 
+     * @param breakBefore the breakBefore to set
+     */
+    public void setBreakBefore(int breakBefore) {
+        this.breakBefore = breakBefore;
+    }
+
+    /**
+     * Returns the class of the before after for the last child element of this cell.
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+    /**
+     * Don't use, reserved for TableCellLM. TODO
+     * 
+     * @param breakAfter the breakAfter to set
+     */
+    public void setBreakAfter(int breakAfter) {
+        this.breakAfter = breakAfter;
     }
 
 }

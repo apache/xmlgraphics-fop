@@ -19,9 +19,10 @@
 
 package org.apache.fop.render.pcl;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.util.QName;
 
 /**
  * Wrapper on the RendererContext to access the information structure for drawing 
@@ -62,11 +63,28 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
              && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
     }
 
+    /**
+     * Indicates whether the background should not be erased prior to painting.
+     * @return true if the background shouldn't be erased
+     */
     public boolean isSourceTransparency() {
         QName qName = new QName(ExtensionElementMapping.URI, null, "source-transparency");
         return getForeignAttributes() != null 
              && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
     }
     
+    /**
+     * Indicates whether an RGB canvas should be used rather than one with grayscales.
+     * This can be used to work around limitations of Apache Batik if you get error while
+     * processing SVG graphics. Note, however, that RGB mode will use more memory.
+     * @return true if an EGB canvas should be used
+     */
+    public boolean isColorCanvas() {
+        QName qName = new QName(ExtensionElementMapping.URI, null, "color-canvas");
+        Boolean prop = (Boolean)context.getProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS);
+        return Boolean.TRUE.equals(prop) 
+            || (getForeignAttributes() != null 
+                    && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName)));
+    }
 
 }

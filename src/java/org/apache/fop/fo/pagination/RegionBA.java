@@ -28,7 +28,9 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 
 /**
- * Abstract base class for fo:region-before and fo:region-after.
+ * Abstract base class for <a href="http://www.w3.org/TR/xsl/#fo_region-before">
+ * <code>fo:region-before</code></a> and <a href="http://www.w3.org/TR/xsl/#fo_region-after">
+ * <code>fo:region-after</code></a>.
  */
 public abstract class RegionBA extends SideRegion {
     // The value of properties relevant for fo:region-[before|after].
@@ -36,22 +38,23 @@ public abstract class RegionBA extends SideRegion {
     // End of property values
     
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionBA instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     protected RegionBA(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         precedence = pList.get(PR_PRECEDENCE).getEnum();
     }
 
     /**
-     * @return the "precedence" property.
+     * Get the value of the <code>precedence</code> property.
+     * @return the "precedence" property
      */
     public int getPrecedence() {
         return precedence;

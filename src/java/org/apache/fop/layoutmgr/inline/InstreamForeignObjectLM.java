@@ -40,11 +40,7 @@ public class InstreamForeignObjectLM extends AbstractGraphicsLayoutManager {
         fobj = node;
     }
 
-    /**
-     * Get the inline area created by this element.
-     *
-     * @return the inline area
-     */
+    /** {@inheritDoc} */
     protected Area getChildArea() {
         XMLObj child = (XMLObj) fobj.getChildXMLObj();
 

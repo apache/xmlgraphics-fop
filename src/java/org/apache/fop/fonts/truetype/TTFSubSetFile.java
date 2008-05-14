@@ -21,8 +21,8 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -67,11 +67,31 @@ public class TTFSubSetFile extends TTFFile {
         // createDirectory()
     }
 
+    private int determineTableCount() {
+        int numTables = 4; //4 req'd tables: head,hhea,hmtx,maxp
+        if (isCFF()) {
+            throw new UnsupportedOperationException(
+                    "OpenType fonts with CFF glyphs are not supported");
+        } else {
+            numTables += 2; //1 req'd table: glyf,loca
+            if (hasCvt()) {
+                numTables++;
+            }
+            if (hasFpgm()) {
+                numTables++;
+            }
+            if (hasPrep()) {
+                numTables++;
+            }
+        }
+        return numTables;
+    }
+    
     /**
      * Create the directory table
      */
     private void createDirectory() {
-        int numTables = 9;
+        int numTables = determineTableCount();
         // Create the TrueType header
         writeByte((byte)0);
         writeByte((byte)1);
@@ -95,10 +115,12 @@ public class TTFSubSetFile extends TTFFile {
         realSize += 2;
 
         // Create space for the table entries
-        writeString("cvt ");
-        cvtDirOffset = currentPos;
-        currentPos += 12;
-        realSize += 16;
+        if (hasCvt()) {
+            writeString("cvt ");
+            cvtDirOffset = currentPos;
+            currentPos += 12;
+            realSize += 16;
+        }
 
         if (hasFpgm()) {
             writeString("fpgm");
@@ -137,17 +159,19 @@ public class TTFSubSetFile extends TTFFile {
         currentPos += 12;
         realSize += 16;
 
-        writeString("prep");
-        prepDirOffset = currentPos;
-        currentPos += 12;
-        realSize += 16;
+        if (hasPrep()) {
+            writeString("prep");
+            prepDirOffset = currentPos;
+            currentPos += 12;
+            realSize += 16;
+        }
     }
 
 
     /**
      * Copy the cvt table as is from original font to subset font
      */
-    private void createCvt(FontFileReader in) throws IOException {
+    private boolean createCvt(FontFileReader in) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("cvt ");
         if (entry != null) {
             pad4();
@@ -161,21 +185,29 @@ public class TTFSubSetFile extends TTFFile {
             writeULong(cvtDirOffset + 8, (int)entry.getLength());
             currentPos += (int)entry.getLength();
             realSize += (int)entry.getLength();
+            return true;
         } else {
-            throw new IOException("Can't find cvt table");
+            return false;
+            //throw new IOException("Can't find cvt table");
         }
     }
 
-
-    private boolean hasFpgm() {
-        return (dirTabs.get("fpgm") != null);
+    private boolean hasCvt() {
+        return dirTabs.containsKey("cvt ");
     }
 
+    private boolean hasFpgm() {
+        return dirTabs.containsKey("fpgm");
+    }
+
+    private boolean hasPrep() {
+        return dirTabs.containsKey("prep");
+    }
 
     /**
      * Copy the fpgm table as is from original font to subset font
      */
-    private void createFpgm(FontFileReader in) throws IOException {
+    private boolean createFpgm(FontFileReader in) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("fpgm");
         if (entry != null) {
             pad4();
@@ -188,9 +220,9 @@ public class TTFSubSetFile extends TTFFile {
             writeULong(fpgmDirOffset + 8, (int)entry.getLength());
             currentPos += (int)entry.getLength();
             realSize += (int)entry.getLength();
+            return true;
         } else {
-            //fpgm table is optional
-            //throw new IOException("Can't find fpgm table");
+            return false;
         }
     }
 
@@ -237,7 +269,7 @@ public class TTFSubSetFile extends TTFFile {
     /**
      * Copy the prep table as is from original font to subset font
      */
-    private void createPrep(FontFileReader in) throws IOException {
+    private boolean createPrep(FontFileReader in) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("prep");
         if (entry != null) {
             pad4();
@@ -251,8 +283,9 @@ public class TTFSubSetFile extends TTFFile {
             writeULong(prepDirOffset + 8, (int)entry.getLength());
             currentPos += (int)entry.getLength();
             realSize += (int)entry.getLength();
+            return true;
         } else {
-            throw new IOException("Can't find prep table");
+            return false;
         }
     }
 
@@ -559,8 +592,8 @@ public class TTFSubSetFile extends TTFFile {
                                         + mtxTab[origIndex.intValue()].getOffset()) < 0) {
                         // origIndex is a composite glyph
                         allComposites.put(origIndex, glyphs.get(origIndex));
-                        List composites =
-                            getIncludedGlyphs(in, (int)entry.getOffset(),
+                        List composites
+                            = getIncludedGlyphs(in, (int)entry.getOffset(),
                                               origIndex);
 
                         // Iterate through all composites pointed to
@@ -618,6 +651,9 @@ public class TTFSubSetFile extends TTFFile {
         if (!checkTTC(in, name)) {
             throw new IOException("Failed to read font");
         }
+        
+        //Copy the Map as we're going to modify it
+        Map subsetGlyphs = new java.util.HashMap(glyphs);
 
         output = new byte[in.getFileSize()];
 
@@ -628,49 +664,36 @@ public class TTFSubSetFile extends TTFFile {
         readHorizontalMetrics(in);
         readIndexToLocation(in);
 
-        scanGlyphs(in, glyphs);
+        scanGlyphs(in, subsetGlyphs);
 
         createDirectory();                // Create the TrueType header and directory
 
         createHead(in);
-        createHhea(in, glyphs.size());    // Create the hhea table
-        createHmtx(in, glyphs);           // Create hmtx table
-        createMaxp(in, glyphs.size());    // copy the maxp table
+        createHhea(in, subsetGlyphs.size());    // Create the hhea table
+        createHmtx(in, subsetGlyphs);           // Create hmtx table
+        createMaxp(in, subsetGlyphs.size());    // copy the maxp table
 
-        try {
-            createCvt(in);    // copy the cvt table
-        } catch (IOException ex) {
-            // Cvt is optional (only required for OpenType (MS) fonts)
-            //log.error("TrueType warning: " + ex.getMessage());
+        boolean optionalTableFound;
+        optionalTableFound = createCvt(in);    // copy the cvt table
+        if (!optionalTableFound) {
+            // cvt is optional (used in TrueType fonts only)
+            log.debug("TrueType: ctv table not present. Skipped.");
         }
 
-        try {
-            createFpgm(in);    // copy fpgm table
-        } catch (IOException ex) {
-            // Fpgm is optional (only required for OpenType (MS) fonts)
-            //log.error("TrueType warning: " + ex.getMessage());
+        optionalTableFound = createFpgm(in);    // copy fpgm table
+        if (!optionalTableFound) {
+            // fpgm is optional (used in TrueType fonts only)
+            log.debug("TrueType: fpgm table not present. Skipped.");
         }
 
-        try {
-            createPrep(in);    // copy prep table
-        } catch (IOException ex) {
-            // Prep is optional (only required for OpenType (MS) fonts)
-            //log.error("TrueType warning: " + ex.getMessage());
+        optionalTableFound = createPrep(in);    // copy prep table
+        if (!optionalTableFound) {
+            // prep is optional (used in TrueType fonts only)
+            log.debug("TrueType: prep table not present. Skipped.");
         }
 
-        try {
-            createLoca(glyphs.size());    // create empty loca table
-        } catch (IOException ex) {
-            // Loca is optional (only required for OpenType (MS) fonts)
-            //log.error("TrueType warning: " + ex.getMessage());
-        }
-
-        try {
-            createGlyf(in, glyphs);
-        } catch (IOException ex) {
-            // Glyf is optional (only required for OpenType (MS) fonts)
-            //log.error("TrueType warning: " + ex.getMessage());
-        }
+        createLoca(subsetGlyphs.size());    // create empty loca table
+        createGlyf(in, subsetGlyphs);       //create glyf table and update loca table
 
         pad4();
         createCheckSumAdjustment();

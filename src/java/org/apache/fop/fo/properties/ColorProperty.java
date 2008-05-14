@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: ColorTypeProperty.java 377045 2006-02-11 20:23:47Z jeremias $ */
+/* $Id$ */
 
 package org.apache.fop.fo.properties;
 
@@ -33,7 +33,7 @@ import org.apache.fop.util.ColorUtil;
 public final class ColorProperty extends Property  {
     
     /** cache holding canonical ColorProperty instances */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(ColorProperty.class);
     
     /**
      * The color represented by this property.
@@ -92,6 +92,8 @@ public final class ColorProperty extends Property  {
      * 
      * @param foUserAgent FOP user agent
      * @param value RGB value as String to be parsed
+     * @return the canonical ColorProperty instance corresponding 
+     *         to the given value
      * @throws PropertyException if the value can't be parsed
      * @see ColorUtil#parseColorString(FOUserAgent, String)
      */
@@ -99,18 +101,9 @@ public final class ColorProperty extends Property  {
         ColorProperty instance = new ColorProperty(
                                        ColorUtil.parseColorString(
                                                foUserAgent, value));
-        return (ColorProperty) cache.fetch(instance);
+        return (ColorProperty)cache.fetch(instance);
     }
 
-    /**
-     * Returns an instance of a color property given a color
-     * @param color the color value
-     * @return the color property
-     */
-    public static ColorProperty getInstance(Color color) {
-        return (ColorProperty) cache.fetch(new ColorProperty(color));
-    }
-    
     /**
      * Create a new ColorProperty with a given color.
      * 

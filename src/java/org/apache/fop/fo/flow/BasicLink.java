@@ -27,19 +27,21 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:basic-link object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_basic-link">
+ * <code>fo:basic-link</code></a> object.
  *
  * This class contains the logic to determine the link represented by this FO,
  * and whether that link is external (uses a URI) or internal (an id 
  * reference).
  */
 public class BasicLink extends Inline {
+
     // The value of properties relevant for fo:basic-link.
     // private ToBeImplementedProperty destinationPlacementOffset;
     private String externalDestination;
     // private ToBeImplementedProperty indicateDestination;
     private String internalDestination;
-    // private ToBeImplementedProperty showDestination;
+    private int showDestination;
     // private ToBeImplementedProperty targetProcessingContext;
     // private ToBeImplementedProperty targetPresentationContext;
     // private ToBeImplementedProperty targetStylesheet;
@@ -51,22 +53,23 @@ public class BasicLink extends Inline {
     private boolean blockOrInlineItemFound = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Construct a BasicLink instance with the given {@link FONode}
+     * as its parent.
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public BasicLink(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         // destinationPlacementOffset = pList.get(PR_DESTINATION_PLACEMENT_OFFSET);
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         // indicateDestination = pList.get(PR_INDICATE_DESTINATION);
         internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
-        // showDestination = pList.get(PR_SHOW_DESTINATION);
+        showDestination = pList.get(PR_SHOW_DESTINATION).getEnum();
         // targetProcessingContext = pList.get(PR_TARGET_PROCESSING_CONTEXT);
         // targetPresentationContext = pList.get(PR_TARGET_PRESENTATION_CONTEXT);
         // targetStylesheet = pList.get(PR_TARGET_STYLESHEET);
@@ -76,70 +79,83 @@ public class BasicLink extends Inline {
             externalDestination = null;
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
-            attributeError("Missing attribute:  Either external-destination or " +
-                "internal-destination must be specified.");
+            getFOValidationEventProducer().missingLinkDestination(this, getName(), locator);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startLink(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endLink();
     }
 
-    /**
-     * {@inheritDoc} String, String)
-     * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
-     */
+    /** {@inheritDoc} */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockOrInlineItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(#PCDATA|%inline;|%block;)");
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockOrInlineItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(#PCDATA|%inline;|%block;)");
+                }
+            } else if (!isBlockOrInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockOrInlineItemFound = true;
             }
-        } else if (!isBlockOrInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockOrInlineItemFound = true;
         }
     }
 
     /**
-     * @return the "internal-destination" property.
+     * Get the value of the <code>internal-destination</code> property.
+     *
+     * @return the "internal-destination" property
      */
     public String getInternalDestination() {
         return internalDestination;
     }
 
     /**
-     * @return the "external-destination" property.
+     * Get the value of the <code>external-destination</code> property.
+     *
+     * @return the "external-destination" property
      */
     public String getExternalDestination() {
         return externalDestination;
     }
 
     /**
-     * @return whether or not this basic link has an internal destination or not
+     * Convenience method to check if this instance has an internal destination.
+     *
+     * @return <code>true</code> if this basic link has an internal destination;
+     *          <code>false</code> otherwise
      */
     public boolean hasInternalDestination() {
         return internalDestination != null && internalDestination.length() > 0;
     }
 
     /**
-     * @return whether or not this basic link has an external destination or not
+     * Convenience method to check if this instance has an external destination
+     *
+     * @return <code>true</code> if this basic link has an external destination;
+     *          <code>false</code> otherwise
      */
     public boolean hasExternalDestination() {
         return externalDestination != null && externalDestination.length() > 0;
+    }
+
+    /**
+     * Get the value of the <code>show-destination</code> property.
+     *
+     * @return the "show-destination" property
+     */
+    public int getShowDestination() {
+        return this.showDestination;
     }
 
     /** {@inheritDoc} */
@@ -147,7 +163,10 @@ public class BasicLink extends Inline {
         return "basic-link";
     }
     
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_BASIC_LINK}
+     */
     public int getNameId() {
         return FO_BASIC_LINK;
     }

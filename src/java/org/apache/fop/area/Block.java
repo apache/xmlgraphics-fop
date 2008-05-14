@@ -19,7 +19,6 @@
  
 package org.apache.fop.area;
 
-import java.util.ArrayList;
 
 // block areas hold either more block areas or line
 // areas can also be used as a block spacer
@@ -59,6 +58,8 @@ public class Block extends BlockParent {
     private int stacking = TB;
     private int positioning = STACK;
 
+    protected transient boolean allowBPDUpdate = true;
+    
     // a block with may contain the dominant styling info in
     // terms of most lines or blocks with info
 
@@ -78,7 +79,7 @@ public class Block extends BlockParent {
      * @param autoHeight increase the height of the block.
      */
     public void addBlock(Block block, boolean autoHeight) {
-        if (autoHeight) {
+        if (autoHeight && allowBPDUpdate) {
             bpd += block.getAllocBPD();
         }
         addChildArea(block);
@@ -113,12 +114,20 @@ public class Block extends BlockParent {
     }
 
     /**
+     * Indicates whether this block is stacked, rather than absolutely positioned.
+     * @return true if it is stacked
+     */
+    public boolean isStacked() {
+        return (getPositioning() == Block.STACK || getPositioning() == Block.RELATIVE);
+    }
+    
+    /**
      * @return the start-indent trait
      */
     public int getStartIndent() {
         Integer startIndent = (Integer)getTrait(Trait.START_INDENT);
         return (startIndent != null ? startIndent.intValue() : 0);
     }
-    
+
 }
 

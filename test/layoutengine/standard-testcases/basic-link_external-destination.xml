@@ -33,12 +33,16 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block><fo:basic-link external-destination="http://xmlgraphics.apache.org/fop/">FOP</fo:basic-link></fo:block>
           <fo:block><fo:basic-link external-destination="url(http://xmlgraphics.apache.org/fop/)">FOP</fo:basic-link></fo:block>
+          <fo:block><fo:basic-link show-destination="replace" external-destination="url(http://xmlgraphics.apache.org/fop/)">FOP</fo:basic-link></fo:block>
+          <fo:block><fo:basic-link show-destination="new" external-destination="url(http://xmlgraphics.apache.org/fop/)">FOP</fo:basic-link></fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <eval expected="http://xmlgraphics.apache.org/fop/" xpath="//flow/block[1]/lineArea/inlineparent/@external-link"/>
-    <eval expected="http://xmlgraphics.apache.org/fop/" xpath="//flow/block[2]/lineArea/inlineparent/@external-link"/>
+    <eval expected="http://xmlgraphics.apache.org/fop/" xpath="substring-after(//flow/block[1]/lineArea/inlineparent/@external-link,'dest=')"/>
+    <eval expected="http://xmlgraphics.apache.org/fop/" xpath="substring-after(//flow/block[2]/lineArea/inlineparent/@external-link,'dest=')"/>
+    <eval expected="false" xpath="substring-before(substring-after(//flow/block[3]/lineArea/inlineparent/@external-link,'newWindow='), ',')"/>
+    <eval expected="true" xpath="substring-before(substring-after(//flow/block[4]/lineArea/inlineparent/@external-link,'newWindow='), ',')"/>
   </checks>
 </testcase>
