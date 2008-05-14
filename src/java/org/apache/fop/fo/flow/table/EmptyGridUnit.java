@@ -19,31 +19,28 @@
 
 package org.apache.fop.fo.flow.table;
 
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
  * GridUnit subclass for empty grid units.
  */
 public class EmptyGridUnit extends GridUnit {
 
-    private TableBody body;
-
     /**
      * @param table the containing table
      * @param row the table-row element this grid unit belongs to (if any)
-     * @param startRow index of the row this grid unit belongs to, 0-based
-     * @param startCol column index, 0-based
+     * @param colIndex column index, 0-based
      */
-    EmptyGridUnit(Table table, TableRow row, int startRow, int startCol) {
-        super(table, row, table.getColumn(startCol), startCol, 0, 0);
+    EmptyGridUnit(Table table, TableRow row, int colIndex) {
+        super(table, 0, 0);
+        setRow(row);
     }
 
     /** {@inheritDoc} */
-    protected void setBorder(int side) {
-        resolvedBorders[side] = new BorderSpecification(
-                CommonBorderPaddingBackground.getDefaultBorderInfo(),
-                Constants.FO_TABLE_CELL);
+    protected void setBordersFromCell() {
+        borderBefore = ConditionalBorder.getDefaultBorder(collapsingBorderModel);
+        borderAfter = ConditionalBorder.getDefaultBorder(collapsingBorderModel);
+        borderStart = BorderSpecification.getDefaultBorder();
+        borderEnd = BorderSpecification.getDefaultBorder();
     }
 
     /** {@inheritDoc} */
@@ -54,12 +51,7 @@ public class EmptyGridUnit extends GridUnit {
 
     /** {@inheritDoc} */
     public boolean isPrimary() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    public TableBody getBody() {
-        return this.body;
+        return false;
     }
 
     /** {@inheritDoc} */

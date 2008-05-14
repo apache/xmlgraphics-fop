@@ -45,9 +45,7 @@ public abstract class LengthProperty extends Property
             super(propId);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
                                         FObj fo) throws PropertyException {
@@ -59,7 +57,9 @@ public abstract class LengthProperty extends Property
             }
             if (p instanceof NumberProperty) {
                 //Assume pixels (like in HTML) when there's no unit
-                return FixedLength.getInstance(p.getNumeric().getNumericValue(), "px");
+                return FixedLength.getInstance(
+                        p.getNumeric().getNumericValue(), "px",
+                        propertyList.getFObj().getUserAgent().getSourceResolution() / 72.0f);
             }
             Length val = p.getLength();
             if (val != null) {
@@ -71,46 +71,22 @@ public abstract class LengthProperty extends Property
 
     }
 
-    /**
-     * Return the number of table units which are included in this
-     * length specification.
-     * This will always be 0 unless the property specification used
-     * the proportional-column-width() function (only only table
-     * column FOs).
-     * <p>If this value is not 0, the actual value of the Length cannot
-     * be known without looking at all of the columns in the table to
-     * determine the value of a "table-unit".
-     * @return The number of table units which are included in this
-     * length specification.
-     */
-    public double getTableUnits() {
-        return 0.0;
-    }
-
-    /**
-     * @return the numeric dimension. Length always a dimension of 1.
-     */
+    /** @return the numeric dimension. Length always a dimension of 1 */
     public int getDimension() {
         return 1;
     }
 
-    /**
-     * @return this.length cast as a Numeric
-     */
+    /** @return this.length cast as a Numeric */
     public Numeric getNumeric() {
         return this;
     }
 
-    /**
-     * @return this.length
-     */
+    /** @return this.length */
     public Length getLength() {
         return this;
     }
 
-    /**
-     * @return this.length cast as an Object
-     */
+    /** @return this.length cast as an Object */
     public Object getObject() {
         return this;
     }

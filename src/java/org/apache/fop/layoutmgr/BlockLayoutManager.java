@@ -25,14 +25,15 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
@@ -78,11 +79,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         proxyLMiter = new ProxyLMiter();
     }
 
+    /** {@inheritDoc} */
     public void initialize() {
         super.initialize();
         FontInfo fi = getBlockFO().getFOEventHandler().getFontInfo();
         FontTriplet[] fontkeys = getBlockFO().getCommonFont().getFontState(fi);
-        Font initFont = fi.getFontInstance(fontkeys[0], getBlockFO().getCommonFont().fontSize.getValue(this));
+        Font initFont = fi.getFontInstance(fontkeys[0],
+                getBlockFO().getCommonFont().fontSize.getValue(this));
         lead = initFont.getAscender();
         follow = -initFont.getDescender();
         //middleShift = -fs.getXHeight() / 2;
@@ -134,7 +137,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      */
     protected class ProxyLMiter extends LMiter {
 
-        /*
+        /**
          * Constructs a proxy iterator for Block LM.
          */
         public ProxyLMiter() {
@@ -146,10 +149,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
          * @return true if there are more child lms
          */
         public boolean hasNext() {
-            return (curPos < listLMs.size()) ? true : createNextChildLMs(curPos);
+            return (curPos < listLMs.size()) || createNextChildLMs(curPos);
         }
 
         /**
+         * @param pos ...
          * @return true if new child lms were added
          */
         protected boolean createNextChildLMs(int pos) {
@@ -205,40 +209,25 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         return llm;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepTogether() {
-        // TODO Keeps will have to be more sophisticated sooner or later
-        // TODO This is a quick fix for the fact that the parent is not always a BlockLevelLM;
-        // eventually mustKeepTogether() must be moved up to the LM interface
-        return (!getBlockFO().getKeepTogether().getWithinPage().isAuto()
-                || !getBlockFO().getKeepTogether().getWithinColumn().isAuto()
-                || (getParent() instanceof BlockLevelLayoutManager
-                    && ((BlockLevelLayoutManager) getParent()).mustKeepTogether())
-                || (getParent() instanceof InlineLayoutManager
-                    && ((InlineLayoutManager) getParent()).mustKeepTogether()));
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        KeepProperty keep = getBlockFO().getKeepTogether();
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(keep);
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
+    }
+    
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getBlockFO().getKeepWithNext());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepWithPrevious() {
-        return !getBlockFO().getKeepWithPrevious().getWithinPage().isAuto()
-                || !getBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getBlockFO().getKeepWithPrevious());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepWithNext() {
-        return !getBlockFO().getKeepWithNext().getWithinPage().isAuto()
-                || !getBlockFO().getKeepWithNext().getWithinColumn().isAuto();
-    }
-
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public void addAreas(PositionIterator parentIter,
             LayoutContext layoutContext) {
         getParentArea(null);
@@ -249,7 +238,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        LayoutManager childLM = null;
+        LayoutManager childLM;
         LayoutManager lastLM = null;
         LayoutContext lc = new LayoutContext(0);
         lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
@@ -279,7 +268,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             Position innerPosition = pos;
             if (pos instanceof NonLeafPosition) {
                 //Not all elements are wrapped
-                innerPosition = ((NonLeafPosition) pos).getPosition();
+                innerPosition = pos.getPosition();
             }
             if (innerPosition == null) {
                 // pos was created by this BlockLM and was inside an element
@@ -308,7 +297,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        getPSLM().addIDToPage(getBlockFO().getId());
+        addId();
         
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
@@ -389,7 +378,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             // set last area flag
             lc.setFlags(LayoutContext.LAST_AREA,
                     (layoutContext.isLastArea() && childLM == lastLM));
-            lc.setStackLimit(layoutContext.getStackLimit());
+            lc.setStackLimitBP(layoutContext.getStackLimitBP());
             // Add the line areas to Area
             childLM.addAreas(childPosIter, lc);
         }
@@ -403,8 +392,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         curBlockArea = null;
         resetSpaces();
         
-        // Notify end of block layout manager to the PSLM
-        getPSLM().notifyEndOfLayout(getBlockFO().getId());
+        //Notify end of block layout manager to the PSLM
+        checkEndOfLayout(lastPos);
     }
 
     /**
@@ -473,19 +462,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                     getBlockFO().getCommonBorderPaddingBackground(),
                     this);
             super.flush();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-            childBreaks.clear();
-        } else {
-            //reset(resetPos);
-            LayoutManager lm = resetPos.getLM();
         }
     }
 

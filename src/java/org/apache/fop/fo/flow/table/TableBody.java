@@ -23,16 +23,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
- * Class modelling the fo:table-body object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-body">
+ * <code>fo:table-body</code></a> object.
  */
 public class TableBody extends TableCellContainer {
     // The value of properties relevant for fo:table-body.
@@ -62,23 +64,21 @@ public class TableBody extends TableCellContainer {
     private List rowGroups = new LinkedList();
 
     /**
+     * Create a TableBody instance with the given {@link FONode}
+     * as parent.
      * @param parent FONode that is the parent of the object
      */
     public TableBody(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         super.bind(pList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList pList)
                     throws FOPException {
@@ -98,17 +98,13 @@ public class TableBody extends TableCellContainer {
         super.processNode(elementName, locator, attlist, pList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startBody(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
 
         if (!inMarker()) {
@@ -119,13 +115,8 @@ public class TableBody extends TableCellContainer {
         getFOEventHandler().endBody(this);
 
         if (!(tableRowsFound || tableCellsFound)) {
-            if (getUserAgent().validateStrictly()) {
-                missingChildElementError("marker* (table-row+|table-cell+)");
-            } else {
-                log.error("fo:table-body must not be empty. "
-                        + "Expected: marker* (table-row+|table-cell+)");
-                getParent().removeChild(this);
-            }
+            missingChildElementError("marker* (table-row+|table-cell+)", true);
+            getParent().removeChild(this);
         } else {
             finishLastRowGroup();
         }
@@ -138,14 +129,14 @@ public class TableBody extends TableCellContainer {
 
     protected void finishLastRowGroup() throws ValidationException {
         if (!inMarker()) {
-            RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder(); 
+            RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder();
             if (tableRowsFound) {
-                rowGroupBuilder.endRow(lastRow);
+                rowGroupBuilder.endTableRow();
             } else if (!lastCellEndsRow) {
                 rowGroupBuilder.endRow(this);
             }
             try {
-                rowGroupBuilder.endTablePart(this);
+                rowGroupBuilder.endTablePart();
             } catch (ValidationException e) {
                 e.setLocator(locator);
                 throw e;
@@ -154,8 +145,8 @@ public class TableBody extends TableCellContainer {
     }
 
     /**
-     * {@inheritDoc} String, String)
-     * XSL Content Model: marker* (table-row+|table-cell+)
+     * {@inheritDoc}
+     * <br>XSL Content Model: marker* (table-row+|table-cell+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
@@ -167,29 +158,24 @@ public class TableBody extends TableCellContainer {
             } else if (localName.equals("table-row")) {
                 tableRowsFound = true;
                 if (tableCellsFound) {
-                    invalidChildError(loc, nsURI, localName, "Either fo:table-rows" +
-                      " or fo:table-cells may be children of an " + getName() +
-                      " but not both");
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.noMixRowsAndCells(this, getName(), getLocator());
                 }
             } else if (localName.equals("table-cell")) {
                 tableCellsFound = true;
                 if (tableRowsFound) {
-                    invalidChildError(loc, nsURI, localName,
-                            "Either fo:table-rows or fo:table-cells "
-                            + "may be children of an "
-                            + getName() + " but not both");
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.noMixRowsAndCells(this, getName(), getLocator());
                 }
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
             switch (child.getNameId()) {
@@ -198,11 +184,11 @@ public class TableBody extends TableCellContainer {
                     getTable().getRowGroupBuilder().startTablePart(this);
                 } else {
                     columnNumberManager.prepareForNextRow(pendingSpans);
-                    getTable().getRowGroupBuilder().endRow(lastRow);
+                    getTable().getRowGroupBuilder().endTableRow();
                 }
                 rowsStarted = true;
                 lastRow = (TableRow) child;
-                getTable().getRowGroupBuilder().startRow(lastRow);
+                getTable().getRowGroupBuilder().startTableRow(lastRow);
                 break;
             case FO_TABLE_CELL:
                 if (!rowsStarted) {
@@ -211,7 +197,7 @@ public class TableBody extends TableCellContainer {
                 rowsStarted = true;
                 TableCell cell = (TableCell) child;
                 addTableCellChild(cell, firstRow);
-                lastCellEndsRow = cell.endsRow(); 
+                lastCellEndsRow = cell.endsRow();
                 if (lastCellEndsRow) {
                     firstRow = false;
                     columnNumberManager.prepareForNextRow(pendingSpans);
@@ -225,15 +211,6 @@ public class TableBody extends TableCellContainer {
         super.addChildNode(child);
     }
 
-    /** {inheritDoc} */
-    protected void setCollapsedBorders() {
-        Table table = (Table) parent;
-        createBorder(CommonBorderPaddingBackground.START, table);
-        createBorder(CommonBorderPaddingBackground.END, table);
-        createBorder(CommonBorderPaddingBackground.BEFORE);
-        createBorder(CommonBorderPaddingBackground.AFTER);
-    }
-
     void addRowGroup(List rowGroup) {
         rowGroups.add(rowGroup);
     }
@@ -243,7 +220,9 @@ public class TableBody extends TableCellContainer {
     }
 
     /**
-     * @return the Common Border, Padding, and Background Properties.
+     * Get the {@link CommonBorderPaddingBackground} instance attached
+     * to this TableBody.
+     * @return the {@link CommonBorderPaddingBackground} instance.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
@@ -256,9 +235,14 @@ public class TableBody extends TableCellContainer {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_BODY}
      */
     public int getNameId() {
         return FO_TABLE_BODY;
+    }
+
+    protected boolean isTableHeader() {
+        return false;
     }
 
     protected boolean isTableFooter() {
@@ -282,7 +266,6 @@ public class TableBody extends TableCellContainer {
                 getTable().getRowGroupBuilder().endRow(this);
             }
         }
-        rowsStarted = true;
     }
 
 }

@@ -21,11 +21,11 @@
   <section href="fop-overview.xml" width="165" height="118"/>
   <section href="fop-output-formats.xml" width="165" height="103"/>
   <section href="fop-foreign-xml-support.xml" width="165" height="55"/>
-  <section href="fop-image-support.xml" width="165" height="65"/>
-  <section href="fop-use-cases.xml" width="165" height="96"/>
-  <section href="fop-history.xml" width="165" height="181"/>
+  <section href="fop-image-support.xml" width="165" height="66"/>
+  <section href="fop-use-cases.xml" width="165" height="98"/>
+  <section href="fop-history.xml" width="165" height="180"/>
   <section href="fop-getting-help.xml" width="165" height="67"/>
-  <section href="fop-transformation-chain.xml" width="335" height="167"/>
+  <section href="fop-transformation-chain.xml" width="335" height="166"/>
   <!-- section href="hello-world-in-fo.xml" width="165" height="115"/-->
-  <section href="business-card-demo.xml" width="335" height="181"/>
+  <section href="business-card-demo.xml" width="335" height="185"/>
 </poster>

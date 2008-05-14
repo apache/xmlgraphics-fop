@@ -31,6 +31,8 @@ import org.w3c.dom.Document;
  */
 public class ForeignObject extends Area {
     
+    private static final long serialVersionUID = -214947698798577885L;
+    
     private Document doc;
     private String namespace;
 

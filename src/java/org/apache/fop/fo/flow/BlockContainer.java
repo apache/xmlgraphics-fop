@@ -35,7 +35,8 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
- * Class modelling the fo:block-container object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_block-container">
+ * <code>fo:block-container</code></a> object.
  */
 public class BlockContainer extends FObj {
     // The value of properties relevant for fo:block-container.
@@ -47,7 +48,6 @@ public class BlockContainer extends FObj {
     private int breakBefore;
     // private ToBeImplementedProperty clip;
     private int displayAlign;
-    private Length height;
     private LengthRangeProperty inlineProgressionDimension;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
@@ -55,7 +55,6 @@ public class BlockContainer extends FObj {
     private int overflow;
     private Numeric referenceOrientation;
     private int span;
-    private Length width;
     private int writingMode;
     // Unused but valid items, commented out for performance:
     //     private int intrusionDisplace;
@@ -66,15 +65,16 @@ public class BlockContainer extends FObj {
     private boolean blockItemFound = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Creates a new BlockContainer instance as a child of
+     * the given {@link FONode}.
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public BlockContainer(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonAbsolutePosition = pList.getAbsolutePositionProps();
@@ -85,7 +85,6 @@ public class BlockContainer extends FObj {
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         // clip = pList.get(PR_CLIP);
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
-        height = pList.get(PR_HEIGHT).getLength();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
@@ -93,13 +92,10 @@ public class BlockContainer extends FObj {
         overflow = pList.get(PR_OVERFLOW).getEnum();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         span = pList.get(PR_SPAN).getEnum();
-        width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startBlockContainer(this);
@@ -107,28 +103,34 @@ public class BlockContainer extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (%block;)+
-     * But: "In addition an fo:block-container that does not generate an 
+     * <br>XSL Content Model: marker* (%block;)+
+     * <br><i><b>BUT</b>: "In addition an fo:block-container that does not generate an 
      * absolutely positioned area may have a sequence of zero or more 
      * fo:markers as its initial children."
-     * @todo - implement above restriction if possible
+     * The latter refers to block-containers with absolute-position="absolute"
+     * or absolute-position="fixed".
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+        if (FO_URI.equals(nsURI)) {
+            if ("marker".equals(localName)) {
+                if (commonAbsolutePosition.absolutePosition == EN_ABSOLUTE
+                        || commonAbsolutePosition.absolutePosition == EN_FIXED) {
+                    getFOValidationEventProducer()
+                            .markerBlockContainerAbsolutePosition(this, locator);
+                }
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(FO_URI, localName)) {
+                invalidChildError(loc, FO_URI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
@@ -137,30 +139,22 @@ public class BlockContainer extends FObj {
         getFOEventHandler().endBlockContainer(this);
     }
 
-    /**
-     * @return true (BlockContainer can generate Reference Areas)
-     */
+    /** @return <code>true</code> (BlockContainer can generate Reference Areas) */
     public boolean generatesReferenceAreas() {
         return true;
     }
 
-    /**
-     * @return the Common Absolute Position Properties.
-     */
+    /** @return the {@link CommonAbsolutePosition} */
     public CommonAbsolutePosition getCommonAbsolutePosition() {
         return commonAbsolutePosition;
     }
     
-    /**
-     * @return the Common Margin Properties-Block.
-     */
+    /** @return the {@link CommonMarginBlock} */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
-    /**
-     * @return the Common Border, Padding, and Background Properties.
-     */
+    /** @return the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
@@ -172,7 +166,7 @@ public class BlockContainer extends FObj {
         return blockProgressionDimension;
     }
 
-    /** @return the display-align property. */
+    /** @return the "display-align" property. */
     public int getDisplayAlign() {
         return displayAlign;
     }
@@ -202,55 +196,31 @@ public class BlockContainer extends FObj {
         return keepTogether;
     }
 
-    /**
-     * @return the "inline-progression-dimension" property.
-     */
+    /** @return the "inline-progression-dimension" property */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
-    /**
-     * @return the "overflow" property.
-     */
+    /** @return the "overflow" property */
     public int getOverflow() {
         return overflow;
     }
 
-    /**
-     * @return the "reference-orientation" property.
-     */
+    /** @return the "reference-orientation" property */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();
     }
 
-    /**
-     * @return the "span" property.
-     */
+    /** @return the "span" property */
     public int getSpan() {
         return this.span;
     }
 
-    /**
-     * @return the "writing-mode" property.
-     */
+    /** @return the "writing-mode" property */
     public int getWritingMode() {
         return writingMode;
     }
     
-    /**
-     * @return the width property
-     */
-    public Length getWidth() {
-        return width;
-    }
-
-    /**
-     * @return the height property
-     */
-    public Length getHeight() {
-        return height;
-    }
-
     /** {@inheritDoc} */
     public String getLocalName() {
         return "block-container";
@@ -258,6 +228,7 @@ public class BlockContainer extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_BLOCK_CONTAINER}
      */
     public int getNameId() {
         return FO_BLOCK_CONTAINER;

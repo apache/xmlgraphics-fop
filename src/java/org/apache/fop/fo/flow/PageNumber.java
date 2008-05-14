@@ -36,7 +36,8 @@ import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Class modelling the fo:page-number object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-number">
+ * <code>fo:page-number</code></a> object.
  */
 public class PageNumber extends FObj {
     // The value of properties relevant for fo:page-number.
@@ -71,15 +72,15 @@ public class PageNumber extends FObj {
     private Color color;
     
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public PageNumber(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -97,28 +98,26 @@ public class PageNumber extends FObj {
         color = pList.get(Constants.PR_COLOR).getColor(getUserAgent());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startPageNumber(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         getFOEventHandler().endPageNumber(this);
     }
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /** @return the Common Font Properties. */
@@ -141,37 +140,27 @@ public class PageNumber extends FObj {
         return textDecoration; 
     }
 
-    /**
-     * @return the "alignment-adjust" property
-     */
+    /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
     
-    /**
-     * @return the "alignment-baseline" property
-     */
+    /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
     
-    /**
-     * @return the "baseline-shift" property
-     */
+    /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
     
-    /**
-     * @return the "dominant-baseline" property
-     */
+    /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
     
-    /**
-     * @return the "line-height" property
-     */
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
@@ -181,7 +170,10 @@ public class PageNumber extends FObj {
         return "page-number";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_PAGE_NUMBER}
+     */
     public int getNameId() {
         return FO_PAGE_NUMBER;
     }

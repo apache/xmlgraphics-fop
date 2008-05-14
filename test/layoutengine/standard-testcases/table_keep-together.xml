@@ -25,16 +25,16 @@
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg" white-space-collapse="true" widows="0" orphans="0">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="4.5 * 14.4pt">
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5 * 14.4pt">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block1</fo:block>
-          <fo:table table-layout="fixed" keep-together.within-page="always">
-            <fo:table-column/>
-            <fo:table-column/>
+          <fo:table table-layout="fixed" width="100%" keep-together.within-page="always">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell id="cell1">
@@ -58,6 +58,35 @@
           <fo:block>block2</fo:block>
         </fo:flow>
       </fo:page-sequence>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>block1b</fo:block>
+          <fo:table table-layout="fixed" width="100%" keep-together.within-column="1">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell id="cell1b">
+                  <fo:block>line1</fo:block>
+                  <fo:block>line2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="cell2b">
+                  <fo:block>line1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell id="cell3b">
+                  <fo:block>line1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="cell4b">
+                  <fo:block>line1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>block2b</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
@@ -69,11 +98,33 @@
     <element-list category="table-cell" id="cell2">
       <box w="14400"/>
     </element-list>
-    <element-list category="breaker">
+    <element-list category="breaker" index="0">
       <box w="14400"/>
       <penalty w="0" p="0"/>
       <box w="28800"/>
       <penalty w="0" p="INF"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <skip>3</skip>
+    </element-list>
+
+    <!-- the same again but this time with keep="1" -->
+    <element-list category="table-cell" id="cell1b">
+      <box w="14400"/>
+      <penalty w="0" p="999"/>
+      <box w="14400"/>
+    </element-list>
+    <element-list category="table-cell" id="cell2b">
+      <box w="14400"/>
+    </element-list>
+    <element-list category="breaker" index="1">
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="999"/>
+      <box w="14400"/>
+      <penalty w="0" p="999"/>
       <box w="14400"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>

@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
@@ -60,6 +61,15 @@ public interface LayoutManagerMaker {
      */
     public PageSequenceLayoutManager makePageSequenceLayoutManager(
         AreaTreeHandler ath, PageSequence ps);
+
+    /**
+     * Make a ExternalDocumentLayoutManager object for the fox:external-document extension.
+     * @param ath the AreaTreeHandler object the external-document interacts with
+     * @param ed the fox:external-document object to be processed
+     * @return The created ExternalDocumentLayoutManager object
+     */
+    public ExternalDocumentLayoutManager makeExternalDocumentLayoutManager(
+        AreaTreeHandler ath, ExternalDocument ed);
 
     /**
      * Make a FlowLayoutManager object.

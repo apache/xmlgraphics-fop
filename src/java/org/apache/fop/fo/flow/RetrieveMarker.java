@@ -19,37 +19,30 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.Iterator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TableFObj;
 import org.xml.sax.Locator;
+import org.xml.sax.Attributes;
 
 /**
- * Class modelling the fo:retrieve-marker object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_retrieve-marker">
+ * <code>fo:retrieve-marker</code></a> formatting object.
  * This will create a layout manager that will retrieve
  * a marker based on the information.
  */
-public class RetrieveMarker extends FObjMixed {
+public class RetrieveMarker extends AbstractRetrieveMarker {
+
     // The value of properties relevant for fo:retrieve-marker.
-    private String retrieveClassName;
     private int retrievePosition;
     private int retrieveBoundary;
     // End of property values
 
-    private PropertyList propertyList;
-
     /**
-     * Create a retrieve marker object.
+     * Create a new RetrieveMarker instance that is a
+     * child of the given {@link FONode}.
      *
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * @param parent the parent {@link FONode}
      */
     public RetrieveMarker(FONode parent) {
         super(parent);
@@ -57,164 +50,52 @@ public class RetrieveMarker extends FObjMixed {
 
     /**
      * {@inheritDoc}
+     * <i>NOTE: An <code>fo:retrieve-marker</code> is only permitted as a descendant
+     * of an <code>fo:static-content</code>.</i>
      */
-    public void bind(PropertyList pList) throws FOPException {
+    public void processNode(String elementName,
+                            Locator locator,
+                            Attributes attlist,
+                            PropertyList pList)
+            throws FOPException {
         if (findAncestor(FO_STATIC_CONTENT) < 0) {
-            invalidChildError(locator, FO_URI, "retrieve-marker", 
-                "An fo:retrieve-marker is permitted only as the " +
-                " descendant of an fo:static-content.");
+            invalidChildError(locator, getParent().getName(), FO_URI, getName(),
+                "rule.retrieveMarkerDescendantOfStaticContent");
+        } else {
+            super.processNode(elementName, locator, attlist, pList);
         }
-
-        retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();
-        retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
-        retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
-        
-        if (retrieveClassName == null || retrieveClassName.equals("")) {
-            missingPropertyError("retrieve-class-name");
-        }
-        
-        propertyList = pList.getParentPropertyList();
     }
-    
-    /**
-     * {@inheritDoc}
-     * XSL Content Model: empty
-     */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-            invalidChildError(loc, nsURI, localName);
+
+    /** {@inheritDoc} */
+    public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
+        this.retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
+        this.retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
     }
 
     /**
-     * @return the "retrieve-class-name" property.
-     */
-    public String getRetrieveClassName() {
-        return retrieveClassName;
-    }
-
-    /**
-     * @return the "retrieve-position" property (enum value).
+     * Return the value for the <code>retrieve-position</code>
+     * property
+     * @return  the value for retrieve-position-within-table; one of
+     *              {@link org.apache.fop.fo.Constants#EN_FSWP},
+     *              {@link org.apache.fop.fo.Constants#EN_FIC},
+     *              {@link org.apache.fop.fo.Constants#EN_LSWP},
+     *              {@link org.apache.fop.fo.Constants#EN_LEWP}.
      */
     public int getRetrievePosition() {
-        return retrievePosition;
+        return this.retrievePosition;
     }
 
     /**
-     * @return the "retrieve-boundary" property (enum value).
+     * Return the value for the <code>retrieve-boundary</code>
+     * property
+     * @return  the value for retrieve-boundary-within-table; one of
+     *              {@link org.apache.fop.fo.Constants#EN_PAGE},
+     *              {@link org.apache.fop.fo.Constants#EN_PAGE_SEQUENCE},
+     *              {@link org.apache.fop.fo.Constants#EN_DOCUMENT}.
      */
     public int getRetrieveBoundary() {
-        return retrieveBoundary;
-    }
-    
-    private PropertyList createPropertyListFor(FObj fo, PropertyList parent) {
-        return getFOEventHandler().getPropertyListMaker().make(fo, parent);
-    }
-
-    private void cloneSingleNode(FONode child, FONode newParent,
-                            Marker marker, PropertyList parentPropertyList)
-        throws FOPException {
-
-        if (child != null) {
-            FONode newChild = child.clone(newParent, true);
-            if (child instanceof FObj) {
-                Marker.MarkerPropertyList pList;
-                PropertyList newPropertyList = createPropertyListFor(
-                            (FObj) newChild, parentPropertyList);
-                
-                pList = marker.getPropertyListFor(child);
-                newChild.processNode(
-                        child.getLocalName(),
-                        getLocator(),
-                        pList,
-                        newPropertyList);
-                if (newChild instanceof TableFObj) {
-                    // TODO calling startOfNode (and endOfNode, below) on other fobjs may
-                    // have undesirable side-effects. This is really ugly and will need to
-                    // be addressed sooner or later
-                    ((TableFObj) newChild).startOfNode();
-                }
-                addChildTo(newChild, (FObj) newParent);
-                if (newChild.getNameId() == FO_TABLE) {
-                    Table t = (Table) child;
-                    cloneSubtree(t.getColumns().listIterator(),
-                            newChild, marker, newPropertyList);
-                    cloneSingleNode(t.getTableHeader(),
-                            newChild, marker, newPropertyList);
-                    cloneSingleNode(t.getTableFooter(),
-                            newChild, marker, newPropertyList);
-                }
-                cloneSubtree(child.getChildNodes(), newChild,
-                        marker, newPropertyList);
-                if (newChild instanceof TableFObj) {
-                    // TODO this is ugly
-                    ((TableFObj) newChild).endOfNode();
-                }
-            } else if (child instanceof FOText) {
-                FOText ft = (FOText) newChild;
-                ft.bind(parentPropertyList);
-                addChildTo(newChild, (FObj) newParent);
-            }
-            if (newChild instanceof FObjMixed) {
-                handleWhiteSpaceFor((FObjMixed) newChild);
-            }
-        }
-    }
-    
-    /**
-     * Clone the FO nodes in the parent iterator,
-     * attach the new nodes to the new parent,
-     * and map the new nodes to the existing property lists.
-     * FOText nodes are also in the new map, with a null value.
-     * Clone the subtree by a recursive call to this method.
-     * @param parentIter the iterator over the children of the old parent
-     * @param newParent the new parent for the cloned nodes
-     * @param marker the marker that contains the old property list mapping
-     * @param descPLists the map of the new nodes to property lists
-     */
-    private void cloneSubtree(Iterator parentIter, FONode newParent,
-                              Marker marker, PropertyList parentPropertyList)
-        throws FOPException {
-        if (parentIter != null) {
-            FONode child;
-            while (parentIter.hasNext()) {
-                child = (FONode) parentIter.next();
-                cloneSingleNode(child, newParent, 
-                        marker, parentPropertyList);
-            }
-        }
-    }
-
-    private void cloneFromMarker(Marker marker)
-        throws FOPException {
-        // clean up remnants from a possible earlier layout
-        if (firstChild != null) {
-            currentTextNode = null;
-            firstChild = null;
-        }
-        cloneSubtree(marker.getChildNodes(), this, 
-                        marker, propertyList);
-        handleWhiteSpaceFor(this);
-    }
-
-    /**
-     * Clone the subtree of the given marker
-     * 
-     * @param marker the marker that is to be cloned
-     */
-    public void bindMarker(Marker marker) {
-        if (marker.getChildNodes() != null) {
-            try {
-                cloneFromMarker(marker);
-            } catch (FOPException exc) {
-                log.error("fo:retrieve-marker unable to clone "
-                        + "subtree of fo:marker (marker-class-name="
-                        + marker.getMarkerClassName() + ")", exc);
-                return;
-            }
-        } else if (log.isInfoEnabled()) {
-            log.info("Empty marker retrieved...");
-        }
-        return;
+        return this.retrieveBoundary;
     }
 
     /** {@inheritDoc} */
@@ -224,6 +105,7 @@ public class RetrieveMarker extends FObjMixed {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_RETRIEVE_MARKER}
      */
     public int getNameId() {
         return FO_RETRIEVE_MARKER;

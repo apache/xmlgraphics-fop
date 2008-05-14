@@ -26,11 +26,13 @@ import javax.xml.parsers.SAXParserFactory;
 
 import junit.framework.TestCase;
 
+import org.xml.sax.XMLReader;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.FOEventHandler;
-import org.xml.sax.XMLReader;
+import org.apache.fop.util.ConsoleEventListenerForTests;
 
 
 /**
@@ -82,6 +84,8 @@ public abstract class FOTreeUnitTester extends TestCase {
     public void setUp(String filename, FOEventHandlerFactory factory) throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         ua.setFOEventHandlerOverride(factory.createFOEventHandler(ua));
+        ua.getEventBroadcaster().addEventListener(
+                new ConsoleEventListenerForTests(filename));
 
         Fop fop = fopFactory.newFop(ua);
 

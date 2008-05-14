@@ -22,7 +22,6 @@ package org.apache.fop.area;
 import java.util.List;
 
 import org.apache.fop.fo.extensions.destination.Destination;
-import org.apache.fop.area.PageViewport;
 /**
  * An instance of this class is named destination from fox:destination
  */
@@ -46,10 +45,18 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
      * @param destination the fo:bookmark object
      */
     public DestinationData(Destination destination) {
-        idRef = destination.getInternalDestination();
-        idRefs = new String[] {idRef};
+        this(destination.getInternalDestination());
     }
 
+    /**
+     * Create a new named destination.
+     * @param idRef the id reference of the destination
+     */
+    public DestinationData(String idRef) {
+        this.idRef = idRef;
+        this.idRefs = new String[] {idRef};
+    }
+    
     /**
      * Get the idref for this destination
      *
@@ -99,9 +106,7 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
         // TODO get rect area of id on page
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getName() {
         return "Destination";
     }

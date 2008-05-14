@@ -36,16 +36,30 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.Trait.Background;
-import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
@@ -60,20 +74,11 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DefaultErrorListener;
-import org.apache.fop.util.QName;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This is a parser for the area tree XML (intermediate format) which is used to reread an area
@@ -136,7 +141,6 @@ public class AreaTreeParser {
 
         private Stack areaStack = new Stack();
         private boolean firstFlow;
-        private boolean pendingStartPageSequence;
 
         private Stack delegateStack = new Stack();
         private ContentHandler delegate;
@@ -179,6 +183,7 @@ public class AreaTreeParser {
             makers.put("foreignObject", new ForeignObjectMaker());
             makers.put("bookmarkTree", new BookmarkTreeMaker());
             makers.put("bookmark", new BookmarkMaker());
+            makers.put("destination", new DestinationMaker());
         }
 
         private static Rectangle2D parseRect(String rect) {
@@ -343,8 +348,12 @@ public class AreaTreeParser {
         private class PageSequenceMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                pendingStartPageSequence = true;
-                //treeModel.startPageSequence(null); Done after title or on the first viewport
+                PageSequence pageSequence = new PageSequence(null);
+                String lang = attributes.getValue("language");
+                pageSequence.setLanguage(lang);
+                String country = attributes.getValue("country");
+                pageSequence.setCountry(country);
+                areaStack.push(pageSequence);
             }
         }
 
@@ -358,19 +367,19 @@ public class AreaTreeParser {
 
             public void endElement() {
                 LineArea line = (LineArea)areaStack.pop();
-                treeModel.startPageSequence(line);
-                pendingStartPageSequence = false;
+                PageSequence pageSequence = (PageSequence)areaStack.peek();
+                pageSequence.setTitle(line);
             }
-
 
         }
 
         private class PageViewportMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                if (pendingStartPageSequence) {
-                    treeModel.startPageSequence(null);
-                    pendingStartPageSequence = false;
+                if (!areaStack.isEmpty()) {
+                    PageSequence pageSequence = (PageSequence)areaStack.peek();
+                    treeModel.startPageSequence(pageSequence);
+                    areaStack.pop();
                 }
                 if (currentPageViewport != null) {
                     throw new IllegalStateException("currentPageViewport must be null");
@@ -922,6 +931,26 @@ public class AreaTreeParser {
             }
         }
 
+        private class DestinationMaker extends AbstractMaker {
+
+            public void startElement(Attributes attributes) {
+                String[] linkdata
+                    = InternalLink.parseXMLAttribute(lastAttributes.getValue("internal-link"));
+                PageViewport pv = (PageViewport) pageViewportsByKey.get(linkdata[0]);
+                DestinationData dest = new DestinationData(linkdata[1]);
+                List pages = new java.util.ArrayList();
+                pages.add(pv);
+                dest.resolveIDRef(linkdata[1], pages);
+                areaStack.push(dest);
+            }
+
+            public void endElement() {
+                Object tos = areaStack.pop();
+                assertObjectOfClass(tos, DestinationData.class);
+                treeModel.handleOffDocumentItem((DestinationData) tos);
+            }
+        }
+
         // ====================================================================
 
 
@@ -989,7 +1018,7 @@ public class AreaTreeParser {
             Trait.IS_REFERENCE_AREA, Trait.IS_VIEWPORT_AREA};
 
         private void setTraits(Attributes attributes, Area area, Object[] traitSubset) {
-            for (int i = 0, c = traitSubset.length; i < c; i++) {
+            for (int i = traitSubset.length; --i >= 0;) {
                 Object trait = traitSubset[i];
                 String traitName = Trait.getTraitName(trait);
                 String value = attributes.getValue(traitName);
@@ -1015,6 +1044,8 @@ public class AreaTreeParser {
                         }
                     } else if (cl == InternalLink.class) {
                         area.addTrait(trait, new InternalLink(value));
+                    } else if (cl == Trait.ExternalLink.class) {
+                        area.addTrait(trait, Trait.ExternalLink.makeFromTraitValue(value));
                     } else if (cl == Background.class) {
                         Background bkg = new Background();
                         try {
@@ -1024,22 +1055,19 @@ public class AreaTreeParser {
                         } catch (PropertyException e) {
                             throw new IllegalArgumentException(e.getMessage());
                         }
-                        String url = attributes.getValue("bkg-img");
-                        if (url != null) {
-                            bkg.setURL(url);
+                        String uri = attributes.getValue("bkg-img");
+                        if (uri != null) {
+                            bkg.setURL(uri);
 
-                            ImageFactory fact = userAgent.getFactory().getImageFactory();
-                            FopImage img = fact.getImage(url, userAgent);
-                            if (img == null) {
-                                log.error("Background image not available: " + url);
-                            } else {
-                                // load dimensions
-                                if (!img.load(FopImage.DIMENSIONS)) {
-                                    log.error("Cannot read background image dimensions: "
-                                            + url);
-                                }
+                            try {
+                                ImageManager manager = userAgent.getFactory().getImageManager();
+                                ImageSessionContext sessionContext
+                                    = userAgent.getImageSessionContext();
+                                ImageInfo info = manager.getImageInfo(uri, sessionContext);
+                                bkg.setImageInfo(info);
+                            } catch (Exception e) {
+                                log.error("Background image not available: " + uri, e);
                             }
-                            bkg.setFopImage(img);
 
                             String repeat = attributes.getValue("bkg-repeat");
                             if (repeat != null) {

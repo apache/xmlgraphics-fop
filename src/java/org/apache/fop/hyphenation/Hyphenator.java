@@ -255,11 +255,13 @@ public class Hyphenator {
                 if (source instanceof StreamSource) {
                     in = ((StreamSource) source).getInputStream();
                 }
-                if (in == null && source.getSystemId() != null) {
-                    in = new java.net.URL(source.getSystemId()).openStream();
-                } else {
-                    throw new UnsupportedOperationException("Cannot load hyphenation pattern file"
+                if (in == null) {
+                    if (source.getSystemId() != null) {
+                        in = new java.net.URL(source.getSystemId()).openStream();
+                    } else {
+                        throw new UnsupportedOperationException("Cannot load hyphenation pattern file"
                             + " with the supplied Source object: " + source);
+                    }
                 }
                 in = new BufferedInputStream(in);
                 try {

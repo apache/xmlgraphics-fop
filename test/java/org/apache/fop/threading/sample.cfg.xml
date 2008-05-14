@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config>
+<config prompt="false">
   <threads>2</threads>
   <output-dir>C:/Dev/FOP/temp/out</output-dir>
-  <foprocessor>
-    <!--basedir>C:/Dev/FOP/temp</basedir>
-    <fontbasedir>C:/Dev/FOP/temp/fonts</fontbasedir>
+  <foprocessor class="org.apache.fop.threading.FOProcessorImpl">
+    <!--
     <userconfig>C:/Dev/FOP/temp/userconfig.xml</userconfig>
-    <strokesvgtext>true</strokesvgtext-->
+    -->
+    <mime>application/pdf</mime>
+    <extension>.pdf</extension>
   </foprocessor>
   <tasks repeat="2">
     <task fo="C:/Dev/FOP/temp/helloworld.fo"/>

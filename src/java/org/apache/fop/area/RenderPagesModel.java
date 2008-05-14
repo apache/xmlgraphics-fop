@@ -31,6 +31,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererEventProducer;
 
 /**
  * This uses the AreaTreeModel to store the pages
@@ -81,16 +82,11 @@ public class RenderPagesModel extends AreaTreeModel {
         }
     }
 
-    /**
-     * Start a new page sequence.
-     * This tells the renderer that a new page sequence has
-     * started with the given title.
-     * @param title the title of the new page sequence
-     */
-    public void startPageSequence(LineArea title) {
-        super.startPageSequence(title);
+    /** {@inheritDoc} */
+    public void startPageSequence(PageSequence pageSequence) {
+        super.startPageSequence(pageSequence);
         if (renderer.supportsOutOfOrder()) {
-            renderer.startPageSequence(title);
+            renderer.startPageSequence(getCurrentPageSequence());
         }
     }
 
@@ -112,7 +108,7 @@ public class RenderPagesModel extends AreaTreeModel {
         boolean ready = renderer.supportsOutOfOrder() && page.isResolved();
         if (ready) {
             if (!renderer.supportsOutOfOrder() && page.getPageSequence().isFirstPage(page)) {
-                renderer.startPageSequence(this.currentPageSequence.getTitle());
+                renderer.startPageSequence(getCurrentPageSequence());
             }
             try {
                 renderer.renderPage(page);
@@ -120,8 +116,12 @@ public class RenderPagesModel extends AreaTreeModel {
                 String err = "Error while rendering page " + page.getPageNumberString(); 
                 log.error(err, re);
                 throw re;
-            } catch (Exception e) {
-                //TODO use error handler to handle this FOP or IO Exception or propagate exception
+            } catch (IOException ioe) {
+                RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
+                        renderer.getUserAgent().getEventBroadcaster());
+                eventProducer.ioError(this, ioe);
+            } catch (FOPException e) {
+                //TODO use error handler to handle this FOPException or propagate exception
                 String err = "Error while rendering page " + page.getPageNumberString(); 
                 log.error(err, e);
                 throw new IllegalStateException("Fatal error occurred. Cannot continue. " 
@@ -159,25 +159,9 @@ public class RenderPagesModel extends AreaTreeModel {
             if (pageViewport.isResolved() || renderUnresolved) {
                 if (!renderer.supportsOutOfOrder()
                         && pageViewport.getPageSequence().isFirstPage(pageViewport)) {
-                    renderer.startPageSequence(this.currentPageSequence.getTitle());
+                    renderer.startPageSequence(getCurrentPageSequence());
                 }
-                try {
-                    renderer.renderPage(pageViewport);
-                    if (!pageViewport.isResolved()) {
-                        String[] idrefs = pageViewport.getIDRefs();
-                        for (int count = 0; count < idrefs.length; count++) {
-                            log.warn("Page " + pageViewport.getPageNumberString()
-                                + ": Unresolved id reference \"" + idrefs[count] 
-                                + "\" found.");
-                        }
-                    }
-                } catch (Exception e) {
-                    // use error handler to handle this FOP or IO Exception
-                    log.error(e);
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException)e;
-                    }
-                }
+                renderPage(pageViewport);
                 pageViewport.clear();
                 iter.remove();
             } else {
@@ -188,6 +172,33 @@ public class RenderPagesModel extends AreaTreeModel {
             }
         }
         return renderer.supportsOutOfOrder() || prepared.isEmpty();
+    }
+
+    /**
+     * Renders the given page and notified about unresolved IDs if any.
+     * @param pageViewport the page to be rendered.
+     */
+    protected void renderPage(PageViewport pageViewport) {
+        try {
+            renderer.renderPage(pageViewport);
+            if (!pageViewport.isResolved()) {
+                String[] idrefs = pageViewport.getIDRefs();
+                for (int count = 0; count < idrefs.length; count++) {
+                    AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
+                            renderer.getUserAgent().getEventBroadcaster());
+                    eventProducer.unresolvedIDReferenceOnPage(this,
+                            pageViewport.getPageNumberString(), idrefs[count]);
+                }
+            }
+        } catch (Exception e) {
+            AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
+                    renderer.getUserAgent().getEventBroadcaster());
+            eventProducer.pageRenderingError(this,
+                    pageViewport.getPageNumberString(), e);
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e;
+            }
+        }
     }
 
     /**

@@ -27,13 +27,6 @@
     nominal line.</description>
   </testcase>
   <testcase>
-    <name>Bugzilla #36391: reference-orientation</name>
-    <file>block-container_reference-orientation_bug36391.xml</file>
-    <description>There's a problem involving nested block-containers
-    and reference-orientation 180/-180.</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=36391</reference>
-  </testcase>
-  <testcase>
     <name>Auto-height block-containers produce fences</name>
     <file>block-container_space-before_space-after_3.xml</file>
     <description>Block-containers with no height currently don't
@@ -172,18 +165,6 @@
     <reference>http://www.nabble.com/leaders-with-leader-pattern%3D%22use-content%22-t546244.html</reference>
   </testcase>
   <testcase>
-    <name>keep-with-previous doesn't work in lists</name>
-    <file>list-block_keep-with-previous.xml</file>
-    <description>Keep-with-previous doesn't work inside tables and
-    lists, yet.</description>
-  </testcase>
-  <testcase>
-    <name>keep-with-previous doesn't work in lists</name>
-    <file>list-item_block_keep-with-previous.xml</file>
-    <description>Keep-with-previous doesn't work inside tables and
-    lists, yet.</description>
-  </testcase>
-  <testcase>
     <name>Page breaking doesn't deal with IPD changes</name>
     <file>page-breaking_4.xml</file>
     <description>Page breaking currently doesn't support changing available IPD 
@@ -206,11 +187,6 @@
     <file>page-number-citation_background-image.xml</file>
     <description>Background-images on page-number-citations are not
     placed correctly.</description>
-  </testcase>
-  <testcase>
-    <name>page-number-citation-last: FOs spanning multiple pages are not properly handled.</name>
-    <file>page-number-citation-last_basic.xml</file>
-    <description>Resolution of forward references does not wait until an FO is fully finished when an FO spans multiple pages.</description>
   </testcase>
   <testcase>
     <name>IDs are not working on all FO elements</name>
@@ -240,54 +216,6 @@
     <description>Column balancing doesn't work as expected.</description>
   </testcase>
   <testcase>
-    <name>No background-images on table-body</name>
-    <file>table-body_background-image.xml</file>
-    <description>The backgrounds of table-body, table-header,
-    table-footer and table-column are not painted, yet.</description>
-  </testcase>
-  <testcase>
-    <name>Collapsing Border Model NYI</name>
-    <file>table_border-collapse_collapse_1.xml</file>
-    <description>Border-collapse="collapse" is not yet
-    implemented.</description>
-  </testcase>
-  <testcase>
-    <name>Collapsing Border Model NYI</name>
-    <file>table_border-collapse_collapse_2.xml</file>
-    <description>Border-collapse="collapse" is not yet
-    implemented.</description>
-  </testcase>
-  <testcase>
-    <name>Problems with border and padding on tables</name>
-    <file>table_border_padding.xml</file>
-    <description>The element list seems to not be fully correct, yet, causing
-    the layout to look odd.</description>
-  </testcase>
-  <testcase>
-    <name>keep-with-previous doesn't work inside tables</name>
-    <file>table-cell_block_keep-with-previous.xml</file>
-    <description>Keep-with-previous doesn't work inside tables and
-    lists, yet.</description>
-  </testcase>
-  <testcase>
-    <name>Border and padding conditionality is NYI on table-cells</name>
-    <file>table-cell_border_padding_conditionality.xml</file>
-    <description>Border and padding conditionality are not supported
-    on table-cells, yet.</description>
-  </testcase>
-  <testcase>
-    <name>No background-images on table-header</name>
-    <file>table-header_background-image.xml</file>
-    <description>The backgrounds of table-body, table-header,
-    table-footer and table-column are not painted, yet.</description>
-  </testcase>
-  <testcase>
-    <name>keep-with-previous doesn't work on table-rows</name>
-    <file>table-row_keep-with-previous.xml</file>
-    <description>Keep-with-previous doesn't work inside tables and
-    lists, yet.</description>
-  </testcase>
-  <testcase>
     <name>table-cell empty area with marker.xml</name>
     <file>table-cell_empty_area_with_marker.xml</file>
     <description>A table-cell producing an empty area does currently not add any markers to a page. 
@@ -299,12 +227,6 @@
     <description>The code should be ok, but the test case uses shorthands and therefore
     is probably not expressing the indended outcome according to the spec. The test
     case should be revisited.</description>
-  </testcase>
-  <testcase>
-    <name>fo:wrapper around block-level content (with id)</name>
-    <file>wrapper_block_id.xml</file>
-    <description>"id" attributes on fo:wrapper around block-level content don't get
-    added to the area tree.</description>
   </testcase>
   <testcase>
     <name>Soft hyphen with normal hyphenation enabled</name>

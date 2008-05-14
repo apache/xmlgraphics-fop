@@ -24,15 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -316,6 +317,22 @@ public class PDFDocument {
         }
     }
 
+    /**
+     * Creates and returns a Writer object wrapping the given OutputStream. The Writer is
+     * buffered to reduce the number of calls to the encoding converter so don't forget
+     * to <code>flush()</code> the Writer after use or before writing directly to the
+     * underlying OutputStream.
+     * @param out the OutputStream to write to
+     * @return the requested Writer
+     */
+    public static Writer getWriterFor(OutputStream out) {
+        try {
+            return new java.io.BufferedWriter(new java.io.OutputStreamWriter(out, ENCODING));
+        } catch (UnsupportedEncodingException uee) {
+            throw new Error("JVM doesn't support " + ENCODING + " encoding!");
+        }
+    }
+    
     /**
      * set the producer of the document
      *

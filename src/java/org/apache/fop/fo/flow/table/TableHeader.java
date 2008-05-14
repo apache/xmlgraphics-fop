@@ -25,36 +25,32 @@ import org.apache.fop.fo.FONode;
 
 
 /**
- * Class modelling the fo:table-header object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-header">
+ * <code>fo:table-header</code></a> object.
  */
 public class TableHeader extends TableBody {
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a TableHeader instance with the given {@link FONode}
+     * as parent.
+     * @param parent {@link FONode} that is the parent of this object
      */
     public TableHeader(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
         super.startOfNode();
-        //getFOEventHandler().startHeader(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
-//      getFOEventHandler().endHeader(this);
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)");
         } else {
             finishLastRowGroup();
         }
-//      convertCellsToRows();
     }
 
     /** {@inheritDoc} */
@@ -62,8 +58,16 @@ public class TableHeader extends TableBody {
         return "table-header";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_HEADER}
+     */
     public int getNameId() {
         return FO_TABLE_HEADER;
+    }
+
+    /** {@inheritDoc} */
+    protected boolean isTableHeader() {
+        return true;
     }
 }

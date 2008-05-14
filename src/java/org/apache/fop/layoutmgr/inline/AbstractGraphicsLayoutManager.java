@@ -19,12 +19,12 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.LinkedList;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.AbstractGraphics;
@@ -57,156 +57,29 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
      * @return the viewport inline area
      */
     private Viewport getInlineArea() {
+        Dimension intrinsicSize = new Dimension(
+                fobj.getIntrinsicWidth(),
+                fobj.getIntrinsicHeight());
 
-        // viewport size is determined by block-progression-dimension
-        // and inline-progression-dimension
+        //TODO Investigate if the line-height property has to be taken into the calculation
+        //somehow. There was some code here that hints in this direction but it was disabled.
 
-        // if replaced then use height then ignore block-progression-dimension
-        //int h = this.propertyList.get("height").getLength().mvalue();
-
-        // use specified line-height then ignore dimension in height direction
-        boolean hasLH = false; //propertyList.get("line-height").getSpecifiedValue() != null;
-
-        Length len;
-
-        int bpd = -1;
-        int ipd = -1;
-        if (hasLH) {
-            bpd = fobj.getLineHeight().getOptimum(this).getLength().getValue(this);
-        } else {
-            // this property does not apply when the line-height applies
-            // isn't the block-progression-dimension always in the same
-            // direction as the line height?
-            len = fobj.getBlockProgressionDimension().getOptimum(this).getLength();
-            if (len.getEnum() != EN_AUTO) {
-                bpd = len.getValue(this);
-            } else {
-                len = fobj.getHeight();
-                if (len.getEnum() != EN_AUTO) {
-                    bpd = len.getValue(this);
-                }
-            }
-        }
-
-        len = fobj.getInlineProgressionDimension().getOptimum(this).getLength();
-        if (len.getEnum() != EN_AUTO) {
-            ipd = len.getValue(this);
-        } else {
-            len = fobj.getWidth();
-            if (len.getEnum() != EN_AUTO) {
-                ipd = len.getValue(this);
-            }
-        }
-
-        // if auto then use the intrinsic size of the content scaled
-        // to the content-height and content-width
-        int cwidth = -1;
-        int cheight = -1;
-        len = fobj.getContentWidth();
-        if (len.getEnum() != EN_AUTO) {
-            if (len.getEnum() == EN_SCALE_TO_FIT) {
-                if (ipd != -1) {
-                    cwidth = ipd;
-                }
-            } else {
-                cwidth = len.getValue(this);
-            }
-        }
-        len = fobj.getContentHeight();
-        if (len.getEnum() != EN_AUTO) {
-            if (len.getEnum() == EN_SCALE_TO_FIT) {
-                if (bpd != -1) {
-                    cheight = bpd;
-                }
-            } else {
-                cheight = len.getValue(this);
-            }
-        }
-
-        int scaling = fobj.getScaling();
-        if ((scaling == EN_UNIFORM) || (cwidth == -1) || cheight == -1) {
-            if (cwidth == -1 && cheight == -1) {
-                cwidth = fobj.getIntrinsicWidth();
-                cheight = fobj.getIntrinsicHeight();
-            } else if (cwidth == -1) {
-                if (fobj.getIntrinsicHeight() == 0) {
-                    cwidth = 0;
-                } else {
-                    cwidth = (int)(fobj.getIntrinsicWidth() * (double)cheight 
-                            / fobj.getIntrinsicHeight());
-                }
-            } else if (cheight == -1) {
-                if (fobj.getIntrinsicWidth() == 0) {
-                    cheight = 0;
-                } else {
-                    cheight = (int)(fobj.getIntrinsicHeight() * (double)cwidth 
-                            / fobj.getIntrinsicWidth());
-                }
-            } else {
-                // adjust the larger
-                if (fobj.getIntrinsicWidth() == 0 || fobj.getIntrinsicHeight() == 0) {
-                    cwidth = 0;
-                    cheight = 0;
-                } else {
-                    double rat1 = (double) cwidth / fobj.getIntrinsicWidth();
-                    double rat2 = (double) cheight / fobj.getIntrinsicHeight();
-                    if (rat1 < rat2) {
-                        // reduce cheight
-                        cheight = (int)(rat1 * fobj.getIntrinsicHeight());
-                    } else if (rat1 > rat2) {
-                        cwidth = (int)(rat2 * fobj.getIntrinsicWidth());
-                    }
-                }
-            }
-        }
-
-        if (ipd == -1) {
-            ipd = cwidth;
-        }
-        if (bpd == -1) {
-            bpd = cheight;
-        }
-
-        boolean clip = false;
-        if (cwidth > ipd || cheight > bpd) {
-            int overflow = fobj.getOverflow();
-            if (overflow == EN_HIDDEN) {
-                clip = true;
-            } else if (overflow == EN_ERROR_IF_OVERFLOW) {
-                log.error("Object overflows the viewport: clipping");
-                clip = true;
-            }
-        }
-
-        int xoffset = fobj.computeXOffset(ipd, cwidth);
-        int yoffset = fobj.computeYOffset(bpd, cheight);
+        ImageLayout imageLayout = new ImageLayout(fobj, this, intrinsicSize);
+        Rectangle placement = imageLayout.getPlacement();
 
         CommonBorderPaddingBackground borderProps = fobj.getCommonBorderPaddingBackground();
         
-        //Determine extra BPD from borders etc.
+        //Determine extra BPD from borders and padding
         int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
-        beforeBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
-                                             false);
-        int afterBPD = borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
-        afterBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
+        beforeBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE, false);
         
-        yoffset += beforeBPD;
-        //bpd += beforeBPD;
-        //bpd += afterBPD;
+        placement.y += beforeBPD;
         
-        //Determine extra IPD from borders etc.
-        int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                false, this);
-        startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
-                 false);
-        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false, this);
-        endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false);
+        //Determine extra IPD from borders and padding
+        int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START, false, this);
+        startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START, false);
         
-        xoffset += startIPD;
-        //ipd += startIPD;
-        //ipd += endIPD;
-
-        Rectangle2D placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
+        placement.x += startIPD;
 
         Area viewportArea = getChildArea();
         TraitSetter.setProducerID(viewportArea, fobj.getId());
@@ -214,10 +87,10 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
 
         Viewport vp = new Viewport(viewportArea);
         TraitSetter.setProducerID(vp, fobj.getId());
-        vp.setIPD(ipd);
-        vp.setBPD(bpd);
+        vp.setIPD(imageLayout.getViewportSize().width);
+        vp.setBPD(imageLayout.getViewportSize().height);
         vp.setContentPosition(placement);
-        vp.setClip(clip);
+        vp.setClip(imageLayout.isClipped());
         vp.setOffset(0);
 
         // Common Border, Padding, and Background Properties
@@ -230,9 +103,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         return vp;
     }
     
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         Viewport areaCurrent = getInlineArea();
@@ -240,9 +111,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         return super.getNextKnuthElements(context, alignment);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(
                 get(context).getAllocBPD()
@@ -252,13 +121,6 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
                 , fobj.getDominantBaseline()
                 , context.getAlignmentContext()
             );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
     }
 
     /**

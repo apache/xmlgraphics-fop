@@ -30,7 +30,6 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * The Map Page Overlay structured field maps a Resource Local ID to the name of
  * a Begin Overlay structured field. A Map Page Overlay structured field may
  * contain from one to 254 repeating groups.
- *
  */
 public class MapPageOverlay extends AbstractAFPObject {
 
@@ -68,15 +67,10 @@ public class MapPageOverlay extends AbstractAFPObject {
             log.debug("addOverlay():: adding overlay " + name);
         }
 
-        byte[] data;
-
         try {
-
-            data = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            byte[] data = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
             overLays.add(data);
-
         } catch (UnsupportedEncodingException usee) {
-
             log.error("addOverlay():: UnsupportedEncodingException translating the name "
                 + name);
         }
@@ -117,7 +111,6 @@ public class MapPageOverlay extends AbstractAFPObject {
         byte olayref = 0x00;
 
         for (int i = 0; i < oLayCount; i++) {
-
             olayref = (byte) (olayref + 1);
 
             data[++pos] = 0x00;

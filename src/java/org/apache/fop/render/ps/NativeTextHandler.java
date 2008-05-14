@@ -38,16 +38,16 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 public class NativeTextHandler implements PSTextHandler {
 
     private PSGraphics2D g2d;
-    
+
     /** FontInfo containing all available fonts */
     protected FontInfo fontInfo;
 
     /** Currently valid Font */
     protected Font font;
-    
+
     /** Overriding FontState */
     protected Font overrideFont = null;
-    
+
     /** the current (internal) font name */
     protected String currentFontName;
 
@@ -67,13 +67,13 @@ public class NativeTextHandler implements PSTextHandler {
             setupFontInfo();
         }
     }
-    
+
     private void setupFontInfo() {
         //Sets up a FontInfo with default fonts
         fontInfo = new FontInfo();
-        FontSetup.setup(fontInfo, null, null);
+        FontSetup.setup(fontInfo);
     }
-    
+
     /**
      * Return the font information associated with this object
      * @return the FontInfo object
@@ -85,7 +85,7 @@ public class NativeTextHandler implements PSTextHandler {
     private PSGenerator getPSGenerator() {
         return this.g2d.getPSGenerator();
     }
-    
+
     /** {@inheritDoc} */
     public void writeSetup() throws IOException {
         if (fontInfo != null) {
@@ -99,9 +99,9 @@ public class NativeTextHandler implements PSTextHandler {
     }
 
     /**
-     * Draw a string to the PostScript document. The text is painted using 
+     * Draw a string to the PostScript document. The text is painted using
      * text operations.
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void drawString(String s, float x, float y) throws IOException {
         g2d.preparePainting();
@@ -112,7 +112,7 @@ public class NativeTextHandler implements PSTextHandler {
             this.font = this.overrideFont;
             this.overrideFont = null;
         }
-        
+
         //Color and Font state
         g2d.establishColor(g2d.getColor());
         establishCurrentFont();
@@ -130,14 +130,14 @@ public class NativeTextHandler implements PSTextHandler {
         gen.writeln(gen.formatDouble(x) + " "
                   + gen.formatDouble(y) + " moveto ");
         gen.writeln("1 -1 scale");
-  
+
         StringBuffer sb = new StringBuffer("(");
         escapeText(s, sb);
         sb.append(") t ");
 
         gen.writeln(sb.toString());
-        
-        gen.restoreGraphicsState();        
+
+        gen.restoreGraphicsState();
     }
 
     private void escapeText(final String text, StringBuffer target) {
@@ -157,7 +157,7 @@ public class NativeTextHandler implements PSTextHandler {
         int fontSize = 1000 * f.getSize();
         String style = f.isItalic() ? "italic" : "normal";
         int weight = f.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
-                
+
         FontTriplet triplet = fontInfo.findAdjustWeight(fontFamily, style, weight);
         if (triplet == null) {
             triplet = fontInfo.findAdjustWeight("sans-serif", style, weight);
@@ -166,10 +166,10 @@ public class NativeTextHandler implements PSTextHandler {
     }
 
     private void establishCurrentFont() throws IOException {
-        if ((currentFontName != this.font.getFontName()) 
+        if ((currentFontName != this.font.getFontName())
                 || (currentFontSize != this.font.getFontSize())) {
             PSGenerator gen = getPSGenerator();
-            gen.writeln(this.font.getFontName() + " " 
+            gen.writeln(this.font.getFontName() + " "
                     + gen.formatDouble(font.getFontSize() / 1000f) + " F");
             currentFontName = this.font.getFontName();
             currentFontSize = this.font.getFontSize();
@@ -183,6 +183,6 @@ public class NativeTextHandler implements PSTextHandler {
     public void setOverrideFont(Font override) {
         this.overrideFont = override;
     }
-    
+
 
 }

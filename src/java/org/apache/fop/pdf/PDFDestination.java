@@ -19,6 +19,12 @@
 
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+
+import org.apache.commons.io.output.CountingOutputStream;
+
 /**
  * class representing a named destination
  */
@@ -40,30 +46,24 @@ public class PDFDestination extends PDFObject {
      * @param goToRef Object reference to the GoTo Action
      */
     public PDFDestination(String idRef, Object goToRef) {
+        super();
         this.goToReference = goToRef;
         this.idRef = idRef;
     }
 
-    /**
-     * Creates the key/value pair for this destination entry for the name tree.
-     * @return the formatted key/value pair
-     */
-    public String toKeyValuePair() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("(").append(getIDRef()).append(") ");
-        if (goToReference instanceof PDFWritable) {
-            sb.append(((PDFWritable)goToReference).toInlinePDFString());
-        } else {
-            sb.append(goToReference);
-        }
-        return sb.toString();
+    /** {@inheritDoc} */
+    protected int output(OutputStream stream) throws IOException {
+        CountingOutputStream cout = new CountingOutputStream(stream);
+        Writer writer = PDFDocument.getWriterFor(cout);
+        
+        formatObject(getIDRef(), cout, writer);
+        writer.write(' ');
+        formatObject(goToReference, cout, writer);
+        
+        writer.flush();
+        return cout.getCount();
     }
     
-    /** {@inheritDoc} */
-    protected String toPDFString() {
-        return toKeyValuePair();
-    }
-
     /**
      * Sets the GoToReference in the associated DestinationData object.
      *
@@ -124,9 +124,7 @@ public class PDFDestination extends PDFObject {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int hashCode() {
         return getIDRef().hashCode();
     }

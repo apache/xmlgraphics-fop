@@ -24,21 +24,18 @@ import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 
-//JAXP
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.Result;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
-
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FopFactory;
-import org.apache.fop.render.print.PrintRenderer;
+import org.apache.fop.apps.MimeConstants;
 
 /**
  * This class demonstrates printing an FO file to a PrinterJob instance.
@@ -63,15 +60,10 @@ public class ExampleFO2OldStylePrint {
         try {
             //Set up a custom user agent so we can supply our own renderer instance
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
+            userAgent.getRendererOptions().put("printerjob", printerJob);
 
-            //Set up our own PrintRenderer instance so we can supply a special PrinterJob instance.
-            PrintRenderer renderer = new PrintRenderer(printerJob);
-            renderer.setUserAgent(userAgent);
-            
-            userAgent.setRendererOverride(renderer);
-            
-            // Construct fop with desired output format (here, it is set through the user agent)
-            Fop fop = fopFactory.newFop(userAgent);
+            // Construct FOP with desired output format
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_PRINT, userAgent);
 
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();

@@ -19,24 +19,29 @@
  
 package org.apache.fop.svg;
 
-import org.apache.batik.bridge.SVGImageElementBridge;
-
-import java.awt.Shape;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.svg.SVGDocument;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.SVGImageElementBridge;
 import org.apache.batik.gvt.AbstractGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.ParsedURL;
 
-import org.apache.fop.image.JpegImage;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.analyser.ImageReaderFactory;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 
 /**
  * Bridge class for the &lt;image> element when jpeg images.
@@ -50,6 +55,11 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      */
     public PDFImageElementBridge() { }
 
+    private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
+                                               {ImageFlavor.RAW_JPEG,
+                                                ImageFlavor.RAW_CCITTFAX,
+                                                ImageFlavor.GRAPHICS2D,
+                                                ImageFlavor.XML_DOM};
     /**
      * Create the raster image node.
      * THis checks if it is a jpeg file and creates a jpeg node
@@ -60,110 +70,120 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      * @return a new graphics node
      */
     protected GraphicsNode createImageGraphicsNode
-        (BridgeContext ctx, Element imageElement, ParsedURL purl) {
+                (BridgeContext ctx, Element imageElement, ParsedURL purl) {
+        PDFBridgeContext pdfCtx = (PDFBridgeContext)ctx;
+        
+        ImageManager manager = pdfCtx.getImageManager();
+        ImageSessionContext sessionContext = pdfCtx.getImageSessionContext();
         try {
-            InputStream is = purl.openStream();
-            if (!is.markSupported()) {
-                is = new BufferedInputStream(is, 1024);
+            ImageInfo info = manager.getImageInfo(purl.toString(), sessionContext);
+            Image image = manager.getImage(info, supportedFlavors, sessionContext);
+            
+            //TODO color profile overrides aren't handled, yet!
+            //ICCColorSpaceExt colorspaceOverride = extractColorSpace(e, ctx);
+            AbstractGraphicsNode specializedNode = null;
+            if (image instanceof ImageXMLDOM) {
+                ImageXMLDOM xmlImage = (ImageXMLDOM)image;
+                if (xmlImage.getDocument() instanceof SVGDocument) {
+                    return createSVGImageNode(ctx, imageElement,
+                            (SVGDocument)xmlImage.getDocument());
+                } else {
+                    //Convert image to Graphics2D
+                    image = manager.convertImage(xmlImage,
+                            new ImageFlavor[] {ImageFlavor.GRAPHICS2D});
+                }
+            }
+            if (image instanceof ImageRawJPEG) {
+                specializedNode = new LoaderImageNode(image, ctx, imageElement, purl);
+            } else if (image instanceof ImageRawCCITTFax) {
+                specializedNode = new LoaderImageNode(image, ctx, imageElement, purl);
+            } else if (image instanceof ImageGraphics2D) {
+                ImageGraphics2D g2dImage = (ImageGraphics2D)image;
+                specializedNode = new Graphics2DNode(g2dImage);
+            } else {
+                ctx.getUserAgent().displayError(
+                        new ImageException("Cannot convert an image to a usable format: " + purl));
             }
             
-            is.mark(3);
-            byte [] data = new byte[3];
-            is.read(data);
-            is.reset();
-            if ((data[0] == (byte)0xFF) 
-                    && (data[1] == (byte)0xD8) 
-                    && (data[2] == (byte)0xFF)) {
-                FopImage.ImageInfo ii = ImageReaderFactory.make
-                        (purl.toString(), is, null);
-                JpegImage jpeg = new JpegImage(ii);
-                jpeg.load(FopImage.ORIGINAL_DATA);
-                PDFJpegNode node = new PDFJpegNode(jpeg, ctx, imageElement, purl);
-    
-                Rectangle2D imgBounds = getImageBounds(ctx, imageElement);
-                Rectangle2D bounds = node.getPrimitiveBounds();
-                float [] vb = new float[4];
-                vb[0] = 0; // x
-                vb[1] = 0; // y
-                vb[2] = (float) bounds.getWidth(); // width
-                vb[3] = (float) bounds.getHeight(); // height
-    
-                // handles the 'preserveAspectRatio', 'overflow' and 'clip' 
-                // and sets the appropriate AffineTransform to the image node
-                initializeViewport(ctx, imageElement, node, vb, imgBounds);
-                return node;
-            }
-        } catch (Exception ex) {
-            //TODO Handle this exception
-        }
+            Rectangle2D imgBounds = getImageBounds(ctx, imageElement);
+            Rectangle2D bounds = specializedNode.getPrimitiveBounds();
+            float [] vb = new float[4];
+            vb[0] = 0; // x
+            vb[1] = 0; // y
+            vb[2] = (float) bounds.getWidth(); // width
+            vb[3] = (float) bounds.getHeight(); // height
 
+            // handles the 'preserveAspectRatio', 'overflow' and 'clip' 
+            // and sets the appropriate AffineTransform to the image node
+            initializeViewport(ctx, imageElement, specializedNode, vb, imgBounds);
+            return specializedNode;
+        } catch (Exception e) {
+            ctx.getUserAgent().displayError(e);
+        }
+        
         return superCreateGraphicsNode(ctx, imageElement, purl);
     }
 
     /**
+     * Calls the superclass' createImageGraphicNode() method to create the normal GraphicsNode.
+     * @param ctx the bridge context
+     * @param imageElement the image element
+     * @param purl the parsed URL
+     * @return the newly created graphics node
      * @see org.apache.batik.bridge.SVGImageElementBridge#createGraphicsNode(BridgeContext, Element)
      */
     protected GraphicsNode superCreateGraphicsNode
-        (BridgeContext ctx, Element imageElement, ParsedURL purl) {
+            (BridgeContext ctx, Element imageElement, ParsedURL purl) {
         return super.createImageGraphicsNode(ctx, imageElement, purl);
     }
 
 
     /**
-     * A PDF jpeg node.
-     * This holds a jpeg image so that it can be drawn into
+     * An image node for natively handled Image instance.
+     * This holds a natively handled image so that it can be drawn into
      * the PDFGraphics2D.
      */
-    public class PDFJpegNode extends AbstractGraphicsNode {
+    public class LoaderImageNode extends AbstractGraphicsNode {
         
-        private JpegImage jpeg;
+        private Image image;
         private BridgeContext ctx;
         private Element imageElement;
         private ParsedURL purl;
         private GraphicsNode origGraphicsNode = null;
         
         /**
-         * Create a new pdf jpeg node for drawing jpeg images
-         * into pdf graphics.
-         * @param j the jpeg image
+         * Create a new image node for drawing natively handled images
+         * into PDF graphics.
+         * @param image the JPEG image
          * @param ctx the bridge context
          * @param imageElement the SVG image element
          * @param purl the URL to the image
          */
-        public PDFJpegNode(JpegImage j, BridgeContext ctx, 
+        public LoaderImageNode(Image image, BridgeContext ctx, 
                            Element imageElement, ParsedURL purl) {
-            this.jpeg = j;
+            this.image = image;
             this.ctx  = ctx;
             this.imageElement = imageElement;
             this.purl = purl;
         }
 
-        /**
-         * Get the outline of this image.
-         * @return the outline shape which is the primitive bounds
-         */
+        /** {@inheritDoc} */
         public Shape getOutline() {
             return getPrimitiveBounds();
         }
 
-        /**
-         * Paint this jpeg image.
-         * As this is used for inserting jpeg into pdf
-         * it adds the jpeg image to the PDFGraphics2D.
-         * @param g2d the graphics to draw the image on
-         */
+        /** {@inheritDoc} */
         public void primitivePaint(Graphics2D g2d) {
             if (g2d instanceof PDFGraphics2D) {
                 PDFGraphics2D pdfg = (PDFGraphics2D) g2d;
                 float x = 0;
                 float y = 0;
                 try {
-                    float width = jpeg.getWidth();
-                    float height = jpeg.getHeight();
-                    pdfg.addJpegImage(jpeg, x, y, width, height);
+                    float width = image.getSize().getWidthPx();
+                    float height = image.getSize().getHeightPx();
+                    pdfg.addNativeImage(image, x, y, width, height);
                 } catch (Exception e) {
-                    //TODO Handle this exception properly
-                    e.printStackTrace();
+                    ctx.getUserAgent().displayError(e);
                 }
             } else {
                 // Not going directly into PDF so use
@@ -179,35 +199,19 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
             }
         }
 
-        /**
-         * Get the geometrix bounds of the image.
-         * @return the primitive bounds
-         */
+        /** {@inheritDoc} */
         public Rectangle2D getGeometryBounds() {
             return getPrimitiveBounds();
         }
 
-        /**
-         * Get the primitive bounds of this bridge element.
-         * @return the bounds of the jpeg image
-         */
+        /** {@inheritDoc} */
         public Rectangle2D getPrimitiveBounds() {
-            try {
-                return new Rectangle2D.Double(0, 0, jpeg.getWidth(),
-                                              jpeg.getHeight());
-            } catch (Exception e) {
-                //TODO Handle this exception properly
-                e.printStackTrace();
-            }
-            return null;
+            return new Rectangle2D.Double(0, 0,
+                       image.getSize().getWidthPx(),
+                       image.getSize().getHeightPx());
         }
 
-        /**
-         * Returns the bounds of the sensitive area covered by this node,
-         * This includes the stroked area but does not include the effects
-         * of clipping, masking or filtering.
-         * @return the bounds of the sensitive area
-         */
+        /** {@inheritDoc} */
         public Rectangle2D getSensitiveBounds() {
             //No interactive features, just return primitive bounds
             return getPrimitiveBounds();
@@ -215,4 +219,51 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
 
     }
 
+    /**
+     * A node that holds a Graphics2D image.
+     */
+    public class Graphics2DNode extends AbstractGraphicsNode {
+        
+        private ImageGraphics2D image;
+        
+        /**
+         * Create a new Graphics2D node.
+         * @param g2d the Graphics2D image
+         */
+        public Graphics2DNode(ImageGraphics2D g2d) {
+            this.image = g2d;
+        }
+
+        /** {@inheritDoc} */
+        public Shape getOutline() {
+            return getPrimitiveBounds();
+        }
+
+        /** {@inheritDoc} */
+        public void primitivePaint(Graphics2D g2d) {
+            int width = image.getSize().getWidthPx();
+            int height = image.getSize().getHeightPx();
+            Rectangle2D area = new Rectangle2D.Double(0, 0, width, height);
+            image.getGraphics2DImagePainter().paint(g2d, area);
+        }
+
+        /** {@inheritDoc} */
+        public Rectangle2D getGeometryBounds() {
+            return getPrimitiveBounds();
+        }
+
+        /** {@inheritDoc} */
+        public Rectangle2D getPrimitiveBounds() {
+            return new Rectangle2D.Double(0, 0,
+                    image.getSize().getWidthPx(),
+                    image.getSize().getHeightPx());
+        }
+
+        /** {@inheritDoc} */
+        public Rectangle2D getSensitiveBounds() {
+            //No interactive features, just return primitive bounds
+            return getPrimitiveBounds();
+        }
+
+    }
 }

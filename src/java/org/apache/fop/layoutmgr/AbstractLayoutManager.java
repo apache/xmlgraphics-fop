@@ -38,7 +38,7 @@ import org.apache.fop.fo.flow.RetrieveMarker;
 /**
  * The base class for most LayoutManagers.
  */
-public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager 
+public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     implements Constants {
 
     /**
@@ -56,13 +56,14 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     private Map markers = null;
 
     /** True if this LayoutManager has handled all of its content. */
-    private boolean bFinished = false;
-    
-    /** child LM and child LM iterator during getNextKnuthElement phase */
+    private boolean isFinished = false;
+
+    /** child LM during getNextKnuthElement phase */
     protected LayoutManager curChildLM = null;
-    /** child LM and child LM iterator during getNextKnuthElement phase */
+
+    /** child LM iterator during getNextKnuthElement phase */
     protected ListIterator childLMiter = null;
-    
+
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;
 
@@ -113,7 +114,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         if (curChildLM != null && !curChildLM.isFinished()) {
             return curChildLM;
         }
-        while (childLMiter.hasNext()) {
+        if (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
             curChildLM.initialize();
             return curChildLM;
@@ -130,51 +131,12 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * Reset the layoutmanager "iterator" so that it will start
-     * with the passed Position's generating LM
-     * on the next call to getChildLM.
-     * @param pos a Position returned by a child layout manager
-     * representing a potential break decision.
-     * If pos is null, then back up to the first child LM.
-     */
-    protected void reset(org.apache.fop.layoutmgr.Position pos) {
-        //if (lm == null) return;
-        LayoutManager lm = (pos != null) ? pos.getLM() : null;
-        if (curChildLM != lm) {
-            // ASSERT curChildLM == (LayoutManager)childLMiter.previous()
-            if (childLMiter.hasPrevious() && curChildLM
-                    != (LayoutManager) childLMiter.previous()) {
-                //log.error("LMiter problem!");
-            }
-            while (curChildLM != lm && childLMiter.hasPrevious()) {
-                curChildLM.resetPosition(null);
-                curChildLM = (LayoutManager) childLMiter.previous();
-            }
-            // Otherwise next returns same object
-            childLMiter.next();
-        }
-        if (curChildLM != null) {
-            curChildLM.resetPosition(pos);
-        }
-        if (isFinished()) {
-            setFinished(false);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void resetPosition(Position resetPos) {
-        //  if (resetPos == null) {
-        //      reset(null);
-        //  }
-    }
-
-    /**
      * Tell whether this LayoutManager has handled all of its content.
      * @return True if there are no more break possibilities,
      * ie. the last one returned represents the end of the content.
      */
     public boolean isFinished() {
-        return bFinished;
+        return isFinished;
     }
 
     /**
@@ -182,18 +144,14 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * @param fin the flag value to be set
      */
     public void setFinished(boolean fin) {
-        bFinished = fin;
+        isFinished = fin;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         log.warn("null implementation of getNextKnuthElements() called!");
@@ -201,9 +159,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return null;
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         log.warn("null implementation of getChangeKnuthElement() called!");
@@ -263,25 +219,24 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return newLMs;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public PageSequenceLayoutManager getPSLM() {
         return parentLM.getPSLM();
     }
-    
+
     /**
      * @see PageSequenceLayoutManager#getCurrentPage()
+     * @return the {@link Page} instance corresponding to the current page
      */
     public Page getCurrentPage() {
         return getPSLM().getCurrentPage();
-    }  
-    
+    }
+
     /** @return the current page viewport */
     public PageViewport getCurrentPV() {
         return getPSLM().getCurrentPage().getPageViewport();
-    }  
-    
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -341,11 +296,12 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         if (pos.getIndex() >= 0) {
             throw new IllegalStateException("Position already got its index");
         }
+        
         lastGeneratedPosition++;
         pos.setIndex(lastGeneratedPosition);
         return pos;
     }
-    
+
     /**
      * Indicates whether the given Position is the first area-generating Position of this LM.
      * @param pos the Position (must be one with a position index)
@@ -365,7 +321,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             return false;
         }
     }
-    
+
     /**
      * Indicates whether the given Position is the last area-generating Position of this LM.
      * @param pos the Position (must be one with a position index)
@@ -385,27 +341,89 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * @param targetArea the area to set the attributes on
      */
     protected void transferForeignAttributes(Area targetArea) {
-        Map atts = getFObj().getForeignAttributes();
+        Map atts = fobj.getForeignAttributes();
         targetArea.setForeignAttributes(atts);
     }
-    
+
     /**
      * Registers the FO's markers on the current PageViewport
+     *
+     * @param isStarting    boolean indicating whether the markers qualify as 'starting'
+     * @param isFirst   boolean indicating whether the markers qualify as 'first'
+     * @param isLast    boolean indicating whether the markers qualify as 'last'
      */
     protected void addMarkersToPage(boolean isStarting, boolean isFirst, boolean isLast) {
         if (this.markers != null) {
             getCurrentPV().addMarkers(
-                    this.markers, 
-                    isStarting, 
-                    isFirst, 
+                    this.markers,
+                    isStarting,
+                    isFirst,
                     isLast);
         }
     }
 
+    /**
+     * Registers the FO's id on the current PageViewport
+     */
+    protected void addId() {
+        if (fobj != null) {
+            getPSLM().addIDToPage(fobj.getId());
+        }
+    }
+
+    /**
+     * Notifies the {@link PageSequenceLayoutManager} that layout
+     * for this LM has ended.
+     */
+    protected void notifyEndOfLayout() {
+        if (fobj != null) {
+            getPSLM().notifyEndOfLayout(fobj.getId());
+        }
+    }
+
+    /**
+     * Checks to see if the incoming {@link Position}
+     * is the last one for this LM, and if so, calls
+     * {@link #notifyEndOfLayout()} and cleans up.
+     * 
+     * @param pos   the {@link Position} to check
+     */
+    protected void checkEndOfLayout(Position pos) {
+        if (pos != null
+            && pos.getLM() == this
+            && this.isLast(pos)) {
+            
+            notifyEndOfLayout();
+            
+            /* References to the child LMs are no longer needed
+             */
+            childLMs = null;
+            curChildLM = null;
+            childLMiter = null;
+            
+            /* markers that qualify have been transferred to the page
+             */
+            markers = null;
+            
+            /* References to the FO's children can be released if the 
+             * LM is a descendant of the FlowLM. For static-content
+             * the FO may still be needed on following pages.
+             */
+            LayoutManager lm = this.parentLM;
+            while (!(lm instanceof FlowLayoutManager
+                        || lm instanceof PageSequenceLayoutManager)) {
+                lm = lm.getParent();
+            }
+            if (lm instanceof FlowLayoutManager) {
+                fobj.clearChildNodes();
+                fobjIter = null;
+            }
+        }
+    }
+    
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));
     }
-    
-    
+
 }

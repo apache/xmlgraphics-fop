@@ -124,6 +124,7 @@
     <char name="bar" width="200"/>
     <char name="braceright" width="480"/>
     <char name="similar" width="549"/>
+    <char name="Euro" width="750"/>
     <char name="Upsilon1" width="620"/>
     <char name="minute" width="247"/>
     <char name="lessequal" width="549"/>

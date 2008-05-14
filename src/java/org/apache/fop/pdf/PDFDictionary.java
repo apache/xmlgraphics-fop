@@ -19,9 +19,14 @@
  
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.output.CountingOutputStream;
 
 /**
  * Class representing a PDF dictionary object
@@ -40,11 +45,18 @@ public class PDFDictionary extends PDFObject {
     protected List order = new java.util.ArrayList();
     
     /**
-     * Create the dictionary object
+     * Create a new dictionary object.
      */
     public PDFDictionary() {
-        /* generic creation of PDF object */
         super();
+    }
+
+    /**
+     * Create a new dictionary object.
+     * @param parent the object's parent if any
+     */
+    public PDFDictionary(PDFObject parent) {
+        super(parent);
     }
 
     /**
@@ -53,6 +65,12 @@ public class PDFDictionary extends PDFObject {
      * @param value the value
      */
     public void put(String name, Object value) {
+        if (value instanceof PDFObject) {
+            PDFObject pdfObj = (PDFObject)value;
+            if (!pdfObj.hasObjectNumber()) {
+                pdfObj.setParent(this);
+            }
+        }
         if (!entries.containsKey(name)) {
             this.order.add(name);
         }
@@ -80,37 +98,53 @@ public class PDFDictionary extends PDFObject {
         return this.entries.get(name);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public String toPDFString() {
-        StringBuffer p = new StringBuffer(64);
+    /** {@inheritDoc} */
+    protected int output(OutputStream stream) throws IOException {
+        CountingOutputStream cout = new CountingOutputStream(stream);
+        Writer writer = PDFDocument.getWriterFor(cout);
         if (hasObjectNumber()) {
-            p.append(getObjectID());
+            writer.write(getObjectID());
         }
-        writeDictionary(p);
-        if (hasObjectNumber()) {
-            p.append("endobj\n");
-        }
-        return p.toString();
-    }
+        
+        writeDictionary(cout, writer);
 
+        if (hasObjectNumber()) {
+            writer.write("\nendobj\n");
+        }
+        
+        writer.flush();
+        return cout.getCount();
+    }
+    
     /**
      * Writes the contents of the dictionary to a StringBuffer.
-     * @param sb the target StringBuffer
+     * @param out the OutputStream (for binary content)
+     * @param writer the Writer (for text content, wraps the above OutputStream)
+     * @throws IOException if an I/O error occurs
      */
-    protected void writeDictionary(StringBuffer sb) {
-        sb.append("<<");
+    protected void writeDictionary(OutputStream out, Writer writer) throws IOException {
+        writer.write("<<");
+        boolean compact = (this.order.size() <= 2);
         Iterator iter = this.order.iterator();
         while (iter.hasNext()) {
             String key = (String)iter.next();
-            sb.append("\n  /");
-            sb.append(key);
-            sb.append(" ");
+            if (compact) {
+                writer.write(' ');
+            } else {
+                writer.write("\n  ");
+            }
+            writer.write('/');
+            writer.write(key);
+            writer.write(' ');
             Object obj = this.entries.get(key);
-            formatObject(obj, sb);
+            formatObject(obj, out, writer);
         }
-        sb.append("\n>>\n");
+        if (compact) {
+            writer.write(' ');
+        } else {
+            writer.write('\n');
+        }
+        writer.write(">>\n");
     }
 
 }

@@ -68,19 +68,16 @@ public class MinOptMaxUtil {
     }
 
     /**
-     * Extend the minimum length to the given length.
+     * Extends the minimum length to the given length if necessary, and adjusts opt and
+     * max accordingly.
+     * 
      * @param mom the min/opt/max trait
      * @param len the new minimum length
-     * @param optToLen if set adjusts the optimum length to be the smaller of the
-     * minimum length and the given length
      */
-    public static void extendMinimum(MinOptMax mom, int len, boolean optToLen) {
+    public static void extendMinimum(MinOptMax mom, int len) {
         if (mom.min < len) {
             mom.min = len;
             mom.opt = Math.max(mom.min, mom.opt);
-            if (optToLen) {
-                mom.opt = Math.min(mom.min, len);
-            }
             mom.max = Math.max(mom.opt, mom.max);
         }
     }
@@ -111,7 +108,7 @@ public class MinOptMaxUtil {
                         ? 0 : prop.getMinimum(context).getLength().getValue(context)),
                 (prop.getOptimum(context).isAuto() 
                         ? 0 : prop.getOptimum(context).getLength().getValue(context)),
-                (prop.getMinimum(context).isAuto() 
+                (prop.getMaximum(context).isAuto() 
                         ? Integer.MAX_VALUE 
                         : prop.getMaximum(context).getLength().getValue(context)));
         return mom;

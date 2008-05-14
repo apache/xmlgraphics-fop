@@ -21,6 +21,11 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.FOValidationEventProducer;
+import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.expr.PropertyException;
+
+import java.util.Set;
 
 /**
  * Exists primarily as a container for its Maker inner class, which is
@@ -72,13 +77,16 @@ public final class StringProperty extends Property {
                     value = str;
                 }
             }
-            return new StringProperty(value);
+            return StringProperty.getInstance(value);
         }
 
-    }    // end String.Maker
-
+    }
+    
     /** cache containing all canonical StringProperty instances */
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(StringProperty.class);
+    
+    /** canonical instance for empty strings */
+    public static final StringProperty EMPTY_STRING_PROPERTY = new StringProperty("");
     
     private final String str;
 
@@ -97,40 +105,38 @@ public final class StringProperty extends Property {
      * @return  the canonical instance
      */
     public static StringProperty getInstance(String str) {
-        return (StringProperty)cache.fetch(
-                   new StringProperty(str));
+        if ("".equals(str) || str == null) {
+            return EMPTY_STRING_PROPERTY;
+        } else {
+            return (StringProperty)cache.fetch(
+                       new StringProperty(str));
+        }
     }
     
-    /**
-     * @return the Object equivalent of this property
-     */
+    /** @return the Object equivalent of this property */
     public Object getObject() {
         return this.str;
     }
 
-    /**
-     * @return the String equivalent of this property
-     */
+    /** @return the String equivalent of this property */
     public String getString() {
         return this.str;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj instanceof StringProperty) {
             StringProperty sp = (StringProperty)obj;
             return (sp.str == this.str
                     || sp.str.equals(this.str));
-        } else {
-            return false;
         }
+        return false;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int hashCode() {
         return str.hashCode();
     }

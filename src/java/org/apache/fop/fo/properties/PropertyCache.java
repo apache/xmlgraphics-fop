@@ -36,13 +36,21 @@ public final class PropertyCache {
     /** bitmask to apply to the hash to get to the 
      *  corresponding cache segment */
     private static final int SEGMENT_MASK = 0x1F;
+    /** 
+     * Indicates whether the cache should be used at all
+     * Can be controlled by the system property:
+     *   org.apache.fop.fo.properties.use-cache
+     */
+    private final boolean useCache;
     
     /** the segments array (length = 32) */
     private CacheSegment[] segments = new CacheSegment[SEGMENT_MASK + 1];
     /** the table of hash-buckets */
     private CacheEntry[] table = new CacheEntry[8];
     
-    boolean[] votesForRehash = new boolean[SEGMENT_MASK + 1];
+    private Class runtimeType;
+    
+    final boolean[] votesForRehash = new boolean[SEGMENT_MASK + 1];
     
     /* same hash function as used by java.util.HashMap */
     private static int hash(Object x) {
@@ -80,10 +88,10 @@ public final class PropertyCache {
     /* Wrapper objects to synchronize on */
     private final class CacheSegment {
         private int count = 0;
-        private ReferenceQueue staleEntries = new ReferenceQueue();
+        private volatile ReferenceQueue staleEntries = new ReferenceQueue();
     }    
     
-    private final void cleanSegment(int segmentIndex) {
+    private void cleanSegment(int segmentIndex) {
         CacheEntry entry;
         CacheSegment segment = segments[segmentIndex];
         int bucketIndex;
@@ -113,29 +121,26 @@ public final class PropertyCache {
         }
         synchronized (votesForRehash) {
             if (oldCount > segment.count) {
-                if (votesForRehash[segmentIndex]) {
-                    votesForRehash[segmentIndex] = false;
-                }
+                votesForRehash[segmentIndex] = false;
                 return;
-            } else {
-                /* cleanup had no effect */
-                if (!votesForRehash[segmentIndex]) {
-                    /* first time for this segment */
-                    votesForRehash[segmentIndex] = true;
-                    int voteCount = 0;
-                    for (int i = SEGMENT_MASK + 1; --i >= 0; ) {
-                        if (votesForRehash[i]) {
-                            voteCount++;
-                        }
+            }
+            /* cleanup had no effect */
+            if (!votesForRehash[segmentIndex]) {
+                /* first time for this segment */
+                votesForRehash[segmentIndex] = true;
+                int voteCount = 0;
+                for (int i = SEGMENT_MASK + 1; --i >= 0; ) {
+                    if (votesForRehash[i]) {
+                        voteCount++;
                     }
-                    if (voteCount > SEGMENT_MASK / 4) {
-                        rehash(SEGMENT_MASK);
-                        /* reset votes */
-                        for (int i = SEGMENT_MASK + 1; --i >= 0;) {
-                            votesForRehash[i] = false;
-                        }
-    
+                }
+                if (voteCount > SEGMENT_MASK / 4) {
+                    rehash(SEGMENT_MASK);
+                    /* reset votes */
+                    for (int i = SEGMENT_MASK + 1; --i >= 0;) {
+                        votesForRehash[i] = false;
                     }
+
                 }
             }
         }
@@ -148,7 +153,7 @@ public final class PropertyCache {
      * cleanup will be performed to try and remove obsolete
      * entries.
      */
-    private final void put(Object o) {
+    private void put(Object o) {
         
         int hash = hash(o);
         CacheSegment segment = segments[hash & SEGMENT_MASK];
@@ -180,7 +185,7 @@ public final class PropertyCache {
     
 
     /* Gets a cached instance. Returns null if not found */
-    private final Object get(Object o) {
+    private Object get(Object o) {
         
         int hash = hash(o);
         int index = hash & (table.length - 1);
@@ -219,7 +224,7 @@ public final class PropertyCache {
      * extends the cache and redistributes the entries.
      * 
      */
-    private final void rehash(int index) {
+    private void rehash(int index) {
         
         CacheSegment seg = segments[index];
         synchronized (seg) {
@@ -258,12 +263,20 @@ public final class PropertyCache {
     }
     
     /**
-     *  Default constructor. 
+     *  Default constructor.
+     *  
+     *  @param c    Runtime type of the objects that will be stored in the cache
      */
-    public PropertyCache() {
-        for (int i = SEGMENT_MASK + 1; --i >= 0;) {
-            segments[i] = new CacheSegment();
+    public PropertyCache(Class c) {
+        this.useCache = Boolean.valueOf(System.getProperty(
+                            "org.apache.fop.fo.properties.use-cache", "true")
+                        ).booleanValue();
+        if (useCache) {
+            for (int i = SEGMENT_MASK + 1; --i >= 0;) {
+                segments[i] = new CacheSegment();
+            }
         }
+        this.runtimeType = c;
     }
     
     /**
@@ -275,7 +288,11 @@ public final class PropertyCache {
      *  @param obj   the Object to check for
      *  @return  the cached instance
      */
-    private final Object fetch(Object obj) {
+    private Object fetch(Object obj) {
+        if (!this.useCache) {
+            return obj;
+        }
+        
         if (obj == null) {
             return null;
         }
@@ -289,7 +306,7 @@ public final class PropertyCache {
     }
     
     /**
-     *  Checks if the given <code>Property</code> is present in the cache - 
+     *  Checks if the given {@link Property} is present in the cache - 
      *  if so, returns a reference to the cached instance. 
      *  Otherwise the given object is added to the cache and returned.
      *  
@@ -302,7 +319,7 @@ public final class PropertyCache {
     }
     
     /**
-     *  Checks if the given <code>CommonHyphenation</code> is present in the cache - 
+     *  Checks if the given {@link CommonHyphenation} is present in the cache - 
      *  if so, returns a reference to the cached instance. 
      *  Otherwise the given object is added to the cache and returned.
      *  
@@ -315,20 +332,7 @@ public final class PropertyCache {
     }
     
     /**
-     *  Checks if the given <code>CachedCommonFont</code> is present in the cache - 
-     *  if so, returns a reference to the cached instance. 
-     *  Otherwise the given object is added to the cache and returned.
-     *  
-     *  @param ccf the CachedCommonFont instance to check for
-     *  @return the cached instance
-     */
-    public final CommonFont.CachedCommonFont fetch(CommonFont.CachedCommonFont ccf) {
-        
-        return (CommonFont.CachedCommonFont) fetch((Object) ccf);
-    }
-    
-    /**
-     *  Checks if the given <code>CommonFont</code> is present in the cache - 
+     *  Checks if the given {@link CommonFont} is present in the cache - 
      *  if so, returns a reference to the cached instance. 
      *  Otherwise the given object is added to the cache and returned.
      *  
@@ -339,4 +343,37 @@ public final class PropertyCache {
         
         return (CommonFont) fetch((Object) cf);
     }
+
+    /**
+     *  Checks if the given {@link CommonBorderPaddingBackground} is present in the cache - 
+     *  if so, returns a reference to the cached instance. 
+     *  Otherwise the given object is added to the cache and returned.
+     *  
+     *  @param cbpb the CommonBorderPaddingBackground instance to check for
+     *  @return the cached instance
+     */
+    public final CommonBorderPaddingBackground fetch(CommonBorderPaddingBackground cbpb) {
+        
+        return (CommonBorderPaddingBackground) fetch((Object) cbpb);
+    }
+
+    /**
+     *  Checks if the given {@link CommonBorderPaddingBackground.BorderInfo} is present in the cache - 
+     *  if so, returns a reference to the cached instance. 
+     *  Otherwise the given object is added to the cache and returned.
+     *  
+     *  @param bi the BorderInfo instance to check for
+     *  @return the cached instance
+     */
+    public final CommonBorderPaddingBackground.BorderInfo fetch(CommonBorderPaddingBackground.BorderInfo bi) {
+        
+        return (CommonBorderPaddingBackground.BorderInfo) fetch((Object) bi);
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return super.toString() + "[runtimeType=" + this.runtimeType + "]";
+    }
+    
+    
 }

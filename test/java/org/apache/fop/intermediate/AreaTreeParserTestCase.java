@@ -50,6 +50,7 @@ import org.apache.fop.area.RenderPagesModel;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.xml.XMLRenderer;
+import org.apache.fop.util.ConsoleEventListenerForTests;
 
 //XML Unit 1.0: See http://xmlunit.sourceforge.net (BSD-style License)
 import org.custommonkey.xmlunit.XMLTestCase;
@@ -170,6 +171,8 @@ public class AreaTreeParserTestCase extends XMLTestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         try {
             userAgent.setBaseURL(testDir.toURL().toExternalForm());
+            userAgent.getEventBroadcaster().addEventListener(
+                    new ConsoleEventListenerForTests(testFile.getName()));
         } catch (MalformedURLException e) {
             //ignore, won't happen
         }

@@ -21,9 +21,11 @@ package org.apache.fop.render.ps;
 
 // Java
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
@@ -38,12 +40,38 @@ import javax.xml.transform.Source;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawEPS;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.pipeline.ImageProviderPipeline;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.ImageEncoder;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSImageUtils;
+import org.apache.xmlgraphics.ps.PSProcSets;
+import org.apache.xmlgraphics.ps.PSResource;
+import org.apache.xmlgraphics.ps.PSState;
+import org.apache.xmlgraphics.ps.dsc.DSCException;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageViewport;
@@ -56,33 +84,25 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.image.EPSImage;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.ImageAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.ps.extensions.PSCommentAfter;
 import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
-import org.apache.xmlgraphics.ps.DSCConstants;
-import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSProcSets;
-import org.apache.xmlgraphics.ps.PSResource;
-import org.apache.xmlgraphics.ps.PSState;
-import org.apache.xmlgraphics.ps.dsc.DSCException;
-import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
-import org.w3c.dom.Document;
 
 /**
  * Renderer that renders to PostScript.
@@ -103,7 +123,8 @@ import org.w3c.dom.Document;
  * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
  */
-public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAdapter {
+public class PSRenderer extends AbstractPathOrientedRenderer
+            implements ImageAdapter, PSSupportedFlavors {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PSRenderer.class);
@@ -149,17 +170,22 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** Whether or not the safe set page device macro will be used or not */
     private boolean safeSetPageDevice = false;
 
-    /** Whether or not Dublin Core Standard (dsc) compliant output is enforced */
+    /**
+     * Whether or not PostScript Document Structuring Conventions (DSC) compliant output are
+     * enforced.
+     */
     private boolean dscCompliant = true;
 
+    /** Is used to determine the document's bounding box */
+    private Rectangle2D documentBoundingBox;
+    
     /** This is a collection holding all document header comments */
     private Collection headerComments;
 
     /** This is a collection holding all document footer comments */
     private Collection footerComments;
-    /**
-     * {@inheritDoc}
-     */
+    
+    /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
         Object obj;
@@ -274,7 +300,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      */
     protected void handleIOTrouble(IOException ioe) {
         if (!ioTrouble) {
-            log.error("Error while writing to target file", ioe);
+            RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.ioError(this, ioe);
             ioTrouble = true;
         }
     }
@@ -305,15 +333,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         writeln("clip newpath");
     }
     
-    /**
-     * Clip an area.
-     * Write a clipping operation given coordinates in the current
-     * transform.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width of the area
-     * @param height the height of the area
-     */
+    /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
         try {
             gen.defineRect(x, y, width, height);
@@ -369,58 +389,188 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
+    /**
+     * Indicates whether an image should be inlined or added as a PostScript form.
+     * @param uri the URI of the image
+     * @return true if the image should be inlined rather than added as a form
+     */
+    protected boolean isImageInlined(String uri) {
+        return !isOptimizeResources() || uri == null || "".equals(uri);
+    }
+    
+    /**
+     * Indicates whether an image should be inlined or added as a PostScript form.
+     * @param info the ImageInfo object of the image
+     * @return true if the image should be inlined rather than added as a form
+     */
+    protected boolean isImageInlined(ImageInfo info) {
+        if (isImageInlined(info.getOriginalURI())) {
+            return true;
+        }
+        
+        if (!isOptimizeResources()) {
+            throw new IllegalStateException("Must not get here if form support is enabled");
+        }
+
+        //Investigate choice for inline mode
+        ImageFlavor[] inlineFlavors = getInlineFlavors();
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageProviderPipeline[] inlineCandidates
+            = manager.getPipelineFactory().determineCandidatePipelines(
+                    info, inlineFlavors);
+        ImageProviderPipeline inlineChoice = manager.choosePipeline(inlineCandidates);
+        ImageFlavor inlineFlavor = (inlineChoice != null ? inlineChoice.getTargetFlavor() : null);
+        
+        //Investigate choice for form mode
+        ImageFlavor[] formFlavors = getFormFlavors();
+        ImageProviderPipeline[] formCandidates
+            = manager.getPipelineFactory().determineCandidatePipelines(
+                    info, formFlavors);
+        ImageProviderPipeline formChoice = manager.choosePipeline(formCandidates);
+        ImageFlavor formFlavor = (formChoice != null ? formChoice.getTargetFlavor() : null);
+        
+        //Inline if form is not supported or if a better choice is available with inline mode
+        return formFlavor == null || !formFlavor.equals(inlineFlavor);
+    }
+    
     /** {@inheritDoc} */
     protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
-        uri = ImageFactory.getURL(uri);
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(uri, userAgent);
-        if (fopimage == null) {
-            return;
+        int x = currentIPPosition + (int)Math.round(pos.getX());
+        int y = currentBPPosition + (int)Math.round(pos.getY());
+        uri = URISpecification.getURL(uri);
+        if (log.isDebugEnabled()) {
+            log.debug("Handling image: " + uri);
         }
-        if (!fopimage.load(FopImage.DIMENSIONS)) {
-            return;
-        }
-        float x = (float)pos.getX() / 1000f;
-        x += currentIPPosition / 1000f;
-        float y = (float)pos.getY() / 1000f;
-        y += currentBPPosition / 1000f;
-        float w = (float)pos.getWidth() / 1000f;
-        float h = (float)pos.getHeight() / 1000f;
+        
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageInfo info = null;
         try {
-            String mime = fopimage.getMimeType();
-            if ("text/xml".equals(mime)) {
-                if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                    return;
-                }
-                Document doc = ((XMLImage) fopimage).getDocument();
-                String ns = ((XMLImage) fopimage).getNameSpace();
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            info = manager.getImageInfo(uri, sessionContext);
+            int width = (int)pos.getWidth();
+            int height = (int)pos.getHeight();
+            
+            //millipoints --> points for PostScript
+            float ptx = x / 1000f;
+            float pty = y / 1000f;
+            float ptw = width / 1000f;
+            float pth = height / 1000f;
 
-                renderDocument(doc, ns, pos, foreignAttributes);
-            } else if ("image/svg+xml".equals(mime)) {
-                if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                    return;
+            if (isImageInlined(info)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Image " + info + " is inlined");
                 }
-                Document doc = ((XMLImage) fopimage).getDocument();
-                String ns = ((XMLImage) fopimage).getNameSpace();
-
-                renderDocument(doc, ns, pos, foreignAttributes);
-            } else if (fopimage instanceof EPSImage) {
-                PSImageUtils.renderEPS((EPSImage)fopimage, x, y, w, h, gen);
-            } else {
-                if (isImageInlined(uri, fopimage)) {
-                    PSImageUtils.renderBitmapImage(fopimage, x, y, w, h, gen);
+                //Only now fully load/prepare the image
+                Map hints = ImageUtil.getDefaultHints(sessionContext);
+                org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
+                        info, getInlineFlavors(), hints, sessionContext);
+                
+                //...and embed as inline image
+                if (img instanceof ImageGraphics2D) {
+                    ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                    RendererContext context = createRendererContext(
+                            x, y, width, height, foreignAttributes);
+                    getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                            context, x, y, width, height);
+                } else if (img instanceof ImageRendered) {
+                    ImageRendered imgRend = (ImageRendered)img;
+                    RenderedImage ri = imgRend.getRenderedImage();
+                    PSImageUtils.renderBitmapImage(ri, ptx, pty, ptw, pth, gen);
+                } else if (img instanceof ImageXMLDOM) {
+                    ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                    renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                            pos, foreignAttributes);
+                } else if (img instanceof ImageRawStream) {
+                    final ImageRawStream raw = (ImageRawStream)img;
+                    if (raw instanceof ImageRawEPS) {
+                        ImageRawEPS eps = (ImageRawEPS)raw;
+                        Rectangle2D bbox = eps.getBoundingBox(); 
+                        InputStream in = raw.createInputStream();
+                        try {
+                            PSImageUtils.renderEPS(in, uri,
+                                    new Rectangle2D.Float(ptx, pty, ptw, pth),
+                                    bbox,
+                                    gen);
+                        } finally {
+                            IOUtils.closeQuietly(in);
+                        }
+                    } else if (raw instanceof ImageRawCCITTFax) {
+                        final ImageRawCCITTFax ccitt = (ImageRawCCITTFax)raw;
+                        ImageEncoder encoder = new ImageEncoderCCITTFax(ccitt);
+                        Rectangle2D targetRect = new Rectangle2D.Float(
+                                ptx, pty, ptw, pth);
+                        PSImageUtils.writeImage(encoder, info.getSize().getDimensionPx(),
+                                uri, targetRect,
+                                ccitt.getColorSpace(), 1, false, gen);
+                    } else if (raw instanceof ImageRawJPEG) {
+                        ImageRawJPEG jpeg = (ImageRawJPEG)raw;
+                        ImageEncoder encoder = new ImageEncoderJPEG(jpeg);
+                        Rectangle2D targetRect = new Rectangle2D.Float(
+                                ptx, pty, ptw, pth);
+                        PSImageUtils.writeImage(encoder, info.getSize().getDimensionPx(),
+                                uri, targetRect,
+                                jpeg.getColorSpace(), 8, jpeg.isInverted(), gen);
+                    } else {
+                        throw new UnsupportedOperationException("Unsupported raw image: " + info);
+                    }
                 } else {
-                    PSResource form = getFormForImage(uri, fopimage);
-                    PSImageUtils.renderForm(fopimage, form, x, y, w, h, gen);
+                    throw new UnsupportedOperationException("Unsupported image type: " + img);
                 }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Image " + info + " is embedded as a form later");
+                }
+                //Don't load image at this time, just put a form placeholder in the stream
+                PSResource form = getFormForImage(uri);   
+                Rectangle2D targetRect = new Rectangle2D.Double(ptx, pty, ptw, pth);
+                PSImageUtils.paintForm(form, info.getSize().getDimensionPt(), targetRect, gen);   
             }
+
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
         } catch (IOException ioe) {
-            handleIOTrouble(ioe);
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
     }
 
-    protected PSResource getFormForImage(String uri, FopImage fopimage) {
+    private ImageFlavor[] getInlineFlavors() {
+        ImageFlavor[] flavors;
+        if (gen.getPSLevel() >= 3) {
+            flavors = LEVEL_3_FLAVORS_INLINE;
+        } else {
+            flavors = LEVEL_2_FLAVORS_INLINE;
+        }
+        return flavors;
+    }
+
+    private ImageFlavor[] getFormFlavors() {
+        ImageFlavor[] flavors;
+        if (gen.getPSLevel() >= 3) {
+            flavors = LEVEL_3_FLAVORS_FORM;
+        } else {
+            flavors = LEVEL_2_FLAVORS_FORM;
+        }
+        return flavors;
+    }
+
+    /**
+     * Returns a PSResource instance representing a image as a PostScript form.
+     * @param uri the image URI
+     * @return a PSResource instance
+     */
+    protected PSResource getFormForImage(String uri) {
+        if (uri == null || "".equals(uri)) {
+            throw new IllegalArgumentException("uri must not be empty or null");
+        }
         if (this.formResources == null) {
             this.formResources = new java.util.HashMap();
         }
@@ -431,11 +581,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
         return form;
     }
-    
-    protected boolean isImageInlined(String uri, FopImage image) {
-        return !isOptimizeResources();
-    }
-    
+
     /** {@inheritDoc} */
     public void paintImage(RenderedImage image, RendererContext context, 
             int x, int y, int width, int height) throws IOException {
@@ -477,6 +623,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** Restores the last graphics state of the rendering engine. */
     public void restoreGraphicsState() {
         try {
+            endTextObject();
             //delegate
             gen.restoreGraphicsState();
         } catch (IOException ioe) {
@@ -515,7 +662,22 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         }
     }
 
+    /** {@inheritDoc} */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        try {
+            gen.concatMatrix(at);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+    
     private String getPostScriptNameForFontKey(String key) {
+        int pos = key.indexOf('_');
+        String postFix = null;
+        if (pos > 0) {
+            postFix = key.substring(pos);
+            key = key.substring(0, pos);
+        }
         Map fonts = fontInfo.getFonts();
         Typeface tf = (Typeface)fonts.get(key);
         if (tf instanceof LazyFont) {
@@ -524,7 +686,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         if (tf == null) {
             throw new IllegalStateException("Font not available: " + key);
         }
-        return tf.getFontName();
+        if (postFix == null) {
+            return tf.getFontName();
+        } else {
+            return tf.getFontName() + postFix;
+        }
     }
     
     /**
@@ -554,7 +720,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     protected void useFont(String key, int size) {
         try {
             PSResource res = getPSResourceForFontKey(key);
-            //gen.useFont(key, size / 1000f);
             gen.useFont("/" + res.getName(), size / 1000f);
             gen.getResourceTracker().notifyResourceUsageOnPage(res);
         } catch (IOException ioe) {
@@ -776,6 +941,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         gen.writeDSCComment(DSCConstants.CREATION_DATE, new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.LANGUAGE_LEVEL, new Integer(gen.getPSLevel()));
         gen.writeDSCComment(DSCConstants.PAGES, new Object[] {DSCConstants.ATEND});
+        gen.writeDSCComment(DSCConstants.BBOX, DSCConstants.ATEND);
+        gen.writeDSCComment(DSCConstants.HIRES_BBOX, DSCConstants.ATEND);
+        this.documentBoundingBox = new Rectangle2D.Double();
         gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES, 
                 new Object[] {DSCConstants.ATEND});
         if (headerComments != null) {
@@ -804,7 +972,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         if (!isOptimizeResources()) {
             this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
         } else {
-            gen.commentln("%FOPFontSetup");
+            gen.commentln("%FOPFontSetup"); //Place-holder, will be replaced in the second pass
         }
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }
@@ -833,6 +1001,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             footerComments.clear();
         }
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
+        new DSCCommentBoundingBox(this.documentBoundingBox).generate(gen);
+        new DSCCommentHiResBoundingBox(this.documentBoundingBox).generate(gen);
         gen.getResourceTracker().writeResources(false, gen);
         gen.writeDSCComment(DSCConstants.EOF);
         gen.flush();
@@ -863,7 +1033,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         try {
             try {
                 ResourceHandler.process(this.userAgent, in, this.outputStream, 
-                        this.fontInfo, resTracker, this.formResources, this.currentPageNumber);
+                        this.fontInfo, resTracker, this.formResources,
+                        this.currentPageNumber, this.documentBoundingBox);
                 this.outputStream.flush();
             } catch (DSCException e) {
                 throw new RuntimeException(e.getMessage());
@@ -910,8 +1081,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                             try {
                                 this.pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
                             } catch (PSDictionaryFormatException e) {
-                                log.error("Failed to parse dictionary string: "
-                                        + e.getMessage() + ", content = '" + content + "'");
+                                PSEventProducer eventProducer = PSEventProducer.Provider.get(
+                                        getUserAgent().getEventBroadcaster());
+                                eventProducer.postscriptDictionaryParseError(this, content, e);
                             }
                         }
                     } else if (attachment instanceof PSCommentBefore) {
@@ -929,11 +1101,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             }
         }
         super.processOffDocumentItem(oDI);
-    }
-    
-    /** {@inheritDoc} */
-    public void startPageSequence(LineArea seqTitle) {
-        super.startPageSequence(seqTitle);
     }
     
     /**
@@ -1014,8 +1181,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         try {
                             pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
                         } catch (PSDictionaryFormatException e) {
-                            log.error("failed to parse dictionary string: "
-                                    + e.getMessage() + ", [" + content + "]");
+                            PSEventProducer eventProducer = PSEventProducer.Provider.get(
+                                    getUserAgent().getEventBroadcaster());
+                            eventProducer.postscriptDictionaryParseError(this, content, e);
                         }
                     }
                 }
@@ -1031,7 +1199,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             log.error(e.getMessage());
         }
         final Integer zero = new Integer(0);
+        Rectangle2D pageBoundingBox = new Rectangle2D.Double();
         if (rotate) {
+            pageBoundingBox.setRect(0, 0, pageHeight, pageWidth);
             gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[] {
                     zero, zero, new Long(Math.round(pageHeight)),
                     new Long(Math.round(pageWidth)) });
@@ -1040,6 +1210,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                     new Double(pageWidth) });
             gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Landscape");
         } else {
+            pageBoundingBox.setRect(0, 0, pageWidth, pageHeight);
             gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[] {
                     zero, zero, new Long(Math.round(pageWidth)),
                     new Long(Math.round(pageHeight)) });
@@ -1051,6 +1222,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                         "Portrait");
             }
         }
+        this.documentBoundingBox.add(pageBoundingBox);
         gen.writeDSCComment(DSCConstants.PAGE_RESOURCES,
                 new Object[] {DSCConstants.ATEND});
 
@@ -1132,9 +1304,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         if (inTextMode) {
+            inTextMode = false; //set before restoreGraphicsState() to avoid recursion
             writeln("ET");
             restoreGraphicsState();
-            inTextMode = false;
         }
     }
 
@@ -1143,17 +1315,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      */
     public void renderText(TextArea area) {
         renderInlineAreaBackAndBorders(area);
-        String fontname = getInternalFontNameForArea(area);
+        String fontkey = getInternalFontNameForArea(area);
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface tf = (Typeface) fontInfo.getFonts().get(fontname);
+        Typeface tf = (Typeface) fontInfo.getFonts().get(fontkey);
 
         //Determine position
         int rx = currentIPPosition + area.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + area.getOffset() + area.getBaselineOffset();
 
-        useFont(fontname, fontsize);
         Color ct = (Color)area.getTrait(Trait.COLOR);
         if (ct != null) {
             try {
@@ -1198,30 +1369,75 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
         super.renderSpace(space);
     }
 
+    private Typeface getTypeface(String fontName) {
+        Typeface tf = (Typeface)fontInfo.getFonts().get(fontName);
+        if (tf instanceof LazyFont) {
+            tf = ((LazyFont)tf).getRealFont();
+        }
+        return tf;
+    }
+    
     private void renderText(AbstractTextArea area, String text, int[] letterAdjust) {
+        String fontkey = getInternalFontNameForArea(area);
+        int fontSize = area.getTraitAsInteger(Trait.FONT_SIZE);
         Font font = getFontFromArea(area);
-        Typeface tf = (Typeface) fontInfo.getFonts().get(font.getFontName());
+        Typeface tf = getTypeface(font.getFontName());
+        SingleByteFont singleByteFont = null;
+        if (tf instanceof SingleByteFont) {
+            singleByteFont = (SingleByteFont)tf;
+        }
 
+        int textLen = text.length();
+        if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
+            int start = 0;
+            int currentEncoding = -1;
+            for (int i = 0; i < textLen; i++) {
+                char c = text.charAt(i);
+                char mapped = tf.mapChar(c);
+                int encoding = mapped / 256;
+                if (currentEncoding != encoding) {
+                    if (i > 0) {
+                        writeText(area, text, start, i - start, letterAdjust, fontSize, tf);
+                    }
+                    if (encoding == 0) {
+                        useFont(fontkey, fontSize);
+                    } else {
+                        useFont(fontkey + "_" + Integer.toString(encoding), fontSize);
+                    }
+                    currentEncoding = encoding;
+                    start = i;
+                }
+            }
+            writeText(area, text, start, textLen - start, letterAdjust, fontSize, tf);
+        } else {
+            useFont(fontkey, fontSize);
+            writeText(area, text, 0, textLen, letterAdjust, fontSize, tf);
+        }
+    }
+
+    private void writeText(AbstractTextArea area, String text, int start, int len,
+            int[] letterAdjust, int fontsize, Typeface tf) {
+        int end = start + len;
         int initialSize = text.length();
         initialSize += initialSize / 2;
         StringBuffer sb = new StringBuffer(initialSize);
-        int textLen = text.length();
         if (letterAdjust == null 
                 && area.getTextLetterSpaceAdjust() == 0 
                 && area.getTextWordSpaceAdjust() == 0) {
             sb.append("(");
-            for (int i = 0; i < textLen; i++) {
+            for (int i = start; i < end; i++) {
                 final char c = text.charAt(i);
-                final char mapped = tf.mapChar(c);
+                final char mapped = (char)(tf.mapChar(c) % 256);
                 PSGenerator.escapeChar(mapped, sb);
             }
             sb.append(") t");
         } else {
             sb.append("(");
-            int[] offsets = new int[textLen];
-            for (int i = 0; i < textLen; i++) {
+            int[] offsets = new int[len];
+            for (int i = start; i < end; i++) {
                 final char c = text.charAt(i);
                 final char mapped = tf.mapChar(c);
+                char codepoint = (char)(mapped % 256);
                 int wordSpace;
 
                 if (CharUtilities.isAdjustableSpace(mapped)) {
@@ -1229,14 +1445,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
                 } else {
                     wordSpace = 0;
                 }
-                int cw = tf.getWidth(mapped, font.getFontSize()) / 1000;
-                int ladj = (letterAdjust != null && i < textLen - 1 ? letterAdjust[i + 1] : 0);
-                int tls = (i < textLen - 1 ? area.getTextLetterSpaceAdjust() : 0); 
-                offsets[i] = cw + ladj + tls + wordSpace;
-                PSGenerator.escapeChar(mapped, sb);
+                int cw = tf.getWidth(mapped, fontsize) / 1000;
+                int ladj = (letterAdjust != null && i < end - 1 ? letterAdjust[i + 1] : 0);
+                int tls = (i < end - 1 ? area.getTextLetterSpaceAdjust() : 0); 
+                offsets[i - start] = cw + ladj + tls + wordSpace;
+                PSGenerator.escapeChar(codepoint, sb);
             }
             sb.append(")" + PSGenerator.LF + "[");
-            for (int i = 0; i < textLen; i++) {
+            for (int i = 0; i < len; i++) {
                 if (i > 0) {
                     if (i % 8 == 0) {
                         sb.append(PSGenerator.LF);
@@ -1249,7 +1465,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
             sb.append("]" + PSGenerator.LF + "xshow");
         }
         writeln(sb.toString());
-
     }
 
     /** {@inheritDoc} */
@@ -1314,7 +1529,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
      * {@inheritDoc}
      */
     protected void endVParea() {
-        endTextObject();
         restoreGraphicsState();
     }
 
@@ -1491,13 +1705,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer implements ImageAda
     }
 
     /**
-     * Sets whether or not Dublin Core Standard (dsc) compliance is enforced.
-     * 
-     * It can cause problems (unwanted postscript subsystem initgraphics/erasepage calls)
+     * Sets whether or not PostScript Document Structuring Conventions (dsc) compliance are
+     * enforced.
+     * <p>
+     * It can cause problems (unwanted PostScript subsystem initgraphics/erasepage calls)
      * on some printers when the pagedevice is set.  If this causes problems on a
      * particular implementation then use this setting with a 'false' value to try and
      * minimize the number of setpagedevice calls in the postscript document output. 
-     * 
+     * <p>
      * Set this value to false if you experience unwanted blank pages in your
      * postscript output.
      * @param dscCompliant boolean value (default is true)

@@ -25,10 +25,11 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.datatypes.Length;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.expr.RelativeNumericProperty;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
@@ -77,12 +78,14 @@ public class ColumnSetup {
                 }
             }
             //Post-processing the list (looking for gaps)
+            //TODO The following block could possibly be removed
             int pos = 1;
             ListIterator ppIter = columns.listIterator();
             while (ppIter.hasNext()) {
                 TableColumn col = (TableColumn)ppIter.next();
                 if (col == null) {
-                    log.error("Found a gap in the table-columns at position " + pos);
+                    assert false; //Gaps are filled earlier by fo.flow.table.Table.finalizeColumns()
+                    //log.error("Found a gap in the table-columns at position " + pos);
                 }
                 pos++;
             }
@@ -100,7 +103,9 @@ public class ColumnSetup {
         if (index > size) {
             if (index > maxColIndexReferenced) {
                 maxColIndexReferenced = index;
-                if (!(size == 1 && getColumn(1).isImplicitColumn())) {
+                TableColumn col = getColumn(1);
+                if (!(size == 1 && col.isImplicitColumn())) {
+                    assert false; //TODO Seems to be removable as this is now done in the FO tree
                     log.warn(FONode.decorateWithContextInfo(
                             "There are fewer table-columns than are needed. "
                             + "Column " + index + " was accessed, but only "
@@ -192,9 +197,10 @@ public class ColumnSetup {
             Length colWidth = (Length) i.next();
             if (colWidth != null) {
                 sumCols += colWidth.getValue(tlm);
-                if (colWidth instanceof TableColLength) {
-                    factors += 
-                        ((TableColLength) colWidth).getTableUnits();
+                if (colWidth instanceof RelativeNumericProperty) {
+                    factors += ((RelativeNumericProperty) colWidth).getTableUnits();
+                } else if (colWidth instanceof TableColLength) {
+                    factors += ((TableColLength) colWidth).getTableUnits();
                 }
             }
         }

@@ -32,12 +32,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
-// commons logging
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.util.DataURIResolver;
 
 import org.apache.xmlgraphics.util.io.Base64EncodeStream;
+
+import org.apache.fop.util.DataURIResolver;
 
 /**
  * Provides FOP specific URI resolution. This is the default URIResolver
@@ -52,12 +52,40 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
 
     /** URIResolver for RFC 2397 data URLs */
     private URIResolver dataURIResolver = new DataURIResolver();
-    
+
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
 
     /** true if exceptions are to be thrown if the URIs cannot be resolved. */
     private boolean throwExceptions = false;
+
+    /**
+     * Checks if the given base URL is acceptable. It also normalizes the URL.
+     * @param base the base URL to check
+     * @return the normalized URL
+     * @throws MalformedURLException if there's a problem with a file URL
+     */
+    public String checkBaseURL(String base) throws MalformedURLException {
+        if (!base.endsWith("/")) {
+            // The behavior described by RFC 3986 regarding resolution of relative
+            // references may be misleading for normal users:
+            // file://path/to/resources + myResource.res -> file://path/to/myResource.res
+            // file://path/to/resources/ + myResource.res -> file://path/to/resources/myResource.res
+            // We assume that even when the ending slash is missing, users have the second
+            // example in mind
+            base += "/";
+        }
+        File dir = new File(base);
+        try {
+            base = (dir.isDirectory() ? dir.toURL() : new URL(base)).toExternalForm();
+        } catch (MalformedURLException mfue) {
+            if (throwExceptions) {
+                throw mfue;
+            }
+            log.error(mfue.getMessage());
+        }
+        return base;
+    }
 
     /**
      * Default constructor
@@ -119,11 +147,11 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
      */
     public Source resolve(String href, String base) throws TransformerException {
         Source source = null;
-        
+
         // data URLs can be quite long so evaluate early and don't try to build a File
         // (can lead to problems)
         source = dataURIResolver.resolve(href, base);
-        
+
         // Custom uri resolution
         if (source == null && uriResolver != null) {
             source = uriResolver.resolve(href, base);
@@ -132,10 +160,23 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
         // Fallback to default resolution mechanism
         if (source == null) {
             URL absoluteURL = null;
-            File file = new File(href);
+            int hashPos = href.indexOf('#');
+            String fileURL, fragment;
+            if (hashPos >= 0) {
+                fileURL = href.substring(0, hashPos);
+                fragment = href.substring(hashPos);
+            } else {
+                fileURL = href;
+                fragment = null;
+            }
+            File file = new File(fileURL);
             if (file.canRead() && file.isFile()) {
                 try {
-                    absoluteURL = file.toURL();
+                    if (fragment != null) {
+                        absoluteURL = new URL(file.toURL().toExternalForm() + fragment);
+                    } else {
+                        absoluteURL = file.toURL();
+                    }
                 } catch (MalformedURLException mfue) {
                     handleException(mfue, "Could not convert filename '" + href
                             + "' to URL", throwExceptions);

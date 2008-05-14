@@ -44,7 +44,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block1</fo:block>
           <fo:block>block2</fo:block>
-          <fo:block keep-together.within-page="10" color="blue">
+          <fo:block keep-together.within-page="always" color="blue">
             <fo:block>block3</fo:block>
             <fo:block>block4</fo:block>
             <fo:block>block5</fo:block>
@@ -53,7 +53,7 @@
           </fo:block>
           <fo:block>block8</fo:block>
           <fo:block>block9</fo:block>
-          <fo:block keep-together.within-page="10" color="green">
+          <fo:block keep-together.within-page="always" color="green">
             <fo:block>block10</fo:block>
             <fo:block>block11</fo:block>
             <fo:block>block12</fo:block>

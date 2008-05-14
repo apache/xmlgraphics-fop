@@ -42,12 +42,12 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
     /**
      * The x coordinate
      */
-    private int xCoor = 0;
+    private int x = 0;
 
     /**
      * The y coordinate
      */
-    private int yCoor = 0;
+    private int y = 0;
 
     /**
      * The orientation
@@ -62,11 +62,9 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
      * @param orientation The orientation
      */
     public IncludePageOverlay(String overlayName, int x, int y, int orientation) {
-
         super(overlayName);
-
-        xCoor = x;
-        yCoor = y;
+        this.x = x;
+        this.y = y;
         setOrientation(orientation);
     }
 
@@ -77,7 +75,6 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
      *            The orientation (0,90, 180, 270)
      */
     public void setOrientation(int orientation) {
-
         if (orientation == 0 || orientation == 90 || orientation == 180
             || orientation == 270) {
             this.orientation = orientation;
@@ -85,7 +82,6 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
             throw new IllegalArgumentException(
                 "The orientation must be one of the values 0, 90, 180, 270");
         }
-
     }
 
     /**
@@ -101,9 +97,9 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
         data[0] = 0x5A;
 
         // Set the total record length
-        byte[] rl1 = BinaryUtils.convert(24, 2); //Ignore first byte
-        data[1] = rl1[0];
-        data[2] = rl1[1];
+        byte[] len = BinaryUtils.convert(24, 2); //Ignore first byte
+        data[1] = len[0];
+        data[2] = len[1];
 
         // Structured field ID for a IPO
         data[3] = (byte) 0xD3;
@@ -115,20 +111,18 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
         data[8] = 0x00; // Reserved
 
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
 
-        byte[] r2 = BinaryUtils.convert(xCoor, 3);
-        data[17] = r2[0]; // x coordinate
-        data[18] = r2[1];
-        data[19] = r2[2];
+        byte[] xcoord = BinaryUtils.convert(x, 3);
+        data[17] = xcoord[0]; // x coordinate
+        data[18] = xcoord[1];
+        data[19] = xcoord[2];
 
-        byte[] r3 = BinaryUtils.convert(yCoor, 3);
-        data[20] = r3[0]; // y coordinate
-        data[21] = r3[1];
-        data[22] = r3[2];
+        byte[] ycoord = BinaryUtils.convert(y, 3);
+        data[20] = ycoord[0]; // y coordinate
+        data[21] = ycoord[1];
+        data[22] = ycoord[2];
 
         switch (orientation) {
             case 90:
@@ -148,9 +142,6 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
                 data[24] = 0x00;
                 break;
         }
-
         os.write(data);
-
     }
-
 }

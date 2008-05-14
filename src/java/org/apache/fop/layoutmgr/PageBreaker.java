@@ -27,7 +27,6 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
@@ -79,27 +78,25 @@ public class PageBreaker extends AbstractBreaker {
         return pslm.getPageProvider();
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    protected PageBreakingLayoutListener getLayoutListener() {
+    /** {@inheritDoc} */
+    protected PageBreakingLayoutListener createLayoutListener() {
         return new PageBreakingLayoutListener() {
 
-            public void notifyOverflow(int part, FObj obj) {
+            public void notifyOverflow(int part, int amount, FObj obj) {
                 Page p = pageProvider.getPage(
                             false, part, PageProvider.RELTO_CURRENT_ELEMENT_LIST);
                 RegionBody body = (RegionBody)p.getSimplePageMaster().getRegion(
                         Region.FO_REGION_BODY);
-                String err = FONode.decorateWithContextInfo(
-                        "Content of the region-body on page " 
-                        + p.getPageViewport().getPageNumberString() 
-                        + " overflows the available area in block-progression dimension.", 
-                        obj);
-                if (body.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW) {
-                    throw new RuntimeException(err);
-                } else {
-                    log.warn(err);
-                }
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                        body.getUserAgent().getEventBroadcaster());
+
+                boolean canRecover = (body.getOverflow() != Constants.EN_ERROR_IF_OVERFLOW);
+                boolean needClip = (body.getOverflow() == Constants.EN_HIDDEN
+                        || body.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW);
+                eventProducer.regionOverflow(this, body.getName(),
+                        p.getPageViewport().getPageNumberString(),
+                        amount, needClip, canRecover,
+                        body.getLocator());
             }
             
         };
@@ -156,7 +153,7 @@ public class PageBreaker extends AbstractBreaker {
                     // element represents a line with footnote citations
                     bFootnotesPresent = true;
                     LayoutContext footnoteContext = new LayoutContext(context);
-                    footnoteContext.setStackLimit(context.getStackLimit());
+                    footnoteContext.setStackLimitBP(context.getStackLimitBP());
                     footnoteContext.setRefIPD(pslm.getCurrentPV()
                             .getRegionReference(Constants.FO_REGION_BODY).getIPD());
                     LinkedList footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();
@@ -297,7 +294,7 @@ public class PageBreaker extends AbstractBreaker {
         //Restart last page
         PageBreakingAlgorithm algRestart = new PageBreakingAlgorithm(
                 getTopLevelLM(),
-                getPageProvider(), getLayoutListener(),
+                getPageProvider(), createLayoutListener(),
                 alg.getAlignment(), alg.getAlignmentLast(), 
                 footnoteSeparatorLength,
                 isPartOverflowRecoveryActivated(), false, false);
@@ -356,7 +353,7 @@ public class PageBreaker extends AbstractBreaker {
         //Restart last page
         PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
                 getTopLevelLM(),
-                getPageProvider(), getLayoutListener(),
+                getPageProvider(), createLayoutListener(),
                 alignment, Constants.EN_START, footnoteSeparatorLength,
                 isPartOverflowRecoveryActivated(),
                 pslm.getCurrentPV().getBodyRegion().getColumnCount());
@@ -470,7 +467,9 @@ public class PageBreaker extends AbstractBreaker {
         } else if (breakVal == Constants.EN_NONE) {
             curPage.getPageViewport().createSpan(false);
             return;
-        } else if (breakVal == Constants.EN_COLUMN || breakVal <= 0) {
+        } else if (breakVal == Constants.EN_COLUMN
+                || breakVal <= 0
+                || breakVal == Constants.EN_AUTO) {
             PageViewport pv = curPage.getPageViewport();
             
             //Check if previous page was spanned

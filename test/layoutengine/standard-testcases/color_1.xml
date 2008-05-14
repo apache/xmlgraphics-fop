@@ -26,7 +26,7 @@
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Gladiator">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
-          <fo:region-body/>
+          <fo:region-body background-color="rgb-icc(100%,80%,80%,sRGB,1,0.8,0.8)" />
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:declarations>
@@ -41,12 +41,18 @@
           <fo:block color="rgb-icc(100%,50%,0%, sRGB, 1, 0.5, 0)">color "rgb-icc(100%,50%,0%, sRGB, 1, 0.5, 0)"</fo:block>
           <fo:block color="rgb-icc(0%,100%,0%, unknown, 1, 0.5, 0)">color "rgb-icc(0%,100%,0%, unknown, 1, 0.5, 0)"</fo:block>
           <fo:block color="cmyk(0%,0%,20%,40%)">color "cmyk(0%,0%,20%,40%)" (Khaki)</fo:block>
+          <!-- NYI
+          <fo:block color="rgb-icc(153, 153, 102, #CMYK, 0, 0, 0.2, 0.4)">color "rgb-icc(153, 153, 102, #CMYK, 0, 0, 0.2, 0.4)" (Khaki)</fo:block>
+          -->
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
     <!-- Check page -->
+    <!-- Special case? rgb-icc() used before fo:declarations
+         Revert to sRGB fallback for now -->
+    <eval expected="color=#ffcccc" xpath="//regionViewport[1]/@background" />
     <eval expected="#ff0000" xpath="//block[1]//text/@color"/>
     <eval expected="#ff8000" xpath="//block[2]//text/@color"/>
     <eval expected="#ff8000" xpath="//block[3]//text/@color"/>

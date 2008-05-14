@@ -201,6 +201,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (ipd < 0) {
             //5.3.4, XSL 1.0, Overconstrained Geometry
             log.debug("Adjusting end-indent based on overconstrained geometry rules for " + fobj);
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                    getFObj().getUserAgent().getEventBroadcaster());
+            eventProducer.overconstrainedAdjustEndIndent(this,
+                    getFObj().getName(), ipd, getFObj().getLocator());
             endIndent += ipd;
             ipd = 0;
             //TODO Should we skip layout for a block that has ipd=0?
@@ -212,7 +216,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Sets the content area IPD by directly supplying the value. 
      * end-indent is adjusted based on overconstrained geometry rules, if necessary.
-     * 
+     * @param contentIPD the IPD of the content
      * @return the resulting content area IPD
      */
     protected int updateContentAreaIPDwithOverconstrainedAdjust(int contentIPD) {
@@ -220,6 +224,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (ipd < 0) {
             //5.3.4, XSL 1.0, Overconstrained Geometry
             log.debug("Adjusting end-indent based on overconstrained geometry rules for " + fobj);
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                    getFObj().getUserAgent().getEventBroadcaster());
+            eventProducer.overconstrainedAdjustEndIndent(this,
+                    getFObj().getName(), ipd, getFObj().getLocator());
             endIndent += ipd;
         }
         setContentAreaIPD(contentIPD);
@@ -257,6 +265,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
         if (!firstVisibleMarkServed) {
             addKnuthElementsForSpaceBefore(returnList, alignment);
+            context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
         }
         
         addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
@@ -274,34 +283,43 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             if (curLM instanceof LineLayoutManager) {
                 // curLM is a LineLayoutManager
                 // set stackLimit for lines (stack limit is now i-p-direction, not b-p-direction!)
-                childLC.setStackLimit(new MinOptMax(getContentAreaIPD()));
+                childLC.setStackLimitBP(context.getStackLimitBP());
+                childLC.setStackLimitIP(new MinOptMax(getContentAreaIPD()));
                 childLC.setRefIPD(getContentAreaIPD());
             } else {
                 // curLM is a ?
                 //childLC.setStackLimit(MinOptMax.subtract(context
                 //        .getStackLimit(), stackSize));
-                childLC.setStackLimit(context.getStackLimit());
+                childLC.setStackLimitBP(context.getStackLimitBP());
                 childLC.setRefIPD(referenceIPD);
             }
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
-                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                //Propagate keep-with-previous up from the first child
+                context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+                childLC.clearKeepWithPreviousPending();
             }
             if (returnedList != null
                     && returnedList.size() == 1
                     && ((ListElement) returnedList.getFirst()).isForcedBreak()) {
-                // a descendant of this block has break-before
-                contentList.addAll(returnedList);
 
                 if (curLM.isFinished() && !hasNextChildLM()) {
-                    forcedBreakAfterLast = (BreakElement)contentList.removeLast();
+                    // a descendant of this block has break-before
+                    forcedBreakAfterLast = (BreakElement) returnedList.getFirst();
                     context.clearPendingMarks();
                     break;
                 }
 
+                if (contentList.size() == 0) {
+                    // Empty fo:block, zero-length box makes sure the IDs and/or markers 
+                    // are registered and borders/padding are painted.
+                    returnList.add(new KnuthBox(0, notifyPos(new Position(this)), false));
+                }
+                // a descendant of this block has break-before
+                contentList.addAll(returnedList);
+                
                 /* extension: conversione di tutta la sequenza fin'ora ottenuta */
                 if (bpUnit > 0) {
                     storedList = contentList;
@@ -319,27 +337,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 if (prevLM != null) {
                     // there is a block handled by prevLM
                     // before the one handled by curLM
-                    if (mustKeepTogether() 
-                            || context.isKeepWithNextPending()
-                            || childLC.isKeepWithPreviousPending()) {
-                        // Clear keep pending flag
-                        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                        // add an infinite penalty to forbid a break between
-                        // blocks
-                        contentList.add(new BreakElement(
-                                new Position(this), KnuthElement.INFINITE, context));
-                    } else if (!((ListElement) contentList.getLast()).isGlue()) {
-                        // add a null penalty to allow a break between blocks
-                        contentList.add(new BreakElement(
-                                new Position(this), 0, context));
-                    } else {
-                        // the last element in contentList is a glue;
-                        // it is a feasible breakpoint, there is no need to add
-                        // a penalty
-                        log.warn("glue-type break possibility not handled properly, yet");
-                        //TODO Does this happen? If yes, need to deal with border and padding
-                        //at the break possibility
-                    }
+                    addInBetweenBreak(contentList, context, childLC);
                 }
                 if (returnedList == null || returnedList.size() == 0) {
                     //Avoid NoSuchElementException below (happens with empty blocks)
@@ -368,9 +366,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 }
             }
             // propagate and clear
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, childLC.isKeepWithNextPending());
-            childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-            childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+            childLC.clearKeepsPending();
             prevLM = curLM;
         }
 
@@ -392,6 +389,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
         addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
+        
+        //All child content is processed. Only break-after can occur now, so...        
+        context.clearPendingMarks();
         if (forcedBreakAfterLast == null) {
             addKnuthElementsForBreakAfter(returnList, context);
         }
@@ -401,16 +401,72 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             wrapPositionElement(forcedBreakAfterLast, returnList, false);
         }
         
-        if (mustKeepWithNext()) {
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-        }
-        if (mustKeepWithPrevious()) {
-            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-        }
+        context.updateKeepWithNextPending(getKeepWithNextStrength());
         
         setFinished(true);
 
         return returnList;
+    }
+
+    /**
+     * Adds a break element to the content list between individual child elements.
+     * @param contentList the content list to populate
+     * @param context the current layout context
+     * @param childLC the currently active child layout context
+     */
+    protected void addInBetweenBreak(LinkedList contentList, LayoutContext context,
+            LayoutContext childLC) {
+        if (mustKeepTogether() 
+                || context.isKeepWithNextPending()
+                || childLC.isKeepWithPreviousPending()) {
+            
+            int strength = getKeepTogetherStrength();
+            
+            //Handle pending keep-with-next
+            strength = Math.max(strength, context.getKeepWithNextPending());
+            context.clearKeepWithNextPending();
+            
+            //Handle pending keep-with-previous from child LM
+            strength = Math.max(strength, childLC.getKeepWithPreviousPending());
+            childLC.clearKeepWithPreviousPending();
+            
+            int penalty = KeepUtil.getPenaltyForKeep(strength);
+
+            // add a penalty to forbid or discourage a break between blocks
+            contentList.add(new BreakElement(
+                    new Position(this), penalty, context));
+            return;
+        }
+        
+        ListElement last = (ListElement)contentList.getLast(); 
+        if (last.isGlue()) {
+            // the last element in contentList is a glue;
+            // it is a feasible breakpoint, there is no need to add
+            // a penalty
+            log.warn("glue-type break possibility not handled properly, yet");
+            //TODO Does this happen? If yes, need to deal with border and padding
+            //at the break possibility
+        } else if (!ElementListUtils.endsWithNonInfinitePenalty(contentList)) {
+
+            // TODO vh: this is hacky
+            // The getNextKnuthElements method of TableCellLM must not be called
+            // twice, otherwise some settings like indents or borders will be
+            // counted several times and lead to a wrong output. Anyway the
+            // getNextKnuthElements methods should be called only once eventually
+            // (i.e., when multi-threading the code), even when there are forced
+            // breaks.
+            // If we add a break possibility after a forced break the
+            // AreaAdditionUtil.addAreas method will act on a sequence starting
+            // with a SpaceResolver.SpaceHandlingBreakPosition element, having no
+            // LM associated to it. Thus it will stop early instead of adding
+            // areas for following Positions. The above test aims at preventing
+            // such a situation from occurring. add a null penalty to allow a break
+            // between blocks
+            
+            // add a null penalty to allow a break between blocks
+            contentList.add(new BreakElement(
+                    new Position(this), 0, context));
+        }
     }
 
     /**
@@ -740,28 +796,36 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieves and returns the keep-together strength from the parent element.
+     * @return the keep-together strength
      */
-    // default action: ask parentLM
+    protected int getParentKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        if (getParent() instanceof BlockLevelLayoutManager) {
+            strength = ((BlockLevelLayoutManager)getParent()).getKeepTogetherStrength(); 
+        } else if (getParent() instanceof InlineLayoutManager) {
+            if (((InlineLayoutManager) getParent()).mustKeepTogether()) {
+                strength = KEEP_ALWAYS;
+            }
+            //TODO Fix me
+            //strength = ((InlineLayoutManager) getParent()).getKeepTogetherStrength();
+        }
+        return strength;
+    }
+    
+    /** {@inheritDoc} */
     public boolean mustKeepTogether() {
-        return ((getParent() instanceof BlockLevelLayoutManager
-                    && ((BlockLevelLayoutManager) getParent()).mustKeepTogether())
-                || (getParent() instanceof InlineLayoutManager
-                    && ((InlineLayoutManager) getParent()).mustKeepTogether()));
+        return getKeepTogetherStrength() > KEEP_AUTO;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
-        return false;
+        return getKeepWithPreviousStrength() > KEEP_AUTO;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
-        return false;
+        return getKeepWithNextStrength() > KEEP_AUTO;
     }
 
     /**
@@ -1463,10 +1527,20 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected void wrapPositionElements(List sourceList, List targetList, boolean force) {
           
         ListIterator listIter = sourceList.listIterator();
+        Object tempElement;
         while (listIter.hasNext()) {
-            ListElement tempElement;
-            tempElement = (ListElement) listIter.next();
-            wrapPositionElement(tempElement, targetList, force);
+            tempElement = listIter.next();
+            if (tempElement instanceof ListElement) {
+                wrapPositionElement(
+                        (ListElement) tempElement,
+                        targetList,
+                        force);
+            } else if (tempElement instanceof List) {
+                wrapPositionElements(
+                        (List) tempElement, 
+                        targetList,
+                        force);
+            }
         }
     }
 

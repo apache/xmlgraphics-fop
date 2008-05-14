@@ -118,22 +118,20 @@ list of possible build targets.
     </fileset>
   </path>
 
+  <path id="libs-build-tools-classpath">
+    <path refid="libs-build-classpath"/>
+    <fileset dir="${basedir}/lib/build">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+  
   <path id="libs-run-classpath">
-    <fileset dir="${basedir}/lib">
-      <include name="*.jar"/>
-    </fileset>
-    <fileset dir="${optional.lib.dir}">
-      <include name="*.jar"/>
-    </fileset>
+    <path refid="libs-build-classpath"/>
     <fileset dir="${basedir}/build">
       <include name="fop.jar"/>
       <include name="fop-hyph.jar" />
     </fileset>
   </path>
-
-  <patternset id="exclude-jimi">
-    <exclude name="org/apache/fop/image/JimiImage.java" unless="jimi.present"/>
-  </patternset>
 
   <patternset id="exclude-jai">
     <exclude name="org/apache/fop/image/JAIImage.java" unless="jai.present"/>
@@ -148,7 +146,7 @@ list of possible build targets.
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
   <property name="version" value="svn-trunk"/>
-  <property name="year" value="1999-2007"/>
+  <property name="year" value="1999-2008"/>
 
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
@@ -214,7 +212,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init" depends="init-avail, init-filters-jdk14, init-filters-jdk13">
+  <target name="init" depends="init-avail">
   </target>
 
   <target name="init-avail">
@@ -223,18 +221,6 @@ list of possible build targets.
     <echo message="${ant.version}"/>
     <echo message="VM: ${java.vm.version}, ${java.vm.vendor}"/>
     <echo message="JAVA_HOME: ${env.JAVA_HOME}"/>
-
-    <available property="jimi.present" classname="com.sun.jimi.core.Jimi"
-        classpathref="libs-build-classpath"/>
-    <condition property="jimi.message" value="Jimi Support PRESENT">
-      <equals arg1="${jimi.present}" arg2="true"/>
-    </condition>
-    <condition property="jimi.message" value="Jimi Support NOT Present">
-      <not>
-        <equals arg1="${jimi.present}" arg2="true"/>
-      </not>
-    </condition>
-    <echo message="${jimi.message}"/>
 
     <available property="jai.present" classname="javax.media.jai.JAI"
         classpathref="libs-build-classpath"/>
@@ -261,7 +247,8 @@ list of possible build targets.
     <echo message="${jce.message}"/>
 
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
-
+    <fail message="${Name} requires at least Java 1.4!" unless="jdk14.present"/>
+    
     <available property="junit.present" classname="junit.framework.TestCase"
         classpathref="libs-build-classpath"/>
     <condition property="junit.message" value="JUnit Support PRESENT">
@@ -290,22 +277,6 @@ list of possible build targets.
     </condition>
     <echo message="${xmlunit.message}"/>
    
-  </target>
-
-  <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
-    <echo message="Use GraphicsConfiguration adapter for JDK 1.3 or earlier."/>
-    <path id="graphics-configuration-adapter">
-      <pathelement location="src/java-1.3"/>
-    </path>
-    <property name="src.java.version.dir" value="${basedir}/src/java-1.3"/>
-  </target>
-
-  <target name="init-filters-jdk14" depends="init-avail" if="jdk14.present">
-    <echo message="Use GraphicsConfiguration adapter for JDK 1.4."/>
-    <path id="graphics-configuration-adapter">
-      <pathelement location="src/java-1.4"/>
-    </path>
-    <property name="src.java.version.dir" value="${basedir}/src/java-1.4"/>
   </target>
 
   <!-- =================================================================== -->
@@ -393,7 +364,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile-java" depends="init, codegen" description="Compiles the source code">
+  <target name="compile-java" depends="init, codegen">
     <!-- create directories -->
     <mkdir dir="${build.classes.dir}"/>
     <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
@@ -401,29 +372,11 @@ list of possible build targets.
            source="${javac.source}" target="${javac.target}">
       <src path="${build.gensrc.dir}"/>
       <src path="${src.java.dir}"/>
-      <src refid="graphics-configuration-adapter"/>
       <patternset includes="**/*.java"/>
-      <!--patternset includes="org/apache/fop/svg/GraphicsConfiguration.java"/-->
       <patternset refid="exclude-jce-dependencies"/>
       <patternset refid="exclude-jai"/>
-      <patternset refid="exclude-jimi"/>
       <classpath refid="libs-build-classpath"/>
     </javac>
-    <copy todir="${build.classes.dir}">
-      <fileset dir="${src.java.dir}">
-        <include name="META-INF/**"/>
-        <include name="**/*.icm"/>
-        <include name="**/*.LICENSE.txt"/>
-      </fileset>
-    </copy>
-    <mkdir dir="${build.viewer.resources.dir}"/>
-    <copy todir="${build.viewer.resources.dir}">
-      <fileset dir="${src.viewer.resources.dir}"/>
-    </copy>
-    <mkdir dir="${build.viewer.images.dir}"/>
-    <copy todir="${build.viewer.images.dir}">
-      <fileset dir="${src.viewer.images.dir}"/>
-    </copy>
 
     <mkdir dir="${build.sandbox-classes.dir}"/>
     <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
@@ -437,18 +390,130 @@ list of possible build targets.
         <pathelement location="${build.classes.dir}"/>
       </classpath>
     </javac>
+  </target>
+
+  <target name="resourcegen" depends="compile-java">
+    <mkdir dir="${build.codegen-classes.dir}"/>
+    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
+      deprecation="${javac.deprecation}" optimize="${javac.optimize}"
+      source="${javac.source}" target="${javac.target}">
+      <src path="${src.codegen.dir}/java"/>
+      <patternset includes="**/*.java"/>
+      <classpath>
+        <path refid="libs-build-tools-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+      </classpath>
+    </javac>
+    <copy todir="${build.codegen-classes.dir}">
+      <fileset dir="${src.codegen.dir}/java">
+        <include name="**/*.xsl"/>
+      </fileset>
+    </copy>
+    
+    <taskdef name="eventResourceGenerator"
+      classname="org.apache.fop.tools.EventProducerCollectorTask">
+      <classpath>
+        <path refid="libs-build-tools-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.codegen-classes.dir}"/>
+      </classpath>
+    </taskdef>
+  
+    <eventResourceGenerator
+        modelfile="${build.gensrc.dir}/org/apache/fop/events/event-model.xml"
+        translationfile="${src.java.dir}/org/apache/fop/events/EventFormatter.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="**/*.java"/>
+        <exclude name="org/apache/fop/render/*/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/events/EventFormatter.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/afp/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/afp/AFPEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/afp/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/afp/AFPEventProducer.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/bitmap/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/bitmap/BitmapRendererEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/bitmap/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/bitmap/BitmapRendererEventProducer.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/pcl/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/pcl/PCLEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/pcl/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/pcl/PCLEventProducer.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/pdf/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/pdf/PDFEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/pdf/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/pdf/PDFEventProducer.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/ps/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/ps/PSEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/ps/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/ps/PSEventProducer.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator
+      modelfile="${build.gensrc.dir}/org/apache/fop/render/rtf/event-model.xml"
+      translationfile="${src.java.dir}/org/apache/fop/render/rtf/RTFEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/rtf/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/render/rtf/RTFEventProducer.xml" tab="remove" tablength="2"/>
+  </target>
+  
+  <target name="compile-copy-resources" depends="resourcegen">
+    <copy todir="${build.classes.dir}">
+      <fileset dir="${src.java.dir}">
+        <include name="META-INF/**"/>
+        <include name="**/*.icm"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.LICENSE.txt"/>
+      </fileset>
+      <fileset dir="${build.gensrc.dir}">
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${build.viewer.resources.dir}"/>
+    <copy todir="${build.viewer.resources.dir}">
+      <fileset dir="${src.viewer.resources.dir}"/>
+    </copy>
+    <mkdir dir="${build.viewer.images.dir}"/>
+    <copy todir="${build.viewer.images.dir}">
+      <fileset dir="${src.viewer.images.dir}"/>
+    </copy>
+    
+    <!-- sandbox -->
     <copy todir="${build.sandbox-classes.dir}">
       <fileset dir="${src.sandbox.dir}">
         <include name="META-INF/**"/>
       </fileset>
     </copy>
+    
   </target>
-
+  
+  <target name="compile" depends="compile-java, compile-copy-resources" description="Compiles the source code"/>
 
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
   <!-- =================================================================== -->
-  <target name="compile-hyphenation" depends="compile-java">
+  <target name="compile-hyphenation" depends="compile">
     <path id="hyph-classpath">
       <path refid="libs-build-classpath"/>
       <pathelement location="${build.classes.dir}"/>
@@ -486,13 +551,13 @@ list of possible build targets.
   <!-- main FOP JARs                                                       -->
   <!-- =================================================================== -->
 
-  <target name="uptodate-jar-main" depends="compile-java">
+  <target name="uptodate-jar-main" depends="compile">
     <uptodate property="jar.main.uptodate" targetfile="${build.dir}/fop.jar">
       <srcfiles dir= "${build.classes.dir}"/>
     </uptodate>
   </target>
 
-  <target name="jar-main" depends="compile-java,uptodate-jar-main" description="Generates the main jar file" unless="jar.main.uptodate">
+  <target name="jar-main" depends="compile,uptodate-jar-main" description="Generates the main jar file" unless="jar.main.uptodate">
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
@@ -521,13 +586,13 @@ list of possible build targets.
     </jar>
   </target>
 
-  <target name="uptodate-jar-sandbox" depends="compile-java">
+  <target name="uptodate-jar-sandbox" depends="compile">
     <uptodate property="jar.sandbox.uptodate" targetfile="${build.dir}/fop-sandbox.jar">
       <srcfiles dir= "${build.sandbox-classes.dir}"/>
     </uptodate>
   </target>
 
-  <target name="jar-sandbox" depends="compile-java,uptodate-jar-sandbox" description="Generates the sandbox jar file" unless="jar.sandbox.uptodate">
+  <target name="jar-sandbox" depends="compile,uptodate-jar-sandbox" description="Generates the sandbox jar file" unless="jar.sandbox.uptodate">
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
@@ -543,7 +608,6 @@ list of possible build targets.
     <uptodate property="jar.sources.uptodate" targetfile="${build.dir}/fop-sources.jar">
       <srcfiles dir="${build.gensrc.dir}"/>
       <srcfiles dir="${src.java.dir}"/>
-      <srcfiles refid="graphics-configuration-adapter"/>
     </uptodate>
   </target>
 
@@ -609,7 +673,7 @@ list of possible build targets.
       <include name="org/apache/fop/image/Abstract*"/>
       <include name="org/apache/fop/image/analyser/*.class"/>
       <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
-      <include name="org/apache/fop/util/ColorExt*.class"/>
+      <include name="org/apache/fop/util/Color*.class"/>
       <include name="org/apache/fop/util/ASCII*.class"/>
       <include name="org/apache/fop/util/*OutputStream.class"/>
       <include name="org/apache/fop/util/SubInputStream.class"/>
@@ -643,14 +707,14 @@ list of possible build targets.
     <include name="xmlgraphics-commons*.jar"/>
   </fileset>
   
-  <target name="uptodate-transcoder-pkg" depends="compile-java">
+  <target name="uptodate-transcoder-pkg" depends="compile">
     <uptodate property="transcoder.pkg.uptodate" targetfile="${build.dir}/fop-transcoder.jar">
       <srcfiles refid="transcoder-classes-files"/>
       <srcfiles refid="transcoder-lib-files"/>
     </uptodate>
   </target>
 
-  <target name="transcoder-pkg" depends="uptodate-transcoder-pkg, compile-java" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
+  <target name="transcoder-pkg" depends="uptodate-transcoder-pkg, compile" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
     <echo message="Creating the jar file ${build.dir}/fop-transcoder.jar"/>
 
     <property name="fop-transcoder.name" value="FOP Transcoder Package"/>
@@ -726,8 +790,10 @@ list of possible build targets.
       <exclude name="**/intermediate/*"/>
     </patternset>
   </target>
-  <target name="junit-compile" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" description="Runs FOP's JUnit tests" if="junit.present">
+
+  <target name="junit-compile-java" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" if="junit.present">
     <mkdir dir="${build.dir}/test-classes"/>
+    <mkdir dir="${build.dir}/test-gensrc"/>
     <mkdir dir="${junit.reports.dir}"/>
     <javac destdir="${build.dir}/test-classes" fork="${javac.fork}"
            debug="${javac.debug}" deprecation="${javac.deprecation}"
@@ -743,6 +809,25 @@ list of possible build targets.
       </classpath>
     </javac>
   </target>
+
+  <target name="junit-compile-copy-resources" if="junit.present">
+    <eventResourceGenerator modelfile="${build.dir}/test-gensrc/org/apache/fop/events/test-event-model.xml">
+      <fileset dir="${basedir}/test/java">
+        <include name="**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <copy todir="${build.dir}/test-classes">
+      <fileset dir="${basedir}/test/java">
+        <include name="META-INF/**"/>
+        <include name="**/*.xml"/>
+      </fileset>
+      <fileset dir="${build.dir}/test-gensrc">
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="junit-compile" depends="junit-compile-java, junit-compile-copy-resources" description="Compiles FOP's JUnit tests" if="junit.present"/>
 
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
@@ -845,7 +930,7 @@ list of possible build targets.
     <echo message="${hyphenation.message}"/>
   </target>
 
-  <target name="junit-layout-standard" depends="junit-compile" if="junit.present" description="Runs FOP's standard JUnit layout tests">
+  <target name="junit-layout-standard" depends="junit-compile, junit-fotree" if="junit.present" description="Runs FOP's standard JUnit layout tests">
     <echo message="Running standard layout engine tests"/>
     <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
@@ -903,7 +988,7 @@ list of possible build targets.
     </junit>
   </target>
 
-  <target name="junit-intermediate-format" depends="junit-compile" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
+  <target name="junit-intermediate-format" depends="junit-compile, junit-layout" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
     <echo message="Running intermediate format tests"/>
     <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
@@ -1018,6 +1103,7 @@ NOTE:
         overview="${src.dir}/java/org/apache/fop/overview.html"
         use="true"
         failonerror="true"
+        source="${javac.source}"
         public="${javadoc.public}"
         package="${javadoc.package}"
         private="${javadoc.private}">
@@ -1031,7 +1117,6 @@ NOTE:
         <pathelement path="${src.java.dir}"/>
         <pathelement path="${src.sandbox.dir}"/>
         <pathelement path="${build.gensrc.dir}"/>
-        <path refid="graphics-configuration-adapter"/>
       </sourcepath>
       <tag name="todo" scope="all" description="To do:"/>
       <group title="Control and Startup">
@@ -1205,37 +1290,24 @@ NOTE:
     -->
     <echo message="Make sure you have a proper Forrest installation (see http://forrest.apache.org/)"/>
 
-    <!--<antcall target="site"/>-->
-    
-    <!-- You can provide a JDK 1.4 for a JDK 1.3 build by adding "javahome.jdk14" to build-local.properties -->
-    <condition property="javahome.jdk14.override" value="${javahome.jdk14}">
-      <isset property="javahome.jdk14"/>
-    </condition>
-    <echo message="java home: ${javahome.jdk14.override}"/>
-    <condition property="javahome.jdk14.override" value="${env.JAVA_HOME}">
-      <not>
-        <isset property="javahome.jdk14.override"/>
-      </not>
-    </condition>
-    <echo message="java home: ${javahome.jdk14.override}"/>
     <condition property="forrest.call" value="forrest.bat" else="forrest">
       <os family="windows"/>
     </condition>
-    <exec executable="${forrest.call}">
-      <env key="JAVA_HOME" value="${javahome.jdk14.override}"/>
-    </exec>
+    <exec executable="${forrest.call}"/>
   </target>
   
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
-  <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
+  <target name="dist" depends="dist-prereq,dist-src,dist-bin" description="Generates the distribution package"/>
+
+  <target name="dist-prereq" depends="init">
+    <fail message="A complete binary build requires JAI" unless="jai.present"/>
+    <fail message="A complete binary build requires JCE" unless="jce.present"/>
+  </target>
 
   <target name="dist-bin" depends="all,javadocs,docs">
     <echo message="Building the binary distribution files (zip,tar)"/>
-    <fail message="A complete binary build requires Jimi" unless="jimi.present"/>
-    <fail message="A complete binary build requires JAI" unless="jai.present"/>
-    <fail message="A complete binary build requires JCE" unless="jce.present"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
       <fileset refid="dist.bin"/>
@@ -1251,10 +1323,9 @@ NOTE:
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.bin.result.dir}/fop" perm="ugo+rx"/>
 
-    <property name="bin.suffix" value="bin-jdk${java.specification.version}"/>
-    <zip zipfile="${name}-${version}-${bin.suffix}.zip" basedir="${dist.bin.dir}" includes="**"/>
+    <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar longfile="gnu"
-         destfile="${name}-${version}-${bin.suffix}.tar">
+         destfile="${name}-${version}-bin.tar">
       <tarfileset dir="${dist.bin.dir}" mode="755">
         <include name="${name}-${version}/fop"/>
       </tarfileset>
@@ -1263,8 +1334,8 @@ NOTE:
         <exclude name="${name}-${version}/fop"/>
       </tarfileset>
     </tar>
-    <gzip zipfile="${name}-${version}-${bin.suffix}.tar.gz" src="${name}-${version}-${bin.suffix}.tar"/>
-    <delete file="${name}-${version}-${bin.suffix}.tar"/>
+    <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
+    <delete file="${name}-${version}-bin.tar"/>
   </target>
 
   <target name="dist-src" depends="all">

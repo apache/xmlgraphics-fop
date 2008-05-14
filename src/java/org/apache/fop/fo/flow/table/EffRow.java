@@ -22,8 +22,12 @@ package org.apache.fop.fo.flow.table;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.fop.fo.Constants;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.table.TableRowIterator;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * This class represents an effective row in a table and holds a list of grid units occupying
@@ -57,7 +61,7 @@ public class EffRow {
         for (Iterator guIter = gridUnits.iterator(); guIter.hasNext();) {
             Object gu = guIter.next();
             if (gu instanceof PrimaryGridUnit) {
-                ((PrimaryGridUnit) gu).setStartRow(index);
+                ((PrimaryGridUnit) gu).setRowIndex(index);
             }
         }
     }
@@ -80,13 +84,20 @@ public class EffRow {
         return getGridUnit(0).getRow();
     }
     
-    /** @return the calculated height for this EffRow. */
+    /**
+     * Returns the calculated height for this EffRow, including the cells'
+     * bpds/paddings/borders, and the table's border-separation.
+     * 
+     * @return the row's height
+     */
     public MinOptMax getHeight() {
         return this.height;
     }
     
     /**
-     * Sets the calculated height for this EffRow.
+     * Sets the calculated height for this EffRow, including everything (cells' bpds,
+     * paddings, borders, and border-separation).
+     * 
      * @param mom the calculated height
      */
     public void setHeight(MinOptMax mom) {
@@ -152,7 +163,116 @@ public class EffRow {
             throw new IllegalArgumentException("Illegal flag queried: " +  which);
         }
     }
+
+    /**
+     * Returns the strength of the keep constraint if the enclosing (if any) fo:table-row element
+     * of this row, or if any of the cells starting on this row, have keep-with-previous set.
+     * 
+     * @return the strength of the keep-with-previous constraint
+     */
+    public int getKeepWithPreviousStrength() {
+        int strength = BlockLevelLayoutManager.KEEP_AUTO;
+        TableRow row = getTableRow();
+        if (row != null) {
+            strength = Math.max(strength,
+                    KeepUtil.getCombinedBlockLevelKeepStrength(row.getKeepWithPrevious()));
+        }
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (gu.isPrimary()) {
+                strength = Math.max(strength, gu.getPrimary().getKeepWithPreviousStrength());
+            }
+        }
+        return strength;
+    }
+
+    /**
+     * Returns the strength of the keep constraint if the enclosing (if any) fo:table-row element
+     * of this row, or if any of the cells ending on this row, have keep-with-next set.
+     * 
+     * @return the strength of the keep-with-next constraint
+     */
+    public int getKeepWithNextStrength() {
+        int strength = BlockLevelLayoutManager.KEEP_AUTO;
+        TableRow row = getTableRow();
+        if (row != null) {
+            strength = Math.max(strength,
+                    KeepUtil.getCombinedBlockLevelKeepStrength(row.getKeepWithNext()));
+        }
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
+                strength = Math.max(strength, gu.getPrimary().getKeepWithNextStrength());
+            }
+        }
+        return strength;
+    }
+
+    /**
+     * Returns the keep-together strength for this element. Note: The keep strength returned does
+     * not take the parent table's keeps into account!
+     * @return the keep-together strength
+     */
+    public int getKeepTogetherStrength() {
+        TableRow row = getTableRow();
+        int strength = BlockLevelLayoutManager.KEEP_AUTO;
+        if (row != null) {
+            strength = Math.max(strength, KeepUtil.getKeepStrength(
+                    row.getKeepTogether().getWithinPage()));
+            strength = Math.max(strength, KeepUtil.getKeepStrength(
+                    row.getKeepTogether().getWithinColumn()));
+        }
+        return strength;
+    }
     
+    /**
+     * Returns the break class for this row. This is a combination of break-before set on
+     * the first children of any cells starting on this row.
+     * <p><strong>Note:</strong> this method doesn't take into account break-before set on
+     * the enclosing fo:table-row element, if any, as it must be ignored if the row
+     * belongs to a group of spanned rows (see XSL-FO 1.1, 7.20.2).
+     * <p><strong>Note:</strong> this works only after getNextKuthElements on the
+     * corresponding TableCellLM have been called!</p>
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakBefore() {
+        int breakBefore = Constants.EN_AUTO;
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (gu.isPrimary()) {
+                breakBefore = BreakUtil.compareBreakClasses(breakBefore,
+                        gu.getPrimary().getBreakBefore());
+            }
+        }
+        return breakBefore;
+    }
+
+    /**
+     * Returns the break class for this row. This is a combination of break-after set on
+     * the last children of any cells ending on this row.
+     * <p><strong>Note:</strong> this method doesn't take into account break-after set on
+     * the enclosing fo:table-row element, if any, as it must be ignored if the row
+     * belongs to a group of spanned rows (see XSL-FO 1.1, 7.20.1).
+     * <p><strong>Note:</strong> this works only after getNextKuthElements on the
+     * corresponding TableCellLM have been called!</p>
+     * 
+     * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
+     * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
+     */
+    public int getBreakAfter() {
+        int breakAfter = Constants.EN_AUTO;
+        for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
+            GridUnit gu = (GridUnit) iter.next();
+            if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
+                breakAfter = BreakUtil.compareBreakClasses(breakAfter,
+                        gu.getPrimary().getBreakAfter());
+            }
+        }
+        return breakAfter;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("EffRow {");

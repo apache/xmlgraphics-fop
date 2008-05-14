@@ -28,7 +28,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:flow object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_flow">
+ * <code>fo:flow</code></a> object.
+ *
  */
 public class Flow extends FObj {
     // The value of properties relevant for fo:flow.
@@ -39,22 +41,19 @@ public class Flow extends FObj {
     private boolean blockItemFound = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a Flow instance that is a child of the given {@link FONode}.
+     * @param parent the {@link FONode} that is the parent of this object
      */
     public Flow(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         flowName = pList.get(PR_FLOW_NAME).getString();
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         if (flowName == null || flowName.equals("")) {
             missingPropertyError("flow-name");
@@ -80,10 +79,7 @@ public class Flow extends FObj {
         getFOEventHandler().startFlow(this);
     }
 
-    /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
@@ -93,22 +89,25 @@ public class Flow extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (%block;)+
+     * <br>XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
         }
     }
 
     /**
+     * {@inheritDoc}
      * @return true (Flow can generate reference areas)
      */
     public boolean generatesReferenceAreas() {
@@ -127,6 +126,7 @@ public class Flow extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_FLOW}
      */
     public int getNameId() {
         return FO_FLOW;

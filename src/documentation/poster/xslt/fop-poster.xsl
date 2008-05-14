@@ -60,9 +60,6 @@
               </fo:static-content>
 			  <fo:flow flow-name="xsl-region-body">
                 <xsl:apply-templates select="section"/>
-                <fo:block-container width="1cm" height="5cm">
-                  <fo:block/>
-                </fo:block-container>
 			  </fo:flow>
 			</fo:page-sequence>
 		</fo:root>
@@ -84,14 +81,14 @@
               <path
                  d="M 840,575 L 280,575 c -40,0 -60,-50 -100,-50 L 0,525"
                  style="fill:none; stroke:blue; stroke-width:5;" />
-              <image x="680" y="7" width="140" height="60" xlink:href="svg/fop-logo-reconstructed.svg"/>
+              <image x="680" y="7" width="140" height="60" xlink:href="../svg/fop-logo-reconstructed.svg"/>
               <text x="15" y="35" style="fill:black; font-weight:bold; font-size:17">
                 Apache FOP - The leading open source XSL-FO formatter
               </text>
               <text x="685" y="74" style="fill:black; font-size:5.5">
                 A product of the Apache XML Graphics Project
               </text>
-              <image x="15" y="530" width="160" height="60" xlink:href="svg/asf-logo.svg"/>
+              <image x="15" y="530" width="160" height="60" xlink:href="../svg/asf-logo.svg"/>
               <text x="360" y="560" style="fill:blue; font-size:12">
                 For more details, please visit: <a xlink:href="http://xmlgraphics.apache.org/fop/">http://xmlgraphics.apache.org/fop/</a>
               </text>
@@ -111,7 +108,7 @@
 	</xsl:template>
 	
 	<xsl:template match="section">
-	  <xsl:variable name="section-content" select="exslt:node-set(document(@href))"/>
+	  <xsl:variable name="section-content" select="exslt:node-set(document(@href, .))"/>
       <fo:block 
           space-before.minimum="2mm" space-before.optimum="5mm" space-before.maximum="30mm" 
           space-before.conditionality="discard" space-after.conditionality="discard"
@@ -129,7 +126,9 @@
 	        </fo:instream-foreign-object>
 	    </fo:block>
 	  </fo:block-container>
-	  <fo:block-container width="{@width}mm - 8mm" height="{@height}mm - 20mm" padding="4mm" padding-top="16mm" margin="0pt">
+	  <fo:block-container width="{@width}mm - 8mm" height="{@height}mm - 24mm"
+	    padding="4mm" padding-top="16mm" padding-bottom="8mm" margin="0pt"
+	      display-align="distribute" id="section{position()}">
 	    <fo:block>
 	      <xsl:apply-templates select="$section-content/section/*[local-name() != 'title']"/>
 	    </fo:block>

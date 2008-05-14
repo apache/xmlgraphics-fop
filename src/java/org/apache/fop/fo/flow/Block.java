@@ -41,7 +41,8 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 
  /**
-  * Class modelling the fo:block object.
+  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_block">
+  * <code>fo:block object</code></a>.
   */
 public class Block extends FObjMixed {
 
@@ -87,6 +88,8 @@ public class Block extends FObjMixed {
     // End of property values
     
     /**
+     * Base constructor
+     * 
      * @param parent FONode that is the parent of this object
      *
      */
@@ -94,9 +97,7 @@ public class Block extends FObjMixed {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -130,46 +131,35 @@ public class Block extends FObjMixed {
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startBlock(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endBlock(this);
     }
 
-    /**
-     * @return the Common Margin Properties-Block.
-     */
+    /** @return the {@link CommonMarginBlock} */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
-    /**
-     * @return the Common Border, Padding, and Background Properties.
-     */
+    /** @return the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * @return the Common Font Properties.
-     */
+     * @return the {@link CommonFont} */
     public CommonFont getCommonFont() {
         return commonFont;
     }
 
-    /**
-     * @return the Common Hyphenation Properties.
-     */
+    /** @return the {@link CommonHyphenation} */
     public CommonHyphenation getCommonHyphenation() {
         return commonHyphenation;
     }
@@ -219,79 +209,63 @@ public class Block extends FObjMixed {
         return lineStackingStrategy;
     }
 
-    /**
-     * @return the "color" property.
-     */
+    /** @return the "color" property */
     public Color getColor() {
         return color;
     }
 
-    /**
-     * @return the "line-height" property.
-     */
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
-    /**
-     * @return the "span" property.
-     */
+    /** @return the "span" property */
     public int getSpan() {
         return this.span;
     }
 
-    /**
-     * @return the "text-align" property.
-     */
+    /** @return the "text-align" property */
     public int getTextAlign() {
         return textAlign;
     }
 
-    /**
-     * @return the "text-align-last" property.
-     */
+    /** @return the "text-align-last" property */
     public int getTextAlignLast() {
         return textAlignLast;
     }
 
-    /**
-     * @return the "text-indent" property.
-     */
+    /** @return the "text-indent" property */
     public Length getTextIndent() {
         return textIndent;
     }
 
-    /**
-     * @return the "last-line-end-indent" property.
-     */
+    /** @return the "last-line-end-indent" property */
     public Length getLastLineEndIndent() {
         return lastLineEndIndent;
     }
 
-    /**
-     * @return the "wrap-option" property.
-     */
+    /** @return the "wrap-option" property */
     public int getWrapOption() {
         return wrapOption;
     }
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* initial-property-set? (#PCDATA|%inline;|%block;)*
-     * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
+     * <br>XSL Content Model: marker* initial-property-set? (#PCDATA|%inline;|%block;)*
+     * <br><i>Additionally: "An fo:bidi-override that is a descendant of an fo:leader
      *  or of the fo:inline child of an fo:footnote may not have block-level
      *  children, unless it has a nearer ancestor that is an 
-     *  fo:inline-container."
+     *  fo:inline-container."</i>
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
             throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if (localName.equals("marker")) {
+            if ("marker".equals(localName)) {
                 if (blockOrInlineItemFound || initialPropertySetFound) {
                    nodesOutOfOrderError(loc, "fo:marker", 
                         "initial-property-set? (#PCDATA|%inline;|%block;)");
                 }
-            } else if (localName.equals("initial-property-set")) {
+            } else if ("initial-property-set".equals(localName)) {
                 if (initialPropertySetFound) {
                     tooManyNodesError(loc, "fo:initial-property-set");
                 } else if (blockOrInlineItemFound) {
@@ -308,57 +282,37 @@ public class Block extends FObjMixed {
         }
     }
 
-    /**
-     * Accessor for the linefeed-treatment property
-     * 
-     * @return the enum value of linefeed-treatment
-     */
+    /** @return the "linefeed-treatment" property */
     public int getLinefeedTreatment() {
         return linefeedTreatment;
     }
     
-    /**
-     * Accessor for the white-space-treatment property
-     * 
-     * @return the enum value of white-space-treatment
-     */
+    /** @return the "white-space-treatment" property */
     public int getWhitespaceTreatment() {
         return whiteSpaceTreatment;
     }
     
-    /**
-     * Accessor for the white-space-collapse property
-     * 
-     * @return the enum value of white-space-collapse
-     */
+    /** @return the "white-space-collapse" property */
     public int getWhitespaceCollapse() {
         return whiteSpaceCollapse;
     }
     
-    /**
-     * @return Returns the commonRelativePosition.
-     */
+    /** @return the {@link CommonRelativePosition} */
     public CommonRelativePosition getCommonRelativePosition() {
         return this.commonRelativePosition;
     }
 
-    /**
-     * @return Returns the hyphenationKeep.
-     */
+    /** @return the "hyphenation-keep" property */
     public int getHyphenationKeep() {
         return this.hyphenationKeep;
     }
 
-    /**
-     * @return Returns the intrusionDisplace.
-     */
+    /** @return the "intrusion-displace" property */
     public int getIntrusionDisplace() {
         return this.intrusionDisplace;
     }
 
-    /**
-     * @return Returns the lineHeightShiftAdjustment.
-     */
+    /** @return the "line-height-shift-adjustment" property */
     public int getLineHeightShiftAdjustment() {
         return this.lineHeightShiftAdjustment;
     }
@@ -373,9 +327,10 @@ public class Block extends FObjMixed {
         return "block";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+     /**
+      * {@inheritDoc}
+      * @return {@link org.apache.fop.fo.Constants#FO_BLOCK}
+      */
     public int getNameId() {
         return FO_BLOCK;
     }

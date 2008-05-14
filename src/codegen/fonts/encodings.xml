@@ -19,12 +19,12 @@
 <!DOCTYPE encoding-set [
   <!ELEMENT encoding-set (encoding+)>
   <!ELEMENT encoding (glyph+)>
-  <!ATTLIST encoding id ID #REQUIRED glyphlist CDATA "AGL">
+  <!ATTLIST encoding id ID #REQUIRED constant CDATA #REQUIRED glyphlist CDATA "AGL">
   <!ELEMENT glyph EMPTY>
   <!ATTLIST glyph codepoint CDATA #REQUIRED name CDATA #REQUIRED>
 ]>
 <encoding-set>
-  <encoding id='StandardEncoding' glyphlist='AGL'>
+  <encoding id='StandardEncoding' constant="STANDARD_ENCODING" glyphlist='AGL'>
     <glyph codepoint='20' name='space'/>
     <glyph codepoint='21' name='exclam'/>
     <glyph codepoint='22' name='quotedbl'/>
@@ -175,7 +175,7 @@
     <glyph codepoint='fa' name='oe'/>
     <glyph codepoint='fb' name='germandbls'/>
   </encoding>
-  <encoding id='ISOLatin1Encoding' glyphlist='AGL'>
+  <encoding id='ISOLatin1Encoding' constant="ISOLATIN1_ENCODING" glyphlist='AGL'>
     <glyph codepoint='20' name='space'/>
     <glyph codepoint='21' name='exclam'/>
     <glyph codepoint='22' name='quotedbl'/>
@@ -377,7 +377,7 @@
     <glyph codepoint='fe' name='thorn'/>
     <glyph codepoint='ff' name='ydieresis'/>
   </encoding>
-  <encoding id='CEEncoding' glyphlist='AGL'>
+  <encoding id='CEEncoding' constant="CE_ENCODING" glyphlist='AGL'>
     <glyph codepoint='20' name='space'/>
     <glyph codepoint='21' name='exclam'/>
     <glyph codepoint='22' name='quotedbl'/>
@@ -594,7 +594,7 @@
     <glyph codepoint='fe' name='tcommaaccent'/>
     <glyph codepoint='ff' name='dotaccent'/>
   </encoding>
-  <encoding id='MacRomanEncoding' glyphlist='AGL'>
+  <encoding id='MacRomanEncoding' constant="MAC_ROMAN_ENCODING" glyphlist='AGL'>
     <glyph codepoint='20' name='space'/>
     <glyph codepoint='21' name='exclam'/>
     <glyph codepoint='22' name='quotedbl'/>
@@ -803,7 +803,7 @@
     <glyph codepoint='b4' name='yen'/>
     <glyph codepoint='7a' name='z'/>
   </encoding>
-  <encoding id='WinAnsiEncoding' glyphlist='AGL'>
+  <encoding id='WinAnsiEncoding' constant="WIN_ANSI_ENCODING" glyphlist='AGL'>
     <glyph codepoint='20' name='space'/>
     <glyph codepoint='21' name='exclam'/>
     <glyph codepoint='22' name='quotedbl'/>
@@ -1021,7 +1021,7 @@
     <glyph codepoint='fe' name='thorn'/>
     <glyph codepoint='ff' name='ydieresis'/>
   </encoding>
-  <encoding id='PDFDocEncoding' glyphlist='AGL'>
+  <encoding id='PDFDocEncoding' constant="PDF_DOC_ENCODING" glyphlist='AGL'>
     <glyph codepoint='18' name='breve'/>
     <glyph codepoint='19' name='caron'/>
     <glyph codepoint='1a' name='circumflex'/>
@@ -1252,7 +1252,7 @@
     <glyph codepoint='fe' name='thorn'/>
     <glyph codepoint='ff' name='ydieresis'/>
   </encoding>
-  <encoding id='SymbolEncoding' glyphlist='AGL'>
+  <encoding id='SymbolEncoding' constant="SYMBOL_ENCODING" glyphlist='AGL'>
     <glyph codepoint='20' name='space'/>
     <glyph codepoint='21' name='exclam'/>
     <glyph codepoint='22' name='universal'/>
@@ -1443,7 +1443,7 @@
     <glyph codepoint='fd' name='bracerightmid'/>
     <glyph codepoint='fe' name='bracerightbt'/>
   </encoding>
-  <encoding id='ZapfDingbatsEncoding' glyphlist='ZGL'>
+  <encoding id='ZapfDingbatsEncoding' constant="ZAPF_DINGBATS_ENCODING" glyphlist='ZGL'>
     <glyph codepoint='20' name='space'/>
     <glyph codepoint='21' name='a1'/>
     <glyph codepoint='22' name='a2'/>

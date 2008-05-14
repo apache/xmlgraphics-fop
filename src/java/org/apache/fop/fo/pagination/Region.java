@@ -34,7 +34,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
- * This is an abstract base class for pagination regions
+ * This is an abstract base class for pagination regions.
  */
 public abstract class Region extends FObj {
     // The value of properties relevant for fo:region
@@ -50,16 +50,16 @@ public abstract class Region extends FObj {
     private SimplePageMaster layoutMaster;
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     protected Region(FONode parent) {
         super(parent);
         layoutMaster = (SimplePageMaster) parent;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         // clip = pList.get(PR_CLIP);
@@ -76,28 +76,28 @@ public abstract class Region extends FObj {
             // check that name is OK. Not very pretty.
             if (isReserved(getRegionName())
                     && !getRegionName().equals(getDefaultRegionName())) {
-                throw new ValidationException("region-name '" + regionName
-                        + "' for " + this.getName()
-                        + " is not permitted.", locator);
+                getFOValidationEventProducer().illegalRegionName(this, getName(),
+                        regionName, getLocator());
             }
         }
         
         //TODO do we need context for getBPPaddingAndBorder() and getIPPaddingAndBorder()?
-        if (getUserAgent().validateStrictly()
-                && (getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, null) != 0 
+        if ((getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, null) != 0
                 || getCommonBorderPaddingBackground().getIPPaddingAndBorder(false, null) != 0)) {
-            throw new PropertyException("Border and padding for region \""
-                    + regionName + "\" must be '0' (See 6.4.13 in XSL 1.0).");
+            getFOValidationEventProducer().nonZeroBorderPaddingOnRegion(this, getName(),
+                    regionName, true, getLocator());
         }
     }
 
     /**
      * {@inheritDoc} String, String)
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**
@@ -121,7 +121,7 @@ public abstract class Region extends FObj {
      * @param name a region name to check
      * @return true if the name parameter is a reserved region name
      */
-    protected boolean isReserved(String name) /*throws FOPException*/ {
+    protected boolean isReserved(String name) {
         return (name.equals("xsl-region-before")
                 || name.equals("xsl-region-start")
                 || name.equals("xsl-region-end")
@@ -130,9 +130,7 @@ public abstract class Region extends FObj {
                 || name.equals("xsl-footnote-separator"));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean generatesReferenceAreas() {
         return true;
     }

@@ -20,20 +20,20 @@
 package org.apache.fop.pdf;
 
 // Java
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.InvalidKeyException;
+import java.util.Random;
+
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.BadPaddingException;
 import javax.crypto.NoSuchPaddingException;
-
-import java.util.Random;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * class representing a /Filter /Standard object.
@@ -358,17 +358,20 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         if (this.encryptionKey == null) {
             throw new IllegalStateException("PDF Encryption has not been initialized");
         }
-        log.debug("encrypting with for " + number + " " + generation);
-
         byte[] hash = calcHash(number, generation);        
         return encryptWithHash(data, hash, hash.length);
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public byte[] encrypt(byte[] data, PDFObject refObj) {
-        return encryptData(data, refObj.getObjectNumber(), refObj.getGeneration());
+        PDFObject o = refObj;
+        while (o != null && !o.hasObjectNumber()) {
+            o = o.getParent();
+        }
+        if (o == null) {
+            throw new IllegalStateException("No object number could be obtained for a PDF object");
+        }
+        return encryptData(data, o.getObjectNumber(), o.getGeneration());
     }
 
     private byte[] calcHash(int number, int generation) {

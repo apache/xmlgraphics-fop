@@ -30,7 +30,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
- * Class modelling the fo:initial-property-set object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_initial-property-set">
+ * <code>fo:initial-property-set</code></a> object.
  */
 public class InitialPropertySet extends FObj {
     // The value of properties relevant for fo:initial-property-set.
@@ -51,15 +52,15 @@ public class InitialPropertySet extends FObj {
     // End of property values
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public InitialPropertySet(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         // letterSpacing = pList.get(PR_LETTER_SPACING);
@@ -69,16 +70,16 @@ public class InitialPropertySet extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
-    /**
-     * @return the "line-height" property.
-     */
+    /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
@@ -90,6 +91,7 @@ public class InitialPropertySet extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_INITIAL_PROPERTY_SET}
      */
     public int getNameId() {
         return FO_INITIAL_PROPERTY_SET;

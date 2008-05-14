@@ -20,6 +20,7 @@
 package org.apache.fop.fo.flow.table;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 
 /**
@@ -27,6 +28,8 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
  * resolution in the collapsing-border model.
  */
 public/*TODO*/ class BorderSpecification {
+
+    private static BorderSpecification defaultBorder;
 
     private BorderInfo borderInfo;
 
@@ -41,6 +44,14 @@ public/*TODO*/ class BorderSpecification {
     public/*TODO*/ BorderSpecification(BorderInfo borderInfo, int holder) {
         this.borderInfo = borderInfo;
         this.holder = holder;
+    }
+
+    static synchronized BorderSpecification getDefaultBorder() {
+        if (defaultBorder == null) {
+            defaultBorder = new BorderSpecification(CommonBorderPaddingBackground
+                    .getDefaultBorderInfo(), Constants.FO_TABLE_CELL);
+        }
+        return defaultBorder;
     }
 
     /**
@@ -66,6 +77,17 @@ public/*TODO*/ class BorderSpecification {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "{" + borderInfo + ", " + holder + "}";
+        String holderName = "";
+        switch (holder) {
+        case Constants.FO_TABLE: holderName = "table"; break;
+        case Constants.FO_TABLE_COLUMN: holderName = "table-column"; break;
+        case Constants.FO_TABLE_HEADER: holderName = "table-header"; break;
+        case Constants.FO_TABLE_FOOTER: holderName = "table-footer"; break;
+        case Constants.FO_TABLE_BODY: holderName = "table-body"; break;
+        case Constants.FO_TABLE_ROW: holderName = "table-row"; break;
+        case Constants.FO_TABLE_CELL: holderName = "table-cell"; break;
+        default: assert false;
+        }
+        return "{" + borderInfo + ", " + holderName + "}";
     }
 }

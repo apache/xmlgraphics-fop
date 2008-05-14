@@ -35,13 +35,17 @@ import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.extensions.destination.Destination;
+import org.apache.fop.fo.pagination.AbstractPageSequence;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
+import org.apache.fop.layoutmgr.ExternalDocumentLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.layoutmgr.LayoutManagerMapping;
 import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
+import org.apache.fop.layoutmgr.TopLevelLayoutManager;
 
 /**
  * Area tree handler for formatting objects.
@@ -78,7 +82,7 @@ public class AreaTreeHandler extends FOEventHandler {
     // The formatting results to be handed back to the caller.
     private FormattingResults results = new FormattingResults();
 
-    private PageSequenceLayoutManager prevPageSeqLM;
+    private TopLevelLayoutManager prevPageSeqLM;
 
     private int idGen = 0;
 
@@ -185,12 +189,12 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @param pageSequence
-     *            is the pageSequence being started
-     */
+    /** {@inheritDoc} */
     public void startPageSequence(PageSequence pageSequence) {
+        startAbstractPageSequence(pageSequence);
+    }
+    
+    private void startAbstractPageSequence(AbstractPageSequence pageSequence) {
         rootFObj = pageSequence.getRoot();
         finishPrevPageSequence(pageSequence.getInitialPageNumber());
         pageSequence.initPageNumber();
@@ -234,6 +238,26 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
+    /** {@inheritDoc} */
+    public void startExternalDocument(ExternalDocument document) {
+        startAbstractPageSequence(document);
+    }
+
+    /** {@inheritDoc} */
+    public void endExternalDocument(ExternalDocument document) {
+        if (statistics != null) {
+            statistics.end();
+        }
+        
+        ExternalDocumentLayoutManager edLM;
+        edLM = getLayoutManagerMaker().makeExternalDocumentLayoutManager(this, document);
+        edLM.activateLayout();
+        // preserve the current PageSequenceLayoutManger for the
+        // force-page-count check at the beginning of the next PageSequence
+        prevPageSeqLM = edLM;
+        
+    }
+
     /**
      * Called by the PageSequenceLayoutManager when it is finished with a
      * page-sequence.
@@ -241,7 +265,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @param pageSequence the page-sequence just finished
      * @param pageCount The number of pages generated for the page-sequence
      */
-    public void notifyPageSequenceFinished(PageSequence pageSequence,
+    public void notifyPageSequenceFinished(AbstractPageSequence pageSequence,
             int pageCount) {
         this.results.haveFormattedPageSequence(pageSequence, pageCount);
         if (log.isDebugEnabled()) {
@@ -301,8 +325,9 @@ public class AreaTreeHandler extends FOEventHandler {
                 if (pageVPList != null) {
                     res.resolveIDRef(ids[count], pageVPList);
                 } else {
-                    log.warn(odi.getName() + ": Unresolved id reference \""
-                            + ids[count] + "\" found.");
+                    AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.unresolvedIDReference(this, odi.getName(), ids[count]);
                     idTracker.addUnresolvedIDRef(ids[count], res);
                 }
             }

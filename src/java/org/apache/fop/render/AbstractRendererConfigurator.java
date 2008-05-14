@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render;
 
@@ -36,7 +36,7 @@ public abstract class AbstractRendererConfigurator {
 
     /** fop factory configuration */
     protected FOUserAgent userAgent = null;
-   
+
     /**
      * Default constructor
      * @param userAgent user agent
@@ -46,7 +46,6 @@ public abstract class AbstractRendererConfigurator {
         this.userAgent = userAgent;
     }
 
-    
     /**
      * Returns the configuration subtree for a specific renderer.
      * @param renderer the renderer
@@ -60,27 +59,26 @@ public abstract class AbstractRendererConfigurator {
             }
             return null;
         }
-        
-        return getRendererConfig(userAgent, mimeType);
+
+        return getRendererConfig(mimeType);
     }
 
     /**
      * Returns the configuration subtree for a specific renderer.
-     * @param userAgent the user agent containing the user configuration
      * @param mimeType the MIME type of the renderer
      * @return the requested configuration subtree, null if there's no configuration
      */
-    public static Configuration getRendererConfig(FOUserAgent userAgent, String mimeType) {
+    private Configuration getRendererConfig(String mimeType) {
         Configuration cfg = userAgent.getFactory().getUserConfig();
         if (cfg == null) {
             if (log.isDebugEnabled()) {
                 log.debug("userconfig is null");
             }
-            return null;            
+            return null;
         }
-    
+
         Configuration userRendererConfig = null;
-    
+
         Configuration[] cfgs
             = cfg.getChild("renderers").getChildren("renderer");
         for (int i = 0; i < cfgs.length; ++i) {

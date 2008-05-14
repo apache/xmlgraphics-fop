@@ -27,7 +27,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:static-content object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_static-content">
+ * <code>fo:static-content</code></a> object.
  */
 public class StaticContent extends Flow {
 
@@ -38,13 +39,10 @@ public class StaticContent extends Flow {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         if (getFlowName() == null || getFlowName().equals("")) {
-            throw new ValidationException("A 'flow-name' is required for "
-                                   + getName() + ".", locator);
+            missingPropertyError("flow-name");
         }
         getFOEventHandler().startFlow(this);
     }
@@ -63,12 +61,14 @@ public class StaticContent extends Flow {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (%block;)+
+     * <br>XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 
@@ -77,7 +77,10 @@ public class StaticContent extends Flow {
         return "static-content";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_STATIC_CONTENT}
+     */
     public int getNameId() {
         return FO_STATIC_CONTENT;
     }

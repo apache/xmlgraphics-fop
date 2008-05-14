@@ -32,7 +32,9 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * The layout-master-set formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_layout-master-set">
+ * <code>fo:layout-master-set</code></a> object.
+ *
  * This class maintains the set of simple page master and
  * page sequence masters.
  * The masters are stored so that the page sequence can obtain
@@ -46,31 +48,28 @@ public class LayoutMasterSet extends FObj {
     private Map pageSequenceMasters;
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a LayoutMasterSet instance that is a child of the given
+     * parent {@link FONode}.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public LayoutMasterSet(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         // No properties in layout-master-set.
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         getRoot().setLayoutMasterSet(this);
         simplePageMasters = new java.util.HashMap();
         pageSequenceMasters = new java.util.HashMap();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(simple-page-master|page-sequence-master)+");
@@ -80,17 +79,15 @@ public class LayoutMasterSet extends FObj {
 
     /**
      * {@inheritDoc}
-        XSL/FOP: (simple-page-master|page-sequence-master)+
+     * <br>XSL/FOP: (simple-page-master|page-sequence-master)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+            throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (!localName.equals("simple-page-master") 
                 && !localName.equals("page-sequence-master")) {   
                     invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -104,23 +101,20 @@ public class LayoutMasterSet extends FObj {
         Map allRegions = new java.util.HashMap();
         for (Iterator spm = simplePageMasters.values().iterator();
                 spm.hasNext();) {
-            SimplePageMaster simplePageMaster =
-                (SimplePageMaster)spm.next();
+            SimplePageMaster simplePageMaster
+                = (SimplePageMaster)spm.next();
             Map spmRegions = simplePageMaster.getRegions();
             for (Iterator e = spmRegions.values().iterator();
                     e.hasNext();) {
                 Region region = (Region) e.next();
                 if (allRegions.containsKey(region.getRegionName())) {
-                    String defaultRegionName =
-                        (String) allRegions.get(region.getRegionName());
+                    String defaultRegionName
+                        = (String) allRegions.get(region.getRegionName());
                     if (!defaultRegionName.equals(region.getDefaultRegionName())) {
-                        throw new ValidationException("Region-name ("
-                                               + region.getRegionName()
-                                               + ") is being mapped to multiple "
-                                               + "region-classes ("
-                                               + defaultRegionName + " and "
-                                               + region.getDefaultRegionName()
-                                               + ")", locator);
+                        getFOValidationEventProducer().regionNameMappedToMultipleRegionClasses(this,
+                                region.getRegionName(),
+                                defaultRegionName,
+                                region.getDefaultRegionName(), getLocator());
                     }
                 }
                 allRegions.put(region.getRegionName(),
@@ -141,21 +135,16 @@ public class LayoutMasterSet extends FObj {
         // check for duplication of master-name
         String masterName = sPM.getMasterName();
         if (existsName(masterName)) {
-            throw new ValidationException("'master-name' ("
-               + masterName
-               + ") must be unique "
-               + "across page-masters and page-sequence-masters", sPM.getLocator());
+            getFOValidationEventProducer().masterNameNotUnique(this,
+                    getName(),
+                    masterName, sPM.getLocator());
         }
         this.simplePageMasters.put(masterName, sPM);
     }
 
     private boolean existsName(String masterName) {
-        if (simplePageMasters.containsKey(masterName)
-                || pageSequenceMasters.containsKey(masterName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (simplePageMasters.containsKey(masterName)
+                || pageSequenceMasters.containsKey(masterName));
     }
 
     /**
@@ -181,10 +170,9 @@ public class LayoutMasterSet extends FObj {
                 throws ValidationException {
         // check against duplication of master-name
         if (existsName(masterName)) {
-            throw new ValidationException("'master-name' ("
-               + masterName
-               + ") must be unique "
-               + "across page-masters and page-sequence-masters", pSM.getLocator());
+            getFOValidationEventProducer().masterNameNotUnique(this,
+                    getName(),
+                    masterName, pSM.getLocator());
         }
         this.pageSequenceMasters.put(masterName, pSM);
     }
@@ -222,6 +210,7 @@ public class LayoutMasterSet extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_LAYOUT_MASTER_SET}
      */
     public int getNameId() {
         return FO_LAYOUT_MASTER_SET;

@@ -90,6 +90,46 @@ http://xmlgraphics.apache.org/fop/stable/running.html
   RELEASE NOTES
 ==============================================================================
 
+Version 0.95beta
+================
+
+This is a pre-version of the third production grade release of the new FOP
+codebase. It contains many bug fixes and new features. See below for details.
+
+Compliance
+----------
+
+This release implements the XSL 1.0 and 1.1 recommendations to a high
+degree of compliance. See the compliance page
+http://xmlgraphics.apache.org/fop/compliance.html for a detailed
+overview.
+
+Known issues
+------------
+
+The known issues of this release are listed at
+http://xmlgraphics.apache.org/fop/0.95/knownissues_overview.html.
+
+Major Changes in Version 0.95
+-----------------------------
+
+* Add new fox:external-document extension element that allows to insert whole
+  documents into a page-sequence (JM)
+* Add support for background on fo:table-column and fo:table-header/footer/body
+  elements (VH)
+* Add support for conditional borders in tables (VH)
+* Add support for scale-down-to-fit and scale-up-to-fit (JM)
+* Fix various bugs and performance problems with external graphics by
+  introducing a new image loading framework (JM)
+
+The long list of changes in this release is available at
+http://xmlgraphics.apache.org/fop/0.95/changes_0.95.html.
+
+The long list of changes in this and earlier releases is available at
+http://xmlgraphics.apache.org/fop/changes.html.
+
+
+
 Version 0.94
 ============
 

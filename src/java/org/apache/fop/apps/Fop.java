@@ -22,10 +22,8 @@ package org.apache.fop.apps;
 // Java
 import java.io.OutputStream;
 
-// XML
 import org.xml.sax.helpers.DefaultHandler;
 
-// FOP
 import org.apache.fop.fo.FOTreeBuilder;
 
 /**
@@ -66,10 +64,8 @@ public class Fop {
      * @param ua FOUserAgent object
      * @param stream the output stream
      * @throws FOPException if setting up the DefaultHandler fails
-     * @deprecated End-users should use {@link FopFactory#newFop(String, FOUserAgent, OutputStream)} 
-     *             instead! This constructor will become invisible with FOP 1.0.
      */
-    public Fop(String outputFormat, FOUserAgent ua, OutputStream stream) throws FOPException {
+    Fop(String outputFormat, FOUserAgent ua, OutputStream stream) throws FOPException {
         this.outputFormat = outputFormat;
 
         foUserAgent = ua;
@@ -83,54 +79,11 @@ public class Fop {
     }
 
     /**
-     * Constructor for use with already-created FOUserAgents. It uses MIME types to select the 
-     * output format (ex. "application/pdf" for PDF).
-     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @param ua FOUserAgent object
-     * @throws FOPException if setting up the DefaultHandler fails
-     * @deprecated End-users should use {@link FopFactory#newFop(String, FOUserAgent)} instead!
-     *             This constructor will become invisible with FOP 1.0.
-     */
-    public Fop(String outputFormat, FOUserAgent ua) throws FOPException {
-        this.outputFormat = outputFormat;
-
-        foUserAgent = ua;
-        if (foUserAgent == null) {
-            foUserAgent = FopFactory.newInstance().newFOUserAgent();
-        }
-        
-        createDefaultHandler();
-    }
-
-    /**
-     * Constructor for FOP with a default FOUserAgent. It uses MIME types to select the 
-     * output format (ex. "application/pdf" for PDF).
-     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @deprecated End-users should use {@link FopFactory#newFop(String)} instead!
-     *             This constructor will become invisible with FOP 1.0.
-     */
-    public Fop(String outputFormat) {
-        this.outputFormat = outputFormat;
-        foUserAgent = FopFactory.newInstance().newFOUserAgent();
-    }
-
-    /**
-     * Get the FOUserAgent instance for this process
+     * Get the FOUserAgent instance associated with the rendering run represented by this instance.
      * @return the user agent
      */
     public FOUserAgent getUserAgent() {
         return foUserAgent;
-    }
-
-    /**
-     * Set the OutputStream to use to output the result of the Render
-     * (if applicable)
-     * @param stream the stream to output the result of rendering to
-     * @deprecated Use one of the factory methods on {@link FopFactory} with an OutputStream
-     *             parameter instead. This method will be removed with FOP 1.0.
-     */
-    public void setOutputStream(OutputStream stream) {
-        this.stream = stream;
     }
 
     /**
@@ -148,8 +101,8 @@ public class Fop {
     }
 
     /**
-     * Returns the DefaultHandler object used to generate the document.
-     * Checking for null and the exception is only for the deprecated constructor.
+     * Returns the DefaultHandler object that will receive the SAX stream containing the
+     * FO document to be rendered.
      * @return the SAX DefaultHandler for handling the SAX events.
      * @throws FOPException if setting up the DefaultHandler fails
      */
@@ -178,13 +131,4 @@ public class Fop {
         }
     }
 
-    /**
-     * Get the version of FOP
-     * @return the version string
-     * @deprecated Use {@link org.apache.fop.Version#getVersion()} instead!
-     *             This method will be removed with FOP 1.0.
-     */
-    public static String getVersion() {
-        return org.apache.fop.Version.getVersion();
-    }
 }

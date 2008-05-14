@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.java2d;
 
@@ -53,5 +53,6 @@ public class Java2DRendererConfigurator extends PrintRendererConfigurator {
                 java2dRenderer.setTransparentPageBackground("true".equalsIgnoreCase(value));
             }
         }
+        super.configure(renderer);
     }
 }

@@ -19,12 +19,13 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import java.util.ListIterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
@@ -47,12 +48,12 @@ import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.NonLeafPosition;
-import org.apache.fop.layoutmgr.SpaceSpecifier;
-import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.SpaceSpecifier;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
@@ -66,8 +67,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      * logging instance
      */
     private static Log log = LogFactory.getLog(InlineLayoutManager.class);
-
-    private InlineLevel fobj;
 
     private CommonMarginInline inlineProps = null;
     private CommonBorderPaddingBackground borderProps = null;
@@ -104,7 +103,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     // The node should be FObjMixed
     public InlineLayoutManager(InlineLevel node) {
         super(node);
-        fobj = node;
     }
     
     private Inline getInlineFO() {
@@ -113,6 +111,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     
     /** {@inheritDoc} */
     public void initialize() {
+        InlineLevel fobj = (InlineLevel) this.fobj;
+
         int padding = 0;
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
         FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
@@ -296,7 +296,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
              );
         }
         
-        while ((curLM = (LayoutManager) getChildLM()) != null) {
+        while ((curLM = getChildLM()) != null) {
             
             if (!(curLM instanceof InlineLevelLayoutManager)) {
                 // A block LM
@@ -313,7 +313,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             // get KnuthElements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                childLC.clearKeepWithPreviousPending();
             }
             if (returnedList == null
                     || returnedList.size() == 0) {
@@ -323,7 +323,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             }
             
             if (curLM instanceof InlineLevelLayoutManager) {
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                context.clearKeepWithNextPending();
                 // "wrap" the Position stored in each element of returnedList
                 ListIterator seqIter = returnedList.listIterator();
                 while (seqIter.hasNext()) {
@@ -364,10 +364,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     returnList.add(sequence);
                 }
                 // propagate and clear
-                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING,
-                                 childLC.isKeepWithNextPending());
-                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
-                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+                childLC.clearKeepsPending();
             }
             lastSequence = (KnuthSequence) returnList.getLast();
             lastChildLM = curLM;
@@ -435,7 +433,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // layout context given to lastLM, but must be cleared in the
         // layout context given to the other LMs.
         LinkedList positionList = new LinkedList();
-        NonLeafPosition pos = null;
+        NonLeafPosition pos;
         LayoutManager lastLM = null;// last child LM in this iterator
         Position lastPos = null;
         while (parentIter.hasNext()) {
@@ -520,6 +518,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         
         context.setFlags(LayoutContext.LAST_AREA, isLast);
         areaCreated = true;
+        checkEndOfLayout(lastPos);
     }
 
     /** {@inheritDoc} */
@@ -548,7 +547,16 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void addKnuthElementsForBorderPaddingStart(List returnList) {
         //Border and Padding (start)
-        CommonBorderPaddingBackground borderAndPadding = fobj.getCommonBorderPaddingBackground();
+        /**
+         * If the returnlist is a BlockKnuthSequence, the border and padding should be added
+         * to the first paragraph inside it, but it is too late to do that now.
+         * At least, avoid adding it to the bpd sequence.
+         */
+        if (returnList instanceof BlockKnuthSequence) {
+            return;
+        }
+        CommonBorderPaddingBackground borderAndPadding =
+                ((InlineLevel)fobj).getCommonBorderPaddingBackground();
         if (borderAndPadding != null) {
             int ipStart = borderAndPadding.getBorderStartWidth(false)
                          + borderAndPadding.getPaddingStart(false, this);
@@ -564,7 +572,16 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void addKnuthElementsForBorderPaddingEnd(List returnList) {
         //Border and Padding (after)
-        CommonBorderPaddingBackground borderAndPadding = fobj.getCommonBorderPaddingBackground();
+        /**
+         * If the returnlist is a BlockKnuthSequence, the border and padding should be added
+         * to the last paragraph inside it, but it is too late to do that now.
+         * At least, avoid adding it to the bpd sequence.
+         */
+        if (returnList instanceof BlockKnuthSequence) {
+            return;
+        }
+        CommonBorderPaddingBackground borderAndPadding =
+                ((InlineLevel)fobj).getCommonBorderPaddingBackground();
         if (borderAndPadding != null) {
             int ipEnd = borderAndPadding.getBorderEndWidth(false)
                         + borderAndPadding.getPaddingEnd(false, this);
@@ -581,11 +598,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             this.auxiliaryPosition = new NonLeafPosition(this, null);
         //}
         return this.auxiliaryPosition;
-    }
-    
-    /** {@inheritDoc} */
-    protected void addId() {
-        getPSLM().addIDToPage(fobj.getId());
     }
     
 }

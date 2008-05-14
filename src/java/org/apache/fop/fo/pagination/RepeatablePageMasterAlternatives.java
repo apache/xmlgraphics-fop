@@ -32,7 +32,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 
 /**
- * A repeatable-page-master-alternatives formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_repeatable-page-master-alternatives">
+ * <code>fo:repeatable-page-master-alternatives</code></a> object.
  * This contains a list of conditional-page-master-reference
  * and the page master is found from the reference that
  * matches the page number and emptyness.
@@ -49,40 +50,32 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private List conditionalPageMasterRefs;
     private boolean hasPagePositionLast = false;
+    private boolean hasPagePositionOnly = false;
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public RepeatablePageMasterAlternatives(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         maximumRepeats = pList.get(PR_MAXIMUM_REPEATS);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         conditionalPageMasterRefs = new java.util.ArrayList();
 
-        if (parent.getName().equals("fo:page-sequence-master")) {
-            PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
-            pageSequenceMaster.addSubsequenceSpecifier(this);
-        } else {
-            throw new ValidationException("fo:repeatable-page-master-alternatives "
-                                   + "must be child of fo:page-sequence-master, not "
-                                   + parent.getName(), locator);
-        }
+        assert parent.getName().equals("fo:page-sequence-master"); //Validation by the parent
+        PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
+        pageSequenceMaster.addSubsequenceSpecifier(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
            missingChildElementError("(conditional-page-master-reference+)");
@@ -91,17 +84,21 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     /**
      * {@inheritDoc}
-        XSL/FOP: (conditional-page-master-reference+)
+     * <br>XSL/FOP: (conditional-page-master-reference+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!(FO_URI.equals(nsURI)
-                && localName.equals("conditional-page-master-reference"))) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!localName.equals("conditional-page-master-reference")) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 
-    /** @return the "maximum-repeats" property. */
+    /**
+     * Get the value of the <code>maximum-repeats</code> property?
+     * @return the "maximum-repeats" property
+     */
     public int getMaximumRepeats() {
         if (maximumRepeats.getEnum() == EN_NO_LIMIT) {
             return INFINITE;
@@ -116,14 +113,11 @@ public class RepeatablePageMasterAlternatives extends FObj
         }
     }
 
-    /**
-     * Get the next matching page master from the conditional
-     * page master references.
-     * @see org.apache.fop.fo.pagination.SubSequenceSpecifier
-     */
+    /** {@inheritDoc} */
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
+                                        boolean isOnlyPage,
                                         boolean isBlankPage) {
         if (getMaximumRepeats() != INFINITE) {
             if (numberConsumed < getMaximumRepeats()) {
@@ -138,7 +132,7 @@ public class RepeatablePageMasterAlternatives extends FObj
         for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
             ConditionalPageMasterReference cpmr
                 = (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
-            if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isBlankPage)) {
+            if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isOnlyPage, isBlankPage)) {
                 return cpmr.getMasterReference();
             }
         }
@@ -154,6 +148,9 @@ public class RepeatablePageMasterAlternatives extends FObj
         this.conditionalPageMasterRefs.add(cpmr);
         if (cpmr.getPagePosition() == EN_LAST) {
             this.hasPagePositionLast = true;
+        }
+        if (cpmr.getPagePosition() == EN_ONLY) {
+            this.hasPagePositionOnly = true;
         }
     }
 
@@ -178,11 +175,19 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
     
     /** {@inheritDoc} */
+    public boolean hasPagePositionOnly() {
+        return this.hasPagePositionOnly;
+    }
+    
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "repeatable-page-master-alternatives";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES}
+     */
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES;
     }

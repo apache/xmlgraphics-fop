@@ -15,24 +15,25 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.ps.extensions;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Extension element for ps:ps-setpagedevice. 
  */
 public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
 
+    /** The element name */
     protected static final String ELEMENT = "ps-setpagedevice";
 
     /**
@@ -52,8 +53,8 @@ public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
         super.startOfNode();
         if ( !((parent.getNameId() == Constants.FO_DECLARATIONS)
                 || (parent.getNameId() == Constants.FO_SIMPLE_PAGE_MASTER)) ) {
-            throw new ValidationException( getName()
-                    + " must be a child of fo:declarations or fo:simple-page-master.");
+            invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                    "rule.childOfSPMorDeclarations");
         }
     }
 

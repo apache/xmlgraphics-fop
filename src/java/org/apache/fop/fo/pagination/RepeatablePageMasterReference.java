@@ -30,7 +30,8 @@ import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 
 /**
- * A repeatable-page-master-reference formatting object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_repeatable-page-master-reference">
+ * <code>fo:repeatable-page-master-reference</code></a> object.
  * This handles a reference with a specified number of repeating
  * instances of the referenced page master (may have no limit).
  */
@@ -47,15 +48,15 @@ public class RepeatablePageMasterReference extends FObj
     private int numberConsumed = 0;
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public RepeatablePageMasterReference(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         maximumRepeats = pList.get(PR_MAXIMUM_REPEATS);
@@ -65,9 +66,7 @@ public class RepeatablePageMasterReference extends FObj
         }        
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
 
@@ -80,19 +79,18 @@ public class RepeatablePageMasterReference extends FObj
  
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
         invalidChildError(loc, nsURI, localName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
+                                        boolean isOnlyPage,
                                         boolean isEmptyPage) {
         if (getMaximumRepeats() != INFINITE) {
             if (numberConsumed < getMaximumRepeats()) {
@@ -104,7 +102,10 @@ public class RepeatablePageMasterReference extends FObj
         return masterReference;
     }
 
-    /** @return the "maximum-repeats" property. */
+    /**
+     * Get the value of the <code>maximum-repeats</code> property.
+     * @return the "maximum-repeats" property
+     */
     public int getMaximumRepeats() {
         if (maximumRepeats.getEnum() == EN_NO_LIMIT) {
             return INFINITE;
@@ -141,13 +142,22 @@ public class RepeatablePageMasterReference extends FObj
     }
 
     /** {@inheritDoc} */
+    public boolean hasPagePositionOnly() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
     public String getLocalName() {
         return "repeatable-page-master-reference";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REPEATABLE_PAGE_MASTER_REFERENCE}
+     */
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_REFERENCE;
     }
+
 
 }

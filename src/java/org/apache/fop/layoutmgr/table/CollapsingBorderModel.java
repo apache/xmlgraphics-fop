@@ -181,7 +181,22 @@ public abstract class CollapsingBorderModel {
      * 
      * @param border1 a border specification
      * @param border2 another border specification
+     * @param discard true if the .conditionality component of the border width must be
+     * taken into account
      * @return the winning border, null if the two borders are equivalent
+     */
+    public abstract BorderSpecification determineWinner(BorderSpecification border1,
+            BorderSpecification border2, boolean discard);
+
+    /**
+     * Returns the border which wins the border conflict resolution. Same as
+     * {@link #determineWinner(BorderSpecification, BorderSpecification, boolean)
+     * determineWinner(border1, border2, false)}.
+     * 
+     * @param border1 a border specification
+     * @param border2 another border specification
+     * @return the winning border, null if the two borders are equivalent
+     * @see determineWinner
      */
     public abstract BorderSpecification determineWinner(BorderSpecification border1,
             BorderSpecification border2);

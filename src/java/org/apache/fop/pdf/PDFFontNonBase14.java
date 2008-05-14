@@ -28,26 +28,6 @@ import org.apache.fop.fonts.FontType;
 public abstract class PDFFontNonBase14 extends PDFFont {
 
     /**
-     * first character code in the font
-     */
-    protected int firstChar;
-
-    /**
-     * last character code in the font
-     */
-    protected int lastChar;
-
-    /**
-     * widths of characters from firstChar to lastChar
-     */
-    protected PDFArray widths;
-
-    /**
-     * descriptor of font metrics
-     */
-    protected PDFFontDescriptor descriptor;
-
-    /**
      * Create the /Font object
      *
      * @param fontname the internal name for the font
@@ -61,8 +41,6 @@ public abstract class PDFFontNonBase14 extends PDFFont {
 
         /* generic creation of PDF object */
         super(fontname, subtype, basefont, encoding);
-
-        this.descriptor = null;
     }
 
     /**
@@ -74,10 +52,9 @@ public abstract class PDFFontNonBase14 extends PDFFont {
      */
     public void setWidthMetrics(int firstChar, int lastChar,
                                 PDFArray widths) {
-        /* set fields using paramaters */
-        this.firstChar = firstChar;
-        this.lastChar = lastChar;
-        this.widths = widths;
+        put("FirstChar", new Integer(firstChar));
+        put("LastChar", new Integer(lastChar));
+        put("Widths", widths);
     }
 
     /**
@@ -86,12 +63,20 @@ public abstract class PDFFontNonBase14 extends PDFFont {
      * @param descriptor the descriptor for other font's metrics
      */
     public void setDescriptor(PDFFontDescriptor descriptor) {
-        this.descriptor = descriptor;
+        put("FontDescriptor", descriptor);
     }
 
     /** @return the FontDescriptor or null if there is none */
     public PDFFontDescriptor getDescriptor() {
-        return this.descriptor;
+        return (PDFFontDescriptor)get("FontDescriptor");
+    }
+    
+    /**
+     * Sets a ToUnicode CMap.
+     * @param cmap the ToUnicode character map
+     */
+    public void setToUnicode(PDFCMap cmap) {
+        put("ToUnicode", cmap);
     }
     
     /** {@inheritDoc} */
@@ -104,20 +89,4 @@ public abstract class PDFFontNonBase14 extends PDFFont {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    protected void fillInPDF(StringBuffer target) {
-        target.append("\n/FirstChar ");
-        target.append(firstChar);
-        target.append("\n/LastChar ");
-        target.append(lastChar);
-        target.append("\n/Widths ");
-        target.append(this.widths.referencePDF());
-        if (descriptor != null) {
-            target.append("\n/FontDescriptor ");
-            target.append(this.descriptor.referencePDF());
-        }
-    }
-
 }

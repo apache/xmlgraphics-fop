@@ -23,9 +23,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.PropertyList;
+import net.sourceforge.jeuclid.DOMMathBuilder;
+import net.sourceforge.jeuclid.MathBase;
+
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,11 +34,12 @@ import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
-import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
 
-import net.sourceforge.jeuclid.MathBase;
-import net.sourceforge.jeuclid.DOMMathBuilder;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Defines the top-level element for MathML.
@@ -57,9 +58,7 @@ public class MathMLElement extends MathMLObj {
         super(parent);
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#processNode
-     */
+    /** {@inheritDoc} */
     public void processNode(String elementName, 
                             Locator locator, 
                             Attributes attlist, 
@@ -141,15 +140,13 @@ public class MathMLElement extends MathMLObj {
 
     }
 
-    /** @see org.apache.fop.fo.XMLObj#getDOMDocument() */
+    /** {@inheritDoc} */
     public Document getDOMDocument() {
         convertToSVG();
         return doc;
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#getNamespaceURI()
-     */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         if (svgDoc == null) {
             return MathMLElementMapping.NAMESPACE;
@@ -157,9 +154,7 @@ public class MathMLElement extends MathMLObj {
         return "http://www.w3.org/2000/svg";
     }
 
-    /**
-     * @see org.apache.fop.fo.XMLObj#getDimension(Point2D)
-     */
+    /** {@inheritDoc} */
     public Point2D getDimension(Point2D view) {
         convertToSVG();
         return new Point2D.Float(width, height);

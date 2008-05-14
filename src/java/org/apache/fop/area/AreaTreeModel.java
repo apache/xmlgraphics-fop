@@ -22,10 +22,8 @@ package org.apache.fop.area;
 // Java
 import java.util.List;
 
-// XML
 import org.xml.sax.SAXException;
 
-// Apache
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,10 +53,13 @@ public class AreaTreeModel {
 
     /**
      * Start a page sequence on this model.
-     * @param title the title of the new page sequence
+     * @param pageSequence the page sequence about to start
      */
-    public void startPageSequence(LineArea title) {
-        currentPageSequence = new PageSequence(title);
+    public void startPageSequence(PageSequence pageSequence) {
+        if (pageSequence == null) {
+            throw new NullPointerException("pageSequence must not be null");
+        }
+        this.currentPageSequence = pageSequence;
         pageSequenceList.add(currentPageSequence);
         currentPageSequenceIndex = pageSequenceList.size() - 1;
     }
@@ -90,6 +91,14 @@ public class AreaTreeModel {
      */
     public void endDocument() throws SAXException {};
 
+    /**
+     * Returns the currently active page-sequence.
+     * @return the currently active page-sequence
+     */
+    public PageSequence getCurrentPageSequence() {
+        return this.currentPageSequence;
+    }
+    
     /**
      * Get the page sequence count.
      * @return the number of page sequences in the document.

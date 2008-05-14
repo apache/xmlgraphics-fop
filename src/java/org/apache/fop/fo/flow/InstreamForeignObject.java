@@ -20,15 +20,21 @@
 package org.apache.fop.fo.flow;
 
 import java.awt.geom.Point2D;
+
+import org.xml.sax.Locator;
+
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.XMLObj;
-import org.xml.sax.Locator;
 
 /**
- * Class modelling the fo:instream-foreign-object object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_instream-foreign-object">
+ * <code>fo:instream-foreign-object</code></a> object.
  * This is an atomic inline object that contains XML data.
  */
 public class InstreamForeignObject extends AbstractGraphics {
@@ -39,13 +45,15 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     //Additional value
     private Point2D intrinsicDimensions;
-    
+    private boolean instrisicSizeDetermined;
+
     private Length intrinsicAlignmentAdjust;
     
     /**
-     * constructs an instream-foreign-object object (called by Maker).
+     * Constructs an instream-foreign-object object 
+     * (called by {@link org.apache.fop.fo.ElementMapping.Maker}).
      *
-     * @param parent the parent formatting object
+     * @param parent the parent {@link FONode}
      */
     public InstreamForeignObject(FONode parent) {
         super(parent);
@@ -53,7 +61,8 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     /**
      * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
+     * {@link org.apache.fop.fo.FOEventHandler} that we are at 
+     * the end of the instream-foreign-object.
      * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
@@ -65,14 +74,14 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: one (1) non-XSL namespace child
+     * <br>XSL Content Model: one (1) non-XSL namespace child
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
         } else if (firstChild != null) {
-            tooManyNodesError(loc, "child element");
+            tooManyNodesError(loc, new QName(nsURI, null, localName));
         }
     }
 
@@ -83,30 +92,29 @@ public class InstreamForeignObject extends AbstractGraphics {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_INSTREAM_FOREIGN_OBJECT}
      */
     public int getNameId() {
         return FO_INSTREAM_FOREIGN_OBJECT;
     }
 
-    /**
-     * Preloads the image so the intrinsic size is available.
-     */
+    /** Preloads the image so the intrinsic size is available. */
     private void prepareIntrinsicSize() {
-        if (intrinsicDimensions == null) {
+        if (!this.instrisicSizeDetermined) {
             XMLObj child = (XMLObj) firstChild;
             Point2D csize = new Point2D.Float(-1, -1);
             intrinsicDimensions = child.getDimension(csize);
             if (intrinsicDimensions == null) {
-                log.error("Intrinsic dimensions of "
-                        + " instream-foreign-object could not be determined");
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.ifoNoIntrinsicSize(this, getLocator());
             }
             intrinsicAlignmentAdjust = child.getIntrinsicAlignmentAdjust();
+            this.instrisicSizeDetermined = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getIntrinsicWidth() {
         prepareIntrinsicSize();
         if (intrinsicDimensions != null) {
@@ -116,9 +124,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getIntrinsicHeight() {
         prepareIntrinsicSize();
         if (intrinsicDimensions != null) {
@@ -128,11 +134,8 @@ public class InstreamForeignObject extends AbstractGraphics {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public  Length getIntrinsicAlignmentAdjust()
-    {
+    /** {@inheritDoc} */
+    public  Length getIntrinsicAlignmentAdjust() {
         prepareIntrinsicSize();
         return intrinsicAlignmentAdjust;
     }
@@ -142,7 +145,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         super.addChildNode(child);
     }
 
-    /** @return the XMLObj child node of the instream-foreign-object. */
+    /** @return the {@link XMLObj} child node of the instream-foreign-object. */
     public XMLObj getChildXMLObj() {
         return (XMLObj) firstChild;
     }

@@ -29,7 +29,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * Class modelling the fo:footnote-body object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_footnote-body">
+ * <code>fo:footnote-body</code></a> object.
  */
 public class FootnoteBody extends FObj {
     // The value of properties relevant for fo:footnote-body (commented out for perforance).
@@ -37,28 +38,27 @@ public class FootnoteBody extends FObj {
     // End of property values
 
     /**
+     * Base constructor
+     * 
      * @param parent FONode that is the parent of this object
      */
     public FootnoteBody(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         getFOEventHandler().startFootnoteBody(this);
     }
 
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
+     * Make sure the content model is satisfied, if so then tell the
+     * {@link org.apache.fop.fo.FOEventHandler} that we are at the 
+     * end of the footnote-body.
      * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
@@ -70,13 +70,15 @@ public class FootnoteBody extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (%block;)+
+     * <br>XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             if (!isBlockItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
             }
+        }
     }
 
     /** {@inheritDoc} */
@@ -86,6 +88,7 @@ public class FootnoteBody extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_FOOTNOTE_BODY}
      */
     public int getNameId() {
         return FO_FOOTNOTE_BODY;

@@ -166,6 +166,30 @@
             </fo:table-body>
           </fo:table>
 
+          <!-- table 3 -->
+          <fo:block space-before="10pt" space-after="10pt">Between tables</fo:block>
+          <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
+            <fo:table-column column-width="proportional-column-width(1)"
+              border="6pt solid blue"/>
+            <fo:table-column column-width="proportional-column-width(1)"
+              border="8pt solid red"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell number-columns-spanned="2" border="1pt solid black">
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>Cell 2.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>Cell 2.2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
           <fo:block>After the tables</fo:block>
         </fo:flow>
       </fo:page-sequence>
@@ -332,6 +356,27 @@
     <eval expected="(solid,#ffff00,14000,collapse-outer)" xpath="//flow/block[4]/block[22]/@border-after"/>
     <eval expected="(solid,#ffff00,1000,collapse-inner)" xpath="//flow/block[4]/block[22]/@border-start"/>
     <eval expected="(solid,#000000,10000,collapse-outer)" xpath="//flow/block[4]/block[22]/@border-end"/>
+
+    <!-- table 3 -->
+    <!-- cell 1.1 -->
+    <eval expected="(solid,#0000ff,6000,collapse-outer)" xpath="//flow/block[6]/block[1]/@border-before"/>
+    <eval expected="(solid,#000000,1000,collapse-inner)" xpath="//flow/block[6]/block[1]/@border-after"/>
+    <eval expected="(solid,#0000ff,6000,collapse-outer)" xpath="//flow/block[6]/block[1]/@border-start"/>
+    <eval expected="" xpath="//flow/block[6]/block[1]/@border-end"/>
+    <eval expected="(solid,#ff0000,8000,collapse-outer)" xpath="//flow/block[6]/block[2]/@border-before"/>
+    <eval expected="(solid,#000000,1000,collapse-inner)" xpath="//flow/block[6]/block[2]/@border-after"/>
+    <eval expected="" xpath="//flow/block[6]/block[2]/@border-start"/>
+    <eval expected="(solid,#ff0000,8000,collapse-outer)" xpath="//flow/block[6]/block[2]/@border-end"/>
+    <!-- cell 2.1 -->
+    <eval expected="(solid,#000000,1000,collapse-inner)" xpath="//flow/block[6]/block[4]/@border-before"/>
+    <eval expected="(solid,#0000ff,6000,collapse-outer)" xpath="//flow/block[6]/block[4]/@border-after"/>
+    <eval expected="(solid,#0000ff,6000,collapse-outer)" xpath="//flow/block[6]/block[4]/@border-start"/>
+    <eval expected="(solid,#ff0000,8000,collapse-inner)" xpath="//flow/block[6]/block[4]/@border-end"/>
+    <!-- cell 2.2 -->
+    <eval expected="(solid,#000000,1000,collapse-inner)" xpath="//flow/block[6]/block[5]/@border-before"/>
+    <eval expected="(solid,#ff0000,8000,collapse-outer)" xpath="//flow/block[6]/block[5]/@border-after"/>
+    <eval expected="(solid,#ff0000,8000,collapse-inner)" xpath="//flow/block[6]/block[5]/@border-start"/>
+    <eval expected="(solid,#ff0000,8000,collapse-outer)" xpath="//flow/block[6]/block[5]/@border-end"/>
 
   </checks>
 </testcase>

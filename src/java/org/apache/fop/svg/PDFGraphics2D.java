@@ -41,7 +41,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferInt;
 import java.awt.image.DirectColorModel;
 import java.awt.image.ImageObserver;
 import java.awt.image.Raster;
@@ -51,8 +50,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.text.AttributedCharacterIterator;
-import java.text.CharacterIterator;
 import java.util.List;
 import java.util.Map;
 
@@ -62,13 +59,19 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.PatternPaint;
-import org.apache.fop.fonts.CIDFont;
+
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
+import org.apache.xmlgraphics.java2d.GraphicContext;
+
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.image.JpegImage;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
@@ -76,9 +79,9 @@ import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFGState;
+import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFImageXObject;
 import org.apache.fop.pdf.PDFLink;
-import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFResourceContext;
@@ -86,10 +89,10 @@ import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.pdf.FopPDFImage;
+import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
+import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
+import org.apache.fop.render.pdf.ImageRenderedAdapter;
 import org.apache.fop.util.ColorExt;
-import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
-import org.apache.xmlgraphics.java2d.GraphicContext;
 
 /**
  * PDF Graphics 2D.
@@ -103,13 +106,13 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
 public class PDFGraphics2D extends AbstractGraphics2D {
 
     private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
-    
-    /** The number of decimal places. */ 
+
+    /** The number of decimal places. */
     private static final int DEC = 8;
 
     /** Convenience constant for full opacity */
     static final int OPAQUE = 255;
-    
+
     /**
      * the PDF Document being created
      */
@@ -136,10 +139,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected int baseLevel = 0;
 
     /**
-     * The count of JPEG images added to document so they recieve
+     * The count of natively handled images added to document so they receive
      * unique keys.
      */
-    protected int[] jpegCount = {0};
+    protected int nativeCount = 0;
 
     /**
      * The current font information.
@@ -225,7 +228,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         this.pageRef = g.pageRef;
         this.graphicsState = g.graphicsState;
         this.currentStream = g.currentStream;
-        this.jpegCount = g.jpegCount;
+        this.nativeCount = g.nativeCount;
         this.outputStream = g.outputStream;
         this.ovFontState = g.ovFontState;
     }
@@ -299,7 +302,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     /**
-     * Set the Grpahics context.
+     * Gets the PDF reference of the current page.
+     * @return the PDF reference of the current page
+     */
+    public String getPageReference() {
+        return this.pageRef;
+    }
+
+    /**
+     * Set the Graphics context.
      * @param c the graphics context to use
      */
     public void setGraphicContext(GraphicContext c) {
@@ -308,10 +319,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     private void setPrivateHints() {
-        setRenderingHint(RenderingHintsKeyExt.KEY_AVOID_TILE_PAINTING, 
+        setRenderingHint(RenderingHintsKeyExt.KEY_AVOID_TILE_PAINTING,
                 RenderingHintsKeyExt.VALUE_AVOID_TILE_PAINTING_ON);
     }
-    
+
     /**
      * Set the override font state for drawing text.
      * This is used by the PDF text painter so that it can temporarily
@@ -344,6 +355,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 + PDFNumber.doubleOut(matrix[5], DEC) + " cm\n");
     }
 
+    private void concatMatrix(AffineTransform transform) {
+        if (!transform.isIdentity()) {
+            double[] matrix = new double[6];
+            transform.getMatrix(matrix);
+            concatMatrix(matrix);
+        }
+    }
+
     /**
      * This is mainly used for shading patterns which use the document-global coordinate system
      * instead of the local one.
@@ -353,7 +372,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         AffineTransform at = new AffineTransform(graphicsState.getTransform());
         return at;
     }
-    
+
     /**
      * This is a pdf specific method used to add a link to the
      * pdf document.
@@ -377,7 +396,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             if (linkType != PDFLink.EXTERNAL) {
                 String pdfdest = "/FitR " + dest;
                 resourceContext.addAnnotation(
-                    pdfDoc.getFactory().makeLink(rect, pageRef, pdfdest));
+                    pdfDoc.getFactory().makeLink(rect, getPageReference(), pdfdest));
             } else {
                 resourceContext.addAnnotation(
                     pdfDoc.getFactory().makeLink(rect, dest, linkType, 0));
@@ -386,44 +405,41 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     /**
-     * Add a JPEG image directly to the PDF document.
-     * This is used by the PDFImageElementBridge to draw a JPEG
-     * directly into the pdf document rather than converting the image into
+     * Add a natively handled image directly to the PDF document.
+     * This is used by the PDFImageElementBridge to draw a natively handled image
+     * (like JPEG or CCITT images)
+     * directly into the PDF document rather than converting the image into
      * a bitmap and increasing the size.
      *
-     * @param jpeg the jpeg image to draw
+     * @param image the image to draw
      * @param x the x position
      * @param y the y position
      * @param width the width to draw the image
      * @param height the height to draw the image
      */
-    public void addJpegImage(JpegImage jpeg, float x, float y, 
+    void addNativeImage(org.apache.xmlgraphics.image.loader.Image image, float x, float y,
                              float width, float height) {
         preparePainting();
-        // Need to include hash code as when invoked from FO you
-        // may have several 'independent' PDFGraphics2D so the
-        // count is not enough.
-        String key = "__AddJPEG_" + hashCode() + "_" + jpegCount[0];
-        jpegCount[0]++;
-        FopPDFImage fopimage = new FopPDFImage(jpeg, key);
-        PDFName imageName = this.pdfDoc.addImage(resourceContext, 
-                                              fopimage).getName();
-        AffineTransform at = getTransform();
-        double[] matrix = new double[6];
-        at.getMatrix(matrix);
-        currentStream.write("q\n");
-        if (!at.isIdentity()) {
-            concatMatrix(matrix);
+        String key = image.getInfo().getOriginalURI();
+        if (key == null) {
+            // Need to include hash code as when invoked from FO you
+            // may have several 'independent' PDFGraphics2D so the
+            // count is not enough.
+            key = "__AddNative_" + hashCode() + "_" + nativeCount;
+            nativeCount++;
         }
-        Shape imclip = getClip();
-        writeClip(imclip);
 
-        currentStream.write("" + width + " 0 0 "
-                          + (-height) + " "
-                          + x + " "
-                          + (y + height) + " cm\n"
-                          + imageName + " Do\nQ\n");
+        PDFImage pdfImage;
+        if (image instanceof ImageRawJPEG) {
+            pdfImage = new ImageRawJPEGAdapter((ImageRawJPEG)image, key);
+        } else if (image instanceof ImageRawCCITTFax) {
+            pdfImage = new ImageRawCCITTFaxAdapter((ImageRawCCITTFax)image, key);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported Image subclass: " + image.getClass().getName());
+        }
 
+        PDFXObject xObject = this.pdfDoc.addImage(resourceContext, pdfImage);
         if (outputStream != null) {
             try {
                 this.pdfDoc.output(outputStream);
@@ -431,6 +447,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 // ignore exception, will be thrown again later
             }
         }
+
+        AffineTransform at = new AffineTransform();
+        at.translate(x, y);
+        useXObject(xObject, at, width, height);
     }
 
     /**
@@ -477,40 +497,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                                  BufferedImage.TYPE_INT_ARGB);
     }
 
-    /**
-     * Draws as much of the specified image as has already been scaled
-     * to fit inside the specified rectangle.
-     * <p>
-     * The image is drawn inside the specified rectangle of this
-     * graphics context's coordinate space, and is scaled if
-     * necessary. Transparent pixels do not affect whatever pixels
-     * are already there.
-     * <p>
-     * This method returns immediately in all cases, even if the
-     * entire image has not yet been scaled, dithered, and converted
-     * for the current output device.
-     * If the current output representation is not yet complete, then
-     * <code>drawImage</code> returns <code>false</code>. As more of
-     * the image becomes available, the process that draws the image notifies
-     * the image observer by calling its <code>imageUpdate</code> method.
-     * <p>
-     * A scaled version of an image will not necessarily be
-     * available immediately just because an unscaled version of the
-     * image has been constructed for this output device.  Each size of
-     * the image may be cached separately and generated from the original
-     * data in a separate image production sequence.
-     * @param    img    the specified image to be drawn.
-     * @param    x      the <i>x</i> coordinate.
-     * @param    y      the <i>y</i> coordinate.
-     * @param    width  the width of the rectangle.
-     * @param    height the height of the rectangle.
-     * @param    observer    object to be notified as more of
-     * the image is converted.
-     * @return true if the image was drawn
-     * @see      java.awt.Image
-     * @see      java.awt.image.ImageObserver
-     * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
-     */
+    /** {@inheritDoc} */
     public boolean drawImage(Image img, int x, int y, int width, int height,
                                ImageObserver observer) {
         preparePainting();
@@ -518,8 +505,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
         // document
-        PDFXObject imageInfo = pdfDoc.getXObject("TempImage:" + img.toString());
-        if (imageInfo == null) {
+        String key = "TempImage:" + img.toString();
+        PDFXObject xObject = pdfDoc.getXObject(key);
+        if (xObject == null) {
             // OK, have to build and add a PDF image
 
             Dimension size = new Dimension(width, height);
@@ -538,92 +526,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
             g.dispose();
 
-            final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3 /*for RGB*/];
-            byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
-            boolean hasMask = false;
-            //boolean binaryMask = true;
-
-            Raster raster = buf.getData();
-            DataBuffer bd = raster.getDataBuffer();
-
-            int count = 0;
-            int maskpos = 0;
-            int[] iarray;
-            int i, j, val, alpha;
-            switch (bd.getDataType()) {
-                case DataBuffer.TYPE_INT:
-                int[][] idata = ((DataBufferInt)bd).getBankData();
-                for (i = 0; i < idata.length; i++) {
-                    iarray = idata[i];
-                    for (j = 0; j < iarray.length; j++) {
-                        val = iarray[j];
-                        alpha = val >>> 24;
-                        mask[maskpos++] = (byte)(alpha & 0xFF);
-                        if (alpha != 255) {
-                            hasMask = true;
-                        }
-                        result[count++] = (byte)((val >> 16) & 0xFF);
-                        result[count++] = (byte)((val >> 8) & 0xFF);
-                        result[count++] = (byte)((val) & 0xFF);
-                    }
-                }
-                break;
-                default:
-                // error
-                break;
-            }
-            String ref = null;
-            if (hasMask) {
-                // if the mask is binary then we could convert it into a bitmask
-                BitmapImage fopimg = new BitmapImage("TempImageMask:"
-                                             + img.toString(), buf.getWidth(),
-                                             buf.getHeight(), mask, null);
-                fopimg.setColorSpace(new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY));
-                PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
-                ref = xobj.referencePDF();
-
-                if (outputStream != null) {
-                    try {
-                        this.pdfDoc.output(outputStream);
-                    } catch (IOException ioe) {
-                        // ignore exception, will be thrown again later
-                    }
-                }
-            } else {
-                mask = null;
-            }
-
-            BitmapImage fopimg = new BitmapImage("TempImage:"
-                                          + img.toString(), buf.getWidth(),
-                                          buf.getHeight(), result, ref);
-            imageInfo = pdfDoc.addImage(resourceContext, fopimg);
-            //int xObjectNum = imageInfo.getXNumber();
-
-            if (outputStream != null) {
-                try {
-                    this.pdfDoc.output(outputStream);
-                } catch (IOException ioe) {
-                    // ignore exception, will be thrown again later
-                }
-            }
+            xObject = addRenderedImage(key, buf);
         } else {
-            resourceContext.getPDFResources().addXObject(imageInfo);
+            resourceContext.getPDFResources().addXObject(xObject);
         }
 
-        // now do any transformation required and add the actual image
-        // placement instance
-        AffineTransform at = getTransform();
-        double[] matrix = new double[6];
-        at.getMatrix(matrix);
-        currentStream.write("q\n");
-        if (!at.isIdentity()) {
-            concatMatrix(matrix);
-        }
-        Shape imclip = getClip();
-        writeClip(imclip);
-        currentStream.write("" + width + " 0 0 " + (-height) + " " + x
-                            + " " + (y + height) + " cm\n"
-                            + imageInfo.getName() + " Do\nQ\n");
+        AffineTransform at = new AffineTransform();
+        at.translate(x, y);
+        useXObject(xObject, at, width, height);
         return true;
     }
 
@@ -739,7 +649,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             graphicsState.pop();
         }
     }
-    
+
 /*
     // in theory we could set the clip using these methods
     // it doesn't seem to improve the file sizes much
@@ -874,8 +784,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     (float) gpaint.getPoint1().getX(),
                     (float) gpaint.getPoint1().getY(),
                     (float) gpaint.getPoint2().getX(),
-                    (float) gpaint.getPoint2().getY(), 
-                    new float[] {0, 1}, 
+                    (float) gpaint.getPoint2().getY(),
+                    new float[] {0, 1},
                     new Color[] {gpaint.getColor1(), gpaint.getColor2()},
                     gpaint.isCyclic() ? LinearGradientPaint.REPEAT : LinearGradientPaint.NO_CYCLE);
         }
@@ -1017,7 +927,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     return false;  // PDF can't do alpha
                 }
 
-                someColors.add(new PDFColor(cc.getRed(), cc.getGreen(), 
+                someColors.add(new PDFColor(cc.getRed(), cc.getGreen(),
                                             cc.getBlue()));
             }
 
@@ -1037,7 +947,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             currentStream.write(myPat.getColorSpaceOut(fill));
 
             return true;
-        } 
+        }
         if (paint instanceof PatternPaint) {
             PatternPaint pp = (PatternPaint)paint;
             return createPattern(pp, fill);
@@ -1049,12 +959,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         preparePainting();
 
         FontInfo specialFontInfo = new FontInfo();
-        FontSetup.setup(specialFontInfo, null, null);
+        FontSetup.setup(specialFontInfo);
 
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);
         PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, specialFontInfo,
-                                        pdfDoc, context, pageRef,
+                                        pdfDoc, context, getPageReference(),
                                         "", 0);
         pattGraphic.setGraphicContext(new GraphicContext());
         pattGraphic.gc.validateTransformStack();
@@ -1080,14 +990,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         //     double patMaxX = rect.getX() + rect.getWidth();
         //     double patMaxY = rect.getY() + rect.getHeight();
         //     double stepX = rect.getWidth();
-        //     double stepY = rect.getHeight();            
-        // 
+        //     double stepY = rect.getHeight();
+        //
         //     int startX = (int)((rect.getX() - gnMaxX)/stepX);
         //     int startY = (int)((rect.getY() - gnMaxY)/stepY);
-        // 
+        //
         //     int endX   = (int)((patMaxX - gnMinX)/stepX);
         //     int endY   = (int)((patMaxY - gnMinY)/stepY);
-        // 
+        //
         //     pattGraphic.translate(startX*stepX, startY*stepY);
         //     for (int yIdx=startY; yIdx<=endY; yIdx++) {
         //         for (int xIdx=startX; xIdx<=endX; xIdx++) {
@@ -1117,14 +1027,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         /** @todo see if pdfDoc and res can be linked here,
-        (currently res <> PDFDocument's resources) so addFonts() 
+        (currently res <> PDFDocument's resources) so addFonts()
         can be moved to PDFDocument class */
         res.addFonts(pdfDoc, specialFontInfo);
 
         PDFPattern myPat = pdfDoc.getFactory().makePattern(
                                 resourceContext, 1, res, 1, 1, bbox,
                                 rect.getWidth(), rect.getHeight(),
-                                theMatrix, null, 
+                                theMatrix, null,
                                 pattGraphic.getBuffer());
 
         currentStream.write(myPat.getColorSpaceOut(fill));
@@ -1184,7 +1094,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             (rgbCS, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000,
              false, DataBuffer.TYPE_BYTE);
 
-        PaintContext pctx = paint.createContext(rgbCM, devBounds, usrBounds, 
+        PaintContext pctx = paint.createContext(rgbCM, devBounds, usrBounds,
                                                 at, getRenderingHints());
         PDFXObject imageInfo = pdfDoc.getXObject
             ("TempImage:" + pctx.toString());
@@ -1202,7 +1112,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             final int[]  line = new int[devW];
             final byte[] mask;
             int x, y, val, rgbIdx = 0;
-        
+
             if (pcm.hasAlpha()) {
                 mask = new byte[devW * devH];
                 int maskIdx = 0;
@@ -1325,63 +1235,61 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
     }
 
-    /**
-     * Renders a {@link RenderedImage},
-     * applying a transform from image
-     * space into user space before drawing.
-     * The transformation from user space into device space is done with
-     * the current <code>Transform</code> in the <code>Graphics2D</code>.
-     * The specified transformation is applied to the image before the
-     * transform attribute in the <code>Graphics2D</code> context is applied.
-     * The rendering attributes applied include the <code>Clip</code>,
-     * <code>Transform</code>, and <code>Composite</code> attributes. Note
-     * that no rendering is done if the specified transform is
-     * noninvertible.
-     * @param img the image to be rendered
-     * @param xform the transformation from image space into user space
-     * @see #transform
-     * @see #setTransform
-     * @see #setComposite
-     * @see #clip
-     * @see #setClip
-     */
+    /** {@inheritDoc} */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        //NYI
+        String key = "TempImage:" + img.toString();
+        drawInnerRenderedImage(key, img, xform);
     }
 
-    /**
-     * Renders a
-     * {@link RenderableImage},
-     * applying a transform from image space into user space before drawing.
-     * The transformation from user space into device space is done with
-     * the current <code>Transform</code> in the <code>Graphics2D</code>.
-     * The specified transformation is applied to the image before the
-     * transform attribute in the <code>Graphics2D</code> context is applied.
-     * The rendering attributes applied include the <code>Clip</code>,
-     * <code>Transform</code>, and <code>Composite</code> attributes. Note
-     * that no rendering is done if the specified transform is
-     * noninvertible.
-     * <p>
-     * Rendering hints set on the <code>Graphics2D</code> object might
-     * be used in rendering the <code>RenderableImage</code>.
-     * If explicit control is required over specific hints recognized by a
-     * specific <code>RenderableImage</code>, or if knowledge of which hints
-     * are used is required, then a <code>RenderedImage</code> should be
-     * obtained directly from the <code>RenderableImage</code>
-     * and rendered using
-     * {@link #drawRenderedImage(RenderedImage, AffineTransform) drawRenderedImage}.
-     * @param img the image to be rendered
-     * @param xform the transformation from image space into user space
-     * @see #transform
-     * @see #setTransform
-     * @see #setComposite
-     * @see #clip
-     * @see #setClip
-     * @see #drawRenderedImage
-     */
+    /** {@inheritDoc} */
+    public void drawInnerRenderedImage(String key, RenderedImage img, AffineTransform xform) {
+        preparePainting();
+        PDFXObject xObject = pdfDoc.getXObject(key);
+        if (xObject == null) {
+            xObject = addRenderedImage(key, img);
+        } else {
+            resourceContext.getPDFResources().addXObject(xObject);
+        }
+
+        useXObject(xObject, xform, img.getWidth(), img.getHeight());
+    }
+
+    private void useXObject(PDFXObject xObject, AffineTransform xform, float width, float height) {
+        // now do any transformation required and add the actual image
+        // placement instance
+        currentStream.write("q\n");
+        concatMatrix(getTransform());
+        Shape imclip = getClip();
+        writeClip(imclip);
+        concatMatrix(xform);
+        String w = PDFNumber.doubleOut(width, DEC);
+        String h = PDFNumber.doubleOut(height, DEC);
+        currentStream.write("" + w + " 0 0 -" + h + " 0 " + h + " cm\n"
+                + xObject.getName() + " Do\nQ\n");
+    }
+
+    private PDFXObject addRenderedImage(String key, RenderedImage img) {
+        ImageInfo info = new ImageInfo(null, "image/unknown");
+        ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
+        info.setSize(size);
+        ImageRendered imgRend = new ImageRendered(info, img, null);
+        ImageRenderedAdapter adapter = new ImageRenderedAdapter(imgRend, key);
+        PDFXObject xObject = pdfDoc.addImage(resourceContext, adapter);
+        if (outputStream != null) {
+            try {
+                this.pdfDoc.output(outputStream);
+            } catch (IOException ioe) {
+                // ignore exception, will be thrown again later
+            }
+        }
+        return xObject;
+    }
+
+    /** {@inheritDoc} */
     public void drawRenderableImage(RenderableImage img,
                                     AffineTransform xform) {
-        //NYI
+        //TODO Check if this is good enough
+        drawRenderedImage(img.createDefaultRendering(), xform);
     }
 
     /**
@@ -1569,14 +1477,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         org.apache.fop.fonts.Typeface f
             = (org.apache.fop.fonts.Typeface)fontInfo.getFonts().get(name);
-        if (f instanceof LazyFont) {
-            if (((LazyFont) f).getRealFont() instanceof CIDFont) {
-                return true;
-            }
-        } else if (f instanceof CIDFont) {
-            return true;
-        }
-        return false;
+        return f.isMultiByte();
     }
 
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
@@ -1617,7 +1518,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setTransform
      * @see #setComposite
      * @see #setClip
-     */
+     *//* TODO Reimplement for higher efficiency similar to the way it was done in PDFTextPainter
     public void drawString(AttributedCharacterIterator iterator, float x,
                            float y) {
         preparePainting();
@@ -1682,7 +1583,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         currentStream.write("ET\n");
-    }
+    }*/
 
     /**
      * Fills the interior of a <code>Shape</code> using the settings of the
@@ -1710,7 +1611,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 return;
             }
         }
-        
+
         AffineTransform trans = getTransform();
         double[] tranvals = new double[6];
         trans.getMatrix(tranvals);
@@ -1808,7 +1709,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             iter.next();
         }
     }
-    
+
     /**
      * Do the PDF drawing command.
      * This does the PDF drawing command according to fill

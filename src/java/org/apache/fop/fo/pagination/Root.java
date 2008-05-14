@@ -30,11 +30,13 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 import org.apache.fop.fo.extensions.destination.Destination;
+import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 
 /**
- * The fo:root formatting object. Contains page masters, page-sequences.
+ * Class modeling the <a href="http://www.w3.org/TR/xsl/#fo_root">
+ * <code>fo:root</code></a> formatting object.
+ * Contains page masters, page-sequences.
  */
 public class Root extends FObj {
     // The value of properties relevant for fo:root.
@@ -61,38 +63,34 @@ public class Root extends FObj {
      */
     private FOEventHandler foEventHandler = null;
      
-     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+    /**
+     * Base constructor
+     *
+     * @param parent {@link FONode} that is the parent of this object
+     * Note: parent should be null for the fo:root.
      */
     public Root(FONode parent) {
         super(parent);
         pageSequences = new java.util.ArrayList();
-        if (parent != null) {
-            //throw new FOPException("root must be root element");
-        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
     }
 
-    /**
-     * Signal end of this xml element.
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (!pageSequenceFound || layoutMasterSet == null) {
-            missingChildElementError("(layout-master-set, declarations?, " + 
-                "bookmark-tree?, page-sequence+)");
+            missingChildElementError("(layout-master-set, declarations?, " 
+                + "bookmark-tree?, (page-sequence|fox:external-document)+)");
         }
     }
 
     /**
      * {@inheritDoc}
-        XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
-        FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
+     * <br>XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
+     * <br>FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
@@ -129,7 +127,21 @@ public class Root extends FObj {
                 invalidChildError(loc, nsURI, localName);
             }
         } else {
-            invalidChildError(loc, nsURI, localName);
+            if (FOX_URI.equals(nsURI)) {
+                if ("external-document".equals(localName)) {
+                    pageSequenceFound = true;
+                }
+            }
+            //invalidChildError(loc, nsURI, localName);
+            //Ignore non-FO elements under root
+        }
+    }
+    
+
+    /** @inheritDoc */
+    protected void validateChildNode(Locator loc, FONode child) throws ValidationException {
+        if (child instanceof AbstractPageSequence) {
+            pageSequenceFound = true;
         }
     }
 
@@ -280,9 +292,7 @@ public class Root extends FObj {
         return bookmarkTree;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Root getRoot() {
         return this;
     }
@@ -294,6 +304,7 @@ public class Root extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_ROOT}
      */
     public int getNameId() {
         return FO_ROOT;

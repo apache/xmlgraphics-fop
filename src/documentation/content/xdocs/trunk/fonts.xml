@@ -31,11 +31,6 @@
   <body>
     <section id="intro">
       <title>Summary</title>
-      <note>The FOP Font subsystem is currently undergoing a significant change.
-        The details provided here especially related to the generation of FOP Font
-        Metrics files and the FOP Font configuration are likely to change substantially
-        in the future.
-      </note>
       <p>The following table summarizes the font capabilities of the various FOP renderers:</p>
       <table>
         <tr>
@@ -59,22 +54,22 @@
           <td>yes</td>
           <td>yes</td>
         </tr>
-        <!--tr> NOT AVAILABLE YET!!!
+        <tr>
           <td>PCL</td>
           <td>yes (modified)</td>
-          <td>no</td>
-          <td>no</td>
-          <td>no</td>
-        </tr-->
-        <tr>
-          <td>TXT</td>
-          <td>yes (used for layout but not for output)</td>
-          <td>no</td>
-          <td>yes (used for layout but not for output)</td>
+          <td>yes (painted as bitmaps)</td>
+          <td>yes (painted as bitmaps)</td>
           <td>no</td>
         </tr>
         <tr>
-          <td>AWT</td>
+          <td>AFP</td>
+          <td>no</td>
+          <td>no</td>
+          <td>yes</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>Java2D/AWT/Bitmap</td>
           <td>if available from OS</td>
           <td>yes</td>
           <td>yes</td>
@@ -95,19 +90,26 @@
           <td>n/a</td>
         </tr>
         <tr>
+          <td>TXT</td>
+          <td>yes (used for layout but not for output)</td>
+          <td>no</td>
+          <td>yes (used for layout but not for output)</td>
+          <td>no</td>
+        </tr>
+        <!--tr> NOT AVAILABLE
           <td>MIF</td>
           <td>n/a (font metrics not needed)</td>
           <td>n/a</td>
           <td>n/a</td>
           <td>n/a</td>
-        </tr>
-        <tr>
+        </tr-->
+        <!--tr> NOT AVAILABLE
           <td>SVG</td>
           <td>if available from OS</td>
           <td>yes</td>
           <td>no</td>
           <td>no</td>
-        </tr>
+        </tr-->
         <tr>
           <td>XML</td>
           <td>yes</td>
@@ -120,8 +122,8 @@
     <section>
       <title>Base-14 Fonts</title>
       <p>
-        The Adobe PDF Specification specifies a set of 14 fonts that must be
-        available to every PDF reader:
+        The Adobe PostScript and PDF Specification specify a set of 14 fonts that must be
+        available to every PostScript interpreter and PDF reader:
         Helvetica (normal, bold, italic, bold italic),
         Times (normal, bold, italic, bold italic),
         Courier (normal, bold, italic, bold italic),
@@ -147,73 +149,133 @@
       </p>
     </section>
     <section id="awt">
-      <title>AWT/Operating System Fonts</title>
-      <p>The AWT family of renderers (AWT, Print, SVG), use the Java AWT libraries for font metric information. Through operating system registration, the AWT libraries know what fonts are available on the system, and the font metrics for each one.</p>
+      <title>Java2D/AWT/Operating System Fonts</title>
+      <p>
+        The Java2D family of renderers (Java2D, AWT, Print, TIFF, PNG), use the
+        Java AWT subsystem for font metric information. Through operating system
+        registration, the AWT subsystem knows what fonts are available on the system,
+        and the font metrics for each one.
+      </p>
+      <p>
+        When working with one of these output formats and you're missing a font, just
+        install it in your operating system and they should be available for these
+        renderers. Please note that this is not true for other output formats such as
+        PDF or PostScript.
+      </p>
     </section>
+    
     <section id="custom">
       <title>Custom Fonts</title>
-      <p>Support for custom fonts is added by creating font metric files (written in XML) from the actual font files, and registering them with FOP. Currently only Type 1 and TrueType fonts can be added.
-More information about fonts can be found at:</p>
+      <p>
+        Support for custom fonts is highly output format dependent (see above table).
+        This section shows how to add Type 1 and TrueType fonts to the PDF, PostScript and
+        Java2D-based renderers. Other renderers (like AFP) support other font formats. Details
+        in this case can be found on the page about <a href="output.html">output formats</a>.
+      </p>
+      <p>
+        Prior to FOP version 0.94, it was always necessary to create an XML font metrics file
+        if you wanted to add a custom font. This unconvenient step has been removed and in
+        addition to that, FOP supports auto-registration of fonts, i.e. FOP can find fonts
+        installed in your operating system or can scan user-specified directories for fonts.
+        Font registration via XML font metrics file is still supported and may still be necessary
+        for some very special cases as fallback variant while we stabilize font auto-detection.
+      </p>
+      <p>
+        Basic information about fonts can be found at:
+      </p>
       <ul>
         <li><a href="http://partners.adobe.com/asn/developer/type/ftypes.html">Adobe font types</a></li>
         <li><a href="http://partners.adobe.com/asn/developer/technotes/fonts.html">Adobe Font Technote</a></li>
       </ul>
+    </section>
+    
+    <section id="basics">
+      <title>Basic font configuration</title>
+      <p>
+        If you want FOP to use custom fonts, you need to tell it where to find them. This
+        is done in the configuration file and once per renderer (because each output format
+        is a little different). In the basic form, you can either tell FOP to find your
+        operating system fonts or you can specify directories that it will search for
+        support fonts. These fonts will then automatically be registered.
+      </p>
+      <source><![CDATA[
+<renderers>
+   <renderer mime="application/pdf">
+      <fonts>
+         <!-- register all the fonts found in a directory -->
+         <directory>C:\MyFonts1</directory>
+  
+         <!-- register all the fonts found in a directory and all of its sub directories (use with care) -->
+         <directory recursive="true">C:\MyFonts2</directory>
+
+         <!-- automatically detect operating system installed fonts -->
+         <auto-detect/>  
+      </fonts>
+   </renderer>
+</renderers>]]></source>
+      <note>
+        Review the documentation for <a href="configuration.html">FOP Configuration</a>
+        for instructions on making the FOP configuration available to FOP when it runs.
+        Otherwise, FOP has no way of finding your custom font information. It is currently
+        not possible to easily configure fonts from Java code.
+      </note>
+    </section>
+    
+    <section id="advanced">
+      <title>Advanced font configuration</title>
+      <p>
+        The instructions found above should be sufficient for most users. Below are some
+        additional instructions in case the basic font configuration doesn't lead to
+        the desired results.
+      </p>
       <section id="type1-metrics">
         <title>Type 1 Font Metrics</title>
         <p>FOP includes PFMReader, which reads the PFM file that normally comes with a Type 1 font, and generates an appropriate font metrics file for it.
-To use it, run the class org.apache.fop.fonts.apps.PFMReader:</p>
-        <p>Windows (on JDK 1.4 and later):</p>
+          To use it, run the class org.apache.fop.fonts.apps.PFMReader:</p>
+        <p>Windows:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\commons-logging.jar;lib\commons-io.jar
-           org.apache.fop.fonts.apps.PFMReader [options] pfm-file xml-file</source>
-        <p>Windows (on JDK 1.3.x):</p>
-        <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\commons-logging.jar;lib\commons-io.jar;lib\xml-apis.jar;
-         lib\xercesImpl.jar;lib\xalan.jar;lib\serializer.jar
-           org.apache.fop.fonts.apps.PFMReader [options] pfm-file xml-file</source>
-        <p>Unix (on JDK 1.4 and later):</p>
+          org.apache.fop.fonts.apps.PFMReader [options] pfm-file xml-file</source>
+        <p>Unix:</p>
         <source>java -cp build/fop.jar:lib/avalon-framework.jar:lib/commons-logging.jar:lib/commons-io.jar
-           org.apache.fop.fonts.apps.PFMReader [options] pfm-file xml-file</source>
-        <p>Unix (on JDK 1.3.1):</p>
-        <source>java -cp build/fop.jar:lib/avalon-framework.jar:lib/commons-logging.jar:lib/commons-io.jar:lib/xml-apis.jar:
-         lib/xercesImpl.jar:lib/xalan.jar:lib/serializer.jar
-           org.apache.fop.fonts.apps.PFMReader [options] pfm-file xml-file</source>
+          org.apache.fop.fonts.apps.PFMReader [options] pfm-file xml-file</source>
         <p>PFMReader [options]:</p>
         <ul>
           <li><strong>-fn &lt;fontname&gt;</strong> By default, FOP uses the fontname from the
-.pfm file when embedding the font. Use the "-fn" option to override this name with one you have
-chosen. This may be useful in some cases to ensure that applications using the output document
-(Acrobat Reader for example) use the embedded font instead of a local font with the same
-name.</li>
+            .pfm file when embedding the font. Use the "-fn" option to override this name with one you have
+            chosen. This may be useful in some cases to ensure that applications using the output document
+            (Acrobat Reader for example) use the embedded font instead of a local font with the same
+            name.</li>
         </ul>
         <note>The classpath in the above example has been simplified for readability.
-You will have to adjust the classpath to the names of the actual JAR files in the lib directory.
-xml-apis.jar, xercesImpl.jar, xalan.jar and serializer.jar are not necessary for JDK version 1.4 or later.</note>
+          You will have to adjust the classpath to the names of the actual JAR files in the lib directory.
+          xml-apis.jar, xercesImpl.jar, xalan.jar and serializer.jar are not necessary for JDK version 1.4 or later.</note>
         <note>The tool will construct some values (FontBBox, StemV and ItalicAngle) based on assumptions and calculations which are only an approximation to the real values.
-FontBBox and Italic Angle can be found in the human-readable part of the PFB file or in the AFM file.
-The PFMReader tool does not yet interpret PFB or AFM files, so if you want to be correct, you may have to adjust the values in the XML file manually.
-The constructed values however appear to have no visible influence.</note>
+          FontBBox and Italic Angle can be found in the human-readable part of the PFB file or in the AFM file.
+          The PFMReader tool does not yet interpret PFB or AFM files, so if you want to be correct, you may have to adjust the values in the XML file manually.
+          The constructed values however appear to have no visible influence.</note>
       </section>
       <section id="truetype-metrics">
         <title>TrueType Font Metrics</title>
         <p>FOP includes TTFReader, which reads the TTF file and generates an appropriate font metrics file for it.
-Use it in a similar manner to PFMReader.
-For example, to create such a metrics file in Windows from the TrueType font at c:\myfonts\cmr10.ttf:</p>
+          Use it in a similar manner to PFMReader.
+          For example, to create such a metrics file in Windows from the TrueType font at c:\myfonts\cmr10.ttf:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\commons-logging.jar;lib\commons-io.jar
-           org.apache.fop.fonts.apps.TTFReader [options]
-             C:\myfonts\cmr10.ttf ttfcm.xml</source>
+          org.apache.fop.fonts.apps.TTFReader [options]
+          C:\myfonts\cmr10.ttf ttfcm.xml</source>
         <p>TTFReader [options]:</p>
         <ul>
           <li><strong>-d &lt;DEBUG | INFO &gt;</strong> Sets the debug level (default is
-INFO).</li>
+            INFO).</li>
           <li><strong>-fn &lt;fontname&gt;</strong> Same as for PFMReader.</li>
           <li><strong>-ttcname &lt;fontname&gt;</strong> If you're reading data from a
-TrueType Collection (.ttc file) you must specify which font from the collection you will read
-metrics from.
-If you read from a .ttc file without this option, the fontnames will be listed for you.</li>
+            TrueType Collection (.ttc file) you must specify which font from the collection you will read
+            metrics from.
+            If you read from a .ttc file without this option, the fontnames will be listed for you.</li>
           <li><strong>-enc ansi</strong> Creates a WinAnsi-encoded font metrics file.
-Without this option, a CID-keyed font metrics file is created.
-The table below summarizes the differences between these two encoding options as currently
-used within FOP.
-Please note that this information only applies to TrueType fonts and TrueType collections:</li>
+            Without this option, a CID-keyed font metrics file is created.
+            The table below summarizes the differences between these two encoding options as currently
+            used within FOP.
+            Please note that this information only applies to TrueType fonts and TrueType collections:</li>
         </ul>
         <table id="ttf-encoding">
           <tr>
@@ -227,17 +289,6 @@ Please note that this information only applies to TrueType fonts and TrueType co
             <td>Limited only by the characters in the font itself.</td>
           </tr>
           <tr>
-            <td>Character Encoding in the Output Document.</td>
-            <td>Correct.</td>
-            <td>Never correct. Search, index, and cut-and-paste operations in the output document
-will produce incorrect results.</td>
-          </tr>
-          <tr>
-            <td>Character Display</td>
-            <td>Correct.</td>
-            <td>Correct, but copy/paste won't work in Acrobat Reader. (FOP currently doesn't emit the /ToUnicode table which is necessary for copy/paste to work.)</td>
-          </tr>
-          <tr>
             <td>Embedding the Font</td>
             <td>Optional.</td>
             <td>Mandatory. Not embedding the font produces invalid PDF documents.</td>
@@ -245,51 +296,58 @@ will produce incorrect results.</td>
         </table>
         <warning>
           You may experience failures with certain TrueType fonts, especially if they don't contain 
-          the so-called "cmap" table. TTFReader can currently not deal with font like this.
+          the so-called Unicode "cmap" table. TTFReader can currently not deal with font like this.
         </warning>
       </section>
       <section id="truetype-collections-metrics">
         <title>TrueType Collections Font Metrics</title>
         <p>TrueType collections (.ttc files) contain more than one font.
-To create metrics files for these fonts, you must specify which font in the collection should be generated, by using the "-ttcname" option with the TTFReader.</p>
+          To create metrics files for these fonts, you must specify which font in the collection should be generated, by using the "-ttcname" option with the TTFReader.</p>
         <p>To get a list of the fonts in a collection, just start the TTFReader as if it were a normal TrueType file (without the -ttcname option).
-It will display all of the font names and exit with an Exception.</p>
+          It will display all of the font names and exit with an Exception.</p>
         <p>Here is an example of generating a metrics file for a .ttc file:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\commons-logging.jar;lib\commons-io.jar
-           org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho"
-             msmincho.ttc msminch.xml</source>
+          org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho"
+          msmincho.ttc msminch.xml</source>
+        <p>
+          Alternatively, the individual sub-fonts of a TrueType Collections can be selected
+          using the "sub-font" attribute on the "font" element. That means that generating
+          an XML font metrics file for TrueType collections is not necessary anymore.
+        </p>
       </section>
       <section id="register">
         <title>Register Fonts with FOP</title>
         <p>You must tell FOP how to find and use the font metrics files by registering them in the <a href="configuration.html">FOP Configuration</a>. Add entries for your custom fonts, regardless of font type, to the configuration file in a manner similar to the following:</p>
         <source><![CDATA[
-<fonts>
-  <!-- register a particular font -->
-  <font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes"
-      embed-url="file:///C:/myfonts/FTL_____.pfb">
-     <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
-  </font>
+<renderers>
+   <renderer mime="application/pdf">
+      <fonts>
+         <!-- register a particular font -->
+         <font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes" embed-url="file:///C:/myfonts/FTL_____.pfb">
+            <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
+         </font>
   
-  <!-- register all the fonts found in a directory -->
-  <directory>C:\MyFonts1</directory>
+         <!-- register all the fonts found in a directory -->
+         <directory>C:\MyFonts1</directory>
   
-  <!-- register all the fonts found in a directory
-       and all of its sub directories (use with care) -->
-  <directory recursive="true">C:\MyFonts2</directory>
+         <!-- register all the fonts found in a directory and all of its sub directories (use with care) -->
+         <directory recursive="true">C:\MyFonts2</directory>
 
-  <!-- automatically detect operating system installed fonts -->
-  <auto-detect/>  
-</fonts>]]></source>
-        <note>Review the documentation for <a href="configuration.html">FOP Configuration</a> for instructions on making the FOP configuration available to FOP when it runs. Otherwise, FOP has no way of finding your custom font information.</note>
+         <!-- automatically detect operating system installed fonts -->
+         <auto-detect/>  
+      </fonts>
+   </renderer>
+</renderers>]]></source>
         <ul>
           <li>
             URLs are used to access the font metric and font files.
             Relative URLs are resolved relative to the font-base property (or base) if available.
             See <a href="configuration.html">FOP: Configuration</a> for more information.
           </li>
+          <li>The "metrics-url" attribute is generally not necessary except if you run into problems with certain fonts.</li>
           <li>Either an "embed-url" or a "metrics-url" must be specified for font tag configurations.</li>
-          <li>The font "kerning" attribute is optional.</li>
-          <li>If embedding is off, the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
+          <li>The font "kerning" attribute is optional. Default is "true".</li>
+          <li>If embedding is off (i.e. embed-url is not set), the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
           <li>When setting the "embed-url" attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>
           <li>The fonts "directory" tag can be used to register fonts contained within a single or list of directory paths.  The "recursive" attribute can be specified to recursively add fonts from all sub directories.</li>
           <li>The fonts "auto-detect" tag can be used to automatically register fonts that are found to be installed on the native operating system.</li>
@@ -304,38 +362,99 @@ It will display all of the font names and exit with an Exception.</p>
         <!--note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note-->
       </section>
       <section id="autodetect">
-        <title>Auto-Detect and auto-embedd feature</title>
-      <p>When the "auto-detect" flag is set in the configuration, FOP will automatically search for fonts in the default paths for your operating system.</p>
-      <p>FOP will also auto-detect fonts which are available in the classpath, if they are described as "application/x-font" in the MANIFEST.MF file. For example, if your .jar file contains font/myfont.ttf:</p>
-      <source>Manifest-Version: 1.0
-
-Name: font/myfont.ttf
-Content-Type: application/x-font</source>
-      <p>This feature allows you to create JAR files containing fonts. The JAR files can be added to fop by providem them in the classpath, e.g. copying them into the lib/ directory.</p>
+        <title>Auto-Detect and auto-embed feature</title>
+        <p>When the "auto-detect" flag is set in the configuration, FOP will automatically search for fonts in the default paths for your operating system.</p>
+        <p>FOP will also auto-detect fonts which are available in the classpath, if they are described as "application/x-font" in the MANIFEST.MF file. For example, if your .jar file contains font/myfont.ttf:</p>
+        <source>Manifest-Version: 1.0
+          
+          Name: font/myfont.ttf
+          Content-Type: application/x-font</source>
+        <p>This feature allows you to create JAR files containing fonts. The JAR files can be added to fop by providem them in the classpath, e.g. copying them into the lib/ directory.</p>
       </section>
       <section id="embedding">
         <title>Embedding</title>
-        <note>The PostScript renderer does not yet support TrueType fonts, but can embed Type 1 fonts.</note>
-        <note>The font is simply embedded into the PDF file, it is not converted.</note>
-        <p>Font embedding is enabled in the userconfig.xml file and controlled by the embed-url attribute.
-If you don't specify the embed-url attribute the font will not be embedded, but will only be referenced.</p>
-        <warning>
-          Omitting the embed-url attribute for CID-encoded TrueType fonts will currently produce invalid 
-          PDF files! If you create the XML font metric file using the "-enc ansi" option, you can omit 
-          the embed-url attribute for TrueType fonts but you're restricted to the WinAnsi character set.
-        </warning>
-        <p>When FOP embeds a font, it adds a prefix to the fontname to ensure that the name will not match the fontname of an installed font.
-This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</p>
-        <p>When embedding PostScript fonts, the entire font is always embedded.</p>
-        <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the
-          original font, containing only the glyphs used, is embedded in the output document.</p>
+        <p>
+          By default, all fonts are embedded if an output format supports font embedding. In some
+          cases, however, it is preferred that some fonts are only referenced. When working
+          with referenced fonts it is important to be in control of the target environment where
+          the produced document is consumed, i.e. the necessary fonts have to be installed there.
+        </p>
+        <p>
+          There are two different ways how you can specify that a font should be referenced:
+        </p>
+        <ol>
+          <li>
+            When using the old-style "font" element to configure a single font, font referencing
+            is controlled by the embed-url attribute. If you don't specify the embed-url attribute
+            the font will not be embedded, but will only be referenced.
+          </li>
+          <li>
+            For automatically configured fonts there's a different mechanism to specify which
+            fonts should be referenced rather than embedded. This is done in the "referenced-fonts"
+            element in the configuration. Here's an example:
+          </li>
+        </ol>
+        <source><![CDATA[
+<fop version="1.0">
+   <fonts>
+      <referenced-fonts>
+        <match font-family="Helvetica"/>
+        <match font-family="DejaVu.*"/>
+      </referenced-fonts>
+   </fonts>
+</fop>]]></source>
+        <p>
+          At the moment, you can only match fonts against their font-family. It is possible to use
+          regular expressions as is shown in the second example above ("DejaVu.*"). The syntax for
+          the regular expressions used here are the one used by the
+          <a href="http://java.sun.com/j2se/1.4/docs/api/java/util/regex/package-summary.html"><code>java.util.regex</code> package</a>.
+          So, in the above snippet "Helvetica" and all variants of the "DejaVu" font family are
+          referenced. If you want to reference all fonts, just specify <code>font-family=".*"</code>.
+        </p>
+        <p>
+          Various notes related to embedded fonts:
+        </p>
+        <ul>
+          <li>The PostScript renderer does not yet support TrueType fonts, but can embed Type 1 fonts.</li>
+          <li>The font is simply embedded into the PDF file, it is not converted.</li>
+          <li>When FOP embeds a font, it adds a prefix to the fontname to ensure that the name will not match the fontname of an installed font.
+            This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</li>
+          <li>When embedding PostScript fonts, the entire font is always embedded.</li>
+          <li>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the
+          original font, containing only the glyphs used, is embedded in the output document.</li>
+        </ul>
       </section>
+      <section id="substitution">
+         <title>Substitution</title>
+         <p>When a &lt;substitutions/&gt; section is defined in the configuration, FOP will re-map any font-family references found in your FO input to a given substitution font.</p>
+         <ul>
+            <li>If a &lt;substitution/&gt; is declared, it is mandatory that both a &lt;from/&gt; and &lt;to/&gt; child element is declared with a font-family attribute.</li>
+            <li>Both font-weight and font-style are optional attributes, if they are provided then a value of 'normal' is assumed.</li>
+         </ul>
+         <p>For example you could make all FO font-family references to 'Arial' with weights between 700 and 900 reference the normal 'Arial Black' font.</p>
+         <source><![CDATA[
+<fop version="1.0">
+   <fonts>
+      <substitutions>
+         <substitution>
+            <from font-family="Arial" font-weight="700..900"/>
+            <to font-family="Arial Black"/>
+         </substitution>
+         <substitution>
+            <from font-family="FrutigerLight"/>
+            <to font-family="Times" font-weight="bold" font-style="italic"/>
+         </substitution>
+      </substitutions>
+   </fonts>
+</fop>]]></source>
+      </section>
+      <!-- The following section should no longer be required
       <section id="embedding-base14">
         <title>Explicitly embedding the base 14 fonts</title>
         <p>
           There are cases where you might want to force the embedding of one or more of the base 14 fonts that
           can normally be considered available on the target platform (viewer, printer). One of these cases is
-          PDF/A which mandates the embedding of even the base 14 fonts. Embedding a font such as Helvetica or
+          <a href="pdfa.html">PDF/A</a> which mandates the embedding of even the base 14 fonts. Embedding a font such as Helvetica or
           Courier is straight-forward. The "Symbol" and "ZapfDingbats" fonts, however, currently present a 
           problem because FOP cannot correctly determine the encoding of these two single-byte fonts through
           the PFM file. FOP now correctly interprets the "encoding" value in the XML font metrics file, but the
@@ -353,7 +472,7 @@ This is helpful with older versions of Acrobat Reader that preferred installed f
   <cap-height>673</cap-height>
   <x-height>766</x-height>
   [..]]]></source>
-      </section>
+      </section-->
     </section>
   </body>
 </document>

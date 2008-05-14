@@ -19,13 +19,12 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.table.TableCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 
 /**
  * LayoutManager for a table-caption FO.
@@ -34,7 +33,6 @@ import org.apache.fop.area.Block;
  * @todo Implement getNextKnuthElements()
  */
 public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
-    private TableCaption fobj;
 
     private Block curBlockArea;
 
@@ -46,9 +44,13 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
      */
     public TableCaptionLayoutManager(TableCaption node) {
         super(node);
-        fobj = node;
     }
 
+    /** @return the table-caption FO */
+    public TableCaption getTableCaptionFO() {
+        return (TableCaption)this.fobj;
+    }
+    
     /**
      * Get the next break position for the caption.
      *
@@ -133,7 +135,7 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        getPSLM().addIDToPage(fobj.getId());
+        addId();
 
         /* TODO: Reimplement using Knuth approach
         LayoutManager childLM;
@@ -193,16 +195,37 @@ public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
                 curBlockArea.addBlock((Block) childArea);
         }
     }
-
-    /**
-     * Reset the layout position.
-     *
-     * @param resetPos the position to reset to
-     */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
+    
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KEEP_AUTO;
+        /* TODO Complete me!
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getTableCaptionFO().getKeepTogether().getWithinPage()));
+        strength = Math.max(strength, KeepUtil.getKeepStrength(
+                getTableCaptionFO().getKeepTogether().getWithinColumn()));
+        */
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
     }
+    
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KEEP_AUTO;
+        /* TODO Complete me!
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableCaptionFO().getKeepWithNext());
+        */
+    }
+
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KEEP_AUTO;
+        /* TODO Complete me!
+        return KeepUtil.getCombinedBlockLevelKeepStrength(
+                getTableCaptionFO().getKeepWithPrevious());
+        */
+    }
+
 }
 

@@ -52,11 +52,12 @@ public class PresentationTextDescriptor extends AbstractDescriptor {
      * width and height.
      * @param width The width of the page.
      * @param height The height of the page.
-     * @param widthRes The width resolution of the page.
-     * @param heightRes The height resolution of the page.
+     * @param widthResolution The width resolution of the page.
+     * @param heightResolution The height resolution of the page.
      */
-    public PresentationTextDescriptor(int width, int height, int widthRes, int heightRes) {
-        super(width, height, widthRes, heightRes);
+    public PresentationTextDescriptor(int width, int height,
+            int widthResolution, int heightResolution) {
+        super(width, height, widthResolution, heightResolution);
     }
 
     /**
@@ -80,11 +81,11 @@ public class PresentationTextDescriptor extends AbstractDescriptor {
         data[9] = 0x00;
         data[10] = 0x00;
 
-        byte[] xdpi = BinaryUtils.convert(widthRes * 10, 2);
+        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
         data[11] = xdpi[0]; // xdpi
         data[12] = xdpi[1];
 
-        byte[] ydpi = BinaryUtils.convert(heightRes * 10, 2);
+        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
         data[13] = ydpi[0]; // ydpi
         data[14] = ydpi[1];
 

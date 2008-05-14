@@ -22,6 +22,8 @@ package org.apache.fop.fo.flow.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
@@ -35,10 +37,10 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.TableColLength;
-import org.xml.sax.Locator;
 
 /**
- * Class modelling the fo:table object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table">
+ * <code>fo:table</code></a> object.
  */
 public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
@@ -95,7 +97,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     private PropertyList propList;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Construct a Table instance with the given {@link FONode}
+     * as parent.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public Table(FONode parent) {
         super(parent);
@@ -126,20 +131,22 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         orphanContentLimit = pList.get(PR_X_ORPHAN_CONTENT_LIMIT).getLength();
 
         if (!blockProgressionDimension.getOptimum(null).isAuto()) {
-            attributeWarning("only a value of \"auto\" for block-progression-dimension has a well-specified"
-                    + " behavior on fo:table. Falling back to \"auto\"");
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.nonAutoBPDOnTable(this, getLocator());
             // Anyway, the bpd of a table is not used by the layout code
         }
         if (tableLayout == EN_AUTO) {
-            attributeWarning("table-layout=\"auto\" is currently not supported by FOP");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "table-layout=\"auto\"", getLocator());
         }
         if (!isSeparateBorderModel()
                 && getCommonBorderPaddingBackground().hasPadding(
                         ValidationPercentBaseContext.getPseudoContext())) {
             //See "17.6.2 The collapsing border model" in CSS2
-            attributeWarning("In collapsing border model a table does not have padding"
-                    + " (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders)"
-                    + ", but a non-zero value for padding was found. The padding will be ignored.");
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.noTablePaddingWithCollapsingBorderModel(this, getLocator());
         }
 
         /* Store reference to the property list, so
@@ -160,10 +167,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (marker*,table-column*,table-header?,table-footer?,table-body+)
+     * <br>XSL Content Model: (marker*,table-column*,table-header?,table-footer?,table-body+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
-        throws ValidationException {
+                throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if ("marker".equals(localName)) {
                 if (tableColumnFound || tableHeaderFound || tableFooterFound
@@ -192,9 +199,13 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                     tooManyNodesError(loc, "table-footer");
                 } else {
                     tableFooterFound = true;
-                    if (tableBodyFound && getUserAgent().validateStrictly()) {
-                        nodesOutOfOrderError(loc, "fo:table-footer",
-                            "(table-body+)");
+                    if (tableBodyFound) {
+                        nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)", true);
+                        if (!isSeparateBorderModel()) {
+                            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                                    getUserAgent().getEventBroadcaster());
+                            eventProducer.footerOrderCannotRecover(this, getName(), getLocator());
+                        }
                     }
                 }
             } else if ("table-body".equals(localName)) {
@@ -202,8 +213,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-        } else {
-            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -217,12 +226,12 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                    "(marker*,table-column*,table-header?,table-footer?"
                        + ",table-body+)");
         }
+        if (!hasChildren()) {
+            getParent().removeChild(this);
+            return;
+        }
         if (!inMarker()) {
-            if (tableFooter != null) {
-                rowGroupBuilder.endTable(tableFooter);
-            } else {
-                rowGroupBuilder.endTable((TableBody) getChildNodes().lastNode());
-            }
+            rowGroupBuilder.endTable();
             /* clean up */
             for (int i = columns.size(); --i >= 0;) {
                 TableColumn col = (TableColumn) columns.get(i);
@@ -250,13 +259,13 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             if (!inMarker()) {
                 addColumnNode((TableColumn) child);
             } else {
-                columns.add((TableColumn) child);
+                columns.add(child);
             }
             break;
         case FO_TABLE_HEADER:
         case FO_TABLE_FOOTER:
         case FO_TABLE_BODY:
-            if (!columnsFinalized) {
+            if (!inMarker() && !columnsFinalized) {
                 columnsFinalized = true;
                 if (hasExplicitColumns) {
                     finalizeColumns();
@@ -280,13 +289,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         default:
             super.addChildNode(child);
         }
-    }
-
-    protected void setCollapsedBorders() {
-        createBorder(CommonBorderPaddingBackground.START);
-        createBorder(CommonBorderPaddingBackground.END);
-        createBorder(CommonBorderPaddingBackground.BEFORE);
-        createBorder(CommonBorderPaddingBackground.AFTER);
     }
 
     private void finalizeColumns() throws FOPException {
@@ -338,7 +340,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * used for determining initial values for column-number
      * 
      * @param col   the column to add
-     * @throws FOPException
      */
     private void addColumnNode(TableColumn col) {
 
@@ -387,7 +388,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * @param index index of the column to be retrieved, 0-based
      * @return the corresponding column (may be an implicitly created column)
      */
-    TableColumn getColumn(int index) {
+    public TableColumn getColumn(int index) {
         return (TableColumn) columns.get(index);
     }
 
@@ -396,7 +397,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * 
      * @return the number of columns, implicit or explicit, in this table
      */
-    int getNumberOfColumns() {
+    public int getNumberOfColumns() {
         return columns.size();
     }
 
@@ -512,7 +513,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         return "table";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE}
+     */
     public int getNameId() {
         return FO_TABLE;
     }

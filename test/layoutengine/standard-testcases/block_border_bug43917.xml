@@ -55,7 +55,7 @@
       <glue w="1000"/> <!-- border-before -->
       
       <box w="14400"/> <!-- Line 1 -->
-      <penalty w="0" p="0"/> <!--SpabeHandlingBreakPosition-->
+      <penalty w="0" p="0"/> <!--SpaceHandlingBreakPosition-->
       <box w="14400"/> <!-- Line 2 -->
       
       <penalty w="0" p="INF"/>
@@ -70,7 +70,7 @@
       <glue w="1000"/> <!-- border-before -->
       
       <box w="14400"/> <!-- Line 1 -->
-      <penalty w="0" p="0"/> <!--SpabeHandlingBreakPosition-->
+      <penalty w="0" p="0"/> <!--SpaceHandlingBreakPosition-->
       <box w="14400"/> <!-- Line 2 -->
       
       <penalty w="0" p="INF"/>

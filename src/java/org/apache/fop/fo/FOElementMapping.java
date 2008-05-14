@@ -22,7 +22,7 @@ package org.apache.fop.fo;
 // Java
 import java.util.HashMap;
 
-import org.apache.fop.util.QName;
+import org.apache.xmlgraphics.util.QName;
 
 /**
  * Element mapping class for all XSL-FO elements.
@@ -135,6 +135,7 @@ public class FOElementMapping extends ElementMapping {
             foObjs.put("wrapper", new WrapperMaker());
             foObjs.put("marker", new MarkerMaker());
             foObjs.put("retrieve-marker", new RetrieveMarkerMaker());
+            foObjs.put("retrieve-table-marker", new RetrieveTableMarkerMaker());
         }
     }
 
@@ -514,4 +515,9 @@ public class FOElementMapping extends ElementMapping {
         }
     }
 
+    static class RetrieveTableMarkerMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new org.apache.fop.fo.flow.RetrieveTableMarker(parent);
+        }
+    }
 }

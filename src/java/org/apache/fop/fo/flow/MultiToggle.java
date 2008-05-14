@@ -30,7 +30,8 @@ import org.apache.fop.fo.ValidationException;
 
 
 /**
- * Class modelling the fo:multi-toggle property.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-toggle">
+ * <code>fo:multi-toggle<code></a> property.
  */
 public class MultiToggle extends FObj {
     // The value of properties relevant for fo:multi-toggle (commented out for performance).
@@ -41,20 +42,21 @@ public class MultiToggle extends FObj {
     static boolean notImplementedWarningGiven = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public MultiToggle(FONode parent) {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:multi-toggle is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         // prSwitchTo = pList.get(PR_SWITCH_TO);
 
@@ -62,12 +64,14 @@ public class MultiToggle extends FObj {
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: (#PCDATA|%inline;|%block;)*
+     * <br>XSL Content Model: (#PCDATA|%inline;|%block;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-        if (!isBlockOrInlineItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (!isBlockOrInlineItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            }
         }
     }
 
@@ -78,6 +82,7 @@ public class MultiToggle extends FObj {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_MULTI_TOGGLE}
      */
     public int getNameId() {
         return FO_MULTI_TOGGLE;

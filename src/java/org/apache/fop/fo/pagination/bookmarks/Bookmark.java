@@ -20,6 +20,7 @@
 package org.apache.fop.fo.pagination.bookmarks;
 
 import java.util.ArrayList;
+
 import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObj;
@@ -29,9 +30,9 @@ import org.apache.fop.fo.ValidationException;
 
 
 /**
- * The fo:bookmark formatting object, first introduced in the 
- * XSL 1.1 WD.  Prototype version only, subject to change as
- * XSL 1.1 WD evolves.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_bookmark">
+ * <code>fo:bookmark</code></a> object, first introduced in the 
+ * XSL 1.1 WD.
  */
 public class Bookmark extends FObj {
     private BookmarkTitle bookmarkTitle;
@@ -47,7 +48,8 @@ public class Bookmark extends FObj {
 
 
     /**
-     * Create a new bookmark object.
+     * Create a new Bookmark object that is a child of the
+     * given {@link FONode}.
      *
      * @param parent the parent fo node
      */
@@ -55,9 +57,7 @@ public class Bookmark extends FObj {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
@@ -68,44 +68,42 @@ public class Bookmark extends FObj {
             externalDestination = null;
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
-            attributeError("Missing attribute:  Either external-destination or " +
-                "internal-destination must be specified.");
+            getFOValidationEventProducer().missingLinkDestination(this, getName(), locator);
         } else {
-            attributeWarning("external-destination property not currently supported");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "external-destination", getLocator());
         }
     }
 
     /**
      * {@inheritDoc}
-        XSL/FOP: (bookmark-title, bookmark*)
+     * <br>XSL/FOP: (bookmark-title, bookmark*)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
-            if (FO_URI.equals(nsURI) && localName.equals("bookmark-title")) {
+                throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("bookmark-title")) {
                 if (bookmarkTitle != null) {
                     tooManyNodesError(loc, "fo:bookmark-title");
                 }
-            } else if (FO_URI.equals(nsURI) && localName.equals("bookmark")) {
+            } else if (localName.equals("bookmark")) {
                 if (bookmarkTitle == null) {
                     nodesOutOfOrderError(loc, "fo:bookmark-title", "fo:bookmark");
                 }                
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (bookmarkTitle == null) {
            missingChildElementError("(bookmark-title, bookmark*)");
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode obj) {
         if (obj instanceof BookmarkTitle) {
             bookmarkTitle = (BookmarkTitle)obj;
@@ -123,10 +121,18 @@ public class Bookmark extends FObj {
         return bookmarkTitle == null ? "" : bookmarkTitle.getTitle();
     }
 
+    /**
+     * Returns the value of the internal-destination property.
+     * @return the internal-destination
+     */
     public String getInternalDestination() {
         return internalDestination;
     }
 
+    /**
+     * Returns the value of the external-destination property.
+     * @return the external-destination
+     */
     public String getExternalDestination() {
         return externalDestination;
     }
@@ -141,6 +147,10 @@ public class Bookmark extends FObj {
         return bShow;
     }
 
+    /**
+     * Get the child <code>Bookmark</code>s in an <code>java.util.ArrayList</code>.
+     * @return an <code>ArrayList</code> containing the child Bookmarks
+     */
     public ArrayList getChildBookmarks() {
         return childBookmarks;
     }
@@ -152,6 +162,7 @@ public class Bookmark extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_BOOKMARK}
      */
     public int getNameId() {
         return FO_BOOKMARK;

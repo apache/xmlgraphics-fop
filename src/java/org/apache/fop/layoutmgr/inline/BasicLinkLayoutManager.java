@@ -21,7 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.flow.BasicLink;
-import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Trait;
@@ -31,7 +31,6 @@ import org.apache.fop.area.LinkResolver;
  * LayoutManager for the fo:basic-link formatting object
  */
 public class BasicLinkLayoutManager extends InlineLayoutManager {
-    private BasicLink fobj;
 
     /**
      * Create an fo:basic-link layout manager.
@@ -40,23 +39,22 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
      */
     public BasicLinkLayoutManager(BasicLink node) {
         super(node);
-        fobj = node;
     }
 
     /** {@inheritDoc} */
     protected InlineArea createArea(boolean bInlineParent) {
         InlineArea area = super.createArea(bInlineParent);
-        setupBasicLinkArea(parentLM, area);
+        setupBasicLinkArea(area);
         return area;
     }
 
     /*
      * Detect internal or external link and add it as an area trait
      *
-     * @param parentLM the parent LayoutManager
      * @param area the basic-link's area
      */
-    private void setupBasicLinkArea(LayoutManager parentLM, InlineArea area) {
+    private void setupBasicLinkArea(InlineArea area) {
+        BasicLink fobj = (BasicLink) this.fobj;
         // internal destinations take precedence:
         if (fobj.hasInternalDestination()) {
             String idref = fobj.getInternalDestination();
@@ -70,8 +68,10 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
             }
         } else if (fobj.hasExternalDestination()) {
             String url = URISpecification.getURL(fobj.getExternalDestination());
+            boolean newWindow = (fobj.getShowDestination() == Constants.EN_NEW);
             if (url.length() > 0) {
-                area.addTrait(Trait.EXTERNAL_LINK, url);
+                area.addTrait(Trait.EXTERNAL_LINK,
+                        new Trait.ExternalLink(url, newWindow));
             }
         }
     }

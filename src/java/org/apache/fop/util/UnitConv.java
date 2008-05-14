@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: FixedLength.java 279656 2005-09-08 22:06:48Z pietsch $ */
+/* $Id$ */
 
 package org.apache.fop.util;
 

@@ -30,7 +30,7 @@ public class MultiByteFont extends CIDFont {
 
     private static int uniqueCounter = -1;
     private static final DecimalFormat COUNTER_FORMAT = new DecimalFormat("00000");
-
+    
     private String ttcName = null;
     private String encoding = "Identity-H";
 
@@ -39,6 +39,9 @@ public class MultiByteFont extends CIDFont {
 
     private String namePrefix = null;    // Quasi unique prefix
 
+    private CIDSubset subset = new CIDSubset();
+    
+    /** A map from Unicode indices to glyph indices */
     private BFEntry[] bfentries = null;
 
     /**
@@ -46,15 +49,7 @@ public class MultiByteFont extends CIDFont {
      */
     public MultiByteFont() {
         // Make sure that the 3 first glyphs are included
-        usedGlyphs.put(new Integer(0), new Integer(0));
-        usedGlyphsIndex.put(new Integer(0), new Integer(0));
-        usedGlyphsCount++;
-        usedGlyphs.put(new Integer(1), new Integer(1));
-        usedGlyphsIndex.put(new Integer(1), new Integer(1));
-        usedGlyphsCount++;
-        usedGlyphs.put(new Integer(2), new Integer(2));
-        usedGlyphsIndex.put(new Integer(2), new Integer(2));
-        usedGlyphsCount++;
+        subset.setupFirstThreeGlyphs();
         
         // Create a quasiunique prefix for fontname
         synchronized (this.getClass()) {
@@ -77,37 +72,27 @@ public class MultiByteFont extends CIDFont {
         setFontType(FontType.TYPE0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getDefaultWidth() {
         return defaultWidth;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getRegistry() {
         return "Adobe";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getOrdering() {
         return "UCS";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getSupplement() {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public CIDFontType getCIDType() {
         return cidType;
     }
@@ -133,68 +118,47 @@ public class MultiByteFont extends CIDFont {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean isEmbeddable() {
         return !(getEmbedFileName() == null && getEmbedResourceName() == null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getEncoding() {
+    /** {@inheritDoc} */
+    public CIDSubset getCIDSubset() {
+        return this.subset;
+    }
+    
+    /** {@inheritDoc} */
+    public String getEncodingName() {
         return encoding;
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public int getWidth(int i, int size) {
         if (isEmbeddable()) {
-            Integer idx = (Integer)usedGlyphsIndex.get(new Integer(i));
-            return size * width[idx.intValue()];
+            int glyphIndex = subset.getGlyphIndexForSubsetIndex(i);
+            return size * width[glyphIndex];
         } else {
             return size * width[i];
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int[] getWidths() {
         int[] arr = new int[width.length];
         System.arraycopy(width, 0, arr, 0, width.length - 1);
-        /*
-        for (int i = 0; i < arr.length; i++)
-            arr[i] *= size;
-        */
         return arr;
     }
 
     /**
-     * Remaps a codepoint based.
-     * @param i codepoint to remap
-     * @return new codepoint
+     * Returns the glyph index for a Unicode character. The method returns 0 if there's no
+     * such glyph in the character map.
+     * @param c the Unicode character index
+     * @return the glyph index (or 0 if the glyph is not available)
      */
-/* unused
-    public Integer reMap(Integer i) {
-        if (isEmbeddable()) {
-            Integer ret = (Integer)usedGlyphsIndex.get(i);
-            if (ret == null) {
-                ret = i;
-            }
-            return ret;
-        } else {
-            return i;
-        }
-
-    }
-*/
-
     private int findGlyphIndex(char c) {
         int idx = (int)c;
-        int retIdx = 0;
+        int retIdx = SingleByteEncoding.NOT_FOUND_CODE_POINT;
 
         for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
             if (bfentries[i].getUnicodeStart() <= idx
@@ -208,48 +172,32 @@ public class MultiByteFont extends CIDFont {
         return retIdx;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public char mapChar(char c) {
         notifyMapOperation();
-        int retIdx = findGlyphIndex(c);
-
-        if (isEmbeddable()) {
-            // Reencode to a new subset font or get
-            // the reencoded value
-            Integer newIdx = (Integer)usedGlyphs.get(new Integer(retIdx));
-            if (newIdx == null) {
-                usedGlyphs.put(new Integer(retIdx),
-                               new Integer(usedGlyphsCount));
-                usedGlyphsIndex.put(new Integer(usedGlyphsCount),
-                                    new Integer(retIdx));
-                usedCharsIndex.put(new Integer(usedGlyphsCount),
-                                    new Integer((int) c));
-                retIdx = usedGlyphsCount;
-                usedGlyphsCount++;
-            } else {
-                retIdx = newIdx.intValue();
-            }
+        int glyphIndex = findGlyphIndex(c);
+        if (glyphIndex == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+            warnMissingGlyph(c);
+            glyphIndex = findGlyphIndex(Typeface.NOT_FOUND);
         }
-
-        return (char)retIdx;
+        if (isEmbeddable()) {
+            glyphIndex = subset.mapSubsetChar(glyphIndex, c);
+        }
+        return (char)glyphIndex;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean hasChar(char c) {
-        return (findGlyphIndex(c) > 0);
+        return (findGlyphIndex(c) != SingleByteEncoding.NOT_FOUND_CODE_POINT);
     }
 
-
     /**
-     * Sets the bfentries.
-     * @param bfentries The bfentries to set
+     * Sets the array of BFEntry instances which constitutes the Unicode to glyph index map for
+     * a font. ("BF" means "base font")
+     * @param entries the Unicode to glyph index map
      */
-    public void setBFEntries(BFEntry[] bfentries) {
-        this.bfentries = bfentries;
+    public void setBFEntries(BFEntry[] entries) {
+        this.bfentries = entries;
     }
 
     /**
@@ -277,17 +225,6 @@ public class MultiByteFont extends CIDFont {
     }
 
     /**
-     * Adds a new CID width entry to the font.
-     * @param cidWidthIndex index
-     * @param wds array of widths
-     */
-    /*
-    public void addCIDWidthEntry(int cidWidthIndex, int[] wds) {
-        this.warray.addEntry(cidWidthIndex, wds);
-    }*/
-
-
-    /**
      * Sets the width array.
      * @param wds array of widths.
      */
@@ -300,30 +237,15 @@ public class MultiByteFont extends CIDFont {
      * @return Map Map of used Glyphs
      */
     public Map getUsedGlyphs() {
-        return usedGlyphs;
+        return subset.getSubsetGlyphs();
     }
-
-    /** The invalid Unicode character, suitable as a return value in methods
-     * that need to return an invalid character. */
-    public static final char INVALID_UNICODE_CHAR = 0xFFFF;
 
     /** {@inheritDoc} */
     public char[] getCharsUsed() {
         if (!isEmbeddable()) {
             return null;
         }
-        char[] charArray = new char[usedGlyphsCount];
-        for (int i = 0; i < usedGlyphsCount; i++) {
-            Integer mapValue = (Integer)usedCharsIndex.get(new Integer(i));
-            if (mapValue != null) {
-                char arrayItem = (char) mapValue.intValue();
-                charArray[i] = arrayItem;
-            }
-            else {
-                charArray[i] = INVALID_UNICODE_CHAR;
-            }
-        }
-        return charArray;
+        return subset.getSubsetChars();
     }
 }
 

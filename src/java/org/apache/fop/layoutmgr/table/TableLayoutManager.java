@@ -19,31 +19,37 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
-import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.RelSide;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
+import org.apache.fop.util.BreakUtil;
 
 /**
  * LayoutManager for a table FO.
@@ -78,7 +84,27 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     
     private int halfBorderSeparationBPD;
     private int halfBorderSeparationIPD;
-    
+
+    /** See {@link TableLayoutManager#registerColumnBackgroundArea(TableColumn, Block, int)}. */
+    private List columnBackgroundAreas;
+
+    /**
+     * Temporary holder of column background informations for a table-cell's area.
+     * 
+     * @see TableLayoutManager#registerColumnBackgroundArea(TableColumn, Block, int)
+     */
+    private static final class ColumnBackgroundInfo {
+        private TableColumn column;
+        private Block backgroundArea;
+        private int xShift;
+
+        private ColumnBackgroundInfo(TableColumn column, Block backgroundArea, int xShift) {
+            this.column = column;
+            this.backgroundArea = backgroundArea;
+            this.xShift = xShift;
+        }
+    }
+
     /**
      * Create a new table layout manager.
      * @param node the table FO
@@ -150,25 +176,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     public int getHalfBorderSeparationIPD() {
         return halfBorderSeparationIPD;
     }
-    
-    /**
-     * Handles the Knuth elements at the table level: mainly breaks, spaces and borders
-     * before and after the table. The Knuth elements for the table cells are handled by
-     * TableContentLayoutManager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     * @see TableContentLayoutManager#getNextKnuthElements(LayoutContext, int)
-     */
+
+    /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         
         LinkedList returnList = new LinkedList();
-        
-        if (!breakBeforeServed) {
-            breakBeforeServed = true;
-            if (addKnuthElementsForBreakBefore(returnList, context)) {
-                return returnList;
-            }
-        }
 
         /*
          * Compute the IPD and adjust it if necessary (overconstrained)
@@ -180,9 +192,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             updateContentAreaIPDwithOverconstrainedAdjust(contentIPD);
         } else {
             if (!getTable().isAutoLayout()) {
-                log.info("table-layout=\"fixed\" and width=\"auto\", "
-                        + "but auto-layout not supported " 
-                        + "=> assuming width=\"100%\"");
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                        getTable().getUserAgent().getEventBroadcaster());
+                eventProducer.tableFixedAutoWidthNotSupported(this, getTable().getLocator());
             }
             updateContentAreaIPDwithOverconstrainedAdjust();
         }
@@ -195,11 +207,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         int availableIPD = referenceIPD - getIPIndents();
         if (getContentAreaIPD() > availableIPD) {
-            log.warn(FONode.decorateWithContextInfo(
-                    "The extent in inline-progression-direction (width) of a table is"
-                    + " bigger than the available space (" 
-                    + getContentAreaIPD() + "mpt > " + context.getRefIPD() + "mpt)", 
-                    getTable()));
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                    getTable().getUserAgent().getEventBroadcaster());
+            eventProducer.objectTooWide(this, getTable().getName(),
+                    getContentAreaIPD(), context.getRefIPD(),
+                    getTable().getLocator());
         }
         
         /* initialize unit to determine computed values
@@ -224,11 +236,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
 
         // Elements for the table-header/footer/body
-        LinkedList contentKnuthElements = null;
-        LinkedList contentList = new LinkedList();
-        //Position returnPosition = new NonLeafPosition(this, null);
-        //Body prevLM = null;
-
+        LinkedList contentKnuthElements;
+        contentLM = new TableContentLayoutManager(this);
         LayoutContext childLC = new LayoutContext(0);
         /*
         childLC.setStackLimit(
@@ -237,46 +246,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         childLC.setRefIPD(context.getRefIPD());
         childLC.copyPendingMarksFrom(context);
 
-        if (contentLM == null) {
-            contentLM = new TableContentLayoutManager(this);
-        }
         contentKnuthElements = contentLM.getNextKnuthElements(childLC, alignment);
-        if (childLC.isKeepWithNextPending()) {
-            log.debug("TableContentLM signals pending keep-with-next");
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
-        }
-        if (childLC.isKeepWithPreviousPending()) {
-            log.debug("TableContentLM signals pending keep-with-previous");
-            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
-        }
-
-        // Check if the table's content starts/ends with a forced break
-        // TODO this is hacky and will need to be handled better eventually
-        if (contentKnuthElements.size() > 0) {
-            ListElement element = (ListElement)contentKnuthElements.getFirst();
-            if (element.isForcedBreak()) {
-                // The first row of the table(-body), or (the content of) one of its cells
-                // has a forced break-before
-                int breakBeforeTable = ((Table) fobj).getBreakBefore();
-                if (breakBeforeTable == EN_PAGE
-                        || breakBeforeTable == EN_COLUMN 
-                        || breakBeforeTable == EN_EVEN_PAGE 
-                        || breakBeforeTable == EN_ODD_PAGE) {
-                    // There is already a forced break before the table; remove this one
-                    // to prevent a double break
-                    contentKnuthElements.removeFirst();
-                } else {
-                    element.setPosition(new NonLeafPosition(this, null));
-                }
-            }
-            element = (ListElement)contentKnuthElements.getLast();
-            if (element.isForcedBreak()) {
-                // The last row of the table(-body), or (the content of) one of its cells
-                // has a forced break-after
-                element.setPosition(new NonLeafPosition(this, null));
-            }
-        }
-
         //Set index values on elements coming from the content LM
         Iterator iter = contentKnuthElements.iterator();
         while (iter.hasNext()) {
@@ -284,24 +254,63 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             notifyPos(el.getPosition());
         }
         log.debug(contentKnuthElements);
-        contentList.addAll(contentKnuthElements);
-        wrapPositionElements(contentList, returnList);
+        wrapPositionElements(contentKnuthElements, returnList);
+
+        context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
+        context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+
+        context.updateKeepWithNextPending(getKeepWithNextStrength());
+        context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+
         if (getTable().isSeparateBorderModel()) {
             addKnuthElementsForBorderPaddingAfter(returnList, true);
         }
         addKnuthElementsForSpaceAfter(returnList, alignment);
-        addKnuthElementsForBreakAfter(returnList, context);
-        if (mustKeepWithNext()) {
-            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
+
+        //addKnuthElementsForBreakBefore(returnList, context);
+        int breakBefore = BreakUtil.compareBreakClasses(getTable().getBreakBefore(),
+                childLC.getBreakBefore());
+        if (breakBefore != Constants.EN_AUTO) {
+            returnList.addFirst(new BreakElement(getAuxiliaryPosition(), 
+                    0, -KnuthElement.INFINITE, breakBefore, context));
         }
-        if (mustKeepWithPrevious()) {
-            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+
+        //addKnuthElementsForBreakAfter(returnList, context);
+        int breakAfter = BreakUtil.compareBreakClasses(getTable().getBreakAfter(),
+                childLC.getBreakAfter());
+        if (breakAfter != Constants.EN_AUTO) {
+            returnList.add(new BreakElement(getAuxiliaryPosition(), 
+                    0, -KnuthElement.INFINITE, breakAfter, context));
         }
+
         setFinished(true);
         resetSpaces();
         return returnList;
     }
-    
+
+    /**
+     * Registers the given area, that will be used to render the part of column background
+     * covered by a table-cell. If percentages are used to place the background image, the
+     * final bpd of the (fraction of) table that will be rendered on the current page must
+     * be known. The traits can't then be set when the areas for the cell are created
+     * since at that moment this bpd is yet unknown. So they will instead be set in
+     * TableLM's {@link #addAreas(PositionIterator, LayoutContext)} method.
+     * 
+     * @param column the table-column element from which the cell gets background
+     * informations
+     * @param backgroundArea the block of the cell's dimensions that will hold the column
+     * background
+     * @param xShift additional amount by which the image must be shifted to be correctly
+     * placed (to counterbalance the cell's start border)
+     */
+    void registerColumnBackgroundArea(TableColumn column, Block backgroundArea, int xShift) {
+        addBackgroundArea(backgroundArea);
+        if (columnBackgroundAreas == null) {
+            columnBackgroundAreas = new ArrayList();
+        }
+        columnBackgroundAreas.add(new ColumnBackgroundInfo(column, backgroundArea, xShift));
+    }
+
     /**
      * The table area is a reference area that contains areas for
      * columns, bodies, rows and the contents are in cells.
@@ -312,7 +321,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        getPSLM().addIDToPage(getTable().getId());
+        addId();
 
         // add space before, in order to implement display-align = "center" or "after"
         if (layoutContext.getSpaceBefore() != 0) {
@@ -335,6 +344,17 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         tableHeight += contentLM.getUsedBPD();
 
         curBlockArea.setBPD(tableHeight);
+
+        if (columnBackgroundAreas != null) {
+            for (Iterator iter = columnBackgroundAreas.iterator(); iter.hasNext();) {
+                ColumnBackgroundInfo b = (ColumnBackgroundInfo) iter.next();
+                TraitSetter.addBackground(b.backgroundArea,
+                        b.column.getCommonBorderPaddingBackground(), this,
+                        b.xShift, -b.backgroundArea.getYOffset(),
+                        b.column.getColumnWidth().getValue(this), tableHeight);
+            }
+            columnBackgroundAreas.clear();
+        }
 
         if (getTable().isSeparateBorderModel()) {
             TraitSetter.addBorders(curBlockArea, 
@@ -361,7 +381,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         resetSpaces();
         curBlockArea = null;
         
-        getPSLM().notifyEndOfLayout(((Table)getFObj()).getId());
+        notifyEndOfLayout();
     }
 
     /**
@@ -405,14 +425,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * Reset the position of this layout manager.
-     *
-     * @param resetPos the position to reset to
+     * Adds the given area to this layout manager's area, without updating the used bpd.
+     * 
+     * @param background an area
      */
-    public void resetPosition(Position resetPos) {
-        if (resetPos == null) {
-            reset(null);
-        }
+    void addBackgroundArea(Block background) {
+        curBlockArea.addChildArea(background);
     }
 
     /** {@inheritDoc} */
@@ -427,30 +445,21 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepTogether() {
-        //TODO Keeps will have to be more sophisticated sooner or later
-        return super.mustKeepTogether() 
-                || !getTable().getKeepTogether().getWithinPage().isAuto()
-                || !getTable().getKeepTogether().getWithinColumn().isAuto();
+    /** {@inheritDoc} */
+    public int getKeepTogetherStrength() {
+        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepTogether());
+        strength = Math.max(strength, getParentKeepTogetherStrength());
+        return strength;
+    }
+    
+    /** {@inheritDoc} */
+    public int getKeepWithNextStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepWithNext());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepWithPrevious() {
-        return !getTable().getKeepWithPrevious().getWithinPage().isAuto()
-                || !getTable().getKeepWithPrevious().getWithinColumn().isAuto();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean mustKeepWithNext() {
-        return !getTable().getKeepWithNext().getWithinPage().isAuto()
-                || !getTable().getKeepWithNext().getWithinColumn().isAuto();
+    /** {@inheritDoc} */
+    public int getKeepWithPreviousStrength() {
+        return KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepWithPrevious());
     }
 
     // --------- Property Resolution related functions --------- //

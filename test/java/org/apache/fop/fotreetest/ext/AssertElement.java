@@ -27,6 +27,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fotreetest.ResultCollector;
@@ -91,7 +92,12 @@ public class AssertElement extends TestObj {
                     prop = sp.getComponent(FOPropertyMapping.getSubPropertyId(component));
                 }
             }
-            String s = String.valueOf(prop);
+            String s;
+            if (prop instanceof PercentLength) {
+                s = ((PercentLength)prop).getString();
+            } else {
+                s = String.valueOf(prop);
+            }
             String expected = attlist.getValue("expected");
             if (!expected.equals(s)) {
                 collector.notifyException(

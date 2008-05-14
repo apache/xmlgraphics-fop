@@ -21,20 +21,19 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonTextDecoration;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * This is a helper class used for setting common traits on areas.
@@ -179,32 +178,30 @@ public class TraitSetter {
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
      * @param area the area to set the traits on.
-     * @param bordProps border properties
+     * @param borderBefore the resolved before border
+     * @param borderAfter the resolved after border
+     * @param borderStart the resolved start border
+     * @param borderEnd the resolved end border
      * @param outer 4 boolean values indicating if the side represents the 
      *     table's outer border. Order: before, after, start, end
-     * @param context Property evaluation context
      */
-    public static void addCollapsingBorders(Area area, 
-            CommonBorderPaddingBackground bordProps,
-            boolean[] outer,
-            PercentBaseContext context) {
-        BorderProps bps = getCollapsingBorderProps(bordProps, 
-                CommonBorderPaddingBackground.BEFORE, outer[0]);
+    public static void addCollapsingBorders(Area area,
+            BorderInfo borderBefore, BorderInfo borderAfter,
+            BorderInfo borderStart, BorderInfo borderEnd,
+            boolean[] outer) {
+        BorderProps bps = getCollapsingBorderProps(borderBefore, outer[0]);
         if (bps != null) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getCollapsingBorderProps(bordProps, 
-                CommonBorderPaddingBackground.AFTER, outer[1]);
+        bps = getCollapsingBorderProps(borderAfter, outer[1]);
         if (bps != null) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getCollapsingBorderProps(bordProps, 
-                CommonBorderPaddingBackground.START, outer[2]);
+        bps = getCollapsingBorderProps(borderStart, outer[2]);
         if (bps != null) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getCollapsingBorderProps(bordProps, 
-                CommonBorderPaddingBackground.END, outer[3]);
+        bps = getCollapsingBorderProps(borderEnd, outer[3]);
         if (bps != null) {
             area.addTrait(Trait.BORDER_END, bps);
         }
@@ -271,18 +268,100 @@ public class TraitSetter {
         }
     }
 
-    private static BorderProps getCollapsingBorderProps(
-            CommonBorderPaddingBackground bordProps, int side, boolean outer) {
-        int width = bordProps.getBorderWidth(side, false);
+    private static BorderProps getCollapsingBorderProps(BorderInfo borderInfo, boolean outer) {
+        assert borderInfo != null;
+        int width = borderInfo.getRetainedWidth();
         if (width != 0) {
-            BorderProps bps;
-            bps = new BorderProps(bordProps.getBorderStyle(side),
-                    width, bordProps.getBorderColor(side),
+            BorderProps bps = new BorderProps(borderInfo.getStyle(), width, borderInfo.getColor(),
                     (outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
             return bps;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Add background to an area. This method is mainly used by table-related layout
+     * managers to add background for column, body or row. Since the area corresponding to
+     * border-separation must be filled with the table's background, for every cell an
+     * additional area with the same dimensions is created to hold the background for the
+     * corresponding column/body/row. An additional shift must then be added to
+     * background-position-horizontal/vertical to ensure the background images are
+     * correctly placed. Indeed the placement of images must be made WRT the
+     * column/body/row and not the cell.
+     * 
+     * <p>Note: The area's IPD and BPD must be set before calling this method.</p>
+     * 
+     * <p>TODO the regular
+     * {@link #addBackground(Area, CommonBorderPaddingBackground, PercentBaseContext)}
+     * method should be used instead, and a means to retrieve the original area's
+     * dimensions must be found.</p>
+     * 
+     * <p>TODO the placement of images in the x- or y-direction will be incorrect if
+     * background-repeat is set for that direction.</p>
+     * 
+     * @param area the area to set the traits on
+     * @param backProps the background properties
+     * @param context Property evaluation context
+     * @param ipdShift horizontal shift to affect to the background, in addition to the
+     * value of the background-position-horizontal property
+     * @param bpdShift vertical shift to affect to the background, in addition to the
+     * value of the background-position-vertical property
+     * @param referenceIPD value to use as a reference for percentage calculation
+     * @param referenceBPD value to use as a reference for percentage calculation
+     */
+    public static void addBackground(Area area, 
+            CommonBorderPaddingBackground backProps,
+            PercentBaseContext context,
+            int ipdShift, int bpdShift, int referenceIPD, int referenceBPD) {
+        if (!backProps.hasBackground()) {
+            return;
+        }
+        Trait.Background back = new Trait.Background();
+        back.setColor(backProps.backgroundColor);
+
+        if (backProps.getImageInfo() != null) {
+            back.setURL(backProps.backgroundImage);
+            back.setImageInfo(backProps.getImageInfo());
+            back.setRepeat(backProps.backgroundRepeat);
+            if (backProps.backgroundPositionHorizontal != null) {
+                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                        || back.getRepeat() == Constants.EN_REPEATY) {
+                    if (area.getIPD() > 0) {
+                        PercentBaseContext refContext = new SimplePercentBaseContext(context,
+                                LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
+                                (referenceIPD - back.getImageInfo().getSize().getWidthMpt()));
+
+                        back.setHoriz(ipdShift
+                                + backProps.backgroundPositionHorizontal.getValue(refContext));
+                    } else {
+                        // TODO Area IPD has to be set for this to work
+                        log.warn("Horizontal background image positioning ignored"
+                                + " because the IPD was not set on the area."
+                                + " (Yes, it's a bug in FOP)");
+                    }
+                }
+            }
+            if (backProps.backgroundPositionVertical != null) {
+                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                        || back.getRepeat() == Constants.EN_REPEATX) {
+                    if (area.getBPD() > 0) {
+                        PercentBaseContext refContext = new SimplePercentBaseContext(context,
+                                LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
+                                (referenceBPD - back.getImageInfo().getSize().getHeightMpt()));
+                        back.setVertical(bpdShift
+                                + backProps.backgroundPositionVertical.getValue(refContext));
+                    } else {
+                        // TODO Area BPD has to be set for this to work
+                        log.warn("Vertical background image positioning ignored"
+                                + " because the BPD was not set on the area."
+                                + " (Yes, it's a bug in FOP)");
+                    }
+                }
+            }
+        }
+
+        area.addTrait(Trait.BACKGROUND, back);
     }
 
     /**
@@ -303,9 +382,9 @@ public class TraitSetter {
         Trait.Background back = new Trait.Background();
         back.setColor(backProps.backgroundColor);
 
-        if (backProps.getFopImage() != null) {
+        if (backProps.getImageInfo() != null) {
             back.setURL(backProps.backgroundImage);
-            back.setFopImage(backProps.getFopImage());
+            back.setImageInfo(backProps.getImageInfo());
             back.setRepeat(backProps.backgroundRepeat);
             if (backProps.backgroundPositionHorizontal != null) {
                 if (back.getRepeat() == Constants.EN_NOREPEAT 
@@ -317,7 +396,7 @@ public class TraitSetter {
                         back.setHoriz(backProps.backgroundPositionHorizontal.getValue(
                                 new SimplePercentBaseContext(context, 
                                     LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
-                                    (width - back.getFopImage().getIntrinsicWidth())
+                                    (width - back.getImageInfo().getSize().getWidthMpt())
                                 )
                             ));
                     } else {
@@ -338,7 +417,7 @@ public class TraitSetter {
                         back.setVertical(backProps.backgroundPositionVertical.getValue(
                                 new SimplePercentBaseContext(context, 
                                      LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
-                                     (height - back.getFopImage().getIntrinsicHeight())
+                                     (height - back.getImageInfo().getSize().getHeightMpt())
                                 )
                             ));
                     } else {

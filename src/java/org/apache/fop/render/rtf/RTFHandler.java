@@ -20,30 +20,39 @@
 package org.apache.fop.render.rtf;
 
 // Java
-import java.awt.color.ColorSpace;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
+import java.util.Map;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.w3c.dom.Document;
+
+import org.xml.sax.SAXException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
@@ -78,11 +87,10 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.DefaultFontResolver;
+import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
@@ -108,10 +116,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
-import org.apache.xmlgraphics.image.writer.ImageWriter;
-import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  * RTF Handler: generates RTF output using the structure events from
@@ -158,6 +162,16 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
+     * Central exception handler for I/O exceptions.
+     * @param ioe IOException to handle
+     */
+    protected void handleIOTrouble(IOException ioe) {
+        RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
+                getUserAgent().getEventBroadcaster());
+        eventProducer.ioError(this, ioe);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void startDocument() throws SAXException {
@@ -194,12 +208,13 @@ public class RTFHandler extends FOEventHandler {
                 this.pagemaster
                         = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
                 if (this.pagemaster == null) {
-                    log.warn("Only simple-page-masters are supported on page-sequences: " 
-                            + reference);
-                    log.warn("Using default simple-page-master from page-sequence-master...");
+                    RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
+                            getUserAgent().getEventBroadcaster());
+                    eventProducer.onlySPMSupported(this, reference, pageSeq.getLocator());
                     PageSequenceMaster master 
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
-                    this.pagemaster = master.getNextSimplePageMaster(false, false, false, false);
+                    this.pagemaster = master.getNextSimplePageMaster(
+                            false, false, false, false, false);
                 }
             }
 
@@ -216,7 +231,9 @@ public class RTFHandler extends FOEventHandler {
                     PageAttributesConverter.convertPageAttributes(
                             pagemaster));
             } else {
-                log.warn("No simple-page-master could be determined!");
+                RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.noSPMFound(this, pageSeq.getLocator());
             }
 
             builderContext.pushContainer(sect);
@@ -224,12 +241,7 @@ public class RTFHandler extends FOEventHandler {
             bHeaderSpecified = false;
             bFooterSpecified = false;
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startPageSequence: " + ioe.getMessage(), ioe);
-            //TODO throw new FOPException(ioe);
-        } catch (FOPException fope) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startPageSequence: " + fope.getMessage(), fope);
+            handleIOTrouble(ioe);
         }
     }
 
@@ -336,8 +348,7 @@ public class RTFHandler extends FOEventHandler {
                 log.warn("A " + fl.getLocalName() + " has been skipped: " + fl.getFlowName());
             }
         } catch (IOException ioe) {
-            log.error("startFlow: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startFlow: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -394,9 +405,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.pushBlockAttributes(rtfAttr);
             textrun.addBookmark(bl.getId());
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startBlock: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -425,8 +434,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.popBlockAttributes();
 
         } catch (IOException ioe) {
-            log.error("startBlock:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -455,9 +463,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.addParagraphBreak();
             textrun.pushBlockAttributes(rtfAttr);
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startBlock: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -484,8 +490,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.popBlockAttributes();
 
         } catch (IOException ioe) {
-            log.error("startBlock:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -528,6 +533,8 @@ public class RTFHandler extends FOEventHandler {
             table.setBorderAttributes(borderAttributes);
             
             builderContext.pushContainer(table);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startTable:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -577,7 +584,7 @@ public class RTFHandler extends FOEventHandler {
             Integer iWidth
                 = new Integer(tc.getColumnWidth().getValue(context) / 1000);
             
-            String strWidth = iWidth.toString() + "pt";
+            String strWidth = iWidth.toString() + FixedLength.POINT;
             Float width = new Float(
                     FoUnitsConverter.getInstance().convertToTwips(strWidth));
             builderContext.getTableContext().setNextColumnWidth(width);
@@ -588,7 +595,6 @@ public class RTFHandler extends FOEventHandler {
             log.error("startColumn: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
-
     }
 
      /**
@@ -647,8 +653,7 @@ public class RTFHandler extends FOEventHandler {
             textrun.pushInlineAttributes(rtfAttr);
             textrun.addBookmark(inl.getId());
         } catch (IOException ioe) {
-            log.error("startInline:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (FOPException fe) {
             log.error("startInline:" + fe.getMessage());
             throw new RuntimeException(fe.getMessage());
@@ -675,8 +680,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
             textrun.popInlineAttributes();
         } catch (IOException ioe) {
-            log.error("startInline:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startInline:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -696,6 +700,8 @@ public class RTFHandler extends FOEventHandler {
 
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(atts);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBody: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -713,6 +719,8 @@ public class RTFHandler extends FOEventHandler {
         try {
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(null);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("endBody: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -743,6 +751,8 @@ public class RTFHandler extends FOEventHandler {
 
             // reset column iteration index to correctly access column widths
             builderContext.getTableContext().selectFirstColumn();
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startRow: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -776,6 +786,8 @@ public class RTFHandler extends FOEventHandler {
                 
                 tctx.selectNextColumn();
             }
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("endRow: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -868,6 +880,8 @@ public class RTFHandler extends FOEventHandler {
             }
             
             builderContext.pushContainer(cell);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startCell: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -904,8 +918,7 @@ public class RTFHandler extends FOEventHandler {
                 ListAttributesConverter.convertAttributes(lb));
             builderContext.pushContainer(newList);
         } catch (IOException ioe) {
-            log.error("startList: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (FOPException fe) {
             log.error("startList: " + fe.getMessage());
             throw new RuntimeException(fe.getMessage());
@@ -959,8 +972,7 @@ public class RTFHandler extends FOEventHandler {
             
             builderContext.pushContainer(list.newListItem());
         } catch (IOException ioe) {
-            log.error("startList: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startList: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -993,8 +1005,7 @@ public class RTFHandler extends FOEventHandler {
             RtfListItemLabel label = item.new RtfListItemLabel(item);
             builderContext.pushContainer(label);
         } catch (IOException ioe) {
-            log.error("startPageNumber:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startPageNumber: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1075,8 +1086,7 @@ public class RTFHandler extends FOEventHandler {
             builderContext.pushContainer(link);
 
         } catch (IOException ioe) {
-            log.error("startLink:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startLink: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1102,27 +1112,28 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
+        String uri = eg.getURL();
+        ImageInfo info = null;
         try {
-            String url = eg.getURL();
 
             //set image data
             FOUserAgent userAgent = eg.getUserAgent();
-            ImageFactory fact = userAgent.getFactory().getImageFactory();
-            FopImage fopimage = fact.getImage(url, userAgent);
-            if (fopimage == null) {
-                log.error("Image could not be found: " + url);
-                return;
-            }
-            if ("image/gif".equals(fopimage.getMimeType())) {
-                //GIF is not directly supported by RTF, so it must be converted to PNG
-                fopimage.load(FopImage.BITMAP);
-            } else {
-                fopimage.load(FopImage.ORIGINAL_DATA);
-            }
+            ImageManager manager = userAgent.getFactory().getImageManager();
+            info = manager.getImageInfo(uri, userAgent.getImageSessionContext());
             
-            putGraphic(eg, fopimage);
-        } catch (Exception e) {
-            log.error("Error while handling an external-graphic: " + e.getMessage(), e);
+            putGraphic(eg, info);
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
     }
 
@@ -1139,85 +1150,98 @@ public class RTFHandler extends FOEventHandler {
             Document doc = child.getDOMDocument();
             String ns = child.getNamespaceURI();
             
-            if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
-                // Build the image info.
-                FopImage.ImageInfo info = new FopImage.ImageInfo();
-                info.mimeType = "image/svg+xml";
-                info.str = SVGDOMImplementation.SVG_NAMESPACE_URI;
-                info.originalURI = "";
-                info.data = doc;
-
-                // Set the resolution to that of the FOUserAgent
-                FOUserAgent ua = ifo.getUserAgent();
-                info.dpiHorizontal = 25.4f / ua.getSourcePixelUnitToMillimeter();
-                info.dpiVertical = info.dpiHorizontal;
-                
-                // Set the image size to the size of the svg.
-                Point2D csize = new Point2D.Float(-1, -1);
-                Point2D intrinsicDimensions = child.getDimension(csize);
-                info.width = (int) intrinsicDimensions.getX();
-                info.height = (int) intrinsicDimensions.getY();
-                
-                FopImage fopImage = new XMLImage(info);
-                fopImage.load(FopImage.ORIGINAL_DATA);
-
-                putGraphic(ifo, fopImage);
-            } else {
-                log.warn("The namespace " + ns
-                        + " for instream-foreign-objects is not supported.");
+            ImageInfo info = new ImageInfo(null, null);
+            // Set the resolution to that of the FOUserAgent
+            FOUserAgent ua = ifo.getUserAgent();
+            ImageSize size = new ImageSize();
+            size.setResolution(ua.getSourceResolution());
+            
+            // Set the image size to the size of the svg.
+            Point2D csize = new Point2D.Float(-1, -1);
+            Point2D intrinsicDimensions = child.getDimension(csize);
+            if (intrinsicDimensions == null) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.ifoNoIntrinsicSize(this, child.getLocator());
+                return;
             }
+            size.setSizeInMillipoints(
+                    (int)Math.round(intrinsicDimensions.getX() * 1000),
+                    (int)Math.round(intrinsicDimensions.getY() * 1000));
+            size.calcPixelsFromSize();
+            info.setSize(size);
+
+            ImageXMLDOM image = new ImageXMLDOM(info, doc, ns);
             
+            FOUserAgent userAgent = ifo.getUserAgent();
+            ImageManager manager = userAgent.getFactory().getImageManager();
+            Image converted = manager.convertImage(image, FLAVORS);
+            putGraphic(ifo, converted);
             
-        } catch (Exception e) {
-            log.error("Error while handling an instream-foreign-object: " + e.getMessage(), e);
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, null, ie, null);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, null, ioe, null);
         }
     }
 
-    private BufferedImage createBufferedImageFromBitmaps(FopImage image) {
-        // TODO Hardcoded color and sample models, FIX ME!
-        ColorModel cm = new ComponentColorModel(
-                ColorSpace.getInstance(ColorSpace.CS_sRGB), 
-                new int[] {8, 8, 8},
-                false, false,
-                ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
-        SampleModel sampleModel = new PixelInterleavedSampleModel(
-                DataBuffer.TYPE_BYTE, image.getWidth(), image.getHeight(), 3, image.getWidth() * 3, 
-                new int[] {0, 1, 2});
-        DataBuffer dbuf = new DataBufferByte(image.getBitmaps(), 
-                image.getWidth() * image.getHeight() * 3);
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
+        ImageFlavor.RAW_EMF, ImageFlavor.RAW_PNG, ImageFlavor.RAW_JPEG
+    };
+    
+    /**
+     * Puts a graphic/image into the generated RTF file.
+     * @param abstractGraphic the graphic (external-graphic or instream-foreign-object)
+     * @param info the image info object
+     * @throws IOException In case of an I/O error
+     */
+    private void putGraphic(AbstractGraphics abstractGraphic, ImageInfo info) 
+            throws IOException {
+        try {
+            FOUserAgent userAgent = abstractGraphic.getUserAgent();
+            ImageManager manager = userAgent.getFactory().getImageManager();
+            ImageSessionContext sessionContext = userAgent.getImageSessionContext();
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
+            Image image = manager.getImage(info, FLAVORS, hints, sessionContext);
 
-        WritableRaster raster = Raster.createWritableRaster(sampleModel,
-                dbuf, null);
-
-        // Combine the color model and raster into a buffered image
-        return new BufferedImage(cm, raster, false, null);
+            putGraphic(abstractGraphic, image);
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, null, ie, null);
+        }
     }
     
     /**
      * Puts a graphic/image into the generated RTF file.
      * @param abstractGraphic the graphic (external-graphic or instream-foreign-object)
-     * @param fopImage the image
+     * @param image the image
      * @throws IOException In case of an I/O error
      */
-    private void putGraphic(AbstractGraphics abstractGraphic, FopImage fopImage) 
+    private void putGraphic(AbstractGraphics abstractGraphic, Image image) 
             throws IOException {
-        byte[] rawData;
-        if ("image/svg+xml".equals(fopImage.getMimeType())) {
-            rawData = SVGConverter.convertToJPEG((XMLImage) fopImage);
-        } else if (fopImage.getRessourceBytes() != null) {
-            rawData = fopImage.getRessourceBytes();
-        } else {
-            //TODO Revisit after the image library redesign!!!
-            //Convert the decoded bitmaps to a BufferedImage
-            BufferedImage bufImage = createBufferedImageFromBitmaps(fopImage);
-            ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor("image/png");
-            ByteArrayOutputStream baout = new ByteArrayOutputStream();
-            writer.writeImage(bufImage, baout);
-            rawData = baout.toByteArray();
+        byte[] rawData = null;
+        
+        ImageInfo info = image.getInfo();
+
+        if (image instanceof ImageRawStream) {
+            ImageRawStream rawImage = (ImageRawStream)image;
+            InputStream in = rawImage.createInputStream();
+            try {
+                rawData = IOUtils.toByteArray(in);
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
         }
+
         if (rawData == null) {
-            log.warn(FONode.decorateWithContextInfo("Image could not be embedded: "
-                    + fopImage.getOriginalURI(), abstractGraphic));
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageWritingError(this, null);
             return;
         }
 
@@ -1228,7 +1252,9 @@ public class RTFHandler extends FOEventHandler {
         final RtfExternalGraphic rtfGraphic = c.getTextrun().newImage();
    
         //set URL
-        rtfGraphic.setURL(fopImage.getOriginalURI());
+        if (info.getOriginalURI() != null) {
+            rtfGraphic.setURL(info.getOriginalURI());
+        }
         rtfGraphic.setImageData(rawData);
 
         //set scaling
@@ -1239,7 +1265,7 @@ public class RTFHandler extends FOEventHandler {
         //get width
         int width = 0;
         if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
-            width = fopImage.getIntrinsicWidth();
+            width = info.getSize().getWidthMpt();
         } else {
             width = abstractGraphic.getWidth().getValue();
         }
@@ -1247,7 +1273,7 @@ public class RTFHandler extends FOEventHandler {
         //get height
         int height = 0;
         if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
-            height = fopImage.getIntrinsicHeight();
+            height = info.getSize().getHeightMpt();
         } else {
             height = abstractGraphic.getHeight().getValue();
         }
@@ -1256,7 +1282,7 @@ public class RTFHandler extends FOEventHandler {
         int contentwidth = 0;
         if (abstractGraphic.getContentWidth().getEnum()
                 == Constants.EN_AUTO) {
-            contentwidth = fopImage.getIntrinsicWidth();
+            contentwidth = info.getSize().getWidthMpt();
         } else if (abstractGraphic.getContentWidth().getEnum()
                 == Constants.EN_SCALE_TO_FIT) {
             contentwidth = width;
@@ -1270,7 +1296,7 @@ public class RTFHandler extends FOEventHandler {
         if (abstractGraphic.getContentHeight().getEnum()
                 == Constants.EN_AUTO) {
 
-            contentheight = fopImage.getIntrinsicHeight();
+            contentheight = info.getSize().getHeightMpt();
 
         } else if (abstractGraphic.getContentHeight().getEnum()
                 == Constants.EN_SCALE_TO_FIT) {
@@ -1282,11 +1308,11 @@ public class RTFHandler extends FOEventHandler {
         }
 
         //set width in rtf
-        //newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
+        //newGraphic.setWidth((long) (contentwidth / 1000f) + FixedLength.POINT);
         rtfGraphic.setWidth((long) (contentwidth / 50f) + "twips");
 
         //set height in rtf
-        //newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
+        //newGraphic.setHeight((long) (contentheight / 1000f) + FixedLength.POINT);
         rtfGraphic.setHeight((long) (contentheight / 50f) + "twips");
 
         //TODO: make this configurable:
@@ -1326,9 +1352,7 @@ public class RTFHandler extends FOEventHandler {
             builderContext.pushContainer(rtfFootnote);
 
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startFootnote: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startFootnote: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -1362,9 +1386,7 @@ public class RTFHandler extends FOEventHandler {
 
             rtfFootnote.startBody();
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("startFootnoteBody: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startFootnoteBody: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -1387,9 +1409,7 @@ public class RTFHandler extends FOEventHandler {
 
             rtfFootnote.endBody();
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOEventHandler events?
-            log.error("endFootnoteBody: " + ioe.getMessage());
-            throw new RuntimeException("IOException: " + ioe);
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("endFootnoteBody: " + e.getMessage());
             throw new RuntimeException("Exception: " + e);
@@ -1425,10 +1445,8 @@ public class RTFHandler extends FOEventHandler {
             textrun.pushInlineAttributes(rtfAttr);
             textrun.addString(new String(data, start, length - start));
             textrun.popInlineAttributes();
-         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all FOEventHandler events?
-            log.error("characters: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("characters:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1456,8 +1474,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
             textrun.addPageNumber(rtfAttr);
         } catch (IOException ioe) {
-            log.error("startPageNumber:" + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
+            handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startPageNumber: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -1615,7 +1632,9 @@ public class RTFHandler extends FOEventHandler {
                 endCell( (TableCell) foNode);
             }
         } else {
-            log.warn("Ignored deferred event for " + foNode);
+            RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.ignoredDeferredEvent(this, foNode, bStart, foNode.getLocator());
         }
     }
 
@@ -1659,8 +1678,9 @@ public class RTFHandler extends FOEventHandler {
                 }
             } else {
                 //TODO Implement implicit column setup handling!
-                log.warn("No table-columns found on table. RTF output requires that all"
-                        + " table-columns for a table are defined. Output will be incorrect.");
+                RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.explicitTableColumnsRequired(this, table.getLocator());
             }
 
             //recurse table-header

@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.pcl;
 
 //Java
@@ -24,32 +24,42 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.w3c.dom.Document;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
@@ -57,6 +67,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.ForeignObject;
@@ -66,28 +77,28 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.image.EPSImage;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.Graphics2DAdapter;
-import org.apache.fop.render.Graphics2DImagePainter;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
+import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.java2d.FontMetricsMapper;
-import org.apache.fop.render.java2d.FontSetup;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.util.QName;
 import org.apache.fop.util.UnitConv;
-import org.apache.xmlgraphics.java2d.GraphicContext;
-import org.w3c.dom.Document;
+
+/* Note:
+ * There are some commonalities with AbstractPathOrientedRenderer but it's not possible
+ * to derive from it due to PCL's restrictions. We may need an additional common subclass to
+ * avoid methods copied from AbstractPathOrientedRenderer. Or we wait until after the IF redesign.
+ */
 
 /**
  * Renderer for the PCL 5 printer language. It also uses HP GL/2 for certain graphic elements.
@@ -100,14 +111,14 @@ public class PCLRenderer extends PrintRenderer {
     /** The MIME type for PCL */
     public static final String MIME_TYPE = MimeConstants.MIME_PCL_ALT;
 
-    private static final QName CONV_MODE 
+    private static final QName CONV_MODE
             = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
-    private static final QName SRC_TRANSPARENCY 
+    private static final QName SRC_TRANSPARENCY
             = new QName(ExtensionElementMapping.URI, null, "source-transparency");
-    
+
     /** The OutputStream to write the PCL stream to */
     protected OutputStream out;
-    
+
     /** The PCL generator */
     protected PCLGenerator gen;
     private boolean ioTrouble = false;
@@ -119,13 +130,13 @@ public class PCLRenderer extends PrintRenderer {
     private int currentPrintDirection = 0;
     private GeneralPath currentPath = null;
     private java.awt.Color currentFillColor = null;
-    
+
     /**
      * Controls whether appearance is more important than speed. False can cause some FO feature
-     * to be ignored (like the advanced borders). 
+     * to be ignored (like the advanced borders).
      */
     private boolean qualityBeforeSpeed = false;
-    
+
     /**
      * Controls whether all text should be painted as text. This is a fallback setting in case
      * the mixture of native and bitmapped text does not provide the necessary quality.
@@ -133,10 +144,22 @@ public class PCLRenderer extends PrintRenderer {
     private boolean allTextAsBitmaps = false;
 
     /**
-     * Controls whether the generation of PJL commands gets disabled. 
+     * Controls whether an RGB canvas is used when converting Java2D graphics to bitmaps.
+     * This can be used to work around problems with Apache Batik, for example, but setting
+     * this to true will increase memory consumption.
+     */
+    private boolean useColorCanvas = false;
+
+    /**
+     * Controls whether the generation of PJL commands gets disabled.
      */
     private boolean disabledPJL = false;
-    
+
+    /** contains the pageWith of the last printed page */
+    private long pageWidth = 0;
+    /** contains the pageHeight of the last printed page */
+    private long pageHeight = 0;
+
     /**
      * Create the PCL renderer
      */
@@ -159,7 +182,7 @@ public class PCLRenderer extends PrintRenderer {
     public void setPJLDisabled(boolean disable) {
         this.disabledPJL = disable;
     }
-    
+
     /**
      * Indicates whether PJL generation is disabled.
      * @return true if PJL generation is disabled.
@@ -167,7 +190,7 @@ public class PCLRenderer extends PrintRenderer {
     public boolean isPJLDisabled() {
         return this.disabledPJL;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -178,11 +201,12 @@ public class PCLRenderer extends PrintRenderer {
         fontInfo = inFontInfo;
         BufferedImage fontImage = new BufferedImage(100, 100,
                 BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = fontImage.createGraphics();
+        Graphics2D graphics2D = fontImage.createGraphics();
         //The next line is important to get accurate font metrics!
-        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
+        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        FontSetup.setup(fontInfo, g);
+
+        userAgent.getFactory().getFontManager().setupRenderer(this, graphics2D);
     }
 
     /**
@@ -191,7 +215,9 @@ public class PCLRenderer extends PrintRenderer {
      */
     protected void handleIOTrouble(IOException ioe) {
         if (!ioTrouble) {
-            log.error("Error while writing to target file", ioe);
+            RendererEventProducer eventProducer = RendererEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.ioError(this, ioe);
             ioTrouble = true;
         }
     }
@@ -205,7 +231,7 @@ public class PCLRenderer extends PrintRenderer {
     public GraphicContext getGraphicContext() {
         return this.graphicContext;
     }
-    
+
     /** @return the target resolution */
     protected int getResolution() {
         int resolution = (int)Math.round(userAgent.getTargetResolution());
@@ -215,7 +241,7 @@ public class PCLRenderer extends PrintRenderer {
             return 600;
         }
     }
-    
+
     /**
      * Sets the current font (NOTE: Hard-coded font mappings ATM!)
      * @param name the font name (internal F* names for now)
@@ -291,25 +317,25 @@ public class PCLRenderer extends PrintRenderer {
         case 9:     // F9 = Courier
 
             gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f)) 
+            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
                     + "h0s0b4099T");
             break;
         case 10:    // F10 = Courier Oblique
 
             gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f)) 
+            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
                     + "h1s0b4099T");
             break;
         case 11:    // F11 = Courier Bold
 
             gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f)) 
+            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
                     + "h0s3b4099T");
             break;
         case 12:    // F12 = Courier Bold Oblique
 
             gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f)) 
+            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
                     + "h1s3b4099T");
             break;
         case 13:    // F13 = Symbol
@@ -374,46 +400,55 @@ public class PCLRenderer extends PrintRenderer {
      */
     public void renderPage(PageViewport page) throws IOException, FOPException {
         saveGraphicsState();
-        
+
         //Paper source
         String paperSource = page.getForeignAttributeValue(
                 new QName(PCLElementMapping.NAMESPACE, null, "paper-source"));
         if (paperSource != null) {
             gen.selectPaperSource(Integer.parseInt(paperSource));
         }
-        
+
         //Page size
         final long pagewidth = Math.round(page.getViewArea().getWidth());
         final long pageheight = Math.round(page.getViewArea().getHeight());
         selectPageFormat(pagewidth, pageheight);
-        
+
         super.renderPage(page);
-        
+
         //Eject page
         gen.formFeed();
         restoreGraphicsState();
     }
 
     private void selectPageFormat(long pagewidth, long pageheight) throws IOException {
-        this.currentPageDefinition = PCLPageDefinition.getPageDefinition(
-                pagewidth, pageheight, 1000);
-        
-        if (this.currentPageDefinition == null) {
-            this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
-            log.warn("Paper type could not be determined. Falling back to: " 
-                    + this.currentPageDefinition.getName());
+        //Only set the page format if it changes (otherwise duplex printing won't work)
+        if ((pagewidth != this.pageWidth) || (pageheight != this.pageHeight))  {
+            this.pageWidth = pagewidth;
+            this.pageHeight = pageheight;
+
+            this.currentPageDefinition = PCLPageDefinition.getPageDefinition(
+                    pagewidth, pageheight, 1000);
+
+            if (this.currentPageDefinition == null) {
+                this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
+                log.warn("Paper type could not be determined. Falling back to: "
+                        + this.currentPageDefinition.getName());
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
+                log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
+            }
+
+            if (this.currentPageDefinition.isLandscapeFormat()) {
+                gen.writeCommand("&l1O"); //Landscape Orientation
+            } else {
+                gen.writeCommand("&l0O"); //Portrait Orientation
+            }
+            gen.selectPageSize(this.currentPageDefinition.getSelector());
+
+            gen.clearHorizontalMargins();
+            gen.setTopMargin(0);
         }
-        log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
-        log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
-        if (this.currentPageDefinition.isLandscapeFormat()) {
-            gen.writeCommand("&l1O"); //Orientation
-        } else {
-            gen.writeCommand("&l0O"); //Orientation
-        }
-        gen.selectPageSize(this.currentPageDefinition.getSelector());
-        
-        gen.clearHorizontalMargins();
-        gen.setTopMargin(0);
     }
 
     /** Saves the current graphics state on the stack. */
@@ -426,7 +461,7 @@ public class PCLRenderer extends PrintRenderer {
     protected void restoreGraphicsState() {
         graphicContext = (GraphicContext)graphicContextStack.pop();
     }
-    
+
     /**
      * Clip an area. write a clipping operation given coordinates in the current
      * transform. Coordinates are in points.
@@ -443,7 +478,7 @@ public class PCLRenderer extends PrintRenderer {
     private Point2D transformedPoint(float x, float y) {
         return transformedPoint(Math.round(x), Math.round(y));
     }
-    
+
     private Point2D transformedPoint(int x, int y) {
         AffineTransform at = graphicContext.getTransform();
         if (log.isTraceEnabled()) {
@@ -453,7 +488,7 @@ public class PCLRenderer extends PrintRenderer {
         Point2D.Float transPoint = new Point2D.Float();
         at.transform(orgPoint, transPoint);
         //At this point we have the absolute position in FOP's coordinate system
-        
+
         //Now get PCL coordinates taking the current print direction and the logical page
         //into account.
         Dimension pageSize = currentPageDefinition.getPhysicalPageSize();
@@ -492,18 +527,18 @@ public class PCLRenderer extends PrintRenderer {
         }
         return transPoint;
     }
-    
+
     private void changePrintDirection() {
         AffineTransform at = graphicContext.getTransform();
         int newDir;
         try {
-            if (at.getScaleX() == 0 && at.getScaleY() == 0 
+            if (at.getScaleX() == 0 && at.getScaleY() == 0
                     && at.getShearX() == 1 && at.getShearY() == -1) {
                 newDir = 90;
-            } else if (at.getScaleX() == -1 && at.getScaleY() == -1 
+            } else if (at.getScaleX() == -1 && at.getScaleY() == -1
                     && at.getShearX() == 0 && at.getShearY() == 0) {
                 newDir = 180;
-            } else if (at.getScaleX() == 0 && at.getScaleY() == 0 
+            } else if (at.getScaleX() == 0 && at.getScaleY() == 0
                     && at.getShearX() == -1 && at.getShearY() == 1) {
                 newDir = 270;
             } else {
@@ -553,7 +588,7 @@ public class PCLRenderer extends PrintRenderer {
     protected void handleBlockTraits(Block block) {
         int borderPaddingStart = block.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = block.getBorderAndPaddingWidthBefore();
-        
+
         float startx = currentIPPosition / 1000f;
         float starty = currentBPPosition / 1000f;
         float width = block.getIPD() / 1000f;
@@ -572,10 +607,28 @@ public class PCLRenderer extends PrintRenderer {
 
     /**
      * {@inheritDoc}
+     * @todo Copied from AbstractPathOrientedRenderer
+     */
+    protected void handleRegionTraits(RegionViewport region) {
+        Rectangle2D viewArea = region.getViewArea();
+        float startx = (float)(viewArea.getX() / 1000f);
+        float starty = (float)(viewArea.getY() / 1000f);
+        float width = (float)(viewArea.getWidth() / 1000f);
+        float height = (float)(viewArea.getHeight() / 1000f);
+
+        if (region.getRegionReference().getRegionClass() == FO_REGION_BODY) {
+            currentBPPosition = region.getBorderAndPaddingWidthBefore();
+            currentIPPosition = region.getBorderAndPaddingWidthStart();
+        }
+        drawBackAndBorders(region, startx, starty, width, height);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     protected void renderText(final TextArea text) {
         renderInlineAreaBackAndBorders(text);
-        
+
         String fontname = getInternalFontNameForArea(text);
         final int fontsize = text.getTraitAsInteger(Trait.FONT_SIZE);
 
@@ -587,9 +640,9 @@ public class PCLRenderer extends PrintRenderer {
         try {
 
             final Color col = (Color)text.getTrait(Trait.COLOR);
-            boolean pclFont = allTextAsBitmaps 
+            boolean pclFont = allTextAsBitmaps
                     ? false
-                    : setFont(fontname, fontsize, text.getText()); 
+                    : setFont(fontname, fontsize, text.getText());
             if (pclFont) {
                 //this.currentFill = col;
                 if (col != null) {
@@ -597,7 +650,7 @@ public class PCLRenderer extends PrintRenderer {
                     gen.setTransparencyMode(true, false);
                     gen.selectGrayscale(col);
                 }
-                
+
                 saveGraphicsState();
                 graphicContext.translate(rx, bl);
                 setCursorPos(0, 0);
@@ -614,25 +667,25 @@ public class PCLRenderer extends PrintRenderer {
                 //Use Java2D to paint different fonts via bitmap
                 final Font font = getFontFromArea(text);
                 final int baseline = text.getBaselineOffset();
-                
+
                 //for cursive fonts, so the text isn't clipped
                 int extraWidth = font.getFontSize() / 3;
                 final FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(
                         font.getFontName());
                 int maxAscent = mapper.getMaxAscent(font.getFontSize()) / 1000;
                 final int additionalBPD = maxAscent - baseline;
-                
+
                 Graphics2DAdapter g2a = getGraphics2DAdapter();
                 final Rectangle paintRect = new Rectangle(
                         rx, currentBPPosition + text.getOffset() - additionalBPD,
                         text.getIPD() + extraWidth, text.getBPD() + additionalBPD);
-                RendererContext rc = createRendererContext(paintRect.x, paintRect.y, 
+                RendererContext rc = createRendererContext(paintRect.x, paintRect.y,
                         paintRect.width, paintRect.height, null);
                 Map atts = new java.util.HashMap();
                 atts.put(CONV_MODE, "bitmap");
                 atts.put(SRC_TRANSPARENCY, "true");
                 rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
-                
+
                 Graphics2DImagePainter painter = new Graphics2DImagePainter() {
 
                     public void paint(Graphics2D g2d, Rectangle2D area) {
@@ -643,17 +696,17 @@ public class PCLRenderer extends PrintRenderer {
                         Java2DRenderer.renderText(text, g2d, font);
                         renderTextDecoration(g2d, mapper, fontsize, text, 0, 0);
                     }
-                    
+
                     public Dimension getImageSize() {
                         return paintRect.getSize();
                     }
-                    
+
                 };
-                g2a.paintImage(painter, rc, 
+                g2a.paintImage(painter, rc,
                         paintRect.x, paintRect.y, paintRect.width, paintRect.height);
                 currentIPPosition = saveIP + text.getAllocIPD();
             }
-        
+
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
@@ -668,11 +721,11 @@ public class PCLRenderer extends PrintRenderer {
      * @param baseline position of the baseline
      * @param startx start IPD
      */
-    private static void renderTextDecoration(Graphics2D g2d, 
-                    FontMetrics fm, int fontsize, InlineArea inline, 
+    private static void renderTextDecoration(Graphics2D g2d,
+                    FontMetrics fm, int fontsize, InlineArea inline,
                     int baseline, int startx) {
-        boolean hasTextDeco = inline.hasUnderline() 
-                || inline.hasOverline() 
+        boolean hasTextDeco = inline.hasUnderline()
+                || inline.hasOverline()
                 || inline.hasLineThrough();
         if (hasTextDeco) {
             float descender = fm.getDescender(fontsize) / 1000f;
@@ -684,7 +737,7 @@ public class PCLRenderer extends PrintRenderer {
                 g2d.setColor(ct);
                 float y = baseline - descender / 2f;
                 g2d.setStroke(new BasicStroke(lineWidth));
-                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f, 
+                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f,
                         endx, y / 1000f));
             }
             if (inline.hasOverline()) {
@@ -692,7 +745,7 @@ public class PCLRenderer extends PrintRenderer {
                 g2d.setColor(ct);
                 float y = (float)(baseline - (1.1 * capHeight));
                 g2d.setStroke(new BasicStroke(lineWidth));
-                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f, 
+                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f,
                         endx, y / 1000f));
             }
             if (inline.hasLineThrough()) {
@@ -700,12 +753,12 @@ public class PCLRenderer extends PrintRenderer {
                 g2d.setColor(ct);
                 float y = (float)(baseline - (0.45 * capHeight));
                 g2d.setStroke(new BasicStroke(lineWidth));
-                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f, 
+                g2d.draw(new Line2D.Float(startx / 1000f, y / 1000f,
                         endx, y / 1000f));
             }
         }
     }
-    
+
     /**
      * Sets the current cursor position. The coordinates are transformed to the absolute position
      * on the logical PCL page and then passed on to the PCLGenerator.
@@ -731,7 +784,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * Closes the current subpath by appending a straight line segment from 
+     * Closes the current subpath by appending a straight line segment from
      * the current point to the starting point of the subpath.
      */
     protected void closePath() {
@@ -739,8 +792,8 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * Appends a straight line segment from the current point to (x, y). The 
-     * new current point is (x, y). 
+     * Appends a straight line segment from the current point to (x, y). The
+     * new current point is (x, y).
      * @param x x coordinate
      * @param y y coordinate
      */
@@ -752,7 +805,7 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     /**
-     * Moves the current point to (x, y), omitting any connecting line segment. 
+     * Moves the current point to (x, y), omitting any connecting line segment.
      * @param x x coordinate
      * @param y y coordinate
      */
@@ -762,7 +815,7 @@ public class PCLRenderer extends PrintRenderer {
         }
         currentPath.moveTo(x, y);
     }
-    
+
     /**
      * Fill a rectangular area.
      * @param x the x coordinate (in pt)
@@ -773,13 +826,13 @@ public class PCLRenderer extends PrintRenderer {
     protected void fillRect(float x, float y, float width, float height) {
         try {
             setCursorPos(x * 1000, y * 1000);
-            gen.fillRect((int)(width * 1000), (int)(height * 1000), 
+            gen.fillRect((int)(width * 1000), (int)(height * 1000),
                     this.currentFillColor);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
     }
-    
+
     /**
      * Sets the new current fill color.
      * @param color the color
@@ -813,9 +866,9 @@ public class PCLRenderer extends PrintRenderer {
         String s = space.getSpace();
         char sp = s.charAt(0);
         Font font = getFontFromArea(textArea);
-        
-        int tws = (space.isAdjustable() 
-                ? textArea.getTextWordSpaceAdjust() 
+
+        int tws = (space.isAdjustable()
+                ? textArea.getTextWordSpaceAdjust()
                         + 2 * textArea.getTextLetterSpaceAdjust()
                 : 0);
 
@@ -840,10 +893,10 @@ public class PCLRenderer extends PrintRenderer {
         float y = (currentBPPosition + viewport.getOffset()) / 1000f;
         float width = viewport.getIPD() / 1000f;
         float height = viewport.getBPD() / 1000f;
-        // TODO: Calculate the border rect correctly. 
+        // TODO: Calculate the border rect correctly.
         float borderPaddingStart = viewport.getBorderAndPaddingWidthStart() / 1000f;
         float borderPaddingBefore = viewport.getBorderAndPaddingWidthBefore() / 1000f;
-        float bpwidth = borderPaddingStart 
+        float bpwidth = borderPaddingStart
                 + (viewport.getBorderAndPaddingWidthEnd() / 1000f);
         float bpheight = borderPaddingBefore
                 + (viewport.getBorderAndPaddingWidthAfter() / 1000f);
@@ -871,24 +924,17 @@ public class PCLRenderer extends PrintRenderer {
         // save positions
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
-        //String saveFontName = currentFontName;
 
         CTM ctm = bv.getCTM();
         int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-        float x, y;
-        x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
-        y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
         //This is the content-rect
         float width = (float)bv.getIPD() / 1000f;
         float height = (float)bv.getBPD() / 1000f;
-        
+
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
-
-            currentIPPosition = bv.getXOffset();
-            currentBPPosition = bv.getYOffset();
 
             //For FIXED, we need to break out of the current viewports to the
             //one established by the page. We save the state stack for restoration
@@ -897,42 +943,48 @@ public class PCLRenderer extends PrintRenderer {
             if (bv.getPositioning() == Block.FIXED) {
                 breakOutList = breakOutOfStateStack();
             }
-            
-            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
-            ctm = tempctm.multiply(ctm);
 
-            //Adjust for spaces (from margin or indirectly by start-indent etc.
-            x += bv.getSpaceStart() / 1000f;
-            currentIPPosition += bv.getSpaceStart();
-            
-            y += bv.getSpaceBefore() / 1000f;
-            currentBPPosition += bv.getSpaceBefore(); 
+            AffineTransform positionTransform = new AffineTransform();
+            positionTransform.translate(bv.getXOffset(), bv.getYOffset());
 
+            //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
+            positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
+
+            saveGraphicsState();
+            //Viewport position
+            concatenateTransformationMatrix(mptToPt(positionTransform));
+
+            //Background and borders
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
             float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
+            drawBackAndBorders(bv, 0, 0, width + bpwidth, height + bpheight);
 
-            drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
+            //Shift to content rectangle after border painting
+            AffineTransform contentRectTransform = new AffineTransform();
+            contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
+            concatenateTransformationMatrix(mptToPt(contentRectTransform));
 
-            //Now adjust for border/padding
-            currentIPPosition += borderPaddingStart;
-            currentBPPosition += borderPaddingBefore;
-            
-            Rectangle2D clippingRect = null;
+            //Clipping
             if (bv.getClip()) {
-                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
-                        bv.getIPD(), bv.getBPD());
+                clipRect(0f, 0f, width, height);
             }
 
-            startVParea(ctm, clippingRect);
+            saveGraphicsState();
+            //Set up coordinate system for content rectangle
+            AffineTransform contentTransform = ctm.toAffineTransform();
+            concatenateTransformationMatrix(mptToPt(contentTransform));
+
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
-            endVParea();
+
+            restoreGraphicsState();
+            restoreGraphicsState();
 
             if (breakOutList != null) {
                 restoreStateStackAfterBreakOut(breakOutList);
             }
-            
+
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
         } else {
@@ -947,16 +999,16 @@ public class PCLRenderer extends PrintRenderer {
 
             CTM tempctm = new CTM(containingIPPosition, currentBPPosition);
             ctm = tempctm.multiply(ctm);
-            
+
             //Now adjust for border/padding
             currentBPPosition += borderPaddingBefore;
 
             Rectangle2D clippingRect = null;
             if (bv.getClip()) {
-                clippingRect = new Rectangle(currentIPPosition, currentBPPosition, 
+                clippingRect = new Rectangle(currentIPPosition, currentBPPosition,
                         bv.getIPD(), bv.getBPD());
             }
-            
+
             startVParea(ctm, clippingRect);
             currentIPPosition = 0;
             currentBPPosition = 0;
@@ -965,10 +1017,22 @@ public class PCLRenderer extends PrintRenderer {
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
-            
+
             currentBPPosition += (int)(bv.getAllocBPD());
         }
         //currentFontName = saveFontName;
+    }
+
+    /**
+     * Concatenates the current transformation matrix with the given one, therefore establishing
+     * a new coordinate system.
+     * @param at the transformation matrix to process (coordinates in points)
+     */
+    protected void concatenateTransformationMatrix(AffineTransform at) {
+        if (!at.isIdentity()) {
+            graphicContext.transform(ptToMpt(at));
+            changePrintDirection();
+        }
     }
 
     private List breakOutOfStateStack() {
@@ -989,87 +1053,93 @@ public class PCLRenderer extends PrintRenderer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    protected RendererContext createRendererContext(int x, int y, int width, int height,
+            Map foreignAttributes) {
+        RendererContext context = super.createRendererContext(
+                x, y, width, height, foreignAttributes);
+        context.setProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS,
+                Boolean.valueOf(this.useColorCanvas));
+        return context;
+    }
+
+    /** {@inheritDoc} */
     public void renderImage(Image image, Rectangle2D pos) {
         drawImage(image.getURL(), pos, image.getForeignAttributes());
     }
 
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[]
+                                             {ImageFlavor.GRAPHICS2D,
+                                              ImageFlavor.BUFFERED_IMAGE,
+                                              ImageFlavor.RENDERED_IMAGE,
+                                              ImageFlavor.XML_DOM};
     /**
      * Draw an image at the indicated location.
-     * @param url the URI/URL of the image
+     * @param uri the URI/URL of the image
      * @param pos the position of the image
      * @param foreignAttributes an optional Map with foreign attributes, may be null
      */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
-        url = ImageFactory.getURL(url);
-        ImageFactory fact = userAgent.getFactory().getImageFactory();
-        FopImage fopimage = fact.getImage(url, userAgent);
-        if (fopimage == null) {
-            return;
-        }
-        if (!fopimage.load(FopImage.DIMENSIONS)) {
-            return;
-        }
-        String mime = fopimage.getMimeType();
-        if ("text/xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+        uri = URISpecification.getURL(uri);
+        Rectangle posInt = new Rectangle(
+                (int)pos.getX(),
+                (int)pos.getY(),
+                (int)pos.getWidth(),
+                (int)pos.getHeight());
+        Point origin = new Point(currentIPPosition, currentBPPosition);
+        int x = origin.x + posInt.x;
+        int y = origin.y + posInt.y;
 
-            renderDocument(doc, ns, pos, foreignAttributes);
-        } else if ("image/svg+xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
-            Document doc = ((XMLImage) fopimage).getDocument();
-            String ns = ((XMLImage) fopimage).getNameSpace();
+        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageInfo info = null;
+        try {
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            info = manager.getImageInfo(uri, sessionContext);
 
-            renderDocument(doc, ns, pos, foreignAttributes);
-        } else if (fopimage instanceof EPSImage) {
-            log.warn("EPS images are not supported by this renderer");
-        } else {
-            if (!fopimage.load(FopImage.BITMAP)) {
-                log.error("Bitmap image could not be processed: " + fopimage);
-                return;
-            }
-            byte[] imgmap = fopimage.getBitmaps();
-            
-            ColorModel cm = new ComponentColorModel(
-                    ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB), 
-                    new int[] {8, 8, 8},
-                    false, false,
-                    ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
-            int imgw = fopimage.getWidth();
-            int imgh = fopimage.getHeight();
-            SampleModel sampleModel = new PixelInterleavedSampleModel(
-                    DataBuffer.TYPE_BYTE, imgw, imgh, 3, imgw * 3, new int[] {0, 1, 2});
-            DataBuffer dbuf = new DataBufferByte(imgmap, imgw * imgh * 3);
+            //Only now fully load/prepare the image
+            Map hints = ImageUtil.getDefaultHints(sessionContext);
+            org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
+                    info, FLAVORS, hints, sessionContext);
 
-            WritableRaster raster = Raster.createWritableRaster(sampleModel,
-                    dbuf, null);
-
-            // Combine the color model and raster into a buffered image
-            RenderedImage img = new BufferedImage(cm, raster, false, null);
-
-            try {
-                setCursorPos(this.currentIPPosition + (int)pos.getX(),
-                        this.currentBPPosition + (int)pos.getY());
-                gen.paintBitmap(img, 
-                        new Dimension((int)pos.getWidth(), (int)pos.getHeight()), 
+            //...and process the image
+            if (img instanceof ImageGraphics2D) {
+                ImageGraphics2D imageG2D = (ImageGraphics2D)img;
+                RendererContext context = createRendererContext(
+                        posInt.x, posInt.y,
+                        posInt.width, posInt.height, foreignAttributes);
+                getGraphics2DAdapter().paintImage(imageG2D.getGraphics2DImagePainter(),
+                        context, x, y, posInt.width, posInt.height);
+            } else if (img instanceof ImageRendered) {
+                ImageRendered imgRend = (ImageRendered)img;
+                RenderedImage ri = imgRend.getRenderedImage();
+                setCursorPos(x, y);
+                gen.paintBitmap(ri,
+                        new Dimension(posInt.width, posInt.height),
                         false);
-            } catch (IOException ioe) {
-                handleIOTrouble(ioe);
+            } else if (img instanceof ImageXMLDOM) {
+                ImageXMLDOM imgXML = (ImageXMLDOM)img;
+                renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                        pos, foreignAttributes);
+            } else {
+                throw new UnsupportedOperationException("Unsupported image type: " + img);
             }
+
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
@@ -1090,18 +1160,18 @@ public class PCLRenderer extends PrintRenderer {
         float height = area.getBPD() / 1000f;
         float borderPaddingStart = area.getBorderAndPaddingWidthStart() / 1000f;
         float borderPaddingBefore = area.getBorderAndPaddingWidthBefore() / 1000f;
-        float bpwidth = borderPaddingStart 
+        float bpwidth = borderPaddingStart
                 + (area.getBorderAndPaddingWidthEnd() / 1000f);
         float bpheight = borderPaddingBefore
                 + (area.getBorderAndPaddingWidthAfter() / 1000f);
-        
+
         if (height != 0.0f || bpheight != 0.0f && bpwidth != 0.0f) {
             drawBackAndBorders(area, x, y - borderPaddingBefore
                                 , width + bpwidth
                                 , height + bpheight);
         }
     }
-    
+
     /**
      * Draw the background and borders. This draws the background and border
      * traits for an area given the position.
@@ -1118,18 +1188,18 @@ public class PCLRenderer extends PrintRenderer {
         BorderProps bpsAfter = (BorderProps) area.getTrait(Trait.BORDER_AFTER);
         BorderProps bpsStart = (BorderProps) area.getTrait(Trait.BORDER_START);
         BorderProps bpsEnd = (BorderProps) area.getTrait(Trait.BORDER_END);
-    
+
         // draw background
         Trait.Background back;
         back = (Trait.Background) area.getTrait(Trait.BACKGROUND);
         if (back != null) {
-    
+
             // Calculate padding rectangle
             float sx = startx;
             float sy = starty;
             float paddRectWidth = width;
             float paddRectHeight = height;
-    
+
             if (bpsStart != null) {
                 sx += bpsStart.width / 1000f;
                 paddRectWidth -= bpsStart.width / 1000f;
@@ -1144,62 +1214,55 @@ public class PCLRenderer extends PrintRenderer {
             if (bpsAfter != null) {
                 paddRectHeight -= bpsAfter.width / 1000f;
             }
-    
+
             if (back.getColor() != null) {
                 updateFillColor(back.getColor());
                 fillRect(sx, sy, paddRectWidth, paddRectHeight);
             }
-    
+
             // background image
-            if (back.getFopImage() != null) {
-                FopImage fopimage = back.getFopImage();
-                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    saveGraphicsState();
-                    clipRect(sx, sy, paddRectWidth, paddRectHeight);
-                    int horzCount = (int) ((paddRectWidth * 1000 / fopimage
-                            .getIntrinsicWidth()) + 1.0f);
-                    int vertCount = (int) ((paddRectHeight * 1000 / fopimage
-                            .getIntrinsicHeight()) + 1.0f);
-                    if (back.getRepeat() == EN_NOREPEAT) {
-                        horzCount = 1;
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATX) {
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATY) {
-                        horzCount = 1;
-                    }
-                    // change from points to millipoints
-                    sx *= 1000;
-                    sy *= 1000;
-                    if (horzCount == 1) {
-                        sx += back.getHoriz();
-                    }
-                    if (vertCount == 1) {
-                        sy += back.getVertical();
-                    }
-                    for (int x = 0; x < horzCount; x++) {
-                        for (int y = 0; y < vertCount; y++) {
-                            // place once
-                            Rectangle2D pos;
-                            // Image positions are relative to the currentIP/BP
-                            pos = new Rectangle2D.Float(
-                                    sx - currentIPPosition 
-                                        + (x * fopimage.getIntrinsicWidth()),
-                                    sy - currentBPPosition
-                                        + (y * fopimage.getIntrinsicHeight()),
-                                    fopimage.getIntrinsicWidth(),
-                                    fopimage.getIntrinsicHeight());
-                            drawImage(back.getURL(), pos, null);
-                        }
-                    }
-                    restoreGraphicsState();
-                } else {
-                    log.warn(
-                            "Can't find background image: " + back.getURL());
+            if (back.getImageInfo() != null) {
+                ImageSize imageSize = back.getImageInfo().getSize();
+                saveGraphicsState();
+                clipRect(sx, sy, paddRectWidth, paddRectHeight);
+                int horzCount = (int) ((paddRectWidth * 1000 / imageSize.getWidthMpt()) + 1.0f);
+                int vertCount = (int) ((paddRectHeight * 1000 / imageSize.getHeightMpt()) + 1.0f);
+                if (back.getRepeat() == EN_NOREPEAT) {
+                    horzCount = 1;
+                    vertCount = 1;
+                } else if (back.getRepeat() == EN_REPEATX) {
+                    vertCount = 1;
+                } else if (back.getRepeat() == EN_REPEATY) {
+                    horzCount = 1;
                 }
+                // change from points to millipoints
+                sx *= 1000;
+                sy *= 1000;
+                if (horzCount == 1) {
+                    sx += back.getHoriz();
+                }
+                if (vertCount == 1) {
+                    sy += back.getVertical();
+                }
+                for (int x = 0; x < horzCount; x++) {
+                    for (int y = 0; y < vertCount; y++) {
+                        // place once
+                        Rectangle2D pos;
+                        // Image positions are relative to the currentIP/BP
+                        pos = new Rectangle2D.Float(
+                                sx - currentIPPosition
+                                    + (x * imageSize.getWidthMpt()),
+                                sy - currentBPPosition
+                                    + (y * imageSize.getHeightMpt()),
+                                imageSize.getWidthMpt(),
+                                imageSize.getHeightMpt());
+                        drawImage(back.getURL(), pos, null);
+                    }
+                }
+                restoreGraphicsState();
             }
         }
-        
+
         Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
         drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
     }
@@ -1212,8 +1275,8 @@ public class PCLRenderer extends PrintRenderer {
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
      */
-    protected void drawBorders(Rectangle2D.Float borderRect, 
-            final BorderProps bpsBefore, final BorderProps bpsAfter, 
+    protected void drawBorders(Rectangle2D.Float borderRect,
+            final BorderProps bpsBefore, final BorderProps bpsAfter,
             final BorderProps bpsStart, final BorderProps bpsEnd) {
         if (bpsBefore == null && bpsAfter == null && bpsStart == null && bpsEnd == null) {
             return; //no borders to paint
@@ -1224,7 +1287,7 @@ public class PCLRenderer extends PrintRenderer {
             drawFastBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
         }
     }
-    
+
     /**
      * Draws borders. Borders are drawn as shaded rectangles with no clipping.
      * @param borderRect the border rectangle
@@ -1233,8 +1296,8 @@ public class PCLRenderer extends PrintRenderer {
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
      */
-    protected void drawFastBorders(Rectangle2D.Float borderRect, 
-            final BorderProps bpsBefore, final BorderProps bpsAfter, 
+    protected void drawFastBorders(Rectangle2D.Float borderRect,
+            final BorderProps bpsBefore, final BorderProps bpsAfter,
             final BorderProps bpsStart, final BorderProps bpsEnd) {
         float startx = borderRect.x;
         float starty = borderRect.y;
@@ -1248,7 +1311,7 @@ public class PCLRenderer extends PrintRenderer {
         if (bpsAfter != null) {
             float borderWidth = bpsAfter.width / 1000f;
             updateFillColor(bpsAfter.color);
-            fillRect(startx, (starty + height - borderWidth), 
+            fillRect(startx, (starty + height - borderWidth),
                     width, borderWidth);
         }
         if (bpsStart != null) {
@@ -1262,7 +1325,7 @@ public class PCLRenderer extends PrintRenderer {
             fillRect((startx + width - borderWidth), starty, borderWidth, height);
         }
     }
-    
+
     /**
      * Draws borders. Borders are drawn in-memory and painted as a bitmap.
      * @param borderRect the border rectangle
@@ -1271,18 +1334,18 @@ public class PCLRenderer extends PrintRenderer {
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
      */
-    protected void drawQualityBorders(Rectangle2D.Float borderRect, 
-            final BorderProps bpsBefore, final BorderProps bpsAfter, 
+    protected void drawQualityBorders(Rectangle2D.Float borderRect,
+            final BorderProps bpsBefore, final BorderProps bpsAfter,
             final BorderProps bpsStart, final BorderProps bpsEnd) {
         Graphics2DAdapter g2a = getGraphics2DAdapter();
         final Rectangle.Float effBorderRect = new Rectangle2D.Float(
-                 borderRect.x - (currentIPPosition / 1000f),
-                 borderRect.y - (currentBPPosition / 1000f),
+                 0,
+                 0,
                  borderRect.width,
                  borderRect.height);
         final Rectangle paintRect = new Rectangle(
                 (int)Math.round(borderRect.x * 1000f),
-                (int)Math.round(borderRect.y * 1000f), 
+                (int)Math.round(borderRect.y * 1000f),
                 (int)Math.floor(borderRect.width * 1000f) + 1,
                 (int)Math.floor(borderRect.height * 1000f) + 1);
         //Add one pixel wide safety margin around the paint area
@@ -1293,14 +1356,14 @@ public class PCLRenderer extends PrintRenderer {
         paintRect.y += yoffset;
         paintRect.width += 2 * pixelWidth;
         paintRect.height += 2 * pixelWidth;
-        
-        RendererContext rc = createRendererContext(paintRect.x, paintRect.y, 
+
+        RendererContext rc = createRendererContext(paintRect.x, paintRect.y,
                 paintRect.width, paintRect.height, null);
         Map atts = new java.util.HashMap();
         atts.put(CONV_MODE, "bitmap");
         atts.put(SRC_TRANSPARENCY, "true");
         rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
-        
+
         Graphics2DImagePainter painter = new Graphics2DImagePainter() {
 
             public void paint(Graphics2D g2d, Rectangle2D area) {
@@ -1311,7 +1374,7 @@ public class PCLRenderer extends PrintRenderer {
                 float width = effBorderRect.width;
                 float height = effBorderRect.height;
                 boolean[] b = new boolean[] {
-                    (bpsBefore != null), (bpsEnd != null), 
+                    (bpsBefore != null), (bpsEnd != null),
                     (bpsAfter != null), (bpsStart != null)};
                 if (!b[0] && !b[1] && !b[2] && !b[3]) {
                     return;
@@ -1322,9 +1385,9 @@ public class PCLRenderer extends PrintRenderer {
                     (b[2] ? bpsAfter.width / 1000f : 0.0f),
                     (b[3] ? bpsStart.width / 1000f : 0.0f)};
                 float[] clipw = new float[] {
-                    BorderProps.getClippedWidth(bpsBefore) / 1000f,    
-                    BorderProps.getClippedWidth(bpsEnd) / 1000f,    
-                    BorderProps.getClippedWidth(bpsAfter) / 1000f,    
+                    BorderProps.getClippedWidth(bpsBefore) / 1000f,
+                    BorderProps.getClippedWidth(bpsEnd) / 1000f,
+                    BorderProps.getClippedWidth(bpsAfter) / 1000f,
                     BorderProps.getClippedWidth(bpsStart) / 1000f};
                 starty += clipw[0];
                 height -= clipw[0];
@@ -1332,7 +1395,7 @@ public class PCLRenderer extends PrintRenderer {
                 startx += clipw[3];
                 width -= clipw[3];
                 width -= clipw[1];
-                
+
                 boolean[] slant = new boolean[] {
                     (b[3] && b[0]), (b[0] && b[1]), (b[1] && b[2]), (b[2] && b[3])};
                 if (bpsBefore != null) {
@@ -1370,7 +1433,7 @@ public class PCLRenderer extends PrintRenderer {
                     currentPath = null;
                     Rectangle2D.Float lineRect = new Rectangle2D.Float(
                             sx1a, outery, ex1a - sx1a, innery - outery);
-                    Java2DRenderer.drawBorderLine(lineRect, true, true, 
+                    Java2DRenderer.drawBorderLine(lineRect, true, true,
                             bpsBefore.style, bpsBefore.color, g);
                     //restoreGraphicsState();
                 }
@@ -1384,7 +1447,7 @@ public class PCLRenderer extends PrintRenderer {
                     float outerx = startx + width + clipw[1];
                     float clipx = outerx - clipw[1];
                     float innerx = outerx - bw[1];
-                    
+
                     //saveGraphicsState();
                     Graphics2D g = (Graphics2D)g2d.create();
                     moveTo(clipx, sy1);
@@ -1409,7 +1472,7 @@ public class PCLRenderer extends PrintRenderer {
                     currentPath = null;
                     Rectangle2D.Float lineRect = new Rectangle2D.Float(
                             innerx, sy1a, outerx - innerx, ey1a - sy1a);
-                    Java2DRenderer.drawBorderLine(lineRect, false, false, 
+                    Java2DRenderer.drawBorderLine(lineRect, false, false,
                             bpsEnd.style, bpsEnd.color, g);
                     //restoreGraphicsState();
                 }
@@ -1448,7 +1511,7 @@ public class PCLRenderer extends PrintRenderer {
                     currentPath = null;
                     Rectangle2D.Float lineRect = new Rectangle2D.Float(
                             sx1a, innery, ex1a - sx1a, outery - innery);
-                    Java2DRenderer.drawBorderLine(lineRect, true, false, 
+                    Java2DRenderer.drawBorderLine(lineRect, true, false,
                             bpsAfter.style, bpsAfter.color, g);
                     //restoreGraphicsState();
                 }
@@ -1487,7 +1550,7 @@ public class PCLRenderer extends PrintRenderer {
                     currentPath = null;
                     Rectangle2D.Float lineRect = new Rectangle2D.Float(
                             outerx, sy1a, innerx - outerx, ey1a - sy1a);
-                    Java2DRenderer.drawBorderLine(lineRect, false, false, 
+                    Java2DRenderer.drawBorderLine(lineRect, false, false,
                             bpsStart.style, bpsStart.color, g);
                     //restoreGraphicsState();
                 }
@@ -1496,20 +1559,25 @@ public class PCLRenderer extends PrintRenderer {
             public Dimension getImageSize() {
                 return paintRect.getSize();
             }
-            
+
         };
         try {
-            g2a.paintImage(painter, rc, 
+            g2a.paintImage(painter, rc,
                     paintRect.x - xoffset, paintRect.y, paintRect.width, paintRect.height);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
     }
 
+    /**
+     * Controls whether all text should be generated as bitmaps or only text for which there's
+     * no native font.
+     * @param allTextAsBitmaps true if all text should be painted as bitmaps
+     */
     public void setAllTextAsBitmaps(boolean allTextAsBitmaps) {
         this.allTextAsBitmaps = allTextAsBitmaps;
     }
-    
-    
-    
+
+
+
 }

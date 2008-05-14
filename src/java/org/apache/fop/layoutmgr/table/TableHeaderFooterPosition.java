@@ -48,6 +48,11 @@ class TableHeaderFooterPosition extends Position {
         this.nestedElements = nestedElements;
     }
 
+    /** {@inheritDoc} */
+    public boolean generatesAreas() {
+        return true;
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("Table");
         sb.append(header ? "Header" : "Footer");

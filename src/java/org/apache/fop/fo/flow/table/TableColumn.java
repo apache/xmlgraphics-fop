@@ -34,7 +34,8 @@ import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
- * Class modelling the fo:table-column object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-column">
+ * <code>fo:table-column</code></a> object.
  */
 public class TableColumn extends TableFObj {
     // The value of properties relevant for fo:table-column.
@@ -51,13 +52,19 @@ public class TableColumn extends TableFObj {
     private PropertyList pList = null;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a TableColumn instance with the given {@link FONode}
+     * as parent.
+     *
+     * @param parent {@link FONode} that is the parent of this object
      */
     public TableColumn(FONode parent) {
         this(parent, false);
     }
 
     /**
+     * Create a TableColumn instance with the given {@link FONode}
+     * as parent
+     *
      * @param parent FONode that is the parent of this object
      * @param implicit true if this table-column has automatically been created (does not
      * correspond to an explicit fo:table-column in the input document)
@@ -68,9 +75,7 @@ public class TableColumn extends TableFObj {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric().getValue();
@@ -82,12 +87,16 @@ public class TableColumn extends TableFObj {
         super.bind(pList);
 
         if (numberColumnsRepeated <= 0) {
-            throw new PropertyException("number-columns-repeated must be 1 or bigger, "
-                    + "but got " + numberColumnsRepeated);
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.valueMustBeBiggerGtEqOne(this,
+                    "number-columns-repeated", numberColumnsRepeated, getLocator());
         }
         if (numberColumnsSpanned <= 0) {
-            throw new PropertyException("number-columns-spanned must be 1 or bigger, "
-                    + "but got " + numberColumnsSpanned);
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.valueMustBeBiggerGtEqOne(this,
+                    "number-columns-spanned", numberColumnsSpanned, getLocator());
         }
 
         /* check for unspecified width and replace with default of
@@ -96,8 +105,9 @@ public class TableColumn extends TableFObj {
          */
         if (columnWidth.getEnum() == EN_AUTO) {
             if (!this.implicitColumn && !getTable().isAutoLayout()) {
-                log.warn("table-layout=\"fixed\" and column-width unspecified "
-                        + "=> falling back to proportional-column-width(1)");
+                TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.warnImplicitColumns(this, getLocator());
             }
             columnWidth = new TableColLength(1.0, this);
         }
@@ -112,9 +122,7 @@ public class TableColumn extends TableFObj {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startColumn(this);
@@ -126,37 +134,34 @@ public class TableColumn extends TableFObj {
     }
 
     /** {@inheritDoc} */
-    protected void setCollapsedBorders() {
-        Table table = (Table) parent;
-        createBorder(CommonBorderPaddingBackground.BEFORE, table);
-        createBorder(CommonBorderPaddingBackground.AFTER, table);
-        createBorder(CommonBorderPaddingBackground.START);
-        createBorder(CommonBorderPaddingBackground.END);
-    }
-
-    /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
         getFOEventHandler().endColumn(this);
     }
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: empty
+     * <br>XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc,
                         String nsURI, String localName)
         throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**
-     * @return the Common Border, Padding, and Background Properties.
+     * Get the {@link CommonBorderPaddingBackground} instance
+     * attached to this TableColumn.
+     * @return the {@link CommonBorderPaddingBackground} instance
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
+     * Get a {@link Length} instance corresponding to the
+     * <code>column-width</code> property.
      * @return the "column-width" property.
      */
     public Length getColumnWidth() {
@@ -172,6 +177,7 @@ public class TableColumn extends TableFObj {
     }
 
     /**
+     * Get the value of the <code>column-number</code> property
      * @return the "column-number" property.
      */
     public int getColumnNumber() {
@@ -180,7 +186,7 @@ public class TableColumn extends TableFObj {
 
     /**
      * Used for setting the column-number for an implicit column
-     * @param columnNumber
+     * @param columnNumber the number to set
      */
     protected void setColumnNumber(int columnNumber) {
         this.columnNumber = columnNumber;
@@ -201,7 +207,10 @@ public class TableColumn extends TableFObj {
         return "table-column";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_COLUMN}
+     */
     public int getNameId() {
         return FO_TABLE_COLUMN;
     }
@@ -237,10 +246,10 @@ public class TableColumn extends TableFObj {
     /**
      * Retrieve a property value through its Id; used by
      * from-table-column() function
-     * 
+     *
      * @param propId    the id for the property to retrieve
      * @return the requested Property
-     * @throws PropertyException
+     * @throws PropertyException if there is a problem evaluating the property
      */
     public Property getProperty(int propId) throws PropertyException {
         return this.pList.get(propId);

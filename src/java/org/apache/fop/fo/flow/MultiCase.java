@@ -25,7 +25,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 
 /**
- * Class modelling the fo:multi-case object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-case">
+ * <code>fo:multi-case</code></a> object.
  * @todo implement validateChildNode()
  */
 public class MultiCase extends FObj {
@@ -40,20 +41,21 @@ public class MultiCase extends FObj {
     static boolean notImplementedWarningGiven = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Base constructor
+     * 
+     * @param parent {@link FONode} that is the parent of this object
      */
     public MultiCase(FONode parent) {
         super(parent);
 
         if (!notImplementedWarningGiven) {
-            log.warn("fo:multi-case is not yet implemented.");
+            getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    getName(), getLocator());
             notImplementedWarningGiven = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         startingState = pList.get(PR_STARTING_STATE).getEnum();
@@ -61,9 +63,7 @@ public class MultiCase extends FObj {
         // caseTitle = pList.get(PR_CASE_TITLE);
     }
 
-    /**
-     * Return the "starting-state" property.
-     */
+    /** @return the "starting-state" property */
     public int getStartingState() {
         return startingState;
     }
@@ -75,6 +75,7 @@ public class MultiCase extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_MULTI_CASE}
      */
     public int getNameId() {
         return FO_MULTI_CASE;

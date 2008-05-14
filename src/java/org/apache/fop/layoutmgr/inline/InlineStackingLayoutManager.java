@@ -75,14 +75,8 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
     private Area currentArea; // LineArea or InlineParent
 
-    //private BreakPoss prevBP;
-    
     /** The child layout context */
     protected LayoutContext childLC;
-
-    private boolean bAreaCreated = false;
-
-    //private LayoutManager currentLM = null;
 
     /** Used to store previous content IPD for each child LM. */
     private HashMap hmPrevIPD = new HashMap();
@@ -155,41 +149,6 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Reset position for returning next BreakPossibility.
-     * @param prevPos a Position returned by this layout manager
-     * representing a potential break decision.
-     */
-    public void resetPosition(Position prevPos) {
-        if (prevPos != null) {
-            // ASSERT (prevPos.getLM() == this)
-            if (prevPos.getLM() != this) {
-                //getLogger().error(
-                //  "InlineStackingLayoutManager.resetPosition: " +
-                //  "LM mismatch!!!");
-            }
-            // Back up the child LM Position
-            Position childPos = prevPos.getPosition();
-            reset(childPos);
-            /*
-            if (prevBP != null
-                    && prevBP.getLayoutManager() != childPos.getLM()) {
-                childLC = null;
-            }
-            prevBP = new BreakPoss(childPos);
-            */
-        } else {
-            // Backup to start of first child layout manager
-            //prevBP = null;
-            // super.resetPosition(prevPos);
-            reset(prevPos);
-            // If any areas created, we are restarting!
-            bAreaCreated = false;
-        }
-        // Do we need to reset some context like pending or prevContent?
-        // What about prevBP?
-    }
-
-    /**
      * TODO: Explain this method
      * @param lm ???
      * @return ???
@@ -205,14 +164,6 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
         hmPrevIPD.clear();
     }
 
-    /**
-     * This method is called by addAreas() so IDs can be added to a page for FOs that 
-     * support the 'id' property.
-     */
-    protected void addId() {
-        // Do nothing here, overriden in subclasses that have an 'id' property.
-    }
-    
     /**
      * Returns the current area.
      * @return the current area
@@ -290,7 +241,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
         // "unwrap" the Position stored in each element of oldList
         while (oldListIterator.hasNext()) {
             element = (KnuthElement) oldListIterator.next();
-            element.setPosition(((NonLeafPosition)element.getPosition()).getPosition());
+            element.setPosition(element.getPosition().getPosition());
         }
 
         // The last element may not have a layout manager (its position == null);
@@ -323,7 +274,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
         // "unwrap" the Position stored in each element of oldList
         while (oldListIterator.hasNext()) {
             element = (KnuthElement) oldListIterator.next();
-            element.setPosition(((NonLeafPosition)element.getPosition()).getPosition());
+            element.setPosition(element.getPosition().getPosition());
         }
 
         ((InlineLevelLayoutManager)
@@ -333,14 +284,14 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
     /** {@inheritDoc} */
     public void getWordChars(StringBuffer sbChars, Position pos) {
-        Position newPos = ((NonLeafPosition) pos).getPosition();
+        Position newPos = pos.getPosition();
         ((InlineLevelLayoutManager)
          newPos.getLM()).getWordChars(sbChars, newPos);
     }
 
     /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hc) {
-        Position newPos = ((NonLeafPosition) pos).getPosition();
+        Position newPos = pos.getPosition();
         ((InlineLevelLayoutManager)
          newPos.getLM()).hyphenate(newPos, hc);
     }
@@ -353,7 +304,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement) oldListIterator.next();
             oldElement.setPosition
-                (((NonLeafPosition) oldElement.getPosition()).getPosition());
+                (oldElement.getPosition().getPosition());
         }
         // reset the iterator
         oldListIterator = oldList.listIterator();
@@ -420,7 +371,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement) oldListIterator.next();
             oldElement.setPosition
-                (((NonLeafPosition) oldElement.getPosition()).getPosition());
+                (oldElement.getPosition().getPosition());
         }
         // reset the iterator
         oldListIterator = oldList.listIterator();

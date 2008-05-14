@@ -66,8 +66,8 @@
   </fo>
   <checks>
     <!-- table dimensions -->
-    <eval expected="308000" xpath="//flow/block[2]/@ipda"/>
-    <eval expected="288000" xpath="//flow/block[2]/@ipd"/>
+    <eval expected="328000" xpath="//flow/block[2]/@ipda"/>
+    <eval expected="308000" xpath="//flow/block[2]/@ipd"/>
     <eval expected="48800" xpath="//flow/block[2]/@bpda"/>
     <eval expected="28800" xpath="//flow/block[2]/@bpd"/>
     <eval expected="10000 10000 10000 10000" xpath="//flow/block[2]/@bap"/>
@@ -95,7 +95,7 @@
     <eval expected="144000" xpath="//flow/block[2]/block[2]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[2]/block[2]/block[1]/@bpd"/>
     <eval expected="cell2" xpath="//flow/block[2]/block[2]/block[1]/lineArea"/>
-    <eval expected="color=#ffff00,repeat=0,horiz=0,vertical=0" xpath="//flow/block[2]/block[2]/@background"/>
+    <eval expected="color=#ffff00" xpath="//flow/block[2]/block[2]/@background"/>
 
     <!-- cell 3 -->
     <true xpath="//flow/block[2]/block[3]/@is-reference-area"/>
@@ -106,7 +106,7 @@
     <eval expected="144000" xpath="//flow/block[2]/block[3]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[2]/block[3]/block[1]/@bpd"/>
     <eval expected="cell3" xpath="//flow/block[2]/block[3]/block[1]/lineArea"/>
-    <eval expected="color=#ffa500,repeat=0,horiz=0,vertical=0" xpath="//flow/block[2]/block[3]/@background"/>
+    <eval expected="color=#ffa500" xpath="//flow/block[2]/block[3]/@background"/>
 
     <!-- cell 4 -->
     <true xpath="//flow/block[2]/block[4]/@is-reference-area"/>
@@ -121,19 +121,27 @@
     <element-list category="breaker">
       <box w="14400"/>
       <penalty w="0" p="0"/>
-      <box w="10000" aux="true"/>
+      <box w="0" aux="true"/>
+      <penalty w="0" p="INF" aux="true"/>
+      <glue w="10000" y="0" z="0" aux="true"/>
       <box w="14400"/>
-      <penalty w="20000" p="0"/>
+      <penalty w="0" p="0"/>
       <box w="14400"/>
-      <box w="10000" aux="true"/>
+      <penalty w="0" p="INF" aux="true"/>
+      <glue w="10000" y="0" z="0" aux="true"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>
       <penalty w="0" p="0"/>
-      <box w="10000" aux="true"/>
+      <box w="0" aux="true"/>
+      <penalty w="0" p="INF" aux="true"/>
+      <glue w="10000" y="0" z="0" aux="true"/>
       <box w="14400"/>
-      <box w="10000" aux="true"/>
+      <box w="0" aux="true"/>
+      <penalty w="0" p="INF" aux="true"/>
+      <glue w="10000" y="0" z="0" aux="true"/>
+      <box w="0" aux="true"/>
       <skip>3</skip>
     </element-list>
-    
+
   </checks>
 </testcase>

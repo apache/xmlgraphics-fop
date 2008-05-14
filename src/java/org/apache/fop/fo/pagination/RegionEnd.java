@@ -29,19 +29,21 @@ import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 
 /**
- * The fo:region-end element.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-end">
+ * <code>fo:region-end</code></a> object.
  */
 public class RegionEnd extends RegionSE {
+
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a RegionEnd instance that is a child of the
+     * given parent {@link FONode}.
+     * @param parent    the {@link FONode} that is to be the parent
      */
     public RegionEnd(FONode parent) {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc} 
-     */
+    /** {@inheritDoc} */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving extent as values are resolved relative 
          * to the page size and reference orientation.
@@ -80,9 +82,7 @@ public class RegionEnd extends RegionSE {
         return vpRect;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String getDefaultRegionName() {
         return "xsl-region-end";
     }
@@ -94,6 +94,7 @@ public class RegionEnd extends RegionSE {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_REGION_END}
      */
     public int getNameId() {
         return FO_REGION_END;

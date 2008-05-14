@@ -23,7 +23,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 
 /**
- * Class modelling the fo:list-item-body object.
+ * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_list-item-body">
+ * <code>fo:list-item-body object</code></a>.
  */
 public class ListItemBody extends AbstractListItemPart {
 
@@ -34,17 +35,13 @@ public class ListItemBody extends AbstractListItemPart {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startListBody();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endListBody();
@@ -57,6 +54,7 @@ public class ListItemBody extends AbstractListItemPart {
     
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_LIST_ITEM_BODY}
      */
     public int getNameId() {
         return FO_LIST_ITEM_BODY;

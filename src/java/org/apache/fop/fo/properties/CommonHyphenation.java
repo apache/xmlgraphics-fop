@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -37,7 +38,7 @@ public final class CommonHyphenation {
     /** Logger */
     protected static Log log = LogFactory.getLog(CommonHyphenation.class);
     
-    private static final PropertyCache cache = new PropertyCache();
+    private static final PropertyCache cache = new PropertyCache(CommonHyphenation.class);
     
     private int hash = 0;
     
@@ -142,7 +143,7 @@ public final class CommonHyphenation {
             FontMetrics metrics = font.getFontMetrics();
             if (metrics instanceof Typeface) {
                 Typeface typeface = (Typeface)metrics;
-                if ("SymbolEncoding".equals(typeface.getEncoding())) {
+                if ("SymbolEncoding".equals(typeface.getEncodingName())) {
                     //SymbolEncoding doesn't have HYPHEN_MINUS, so replace by MINUS_SIGN
                 } else {
                     //only warn if the encoding is not SymbolEncoding
@@ -154,7 +155,7 @@ public final class CommonHyphenation {
             FontMetrics metrics = font.getFontMetrics();
             if (metrics instanceof Typeface) {
                 Typeface typeface = (Typeface)metrics;
-                if ("ZapfDingbatsEncoding".equals(typeface.getEncoding())) {
+                if ("ZapfDingbatsEncoding".equals(typeface.getEncodingName())) {
                     //ZapfDingbatsEncoding doesn't have HYPHEN_MINUS, so replace by ' '
                 } else {
                     //only warn if the encoding is not ZapfDingbatsEncoding
@@ -202,7 +203,7 @@ public final class CommonHyphenation {
     
     /** {@inheritDoc} */
     public int hashCode() {
-        if (hash == 0) {
+        if (this.hash == 0) {
             int hash = 17;
             hash = 37 * hash + (language == null ? 0 : language.hashCode());
             hash = 37 * hash + (script == null ? 0 : script.hashCode());
@@ -214,8 +215,9 @@ public final class CommonHyphenation {
                 (hyphenationPushCharacterCount == null ? 0 : hyphenationPushCharacterCount.hashCode());
             hash = 37 * hash + 
                 (hyphenationRemainCharacterCount == null ? 0 : hyphenationRemainCharacterCount.hashCode());
+            this.hash = hash;
         }
-        return hash;
+        return this.hash;
     }
     
 }

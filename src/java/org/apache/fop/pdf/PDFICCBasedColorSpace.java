@@ -19,6 +19,13 @@
 
 package org.apache.fop.pdf;
 
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
+
 /**
  * Represents an ICCBased color space in PDF.
  */
@@ -93,4 +100,56 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
         return sb.toString();
     }
 
+    /**
+     * Sets sRGB as the DefaultRGB color space in the PDF document.
+     * @param pdfDoc the PDF document
+     * @return the newly installed color space object
+     */
+    public static PDFICCBasedColorSpace setupsRGBAsDefaultRGBColorSpace(PDFDocument pdfDoc) {
+        PDFICCStream sRGBProfile = setupsRGBColorProfile(pdfDoc);
+
+        //Map sRGB as default RGB profile for DeviceRGB
+        return pdfDoc.getFactory().makeICCBasedColorSpace(null, "DefaultRGB", sRGBProfile);
+    }
+
+    /**
+     * Installs the sRGB color space in the PDF document.
+     * @param pdfDoc the PDF document
+     * @return the newly installed color space object
+     */
+    public static PDFICCBasedColorSpace setupsRGBColorSpace(PDFDocument pdfDoc) {
+        PDFICCStream sRGBProfile = setupsRGBColorProfile(pdfDoc);
+
+        //Map sRGB as default RGB profile for DeviceRGB
+        return pdfDoc.getFactory().makeICCBasedColorSpace(null, null, sRGBProfile);
+    }
+
+    /**
+     * Sets up the sRGB color profile in the PDF document. It does so by trying to
+     * install a very small ICC profile (~4KB) instead of the very big one (~140KB)
+     * the Sun JVM uses.
+     * @param pdfDoc the PDF document
+     * @return the ICC stream with the sRGB profile
+     */
+    public static PDFICCStream setupsRGBColorProfile(PDFDocument pdfDoc) {
+        ICC_Profile profile;
+        PDFICCStream sRGBProfile = pdfDoc.getFactory().makePDFICCStream();
+        InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
+        if (in != null) {
+            try {
+                profile = ICC_Profile.getInstance(in);
+            } catch (IOException ioe) {
+                throw new RuntimeException(
+                        "Unexpected IOException loading the sRGB profile: " + ioe.getMessage());
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
+        } else {
+            // Fallback: Use the sRGB profile from the JRE (about 140KB)
+            profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
+        }
+        sRGBProfile.setColorSpace(profile, null);
+        return sRGBProfile;
+    }
+    
 }

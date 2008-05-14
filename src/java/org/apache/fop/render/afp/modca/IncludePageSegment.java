@@ -45,24 +45,24 @@ public class IncludePageSegment extends AbstractNamedAFPObject {
     /**
      * The x position where we need to put this object on the page
      */
-    private byte[] xCoor;
+    private byte[] x;
 
     /**
      * The y position where we need to put this object on the page
      */
-    private byte[] yCoor;
+    private byte[] y;
 
     /**
      * Constructor for the Include Page Segment
      * @param name Name of the page segment
-     * @param xVal The x position
-     * @param yVal The y position
+     * @param x The x position
+     * @param y The y position
      */
-    public IncludePageSegment(String name, int xVal, int yVal) {
+    public IncludePageSegment(String name, int x, int y) {
 
         super(name);
-        this.xCoor = BinaryUtils.convert(xVal, 3);
-        this.yCoor = BinaryUtils.convert(yVal, 3);
+        this.x = BinaryUtils.convert(x, 3);
+        this.y = BinaryUtils.convert(y, 3);
 
     }
 
@@ -93,22 +93,17 @@ public class IncludePageSegment extends AbstractNamedAFPObject {
         data[8] = 0x00; // Reserved
 
         for (int i = 0; i < nameBytes.length; i++) {
-
             data[9 + i] = nameBytes[i];
-
         }
 
-        data[17] = xCoor[0]; // x coordinate
-        data[18] = xCoor[1];
-        data[19] = xCoor[2];
+        data[17] = x[0]; // x coordinate
+        data[18] = x[1];
+        data[19] = x[2];
 
-        data[20] = yCoor[0]; // y coordinate
-        data[21] = yCoor[1];
-        data[22] = yCoor[2];
+        data[20] = y[0]; // y coordinate
+        data[21] = y[1];
+        data[22] = y[2];
 
         os.write(data);
-
     }
-
-
 }

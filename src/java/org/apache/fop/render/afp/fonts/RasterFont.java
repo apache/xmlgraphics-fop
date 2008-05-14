@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.render.afp.exceptions.FontRuntimeException;
 
 /**
@@ -75,7 +77,7 @@ public class RasterFont extends AFPFont {
         String pointsize = String.valueOf(size / 1000);
         CharacterSet csm = (CharacterSet) charSets.get(pointsize);
         if (csm == null) {
-            csm = (CharacterSet) charSets.get(size + "mpt");
+            csm = (CharacterSet) charSets.get(size + FixedLength.MPT);
         }
         if (csm == null) {
             // Get char set with nearest font size
@@ -83,7 +85,7 @@ public class RasterFont extends AFPFont {
             for (Iterator it = charSets.entrySet().iterator(); it.hasNext();) {
                 Map.Entry me = (Map.Entry)it.next();
                 String key = (String)me.getKey();
-                if (!key.endsWith("mpt")) {
+                if (!key.endsWith(FixedLength.MPT)) {
                     int mpt = Integer.parseInt(key) * 1000;
                     if (Math.abs(size - mpt) < distance) {
                         distance = Math.abs(size - mpt);
@@ -93,7 +95,7 @@ public class RasterFont extends AFPFont {
                 }
             }
             if (csm != null) {
-                charSets.put(size + "mpt", csm);
+                charSets.put(size + FixedLength.MPT, csm);
                 String msg = "No " + (size / 1000) + "pt font " + getFontName()
                     + " found, substituted with " + pointsize + "pt font";
                 log.warn(msg);
@@ -228,11 +230,8 @@ public class RasterFont extends AFPFont {
         return charSet.mapChar(c);
     }
 
-    /**
-     * Get the encoding of the font.
-     * @return the encoding
-     */
-    public String getEncoding() {
+    /** {@inheritDoc} */
+    public String getEncodingName() {
         return charSet.getEncoding();
     }
 

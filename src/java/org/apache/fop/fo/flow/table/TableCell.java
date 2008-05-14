@@ -30,7 +30,8 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
- * Class modelling the fo:table-cell object.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-cell">
+ * <code>fo:table-cell</code></a> object.
  */
 public class TableCell extends TableFObj {
     // The value of properties relevant for fo:table-cell.
@@ -60,7 +61,9 @@ public class TableCell extends TableFObj {
     private boolean blockItemFound = false;
 
     /**
-     * @param parent FONode that is the parent of this object
+     * Create a TableCell instance with the given {@link FONode}
+     * as parent.
+     * @param parent {@link FONode} that is the parent of this object
      */
     public TableCell(FONode parent) {
         super(parent);
@@ -87,9 +90,7 @@ public class TableCell extends TableFObj {
         width = pList.get(PR_WIDTH).getLength();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startCell(this);
@@ -102,50 +103,33 @@ public class TableCell extends TableFObj {
      */
     public void endOfNode() throws FOPException {
         if (!blockItemFound) {
-            if (getUserAgent().validateStrictly()) {
-                missingChildElementError("marker* (%block;)+");
-            } else if (firstChild != null) {
-                log.warn("fo:table-cell content that is not "
-                        + "enclosed by a fo:block will be dropped/ignored.");
-            }
+            missingChildElementError("marker* (%block;)+", true);
         }
         if ((startsRow() || endsRow())
                 && getParent().getNameId() == FO_TABLE_ROW ) {
-            log.warn("starts-row/ends-row for fo:table-cells "
-                    + "non-applicable for children of an fo:table-row.");
+            TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.startEndRowUnderTableRowWarning(this, getLocator());
         }
         getFOEventHandler().endCell(this);
     }
 
     /**
      * {@inheritDoc}
-     * XSL Content Model: marker* (%block;)+
+     * <br>XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
-        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
-            if (blockItemFound) {
-               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+        if (FO_URI.equals(nsURI)) {
+            if (localName.equals("marker")) {
+                if (blockItemFound) {
+                   nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+                }
+            } else if (!isBlockItem(nsURI, localName)) {
+                invalidChildError(loc, nsURI, localName);
+            } else {
+                blockItemFound = true;
             }
-        } else if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
-        } else {
-            blockItemFound = true;
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected void setCollapsedBorders() {
-        createBorder(CommonBorderPaddingBackground.BEFORE);
-        createBorder(CommonBorderPaddingBackground.AFTER);
-        Table table = getTable();
-        if (table.hasExplicitColumns()) {
-            TableColumn col = table.getColumn(getColumnNumber() - 1);
-            createBorder(CommonBorderPaddingBackground.START, col);
-            createBorder(CommonBorderPaddingBackground.END, col);
-        } else {
-            createBorder(CommonBorderPaddingBackground.START);
-            createBorder(CommonBorderPaddingBackground.END);
         }
     }
 
@@ -155,25 +139,32 @@ public class TableCell extends TableFObj {
     }
 
     /**
-     * @return the Common Border, Padding, and Background Properties.
+     * Get the {@link CommonBorderPaddingBackground} instance
+     * attached to this TableCell.
+     * @return the {@link CommonBorderPaddingBackground} instance
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return this.commonBorderPaddingBackground;
     }
 
     /**
+     * Get the value for the <code>column-number</code> property.
      * @return the "column-number" property.
      */
     public int getColumnNumber() {
         return columnNumber;
     }
 
-    /** @return true if "empty-cells" is "show" */
+    /**
+     * Get the value for the <code>empty-cells</code> property.
+     * @return true if "empty-cells" is "show"
+     */
     public boolean showEmptyCells() {
         return (this.emptyCells == EN_SHOW);
     }
 
     /**
+     * Get the value for the <code>number-columns-spanned</code> property
      * @return the "number-columns-spanned" property.
      */
     public int getNumberColumnsSpanned() {
@@ -181,6 +172,7 @@ public class TableCell extends TableFObj {
     }
 
     /**
+     * Get the value for the <code>number-rows-spanned</code> property
      * @return the "number-rows-spanned" property.
      */
     public int getNumberRowsSpanned() {
@@ -188,30 +180,41 @@ public class TableCell extends TableFObj {
     }
 
     /**
+     * Get the value for the <code>block-progression-dimension</code> property
      * @return the "block-progression-dimension" property.
      */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
     }
 
-    /** @return the display-align property. */
+    /**
+     * Get the value for the <code>display-align</code> property
+     * @return the display-align property.
+     */
     public int getDisplayAlign() {
         return displayAlign;
     }
 
     /**
+     * Get the value for the <code>width</code> property
      * @return the "width" property.
      */
     public Length getWidth() {
         return width;
     }
 
-    /** @return true if the cell starts a row. */
+    /**
+     * Get the value for the <code>starts-row</code> property
+     * @return true if the cell starts a row.
+     */
     public boolean startsRow() {
         return (startsRow == EN_TRUE);
     }
 
-    /** @return true if the cell ends a row. */
+    /**
+     * Get the value for the <code>ends-row</code> property
+     * @return true if the cell ends a row.
+     */
     public boolean endsRow() {
         return (endsRow == EN_TRUE);
     }
@@ -223,6 +226,7 @@ public class TableCell extends TableFObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_CELL}
      */
     public final int getNameId() {
         return FO_TABLE_CELL;

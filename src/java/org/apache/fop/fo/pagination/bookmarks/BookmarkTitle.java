@@ -27,17 +27,18 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
 /**
- * The fo:bookmark-title formatting object, first introduced in the 
- * XSL 1.1 WD.  Prototype version only, subject to change as XSL 1.1 WD
- * evolves.
+ * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_bookmark-title">
+ * <code>fo:bookmark-title</code></a> object, first introduced in the
+ * XSL 1.1 WD.
  */
 public class BookmarkTitle extends FObj {
     private String title = "";
 
     /**
-     * Create a new BookmarkTitle object.
+     * Create a new BookmarkTitle object that is a child
+     * of the given {@link FONode}.
      *
-     * @param parent the fo node parent
+     * @param parent the {@link FONode} parent
      */
     public BookmarkTitle(FONode parent) {
         super(parent);
@@ -53,7 +54,7 @@ public class BookmarkTitle extends FObj {
      * @param end the end position in the character array
      * @param locator location in fo source file.
      */
-    protected void addCharacters(char data[], int start, int end,
+    protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList,
                                  Locator locator) {
         title += new String(data, start, end - start);
@@ -61,11 +62,13 @@ public class BookmarkTitle extends FObj {
 
     /**
      * {@inheritDoc}
-        XSL/FOP: empty
+     * <br>XSL/FOP: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**
@@ -84,6 +87,7 @@ public class BookmarkTitle extends FObj {
 
     /**
      * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_BOOKMARK_TITLE}
      */
     public int getNameId() {
         return FO_BOOKMARK_TITLE;

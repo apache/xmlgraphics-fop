@@ -27,8 +27,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.fonts.Glyphs;
+
 import org.apache.fop.fonts.FontUtil;
-import org.apache.fop.fonts.Glyphs;
 
 /**
  * Reads a TrueType file or a TrueType Collection.
@@ -103,6 +105,7 @@ public class TTFFile {
     //Ascender/descender from OS/2 table
     private int os2Ascender = 0;
     private int os2Descender = 0;
+    private int usWeightClass = 0;
 
     private short lastChar = 0;
 
@@ -220,7 +223,9 @@ public class TTFFile {
             int cmapEID = in.readTTFUShort();
             long cmapOffset = in.readTTFULong();
 
-            log.debug("Platform ID: " + cmapPID + " Encoding: " + cmapEID);
+            if (log.isDebugEnabled()) {
+                log.debug("Platform ID: " + cmapPID + " Encoding: " + cmapEID);
+            }
 
             if (cmapPID == 3 && cmapEID == 1) {
                 cmapUniOffset = cmapOffset;
@@ -228,8 +233,7 @@ public class TTFFile {
         }
 
         if (cmapUniOffset <= 0) {
-            log.fatal("Unicode cmap table not present");
-            log.fatal("Unsupported format: Aborting");
+            log.fatal("Unsupported TrueType font: Unicode cmap table not present. Aborting");
             return false;
         }
 
@@ -617,6 +621,13 @@ public class TTFFile {
         return flags;
     }
 
+    /**
+     * Returns the weight class of this font. Valid values are 100, 200....,800, 900.
+     * @return the weight class value (or 0 if there was no OS/2 table in the font)
+     */
+    public int getWeightClass() {
+        return this.usWeightClass;
+    }
 
     /**
      * Returns the StemV attribute of the font.
@@ -975,7 +986,12 @@ public class TTFFile {
     private final void readOS2(FontFileReader in) throws IOException {
         // Check if font is embeddable
         if (dirTabs.get("OS/2") != null) {
-            seekTab(in, "OS/2", 2 * 4);
+            seekTab(in, "OS/2", 2 * 2);
+            this.usWeightClass = in.readTTFUShort();
+            
+            // usWidthClass
+            in.skip(2);
+            
             int fsType = in.readTTFUShort();
             if (fsType == 2) {
                 isEmbeddable = false;
@@ -1110,7 +1126,12 @@ public class TTFFile {
             if (((platformID == 1 || platformID == 3) 
                     && (encodingID == 0 || encodingID == 1))) {
                 in.seekSet(j + in.readTTFUShort());
-                String txt = in.readTTFString(l);
+                String txt;
+                if (platformID == 3) {
+                    txt = in.readTTFString(l, encodingID);
+                } else {
+                    txt = in.readTTFString(l);
+                }
                 
                 if (log.isDebugEnabled()) {
                     log.debug(platformID + " " 
@@ -1134,7 +1155,7 @@ public class TTFFile {
                     }
                     break;
                 case 4:
-                    if (fullName.length() == 0) {
+                    if (fullName.length() == 0 || (platformID == 3 && languageID == 1033)) {
                         fullName = txt;
                     }
                     break;
@@ -1331,9 +1352,11 @@ public class TTFFile {
                         if (iObj == null) {
                             // happens for many fonts (Ubuntu font set),
                             // stray entries in the kerning table?? 
-                            log.warn("Unicode index (1) not found for glyph " + i);
+                            log.debug("Ignoring kerning pair because no Unicode index was"
+                                    + " found for the first glyph " + i);
                         } else if (u2 == null) {
-                            log.warn("Unicode index (2) not found for glyph " + i);
+                            log.debug("Ignoring kerning pair because Unicode index was"
+                                    + " found for the second glyph " + i);
                         } else {
                             Map adjTab = (Map)kerningTab.get(iObj);
                             if (adjTab == null) {
@@ -1459,6 +1482,59 @@ public class TTFFile {
         }
     }
 
+    /**
+     * Return TTC font names
+     * @param in FontFileReader to read from
+     * @return True if not collection or font name present, false otherwise
+     * @throws IOException In case of an I/O problem
+     */
+    public final List getTTCnames(FontFileReader in) throws IOException {
+        List fontNames = new java.util.ArrayList();
+
+        String tag = in.readTTFString(4);
+
+        if ("ttcf".equals(tag)) {
+            // This is a TrueType Collection
+            in.skip(4);
+
+            // Read directory offsets
+            int numDirectories = (int)in.readTTFULong();
+            long[] dirOffsets = new long[numDirectories];
+            for (int i = 0; i < numDirectories; i++) {
+                dirOffsets[i] = in.readTTFULong();
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("This is a TrueType collection file with "
+                        + numDirectories + " fonts");
+                log.debug("Containing the following fonts: ");
+            }
+
+            for (int i = 0; (i < numDirectories); i++) {
+                in.seekSet(dirOffsets[i]);
+                readDirTabs(in);
+
+                readName(in);
+
+                log.debug(fullName);
+                fontNames.add(fullName);
+
+                // Reset names
+                notice = "";
+                fullName = "";
+                familyNames.clear();
+                postScriptName = "";
+                subFamilyName = "";
+            }
+
+            in.seekSet(0);
+            return fontNames;
+        } else {
+            log.error("Not a TTC!");
+            return null;
+        }
+    }
+    
     /*
      * Helper classes, they are not very efficient, but that really
      * doesn't matter...
@@ -1521,8 +1597,8 @@ public class TTFFile {
      * @throws IOException if unicodeIndex not found
      */
     private Integer unicodeToGlyph(int unicodeIndex) throws IOException {
-        final Integer result = 
-            (Integer) unicodeToGlyphMap.get(new Integer(unicodeIndex));
+        final Integer result
+            = (Integer) unicodeToGlyphMap.get(new Integer(unicodeIndex));
         if (result == null) {
             throw new IOException(
                     "Glyph index not found for unicode value " + unicodeIndex);
