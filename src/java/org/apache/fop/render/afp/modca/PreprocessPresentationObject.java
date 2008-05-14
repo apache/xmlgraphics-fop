@@ -56,10 +56,6 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
                     prePresObj.getFullyQualifiedName());
         } else {
             this.objType = TYPE_OTHER;
-//            Registry registry = Registry.getInstance();
-//            Registry.Entry entry = registry.getEntry(compontentId);
-//            entry.
-//            setObjectClassification(objectClass, componentId)
         }
     }
     

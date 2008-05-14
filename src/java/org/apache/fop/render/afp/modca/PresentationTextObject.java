@@ -47,9 +47,15 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      */
     private static final String DEFAULT_NAME = "PTO00001";
 
-    private PresentationTextData currentPresentationTextData;
+    /**
+     * The current presentation text data
+     */
+    private PresentationTextData currentPresentationTextData = null;
 
-    private List presentationTextData;
+    /**
+     * The presentation text data list
+     */
+    private List/*<PresentationTextData>*/ presentationTextDataList = null;
 
     /**
      * Default constructor for the PresentationTextObject
@@ -183,22 +189,22 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * Helper method to mark the start of the presentation text data
      */
     private void startPresentationTextData() {
-        if (presentationTextData == null) {
-            presentationTextData = new java.util.ArrayList();
+        if (presentationTextDataList == null) {
+            presentationTextDataList = new java.util.ArrayList/*<PresentationTextData>*/();
         }
-        if (presentationTextData.size() == 0) {
+        if (presentationTextDataList.size() == 0) {
             currentPresentationTextData = new PresentationTextData(true);
         } else {
             currentPresentationTextData = new PresentationTextData();
         }
-        presentationTextData.add(currentPresentationTextData);
+        presentationTextDataList.add(currentPresentationTextData);
     }
 
     /**
      * Helper method to mark the end of the presentation text data
      */
     private void endPresentationTextData() {
-        currentPresentationTextData = null;
+        this.currentPresentationTextData = null;
     }
 
     /**
@@ -206,9 +212,9 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         writeStart(os);
-        writeObjects(presentationTextData, os);
+        writeObjects(this.presentationTextDataList, os);
         writeEnd(os);
     }
 
@@ -277,5 +283,15 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
             endPresentationTextData();
             endControlSequence();
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        if (presentationTextDataList != null) {
+            return presentationTextDataList.toString();
+        }
+        return null;
     }
 }

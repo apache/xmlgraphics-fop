@@ -144,7 +144,7 @@ public class ImageObject extends AbstractDataObject {
         super.writeContent(os);
         if (imageSegment != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageSegment.writeDataStream(baos);
+            imageSegment.write(baos);
             byte[] b = baos.toByteArray();
             int off = 0;
             while (off < b.length) {

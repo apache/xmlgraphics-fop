@@ -143,7 +143,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
      */
     protected void writeContent(OutputStream os) throws IOException {
         if (_imageSizeParameter != null) {
-            _imageSizeParameter.writeDataStream(os);
+            _imageSizeParameter.write(os);
         }
         os.write(getImageEncodingParameter());
         os.write(getImageIDESizeParameter());

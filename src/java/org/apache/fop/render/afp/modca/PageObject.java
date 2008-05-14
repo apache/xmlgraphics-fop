@@ -22,6 +22,8 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.tools.StringUtils;
+
 /**
  * Pages contain the data objects that comprise a presentation document. Each
  * page has a set of data objects associated with it. Each page within a
@@ -42,7 +44,17 @@ import java.io.OutputStream;
  * in page state.
  *
  */
-public class PageObject extends AbstractPageObject {
+public class PageObject extends AbstractResourceGroupContainer {
+
+    /**
+     * The page segment count
+     */
+    private int pageSegmentCount = 0;
+
+    /**
+     * The current page segment
+     */
+    private PageSegment currentPageSegment = null;
 
     /**
      * Construct a new page object for the specified name argument, the page
@@ -83,6 +95,135 @@ public class PageObject extends AbstractPageObject {
     }
 
     /**
+     * @return a new page segment object
+     */
+    private PageSegment createPageSegment() {
+        String name = PAGE_SEGMENT_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++pageSegmentCount), '0', 5);
+        PageSegment pageSegment = new PageSegment(name);
+        return pageSegment;
+    }
+    
+    /**
+     * @return the current page segment
+     */
+    private PageSegment getCurrentPageSegment() {
+        if (currentPageSegment == null) {
+            this.currentPageSegment = createPageSegment();        
+            super.addObject(currentPageSegment);
+        }
+        return this.currentPageSegment;
+    }
+    
+    private static final String PAGE_SEGMENT_NAME_PREFIX = "PSG";
+
+    /**
+     * Starts a new page segment and makes it current.
+     */
+    public void startPageSegment() {
+        getCurrentPageSegment();
+    }
+
+    /**
+     * Ends the current page segment.
+     */
+    public void endPageSegment() {
+        this.currentPageSegment = null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void addObject(AbstractAFPObject obj) {
+        if (currentPageSegment != null) {
+            getCurrentPageSegment().addObject(obj);
+        } else {
+            super.addObject(obj);
+        }
+    }
+
+    /**
+     * This method will create shading on the page using the specified
+     * coordinates (the shading contrast is controlled via the red, green blue
+     * parameters, by converting this to grayscale).
+     *
+     * @param x
+     *            the x coordinate of the shading
+     * @param y
+     *            the y coordinate of the shading
+     * @param w
+     *            the width of the shaded area
+     * @param h
+     *            the height of the shaded area
+     * @param red
+     *            the red value
+     * @param green
+     *            the green value
+     * @param blue
+     *            the blue value
+     */
+    public void createShading(int x, int y, int w, int h, int red, int green, int blue) {
+        int xCoord = 0;
+        int yCoord = 0;
+        int areaWidth = 0;
+        int areaHeight = 0;
+        switch (rotation) {
+            case 90:
+                xCoord = areaWidth - y - h;
+                yCoord = x;
+                areaWidth = h;
+                areaHeight = w;
+                break;
+            case 180:
+                xCoord = areaWidth - x - w;
+                yCoord = areaHeight - y - h;
+                areaWidth = w;
+                areaHeight = h;
+                break;
+            case 270:
+                xCoord = y;
+                yCoord = areaHeight - x - w;
+                areaWidth = h;
+                areaHeight = w;
+                break;
+            default:
+                xCoord = x;
+                yCoord = y;
+                areaWidth = w;
+                areaHeight = h;
+                break;
+        }
+
+        // Convert the color to grey scale
+        float shade = (float) ((red * 0.3) + (green * 0.59) + (blue * 0.11));
+
+        int grayscale = Math.round((shade / 255) * 16);
+
+        String imageName = "IMG"
+            + StringUtils.lpad(String.valueOf(getResourceCount() + 1),
+            '0', 5);
+
+        IMImageObject imImageObject = new IMImageObject(imageName);
+        ImageOutputControl imageOutputControl = new ImageOutputControl(0, 0);
+        ImageInputDescriptor imageInputDescriptor = new ImageInputDescriptor();
+        ImageCellPosition imageCellPosition = new ImageCellPosition(xCoord, yCoord);
+        imageCellPosition.setXFillSize(areaWidth);
+        imageCellPosition.setYFillSize(areaHeight);
+        imageCellPosition.setXSize(64);
+        imageCellPosition.setYSize(8);
+
+        //defining this as a resource
+        ImageRasterData imageRasterData = new ImageRasterData(
+                ImageRasterPattern.getRasterData(grayscale));
+
+        imImageObject.setImageOutputControl(imageOutputControl);
+        imImageObject.setImageInputDescriptor(imageInputDescriptor);
+        imImageObject.setImageCellPosition(imageCellPosition);
+        imImageObject.setImageRasterData(imageRasterData);
+        addObject(imImageObject);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected void writeStart(OutputStream os) throws IOException {
@@ -120,5 +261,12 @@ public class PageObject extends AbstractPageObject {
             data[9 + i] = nameBytes[i];
         }
         os.write(data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return this.getName();
     }
 }

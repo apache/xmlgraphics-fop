@@ -47,7 +47,7 @@ public class PageDescriptor extends AbstractDescriptor {
      * @param os The stream to write to
      * @throws java.io.IOException in the event that an I/O Exception occurred
      */
-    public void writeDataStream(OutputStream os)
+    public void write(OutputStream os)
         throws IOException {
 
         log.debug("width=" + width);

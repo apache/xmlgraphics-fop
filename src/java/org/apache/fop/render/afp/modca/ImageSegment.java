@@ -141,7 +141,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
      */
     public void writeContent(OutputStream os) throws IOException {
         if (imageContent != null) {
-            imageContent.writeDataStream(os);
+            imageContent.write(os);
         }
     }
 

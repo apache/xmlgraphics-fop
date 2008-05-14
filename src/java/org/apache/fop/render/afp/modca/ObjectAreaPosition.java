@@ -51,7 +51,7 @@ public class ObjectAreaPosition extends AbstractAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException in the event that an I/O exception of some sort has occurred.
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         byte[] len = BinaryUtils.convert(32, 2);
         byte[] xcoord = BinaryUtils.convert(x, 3);
         byte[] ycoord = BinaryUtils.convert(y, 3);

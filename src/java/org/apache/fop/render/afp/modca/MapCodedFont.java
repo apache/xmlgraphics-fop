@@ -63,7 +63,7 @@ public class MapCodedFont extends AbstractAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException an I/O exception of some sort has occurred
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(0x5A);

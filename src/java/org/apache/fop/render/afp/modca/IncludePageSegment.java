@@ -67,7 +67,7 @@ public class IncludePageSegment extends AbstractNamedAFPObject {
     /**
      * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[23]; //(9 +14)
 

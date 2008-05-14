@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * AFP format.
  *
  */
-public abstract class AbstractAFPObject implements AFPDataStreamWriter {
+public abstract class AbstractAFPObject implements Writable {
 
     /**
      * Static logging instance
@@ -51,7 +51,7 @@ public abstract class AbstractAFPObject implements AFPDataStreamWriter {
         if (objects != null) {
             for (Iterator it = objects.iterator(); it.hasNext();) {
                 AbstractAFPObject obj = (AbstractAFPObject)it.next(); 
-                obj.writeDataStream(os);
+                obj.write(os);
             }
         }
     }

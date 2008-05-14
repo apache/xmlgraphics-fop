@@ -25,12 +25,12 @@ import java.io.OutputStream;
 /**
  * Implementing object is able to write to an AFPDataStream
  */
-public interface AFPDataStreamWriter {
+public interface Writable {
     /**
-     * DataStream objects must implement the writeDataStream()
+     * DataStream objects must implement the write()
      * method to write its data to the given OutputStream
-     * @param os The outputsteam stream
+     * @param outputStream The outputsteam stream
      * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
-    void writeDataStream(OutputStream os) throws IOException;
+    void write(OutputStream outputStream) throws IOException;
 }

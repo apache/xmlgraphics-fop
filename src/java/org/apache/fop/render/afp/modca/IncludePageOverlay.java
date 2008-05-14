@@ -87,7 +87,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
     /**
      * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         byte[] data = new byte[25]; //(9 +16)
         data[0] = 0x5A;
 

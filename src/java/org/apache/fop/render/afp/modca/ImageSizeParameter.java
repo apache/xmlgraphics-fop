@@ -53,7 +53,7 @@ public class ImageSizeParameter extends AbstractAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException if an I/O exception occured
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             (byte)0x94, // ID = Image Size Parameter
             0x09, // Length

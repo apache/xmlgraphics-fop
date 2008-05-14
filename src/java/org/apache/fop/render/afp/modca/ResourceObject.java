@@ -22,6 +22,8 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.modca.triplets.Triplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -34,8 +36,13 @@ public class ResourceObject extends AbstractPreparedAFPObject implements DataObj
     /**
      * the object container of this resource object
      */
-    private ObjectContainer objectContainer;
+    private AbstractNamedAFPObject namedObject;
         
+    /**
+     * the data object info
+     */
+    private DataObjectInfo dataObjectInfo;
+
     /**
      * Default constructor
      * 
@@ -44,49 +51,63 @@ public class ResourceObject extends AbstractPreparedAFPObject implements DataObj
     public ResourceObject(String name) {
         super(name);
     }
-        
+
     /**
      * Sets the data object referenced by this resource object
-     * @param objectContainer the object container
+     * @param namedObject the named data object
      */
-    public void setObjectContainer(ObjectContainer objectContainer) {
-        this.objectContainer = objectContainer;
-        setResourceObjectType(objectContainer);
+    public void setDataObject(AbstractNamedAFPObject namedObject) {
+        this.namedObject = namedObject;        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AbstractNamedAFPObject getDataObject() {
+        return namedObject;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DataObjectInfo getDataObjectInfo() {
+        return this.dataObjectInfo;
     }
     
     /**
      * {@inheritDoc}
      */
-    public AbstractNamedAFPObject getDataObject() {
-        if (objectContainer != null) {
-            return objectContainer.getDataObject();
-        }
-        return null;
-    }
-    
-    /**
-     * Sets the resource object type
-     * @param resourceObj the resource object
-     */
-    public void setResourceObjectType(AbstractNamedAFPObject resourceObj) {
+    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
+        this.dataObjectInfo = dataObjectInfo;
+        
         byte type;
-        if (resourceObj instanceof ObjectContainer) {
+        if (namedObject instanceof ObjectContainer) {
             type = ResourceObjectTypeTriplet.OBJECT_CONTAINER;
-        } else if (resourceObj instanceof ImageObject) {
+            
+//            ObjectContainer objectContainer = (ObjectContainer)namedObject;
+//            DataObjectInfo dataObjectInfo = objectContainer.getDataObjectInfo();
+            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+            super.setObjectClassification(
+                    ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+                    objectType);
+            
+        } else if (namedObject instanceof ImageObject) {
             type = ResourceObjectTypeTriplet.IMAGE_OBJECT;
-        } else if (resourceObj instanceof GraphicsObject) {
+        } else if (namedObject instanceof GraphicsObject) {
             type = ResourceObjectTypeTriplet.GRAPHICS_OBJECT;
-        } else if (resourceObj instanceof Document) {
+        } else if (namedObject instanceof Document) {
             type = ResourceObjectTypeTriplet.DOCUMENT_OBJECT;
-        } else if (resourceObj instanceof PageSegment) {
+        } else if (namedObject instanceof PageSegment) {
             type = ResourceObjectTypeTriplet.PAGE_SEGMENT_OBJECT;
-        } else if (resourceObj instanceof Overlay) {
+        } else if (namedObject instanceof Overlay) {
             type = ResourceObjectTypeTriplet.OVERLAY_OBJECT;
         } else {
             throw new UnsupportedOperationException(
-                    "Unsupported resource object type " + resourceObj);
+                    "Unsupported resource object type " + namedObject);
         }
+
         getTriplets().add(new ResourceObjectTypeTriplet(type));        
+
     }
         
     /**
@@ -126,8 +147,8 @@ public class ResourceObject extends AbstractPreparedAFPObject implements DataObj
      */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os); // write triplets
-        if (objectContainer != null) {
-            objectContainer.writeDataStream(os);
+        if (namedObject != null) {
+            namedObject.write(os);
         }
     }
 
@@ -194,7 +215,7 @@ public class ResourceObject extends AbstractPreparedAFPObject implements DataObj
             super(RESOURCE_OBJECT,
                 new byte[] {
                     type,
-                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Constant Data
                 }
             );
         }

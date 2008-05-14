@@ -82,7 +82,7 @@ public abstract class AbstractDataObject extends AbstractPreparedObjectContainer
      */
     protected void writeContent(OutputStream os) throws IOException {
         if (objectEnvironmentGroup != null) {
-            objectEnvironmentGroup.writeDataStream(os);
+            objectEnvironmentGroup.write(os);
         }
         super.writeContent(os);
     }

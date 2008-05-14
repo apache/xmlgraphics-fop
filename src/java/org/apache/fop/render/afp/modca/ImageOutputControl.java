@@ -78,7 +78,7 @@ public class ImageOutputControl extends AbstractAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException if an I/O exception occured
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[33];
 

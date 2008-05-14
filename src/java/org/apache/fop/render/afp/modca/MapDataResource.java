@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 //import org.apache.fop.render.afp.ResourceLevel;
+import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
@@ -41,44 +42,31 @@ public class MapDataResource extends AbstractStructuredAFPObject {
 
     /**
      * Main constructor
-     * @param includeObj a map data resource for a given structured AFP object
+     * @param dataObjectAccessor a data object accessor
      */
-    public MapDataResource(IncludeObject includeObj) {
-        AbstractStructuredAFPObject dataObject = includeObj.getDataObject();
-//        ResourceObject resObj = includeObj.getResource();
-        String fqName = dataObject.getFullyQualifiedName();
-        ResourceInfo resourceInfo = includeObj.getResourceInfo();
-        if (fqName != null) {
-            if (resourceInfo.isExternal()) {
-                String dest = resourceInfo.getExternalResourceGroupDest();
+    public MapDataResource(DataObjectAccessor dataObjectAccessor) {
+        AbstractNamedAFPObject namedDataObject = dataObjectAccessor.getDataObject();
+        DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
+        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        if (resourceInfo.isExternal()) {
+            String dest = resourceInfo.getExternalResourceGroupDest();
+            if (dest != null) {
                 super.setFullyQualifiedName(
-                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
-                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, dest);
-            } else {
-//            super.setFullyQualifiedName(
-//                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
-//                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, fqName);            
-                super.setFullyQualifiedName(
-                    FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF,
-                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, fqName);
+                        FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
+                        FullyQualifiedNameTriplet.FORMAT_URL, dest);
             }
+        } else {
+            String fqName = namedDataObject.getFullyQualifiedName();
+            super.setFullyQualifiedName(
+                    FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF,
+                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, fqName);            
         }
-//        if (fqName != null) {
-//            super.setFullyQualifiedName(
-//                FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF,
-//                FullyQualifiedNameTriplet.FORMAT_CHARSTR, fqName);
-//        }
-        final boolean dataInContainer = true;
-        final boolean containerHasOEG = false;
-        final boolean dataInOCD = true;
-        StrucFlgs strucFlgs = new StrucFlgs(
-            dataInContainer, containerHasOEG, dataInOCD
-        );
 
-        //  
-//        super.setObjectClassification(
-//                ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
-//                objectType, strucFlgs);
+        // Set object classification
+        Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+        super.setObjectClassification(
+                ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
+                objectType);
     }
 
     /**

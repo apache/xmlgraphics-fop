@@ -35,6 +35,8 @@ public class StrucFlgs {
     private static final int OBJECT_CONTAINER_DATA_NOT_CARRIED_IN_OBJECT_DATA = 16;
     private static final int OBJECT_CONTAINER_DATA_OBJECT_DATA_CONTAINMENT_UNKNOWN = 32;
     private static final int OBJECT_CONTAINER_DATA_CARRIES_OBJECT_DATA = 48;
+    
+    private static StrucFlgs DEFAULT_STRUC_FLGS = null;
 
     private byte value = 0;
     
@@ -76,5 +78,23 @@ public class StrucFlgs {
      */
     public byte getValue() {
         return this.value;
+    }
+    
+    /**
+     * Returns the default strucflg setting
+     * (data in container, container without OEG, data in OCD)
+     * 
+     * @return the default strucflg settings
+     */
+    public static StrucFlgs getDefault() {
+        synchronized (StrucFlgs.class) {
+            if (DEFAULT_STRUC_FLGS == null) {
+                final boolean dataInContainer = true;
+                final boolean containerHasOEG = false;
+                final boolean dataInOCD = true;
+                DEFAULT_STRUC_FLGS = new StrucFlgs(dataInContainer, containerHasOEG, dataInOCD);
+            }   
+        }
+        return DEFAULT_STRUC_FLGS;
     }
 }

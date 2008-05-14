@@ -153,15 +153,15 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         
-        objectAreaDescriptor.writeDataStream(os);
-        objectAreaPosition.writeDataStream(os);
+        objectAreaDescriptor.write(os);
+        objectAreaPosition.write(os);
 
         if (imageDataDescriptor != null) {
-            imageDataDescriptor.writeDataStream(os);
+            imageDataDescriptor.write(os);
         }
 
         if (graphicsDataDescriptor != null) {
-            graphicsDataDescriptor.writeDataStream(os);
+            graphicsDataDescriptor.write(os);
         }
     }
 

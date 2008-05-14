@@ -129,8 +129,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         BorderProps bpsStart = (BorderProps)area.getTrait(Trait.BORDER_START);
         BorderProps bpsEnd = (BorderProps)area.getTrait(Trait.BORDER_END);
 
-        Trait.Background back;
-        back = (Trait.Background)area.getTrait(Trait.BACKGROUND);
+        Trait.Background back = (Trait.Background)area.getTrait(Trait.BACKGROUND);
         if (back != null) {
             endTextObject();
 

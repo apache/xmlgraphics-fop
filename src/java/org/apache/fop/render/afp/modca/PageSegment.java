@@ -105,5 +105,12 @@ public class PageSegment extends AbstractNamedAFPObject {
             data[9 + i] = nameBytes[i];
         }
         os.write(data);
-    }    
+    }
+ 
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return this.name;
+    }
 }

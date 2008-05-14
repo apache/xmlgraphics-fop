@@ -36,7 +36,7 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * The maps data resources contained in this resource environment group
      */
-    private List mapDataResources = null;
+    private List/*<MapDataResource>*/ mapDataResources = null;
     
     /**
      * The maps page overlays contained in this resource environment group
@@ -46,7 +46,7 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * The pre-process presentation objects contained in this resource environment group
      */
-    private List preProcessPresentationObjects = null;
+    private List/*<PreprocessPresentationObject>*/ preProcessPresentationObjects = null;
 
     /**
      * The resource environment group state
@@ -60,9 +60,9 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
         this(DEFAULT_NAME);
     }
 
-    private List getMapDataResources() {
+    private List/*<MapDataResource>*/ getMapDataResources() {
         if (mapDataResources == null) {
-            this.mapDataResources = new java.util.ArrayList();
+            this.mapDataResources = new java.util.ArrayList/*<MapDataResource>*/();
         }
         return this.mapDataResources;
     }
@@ -74,9 +74,10 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
         return this.mapPageOverlays;
     }
 
-    private List getPreprocessPresentationObjects() {
+    private List/*<PreprocessPresentationObject>*/ getPreprocessPresentationObjects() {
         if (preProcessPresentationObjects == null) {
-            this.preProcessPresentationObjects = new java.util.ArrayList();
+            this.preProcessPresentationObjects
+                = new java.util.ArrayList/*<PreprocessPresentationObject>*/();
         }
         return this.preProcessPresentationObjects;
     }

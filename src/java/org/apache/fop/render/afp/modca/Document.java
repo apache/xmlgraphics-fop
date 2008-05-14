@@ -94,9 +94,9 @@ public final class Document extends AbstractResourceEnvironmentGroupContainer {
      * @param os The stream to write to
      * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         if (isComplete()) {
-            super.writeDataStream(os);
+            super.write(os);
         }
     }
 

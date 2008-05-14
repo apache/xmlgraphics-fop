@@ -138,7 +138,7 @@ public class Triplet extends AbstractAFPObject {
     /**
      * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         os.write((byte)data.length + 2);
         os.write(id);
         os.write(data);

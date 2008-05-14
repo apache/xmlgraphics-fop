@@ -65,7 +65,7 @@ public class PresentationTextDescriptor extends AbstractDescriptor {
      * @param os The stream to write to
      * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
-    public void writeDataStream(OutputStream os)
+    public void write(OutputStream os)
         throws IOException {
 
         byte[] data = new byte[23];

@@ -61,7 +61,7 @@ public class GraphicsDataDescriptor extends AbstractAFPObject {
     /**
      * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         byte[] xreswind = BinaryUtils.convert(xresol * 10, 2);
         byte[] yreswind = BinaryUtils.convert(yresol * 10, 2);
         byte[] xlcoord = BinaryUtils.convert(xlwind, 2);

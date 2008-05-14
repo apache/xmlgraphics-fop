@@ -22,8 +22,8 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.ResourceInfo;
-import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
+import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -69,7 +69,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
     /**
      * The object type (default is other)
      */
-    private byte objectType = TYPE_OTHER;
+    private byte dataObjectType = TYPE_OTHER;
 
     /**
      * The orientation on the include object
@@ -95,11 +95,6 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
      * The Y-axis origin defined in the object
      */
     private int yContentOffset = -1;
-        
-    /**
-     * the resource info
-     */
-    private ResourceInfo resourceInfo = null;
 
     /**
      * the referenced data object
@@ -113,75 +108,72 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
      *
      * @param name the name of this include object
      * @param dataObjectAccessor the data object accessor
-     * @param resourceInfo the resource information
      */
-    public IncludeObject(String name, DataObjectAccessor dataObjectAccessor,
-            ResourceInfo resourceInfo) {
+    public IncludeObject(String name, DataObjectAccessor dataObjectAccessor) {
         super(name);
-        
-        setDataObjectAccessor(dataObjectAccessor);
-        setResourceInfo(resourceInfo);
-    }
 
-    /**
-     * Sets the data object accessor and the object type
-     * @param dataObjectAccessor the data object accessor
-     */
-    private void setDataObjectAccessor(DataObjectAccessor dataObjectAccessor) {
         this.dataObjectAccessor = dataObjectAccessor;
         
         AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
-        
-        if (dataObject instanceof ImageObject) {
-            this.objectType = TYPE_IMAGE;
-        } else if (dataObject instanceof GraphicsObject) {
-            this.objectType = TYPE_GRAPHIC;
-        } else if (dataObject instanceof PageSegment) {
-            this.objectType = TYPE_PAGE_SEGMENT;
-        } else {
-            this.objectType = TYPE_OTHER;
+
+        // Strip any object container
+        if (dataObject instanceof ObjectContainer) {
+            ObjectContainer objectContainer = (ObjectContainer)dataObject;
+            dataObject = objectContainer.getDataObject();
         }
-    }
-
-    /**
-     * @return the data object accessor
-     */
-    private DataObjectAccessor getDataObjectAccessor() {
-        return this.dataObjectAccessor;
-    }
-    
-    /**
-     * Sets the resource level for this resource object
-     * @param resourceInfo the resource information
-     */
-    private void setResourceInfo(ResourceInfo resourceInfo) {
-        this.resourceInfo = resourceInfo;
-        
-        // set data object reference triplet
-        if (resourceInfo != null && resourceInfo.isExternal()) {
-            String dest = resourceInfo.getExternalResourceGroupDest();
-            super.setFullyQualifiedName(
-                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
-                    FullyQualifiedNameTriplet.FORMAT_URL, dest);
+        if (dataObject instanceof ImageObject) {
+            this.dataObjectType = TYPE_IMAGE;
+        } else if (dataObject instanceof GraphicsObject) {
+            this.dataObjectType = TYPE_GRAPHIC;
+        } else if (dataObject instanceof PageSegment) {
+            this.dataObjectType = TYPE_PAGE_SEGMENT;
         } else {
-            super.setFullyQualifiedName(
-                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
-                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, getDataObject().getName());
-        }        
-    }
-    
-    /**
-     * @return the resource info of this resource object
-     */
-    public ResourceInfo getResourceInfo() {
-        return this.resourceInfo;
+            this.dataObjectType = TYPE_OTHER;
+            DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
+            Registry registry = Registry.getInstance();
+            Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
+            // When other type must set object classification
+            super.setObjectClassification(
+                    ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+                    objectType);
+        }
+        
+//        ResourceInfo resourceInfo = dataObjectAccessor.getDataObjectInfo().getResourceInfo();
+//        // Set data object reference triplet
+//        if (resourceInfo != null && resourceInfo.isExternal()) {
+//            String dest = resourceInfo.getExternalResourceGroupDest();
+//            super.setFullyQualifiedName(
+//                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
+//                    FullyQualifiedNameTriplet.FORMAT_URL, dest);
+//        } else {
+//            super.setFullyQualifiedName(
+//                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
+//                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, dataObject.getName());
+//        }
+        
+        // Set measurement units triplet
+        setMeasurementUnits();
     }
 
     /**
-     * @return the actual resource data object referenced by this include object
+     * {@inheritDoc}
      */
     public AbstractNamedAFPObject getDataObject() {
-        return getDataObjectAccessor().getDataObject();
+        return dataObjectAccessor.getDataObject();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public DataObjectInfo getDataObjectInfo() {
+        return dataObjectAccessor.getDataObjectInfo();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
+        dataObjectAccessor.setDataObjectInfo(dataObjectInfo);
     }
 
     /**
@@ -223,7 +215,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
     /**
      * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {       
+    public void write(OutputStream os) throws IOException {       
         byte[] data = new byte[36];
         data[0] = 0x5A;
 
@@ -246,7 +238,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         }
 
         data[17] = 0x00; // reserved
-        data[18] = objectType;
+        data[18] = dataObjectType;
 
         //XoaOset (object area)
         if (xOffset > 0) {
@@ -336,5 +328,12 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         // Write triplet for FQN internal/external object reference 
         byte[] tripletData = super.getTripletData();
         os.write(tripletData);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "IOB: " + this.getName();
     }
 }

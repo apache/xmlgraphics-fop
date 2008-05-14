@@ -83,7 +83,7 @@ public class MapPageOverlay extends AbstractAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException if an I/O exception occurred
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         int oLayCount = getOverlays().size();
         int recordlength = oLayCount * 18;
 

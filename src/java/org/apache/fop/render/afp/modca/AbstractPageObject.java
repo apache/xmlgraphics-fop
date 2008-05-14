@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.fop.render.afp.fonts.AFPFont;
-import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
  * Pages contain the data objects that comprise a presentation document. Each
@@ -47,27 +46,32 @@ import org.apache.fop.render.afp.tools.StringUtils;
  * in page state.
  *
  */
-public abstract class AbstractPageObject extends AbstractResourceGroupContainer {
+public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * The active environment group for the page
      */
-    protected ActiveEnvironmentGroup activeEnvironmentGroup;
+    protected ActiveEnvironmentGroup activeEnvironmentGroup = null;
 
     /**
-     * The presentation text object, we only have one per page
+     * The current presentation text object
      */
-    private PresentationTextObject presentationTextObject;
+    private PresentationTextObject currentPresentationTextObject = null;
 
     /**
      * The list of tag logical elements
      */
-    protected List tagLogicalElements;
+    protected List/*<TagLogicalElement>*/ tagLogicalElements = null;
 
     /**
      * The list of the include page segments
      */
-    protected List segments;
+    protected List/*<IncludePageSegment>*/ includePageSegments = null;
+
+    /**
+     * The list of objects within this resource container
+     */
+    protected List/*<AbstractStructuredAFPObject>*/ objects = null;
 
     /**
      * The page width
@@ -82,12 +86,36 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
     /**
      * The page rotation
      */
-    private int rotation = 0;
+    protected int rotation = 0;
 
     /**
      * The page state
      */
     private boolean complete = false;
+
+    /**
+     * The width resolution
+     */
+    private int widthRes;
+
+    /**
+     * The height resolution
+     */
+    private int heightRes;
+
+    /**
+     * Default constructor
+     */
+    public AbstractPageObject() {
+    }
+
+    /**
+     * Named constructor
+     * @param name the name of this page object
+     */
+    public AbstractPageObject(String name) {
+        super(name);
+    }
 
     /**
      * Construct a new page object for the specified name argument, the page
@@ -113,27 +141,8 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
         this.width = width;
         this.height = height;
         this.rotation = rotation;
-
-        /**
-         * Every page object must have an ActiveEnvironmentGroup
-         */
-        this.activeEnvironmentGroup = new ActiveEnvironmentGroup(
-                width, height, widthRes, heightRes);
-
-        if (rotation != 0) {
-            switch (rotation) {
-                case 90:
-                    activeEnvironmentGroup.setPosition(width, 0, rotation);
-                    break;
-                case 180:
-                    activeEnvironmentGroup.setPosition(width, height, rotation);
-                    break;
-                case 270:
-                    activeEnvironmentGroup.setPosition(0, height, rotation);
-                    break;
-                default:
-            }
-        }
+        this.widthRes = widthRes;
+        this.heightRes = heightRes;
     }
 
     /**
@@ -208,111 +217,31 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
      * sequence on the current presentation text object.
      */
     public void endPage() {
-        if (presentationTextObject != null) {
-            presentationTextObject.endControlSequence();
+        if (currentPresentationTextObject != null) {
+            currentPresentationTextObject.endControlSequence();
         }
         complete = true;
     }
 
-    /**
-     * This method will create shading on the page using the specified
-     * coordinates (the shading contrast is controlled via the red, green blue
-     * parameters, by converting this to grey scale).
-     *
-     * @param x
-     *            the x coordinate of the shading
-     * @param y
-     *            the y coordinate of the shading
-     * @param w
-     *            the width of the shaded area
-     * @param h
-     *            the height of the shaded area
-     * @param red
-     *            the red value
-     * @param green
-     *            the green value
-     * @param blue
-     *            the blue value
-     */
-    public void createShading(int x, int y, int w, int h, int red, int green, int blue) {
-        int xCoord = 0;
-        int yCoord = 0;
-        int areaWidth = 0;
-        int areaHeight = 0;
-        switch (rotation) {
-            case 90:
-                xCoord = areaWidth - y - h;
-                yCoord = x;
-                areaWidth = h;
-                areaHeight = w;
-                break;
-            case 180:
-                xCoord = areaWidth - x - w;
-                yCoord = areaHeight - y - h;
-                areaWidth = w;
-                areaHeight = h;
-                break;
-            case 270:
-                xCoord = y;
-                yCoord = areaHeight - x - w;
-                areaWidth = h;
-                areaHeight = w;
-                break;
-            default:
-                xCoord = x;
-                yCoord = y;
-                areaWidth = w;
-                areaHeight = h;
-                break;
-        }
-
-        // Convert the color to grey scale
-        float shade = (float) ((red * 0.3) + (green * 0.59) + (blue * 0.11));
-
-        int greyscale = Math.round((shade / 255) * 16);
-
-        String imageName = "IMG"
-            + StringUtils.lpad(String.valueOf(getResourceCount() + 1),
-            '0', 5);
-
-        IMImageObject io = new IMImageObject(imageName);
-        ImageOutputControl ioc = new ImageOutputControl(0, 0);
-        ImageInputDescriptor iid = new ImageInputDescriptor();
-        ImageCellPosition icp = new ImageCellPosition(xCoord, yCoord);
-        icp.setXFillSize(areaWidth);
-        icp.setYFillSize(areaHeight);
-        icp.setXSize(64);
-        icp.setYSize(8);
-
-        //defining this as a resource
-        ImageRasterData ird = new ImageRasterData(
-                ImageRasterPattern.getRasterData(greyscale));
-
-        io.setImageOutputControl(ioc);
-        io.setImageInputDescriptor(iid);
-        io.setImageCellPosition(icp);
-        io.setImageRasterData(ird);
-        addObject(io);
-    }
-
     private void endPresentationObject() {
-        if (presentationTextObject != null) {
-            presentationTextObject.endControlSequence();
-            presentationTextObject = null;
+        if (currentPresentationTextObject != null) {
+            currentPresentationTextObject.endControlSequence();
+            currentPresentationTextObject = null;
         }
     }
-    
+        
     /**
      * Helper method to create a presentation text object
      * on the current page and to return the object.
      * @return the presentation text object
      */
     private PresentationTextObject getPresentationTextObject() {
-        if (presentationTextObject == null) {
-            this.presentationTextObject = new PresentationTextObject();
-            super.addObject(this.presentationTextObject);
+        if (currentPresentationTextObject == null) {
+            PresentationTextObject presentationTextObject = new PresentationTextObject();
+            addObject(presentationTextObject);
+            this.currentPresentationTextObject = presentationTextObject;
         }
-        return presentationTextObject;
+        return currentPresentationTextObject;
     }
     
     /**
@@ -326,7 +255,7 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
     public void createTagLogicalElement(String name, String value) {
         TagLogicalElement tle = new TagLogicalElement(name, value);
         if (tagLogicalElements == null) {
-            tagLogicalElements = new java.util.ArrayList();
+            tagLogicalElements = new java.util.ArrayList/*<TagLogicalElement>*/();
         }
         tagLogicalElements.add(tle);
     }
@@ -352,10 +281,10 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
      */
     public void createIncludePageSegment(String name, int xCoor, int yCoor) {
         IncludePageSegment ips = new IncludePageSegment(name, xCoor, yCoor);
-        if (segments == null) {
-            segments = new java.util.ArrayList();
+        if (includePageSegments == null) {
+            includePageSegments = new java.util.ArrayList/*<IncludePageSegment>*/();
         }
-        segments.add(ips);
+        includePageSegments.add(ips);
     }
 
     /**
@@ -364,6 +293,28 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
      * @return the ActiveEnvironmentGroup object
      */
     public ActiveEnvironmentGroup getActiveEnvironmentGroup() {
+        if (activeEnvironmentGroup == null) {
+            /**
+             * Every page object must have an ActiveEnvironmentGroup
+             */
+            this.activeEnvironmentGroup = new ActiveEnvironmentGroup(
+                    width, height, widthRes, heightRes);
+
+            if (rotation != 0) {
+                switch (rotation) {
+                    case 90:
+                        activeEnvironmentGroup.setPosition(width, 0, rotation);
+                        break;
+                    case 180:
+                        activeEnvironmentGroup.setPosition(width, height, rotation);
+                        break;
+                    case 270:
+                        activeEnvironmentGroup.setPosition(0, height, rotation);
+                        break;
+                    default:
+                }
+            }
+        }
         return activeEnvironmentGroup;
     }
 
@@ -404,21 +355,33 @@ public abstract class AbstractPageObject extends AbstractResourceGroupContainer 
      */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
-        getActiveEnvironmentGroup().writeDataStream(os);
-        writeObjects(segments, os);
-        writeObjects(tagLogicalElements, os);
-        writeObjects(objects, os);
+        if (this instanceof PageObject) {
+            getActiveEnvironmentGroup().write(os);
+        }
+        writeObjects(this.includePageSegments, os);
+        writeObjects(this.tagLogicalElements, os);
+        writeObjects(this.objects, os);
     }
     
     /**
-     * {@inheritDoc}
+     * Adds an AFP object to the resource group in this container
+     * @param obj an AFP object
      */
-    protected void addObject(AbstractStructuredAFPObject obj) {
-        if (obj instanceof IncludeObject) {
-            IncludeObject includeObj = (IncludeObject)obj;
-            getActiveEnvironmentGroup().createResource(includeObj);            
+    protected void addObject(AbstractAFPObject obj) {
+        if (objects == null) {
+            this.objects = new java.util.ArrayList/*<AbstractAFPObject>*/();
         }
-        endPresentationObject();
-        super.addObject(obj);
+        objects.add(obj);
     }
+
+//    /**
+//     * {@inheritDoc}
+//     */
+//    protected void addObject(AbstractAFPObject obj) {
+//        if (obj instanceof DataObjectAccessor) {
+//            DataObjectAccessor dataObjectAccessor = (DataObjectAccessor)obj;
+//            getActiveEnvironmentGroup().createMapDataResource(dataObjectAccessor);
+//        }
+//        endPresentationObject();
+//    }    
 }

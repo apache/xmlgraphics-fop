@@ -31,8 +31,6 @@ import java.util.List;
  * entity. Page groups are often processed in stand-alone fashion; that is, they
  * are indexed, retrieved, and presented outside the context of the containing
  * document.
- *
- * @author <a href="mailto:pete@townsend.uk.com">Pete Townsend </a>
  */
 public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
 
@@ -139,5 +137,12 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
             data[9 + i] = nameBytes[i];
         }
         os.write(data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return this.getName();
     }
 }

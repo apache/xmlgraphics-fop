@@ -54,7 +54,7 @@ public class ImageDataDescriptor extends AbstractAFPObject {
      * @param os The stream to write to
      * @throws java.io.IOException
      */
-    public void writeDataStream(OutputStream os)
+    public void write(OutputStream os)
         throws IOException {
 
         byte[] data = new byte[] {

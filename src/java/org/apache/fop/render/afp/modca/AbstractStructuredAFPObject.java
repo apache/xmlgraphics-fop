@@ -129,7 +129,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
      * @param os The stream to write to
      * @throws IOException in the event that an I/O exception occurred
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         writeStart(os);
         writeContent(os);
         writeEnd(os);
@@ -193,12 +193,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
      * @param fqName the fully qualified name of this resource
      */
     public void setFullyQualifiedName(byte fqnType, byte fqnFormat, String fqName) {
-        try {
-            byte[] fqNameBytes = fqName.getBytes(AFPConstants.EBCIDIC_ENCODING);
-            addTriplet(new FullyQualifiedNameTriplet(fqnType, fqnFormat, fqNameBytes));
-        } catch (UnsupportedEncodingException e) {
-            log.error(e.getMessage());
-        }
+        addTriplet(new FullyQualifiedNameTriplet(fqnType, fqnFormat, fqName));
     }
 
     /**
@@ -208,17 +203,9 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         FullyQualifiedNameTriplet fqNameTriplet
             = (FullyQualifiedNameTriplet)getTriplet(Triplet.FULLY_QUALIFIED_NAME);
         if (fqNameTriplet != null) {
-            byte[] nameBytes = fqNameTriplet.getFullyQualifiedName();
-            if (nameBytes != null) {
-                try {
-                    return new String(nameBytes, AFPConstants.EBCIDIC_ENCODING);
-                } catch (UnsupportedEncodingException e) {
-                    log.error(e.getMessage());
-                }
-            } else {
-                log.warn(this + " has no fully qualified name");
-            }
+            return fqNameTriplet.getFullyQualifiedName();
         }
+        log.warn(this + " has no fully qualified name");
         return null;
     }
     
@@ -232,6 +219,16 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     public void setObjectClassification(byte objectClass, Registry.ObjectType objectType,
             StrucFlgs strucFlgs) {
         addTriplet(new ObjectClassificationTriplet(objectClass, objectType, strucFlgs));
+    }
+
+    /**
+     * Sets the objects classification with the default structure flags
+     * @param objectClass the classification of the object
+     * @param objectType the MOD:CA registry object type entry for the given
+     *        object/component type of the object
+     */
+    public void setObjectClassification(byte objectClass, Registry.ObjectType objectType) {
+        setObjectClassification(objectClass, objectType, StrucFlgs.getDefault());
     }
         
     /**

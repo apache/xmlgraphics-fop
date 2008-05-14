@@ -25,7 +25,6 @@ import java.io.OutputStream;
 
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
-import org.apache.fop.render.afp.modca.triplets.StrucFlgs;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -42,30 +41,18 @@ public class ObjectContainer extends AbstractNamedAFPObject implements DataObjec
      * the object data
      */
     private byte[] objectData = null;
+
+    /**
+     * the data object info
+     */
+    private DataObjectInfo dataObjectInfo;
     
     /**
      * Main constructor
      * @param name the name of this object container
-     * @param dataObjectInfo the data object info
      */
-    public ObjectContainer(String name, DataObjectInfo dataObjectInfo) {
-        super(name);
-        final boolean dataInContainer = true;
-        final boolean containerHasOEG = false;
-        final boolean dataInOCD = true;
-        StrucFlgs strucFlgs = new StrucFlgs(
-            dataInContainer, containerHasOEG, dataInOCD
-        );
-        Registry registry = Registry.getInstance();
-        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
-        if (objectType != null) {
-            super.setObjectClassification(
-                    ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
-                    objectType, strucFlgs
-            );
-        } else {
-            log.warn("no object type for " + dataObjectInfo.getUri());
-        }
+    public ObjectContainer(String name) {
+        super(name);        
     }
     
     /**
@@ -86,12 +73,36 @@ public class ObjectContainer extends AbstractNamedAFPObject implements DataObjec
     /**
      * {@inheritDoc}
      */
+    public DataObjectInfo getDataObjectInfo() {
+        return this.dataObjectInfo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
+        this.dataObjectInfo = dataObjectInfo;
+        
+        Registry registry = Registry.getInstance();
+        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
+        if (objectType != null) {
+            super.setObjectClassification(
+                    ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
+                    objectType);
+        } else {
+            log.warn("no object type for " + dataObjectInfo.getUri());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
         
         // create object data from data object
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        dataObj.writeDataStream(bos);
+        dataObj.write(bos);
         this.objectData = bos.toByteArray();
 
         // Set the total record length
@@ -127,7 +138,7 @@ public class ObjectContainer extends AbstractNamedAFPObject implements DataObjec
         // write out object data in chunks of object container data
         for (int i = 0; i <= objectData.length; i += ObjectContainerData.MAX_DATA_LEN) {
             ObjectContainerData objectContainerData = new ObjectContainerData(objectData, i);
-            objectContainerData.writeDataStream(os);
+            objectContainerData.write(os);
         }
     }
     

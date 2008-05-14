@@ -191,14 +191,14 @@ public class DataObjectInfo {
     }
 
     /**
-     * @return the object type entry
+     * @return the object type MOD:CA Registry entry
      */
-    protected ObjectType getObjectType() {
+    public ObjectType getObjectType() {
         return objectType;
     }
 
     /**
-     * @return returns the resource level at which this data object should reside
+     * @return the resource level at which this data object should reside
      */
     public ResourceInfo getResourceInfo() {
         return resourceInfo;
@@ -239,8 +239,26 @@ public class DataObjectInfo {
                             throw new UnsupportedOperationException(msg);
                         }
                         File resourceExternalGroupFile = new File(resourceExternalDest);
-                        if (resourceExternalGroupFile.canWrite()) {
+                        SecurityManager security = System.getSecurityManager();
+                        try {
+                            if (security != null) {
+                                security.checkWrite(resourceExternalGroupFile.getPath());
+                            }
+                        } catch (SecurityException ex) {
+                            log.warn("unable to gain write access to external resource file: "
+                                    + resourceExternalDest);                            
+                        }
+                        
+                        try {
+                            boolean exists = resourceExternalGroupFile.exists();
+                            if (exists) {
+                                log.warn("overwritting external resource file: "
+                                        + resourceExternalDest);
+                            }
                             resourceInfo.setExternalResourceGroupFile(resourceExternalGroupFile);
+                        } catch (SecurityException ex) {
+                            log.warn("unable to gain read access to external resource file: "
+                                    + resourceExternalDest);
                         }
                     }
                 } else {

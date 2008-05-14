@@ -150,14 +150,14 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         writeObjects(mapPageOverlays, os);
         
         if (pageDescriptor != null) {
-            pageDescriptor.writeDataStream(os);            
+            pageDescriptor.write(os);            
         }
         if (objectAreaDescriptor != null && objectAreaPosition != null) {
-            objectAreaDescriptor.writeDataStream(os);
-            objectAreaPosition.writeDataStream(os);
+            objectAreaDescriptor.write(os);
+            objectAreaPosition.write(os);
         }
         if (presentationTextDataDescriptor != null) {
-            presentationTextDataDescriptor.writeDataStream(os);
+            presentationTextDataDescriptor.write(os);
         }
     }
 
@@ -243,7 +243,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
             }
         }
     }
-    
+
     /**
      * Getter method for the most recent MapCodedFont added to the
      * Active Environment Group (returns null if no MapCodedFonts exist)
@@ -260,9 +260,9 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     
     /**
      * Method to create a map data resource object
-     * @param obj creates a map data resource entry for a given AFP data resource object
+     * @param dataObjectAccessor a data object accessor
      */
-    public void createResource(IncludeObject obj) {
-        getMapDataResources().add(new MapDataResource(obj));
+    protected void createMapDataResource(DataObjectAccessor dataObjectAccessor) {
+        getMapDataResources().add(new MapDataResource(dataObjectAccessor));
     }
 }

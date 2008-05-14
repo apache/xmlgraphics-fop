@@ -19,13 +19,26 @@
 
 package org.apache.fop.render.afp.modca;
 
+import org.apache.fop.render.afp.DataObjectInfo;
+
 /**
  * A common interface of ResourceObject and ContainerObject
  */
-public interface DataObjectAccessor extends AFPDataStreamWriter {
+public interface DataObjectAccessor extends Writable {
 
     /**
      * @return the actual data object referenced in this envelope 
      */
     AbstractNamedAFPObject getDataObject();
+    
+    /**
+     * @return the data object info relating to the data object
+     */
+    DataObjectInfo getDataObjectInfo();
+
+    /**
+     * Sets the data object info
+     * @param dataObjectInfo the data object info
+     */
+    void setDataObjectInfo(DataObjectInfo dataObjectInfo);
 }

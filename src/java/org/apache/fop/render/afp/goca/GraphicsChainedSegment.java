@@ -136,7 +136,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         if (previous == null) {
             GraphicsChainedSegment current = this.next;
             while (current != null) {
-                current.writeDataStream(os);
+                current.write(os);
                 current = current.next;
             }
         }

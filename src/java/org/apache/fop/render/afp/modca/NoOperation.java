@@ -60,7 +60,7 @@ public class NoOperation extends AbstractAFPObject {
      * @param os The outputsteam stream
      * @throws java.io.IOException if an I/O exception occurs during processing
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         byte[] contentData = content.getBytes(AFPConstants.EBCIDIC_ENCODING);
         int contentLen = contentData.length;
         

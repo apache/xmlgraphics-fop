@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Set;
 
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ImageObjectInfo;
@@ -32,21 +31,17 @@ import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
 /**
  * An abstract container of resource objects
  */
-public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObject {
+public abstract class AbstractResourceGroupContainer extends AbstractPageObject {
     /**
      * The resource group object
      */
     private ResourceGroup resourceGroup = null;
-    
-    /**
-     * The list of objects within this resource container
-     */
-    protected Set/*<AbstractStructuredAFPObject>*/ objects = null;
 
     /**
-     * Unnamed constructor
+     * Default constructor
      */
     public AbstractResourceGroupContainer() {
+        super();
     }
 
     /**
@@ -55,6 +50,28 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
      */
     public AbstractResourceGroupContainer(String name) {
         super(name);
+    }
+
+    /**
+     * Construct a new page object for the specified name argument, the page
+     * name should be an 8 character identifier.
+     *
+     * @param name
+     *            the name of the page.
+     * @param width
+     *            the width of the page.
+     * @param height
+     *            the height of the page.
+     * @param rotation
+     *            the rotation of the page.
+     * @param widthRes
+     *            the width resolution of the page.
+     * @param heightRes
+     *            the height resolution of the page.
+     */
+    public AbstractResourceGroupContainer(String name, int width, int height,
+            int rotation, int widthRes, int heightRes) {
+        super(name, width, height, rotation, widthRes, heightRes);
     }
 
     /**
@@ -67,17 +84,6 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
         return 0;
     }
     
-    /**
-     * Adds an AFP object to the resource group in this container
-     * @param obj an AFP object
-     */
-    protected void addObject(AbstractAFPObject obj) {
-        if (objects == null) {
-            this.objects = new java.util.LinkedHashSet/*<AbstractAFPObject>*/();
-        }
-        objects.add(obj);
-    }
-
     /**
      * @return true if this resource group container contains resources
      */
@@ -161,7 +167,6 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
 
     private static final String IMAGE_NAME_PREFIX = "IMG";
     private static final String GRAPHIC_NAME_PREFIX = "GRA";
-    private static final String PAGE_SEGMENT_NAME_PREFIX = "PSG";
     
     // not currently used/implemented
     private static final String BARCODE_NAME_PREFIX = "BAR";
@@ -221,18 +226,6 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
     }
 
     /**
-     * Helper method to create a page segment in the current container and to return
-     * the object.
-     * @return a newly created page segment
-     */
-    protected PageSegment createPageSegment() {
-        String name = PAGE_SEGMENT_NAME_PREFIX
-        + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
-        PageSegment pageSegment = new PageSegment(name);
-        return pageSegment;
-    }
-
-    /**
      * Creates and returns a new data object
      * @param info the data object parameters
      * @return a newly created data object
@@ -244,10 +237,9 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
         } else {
             dataObject = createGraphic(info);
         }
-
-         dataObject.setFullyQualifiedName(
-                FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF,
-                FullyQualifiedNameTriplet.FORMAT_URL, info.getUri());
+        dataObject.setFullyQualifiedName(
+            FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
+            FullyQualifiedNameTriplet.FORMAT_CHARSTR, dataObject.getName());
 
         return dataObject;
     }
@@ -258,7 +250,7 @@ public abstract class AbstractResourceGroupContainer extends AbstractNamedAFPObj
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (resourceGroup != null) {
-            resourceGroup.writeDataStream(os);
+            resourceGroup.write(os);
         }
     }
 }

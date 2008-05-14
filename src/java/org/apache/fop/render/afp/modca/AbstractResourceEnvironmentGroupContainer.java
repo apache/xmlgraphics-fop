@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 
 /**
  * An abstract class which encapsulates the common features of 
@@ -75,19 +74,7 @@ public abstract class AbstractResourceEnvironmentGroupContainer
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (resourceEnvironmentGroup != null) {
-            resourceEnvironmentGroup.writeDataStream(os);
-        }
-        if (objects != null) {
-            for (Iterator it = objects.iterator(); it.hasNext();) {
-                AbstractAFPObject ao = (AbstractAFPObject)it.next();
-                if (ao instanceof PageObject && ((PageObject)ao).isComplete()
-                    || ao instanceof PageGroup && ((PageGroup)ao).isComplete()) {
-                    ao.writeDataStream(os);
-                    it.remove();
-                } else {
-                    break;
-                }
-            }
+            resourceEnvironmentGroup.write(os);
         }
     }
     

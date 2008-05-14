@@ -99,7 +99,7 @@ public class TagLogicalElement extends AbstractAFPObject {
      * @param os The outputsteam stream
      * @throws java.io.IOException if an I/O exception occurred
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[17 + tleName.length() + tleValue.length()];
 

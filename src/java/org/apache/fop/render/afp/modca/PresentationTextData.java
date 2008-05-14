@@ -109,7 +109,8 @@ public class PresentationTextData extends AbstractAFPObject {
      *            The control sequence indicator.
      */
     public PresentationTextData(boolean controlInd) {
-        baos.write(new byte[] { 0x5A, // Structured field identifier
+        final byte[] data = {
+            0x5A, // Structured field identifier
             0x00, // Record length byte 1
             0x00, // Record length byte 2
             (byte) 0xD3, // PresentationTextData identifier byte 1
@@ -118,7 +119,8 @@ public class PresentationTextData extends AbstractAFPObject {
             0x00, // Flag
             0x00, // Reserved
             0x00, // Reserved
-        }, 0, 9);
+        };
+        baos.write(data, 0, 9);
 
         if (controlInd) {
             baos.write(new byte[] { 0x2B, (byte) 0xD3 }, 0, 2);
@@ -481,9 +483,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param afpdata
      *            The output stream to which data should be written.
      */
-    private void setVariableSpaceCharacterIncrement(int incr,
-        ByteArrayOutputStream afpdata) {
-
+    private void setVariableSpaceCharacterIncrement(int incr, ByteArrayOutputStream afpdata) {
         byte[] b = BinaryUtils.convert(incr, 2);
 
         afpdata.write(new byte[] {
@@ -517,7 +517,7 @@ public class PresentationTextData extends AbstractAFPObject {
     /**
      * {@inheritDoc}
      */
-    public void writeDataStream(OutputStream os) throws IOException {
+    public void write(OutputStream os) throws IOException {
         byte[] data = baos.toByteArray();
         byte[] size = BinaryUtils.convert(data.length - 1, 2);
         data[1] = size[0];

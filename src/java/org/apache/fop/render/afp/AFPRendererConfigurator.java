@@ -36,6 +36,8 @@ import org.apache.fop.render.afp.fonts.CharacterSet;
 import org.apache.fop.render.afp.fonts.FopCharacterSet;
 import org.apache.fop.render.afp.fonts.OutlineFont;
 import org.apache.fop.render.afp.fonts.RasterFont;
+import org.apache.fop.render.afp.modca.AFPDataStream;
+import org.apache.fop.render.afp.modca.InterchangeSet;
 import org.apache.fop.util.LogUtil;
 
 /**
@@ -240,29 +242,43 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(240));
             }
 
-            // a default external resource group file setting
-            Configuration resourceGroupFileCfg = cfg.getChild("resource-group-file", false);
-            if (resourceGroupFileCfg != null) {
-                String resourceGroupDest = null;
-                try {
-                    resourceGroupDest = resourceGroupFileCfg.getValue();
-                } catch (ConfigurationException e) {
-                    LogUtil.handleException(log, e,
-                            userAgent.getFactory().validateUserConfigStrictly());
-                }
-                File resourceGroupFile = new File(resourceGroupDest);
-                if (resourceGroupFile.canWrite()) {
-                    afpRenderer.getAFPDataStream().setDefaultResourceGroupFile(resourceGroupFile);
-                } else {
-                    log.warn("Unable to write to default external resource group file '"
-                            + resourceGroupDest);
-                }
-            }
+            // the MO:DCA interchange set in use (defaults to MO:DCA-L)
+            Configuration interchangeSetCfg = cfg.getChild("interchange-set", false);
+            if (interchangeSetCfg != null) {
+                String interchangeSetString = interchangeSetCfg.getAttribute(
+                        "name", InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
+                AFPDataStream afpDatastream = afpRenderer.getAFPDataStream();
+                InterchangeSet interchangeSet = InterchangeSet.valueOf(interchangeSetString);
+                afpDatastream.setInterchangeSet(interchangeSet);
 
-            // goca enabled
-            Configuration gocaSupportCfg = cfg.getChild("goca-enabled", false);
-            if (gocaSupportCfg != null) {
-                afpRenderer.setGOCAEnabled(true);
+                if (interchangeSet.supportsLevel2()) {
+                    
+                    // a default external resource group file setting
+                    Configuration resourceGroupFileCfg
+                        = interchangeSetCfg.getChild("resource-group-file", false);
+                    if (resourceGroupFileCfg != null) {
+                        String resourceGroupDest = null;
+                        try {
+                            resourceGroupDest = resourceGroupFileCfg.getValue();
+                        } catch (ConfigurationException e) {
+                            LogUtil.handleException(log, e,
+                                    userAgent.getFactory().validateUserConfigStrictly());
+                        }
+                        File resourceGroupFile = new File(resourceGroupDest);
+                        if (resourceGroupFile.canWrite()) {
+                            afpDatastream.setDefaultResourceGroupFile(resourceGroupFile);
+                        } else {
+                            log.warn("Unable to write to default external resource group file '"
+                                    + resourceGroupDest);
+                        }
+                    }
+                }
+            
+                // goca enabled
+                Configuration gocaSupportCfg = interchangeSetCfg.getChild("goca-enabled", false);
+                if (gocaSupportCfg != null) {
+                    afpRenderer.setGOCAEnabled(true);
+                }
             }
         }
     }

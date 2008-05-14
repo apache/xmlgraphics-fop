@@ -104,16 +104,16 @@ public class IMImageObject extends AbstractNamedAFPObject {
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (imageOutputControl != null) {
-            imageOutputControl.writeDataStream(os);
+            imageOutputControl.write(os);
         }
         if (imageInputDescriptor != null) {
-            imageInputDescriptor.writeDataStream(os);
+            imageInputDescriptor.write(os);
         }
         if (imageCellPosition != null) {
-            imageCellPosition.writeDataStream(os);
+            imageCellPosition.write(os);
         }
         if (imageRasterData != null) {
-            imageRasterData.writeDataStream(os);
+            imageRasterData.write(os);
         }
     }
 
