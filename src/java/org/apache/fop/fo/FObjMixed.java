@@ -134,7 +134,8 @@ public abstract class FObjMixed extends FObj {
                     if (foNameId == FO_BLOCK) {
                         tmpText.createBlockPointers((org.apache.fop.fo.flow.Block) fo);
                         ((FObjMixed) fo).lastFOTextProcessed = tmpText;
-                    } else if (foNameId == FO_PAGE_SEQUENCE) {
+                    } else if (foNameId == FO_PAGE_SEQUENCE
+                                && tmpText.willCreateArea()) {
                         log.error("Could not create block pointers."
                                 + " FOText w/o Block ancestor.");
                     }
