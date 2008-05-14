@@ -79,10 +79,6 @@ public abstract class FOEventHandler {
      * This is used so we know if the FO tree contains duplicates.
      */
     private Set idReferences = new HashSet();
-    /**
-     * Keeps track of the last automatically generated id in the current document
-     */
-    private long lastGeneratedId = 1;
     
     /**
      * The property list maker.
@@ -179,15 +175,6 @@ public abstract class FOEventHandler {
      */
     protected boolean inMarker() {
         return this.inMarker;
-    }
-    
-    /**
-     * Return the next value for automatically generated ids
-     * 
-     * @return the next value to append to automatically generated ids
-     */
-    public long getNextId() {
-        return this.lastGeneratedId++;
     }
     
     /**

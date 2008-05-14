@@ -81,49 +81,7 @@ public final class StringProperty extends Property {
         }
 
     }
-
-    /**
-     * Inner class dedicated to the "id" property, which should provide a random
-     * unique identifier as an initial value.
-     * The values for "id" are never cached, as they're typically valid for one
-     * document.
-     */
-    public static class IdMaker extends PropertyMaker {
-
-        /**
-         * @param propId    the id of the property for which the maker should be created
-         */
-        public IdMaker(int propId) {
-            super(propId);
-        }
-
-        /** {@inheritDoc} */
-        public Property make(PropertyList propertyList) throws PropertyException {
-            String newId = "FO_";
-            newId += propertyList.getFObj().getFOEventHandler().getNextId();
-            return new StringProperty(newId);
-        }
-        
-        /** {@inheritDoc} */
-        public Property make(PropertyList propertyList, 
-                             String value,
-                             FObj fo) throws PropertyException {
-            
-            Property idProp;
-            
-            //no parsing necessary; just return a new StringProperty
-            //TODO: Should we move validation here? (see FObj#checkId())
-            if ("".equals(value)) {
-                //if an empty string was specified, return the default
-                idProp = this.make(propertyList);
-            } else {
-                idProp = new StringProperty(value);
-            }
-            
-            return idProp;
-        }
-    }
-
+    
     /** cache containing all canonical StringProperty instances */
     private static final PropertyCache cache = new PropertyCache(StringProperty.class);
     
