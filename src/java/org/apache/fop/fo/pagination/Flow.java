@@ -50,6 +50,7 @@ public class Flow extends FObj {
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         flowName = pList.get(PR_FLOW_NAME).getString();
     }
     
