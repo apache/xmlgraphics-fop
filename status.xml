@@ -61,6 +61,9 @@
     <!--/release-->
     <release version="0.95" date="TBD">
       <action context="Renderers" dev="JM" type="fix">
+        Fixed rendering of fixed block-containers in AFP output.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
         Fixed regression causing bad positioning of block-containers if used as descendant
         of a table-cell.
       </action>

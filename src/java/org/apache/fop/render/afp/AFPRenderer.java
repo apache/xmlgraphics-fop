@@ -464,9 +464,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
 
@@ -1248,20 +1246,24 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /**
-     * Restores the state stack after a break out.
-     * @param breakOutList the state stack to restore.
-     */
-    public void restoreStateStackAfterBreakOut(List breakOutList) {
-
+    /** {@inheritDoc} */
+    public List breakOutOfStateStack() {
+        log.debug("Block.FIXED --> break out");
+        List breakOutList = new java.util.ArrayList();
+        //Don't pop the last ViewPortPos (created by renderPage())
+        while (this.viewPortPositions.size() > 1) {
+            breakOutList.add(0, popViewPortPos());
+        }
+        return breakOutList;
     }
 
-    /**
-     * Breaks out of the state stack to handle fixed block-containers.
-     * @return the saved state stack to recreate later
-     */
-    public List breakOutOfStateStack() {
-        return null;
+    /** {@inheritDoc} */
+    public void restoreStateStackAfterBreakOut(List breakOutList) {
+        log.debug("Block.FIXED --> restoring context after break-out");
+        for (int i = 0, c = breakOutList.size(); i < c; i++) {
+            ViewPortPos vps = (ViewPortPos)breakOutList.get(i);
+            pushViewPortPos(vps);
+        }
     }
 
     /** Saves the graphics state of the rendering engine. */
@@ -1784,12 +1786,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         afpDataStream.setOffsets(vpp.x, vpp.y, vpp.rot);
     }
 
-    private void popViewPortPos() {
-        viewPortPositions.remove(viewPortPositions.size() - 1);
+    private ViewPortPos popViewPortPos() {
+        ViewPortPos current = (ViewPortPos)viewPortPositions.remove(viewPortPositions.size() - 1);
         if (viewPortPositions.size() > 0) {
             ViewPortPos vpp = (ViewPortPos)viewPortPositions.get(viewPortPositions.size() - 1);
             afpDataStream.setOffsets(vpp.x, vpp.y, vpp.rot);
         }
+        return current;
     }
 
     /**
