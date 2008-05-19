@@ -145,6 +145,17 @@ public interface TableEventProducer extends EventProducer {
             Locator loc) throws PropertyException;
 
     /**
+     * @param source the event source
+     * @param elementName the name of the context node
+     * @param propValue the user-specified value of the column-number property
+     * @param columnNumber the generated value for the column-number property
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void forceNextColumnNumber(Object source, String elementName, Number propValue,
+                               int columnNumber, Locator loc);
+
+    /**
      * Break ignored due to row spanning.
      * @param source the event source
      * @param elementName the name of the context node
