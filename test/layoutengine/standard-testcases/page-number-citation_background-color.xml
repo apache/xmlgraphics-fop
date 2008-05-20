@@ -30,7 +30,7 @@
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
-        <fo:flow flow-name="xsl-region-body" font-size="10pt" id="ref">
+        <fo:flow flow-name="xsl-region-body" font-size="10pt">
           <fo:block background-color="silver" id="ref">
             To emphasize a page number citation <fo:page-number-citation ref-id="ref" background-color="yellow" /> highlight it.
           </fo:block>

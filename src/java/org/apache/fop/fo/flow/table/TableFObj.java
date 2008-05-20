@@ -159,9 +159,8 @@ public abstract class TableFObj extends FObj {
             int colSpan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
                                 .getNumeric().getValue();
             
-            int i = columnIndex - 1;
-            int lastIndex = (columnIndex + colSpan) - 1;
-            while (++i < lastIndex) {
+            int lastIndex = columnIndex - 1 + colSpan;
+            for (int i = columnIndex; i <= lastIndex; ++i) {
                 if (columnIndexManager.isColumnNumberUsed(i)) {
                     /* if column-number is already in use by another
                      * cell/column => error!
@@ -195,6 +194,10 @@ public abstract class TableFObj extends FObj {
                         (ColumnNumberManagerHolder) propertyList.getParentFObj();
                     ColumnNumberManager columnIndexManager =  parent.getColumnNumberManager();
                     i = columnIndexManager.getCurrentColumnNumber();
+                    TableEventProducer eventProducer =
+                        TableEventProducer.Provider.get(fo.getUserAgent().getEventBroadcaster());
+                    eventProducer.forceNextColumnNumber(this, propertyList.getFObj().getName(),
+                                                        val, i, fo.getLocator());
                 }
                 return NumberProperty.getInstance(i);
             }
