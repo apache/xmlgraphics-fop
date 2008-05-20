@@ -33,6 +33,8 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class MapPageOverlay extends AbstractAFPObject {
 
+    private static final int MAX_SIZE = 253;
+    
     /**
      * The collection of overlays (maximum of 254 stored as byte[])
      */
@@ -59,7 +61,7 @@ public class MapPageOverlay extends AbstractAFPObject {
      * @throws MaximumSizeExceededException if the maximum size is reached
      */
     public void addOverlay(String name) throws MaximumSizeExceededException {
-        if (getOverlays().size() > 253) {
+        if (getOverlays().size() > MAX_SIZE) {
             throw new MaximumSizeExceededException();
         }
         if (name.length() != 8) {

@@ -169,8 +169,8 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
     private static final String GRAPHIC_NAME_PREFIX = "GRA";
     
     // not currently used/implemented
-    private static final String BARCODE_NAME_PREFIX = "BAR";
-    private static final String OTHER_NAME_PREFIX = "OTH";
+//    private static final String BARCODE_NAME_PREFIX = "BAR";
+//    private static final String OTHER_NAME_PREFIX = "OTH";
 
     /**
      * Helper method to create an image on the current container and to return
@@ -248,9 +248,9 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
      * {@inheritDoc}
      */
     protected void writeContent(OutputStream os) throws IOException {
-        super.writeContent(os);
         if (resourceGroup != null) {
             resourceGroup.write(os);
         }
+        super.writeContent(os);
     }
 }

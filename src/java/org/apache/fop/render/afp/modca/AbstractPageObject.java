@@ -355,7 +355,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
-        if (this instanceof PageObject) {
+        if (this instanceof PageObject || this instanceof Overlay) {
             getActiveEnvironmentGroup().write(os);
         }
         writeObjects(this.includePageSegments, os);

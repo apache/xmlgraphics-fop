@@ -32,12 +32,15 @@ public class MeasurementUnitsTriplet extends Triplet {
     
     /**
      * Main constructor
+     * 
+     * @param xRes units per base on the x-axis
+     * @param yRes units per base on the y-axis
      */
-    public MeasurementUnitsTriplet() {
+    public MeasurementUnitsTriplet(int xRes, int yRes) {
         super(MEASUREMENT_UNITS);
         //TODO: units correct?
-        byte[] xUnits = BinaryUtils.convert(1, 2);
-        byte[] yUnits = BinaryUtils.convert(1, 2);
+        byte[] xUnits = BinaryUtils.convert(xRes * 10, 2);
+        byte[] yUnits = BinaryUtils.convert(yRes * 10, 2);
         byte[] data = new byte[] {
              TEN_INCHES, // XoaBase
              TEN_INCHES, // YoaBase

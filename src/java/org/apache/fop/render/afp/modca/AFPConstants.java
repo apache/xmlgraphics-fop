@@ -34,4 +34,9 @@ public interface AFPConstants {
      * The encoding to use to convert to ASCII
      */
     String ASCII_ENCODING = "Cp1252";
+
+    /**
+     * The encoding to use to convert to US ASCII (7 bit)
+     */
+    String US_ASCII_ENCODING = "US-ASCII";
 }

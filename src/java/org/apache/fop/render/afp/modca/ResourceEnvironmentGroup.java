@@ -91,15 +91,15 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
         super(name);
     }
 
-    /**
-     * Adds an AFP object mapping reference to this resource environment group
-     * @param obj the object to add
-     */
-    public void addObject(AbstractStructuredAFPObject obj) {
-        // TODO: AC - fix
+//    /**
+//     * Adds an AFP object mapping reference to this resource environment group
+//     * @param obj the object to add
+//     */
+//    public void addObject(AbstractStructuredAFPObject obj) {
 //        getMapDataResources().add(new MapDataResource(obj));
-        getPreprocessPresentationObjects().add(new PreprocessPresentationObject(obj));
-    }
+//        createOverlay(obj.get);
+//        getPreprocessPresentationObjects().add(new PreprocessPresentationObject(obj));
+//    }
         
     /**
      * Returns an indication if the resource environment group is complete

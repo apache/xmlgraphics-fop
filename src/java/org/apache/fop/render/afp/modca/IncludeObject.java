@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
+import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -74,27 +76,27 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
     /**
      * The orientation on the include object
      */
-    private int orientation = -1;
+    private int orientation = 0;
 
     /**
      * The X-axis origin of the object area 
      */
-    private int xOffset = -1; 
+    private int xOffset = 0; 
     
     /**
      * The Y-axis origin of the object area 
      */    
-    private int yOffset = -1;
+    private int yOffset = 0;
 
     /**
      * The X-axis origin defined in the object
      */
-    private int xContentOffset = -1;
+    private int xContentOffset = 0;
 
     /**
      * The Y-axis origin defined in the object
      */
-    private int yContentOffset = -1;
+    private int yContentOffset = 0;
 
     /**
      * the referenced data object
@@ -115,7 +117,6 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         this.dataObjectAccessor = dataObjectAccessor;
         
         AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
-
         // Strip any object container
         if (dataObject instanceof ObjectContainer) {
             ObjectContainer objectContainer = (ObjectContainer)dataObject;
@@ -129,30 +130,28 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
             this.dataObjectType = TYPE_PAGE_SEGMENT;
         } else {
             this.dataObjectType = TYPE_OTHER;
-            DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
-            Registry registry = Registry.getInstance();
-            Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
-            // When other type must set object classification
-            super.setObjectClassification(
-                    ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
-                    objectType);
         }
+
+        DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
+
+        setObjectArea(dataObjectInfo.getX(), dataObjectInfo.getY());
         
-//        ResourceInfo resourceInfo = dataObjectAccessor.getDataObjectInfo().getResourceInfo();
-//        // Set data object reference triplet
-//        if (resourceInfo != null && resourceInfo.isExternal()) {
-//            String dest = resourceInfo.getExternalResourceGroupDest();
-//            super.setFullyQualifiedName(
-//                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
-//                    FullyQualifiedNameTriplet.FORMAT_URL, dest);
-//        } else {
-//            super.setFullyQualifiedName(
-//                    FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
-//                    FullyQualifiedNameTriplet.FORMAT_CHARSTR, dataObject.getName());
-//        }
+        super.setFullyQualifiedName(
+                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
+                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
+                dataObjectInfo.getUri());
+
+        Registry registry = Registry.getInstance();
+        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
+        super.setObjectClassification(
+             ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+             objectType);
         
-        // Set measurement units triplet
-        setMeasurementUnits();
+        super.setMeasurementUnits(dataObjectInfo.getWidthRes(), dataObjectInfo.getHeightRes());
+        
+        super.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
+        
+        super.setObjectAreaSize(dataObjectInfo.getWidth(), dataObjectInfo.getHeight());        
     }
 
     /**
@@ -241,7 +240,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         data[18] = dataObjectType;
 
         //XoaOset (object area)
-        if (xOffset > 0) {
+        if (xOffset >= -1) {
             byte[] x = BinaryUtils.convert(xOffset, 3);
             data[19] = x[0];
             data[20] = x[1];
@@ -253,7 +252,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         }
 
         // YoaOset (object area)
-        if (yOffset > 0) {
+        if (yOffset > -1) {
             byte[] y = BinaryUtils.convert(yOffset, 3);
             data[22] = y[0];
             data[23] = y[1];
@@ -298,7 +297,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         }
 
         // XocaOset (object content)
-        if (xContentOffset > 0) {
+        if (xContentOffset > -1) {
             byte[] y = BinaryUtils.convert(xContentOffset, 3);
             data[29] = y[0];
             data[30] = y[1];
@@ -310,7 +309,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         }
 
         // YocaOset (object content)
-        if (yContentOffset > 0) {
+        if (yContentOffset > -1) {
             byte[] y = BinaryUtils.convert(yContentOffset, 3);
             data[32] = y[0];
             data[33] = y[1];

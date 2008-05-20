@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.modca.triplets.Triplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
@@ -54,10 +55,37 @@ public class ResourceObject extends AbstractPreparedAFPObject implements DataObj
 
     /**
      * Sets the data object referenced by this resource object
-     * @param namedObject the named data object
+     * @param obj the named data object
      */
-    public void setDataObject(AbstractNamedAFPObject namedObject) {
-        this.namedObject = namedObject;        
+    public void setDataObject(AbstractNamedAFPObject obj) {
+        this.namedObject = obj; 
+        
+        String fqn = obj.getFullyQualifiedName();
+        if (fqn != null) {
+            super.setFullyQualifiedName(
+                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
+                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
+                fqn);
+        }
+        
+        byte type;
+        if (obj instanceof ObjectContainer) {
+            type = ResourceObjectTypeTriplet.OBJECT_CONTAINER;
+        } else if (obj instanceof ImageObject) {
+            type = ResourceObjectTypeTriplet.IMAGE_OBJECT;
+        } else if (obj instanceof GraphicsObject) {
+            type = ResourceObjectTypeTriplet.GRAPHICS_OBJECT;
+        } else if (obj instanceof Document) {
+            type = ResourceObjectTypeTriplet.DOCUMENT_OBJECT;
+        } else if (obj instanceof PageSegment) {
+            type = ResourceObjectTypeTriplet.PAGE_SEGMENT_OBJECT;
+        } else if (obj instanceof Overlay) {
+            type = ResourceObjectTypeTriplet.OVERLAY_OBJECT;
+        } else {
+            throw new UnsupportedOperationException(
+                    "Unsupported resource object type " + obj);
+        }
+        getTriplets().add(new ResourceObjectTypeTriplet(type));
     }
 
     /**
@@ -80,34 +108,12 @@ public class ResourceObject extends AbstractPreparedAFPObject implements DataObj
     public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
         this.dataObjectInfo = dataObjectInfo;
         
-        byte type;
         if (namedObject instanceof ObjectContainer) {
-            type = ResourceObjectTypeTriplet.OBJECT_CONTAINER;
-            
-//            ObjectContainer objectContainer = (ObjectContainer)namedObject;
-//            DataObjectInfo dataObjectInfo = objectContainer.getDataObjectInfo();
             Registry.ObjectType objectType = dataObjectInfo.getObjectType();
             super.setObjectClassification(
                     ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
                     objectType);
-            
-        } else if (namedObject instanceof ImageObject) {
-            type = ResourceObjectTypeTriplet.IMAGE_OBJECT;
-        } else if (namedObject instanceof GraphicsObject) {
-            type = ResourceObjectTypeTriplet.GRAPHICS_OBJECT;
-        } else if (namedObject instanceof Document) {
-            type = ResourceObjectTypeTriplet.DOCUMENT_OBJECT;
-        } else if (namedObject instanceof PageSegment) {
-            type = ResourceObjectTypeTriplet.PAGE_SEGMENT_OBJECT;
-        } else if (namedObject instanceof Overlay) {
-            type = ResourceObjectTypeTriplet.OVERLAY_OBJECT;
-        } else {
-            throw new UnsupportedOperationException(
-                    "Unsupported resource object type " + namedObject);
         }
-
-        getTriplets().add(new ResourceObjectTypeTriplet(type));        
-
     }
         
     /**

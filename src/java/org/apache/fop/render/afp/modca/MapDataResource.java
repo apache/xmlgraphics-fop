@@ -22,12 +22,11 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-//import org.apache.fop.render.afp.ResourceLevel;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ResourceInfo;
+import org.apache.fop.render.afp.ResourceLevel;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
-import org.apache.fop.render.afp.modca.triplets.StrucFlgs;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -48,12 +47,13 @@ public class MapDataResource extends AbstractStructuredAFPObject {
         AbstractNamedAFPObject namedDataObject = dataObjectAccessor.getDataObject();
         DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
         ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-        if (resourceInfo.isExternal()) {
-            String dest = resourceInfo.getExternalResourceGroupDest();
-            if (dest != null) {
+        ResourceLevel resourceLevel = resourceInfo.getLevel();
+        if (resourceLevel.isExternal()) {
+            String url = resourceLevel.getExternalResourceGroupFilePath();
+            if (url != null) {
                 super.setFullyQualifiedName(
                         FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
-                        FullyQualifiedNameTriplet.FORMAT_URL, dest);
+                        FullyQualifiedNameTriplet.FORMAT_CHARSTR, url);
             }
         } else {
             String fqName = namedDataObject.getFullyQualifiedName();

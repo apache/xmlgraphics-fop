@@ -57,6 +57,12 @@ public class DataObjectInfo {
     private ResourceInfo resourceInfo = DEFAULT_RESOURCE_INFO;
     
     /**
+     * Default constructor
+     */
+    public DataObjectInfo() {
+    }
+
+    /**
      * Sets the data object uri
      * @param uri the data object uri
      */
@@ -110,12 +116,6 @@ public class DataObjectInfo {
      */
     protected void setHeightRes(int heightRes) {
         this.heightRes = heightRes;
-    }
-
-    /**
-     * Default constructor
-     */
-    public DataObjectInfo() {
     }
     
     /**
@@ -226,16 +226,19 @@ public class DataObjectInfo {
             }
             QName resourceLevelKey = new QName(AFPElementMapping.NAMESPACE, RESOURCE_LEVEL);
             if (foreignAttributes.containsKey(resourceLevelKey)) {
-                String level = (String)foreignAttributes.get(resourceLevelKey);              
-                if (resourceInfo.setLevel(level)) {
-                    if (resourceInfo.isExternal()) {
+                String level = (String)foreignAttributes.get(resourceLevelKey);
+                ResourceLevel resourceLevel = null;
+                try {
+                    resourceLevel = ResourceLevel.valueOf(level);
+                    resourceInfo.setLevel(resourceLevel);
+                    if (resourceLevel.isExternal()) {
                         QName resourceGroupFileKey = new QName(AFPElementMapping.NAMESPACE,
                                 RESOURCE_GROUP_FILE);
                         String resourceExternalDest
                             = (String)foreignAttributes.get(resourceGroupFileKey);
                         if (resourceExternalDest == null) {
                             String msg = RESOURCE_GROUP_FILE + " not specified";
-                            log.warn(msg);
+                            log.error(msg);
                             throw new UnsupportedOperationException(msg);
                         }
                         File resourceExternalGroupFile = new File(resourceExternalDest);
@@ -245,25 +248,26 @@ public class DataObjectInfo {
                                 security.checkWrite(resourceExternalGroupFile.getPath());
                             }
                         } catch (SecurityException ex) {
-                            log.warn("unable to gain write access to external resource file: "
+                            log.error("unable to gain write access to external resource file: "
                                     + resourceExternalDest);                            
                         }
-                        
+                            
                         try {
                             boolean exists = resourceExternalGroupFile.exists();
                             if (exists) {
                                 log.warn("overwritting external resource file: "
                                         + resourceExternalDest);
                             }
-                            resourceInfo.setExternalResourceGroupFile(resourceExternalGroupFile);
+                            resourceLevel.setExternalResourceGroupFile(resourceExternalGroupFile);
                         } catch (SecurityException ex) {
-                            log.warn("unable to gain read access to external resource file: "
+                            log.error("unable to gain read access to external resource file: "
                                     + resourceExternalDest);
                         }
                     }
-                } else {
-                    String msg = RESOURCE_LEVEL + " is null or not valid";
-                    log.warn(msg);
+                } catch (IllegalArgumentException e) {
+                    // default to print-file resource level if invalid resource level provided
+                    resourceLevel = new ResourceLevel(ResourceLevel.PRINT_FILE);
+                    log.error(e.getMessage() + ", defaulting to '" + resourceLevel + "' level");
                 }
             }
         }

@@ -81,18 +81,10 @@ public abstract class AbstractResourceEnvironmentGroupContainer
     /**
      * @return the resource environment group
      */
-    private ResourceEnvironmentGroup getResourceEnvironmentGroup() {
+    protected ResourceEnvironmentGroup getResourceEnvironmentGroup() {
         if (resourceEnvironmentGroup == null) {
             this.resourceEnvironmentGroup = new ResourceEnvironmentGroup();
         }
         return this.resourceEnvironmentGroup;
-    }
-    
-    /**
-     * Adds a resource mapping to this resource environment group
-     * @param obj a resource to be referenced in this resource environment group
-     */
-    protected void addResource(AbstractStructuredAFPObject obj) {
-        getResourceEnvironmentGroup().addObject(obj);
-    }
+    }    
 }

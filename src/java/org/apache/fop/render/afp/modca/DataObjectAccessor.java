@@ -41,4 +41,9 @@ public interface DataObjectAccessor extends Writable {
      * @param dataObjectInfo the data object info
      */
     void setDataObjectInfo(DataObjectInfo dataObjectInfo);
+    
+    /**
+     * @return the data object accessor name
+     */
+    String getName();
 }

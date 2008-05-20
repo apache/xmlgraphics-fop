@@ -160,13 +160,17 @@ public class FullyQualifiedNameTriplet extends Triplet {
         super(FULLY_QUALIFIED_NAME);
         
         this.fqName = fqName;
-        
+
         byte[] fqNameBytes;
+        String encoding = AFPConstants.EBCIDIC_ENCODING;            
+        if (format == FORMAT_URL) {
+            encoding = AFPConstants.US_ASCII_ENCODING;            
+        }
         try {
-            fqNameBytes = fqName.getBytes(AFPConstants.ASCII_ENCODING);
+            fqNameBytes = fqName.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(
-                    AFPConstants.ASCII_ENCODING + " encoding failed");
+                    encoding + " encoding failed");
         }
 
         byte[] data = new byte[2 + fqNameBytes.length];

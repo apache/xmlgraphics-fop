@@ -46,15 +46,15 @@ import org.apache.fop.render.afp.tools.StringUtils;
  */
 public class PageObject extends AbstractResourceGroupContainer {
 
-    /**
-     * The page segment count
-     */
-    private int pageSegmentCount = 0;
-
-    /**
-     * The current page segment
-     */
-    private PageSegment currentPageSegment = null;
+//    /**
+//     * The page segment count
+//     */
+//    private int pageSegmentCount = 0;
+//
+//    /**
+//     * The current page segment
+//     */
+//    private PageSegment currentPageSegment = null;
 
     /**
      * Construct a new page object for the specified name argument, the page
@@ -91,56 +91,58 @@ public class PageObject extends AbstractResourceGroupContainer {
      *            the orientation required for the overlay
      */
     public void createIncludePageOverlay(String name, int x, int y, int orientation) {
-        addObject(new IncludePageOverlay(name, x, y, orientation));
+        getActiveEnvironmentGroup().createOverlay(name);
+        IncludePageOverlay ipo = new IncludePageOverlay(name, x, y, orientation);
+        addObject(ipo);
     }
 
-    /**
-     * @return a new page segment object
-     */
-    private PageSegment createPageSegment() {
-        String name = PAGE_SEGMENT_NAME_PREFIX
-        + StringUtils.lpad(String.valueOf(++pageSegmentCount), '0', 5);
-        PageSegment pageSegment = new PageSegment(name);
-        return pageSegment;
-    }
+//    /**
+//     * @return a new page segment object
+//     */
+//    private PageSegment createPageSegment() {
+//        String name = PAGE_SEGMENT_NAME_PREFIX
+//        + StringUtils.lpad(String.valueOf(++pageSegmentCount), '0', 5);
+//        PageSegment pageSegment = new PageSegment(name);
+//        return pageSegment;
+//    }
     
-    /**
-     * @return the current page segment
-     */
-    private PageSegment getCurrentPageSegment() {
-        if (currentPageSegment == null) {
-            this.currentPageSegment = createPageSegment();        
-            super.addObject(currentPageSegment);
-        }
-        return this.currentPageSegment;
-    }
-    
-    private static final String PAGE_SEGMENT_NAME_PREFIX = "PSG";
+//    /**
+//     * @return the current page segment
+//     */
+//    private PageSegment getCurrentPageSegment() {
+//        if (currentPageSegment == null) {
+//            this.currentPageSegment = createPageSegment();        
+//            super.addObject(currentPageSegment);
+//        }
+//        return this.currentPageSegment;
+//    }
+//    
+//    private static final String PAGE_SEGMENT_NAME_PREFIX = "PSG";
 
-    /**
-     * Starts a new page segment and makes it current.
-     */
-    public void startPageSegment() {
-        getCurrentPageSegment();
-    }
+//    /**
+//     * Starts a new page segment and makes it current.
+//     */
+//    public void startPageSegment() {
+//        getCurrentPageSegment();
+//    }
+//
+//    /**
+//     * Ends the current page segment.
+//     */
+//    public void endPageSegment() {
+//        this.currentPageSegment = null;
+//    }
 
-    /**
-     * Ends the current page segment.
-     */
-    public void endPageSegment() {
-        this.currentPageSegment = null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void addObject(AbstractAFPObject obj) {
-        if (currentPageSegment != null) {
-            getCurrentPageSegment().addObject(obj);
-        } else {
-            super.addObject(obj);
-        }
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    protected void addObject(AbstractAFPObject obj) {
+////        if (currentPageSegment != null) {
+////            getCurrentPageSegment().addObject(obj);
+////        } else {
+//            super.addObject(obj);
+////        }
+//    }
 
     /**
      * This method will create shading on the page using the specified

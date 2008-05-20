@@ -513,18 +513,20 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             int res = getResolution();
             final int rotation = 0;
             getAFPDataStream().startOverlay(x, y, w, h, res, res, rotation);
+//            Color col = back.getColor();
+//            getAFPDataStream().createShading(x, y, w, h, col);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+//    /**
+//     * {@inheritDoc}
+//     */
     protected void renderBlock(Block block) {
-        // new block so start page segment
-        getAFPDataStream().startPageSegment();
+//        // new block so start page segment
+////        getAFPDataStream().startPageSegment();
         super.renderBlock(block);
         getAFPDataStream().endOverlay();
-        getAFPDataStream().endPageSegment();
+////        getAFPDataStream().endPageSegment();
     }
 
     /**
@@ -763,13 +765,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * {@inheritDoc}
      */
     public void fillRect(float x, float y, float width, float height) {
-        /*
-         * getAFPDataStream().createShading( pts2units(x), pts2units(y),
-         * pts2units(width), pts2units(height), currentColor);
-         */
-        getAFPDataStream().createLine(pts2units(x), pts2units(y),
-                pts2units(x + width), pts2units(y), pts2units(height),
+        getAFPDataStream().createShading(
+                pts2units(x), pts2units(y), pts2units(width), pts2units(height),
                 currentColor);
+//        getAFPDataStream().createLine(pts2units(x), pts2units(y),
+//                pts2units(x + width), pts2units(y), pts2units(height),
+//                currentColor);
     }
 
     /**
@@ -921,7 +922,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         int x = origin.x + posInt.x;
         int y = origin.y + posInt.y;
 
-        String name = (String) getPageSegments().get(uri);
+        String name = (String)getPageSegments().get(uri);
         if (name != null) {
             getAFPDataStream().createIncludePageSegment(name, mpts2units(x),
                     mpts2units(y));

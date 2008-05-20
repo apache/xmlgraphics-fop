@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.AFPFontAttributes;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ResourceInfo;
+import org.apache.fop.render.afp.ResourceLevel;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.tools.StringUtils;
@@ -170,7 +171,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     /**
      * @return the current page
      */
-    private AbstractPageObject getCurrentPage() {
+    protected AbstractPageObject getCurrentPage() {
         return this.currentPage;
     }
 
@@ -225,14 +226,16 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             endPageGroup();
         }
 
-        // Write out any external resource groups
-        getExternalResourceGroupManager().writeExternalResources();
-
-        // Write out any print-file level resources
-        if (hasResources()) {
-            getResourceGroup().write(this.outputStream);
+        if (interchangeSet.supportsLevel2()) {
+            // Write out any external resource groups
+            getExternalResourceGroupManager().writeExternalResources();
+            
+            // Write out any print-file level resources
+            if (hasResources()) {
+                getResourceGroup().write(this.outputStream);
+            }
         }
-
+        
         // Write out document
         if (document != null) {
             document.endDocument();
@@ -303,7 +306,14 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         this.currentOverlay = new Overlay(overlayName, width, height, widthRes,
                 heightRes, overlayRotation);
 
-        getResourceGroup().addObject(currentOverlay);
+        if (interchangeSet.supportsLevel2()) {
+            ResourceObject resourceObject = new ResourceObject(overlayName);
+            resourceObject.setDataObject(currentOverlay);
+            getResourceGroup().addObject(resourceObject);
+        }
+//        currentPageGroup.getResourceEnvironmentGroup().addObject(currentOverlay);
+//        currentPageObject.getActiveEnvironmentGroup().createOverlay(overlayName);
+
         currentPageObject.createIncludePageOverlay(overlayName, x, y, 0);
         currentPage = currentOverlay;
         setOffsets(0, 0, 0);
@@ -462,13 +472,14 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             dataObjectInfo.setObjectType(objectType);
 
             ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-
+            ResourceLevel resourceLevel = resourceInfo.getLevel();
+            
             // is MO:DCA-L available?
             if (interchangeSet.supportsLevel2()) {
                 // can this data object use the include object (IOB) referencing
                 // mechanism?
                 if (objectType.canBeIncluded()) {
-                    ResourceGroup resourceGroup = getResourceGroup(resourceInfo);
+                    ResourceGroup resourceGroup = getResourceGroup(resourceLevel);
                     IncludeObject includeObject = resourceGroup.createObject(dataObjectInfo);
 
                     // add include to current page
@@ -479,7 +490,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                         + "' cannot be referenced with an include so it will be embedded directly");
                 }
             } else {
-                if (resourceInfo.isExternal()) {
+                if (resourceLevel.isExternal()) {
                     log.warn( interchangeSet
                             + ": not available, object " + getName() + " will reside inline");
                 }                
@@ -776,23 +787,23 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     /**
      * Returns the resource group for a given resource into
      * 
-     * @param resourceInfo
+     * @param level
      *            resource info
      * @return a resource group container for the given resource info
      */
-    private ResourceGroup getResourceGroup(ResourceInfo resourceInfo) {
+    private ResourceGroup getResourceGroup(ResourceLevel level) {
         ResourceGroup resourceGroup = null;
-        if (resourceInfo.isPrintFile()) {
+        if (level.isPrintFile()) {
             resourceGroup = getResourceGroup();
-        } else if (resourceInfo.isDocument()) {
+        } else if (level.isDocument()) {
             resourceGroup = getDocument().getResourceGroup();
-        } else if (resourceInfo.isPageGroup()) {
+        } else if (level.isPageGroup()) {
             resourceGroup = getCurrentPageGroup().getResourceGroup();
-        } else if (resourceInfo.isPage()) {
+        } else if (level.isPage()) {
             resourceGroup = currentPageObject.getResourceGroup();
-        } else if (resourceInfo.isExternal()) {
+        } else if (level.isExternal()) {
             resourceGroup = getExternalResourceGroupManager()
-                    .getExternalResourceGroup(resourceInfo);
+                    .getExternalResourceGroup(level);
         }
         return resourceGroup;
     }
@@ -889,28 +900,28 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         }
 
         /**
-         * Returns the corresponding resource group for the given resource info
+         * Returns the corresponding resource group for the given resource level
          * 
-         * @param resourceInfo
-         *            resource info
-         * @return the corresponding resource group for the given resource info
+         * @param level
+         *            the resource level
+         * @return the corresponding resource group for the given resource level
          */
-        private ResourceGroup getExternalResourceGroup(ResourceInfo resourceInfo) {
+        private ResourceGroup getExternalResourceGroup(ResourceLevel level) {
             ResourceGroup resourceGroup;
-            // this resource info does not have a an external resource group
+            // this resource info does not have an external resource group
             // file definition
-            if (!resourceInfo.hasExternalResourceGroupFile()) {
+            if (!level.hasExternalResourceGroupFile()) {
                 if (defaultResourceGroupFile != null) {
                     // fallback to default resource group file
-                    resourceInfo.setExternalResourceGroupFile(defaultResourceGroupFile);
-                    resourceGroup = getExternalResourceGroup(resourceInfo);
+                    level.setExternalResourceGroupFile(defaultResourceGroupFile);
+                    resourceGroup = getExternalResourceGroup(level);
                 } else {
                     // use print-file level resource group in the absence
                     // of an external resource group file definition
                     resourceGroup = container.getResourceGroup();
                 }
             } else {
-                File resourceGroupFile = resourceInfo
+                File resourceGroupFile = level
                         .getExternalResourceGroupFile();
                 resourceGroup = (ResourceGroup)getExternalResourceGroups().get(resourceGroupFile);
                 if (resourceGroup == null) {
@@ -930,19 +941,19 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         }
     }
 
-    /**
-     * Starts a new page segment.
-     */
-    public void startPageSegment() {
-        currentPageObject.startPageSegment();
-    }
-
-    /**
-     * Ends the current page segment.
-     */
-    public void endPageSegment() {
-        currentPageObject.endPageSegment();
-    }
+//    /**
+//     * Starts a new page segment.
+//     */
+//    public void startPageSegment() {
+//        currentPageObject.startPageSegment();
+//    }
+//
+//    /**
+//     * Ends the current page segment.
+//     */
+//    public void endPageSegment() {
+//        currentPageObject.endPageSegment();
+//    }
 
     /**
      * Sets the MO:DCA interchange set to use

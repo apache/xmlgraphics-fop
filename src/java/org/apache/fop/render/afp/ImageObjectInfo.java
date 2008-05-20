@@ -35,6 +35,7 @@ public class ImageObjectInfo extends DataObjectInfo {
      * Default constructor
      */
     public ImageObjectInfo() {
+        super();
     }
 
     /**

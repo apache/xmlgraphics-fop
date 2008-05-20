@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -32,6 +33,8 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class ObjectContainer extends AbstractNamedAFPObject implements DataObjectAccessor {
                 
+    private static final String DEFAULT_NAME = "OC000001";
+
     /**
      * the data object
      */
@@ -47,6 +50,13 @@ public class ObjectContainer extends AbstractNamedAFPObject implements DataObjec
      */
     private DataObjectInfo dataObjectInfo;
     
+    /**
+     * Default constructor
+     */
+    public ObjectContainer() {
+        super(DEFAULT_NAME);
+    }
+
     /**
      * Main constructor
      * @param name the name of this object container
@@ -92,6 +102,10 @@ public class ObjectContainer extends AbstractNamedAFPObject implements DataObjec
         } else {
             log.warn("no object type for " + dataObjectInfo.getUri());
         }
+        super.setFullyQualifiedName(
+                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
+                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
+                dataObjectInfo.getUri());
     }
 
     /**

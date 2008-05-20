@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
+import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
@@ -232,7 +233,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
         
     /**
-     * Specifies the extent of an object area in the X and Y directions
+     * Sets the extent of an object area in the X and Y directions
      * @param x the x direction extent
      * @param y the y direction extent
      */
@@ -242,11 +243,21 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Sets the measurement units used to specify the units of measure
+     * @param xRes units per base on the x-axis
+     * @param yRes units per base on the y-axis
      */
-    public void setMeasurementUnits() {
-        addTriplet(new MeasurementUnitsTriplet());
+    public void setMeasurementUnits(int xRes, int yRes) {
+        addTriplet(new MeasurementUnitsTriplet(xRes, xRes));
     }
 
+    /**
+     * Sets the mapping option
+     * @param optionValue the mapping option value
+     */
+    public void setMappingOption(byte optionValue) {
+        addTriplet(new MappingOptionTriplet(optionValue));
+    }
+    
     /**
      * Sets a comment on this resource
      * @param comment a comment string

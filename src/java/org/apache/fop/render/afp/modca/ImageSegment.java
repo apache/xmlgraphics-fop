@@ -36,7 +36,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
     /**
      * Default name for the object environment group
      */
-    private static final String DEFAULT_NAME = "IS01";
+    private static final String DEFAULT_NAME = "IS000001";
 
     /**
      * The ImageContent for the image segment

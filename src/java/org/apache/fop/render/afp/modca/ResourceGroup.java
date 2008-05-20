@@ -28,6 +28,8 @@ import java.util.Map;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ImageObjectInfo;
 import org.apache.fop.render.afp.ResourceInfo;
+import org.apache.fop.render.afp.ResourceLevel;
+import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
  * A Resource Group contains a set of overlays.
@@ -72,6 +74,14 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
         return this.container;
     }
 
+    private static final String OBJECT_CONTAINER_NAME_PREFIX = "OC";
+
+    private ObjectContainer createObjectContainer() {
+        String name = OBJECT_CONTAINER_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 6);
+        return new ObjectContainer(name);
+    }
+    
     /**
      * Creates a data object in this resource group
      * @param dataObjectInfo the data object info
@@ -81,6 +91,7 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
         DataObjectAccessor dataObjectAccessor
             = (DataObjectAccessor)getResourceMap().get(dataObjectInfo.getUri());
         ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        ResourceLevel resourceLevel = resourceInfo.getLevel();
         AbstractDataObject dataObj;
         if (dataObjectAccessor == null) {
             if (dataObjectInfo instanceof ImageObjectInfo) {
@@ -94,27 +105,31 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
                     dataObjectInfo.getWidthRes(), dataObjectInfo.getHeightRes(),
                     dataObjectInfo.getRotation());
 
+            ObjectContainer objectContainer = null;
             String resourceName = resourceInfo.getName();
-            ObjectContainer objectContainer = new ObjectContainer(resourceName);
+            if (resourceName != null) {
+                objectContainer = new ObjectContainer(resourceName);
+            } else {
+                objectContainer = createObjectContainer();
+                resourceName = objectContainer.getName();
+            }
             objectContainer.setDataObject(dataObj);
             objectContainer.setDataObjectInfo(dataObjectInfo);
             
             // When externally located, wrap the object container in a resource object
-            if (resourceInfo.isExternal()) {
+            if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
                 ResourceObject resourceObject = new ResourceObject(resourceName);
                 resourceObject.setDataObject(objectContainer);
+                resourceObject.setDataObjectInfo(dataObjectInfo);
                 dataObjectAccessor = resourceObject;
             } else { // Access data object through container
                 dataObjectAccessor = objectContainer;
             }
-            dataObjectAccessor.setDataObjectInfo(dataObjectInfo);
             
             // Add to resource map
             getResourceMap().put(dataObjectInfo.getUri(), dataObjectAccessor);            
         }
-        // Return include object
-        AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
-        String name = dataObject.getName();
+        String name = dataObjectAccessor.getName();
         IncludeObject includeObj = new IncludeObject(name, dataObjectAccessor);
         return includeObj;
     }
@@ -126,13 +141,15 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      */
     private boolean isValidObjectType(AbstractNamedAFPObject namedObj) {
         return (namedObj instanceof Overlay
+                || namedObj instanceof ResourceObject
                 || namedObj instanceof PageSegment
-             // || namedObj instanceof FormMap
-             // || namedObj instanceof BarcodeObject 
                 || namedObj instanceof GraphicsObject
                 || namedObj instanceof ImageObject
                 || namedObj instanceof ObjectContainer
-                || namedObj instanceof Document);
+                || namedObj instanceof Document
+                // || namedObj instanceof FormMap
+                // || namedObj instanceof BarcodeObject 
+                );
     }
     /**
      * Adds a named object to this resource group
