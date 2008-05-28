@@ -21,6 +21,7 @@ package org.apache.fop.area;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.xmlgraphics.util.QName;
@@ -32,6 +33,9 @@ public abstract class AreaTreeObject {
 
     /** Foreign attributes */
     protected Map foreignAttributes = null;
+    
+    /** Extension attachments */
+    protected List/*<ExtensionAttachment>*/ extensionAttachments = null;
     
     /**
      * Sets a foreign attribute.
@@ -84,5 +88,20 @@ public abstract class AreaTreeObject {
         }
     }
     
-    
+    /**
+     * Set extension attachments from a List 
+     * @param extensionAttachments a List with extension attachments
+     */
+    public void setExtensionAttachments(List extensionAttachments) {
+        this.extensionAttachments = extensionAttachments;
+    }
+
+    /** @return the extension attachments associated with this area */
+    public List getExtensionAttachments() {
+        if (this.foreignAttributes != null) {
+            return Collections.unmodifiableList(this.extensionAttachments);
+        } else {
+            return Collections.EMPTY_LIST;
+        }
+    }    
 }
