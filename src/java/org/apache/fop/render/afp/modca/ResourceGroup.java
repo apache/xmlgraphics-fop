@@ -116,7 +116,8 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
             objectContainer.setDataObject(dataObj);
             objectContainer.setDataObjectInfo(dataObjectInfo);
             
-            // When externally located, wrap the object container in a resource object
+            // When located at print-file level or externally,
+            // wrap the object container in a resource object
             if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
                 ResourceObject resourceObject = new ResourceObject(resourceName);
                 resourceObject.setDataObject(objectContainer);
