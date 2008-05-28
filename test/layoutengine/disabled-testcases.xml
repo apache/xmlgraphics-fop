@@ -98,24 +98,6 @@
     regions.</description>
   </testcase>
   <testcase>
-    <name>Footnotes swallowed in lists</name>
-    <file>footnote_in_list.xml</file>
-    <description>Element lists for lists are created by combining the 
-    element lists from list-item-label and list-item-body. The 
-    footnotes contained in the KnuthBlockBoxes are not propagated to 
-    the combined element list.</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=37579</reference>
-  </testcase>
-  <testcase>
-    <name>Footnotes swallowed in tables</name>
-    <file>footnote_in_table.xml</file>
-    <description>Element lists for tables are created by combining the 
-    element lists from the individual table-cells. The footnotes 
-    contained in the KnuthBlockBoxes are not propagated to the combined 
-    element list.</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=37579</reference>
-  </testcase>
-  <testcase>
     <name>NPE for table inside an inline</name>
     <file>inline_block_nested_3.xml</file>
     <description>Placing a table as a child of an fo:inline produces a 
