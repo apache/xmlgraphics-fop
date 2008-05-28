@@ -32,6 +32,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontSelector;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -70,6 +71,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         private boolean isHyphenated;
         private boolean isSpace;
         private boolean breakOppAfter;
+        private final Font font;
 
         AreaInfo(short startIndex,
                         short breakIndex,
@@ -78,7 +80,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         MinOptMax areaIPD,
                         boolean isHyphenated,
                         boolean isSpace,
-                        boolean breakOppAfter) {
+                        boolean breakOppAfter,
+                        Font font) {
             this.startIndex = startIndex;
             this.breakIndex = breakIndex;
             this.wordSpaceCount = wordSpaceCount;
@@ -87,6 +90,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             this.isHyphenated = isHyphenated;
             this.isSpace = isSpace;
             this.breakOppAfter = breakOppAfter;
+            this.font = font;
         }
 
         public String toString() {
@@ -97,6 +101,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 + ", bidx=" + breakIndex
                 + ", hyph=" + isHyphenated
                 + ", space=" + isSpace
+                + ", font=" + font
                 + "]";
         }
 
@@ -139,7 +144,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private static final char NEWLINE = '\n';
 
-    private Font font = null;
+    /** Font used for the space between words. */
+    private Font spaceFont = null;
     /** Start index of next TextArea */
     private short nextStart = 0;
     /** size of a space character (U+0020) glyph in current font */
@@ -150,10 +156,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     private int hyphIPD;
     /** 1/1 of word-spacing value */
     private SpaceVal ws;
-    /** 1/2 of word-spacing value */
-    private SpaceVal halfWS;
-    /** 1/2 of letter-spacing value */
-    private SpaceVal halfLS;
 
     private boolean hasChanged = false;
     private int returnedIndex = 0;
@@ -206,23 +208,19 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     /** {@inheritDoc} */
     public void initialize() {
-        FontInfo fi = foText.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = foText.getCommonFont().getFontState(fi);
-        font = fi.getFontInstance(fontkeys[0], foText.getCommonFont().fontSize.getValue(this));
+        
+        spaceFont = FontSelector.selectFontForCharacterInText(' ', foText, this);
 
         // With CID fonts, space isn't neccesary currentFontState.width(32)
-        spaceCharIPD = font.getCharWidth(' ');
+        spaceCharIPD = spaceFont.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = foText.getCommonHyphenation().getHyphIPD(font);
+        
+        // TODO: Use hyphen based on actual font used!
+        hyphIPD = foText.getCommonHyphenation().getHyphIPD(spaceFont);
 
         SpaceVal ls = SpaceVal.makeLetterSpacing(foText.getLetterSpacing());
-        halfLS = new SpaceVal(MinOptMax.multiply(ls.getSpace(), 0.5),
-                ls.isConditional(), ls.isForcing(), ls.getPrecedence());
 
-        ws = SpaceVal.makeWordSpacing(foText.getWordSpacing(), ls, font);
-        // Make half-space: <space> on either side of a word-space)
-        halfWS = new SpaceVal(MinOptMax.multiply(ws.getSpace(), 0.5),
-                ws.isConditional(), ws.isForcing(), ws.getPrecedence());
+        ws = SpaceVal.makeWordSpacing(foText.getWordSpacing(), ls, spaceFont);
 
         // letter space applies only to consecutive non-space characters,
         // while word space applies to space characters;
@@ -255,7 +253,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     public void addAreas(PositionIterator posIter, LayoutContext context) {
 
         // Add word areas
-        AreaInfo ai = null;
+        AreaInfo ai; 
         int wordSpaceCount = 0;
         int letterSpaceCount = 0;
         int firstAreaInfoIndex = -1;
@@ -265,6 +263,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         /* On first area created, add any leading space.
          * Calculate word-space stretch value.
          */
+        AreaInfo lastAi = null;
         while (posIter.hasNext()) {
             LeafPosition tbpNext = (LeafPosition) posIter.next();
             if (tbpNext == null) {
@@ -272,18 +271,38 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             }
             if (tbpNext.getLeafPos() != -1) {
                 ai = (AreaInfo) vecAreaInfo.get(tbpNext.getLeafPos());
-                if (firstAreaInfoIndex == -1) {
+                if (lastAi == null || ai.font != lastAi.font) {
+                    if (lastAi != null) {
+                        this.addAreaInfoAreas(lastAi, wordSpaceCount,
+                                letterSpaceCount, firstAreaInfoIndex,
+                                lastAreaInfoIndex, realWidth, context);
+                    }
                     firstAreaInfoIndex = tbpNext.getLeafPos();
-                }
+                    wordSpaceCount = 0;
+                    letterSpaceCount = 0;
+                    realWidth = new MinOptMax(0);                    
+                } 
                 wordSpaceCount += ai.wordSpaceCount;
                 letterSpaceCount += ai.letterSpaceCount;
                 realWidth.add(ai.areaIPD);
                 lastAreaInfoIndex = tbpNext.getLeafPos();
+                lastAi = ai;
             }
         }
-        if (ai == null) {
-            return;
+        if (lastAi != null) {
+            this.addAreaInfoAreas(lastAi, wordSpaceCount, letterSpaceCount,
+                    firstAreaInfoIndex, lastAreaInfoIndex, realWidth, context);
         }
+    }
+        
+    private void addAreaInfoAreas(AreaInfo ai, int wordSpaceCount,
+            int letterSpaceCount, int firstAreaInfoIndex,
+            int lastAreaInfoIndex, MinOptMax realWidth, LayoutContext context) {
+        
+        // TODO: These two statements (if, for) where like this before my recent
+        // changes. However, it seems as if they should use the AreaInfo from
+        // firstAreaInfoIndex.. lastAreaInfoIndex rather than just the last ai.
+        // This needs to be checked.
         int textLength = ai.breakIndex - ai.startIndex;
         if (ai.letterSpaceCount == textLength && !ai.isHyphenated
                    && context.isLastArea()) {
@@ -353,9 +372,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
 
         TextArea t = createTextArea(realWidth, totalAdjust, context,
-                                    wordSpaceIPD.opt - spaceCharIPD,
-                                    firstAreaInfoIndex, lastAreaInfoIndex,
-                                    context.isLastArea());
+                wordSpaceIPD.opt - spaceCharIPD, firstAreaInfoIndex,
+                lastAreaInfoIndex, context.isLastArea(), ai.font);
 
         // wordSpaceDim is computed in relation to wordSpaceIPD.opt
         // but the renderer needs to know the adjustment in relation
@@ -391,11 +409,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      * @param firstIndex the index of the first AreaInfo used for the TextArea
      * @param lastIndex the index of the last AreaInfo used for the TextArea
      * @param isLastArea is this TextArea the last in a line?
+     * @param font Font to be used in this particular TextArea
      * @return the new text area
      */
     protected TextArea createTextArea(MinOptMax width, int adjust,
-                                      LayoutContext context, int spaceDiff,
-                                      int firstIndex, int lastIndex, boolean isLastArea) {
+            LayoutContext context, int spaceDiff, int firstIndex,
+            int lastIndex, boolean isLastArea, Font font) {
         TextArea textArea;
         if (context.getIPDAdjust() == 0.0) {
             // create just a TextArea
@@ -409,6 +428,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
         textArea.setIPD(width.opt + adjust);
         textArea.setBPD(font.getAscender() - font.getDescender());
+        
         textArea.setBaselineOffset(font.getAscender());
         if (textArea.getBPD() == alignmentContext.getHeight()) {
             textArea.setOffset(0);
@@ -548,6 +568,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     while (lastIndex > 0 && textArray[lastIndex - 1] == CharUtilities.SOFT_HYPHEN) {
                         lastIndex--;
                     }
+                    final Font font = FontSelector
+                            .selectFontForCharactersInText(textArray,
+                                    thisStart, lastIndex, foText, this);
                     int wordLength = lastIndex - thisStart;
                     boolean kerning = font.hasKerning();
                     MinOptMax wordIPD = new MinOptMax(0);
@@ -592,8 +615,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
                     // create the AreaInfo object
                     ai = new AreaInfo(thisStart, lastIndex, (short) 0,
-                            (short) iLetterSpaces,
-                            wordIPD, textArray[lastIndex] == CharUtilities.SOFT_HYPHEN, false, breakOpportunity);
+                            (short) iLetterSpaces, wordIPD,
+                            textArray[lastIndex] == CharUtilities.SOFT_HYPHEN,
+                            false, breakOpportunity, font);
                     prevAi = ai;
                     vecAreaInfo.add(ai);
                     tempStart = nextStart;
@@ -610,8 +634,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     // create the AreaInfo object
                     ai = new AreaInfo(thisStart, nextStart,
                             (short) (nextStart - thisStart), (short) 0,
-                            MinOptMax.multiply(wordSpaceIPD, nextStart - thisStart),
-                            false, true, breakOpportunity);
+                            MinOptMax.multiply(wordSpaceIPD, nextStart
+                                    - thisStart), false, true,
+                            breakOpportunity, spaceFont);
                     vecAreaInfo.add(ai);
                     prevAi = ai;
 
@@ -647,15 +672,17 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 // preserved space or non-breaking space:
                 // create the AreaInfo object
                 ai = new AreaInfo(nextStart, (short) (nextStart + 1),
-                        (short) 1, (short) 0,
-                        wordSpaceIPD, false, true, breakOpportunity);
+                        (short) 1, (short) 0, wordSpaceIPD, false, true,
+                        breakOpportunity, spaceFont);
                 thisStart = (short) (nextStart + 1);
             } else if (CharUtilities.isFixedWidthSpace(ch) || CharUtilities.isZeroWidthSpace(ch)) {
                 // create the AreaInfo object
+                final Font font = FontSelector.selectFontForCharacterInText(ch,
+                        foText, this);
                 MinOptMax ipd = new MinOptMax(font.getCharWidth(ch));
                 ai = new AreaInfo(nextStart, (short) (nextStart + 1),
-                        (short) 0, (short) 0,
-                        ipd, false, true, breakOpportunity);
+                        (short) 0, (short) 0, ipd, false, true,
+                        breakOpportunity, font);
                 thisStart = (short) (nextStart + 1);
             } else if (ch == NEWLINE) {
                 // linefeed; this can happen when linefeed-treatment="preserve"
@@ -673,6 +700,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 lastIndex--;
             }
             int wordLength = lastIndex - thisStart;
+            final Font font = FontSelector.selectFontForCharactersInText(
+                    textArray, thisStart, lastIndex, foText, this);
             boolean kerning = font.hasKerning();
             MinOptMax wordIPD = new MinOptMax(0);
             for (int i = thisStart; i < lastIndex; i++) {
@@ -703,9 +732,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             wordIPD.add(MinOptMax.multiply(letterSpaceIPD, iLetterSpaces));
 
             // create the AreaInfo object
-            ai = new AreaInfo(thisStart, (short)lastIndex, (short) 0,
-                    (short) iLetterSpaces,
-                    wordIPD, false, false, false);
+            ai = new AreaInfo(thisStart, (short) lastIndex, (short) 0,
+                    (short) iLetterSpaces, wordIPD, false, false, false, font);
             vecAreaInfo.add(ai);
             tempStart = nextStart;
 
@@ -715,9 +743,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             ai = null;
         } else if (inWhitespace) {
             ai = new AreaInfo(thisStart, (short) (nextStart),
-                    (short) (nextStart - thisStart), (short) 0,
-                    MinOptMax.multiply(wordSpaceIPD, nextStart - thisStart),
-                    false, true, true);
+                    (short) (nextStart - thisStart), (short) 0, MinOptMax
+                            .multiply(wordSpaceIPD, nextStart - thisStart),
+                    false, true, true, spaceFont);
             vecAreaInfo.add(ai);
 
             // create the elements
@@ -828,6 +856,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         int startIndex = ai.startIndex;
         int stopIndex;
         boolean nothingChanged = true;
+        final Font font = ai.font;
 
         while (startIndex < ai.breakIndex) {
             MinOptMax newIPD = new MinOptMax(0);
@@ -881,15 +910,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 if (changeList == null) {
                     changeList = new LinkedList();
                 }
-                changeList.add
-                    (new PendingChange
-                     (new AreaInfo((short) startIndex, (short) stopIndex,
-                                   (short) 0,
-                                   (short) (isWordEnd
-                                            ? (stopIndex - startIndex - 1)
-                                            : (stopIndex - startIndex)),
-                                   newIPD, hyphenFollows, false, false),
-                      ((LeafPosition) pos).getLeafPos()));
+                changeList.add(new PendingChange(new AreaInfo(
+                        (short) startIndex, (short) stopIndex, (short) 0,
+                        (short) (isWordEnd ? (stopIndex - startIndex - 1)
+                                : (stopIndex - startIndex)), newIPD,
+                        hyphenFollows, false, false, font),
+                        ((LeafPosition) pos).getLeafPos()));
                 nothingChanged = false;
             }
             startIndex = stopIndex;

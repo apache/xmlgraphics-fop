@@ -37,7 +37,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
 /**
  * A text node (PCDATA) in the formatting object tree.
  *
- * Unfortunately the BufferManager implementatation holds
+ * Unfortunately the BufferManager implementation holds
  * onto references to the character data in this object
  * longer than the lifetime of the object itself, causing
  * excessive memory consumption and OOM errors.
