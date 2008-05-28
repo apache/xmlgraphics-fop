@@ -50,9 +50,9 @@ public class RenderPagesModel extends AreaTreeModel {
     /**
      * Pages that have been prepared but not rendered yet.
      */
-    protected List prepared = new java.util.ArrayList();
-    private List pendingODI = new java.util.ArrayList();
-    private List endDocODI = new java.util.ArrayList();
+    protected List/*<PageViewport>*/ prepared = new java.util.ArrayList/*<PageViewport>*/();
+    private List/*<OffDocumentItem>*/ pendingODI = new java.util.ArrayList/*<OffDocumentItem>*/();
+    private List/*<OffDocumentItem>*/ endDocODI = new java.util.ArrayList/*<OffDocumentItem>*/();
 
     /**
      * Create a new render pages model with the given renderer.
@@ -66,7 +66,7 @@ public class RenderPagesModel extends AreaTreeModel {
         FontInfo fontInfo, OutputStream stream) throws FOPException {
 
         super();
-        renderer = userAgent.getRendererFactory().createRenderer(
+        this.renderer = userAgent.getRendererFactory().createRenderer(
                 userAgent, outputFormat);
 
         try {
