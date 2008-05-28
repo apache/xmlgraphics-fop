@@ -20,8 +20,6 @@
 package org.apache.fop.area;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,20 +34,20 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IDTracker {
     
-    private static Log log = LogFactory.getLog(IDTracker.class);
+    private static final Log log = LogFactory.getLog(IDTracker.class);
 
     // HashMap of ID's whose area is located on one or more consecutive
     // PageViewports. Each ID has an arraylist of PageViewports that
     // form the defined area of this ID
-    private Map idLocations = new HashMap();
+    private Map idLocations = new java.util.HashMap();
 
     // idref's whose target PageViewports have yet to be identified
     // Each idref has a HashSet of Resolvable objects containing that idref
-    private Map unresolvedIDRefs = new HashMap();
+    private Map unresolvedIDRefs = new java.util.HashMap();
 
-    private Set unfinishedIDs = new HashSet();
+    private Set unfinishedIDs = new java.util.HashSet();
 
-    private Set alreadyResolvedIDs = new HashSet();
+    private Set alreadyResolvedIDs = new java.util.HashSet();
     
     /**
      * Tie a PageViewport with an ID found on a child area of the PV. Note that
@@ -198,7 +196,7 @@ public class IDTracker {
     public void addUnresolvedIDRef(String idref, Resolvable res) {
         Set todo = (Set) unresolvedIDRefs.get(idref);
         if (todo == null) {
-            todo = new HashSet();
+            todo = new java.util.HashSet();
             unresolvedIDRefs.put(idref, todo);
         }
         // add Resolvable object to this HashSet
