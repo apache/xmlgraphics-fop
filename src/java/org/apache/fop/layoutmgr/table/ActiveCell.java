@@ -19,12 +19,12 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
@@ -32,6 +32,7 @@ import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
@@ -101,6 +102,8 @@ class ActiveCell {
         private int penaltyLength;
         /** Value of the penalty ending this step, 0 if the step does not end on a penalty. */
         private int penaltyValue;
+        /** List of footnotes for this step. */
+        private List footnoteList;
         /**
          * One of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
          * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
@@ -130,6 +133,7 @@ class ActiveCell {
             this.totalLength   = other.totalLength;
             this.penaltyLength = other.penaltyLength;
             this.penaltyValue  = other.penaltyValue;
+            this.footnoteList  = other.footnoteList;
             this.condBeforeContentLength = other.condBeforeContentLength;
             this.breakClass    = other.breakClass;
         }
@@ -293,6 +297,7 @@ class ActiveCell {
         afterNextStep.penaltyValue = 0;
         afterNextStep.condBeforeContentLength = 0;
         afterNextStep.breakClass = Constants.EN_AUTO;
+        afterNextStep.footnoteList = null;
         boolean breakFound = false;
         boolean prevIsBox = false;
         boolean boxFound = false;
@@ -322,6 +327,12 @@ class ActiveCell {
                 }
                 prevIsBox = false;
             } else {
+                if (el instanceof KnuthBlockBox && ((KnuthBlockBox) el).hasAnchors()) {
+                    if (afterNextStep.footnoteList == null) {
+                        afterNextStep.footnoteList = new LinkedList();
+                    }
+                    afterNextStep.footnoteList.addAll(((KnuthBlockBox) el).getFootnoteBodyLMs());
+                }
                 prevIsBox = true;
                 boxFound = true;
                 afterNextStep.contentLength += el.getW();
@@ -540,6 +551,18 @@ class ActiveCell {
             return new CellPart(pgu, nextStep.start, nextStep.end, lastCellPart,
                     nextStep.condBeforeContentLength, length, nextStep.penaltyLength,
                     bpBeforeNormal, bpBeforeFirst, bpAfterNormal, bpAfterTrailing);
+        }
+    }
+
+    /**
+     * Adds the footnotes (if any) that are part of the next step, if this cell
+     * contributes content to the next step.
+     * 
+     * @param footnoteList the list to which this cell must add its footnotes
+     */
+    void addFootnotes(List footnoteList) {
+        if (includedInLastStep() && nextStep.footnoteList != null) {
+            footnoteList.addAll(nextStep.footnoteList);
         }
     }
 
