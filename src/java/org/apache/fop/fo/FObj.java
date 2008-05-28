@@ -573,6 +573,11 @@ public abstract class FObj extends FONode implements Constants {
         }
     }
 
+    /** @return true if this FObj has extension attachments */ 
+    public boolean hasExtensionAttachments() {
+        return extensionAttachments != null;
+    }
+    
     /**
      * Adds a foreign attribute to this FObj.
      * @param attributeName the attribute name as a QName instance
