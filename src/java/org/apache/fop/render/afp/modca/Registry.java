@@ -21,6 +21,8 @@ package org.apache.fop.render.afp.modca;
 
 import java.util.Collections;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ImageObjectInfo;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -29,6 +31,8 @@ import org.apache.xmlgraphics.util.MimeConstants;
  * MOD:CA Registry of object types 
  */
 public final class Registry {
+    /** logging instance */
+    private static final Log log = LogFactory.getLog("org.apache.fop.afp");
 
     /** IOB supported object types */    
     private static final byte COMPID_GIF = 22;
@@ -131,7 +135,11 @@ public final class Registry {
         if (dataObjectInfo instanceof ImageObjectInfo) {
             ImageObjectInfo imageInfo = (ImageObjectInfo)dataObjectInfo;
             String mimeType = imageInfo.getMimeType();
-            entry = (Registry.ObjectType)mimeEntryMap.get(mimeType);
+            if (mimeType != null) {
+                entry = (Registry.ObjectType)mimeEntryMap.get(mimeType);
+            } else {
+                log.info("mimetype for " + dataObjectInfo + " is null");
+            }
         }
         return entry;
     }
