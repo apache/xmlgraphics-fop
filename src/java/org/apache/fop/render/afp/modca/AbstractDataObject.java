@@ -62,11 +62,19 @@ public abstract class AbstractDataObject extends AbstractPreparedObjectContainer
      */
     public void setViewport(int x, int y, int width, int height,
             int widthRes, int heightRes, int rotation) {
+        getObjectEnvironmentGroup().setObjectArea(x, y, width, height,
+                widthRes, heightRes, rotation);
+    }
+    
+    /**
+     * Gets the ObjectEnvironmentGroup
+     * @return the object environment group
+     */
+    protected ObjectEnvironmentGroup getObjectEnvironmentGroup() {
         if (objectEnvironmentGroup == null) {
             objectEnvironmentGroup = new ObjectEnvironmentGroup();
         }
-        objectEnvironmentGroup.setObjectArea(x, y, width, height,
-                widthRes, heightRes, rotation);
+        return objectEnvironmentGroup;
     }
     
     /**
