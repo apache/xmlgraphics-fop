@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: FontCollection.java 654783 2008-05-09 12:30:40Z vhennebert $ */
+/* $Id$ */
 
 package org.apache.fop.fonts;
 
