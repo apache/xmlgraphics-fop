@@ -58,6 +58,9 @@
         Added SVG support for AFP (GOCA).
       </action -->
       <action context="Layout" dev="MB" type="add">
+        Implemented word-by-ford font-selection strategy on text.
+      </action>
+      <action context="Layout" dev="MB" type="add">
         Support character-by-character font-selection strategy on fo:character element.
       </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="44794">
