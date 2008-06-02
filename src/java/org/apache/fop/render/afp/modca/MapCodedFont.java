@@ -42,7 +42,7 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  *
  * @author <a href="mailto:pete@townsend.uk.com">Pete Townsend </a>
  */
-public class MapCodedFont extends AbstractAFPObject {
+public class MapCodedFont extends AbstractStructuredAFPObject {
 
     /**
      * The collection of map coded fonts (maximum of 254)
@@ -53,32 +53,30 @@ public class MapCodedFont extends AbstractAFPObject {
      * Constructor for the MapCodedFont
      */
     public MapCodedFont() {
-
         fontList = new java.util.ArrayList();
-
     }
 
     /**
-     * Accessor method to write the AFP datastream for the Map Coded Font
-     * @param os The stream to write to
-     * @throws java.io.IOException an I/O exception of some sort has occurred
+     * {@inheritDoc}
      */
     public void write(OutputStream os) throws IOException {
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(0x5A);
-        baos.write(new byte[] {0x00, 0x00});
-
-        // Field identifier for a MapCodedFont
-        baos.write(new byte[] {(byte) 0xD3, (byte) 0xAB, (byte) 0x8A});
-
-        // Reserved
-        baos.write(new byte[] {0x00, 0x00, 0x00});
-
+        byte[] startData = new byte[] {
+            0x5A,
+            0x00, // Reserved
+            0x00, // Reserved
+            (byte)0xD3,
+            (byte)0xAB, // Format 2
+            (byte)0x8A,
+            0x00, // Reserved
+            0x00, // Reserved
+            0x00, // Reserved
+        };
         
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(startData);
+
         Iterator iter = fontList.iterator();
         while (iter.hasNext()) {
-
             FontDefinition fd = (FontDefinition) iter.next();
 
             // Start of repeating groups (occurs 1 to 254)
@@ -186,9 +184,7 @@ public class MapCodedFont extends AbstractAFPObject {
         }
 
         try {
-
             if (font instanceof RasterFont) {
-
                 RasterFont raster = (RasterFont) font;
                 CharacterSet cs = raster.getCharacterSet(size);
                 if (cs == null) {
@@ -218,7 +214,6 @@ public class MapCodedFont extends AbstractAFPObject {
                 }
 
             } else if (font instanceof OutlineFont) {
-
                 OutlineFont outline = (OutlineFont) font;
                 CharacterSet cs = outline.getCharacterSet();
                 fd.characterSet = cs.getNameBytes();
@@ -236,7 +231,6 @@ public class MapCodedFont extends AbstractAFPObject {
                         AFPConstants.EBCIDIC_ENCODING)
                         + " must have a fixed length of 8 characters.");
                 }
-
             } else {
                 String msg = "Font of type " + font.getClass().getName()
                     + " not recognized.";
@@ -245,22 +239,19 @@ public class MapCodedFont extends AbstractAFPObject {
             }
 
             if (fontList.size() > 253) {
-
                 // Throw an exception if the size is exceeded
                 throw new MaximumSizeExceededException();
-
             } else {
                 fontList.add(fd);
             }
 
         } catch (UnsupportedEncodingException ex) {
-
             throw new FontRuntimeException("Failed to create font "
                 + " due to a UnsupportedEncodingException", ex);
-
         }   
     }
 
+    
     /**
      * Private utility class used as a container for font attributes
      */
@@ -290,7 +281,6 @@ public class MapCodedFont extends AbstractAFPObject {
          * The scale (only specified for outline fonts)
          */
         private int scale = 0;
-
     }
 
 }
