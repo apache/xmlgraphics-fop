@@ -694,6 +694,22 @@ out = proc.getOutputStream();]]></source>
         </p>
       </section>
     </section>
+    <section id="afp-foreign-attributes">
+      <title>Foreign Attributes</title>
+        <section id="afp-foreign-attributes-resource">
+        <title>Resource</title>
+        <p>The resource foreign attributes provides the ability to control where data object resources (e.g. images) will reside in the AFP output. Example:</p>
+      <source><![CDATA[
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+     ...
+     <block>
+      <fo:external-graphic width="2.0cm" content-width="2.0cm" height="1.8cm" content-height="1.8cm" src="examples/fo/graphics/xml_feather.gif" afp:resource-name="feather" afp:resource-level="external" afp:resource-group-file="resources.afp"/>
+     </block>
+]]></source>
+        <p>The resource-info extension can only occur as foreign attributes of &gt;fo:external-graphic/&lt; and &gt;instream-foreign-object/&lt;.</p>
+      </section>
+    </section>
   </section>
 <section id="rtf">
   <title>RTF</title>
