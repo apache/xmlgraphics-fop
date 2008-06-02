@@ -26,8 +26,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.FontSelector;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -62,7 +61,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     /** {@inheritDoc} */
     public void initialize() {
         Character fobj = (Character)this.fobj;        
-        font = this.selectFontForCharacter(fobj);
+        font = FontSelector.selectFontForCharacter(fobj, this);
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
         letterSpaceIPD = ls.getSpace();
         hyphIPD = fobj.getCommonHyphenation().getHyphIPD(font);
@@ -71,33 +70,6 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         org.apache.fop.area.inline.TextArea chArea = getCharacterInlineArea(fobj);
         chArea.setBaselineOffset(font.getAscender());
         setCurrentArea(chArea);
-    }
-    
-    /**
-     * Selects a font which is able to display the given character.
-     * <p>
-     * Please note: this implements the font-selection-strategy
-     * character-by-character.
-     * <p>
-     * TODO: The same function could apply to other elements as well.
-     * 
-     * @param fobj
-     *            a Character object containing the character and its
-     *            attributed.
-     * @return a Font object.
-     */
-    private Font selectFontForCharacter(Character fobj) {
-        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
-        for (int i = 0; i < fontkeys.length; i++) {
-            font = fi.getFontInstance(fontkeys[i],
-                    fobj.getCommonFont().fontSize.getValue(this));
-            if (font.hasChar(fobj.getCharacter())) {
-                return font;
-            }
-        }
-        return fi.getFontInstance(fontkeys[0],
-                fobj.getCommonFont().fontSize.getValue(this));
     }
 
     private org.apache.fop.area.inline.TextArea getCharacterInlineArea(Character node) {

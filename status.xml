@@ -60,6 +60,13 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added de-duplication and externalization support for IOCA and GOCA data resource objects.
       </action -->
+      <action context="Code" dev="AD" type="fix" fixes-bug="45097">
+        Corrected white-space-treatment for situations where an inline-node is the first/last
+        child node of an fo:block, without preceding/following text.
+      </action>
+      <action context="Layout" dev="MB" type="add">
+        Implemented word-by-ford font-selection strategy on text.
+      </action>
       <action context="Layout" dev="MB" type="add">
         Support character-by-character font-selection strategy on fo:character element.
       </action>

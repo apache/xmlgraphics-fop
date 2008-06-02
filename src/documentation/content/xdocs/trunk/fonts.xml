@@ -22,7 +22,7 @@
     <title>Apache FOP: Fonts</title>
     <version>$Revision$</version>
     <authors>
-      <person name="Jeremias Märki" email=""/>
+      <person name="Jeremias M&#xE4;rki" email=""/>
       <person name="Tore Engvig" email=""/>
       <person name="Adrian Cumiskey" email=""/>
       <person name="Max Berger" email=""/>
@@ -96,14 +96,14 @@
           <td>yes (used for layout but not for output)</td>
           <td>no</td>
         </tr>
-        <!--tr> NOT AVAILABLE
+<!--tr> NOT AVAILABLE
           <td>MIF</td>
           <td>n/a (font metrics not needed)</td>
           <td>n/a</td>
           <td>n/a</td>
           <td>n/a</td>
         </tr-->
-        <!--tr> NOT AVAILABLE
+<!--tr> NOT AVAILABLE
           <td>SVG</td>
           <td>if available from OS</td>
           <td>yes</td>
@@ -163,7 +163,6 @@
         PDF or PostScript.
       </p>
     </section>
-    
     <section id="custom">
       <title>Custom Fonts</title>
       <p>
@@ -184,11 +183,14 @@
         Basic information about fonts can be found at:
       </p>
       <ul>
-        <li><a href="http://partners.adobe.com/asn/developer/type/ftypes.html">Adobe font types</a></li>
-        <li><a href="http://partners.adobe.com/asn/developer/technotes/fonts.html">Adobe Font Technote</a></li>
+        <li>
+          <a href="http://partners.adobe.com/asn/developer/type/ftypes.html">Adobe font types</a>
+        </li>
+        <li>
+          <a href="http://partners.adobe.com/asn/developer/technotes/fonts.html">Adobe Font Technote</a>
+        </li>
       </ul>
     </section>
-    
     <section id="basics">
       <title>Basic font configuration</title>
       <p>
@@ -220,7 +222,6 @@
         not possible to easily configure fonts from Java code.
       </note>
     </section>
-    
     <section id="advanced">
       <title>Advanced font configuration</title>
       <p>
@@ -359,7 +360,7 @@
             relative to the base directory.
           </li>
         </ul>
-        <!--note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note-->
+<!--note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note-->
       </section>
       <section id="autodetect">
         <title>Auto-Detect and auto-embed feature</title>
@@ -425,14 +426,14 @@
         </ul>
       </section>
       <section id="substitution">
-         <title>Substitution</title>
-         <p>When a &lt;substitutions/&gt; section is defined in the configuration, FOP will re-map any font-family references found in your FO input to a given substitution font.</p>
-         <ul>
-            <li>If a &lt;substitution/&gt; is declared, it is mandatory that both a &lt;from/&gt; and &lt;to/&gt; child element is declared with a font-family attribute.</li>
-            <li>Both font-weight and font-style are optional attributes, if they are provided then a value of 'normal' is assumed.</li>
-         </ul>
-         <p>For example you could make all FO font-family references to 'Arial' with weights between 700 and 900 reference the normal 'Arial Black' font.</p>
-         <source><![CDATA[
+        <title>Substitution</title>
+        <p>When a &lt;substitutions/&gt; section is defined in the configuration, FOP will re-map any font-family references found in your FO input to a given substitution font.</p>
+        <ul>
+          <li>If a &lt;substitution/&gt; is declared, it is mandatory that both a &lt;from/&gt; and &lt;to/&gt; child element is declared with a font-family attribute.</li>
+          <li>Both font-weight and font-style are optional attributes, if they are provided then a value of 'normal' is assumed.</li>
+        </ul>
+        <p>For example you could make all FO font-family references to 'Arial' with weights between 700 and 900 reference the normal 'Arial Black' font.</p>
+        <source><![CDATA[
 <fop version="1.0">
    <fonts>
       <substitutions>
@@ -448,7 +449,7 @@
    </fonts>
 </fop>]]></source>
       </section>
-      <!-- The following section should no longer be required
+<!-- The following section should no longer be required
       <section id="embedding-base14">
         <title>Explicitly embedding the base 14 fonts</title>
         <p>
@@ -473,6 +474,19 @@
   <x-height>766</x-height>
   [..]]]></source>
       </section-->
+    </section>
+    <section id="selection">
+      <title>Font Selection Strategies</title>
+      <p>
+          There are two font selection strategies: character-by-character or auto. The default is auto.</p>
+      <p>Auto selected the first font from the list which is able to display the most characters in a given word. This means (assume font A has characters for abclmn, font B for lnmxyz, fontlist is A,B):</p>
+      <ul>
+        <li>aaa lll xxx would be displayed in fonts A A B</li>
+        <li>aaaxx would be displayed in font A</li>
+        <li>aaaxxx would be displayed in font A</li>
+        <li>aaaxxxx would be displayed in font B</li>
+      </ul>
+      <p>Character-by-Character is NOT yet supported!</p>
     </section>
   </body>
 </document>

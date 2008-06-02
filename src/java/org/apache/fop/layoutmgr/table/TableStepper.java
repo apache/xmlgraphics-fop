@@ -33,6 +33,7 @@ import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KeepUtil;
+import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -199,12 +200,14 @@ public class TableStepper {
                 }
             }
 
+            LinkedList footnoteList = new LinkedList();
             //Put all involved grid units into a list
             List cellParts = new java.util.ArrayList(columnCount);
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 CellPart part = activeCell.createCellPart();
                 cellParts.add(part);
+                activeCell.addFootnotes(footnoteList);
             }
 
             //Create elements for step
@@ -217,7 +220,13 @@ public class TableStepper {
                 tcpos.setFlag(TableContentPosition.FIRST_IN_ROWGROUP, true);
             }
             lastTCPos = tcpos;
-            returnList.add(new KnuthBox(boxLen, tcpos, false));
+
+            // TODO TableStepper should remain as footnote-agnostic as possible
+            if (footnoteList.isEmpty()) {
+                returnList.add(new KnuthBox(boxLen, tcpos, false));
+            } else {
+                returnList.add(new KnuthBlockBox(boxLen, footnoteList, tcpos, false));
+            }
 
             int effPenaltyLen = Math.max(0, penaltyOrGlueLen);
             TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
