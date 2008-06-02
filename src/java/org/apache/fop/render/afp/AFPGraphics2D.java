@@ -34,24 +34,20 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 
 import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.goca.GraphicsSetLineType;
 import org.apache.fop.render.afp.modca.GraphicsObject;
-import org.apache.fop.render.afp.modca.IncludeObject;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.StrokingTextHandler;
 import org.apache.xmlgraphics.java2d.TextHandler;
-import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 /**
  * This is a concrete implementation of <tt>AbstractGraphics2D</tt> (and
@@ -78,8 +74,8 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     /** Current AFP state */
     private AFPState afpState = null;
 
-    /** The SVG document URI */
-    private String documentURI = null;
+//    /** The SVG document URI */
+//    private String documentURI = null;
 
     /**
      * @param textAsShapes
@@ -215,10 +211,9 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         int[] coords = null;
         if (shape instanceof GeneralPath || shape instanceof ExtendedGeneralPath) {
             // graphics segment opening coordinates (x,y)
-            int[] openingCoords = new int[2];
             // current position coordinates (x,y)
-            int[] currCoords = new int[2];
-            NEXT_ITER: while (!iter.isDone()) {
+            for (int[] openingCoords = new int[2], currCoords = new int[2];
+                !iter.isDone(); iter.next()) {
                 // round the coordinate values and combine with current position
                 // coordinates
                 int type = iter.currentSegment(vals);
@@ -252,8 +247,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                             log.debug("Unrecognised path iterator type: "
                                     + type);
                         }
-                        iter.next();
-                        continue NEXT_ITER;
+                        continue;
                     }
                     // combine current position coordinates with new graphics
                     // segment coordinates
@@ -273,7 +267,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                     currCoords[0] = coords[coords.length - 2];
                     currCoords[1] = coords[coords.length - 1];
                 }
-                iter.next();
             }
         } else if (shape instanceof Line2D) {
             iter.currentSegment(vals);
@@ -412,37 +405,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         log.debug("drawImage(): NYI img=" + img + ", x=" + x + ", y=" + y
                 + ", width=" + width + ", height=" + height + ", obs=" + observer);
         return false;
-//        log.debug("drawImage() img=" + img + ", x=" + x + ", y=" + y
-//                + ", width=" + width + ", height=" + height + ", obs=" + observer);
-//        if (img instanceof BufferedImage) {
-//            try {
-//                BufferedImage bi = (BufferedImage)img;
-//                ByteArrayOutputStream baout = new ByteArrayOutputStream();
-//                
-//                // Serialize image
-//                ImageEncodingHelper.encodeRenderedImageAsRGB(bi, baout);
-//                
-//                int res = afpInfo.getResolution();
-//                ImageObjectParameters params = new ImageObjectParameters(
-//                        //TODO: provide a real url
-//                        img.toString(), x, y,
-//                        width, height, res, res, baout.toByteArray(),
-//                        img.getWidth(observer), img.getHeight(observer), 
-//                        afpInfo.isColorSupported(), afpInfo.getBitsPerPixel());
-//                
-//                afpInfo.getAFPDataStream().createImageObject(params);
-//
-//                // Generate image
-//            } catch (IOException ioe) {
-//                log.error("Error while serializing bitmap: " + ioe.getMessage(),
-//                    ioe);
-//                return false;
-//            }
-//            return true;
-//        } else {
-//            log.debug("drawImage() image type not supported: " + img);
-//        }
-//        return false;
     }
 
     /**
@@ -486,40 +448,26 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         this.customTextHandler = handler;
     }
 
-//    /**
-//     * Sets the SVG document URI
-//     * @param documentURI the SVG document URI
-//     */
-//    public void setDocumentURI(String documentURI) {
-//        this.documentURI = documentURI;
-//    }
-
     /**
      * @return the GOCA graphics object
      */
     protected GraphicsObject getGraphicsObject() {
-//        if (this.graphicsObj == null) {
-////          DataObjectParameters params = new DataObjectParameters(
-////          ((AbstractDocument)doc).getDocumentURI(),
-////          afpInfo.getX(), afpInfo.getY(),
-////          afpInfo.getWidth(), afpInfo.getHeight(), res, res);
-////  
-////  afpInfo.getAFPDataStream().createGraphicsObject(params);
-//
-//            int x = (int)Math.round((afpInfo.getX() * 25.4f) / 1000);
-//            int y = (int)Math.round((afpInfo.getY() * 25.4f) / 1000);
-//            int res = afpInfo.getResolution();
-//            int width = (int)Math.round((afpInfo.getWidth() * res) / 72000f);
-//            int height = (int)Math.round((afpInfo.getHeight() * res) / 72000f);
-//            DataObjectParameters params = new DataObjectParameters(
-//                    this.documentURI, x, y, width, height, res, res);
-//            IncludeObject includeObj = afpInfo.getAFPDataStream().createGraphicsObject(params);
-//            this.graphicsObj = (GraphicsObject)includeObj.getReferencedObject();
-//        }
         return this.graphicsObj;
     }
 
-    protected void setGraphicsObject(GraphicsObject graphicsObj) {
-        this.graphicsObj = graphicsObj;
+    /**
+     * Sets the graphics object
+     * @param obj the graphics object
+     */
+    protected void setGraphicsObject(GraphicsObject obj) {
+        this.graphicsObj = obj;
     }
+    
+//  /**
+//  * Sets the SVG document URI
+//  * @param documentURI the SVG document URI
+//  */
+// public void setDocumentURI(String documentURI) {
+//     this.documentURI = documentURI;
+// }
 }
