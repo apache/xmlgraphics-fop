@@ -169,12 +169,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * The map of page segments
      */
-    private Map/*<String, String>*/pageSegmentsMap = null;
+    private Map/*<String,String>*/pageSegmentsMap = null;
 
     /**
      * The fonts on the current page
      */
-    private Map/*<String, AFPFontAttributes<*/currentPageFontMap = null;
+    private Map/*<String,AFPFontAttributes<*/currentPageFontMap = null;
 
     /**
      * The current color object
@@ -340,12 +340,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         super.setUserAgent(agent);
     }
 
-    private Map/* <String, AFPFontAttributes */getCurrentPageFonts() {
+    private Map/*<String,AFPFontAttributes>*/getCurrentPageFonts() {
         if (currentPageFontMap == null) {
-            this.currentPageFontMap = new java.util.HashMap/*
-                                                             * <String,
-                                                             * AFPFontAttributes
-                                                             */();
+            this.currentPageFontMap = new java.util.HashMap/*<String,AFPFontAttributes>*/();
         }
         return this.currentPageFontMap;
     }
@@ -492,42 +489,41 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    // TODO - AC fix
-    protected void drawBackAndBorders(Area area, float startx, float starty,
-            float width, float height) {
-        super.drawBackAndBorders(area, startx, starty, width, height);
-        Trait.Background back = (Trait.Background) area
-                .getTrait(Trait.BACKGROUND);
-
-        // the current block has a background so its contents are placed inside
-        // an overlay
-        // after drawing the background and borders
-        if (back != null) {
-            int x = pts2units(startx);
-            int y = pts2units(starty);
-            int w = mpts2units(width);
-            int h = mpts2units(height);
-            int res = getResolution();
-            final int rotation = 0;
-            getAFPDataStream().startOverlay(x, y, w, h, res, res, rotation);
-//            Color col = back.getColor();
-//            getAFPDataStream().createShading(x, y, w, h, col);
-        }
-    }
-
 //    /**
 //     * {@inheritDoc}
 //     */
-    protected void renderBlock(Block block) {
-//        // new block so start page segment
-////        getAFPDataStream().startPageSegment();
-        super.renderBlock(block);
-        getAFPDataStream().endOverlay();
-////        getAFPDataStream().endPageSegment();
-    }
+//    protected void drawBackAndBorders(Area area, float startx, float starty,
+//            float width, float height) {
+//        super.drawBackAndBorders(area, startx, starty, width, height);
+//        Trait.Background back = (Trait.Background) area
+//                .getTrait(Trait.BACKGROUND);
+//
+//        // the current block has a background so its contents are placed inside
+//        // an overlay
+//        // after drawing the background and borders
+//        if (back != null) {
+//            int x = pts2units(startx);
+//            int y = pts2units(starty);
+//            int w = mpts2units(width);
+//            int h = mpts2units(height);
+//            int res = getResolution();
+//            final int rotation = 0;
+//            getAFPDataStream().startOverlay(x, y, w, h, res, res, rotation);
+////            Color col = back.getColor();
+////            getAFPDataStream().createShading(x, y, w, h, col);
+//        }
+//    }
+//
+////    /**
+////     * {@inheritDoc}
+////     */
+//    protected void renderBlock(Block block) {
+////        // new block so start page segment
+//////        getAFPDataStream().startPageSegment();
+//        super.renderBlock(block);
+//        getAFPDataStream().endOverlay();
+//////        getAFPDataStream().endPageSegment();
+//    }
 
     /**
      * {@inheritDoc}
@@ -765,12 +761,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * {@inheritDoc}
      */
     public void fillRect(float x, float y, float width, float height) {
-        getAFPDataStream().createShading(
-                pts2units(x), pts2units(y), pts2units(width), pts2units(height),
-                currentColor);
-//        getAFPDataStream().createLine(pts2units(x), pts2units(y),
-//                pts2units(x + width), pts2units(y), pts2units(height),
+//        getAFPDataStream().createShading(
+//                pts2units(x), pts2units(y), pts2units(width), pts2units(height),
 //                currentColor);
+        getAFPDataStream().createLine(pts2units(x), pts2units(y),
+                pts2units(x + width), pts2units(y), pts2units(height),
+                currentColor);
     }
 
     /**
@@ -966,11 +962,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     int afpw = mpts2units(posInt.getWidth());
                     int afph = mpts2units(posInt.getHeight());
                     int afpres = getResolution();
-
+                    String mimeType = info.getMimeType();
                     // create image object parameters
                     ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
                     imageObjectInfo.setUri(uri);
-                    imageObjectInfo.setMimeType(info.getMimeType());
+                    imageObjectInfo.setMimeType(mimeType);
                     imageObjectInfo.setX(afpx);
                     imageObjectInfo.setY(afpy);
                     imageObjectInfo.setWidth(afpw);
@@ -978,14 +974,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     imageObjectInfo.setWidthRes(afpres);
                     imageObjectInfo.setHeightRes(afpres);
                     imageObjectInfo.setData(buf);
-                    imageObjectInfo
-                            .setDataHeight(ccitt.getSize().getHeightPx());
+                    imageObjectInfo.setDataHeight(ccitt.getSize().getHeightPx());
                     imageObjectInfo.setDataWidth(ccitt.getSize().getWidthPx());
                     imageObjectInfo.setColor(colorImages);
                     imageObjectInfo.setBitsPerPixel(bitsPerPixel);
                     imageObjectInfo.setCompression(ccitt.getCompression());
-                    imageObjectInfo
-                            .setResourceInfoFromForeignAttributes(foreignAttributes);
+                    imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
                     getAFPDataStream().createObject(imageObjectInfo);
                 } else if (img instanceof ImageXMLDOM) {
                     ImageXMLDOM imgXML = (ImageXMLDOM) img;
@@ -1074,8 +1068,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         // create image object parameters
         ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
-        imageObjectInfo.setUri(imageInfo.getOriginalURI());
-        imageObjectInfo.setMimeType(imageInfo.getMimeType());
+        if (imageInfo != null) {
+            imageObjectInfo.setUri(imageInfo.getOriginalURI());
+            imageObjectInfo.setMimeType(imageInfo.getMimeType());
+        }
         imageObjectInfo.setX(mpts2units(x));
         imageObjectInfo.setY(mpts2units(y));
         imageObjectInfo.setWidth(mpts2units(w));
@@ -1373,9 +1369,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 && pageViewport.getExtensionAttachments().size() > 0) {
             // Extract all AFPPageSetup instances from the attachment list on
             // the s-p-m
-            Iterator i = pageViewport.getExtensionAttachments().iterator();
-            while (i.hasNext()) {
-                ExtensionAttachment attachment = (ExtensionAttachment) i.next();
+            Iterator it = pageViewport.getExtensionAttachments().iterator();
+            while (it.hasNext()) {
+                ExtensionAttachment attachment = (ExtensionAttachment) it.next();
                 if (AFPPageSetup.CATEGORY.equals(attachment.getCategory())) {
                     AFPPageSetup aps = (AFPPageSetup) attachment;
                     String element = aps.getElementName();
@@ -1702,5 +1698,4 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     protected boolean isGOCAEnabled() {
         return this.gocaEnabled;
     }
-
 }

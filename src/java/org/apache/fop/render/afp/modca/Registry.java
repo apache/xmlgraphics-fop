@@ -75,7 +75,8 @@ public final class Registry {
                         COMPID_EPS,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x0D},
                         "Encapsulated Postscript",
-                        false
+                        false,
+                        MimeConstants.MIME_EPS
                 )
         );
         mimeEntryMap.put(
@@ -84,7 +85,8 @@ public final class Registry {
                         COMPID_TIFF,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x0E},
                         "TIFF",
-                        false
+                        false,
+                        MimeConstants.MIME_TIFF
                 )
         );
         mimeEntryMap.put(
@@ -93,7 +95,8 @@ public final class Registry {
                         COMPID_GIF,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x16},
                         "GIF",
-                        true
+                        true,
+                        MimeConstants.MIME_GIF
                 )
         );
         mimeEntryMap.put(
@@ -102,7 +105,8 @@ public final class Registry {
                         COMPID_JFIF,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x17},
                         "JFIF",
-                        true
+                        true,
+                        MimeConstants.MIME_JPEG
                 )
         );
         mimeEntryMap.put(MimeConstants.MIME_PDF,
@@ -110,7 +114,8 @@ public final class Registry {
                         COMPID_PDF_SINGLE_PAGE,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x19},
                         "PDF Single-page Object",
-                        true
+                        true,
+                        MimeConstants.MIME_PDF
                 )
         );         
         mimeEntryMap.put(
@@ -119,7 +124,8 @@ public final class Registry {
                         COMPID_PCL_PAGE_OBJECT,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x22},
                         "PCL Page Object",
-                        true
+                        true,
+                        MimeConstants.MIME_PCL
                 )
         );
     }
@@ -152,6 +158,7 @@ public final class Registry {
         private byte[] oid;
         private String name;
         private boolean canBeIncluded;
+        private String mimeType;
         
         /**
          * Main constructor
@@ -159,13 +166,15 @@ public final class Registry {
          * @param oid the object id of this object type
          * @param name the object type name
          * @param canBeIncluded true if this object can be included with an IOB structured field
+         * @param mimeType the mime type associated with this object type
          */
         public ObjectType(byte componentId, byte[] oid, String name,
-                boolean canBeIncluded) {
+                boolean canBeIncluded, String mimeType) {
             this.componentId = componentId;
             this.oid = oid;
             this.name = name;
             this.canBeIncluded = canBeIncluded;
+            this.mimeType = mimeType;
         }
                 
         /**
@@ -197,7 +206,14 @@ public final class Registry {
         public boolean canBeIncluded() {
             return this.canBeIncluded;
         }
-        
+
+        /**
+         * @return the mime type associated with this object type
+         */
+        public String getMimeType() {
+            return this.mimeType;
+        }
+
         /**
          * {@inheritDoc}
          */

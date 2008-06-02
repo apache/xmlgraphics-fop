@@ -23,10 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.render.afp.DataObjectInfo;
-import org.apache.fop.render.afp.ImageObjectInfo;
-import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
-import org.apache.fop.render.afp.tools.StringUtils;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
 
 /**
  * An abstract container of resource objects
@@ -36,6 +32,11 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
      * The resource group object
      */
     private ResourceGroup resourceGroup = null;
+
+    /**
+     * The data object factory
+     */
+    private DataObjectFactory dataObjectFactory = new DataObjectFactory();
 
     /**
      * Default constructor
@@ -96,7 +97,7 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
      */
     protected ResourceGroup getResourceGroup() {
         if (resourceGroup == null) {
-            resourceGroup = new ResourceGroup(this);
+            resourceGroup = new ResourceGroup();
         }
         return resourceGroup;
     }
@@ -164,84 +165,14 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
         io.setImageIDESize((byte) bitsPerPixel);
         io.setImageData(bw);
     }
-
-    private static final String IMAGE_NAME_PREFIX = "IMG";
-    private static final String GRAPHIC_NAME_PREFIX = "GRA";
     
-    // not currently used/implemented
-//    private static final String BARCODE_NAME_PREFIX = "BAR";
-//    private static final String OTHER_NAME_PREFIX = "OTH";
-
-    /**
-     * Helper method to create an image on the current container and to return
-     * the object.
-     * @param info the image object info
-     * @return a newly created image object
-     */
-    protected ImageObject createImage(ImageObjectInfo info) {
-        String name = IMAGE_NAME_PREFIX
-                + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
-        ImageObject imageObj = new ImageObject(name);
-        if (info.hasCompression()) {
-            int compression = info.getCompression();
-            switch (compression) {
-            case TIFFImage.COMP_FAX_G3_1D:
-                imageObj.setImageEncoding(ImageContent.COMPID_G3_MH);
-                    break;
-                case TIFFImage.COMP_FAX_G3_2D:
-                    imageObj.setImageEncoding(ImageContent.COMPID_G3_MR);
-                    break;
-                case TIFFImage.COMP_FAX_G4_2D:
-                    imageObj.setImageEncoding(ImageContent.COMPID_G3_MMR);
-                    break;
-                default:
-                    throw new IllegalStateException(
-                            "Invalid compression scheme: " + compression);
-            }
-        }
-        imageObj.setImageParameters(info.getWidthRes(), info.getHeightRes(), 
-                info.getDataWidth(), info.getDataHeight());
-        if (info.isColor()) {
-            imageObj.setImageIDESize((byte)24);
-            imageObj.setImageData(info.getData());
-        } else {
-            convertToGrayScaleImage(imageObj, info.getData(),
-                    info.getDataWidth(), info.getDataHeight(),
-                    info.getBitsPerPixel());
-        }
-        return imageObj;
-    }
-    
-    /**
-     * Helper method to create a graphic in the current container and to return
-     * the object.
-     * @param info the data object info
-     * @return a newly created graphics object
-     */
-    protected GraphicsObject createGraphic(DataObjectInfo info) {
-        String name = GRAPHIC_NAME_PREFIX
-            + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 5);
-        GraphicsObject graphicsObj = new GraphicsObject(name);
-        return graphicsObj;
-    }
-
     /**
      * Creates and returns a new data object
-     * @param info the data object parameters
+     * @param dataObjectInfo the data object info
      * @return a newly created data object
      */
-    public AbstractNamedAFPObject createObject(DataObjectInfo info) {
-        AbstractNamedAFPObject dataObject;
-        if (info instanceof ImageObjectInfo) {
-            dataObject = createImage((ImageObjectInfo)info);
-        } else {
-            dataObject = createGraphic(info);
-        }
-        dataObject.setFullyQualifiedName(
-            FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
-            FullyQualifiedNameTriplet.FORMAT_CHARSTR, dataObject.getName());
-
-        return dataObject;
+    public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
+        return dataObjectFactory.create(dataObjectInfo);
     }
 
     /**

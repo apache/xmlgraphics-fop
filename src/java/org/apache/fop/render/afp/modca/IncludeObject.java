@@ -117,11 +117,6 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         this.dataObjectAccessor = dataObjectAccessor;
         
         AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
-        // Strip any object container
-        if (dataObject instanceof ObjectContainer) {
-            ObjectContainer objectContainer = (ObjectContainer)dataObject;
-            dataObject = objectContainer.getDataObject();
-        }
         if (dataObject instanceof ImageObject) {
             this.dataObjectType = TYPE_IMAGE;
         } else if (dataObject instanceof GraphicsObject) {
@@ -130,6 +125,11 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
             this.dataObjectType = TYPE_PAGE_SEGMENT;
         } else {
             this.dataObjectType = TYPE_OTHER;
+            // Strip any object container
+            if (dataObject instanceof ObjectContainer) {
+                ObjectContainer objectContainer = (ObjectContainer)dataObject;
+                dataObject = objectContainer.getDataObject();
+            }
         }
 
         DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();

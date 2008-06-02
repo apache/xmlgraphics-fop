@@ -48,11 +48,11 @@ public class AFPElementMapping extends ElementMapping {
     /** include page segment element */
     public static final String INCLUDE_PAGE_SEGMENT = "include-page-segment";
 
-//    /** include resource element (external) */
-//    public static final String RESOURCE = "resource";
-
     /** NOP */
     public static final String NO_OPERATION = "no-operation";
+
+    /** resource information (name, level, dest) */
+//    public static final String RESOURCE_INFO = "resource-info";
 
     /**
      * The namespace used for AFP extensions
@@ -94,6 +94,9 @@ public class AFPElementMapping extends ElementMapping {
             foObjs.put(
                 NO_OPERATION,
                 new AFPNoOperationMaker());
+//           foObjs.put(
+//               RESOURCE_INFO,
+//               new AFPResourceInfoMaker());
         }
     }
 
@@ -126,6 +129,12 @@ public class AFPElementMapping extends ElementMapping {
             return new AFPElement(parent, NO_OPERATION);
         }
     }
+
+//    static class AFPResourceInfoMaker extends ElementMapping.Maker {
+//        public FONode make(FONode parent) {
+//            return new AFPResourceInfoElement(parent);
+//        }
+//    }
 
 //    static class AFPPageGroupMaker extends ElementMapping.Maker {
 //        public FONode make(FONode parent) {

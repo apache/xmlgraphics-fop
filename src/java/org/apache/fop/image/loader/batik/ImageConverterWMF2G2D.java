@@ -101,6 +101,10 @@ public class ImageConverterWMF2G2D extends AbstractImageConverter {
                 log.debug("Painting WMF took " + duration + " ms.");
             }
         }
+
+        public String getImageUri() {
+            return wmf.getInfo().getOriginalURI();
+        }
         
     }
     

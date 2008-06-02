@@ -26,6 +26,7 @@
   <message key="rule.childOfSPM">The element must be a child of fo:simple-page-master.</message>
   <message key="rule.childOfDeclarations">The element must be a child of fo:declarations.</message>
   <message key="rule.childOfSPMorDeclarations">The element must be a child of fo:declarations or fo:simple-page-master.</message>
+  <message key="rule.childOfInstreamForeignObjectorExternalGraphic">The element must be a child of fo:instream-foreign-object or fo:external-graphic.</message>
   <message key="rule.wrapperInvalidChildForParent">An fo:wrapper is only permitted to have children that would be permitted for its parent.</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.tooManyNodes">For "{elementName}", only one "{offendingNode}" may be declared.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.nodeOutOfOrder">For "{elementName}", "{tooLateNode}" must be declared before "{tooEarlyNode}"!{{locator}}</message>

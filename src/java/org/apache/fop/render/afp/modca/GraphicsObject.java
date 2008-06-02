@@ -67,7 +67,7 @@ public class GraphicsObject extends AbstractDataObject {
     public void setViewport(int x, int y, int width, int height,
             int widthRes, int heightRes, int rotation) {
         super.setViewport(x, y, width, height, widthRes, heightRes, rotation);
-        objectEnvironmentGroup.setGraphicsData(
+        getObjectEnvironmentGroup().setGraphicsData(
                 widthRes, heightRes, 0, x + width, 0, y + height);        
     }
 

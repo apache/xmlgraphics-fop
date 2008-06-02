@@ -454,7 +454,7 @@ out = proc.getOutputStream();]]></source>
     <section id="afp-configuration">
       <title>Configuration</title>
       <section id="afp-font-config">
-        <title>Fonts</title>
+      <title>Fonts</title>
       <p>The AFP Renderer requires special configuration particularly related to fonts.
       AFP Render configuration is done through the normal FOP configuration file. The MIME type
       for the AFP Renderer is application/x-afp which means the AFP Renderer section in the FOP configuration file
@@ -590,7 +590,7 @@ out = proc.getOutputStream();]]></source>
       <section id="afp-image-config">
         <title>Images</title>
         <p>By default the AFP Renderer converts all images to 8 bit grey level.
-        This can be overridden by the &lt;images&gt; configuration element. Example:</p>
+        This can be overridden by the &lt;images/&gt; configuration element. Example:</p>
       <source><![CDATA[
       <images mode="color" />
 ]]></source>
@@ -600,6 +600,16 @@ out = proc.getOutputStream();]]></source>
 ]]></source>
       <p>Only the values "color" and "b+w" are allowed for the mode attribute. The bits-per-pixel
       attribute is ignored if mode is "color". For "b+w" mode is must be 1, 4, or 8.</p>
+      </section>
+      <section id="afp-resource-group-file">
+      <title>Resource Group File</title>
+      <p>By default the AFP Renderer will place all data resource objects such as images within
+      the document of the main output datastream.  An external resource group file where document resources
+      may be specified with the &lt;resource-group-file/&gt; configuration element.  Example:</p>
+      <source><![CDATA[
+      <resource-group-file>external_resources.afp</resource-group-file>
+]]></source>
+      <note>Be careful when using this option not to overwrite existing resource files from previous rendering runs.</note>
       </section>
     </section>
     <section id="afp-extensions">

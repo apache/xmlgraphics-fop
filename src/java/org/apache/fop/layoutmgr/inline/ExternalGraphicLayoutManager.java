@@ -37,12 +37,16 @@ public class ExternalGraphicLayoutManager extends AbstractGraphicsLayoutManager 
      */
     public ExternalGraphicLayoutManager(ExternalGraphic node) {
         super(node);
-        fobj = node;
+        this.fobj = node;
     }
 
     /** {@inheritDoc} */
     protected Area getChildArea() {
-        return new Image(fobj.getSrc());
+        Image img = new Image(fobj.getSrc());
+        if (fobj.hasExtensionAttachments()) {
+            img.setExtensionAttachments(fobj.getExtensionAttachments());
+        }
+        return img;
     }
     
 }

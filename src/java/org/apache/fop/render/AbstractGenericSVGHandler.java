@@ -84,12 +84,13 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
 
         //Build the GVT tree
         final GraphicsNode root;
+        final String uri = getDocumentURI(doc);
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
-            eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
+            eventProducer.svgNotBuilt(this, e, uri);
             return;
         }
 
@@ -110,6 +111,10 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
 
             public Dimension getImageSize() {
                 return new Dimension(wrappedContext.getWidth(), wrappedContext.getHeight());
+            }
+            
+            public String getImageUri() {
+                return uri;
             }
 
         };

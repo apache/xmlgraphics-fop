@@ -41,7 +41,7 @@ import org.apache.fop.render.afp.tools.StringUtils;
  * conforming to a given format. Application programs can generate data streams
  * destined for a presentation service, archive library, presentation device or
  * another application program. The strategic presentation data stream
- * architectures used is Mixed Object Document Content Architecture (MO:DCA�).
+ * architectures used is Mixed Object Document Content Architecture (MO:DCA).
  * 
  * The MO:DCA architecture defines the data stream used by applications to
  * describe documents and object envelopes for interchange with other
@@ -50,7 +50,6 @@ import org.apache.fop.render.afp.tools.StringUtils;
  * printed in local or distributed systems environments. Presentation fidelity
  * is accommodated by including resource objects in the documents that reference
  * them.
- * 
  */
 public class AFPDataStream extends AbstractResourceGroupContainer {
 
@@ -144,10 +143,10 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     private int instreamObjectCount = 0;
 
     /**
-     * The MO:DCA interchange set in use (default to MO:DCA-L resource set)
+     * The MO:DCA interchange set in use (default to MO:DCA-P IS/2 set)
      */
     private InterchangeSet interchangeSet
-        = InterchangeSet.valueOf(InterchangeSet.MODCA_RESOURCE_INTERCHANGE_SET);
+        = InterchangeSet.valueOf(InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
 
     /**
      * The external resource group manager
@@ -311,8 +310,6 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             resourceObject.setDataObject(currentOverlay);
             getResourceGroup().addObject(resourceObject);
         }
-//        currentPageGroup.getResourceEnvironmentGroup().addObject(currentOverlay);
-//        currentPageObject.getActiveEnvironmentGroup().createOverlay(overlayName);
 
         currentPageObject.createIncludePageOverlay(overlayName, x, y, 0);
         currentPage = currentOverlay;
@@ -458,6 +455,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
         String uri = dataObjectInfo.getUri();
 
+        if (uri == null) {
+            uri = "/";
+        }
         // if this is an instream data object adjust uri to ensure that it is
         // unique
         if (uri.endsWith("/")) {
@@ -486,8 +486,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                     getCurrentPage().addObject(includeObject);
                     return includeObject.getDataObject();
                 } else {
-                    log.warn("data object located at '" + uri
-                        + "' cannot be referenced with an include so it will be embedded directly");
+                    log.warn("data object located at '" + uri + "'"
+                            + " of type '" + objectType.getMimeType() + "'"
+                            + " cannot be included with an IOB so it will be embedded directly");
                 }
             } else {
                 if (resourceLevel.isExternal()) {
@@ -495,7 +496,6 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                             + ": not available, object " + getName() + " will reside inline");
                 }                
             }
-
         }
         // unrecognised/unsupported object type so create/embed data object
         // directly in current page
@@ -925,7 +925,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                         .getExternalResourceGroupFile();
                 resourceGroup = (ResourceGroup)getExternalResourceGroups().get(resourceGroupFile);
                 if (resourceGroup == null) {
-                    resourceGroup = new ResourceGroup(container);
+                    resourceGroup = new ResourceGroup();
                     externalResourceGroups
                             .put(resourceGroupFile, resourceGroup);
                 }
@@ -940,20 +940,6 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             return externalResourceGroups;
         }
     }
-
-//    /**
-//     * Starts a new page segment.
-//     */
-//    public void startPageSegment() {
-//        currentPageObject.startPageSegment();
-//    }
-//
-//    /**
-//     * Ends the current page segment.
-//     */
-//    public void endPageSegment() {
-//        currentPageObject.endPageSegment();
-//    }
 
     /**
      * Sets the MO:DCA interchange set to use

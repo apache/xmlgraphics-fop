@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.fop.render.afp.DataObjectInfo;
-import org.apache.fop.render.afp.ImageObjectInfo;
 import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.ResourceLevel;
 import org.apache.fop.render.afp.tools.StringUtils;
@@ -44,34 +43,22 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     /**
      * Mapping of resource uri to data resource object (image/graphic) 
      */
-    private Map/*<String, Writeable>*/ resourceMap = null;
-
-    /**
-     * This resource groups container
-     */
-    private AbstractResourceGroupContainer container = null;
+    private Map/*<String,Writeable>*/ resourceMap = null;
 
     /**
      * Default constructor
-     * @param container the resource group container 
      */
-    public ResourceGroup(AbstractResourceGroupContainer container) {
-        this(DEFAULT_NAME, container);
+    public ResourceGroup() {
+        this(DEFAULT_NAME);
     }
 
     /**
      * Constructor for the ResourceGroup, this takes a
      * name parameter which must be 8 characters long.
      * @param name the resource group name
-     * @param container the parent resource group container
      */
-    public ResourceGroup(String name, AbstractResourceGroupContainer container) {
+    public ResourceGroup(String name) {
         super(name);
-        this.container = container;
-    }
-
-    private AbstractResourceGroupContainer getContainer() {
-        return this.container;
     }
 
     private static final String OBJECT_CONTAINER_NAME_PREFIX = "OC";
@@ -81,6 +68,8 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
         + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 6);
         return new ObjectContainer(name);
     }
+    
+    private DataObjectFactory dataObjectFactory = new DataObjectFactory();
     
     /**
      * Creates a data object in this resource group
@@ -94,17 +83,7 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
         ResourceLevel resourceLevel = resourceInfo.getLevel();
         AbstractDataObject dataObj;
         if (dataObjectAccessor == null) {
-            if (dataObjectInfo instanceof ImageObjectInfo) {
-                dataObj = getContainer().createImage((ImageObjectInfo)dataObjectInfo);
-            } else {
-                dataObj = getContainer().createGraphic(dataObjectInfo);
-            }
-
-            dataObj.setViewport(dataObjectInfo.getX(), dataObjectInfo.getY(),
-                    dataObjectInfo.getWidth(), dataObjectInfo.getHeight(),
-                    dataObjectInfo.getWidthRes(), dataObjectInfo.getHeightRes(),
-                    dataObjectInfo.getRotation());
-
+            dataObj = dataObjectFactory.create(dataObjectInfo);
             ObjectContainer objectContainer = null;
             String resourceName = resourceInfo.getName();
             if (resourceName != null) {

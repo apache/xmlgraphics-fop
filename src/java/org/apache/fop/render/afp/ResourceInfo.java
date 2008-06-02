@@ -34,7 +34,6 @@ public class ResourceInfo {
      */
     private ResourceLevel level = new ResourceLevel(ResourceLevel.PRINT_FILE);
     
-    
     /**
      * Sets the resource reference name
      * @param resourceName the resource reference name
@@ -54,7 +53,8 @@ public class ResourceInfo {
      * {@inheritDoc}
      */
     public String toString() {
-        return "ResourceInfo(" + (name != null ? "name=" + name : "" ) + ", level=" + level + ")";
+        return "ResourceInfo(" + (name != null ? "name=" + name
+                + ", " : "") + "level=" + level + ")";
     }
 
     /**

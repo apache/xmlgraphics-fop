@@ -347,6 +347,34 @@
         to "bitmap" which causes all text to be rendered as bitmaps.
       </p>
     </section>
+    <section id="afp-renderer">
+      <title>Special Settings for the AFP Renderer</title>
+      <p>
+      </p>
+      <p>
+        Additionally, there are certain settings that control how the renderer handles various elements.
+      </p>
+<source><![CDATA[<renderer mime="application/x-afp">
+  <images mode="b+w" bits-per-pixel="8"/>
+  <renderer-resolution>240</renderer-resolution>
+  <resource-group-file>resources.afp</resource-group-file>
+  <goca-enabled/>
+</renderer>]]></source>
+      <p>
+        The default value for the "images mode" setting is "b+w" (black and white).  When the setting is "color" a "bits-per-pixel" setting can be provided 
+      </p>
+      <p>
+        The default value for the "renderer-resolution" is 240 dpi. 
+      </p>
+ <!--
+      <p>
+        The default value for the MO:DCA "interchange-set" is "MO:DCA-L". Other compliance settings include presentation interchange sets "MO:DCA-P IS/1" and "MO:DCA-P IS/2" (Resource Groups). 
+      </p>
+ -->
+      <p>
+        By default if there is no configuration definition for "resource-group-file" all resources will be placed inline within the containing page. 
+      </p>
+    </section>
   </section>
 
         <section>

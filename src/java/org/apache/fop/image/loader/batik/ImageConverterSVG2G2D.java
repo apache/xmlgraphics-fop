@@ -59,7 +59,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
     private static Log log = LogFactory.getLog(ImageConverterSVG2G2D.class);
 
     /** {@inheritDoc} */
-    public Image convert(Image src, Map hints) throws ImageException {
+    public Image convert(final Image src, Map hints) throws ImageException {
         checkSourceFlavor(src);
         final ImageXMLDOM svg = (ImageXMLDOM)src;
         if (!SVGDOMImplementation.SVG_NAMESPACE_URI.equals(svg.getRootNamespace())) {
@@ -105,6 +105,9 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
                 return new Dimension(svg.getSize().getWidthMpt(), svg.getSize().getHeightMpt());
             }
 
+            public String getImageUri() {
+                return src.getInfo().getOriginalURI();
+            }
         };
 
         ImageGraphics2D g2dImage = new ImageGraphics2D(src.getInfo(), painter);

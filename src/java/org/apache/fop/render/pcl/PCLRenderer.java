@@ -700,6 +700,10 @@ public class PCLRenderer extends PrintRenderer {
                     public Dimension getImageSize() {
                         return paintRect.getSize();
                     }
+                    
+                    public String getImageUri() {
+                        return null;
+                    }
 
                 };
                 g2a.paintImage(painter, rc,
@@ -1558,6 +1562,10 @@ public class PCLRenderer extends PrintRenderer {
 
             public Dimension getImageSize() {
                 return paintRect.getSize();
+            }
+
+            public String getImageUri() {
+                return null;
             }
 
         };
