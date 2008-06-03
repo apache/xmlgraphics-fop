@@ -105,9 +105,6 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
                 return new Dimension(svg.getSize().getWidthMpt(), svg.getSize().getHeightMpt());
             }
 
-            public String getImageUri() {
-                return src.getInfo().getOriginalURI();
-            }
         };
 
         ImageGraphics2D g2dImage = new ImageGraphics2D(src.getInfo(), painter);

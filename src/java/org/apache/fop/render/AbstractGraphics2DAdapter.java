@@ -32,11 +32,9 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
 
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.util.UnitConv;
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 /**
  * Graphics2DAdapter implementation for PCL and HP GL/2.
@@ -136,11 +134,4 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
             RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
-
-//    /** {@inheritDoc} */
-//    public void paintImage(Graphics2DImagePainter painter, 
-//            RendererContext context,
-//            int x, int y, int width, int height) throws IOException {
-//        paintImage(painter, context, null, x, y, width, height);
-//    }
 }

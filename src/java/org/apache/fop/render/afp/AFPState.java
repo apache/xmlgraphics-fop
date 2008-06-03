@@ -20,7 +20,6 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -188,6 +187,27 @@ public class AFPState {
     }
 
     /**
+     * Sets the image uri of the current image being processed
+     * @param uri the image uri of the current image being processed
+     * @return true if the image uri has changed
+     */
+    public boolean setImageUri(String uri) {
+        if (!uri.equals(getData().imageUri)) {
+            getData().imageUri = uri;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the image uri of the current image being processed
+     * @return the image uri of the current image being processed
+     */
+    protected String getImageUri() {
+        return getData().imageUri;
+    }
+    
+    /**
      * Push the current state onto the stack.
      * This call should be used when the q operator is used
      * so that the state is known when popped.
@@ -234,6 +254,7 @@ public class AFPState {
         return data;
     }
     
+    /** the state data instance */
     public class Data implements Cloneable, Serializable {
         private static final long serialVersionUID = -1789481244175275686L;
 
@@ -261,6 +282,9 @@ public class AFPState {
         /** The fonts on the current page */
         private AFPPageFonts pageFonts = null;
 
+        /** The current image uri */
+        private String imageUri = null;
+        
         /** {@inheritDoc} */
         public Object clone() throws CloneNotSupportedException {
             Data obj = new Data();
@@ -272,7 +296,21 @@ public class AFPState {
             obj.dashArray = this.dashArray;
             obj.filled = this.filled;
             obj.pageFonts = this.pageFonts;
+            obj.imageUri = this.imageUri;
             return obj;
+        }
+        
+        /** {@inheritDoc} */        
+        public String toString() {
+            return "color=" + color
+            + ", backColor=" + backColor
+            + ", fontName=" + fontName
+            + ", fontSize=" + fontSize
+            + ", lineWidth=" + lineWidth
+            + ", dashArray=" + dashArray
+            + ", filled=" + filled
+            + ", pageFonts=" + pageFonts
+            + ", imageUri=" + imageUri;
         }
     }
 }

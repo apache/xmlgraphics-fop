@@ -52,7 +52,6 @@ import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
@@ -912,6 +911,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         uri = URISpecification.getURL(uri);
+        getState().setImageUri(uri);
         Rectangle posInt = new Rectangle((int) pos.getX(), (int) pos.getY(),
                 (int) pos.getWidth(), (int) pos.getHeight());
         Point origin = new Point(currentIPPosition, currentBPPosition);

@@ -65,11 +65,10 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
         BufferedImage bi
             = paintToBufferedImage(painter, wrappedContext, resolution, gray, false);        
         ImageManager manager = userAgent.getFactory().getImageManager();
-        ImageSessionContext sessionContext = userAgent.getImageSessionContext();
-                
+        ImageSessionContext sessionContext = userAgent.getImageSessionContext();                
+        AFPState state = (AFPState)context.getProperty(AFPRendererContextConstants.AFP_STATE);
         try {
-            String uri = painter.getImageUri();
-            ImageInfo info = manager.getImageInfo(uri, sessionContext);
+            ImageInfo info = manager.getImageInfo(state.getImageUri(), sessionContext);
             java.util.Map foreignAttributes = null;
             afp.drawBufferedImage(info, bi, resolution, x, y, width, height, foreignAttributes);
         } catch (ImageException e) {

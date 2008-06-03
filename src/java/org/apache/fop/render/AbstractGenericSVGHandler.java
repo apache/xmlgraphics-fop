@@ -113,10 +113,6 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
                 return new Dimension(wrappedContext.getWidth(), wrappedContext.getHeight());
             }
             
-            public String getImageUri() {
-                return uri;
-            }
-
         };
 
         //Let the painter paint the SVG on the Graphics2D instance
