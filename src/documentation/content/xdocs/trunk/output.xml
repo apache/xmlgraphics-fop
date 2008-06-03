@@ -422,6 +422,31 @@ out = proc.getOutputStream();]]></source>
           Consult the technical reference for your printer for all available values.
         </p>
       </section>
+      <section id="pcl-duplex-mode">
+        <title>Page Duplex Mode</title>
+        <p>
+          The duplex-mode extension attribute on fo:simple-page-master allows to 
+          select the duplex mode to be used for a particular simple-page-master.
+          Example:
+        </p>
+      <source><![CDATA[
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" pcl:duplex-mode="0">
+          ...
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+]]></source>
+        <p>
+          Note: the duplex is a positive integer and the value depends on
+          the target printer. Not all PCL printers support duplexing.
+          Usually, 
+          "0" is simplex,
+          "1" is duplex (long-edge binding), 
+          "2" is duplex (short-edge binding).
+
+          Consult the technical reference for your printer for all available values.
+        </p>
+      </section>
     </section>
   </section>
   <section id="afp">
