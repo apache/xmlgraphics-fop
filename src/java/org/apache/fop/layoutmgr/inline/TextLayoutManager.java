@@ -1000,14 +1000,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             if (this.textArray[ai.startIndex] != CharUtilities.SPACE
                     || this.foText.getWhitespaceTreatment() == Constants.EN_PRESERVE) {
                 // a breaking space that needs to be preserved
-                this
-                        .addElementsForBreakingSpace(baseList, alignment, ai,
+                this.addElementsForBreakingSpace(baseList, alignment, ai,
                                 this.auxiliaryPosition, 0, mainPosition,
                                 ai.areaIPD.opt, true);
             } else {
                 // a (possible block) of breaking spaces
-                this
-                        .addElementsForBreakingSpace(baseList, alignment, ai,
+                this.addElementsForBreakingSpace(baseList, alignment, ai,
                                 mainPosition, ai.areaIPD.opt,
                                 this.auxiliaryPosition, 0, false);
             }
@@ -1048,8 +1046,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                         this.auxiliaryPosition, false));
                 baseList.add(this.makeZeroWidthPenalty(0));
-                baseList
-                        .add(new KnuthGlue(p2WidthOffset
+                baseList.add(new KnuthGlue(p2WidthOffset
                                 - (this.lineStartBAP + this.lineEndBAP), -3
                                 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                 pos2, false));
@@ -1062,8 +1059,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                         this.auxiliaryPosition, false));
                 baseList.add(this.makeZeroWidthPenalty(0));
-                baseList
-                        .add(new KnuthGlue(ai.areaIPD.opt, -3
+                baseList.add(new KnuthGlue(ai.areaIPD.opt, -3
                                 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                 pos2, false));
             }
