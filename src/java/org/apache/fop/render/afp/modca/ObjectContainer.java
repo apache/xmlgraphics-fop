@@ -214,7 +214,7 @@ public class ObjectContainer extends AbstractNamedAFPObject implements DataObjec
             data[8] = 0x00; // Reserved
             
             // copy object data chunk
-            System.arraycopy(data, startIndex, data, 9, dataLen);
+            System.arraycopy(objData, startIndex, data, 9, dataLen);
             
             super.setData(data);
         }
