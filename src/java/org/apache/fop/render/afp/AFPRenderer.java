@@ -59,6 +59,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
@@ -623,6 +624,37 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         currentIPPosition = saveIP;
         currentBPPosition = saveBP;
     }
+    
+    /** {@inheritDoc} */
+    protected void renderFlow(NormalFlow flow) {
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        
+        if (!at.isIdentity()) {
+            Rectangle2D contentRect
+                = new Rectangle2D.Double(at.getTranslateX(), at.getTranslateY(),
+                        flow.getAllocIPD(), flow.getAllocBPD());
+            pushViewPortPos(new ViewPortPos(contentRect, new CTM(at)));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        super.renderFlow(flow);
+        
+        if (!at.isIdentity()) {
+            popViewPortPos();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
     
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {

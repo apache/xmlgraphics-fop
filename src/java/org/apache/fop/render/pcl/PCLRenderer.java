@@ -65,6 +65,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
@@ -1036,6 +1037,39 @@ public class PCLRenderer extends PrintRenderer {
             renderBlocks(block, children);
         }
 
+        if (!at.isIdentity()) {
+            restoreGraphicsState();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
+    /** {@inheritDoc} */
+    protected void renderFlow(NormalFlow flow) {
+        //TODO This is the same code as in AbstractPathOrientedRenderer
+        //So there's some optimization potential but not otherwise PCLRenderer is a little
+        //difficult to derive from AbstractPathOrientedRenderer. Maybe an additional layer
+        //between PrintRenderer and AbstractPathOrientedRenderer is necessary.
+
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        
+        if (!at.isIdentity()) {
+            saveGraphicsState();
+            concatenateTransformationMatrix(mptToPt(at));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        super.renderFlow(flow);
+        
         if (!at.isIdentity()) {
             restoreGraphicsState();
         }
