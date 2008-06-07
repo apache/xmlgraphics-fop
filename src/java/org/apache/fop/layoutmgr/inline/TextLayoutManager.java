@@ -139,8 +139,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      */
     private final MinOptMax[] letterAdjustArray; //size = textArray.length + 1
 
-    private static final char NEWLINE = '\n';
-    
     /** Font used for the space between words. */
     private Font spaceFont = null;
     /** Start index of next TextArea */
