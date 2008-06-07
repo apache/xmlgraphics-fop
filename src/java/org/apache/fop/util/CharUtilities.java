@@ -54,10 +54,16 @@ public class CharUtilities {
     public static final int XMLWHITESPACE = 4;
 
 
+    /** linefeed character */
+    public static final char LINEFEED_CHAR = '\n';
+    /** carriage return */
+    public static final char CARRIAGE_RETURN = '\r';
     /** normal space */
     public static final char SPACE = '\u0020';
     /** non-breaking space */
     public static final char NBSPACE = '\u00A0';
+    /** next line control character */
+    public static final char NEXT_LINE = '\u0085';
     /** zero-width space */
     public static final char ZERO_WIDTH_SPACE = '\u200B';
     /** word joiner */
@@ -68,6 +74,10 @@ public class CharUtilities {
     public static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
     /** soft hyphen */
     public static final char SOFT_HYPHEN = '\u00AD';
+    /** line-separator */
+    public static final char LINE_SEPARATOR = '\u2028';
+    /** paragraph-separator */
+    public static final char PARAGRAPH_SEPARATOR = '\u2029';
     /** missing ideograph */
     public static final char MISSING_IDEOGRAPH = '\u25A1';
     /** Unicode value indicating the the character is "not a character". */
@@ -174,8 +184,7 @@ public class CharUtilities {
      * @return True if the character represents any kind of space
      */
     public static boolean isAnySpace(char c) {
-        boolean ret = (isBreakableSpace(c) || isNonBreakableSpace(c));
-        return ret;
+        return (isBreakableSpace(c) || isNonBreakableSpace(c));
     }
     
     /**
@@ -188,19 +197,31 @@ public class CharUtilities {
         //Generated from: Other_Alphabetic + Lu + Ll + Lt + Lm + Lo + Nl
         int generalCategory = Character.getType(ch);
         switch (generalCategory) {
-        case Character.UPPERCASE_LETTER: //Lu
-        case Character.LOWERCASE_LETTER: //Ll
-        case Character.TITLECASE_LETTER: //Lt
-        case Character.MODIFIER_LETTER: //Lm
-        case Character.OTHER_LETTER: //Lo
-        case Character.LETTER_NUMBER: //Nl
-            return true;
-        default:
-            //TODO if (ch in Other_Alphabetic) return true; (Probably need ICU4J for that)
-            //Other_Alphabetic contains mostly more exotic characters
-            return false;
+            case Character.UPPERCASE_LETTER: //Lu
+            case Character.LOWERCASE_LETTER: //Ll
+            case Character.TITLECASE_LETTER: //Lt
+            case Character.MODIFIER_LETTER: //Lm
+            case Character.OTHER_LETTER: //Lo
+            case Character.LETTER_NUMBER: //Nl
+                return true;
+            default:
+                //TODO if (ch in Other_Alphabetic) return true; (Probably need ICU4J for that)
+                //Other_Alphabetic contains mostly more exotic characters
+                return false;
         }
     }
-    
+
+    /**
+     * Indicates whether the given character is an explicit break-character
+     * @param ch    the character to check
+     * @return  true if the character represents an explicit break
+     */
+    public static boolean isExplicitBreak(char ch) {
+        return (ch == LINEFEED_CHAR
+            || ch == CARRIAGE_RETURN
+            || ch == NEXT_LINE
+            || ch == LINE_SEPARATOR
+            || ch == PARAGRAPH_SEPARATOR);
+    }
 }
 
