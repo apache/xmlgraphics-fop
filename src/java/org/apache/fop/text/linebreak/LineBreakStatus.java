@@ -73,76 +73,99 @@ public class LineBreakStatus {
      * @return the break action to be taken
      */
     public byte nextChar(char c) {
+        
         byte currentClass = LineBreakUtils.getLineBreakProperty(c);
+        
         if (currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_AI
             || leftClass == LineBreakUtils.LINE_BREAK_PROPERTY_XX) {
+            //current "Ambiguous" or previous "Unknown": 
+            // assume current "Alphabetic"
             currentClass = LineBreakUtils.LINE_BREAK_PROPERTY_AL;
-        } else if (currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_NL) {
-            currentClass = LineBreakUtils.LINE_BREAK_PROPERTY_BK;
         }
-        if (leftClass == -1) {
-            if (currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_LF) {
-                leftClass = LineBreakUtils.LINE_BREAK_PROPERTY_BK;
-            } else {
+        
+        /** Check 1: initial character after a reset/mandatory break? */
+        switch (leftClass) {
+            case -1:
+                //first character after a reset()
                 leftClass = currentClass;
                 if (leftClass == LineBreakUtils.LINE_BREAK_PROPERTY_CM) {
                     leftClass = LineBreakUtils.LINE_BREAK_PROPERTY_ID;
                 }
-            }
-            // LB 2a
-            return PROHIBITED_BREAK;
-        } else if (!(leftClass != LineBreakUtils.LINE_BREAK_PROPERTY_BK
-                    && (leftClass != LineBreakUtils.LINE_BREAK_PROPERTY_CR
-                        || currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_LF)
-                )) {
-            reset();
-            if (currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_LF) {
-                leftClass = LineBreakUtils.LINE_BREAK_PROPERTY_BK;
-            }
-            return EXPLICIT_BREAK;
-        } else if (currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_BK
-                    || currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_LF) {
-            leftClass = LineBreakUtils.LINE_BREAK_PROPERTY_BK;
-            return PROHIBITED_BREAK;
-        } else if (currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_CR) {
-            leftClass = LineBreakUtils.LINE_BREAK_PROPERTY_CR;
-            return PROHIBITED_BREAK;
-        } else if (currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_SP) {
-            hadSpace = true;
-            return PROHIBITED_BREAK;
-        } else {
-            boolean savedHadSpace = hadSpace;
-            hadSpace = false;
-            switch (LineBreakUtils.getLineBreakPairProperty(leftClass, currentClass)) {
-                case LineBreakUtils.PROHIBITED_BREAK :
-                    leftClass = currentClass;
+                // LB 2a
+                return PROHIBITED_BREAK;
+            
+            case LineBreakUtils.LINE_BREAK_PROPERTY_BK:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_LF:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_NL:
+                //first character after mandatory break
+                reset();
+                leftClass = currentClass;
+                return EXPLICIT_BREAK;
+            
+            case LineBreakUtils.LINE_BREAK_PROPERTY_CR:
+                //first character after a carriage return: 
+                // explicit break if it is not a linefeed
+                if (currentClass != LineBreakUtils.LINE_BREAK_PROPERTY_LF) {
+                    reset();
+                    return EXPLICIT_BREAK;
+                }
+                
+            default:
+                //nop
+        }
+        
+        /** Check 2: current is a mandatory break or space? */
+        switch (currentClass) {
+            case LineBreakUtils.LINE_BREAK_PROPERTY_BK:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_LF:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_NL:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_CR:
+                leftClass = currentClass;
+                return PROHIBITED_BREAK;
+            
+            case LineBreakUtils.LINE_BREAK_PROPERTY_SP:
+                hadSpace = true;
+                return PROHIBITED_BREAK;
+            
+            default:
+                //nop
+        }
+        
+        /** Normal treatment, if the first two checks did not return */
+        boolean savedHadSpace = hadSpace;
+        hadSpace = false;
+        byte breakAction = LineBreakUtils.getLineBreakPairProperty(leftClass, currentClass);
+        switch (breakAction) {
+            case PROHIBITED_BREAK:
+            case DIRECT_BREAK:
+                leftClass = currentClass;
+                return breakAction;
+            
+            case INDIRECT_BREAK:
+                leftClass = currentClass;
+                if (savedHadSpace) {
+                    return INDIRECT_BREAK;
+                } else {
                     return PROHIBITED_BREAK;
-                case LineBreakUtils.DIRECT_BREAK :
+                }
+                
+            case COMBINING_INDIRECT_BREAK:
+                if (savedHadSpace) {
                     leftClass = currentClass;
-                    return DIRECT_BREAK;
-                case LineBreakUtils.INDIRECT_BREAK :
+                    return COMBINING_INDIRECT_BREAK;
+                } else {
+                    return PROHIBITED_BREAK;
+                }
+                
+            case COMBINING_PROHIBITED_BREAK:
+                if (savedHadSpace) {
                     leftClass = currentClass;
-                    if (savedHadSpace) {
-                        return INDIRECT_BREAK;
-                    } else {
-                        return PROHIBITED_BREAK;
-                    }
-                case LineBreakUtils.COMBINING_INDIRECT_BREAK :
-                    if (savedHadSpace) {
-                        leftClass = currentClass;
-                        return COMBINING_INDIRECT_BREAK;
-                    } else {
-                        return PROHIBITED_BREAK;
-                    }
-                case LineBreakUtils.COMBINING_PROHIBITED_BREAK :
-                    if (savedHadSpace) {
-                        leftClass = currentClass;
-                    }
-                    return COMBINING_PROHIBITED_BREAK;
-                default :
-                    throw new RuntimeException("duh");
-            }
-
+                }
+                return COMBINING_PROHIBITED_BREAK;
+            
+            default:
+                assert false;
+                return breakAction;
         }
     }
     
