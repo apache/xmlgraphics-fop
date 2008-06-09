@@ -20,13 +20,14 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
+import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
@@ -126,16 +127,16 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     /**
      * {@inheritDoc}
      */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax stackLimit = new MinOptMax(context.getStackLimitBP());
 
         referenceIPD = context.getRefIPD();
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
 
-        LinkedList returnedList;
-        LinkedList contentList = new LinkedList();
-        LinkedList returnList = new LinkedList();
+        List returnedList;
+        List contentList = new LinkedList();
+        List returnList = new LinkedList();
 
         BlockLevelLayoutManager curLM; // currently active LM
         BlockLevelLayoutManager prevLM = null; // previously active LM
@@ -187,13 +188,15 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         }
         //Space resolution
         SpaceResolver.resolveElementList(returnList);
-        if (((KnuthElement) returnList.getFirst()).isForcedBreak()) {
-            primaryGridUnit.setBreakBefore(((KnuthPenalty) returnList.getFirst()).getBreakClass());
-            returnList.removeFirst();
+        if (((KnuthElement) returnList.get(0)).isForcedBreak()) {
+            primaryGridUnit.setBreakBefore(((KnuthPenalty) returnList.get(0)).getBreakClass());
+            returnList.remove(0);
             assert !returnList.isEmpty();
         }
-        if (((KnuthElement) returnList.getLast()).isForcedBreak()) {
-            KnuthPenalty p = (KnuthPenalty) returnList.getLast();
+        final KnuthElement lastItem = (KnuthElement) returnList
+                .get(returnList.size() - 1);
+        if (((KnuthElement) lastItem).isForcedBreak()) {
+            KnuthPenalty p = (KnuthPenalty) lastItem;
             primaryGridUnit.setBreakAfter(p.getBreakClass());
             p.setP(0);
         }

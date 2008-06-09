@@ -574,7 +574,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
         FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
         Font fs = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
@@ -644,7 +644,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         LayoutContext inlineLC = new LayoutContext(context);
         
         InlineLevelLayoutManager curLM;
-        LinkedList returnedList = null;
+        List returnedList = null;
         iLineWidth = context.getStackLimitIP().opt;
             
         // convert all the text in a sequence of paragraphs made
@@ -666,7 +666,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
             
             if (lastPar != null) {
-                KnuthSequence firstSeq = (KnuthSequence) returnedList.getFirst();
+                KnuthSequence firstSeq = (KnuthSequence) returnedList.get(0);
                 
                 // finish last paragraph before a new block sequence
                 if (!firstSeq.isInlineSequence()) {
@@ -901,7 +901,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @param context the layout context
      * @return a list of Knuth elements representing broken lines
      */
-    private LinkedList createLineBreaks(int alignment, LayoutContext context) {
+    private List createLineBreaks(int alignment, LayoutContext context) {
 
         // find the optimal line breaking points for each paragraph
         ListIterator paragraphsIterator
@@ -1048,9 +1048,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @param context the layout context
      * @return the newly built element list
      */
-    private LinkedList postProcessLineBreaks(int alignment, LayoutContext context) {
+    private List postProcessLineBreaks(int alignment, LayoutContext context) {
     
-        LinkedList returnList = new LinkedList();
+        List returnList = new LinkedList();
         
         for (int p = 0; p < knuthParagraphs.size(); p++) {
             // penalty between paragraphs
@@ -1068,7 +1068,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(p);
 
             if (!seq.isInlineSequence()) {
-                LinkedList targetList = new LinkedList();
+                List targetList = new LinkedList();
                 ListIterator listIter = seq.listIterator();
                 while (listIter.hasNext()) {
                     ListElement tempElement;
@@ -1110,7 +1110,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                       = ((LineBreakPosition) llPoss.getChosenPosition(i)).getLeafPos();
                     // create a list of the FootnoteBodyLM handling footnotes 
                     // whose citations are in this line
-                    LinkedList footnoteList = new LinkedList();
+                    List footnoteList = new LinkedList();
                     ListIterator elementIterator = seq.listIterator(startIndex);
                     while (elementIterator.nextIndex() <= endIndex) {
                         KnuthElement element = (KnuthElement) elementIterator.next();
@@ -1334,8 +1334,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /**
      * {@inheritDoc} 
      */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
-        LinkedList returnList = new LinkedList();
+    public List getChangedKnuthElements(List oldList, int alignment) {
+        List returnList = new LinkedList();
         for (int p = 0; p < knuthParagraphs.size(); p++) {
             LineLayoutPossibilities llPoss;
             llPoss = (LineLayoutPossibilities)lineLayoutsList.get(p);
@@ -1384,7 +1384,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         ListIterator currParIterator
             = currPar.listIterator(currPar.ignoreAtStart);
         // list of TLM involved in hyphenation
-        LinkedList updateList = new LinkedList();
+        List updateList = new LinkedList();
         KnuthElement firstElement = null;
         KnuthElement nextElement = null;
         // current InlineLevelLayoutManager
@@ -1497,7 +1497,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 .applyChanges(currPar.subList(fromIndex + iAddedElements,
                                               toIndex + iAddedElements))) {
                 // insert the new KnuthElements
-                LinkedList newElements = null;
+                List newElements = null;
                 newElements
                     = currUpdate.inlineLM.getChangedKnuthElements
                     (currPar.subList(fromIndex + iAddedElements,

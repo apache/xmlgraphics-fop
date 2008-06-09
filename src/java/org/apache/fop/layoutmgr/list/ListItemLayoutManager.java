@@ -72,8 +72,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
     private Block curBlockArea = null;
 
-    private LinkedList labelList = null;
-    private LinkedList bodyList = null;
+    private List labelList = null;
+    private List bodyList = null;
 
     private boolean discardBorderBefore;
     private boolean discardBorderAfter;
@@ -190,11 +190,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     }
     
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         referenceIPD = context.getRefIPD();
         LayoutContext childLC;
         
-        LinkedList returnList = new LinkedList();
+        List returnList = new LinkedList();
         
         if (!breakBeforeServed) {
             try {
@@ -243,7 +243,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         this.keepWithNextPendingOnBody = childLC.getKeepWithNextPending();
 
         // create a combined list
-        LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
+        List returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
 
         // "wrap" the Position inside each element
         wrapPositionElements(returnedList, returnList, true);
@@ -262,10 +262,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
 
-    private LinkedList getCombinedKnuthElementsForListItem(LinkedList labelElements,
-                                                           LinkedList bodyElements,
-                                                           LayoutContext context) {
-        //Copy elements to array lists to improve element access performance
+    private List getCombinedKnuthElementsForListItem(List labelElements,
+            List bodyElements, LayoutContext context) {
+        // Copy elements to array lists to improve element access performance
         List[] elementLists = {new ArrayList(labelElements),
                                new ArrayList(bodyElements)};
         int[] fullHeights = {ElementListUtils.calcContentLength(elementLists[0]),
@@ -429,7 +428,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     /**
      * {@inheritDoc} 
      */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         //log.debug(" LILM.getChanged> label");
         // label
         labelList = label.getChangedKnuthElements(labelList, alignment);
@@ -458,9 +457,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        LinkedList returnedList = body.getChangedKnuthElements(oldList, alignment);
+        List returnedList = body.getChangedKnuthElements(oldList, alignment);
         // "wrap" the Position inside each element
-        LinkedList tempList = returnedList;
+        List tempList = returnedList;
         KnuthElement tempElement;
         returnedList = new LinkedList();
         ListIterator listIter = tempList.listIterator();

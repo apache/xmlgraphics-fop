@@ -364,7 +364,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
     /**
      * {@inheritDoc} 
      */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         // "unwrap" the Positions stored in the elements
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement oldElement;

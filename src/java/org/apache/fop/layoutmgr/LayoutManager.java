@@ -19,7 +19,6 @@
  
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
@@ -138,7 +137,7 @@ public interface LayoutManager extends PercentBaseContext {
      * @param alignment the desired text alignement
      * @return          the list of KnuthElements
      */
-    LinkedList getNextKnuthElements(LayoutContext context, int alignment);
+    List getNextKnuthElements(LayoutContext context, int alignment);
 
     /**
      * Get a sequence of KnuthElements representing the content 
@@ -175,7 +174,7 @@ public interface LayoutManager extends PercentBaseContext {
      * @param alignment      the desired text alignment
      * @return               the updated list of KnuthElements
      */
-    LinkedList getChangedKnuthElements(List oldList, int alignment);
+    List getChangedKnuthElements(List oldList, int alignment);
     
     /**
      * Returns the IPD of the content area

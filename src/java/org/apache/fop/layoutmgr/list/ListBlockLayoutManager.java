@@ -115,9 +115,9 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
     
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         resetSpaces(); 
-        LinkedList returnList = super.getNextKnuthElements(context, alignment);
+        List returnList = super.getNextKnuthElements(context, alignment);
 
         //fox:widow-content-limit
         int widowRowLimit = getListBlockFO().getWidowContentLimit().getValue(); 
@@ -135,7 +135,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
    
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         //log.debug("LBLM.getChangedKnuthElements>");
         return super.getChangedKnuthElements(oldList, alignment);
     }

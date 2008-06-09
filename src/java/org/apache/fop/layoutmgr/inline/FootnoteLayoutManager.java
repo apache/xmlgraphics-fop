@@ -71,7 +71,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context,
+    public List getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         // for the moment, this LM is set as the citationLM's parent
         // later on, when this LM will have nothing more to do, the citationLM's parent
@@ -82,9 +82,9 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
         bodyLM.initialize();
 
         // get Knuth elements representing the footnote citation
-        LinkedList returnedList = new LinkedList();
+        List returnedList = new LinkedList();
         while (!citationLM.isFinished()) {
-            LinkedList partialList = citationLM.getNextKnuthElements(context, alignment);
+            List partialList = citationLM.getNextKnuthElements(context, alignment);
             if (partialList != null) {
                 returnedList.addAll(partialList);
             }
@@ -122,9 +122,9 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
     /**
      * {@inheritDoc} 
      */
-    public LinkedList getChangedKnuthElements(List oldList,
+    public List getChangedKnuthElements(List oldList,
                                               int alignment) {
-        LinkedList returnedList = super.getChangedKnuthElements(oldList, alignment);
+        List returnedList = super.getChangedKnuthElements(oldList, alignment);
         addAnchor(returnedList);
         return returnedList;
     }
@@ -164,7 +164,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
      * Find the last box in the sequence, and add a reference to the FootnoteBodyLM
      * @param citationList the list of elements representing the footnote citation
      */
-    private void addAnchor(LinkedList citationList) {
+    private void addAnchor(List citationList) {
         KnuthInlineBox lastBox = null;
         // the list of elements is searched backwards, until we find a box
         ListIterator citationIterator = citationList.listIterator(citationList.size());

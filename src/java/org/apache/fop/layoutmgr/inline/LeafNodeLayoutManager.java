@@ -249,7 +249,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
     
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         curArea = get(context);
         
         if (curArea == null) {
@@ -313,7 +313,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList,
+    public List getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {
             return null;

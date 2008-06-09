@@ -38,7 +38,7 @@ public class ElementListUtils {
      * @param constraint min/opt/max value to restrict the range in which the breaks are removed.
      * @return true if the opt constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaks(LinkedList elements, MinOptMax constraint) {
+    public static boolean removeLegalBreaks(List elements, MinOptMax constraint) {
         return removeLegalBreaks(elements, constraint.opt);
     }
 
@@ -50,7 +50,7 @@ public class ElementListUtils {
      * @param constraint value to restrict the range in which the breaks are removed.
      * @return true if the constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaks(LinkedList elements, int constraint) {
+    public static boolean removeLegalBreaks(List elements, int constraint) {
         int len = 0;
         ListIterator iter = elements.listIterator();
         while (iter.hasNext()) {
@@ -97,7 +97,7 @@ public class ElementListUtils {
      * @param constraint value to restrict the range in which the breaks are removed.
      * @return true if the constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaksFromEnd(LinkedList elements, int constraint) {
+    public static boolean removeLegalBreaksFromEnd(List elements, int constraint) {
         int len = 0;
         ListIterator i = elements.listIterator(elements.size());
         while (i.hasPrevious()) {
@@ -184,8 +184,8 @@ public class ElementListUtils {
      * @param elems the element list
      * @return true if the list ends with a forced break
      */
-    public static boolean endsWithForcedBreak(LinkedList elems) {
-        ListElement last = (ListElement)elems.getLast();
+    public static boolean endsWithForcedBreak(List elems) {
+        ListElement last = (ListElement) elems.get(elems.size() - 1);
         return last.isForcedBreak();
     }
 
@@ -195,8 +195,8 @@ public class ElementListUtils {
      * @param elems the element list
      * @return true if the list ends with a non-infinite penalty
      */
-    public static boolean endsWithNonInfinitePenalty(LinkedList elems) {
-        ListElement last = (ListElement)elems.getLast();
+    public static boolean endsWithNonInfinitePenalty(List elems) {
+        ListElement last = (ListElement) elems.get(elems.size() - 1);
         if (last.isPenalty() && ((KnuthPenalty)last).getP() < KnuthElement.INFINITE) {
             return true;
         } else if (last instanceof BreakElement
