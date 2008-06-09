@@ -21,7 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.Viewport;
@@ -104,7 +104,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     }
     
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context,
+    public List getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         Viewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);

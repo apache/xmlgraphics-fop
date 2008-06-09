@@ -233,14 +233,14 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         LayoutManager curLM;
 
         // the list returned by child LM
-        LinkedList returnedList;
+        List returnedList;
 
         // the list which will be returned to the parent LM
-        LinkedList returnList = new LinkedList();
+        List returnList = new LinkedList();
         KnuthSequence lastSequence = null;
 
         SpaceSpecifier leadingSpace = context.getLeadingSpace();
@@ -367,7 +367,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
                 childLC.clearKeepsPending();
             }
-            lastSequence = (KnuthSequence) returnList.getLast();
+            lastSequence = (KnuthSequence) returnList
+                    .get(returnList.size() - 1);
             lastChildLM = curLM;
         }
         
@@ -432,7 +433,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // set in the layout context, it must be also set in the
         // layout context given to lastLM, but must be cleared in the
         // layout context given to the other LMs.
-        LinkedList positionList = new LinkedList();
+        List positionList = new LinkedList();
         NonLeafPosition pos;
         LayoutManager lastLM = null;// last child LM in this iterator
         Position lastPos = null;
@@ -533,8 +534,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
-        LinkedList returnedList = new LinkedList();
+    public List getChangedKnuthElements(List oldList, int alignment) {
+        List returnedList = new LinkedList();
         addKnuthElementsForBorderPaddingStart(returnedList);
         returnedList.addAll(super.getChangedKnuthElements(oldList, alignment));
         addKnuthElementsForBorderPaddingEnd(returnedList);

@@ -64,7 +64,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
 
         // set layout dimensions
         int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
@@ -72,8 +72,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
         // currently active LM
         LayoutManager curLM;
-        LinkedList returnedList;
-        LinkedList returnList = new LinkedList();
+        List returnedList;
+        List returnList = new LinkedList();
 
         while ((curLM = getChildLM()) != null) {
             if (!(curLM instanceof WrapperLayoutManager)
@@ -114,7 +114,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             }
 
             // "wrap" the Position inside each element
-            LinkedList tempList = returnedList;
+            List tempList = returnedList;
             returnedList = new LinkedList();
             wrapPositionElements(tempList, returnedList);
 
@@ -213,11 +213,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
     
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/ int alignment) {
+    public List getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/ int alignment) {
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement returnedElement;
-        LinkedList returnedList = new LinkedList();
-        LinkedList returnList = new LinkedList();
+        List returnedList = new LinkedList();
+        List returnList = new LinkedList();
         KnuthElement prevElement = null;
         KnuthElement currElement = null;
         int fromIndex = 0;
@@ -257,7 +257,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                     // add an infinite penalty to forbid a break between blocks
                     returnedList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, 
                             new Position(this), false));
-                } else if (!((KnuthElement) returnedList.getLast()).isGlue()) {
+                } else if (!((KnuthElement) returnedList.get(returnedList
+                        .size() - 1)).isGlue()) {
                     // add a null penalty to allow a break between blocks
                     returnedList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                 }

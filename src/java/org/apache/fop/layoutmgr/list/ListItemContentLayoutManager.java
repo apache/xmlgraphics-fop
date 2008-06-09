@@ -98,7 +98,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         //log.debug("  ListItemContentLayoutManager.getChanged>");
         return super.getChangedKnuthElements(oldList, alignment);
     }

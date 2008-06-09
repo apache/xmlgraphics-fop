@@ -21,11 +21,11 @@ package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
@@ -230,7 +230,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param elementLists list of KnuthElement sequences corresponding to the footnotes
      * bodies
      */
-    private void handleFootnotes(LinkedList elementLists) {
+    private void handleFootnotes(List elementLists) {
         // initialization
         if (!footnotesPending) {
             footnotesPending = true;
@@ -286,7 +286,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return returnValue;
     }
 
-    private void resetFootnotes(LinkedList elementLists) {
+    private void resetFootnotes(List elementLists) {
         for (int i = 0; i < elementLists.size(); i++) {
             /*LinkedList removedList = (LinkedList)*/footnotesList.remove(footnotesList.size() - 1);
             lengthList.remove(lengthList.size() - 1);

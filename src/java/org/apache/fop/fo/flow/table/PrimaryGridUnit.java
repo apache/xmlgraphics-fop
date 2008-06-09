@@ -38,7 +38,7 @@ public class PrimaryGridUnit extends GridUnit {
     /** Cell layout manager. */
     private TableCellLayoutManager cellLM;
     /** List of Knuth elements representing the contents of the cell. */
-    private LinkedList elements;
+    private List elements;
 
     /** Index of the row where this cell starts. */
     private int rowIndex;
@@ -106,11 +106,11 @@ public class PrimaryGridUnit extends GridUnit {
      *
      * @param elements a list of ListElement (?)
      */
-    public void setElements(LinkedList elements) {
+    public void setElements(List elements) {
         this.elements = elements;
     }
 
-    public LinkedList getElements() {
+    public List getElements() {
         return this.elements;
     }
 

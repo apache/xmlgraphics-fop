@@ -523,12 +523,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
     
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(final LayoutContext context, final int alignment) {
+    public List getNextKnuthElements(final LayoutContext context, final int alignment) {
         this.lineStartBAP = context.getLineStartBorderAndPaddingWidth();
         this.lineEndBAP = context.getLineEndBorderAndPaddingWidth();
         this.alignmentContext = context.getAlignmentContext();
 
-        final LinkedList returnList = new LinkedList();
+        final List returnList = new LinkedList();
         KnuthSequence sequence = new InlineKnuthSequence();
         AreaInfo ai = null;
         AreaInfo prevAi = null;
@@ -624,9 +624,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             sequence = this.processLinebreak(returnList, sequence);
         }
 
-        if (((List)returnList.getLast()).size() == 0) {
+        if (((List) returnList.get(returnList.size() - 1)).isEmpty()) {
             //Remove an empty sequence because of a trailing newline
-            returnList.removeLast();
+            returnList.remove(returnList.size() - 1);
         }
         
         this.setFinished(true);
@@ -637,7 +637,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    private KnuthSequence processLinebreak(final LinkedList returnList,
+    private KnuthSequence processLinebreak(final List returnList,
             KnuthSequence sequence) {
         if (this.lineEndBAP != 0) {
             sequence.add(
@@ -942,7 +942,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(final List oldList,
+    public List getChangedKnuthElements(final List oldList,
                                               final int alignment) {
         if (this.isFinished()) {
             return null;

@@ -90,7 +90,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax ipd;
         curArea = get(context);
         KnuthSequence seq = new InlineKnuthSequence();
@@ -179,7 +179,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         if (isFinished()) {
             return null;
         }

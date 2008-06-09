@@ -178,9 +178,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         
-        LinkedList returnList = new LinkedList();
+        List returnList = new LinkedList();
 
         /*
          * Compute the IPD and adjust it if necessary (overconstrained)
@@ -271,8 +271,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         int breakBefore = BreakUtil.compareBreakClasses(getTable().getBreakBefore(),
                 childLC.getBreakBefore());
         if (breakBefore != Constants.EN_AUTO) {
-            returnList.addFirst(new BreakElement(getAuxiliaryPosition(), 
-                    0, -KnuthElement.INFINITE, breakBefore, context));
+            returnList.add(0, new BreakElement(getAuxiliaryPosition(), 0,
+                    -KnuthElement.INFINITE, breakBefore, context));
         }
 
         //addKnuthElementsForBreakAfter(returnList, context);
