@@ -147,7 +147,28 @@
         in the font's primary encoding.
       </action>
     </release>
-    <release version="0.95beta" date="22 March 2008">
+    <release version="0.95" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed positioning of absolutely positioned block-containers in multi-column documents.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed rendering of fixed block-containers in AFP output.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed regression causing bad positioning of block-containers if used as descendant
+        of a table-cell.
+      </action>
+      <action context="Fonts" dev="JM" type="fix">
+        Fixed text extraction problem with ZapfDingbats and Symbol font in PDF output.
+      </action>
+      <action context="Images" dev="JM" type="fix">
+        Fixed a performance problem concerning image serialization.
+      </action>
+      <action context="Fonts" dev="JM" type="fix">
+        Fixed NullPointerException when loading a TrueType font using XML font metric files.
+      </action>
+    </release>
+    <release version="0.95beta" date="26 March 2008">
       <notes>
         <section>
           <title>Notes</title>

@@ -484,6 +484,13 @@ public abstract class AbstractRenderer
     }
 
     /**
+     * Renders a block area that represents a reference area. The reference area establishes
+     * a new coordinate system.
+     * @param block the block area
+     */
+    protected abstract void renderReferenceArea(Block block);
+    
+    /**
      * Renders a list of block areas.
      *
      * @param parent  the parent block if the parent is a block, otherwise
@@ -551,6 +558,8 @@ public abstract class AbstractRenderer
                 // simply move position
                 currentBPPosition += block.getAllocBPD();
             }
+        } else if (Boolean.TRUE.equals(block.getTrait(Trait.IS_REFERENCE_AREA))) {
+            renderReferenceArea(block);
         } else {
             // save position and offset
             int saveIP = currentIPPosition;

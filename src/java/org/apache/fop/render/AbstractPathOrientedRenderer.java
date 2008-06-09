@@ -37,6 +37,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
@@ -520,6 +521,69 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         }
     }
 
+    /** {@inheritDoc} */
+    protected void renderReferenceArea(Block block) {
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        at.translate(block.getXOffset(), block.getYOffset());
+        at.translate(0, block.getSpaceBefore());
+        
+        if (!at.isIdentity()) {
+            saveGraphicsState();
+            concatenateTransformationMatrix(mptToPt(at));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        handleBlockTraits(block);
+
+        List children = block.getChildAreas();
+        if (children != null) {
+            renderBlocks(block, children);
+        }
+
+        if (!at.isIdentity()) {
+            restoreGraphicsState();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
+    /** {@inheritDoc} */
+    protected void renderFlow(NormalFlow flow) {
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        
+        if (!at.isIdentity()) {
+            saveGraphicsState();
+            concatenateTransformationMatrix(mptToPt(at));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        super.renderFlow(flow);
+        
+        if (!at.isIdentity()) {
+            restoreGraphicsState();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
     /**
      * Concatenates the current transformation matrix with the given one, therefore establishing
      * a new coordinate system.

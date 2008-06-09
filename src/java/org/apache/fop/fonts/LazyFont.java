@@ -321,12 +321,16 @@ public class LazyFont extends Typeface implements FontDescriptor {
         return realFontDescriptor.getAscender();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getFlags() {
         load(true);
         return realFontDescriptor.getFlags();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isSymbolicFont() {
+        load(true);
+        return realFontDescriptor.isSymbolicFont();
     }
 
     /**
