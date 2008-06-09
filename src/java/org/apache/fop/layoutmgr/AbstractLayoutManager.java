@@ -20,14 +20,12 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
@@ -152,7 +150,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context,
+    public List getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         log.warn("null implementation of getNextKnuthElements() called!");
         setFinished(true);
@@ -160,7 +158,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList,
+    public List getChangedKnuthElements(List oldList,
                                               int alignment) {
         log.warn("null implementation of getChangeKnuthElement() called!");
         return null;

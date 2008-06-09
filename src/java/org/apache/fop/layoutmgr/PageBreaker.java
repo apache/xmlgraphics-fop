@@ -135,8 +135,8 @@ public class PageBreaker extends AbstractBreaker {
     }
     
     /** {@inheritDoc} */
-    protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        LinkedList contentList = null;
+    protected List getNextKnuthElements(LayoutContext context, int alignment) {
+        List contentList = null;
         
         while (!childFLM.isFinished() && contentList == null) {
             contentList = childFLM.getNextKnuthElements(context, alignment);
@@ -156,7 +156,7 @@ public class PageBreaker extends AbstractBreaker {
                     footnoteContext.setStackLimitBP(context.getStackLimitBP());
                     footnoteContext.setRefIPD(pslm.getCurrentPV()
                             .getRegionReference(Constants.FO_REGION_BODY).getIPD());
-                    LinkedList footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();
+                    List footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();
                     ListIterator footnoteBodyIterator = footnoteBodyLMs.listIterator();
                     // store the lists of elements representing the footnote bodies
                     // in the box representing the line containing their references

@@ -614,7 +614,7 @@ public class SpaceResolver {
      * Resolves unresolved elements applying the space resolution rules defined in 4.3.1.
      * @param elems the element list
      */
-    public static void resolveElementList(LinkedList elems) {
+    public static void resolveElementList(List elems) {
         if (log.isTraceEnabled()) {
             log.trace(elems);
         }

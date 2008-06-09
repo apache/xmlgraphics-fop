@@ -113,7 +113,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         resetSpaces(); 
         return super.getNextKnuthElements(context, alignment);
     }

@@ -211,7 +211,7 @@ public abstract class AbstractBreaker {
      * getNextKnuthElements() implementation(s) that are to be called. 
      * @return LinkedList of Knuth elements.  
      */
-    protected abstract LinkedList getNextKnuthElements(LayoutContext context, int alignment);
+    protected abstract List getNextKnuthElements(LayoutContext context, int alignment);
 
     /** @return true if there's no content that could be handled. */
     public boolean isEmpty() {
@@ -549,7 +549,7 @@ public abstract class AbstractBreaker {
         childLC.signalSpanChange(Constants.NOT_SET);
         
         BlockSequence blockList;
-        LinkedList returnedList = getNextKnuthElements(childLC, alignment);
+        List returnedList = getNextKnuthElements(childLC, alignment);
         if (returnedList != null) {
             if (returnedList.size() == 0) {
                 nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
@@ -561,8 +561,10 @@ public abstract class AbstractBreaker {
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
             
             Position breakPosition = null;
-            if (((KnuthElement) returnedList.getLast()).isForcedBreak()) {
-                KnuthPenalty breakPenalty = (KnuthPenalty)returnedList.removeLast();
+            if (((KnuthElement) returnedList.get(returnedList.size() - 1))
+                    .isForcedBreak()) {
+                KnuthPenalty breakPenalty = (KnuthPenalty) returnedList
+                        .remove(returnedList.size() - 1);
                 breakPosition = breakPenalty.getPosition();
                 switch (breakPenalty.getBreakClass()) {
                 case Constants.EN_PAGE:

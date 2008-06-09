@@ -87,7 +87,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         if (true) {
             throw new UnsupportedOperationException(
                 "Shouldn't this method be emptied because it's never called at all?");
@@ -102,8 +102,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         BlockLevelLayoutManager curLM;
         BlockLevelLayoutManager prevLM = null;
         MinOptMax stackSize = new MinOptMax();
-        LinkedList returnedList;
-        LinkedList returnList = new LinkedList();
+        List returnedList;
+        List returnList = new LinkedList();
 
         while ((curLM = ((BlockLevelLayoutManager) getChildLM())) != null) {
             if (curLM instanceof InlineLevelLayoutManager) {
@@ -125,7 +125,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             //    + returnedList.size());
 
             // "wrap" the Position inside each element
-            LinkedList tempList = returnedList;
+            List tempList = returnedList;
             KnuthElement tempElement;
             returnedList = new LinkedList();
             ListIterator listIter = tempList.listIterator();
@@ -136,8 +136,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             }
 
             if (returnedList.size() == 1
-                && ((KnuthElement)returnedList.getFirst()).isPenalty()
-                && ((KnuthPenalty)returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                && ((KnuthElement)returnedList.get(0)).isPenalty()
+                && ((KnuthPenalty)returnedList.get(0)).getP() == -KnuthElement.INFINITE) {
                 // a descendant of this flow has break-before
                 returnList.addAll(returnedList);
                 return returnList;
@@ -150,16 +150,18 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                         returnList.add(new KnuthPenalty(0, 
                                 KnuthElement.INFINITE, false, 
                                 new Position(this), false));
-                    } else if (!((KnuthElement) returnList.getLast()).isGlue()) {
+                    } else if (!((KnuthElement) returnList.get(returnList
+                            .size() - 1)).isGlue()) {
                         // add a null penalty to allow a break between blocks
                         returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                     }
                 }
 /*LF*/          if (returnedList.size() > 0) { // controllare!
                     returnList.addAll(returnedList);
-                    if (((KnuthElement)returnedList.getLast()).isPenalty()
-                            && ((KnuthPenalty)returnedList.getLast()).getP() 
-                                    == -KnuthElement.INFINITE) {
+                    final KnuthElement last = (KnuthElement) returnedList
+                            .get(returnedList.size() - 1);
+                    if (last.isPenalty()
+                            && ((KnuthPenalty) last).getP() == -KnuthElement.INFINITE) {
                         // a descendant of this flow has break-after
 /*LF*/                  //log.debug("FLM - break after!!");
                         return returnList;
@@ -325,9 +327,9 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             return lc;
         }
         
-        protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        protected List getNextKnuthElements(LayoutContext context, int alignment) {
             LayoutManager curLM; // currently active LM
-            LinkedList returnList = new LinkedList();
+            List returnList = new LinkedList();
 
             while ((curLM = getChildLM()) != null) {
                 LayoutContext childLC = new LayoutContext(0);
@@ -335,7 +337,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 childLC.setRefIPD(context.getRefIPD());
                 childLC.setWritingMode(context.getWritingMode());
 
-                LinkedList returnedList = null;
+                List returnedList = null;
                 //The following is a HACK! Ignore leading and trailing white space 
                 boolean ignore = curLM instanceof TextLayoutManager;
                 if (!curLM.isFinished()) {
