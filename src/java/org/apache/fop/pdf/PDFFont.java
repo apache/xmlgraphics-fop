@@ -62,8 +62,6 @@ public class PDFFont extends PDFDictionary {
             setEncoding((PDFEncoding)encoding);
         } else if (encoding instanceof String) {
             setEncoding((String)encoding);
-        } else {
-            throw new IllegalArgumentException("Illegal value for encoding");
         }
     }
 

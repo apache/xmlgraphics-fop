@@ -24,6 +24,14 @@
   </header>
   <body>
     <section>
+      <title>26th March 2007 - Apache FOP 0.95beta Released</title>
+      <p>The Apache FOP team is delighted to present you a beta version of the
+        next production grade release of the new FOP codebase. This release
+        contains many bug fixes and new features. See the <a
+          href="0.95/releaseNotes_0.95beta.html">Release Notes</a> for a list of
+        the most important changes.</p>
+    </section>
+    <section>
       <title>30 October 2007 - New Committer</title>
       <p>Welcome Max Berger!</p>
     </section>

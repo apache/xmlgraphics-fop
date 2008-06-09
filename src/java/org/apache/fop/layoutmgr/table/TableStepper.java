@@ -282,13 +282,8 @@ public class TableStepper {
             laststep = step;
             step = getNextStep();
         } while (step >= 0);
-        if (!returnList.isEmpty()) {
-            lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
-            // It's not up to TableStepper to decide whether there can/must be a break
-            // after the row group or not, but to ancestor stacking elements
-            assert returnList.getLast() instanceof BreakElement;
-            returnList.removeLast();
-        }
+        assert !returnList.isEmpty();
+        lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
         return returnList;
     }
 

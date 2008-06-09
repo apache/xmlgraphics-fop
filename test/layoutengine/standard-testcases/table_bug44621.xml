@@ -66,12 +66,32 @@
               </fo:table-row>
             </fo:table-body>
           </fo:table>
+
+          <fo:block space-before="20pt" space-after="10pt">The after border of cell 1, in the normal
+            case, is thicker than in the trailing case.</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            font-size="8pt" line-height="10pt">
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>Cell 1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="2pt solid black">
+                  <fo:block>Cell 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
 
+    <!-- table 1 -->
     <eval expected="39000" xpath="//pageViewport//flow/block[2]/@bpd"/>
     <eval expected="39000" xpath="//pageViewport//flow/block[2]/@bpda"/>
     <!-- cell 1.1 -->
@@ -93,12 +113,27 @@
     <eval expected="10000" xpath="//pageViewport//flow/block[2]/block[6]/@bpd"/>
     <eval expected="18000" xpath="//pageViewport//flow/block[2]/block[6]/@bpda"/>
 
+    <!-- table 2 -->
+    <eval expected="23500" xpath="//pageViewport//flow/block[4]/@bpd"/>
+    <eval expected="23500" xpath="//pageViewport//flow/block[4]/@bpda"/>
+    <!-- cell 1 -->
+    <eval expected="10000" xpath="//pageViewport//flow/block[4]/block[1]/@bpd"/>
+    <eval expected="13000" xpath="//pageViewport//flow/block[4]/block[1]/@bpda"/>
+    <!-- cell 2 -->
+    <eval expected="10000" xpath="//pageViewport//flow/block[4]/block[2]/@bpd"/>
+    <eval expected="14000" xpath="//pageViewport//flow/block[4]/block[2]/@bpda"/>
+
     <element-list category="breaker">
       <skip>4</skip>
       <box w="12000"/>
-      <penalty w="14000" p="0"/><!-- should be 15000 -->
+      <penalty w="15000" p="0"/>
       <box w="13000"/>
       <box w="14000"/>
+      <skip>6</skip>
+      <box w="11000"/>
+      <penalty w="0" p="0"/>
+      <glue w="500"/>
+      <box w="12000"/>
       <skip>3</skip>
     </element-list>
   </checks>
