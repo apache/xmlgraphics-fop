@@ -28,13 +28,13 @@ import java.io.IOException;
 
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
-import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 
 /**
  * Graphics2DAdapter implementation for Java2D.
  */
-public class Java2DGraphics2DAdapter implements Graphics2DAdapter {
+public class Java2DGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
     /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter,

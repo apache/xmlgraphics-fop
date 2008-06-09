@@ -17,33 +17,13 @@
 
 /* $Id$ */
  
-package org.apache.fop.util;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.apache.commons.io.output.ProxyOutputStream;
+package org.apache.fop.render.ps;
 
 /**
- * This is a decorator to block calls to close() to the underlying stream.
+ * Utility code for rendering images in PostScript.
+ * @deprecated Kept for compatibility with older FOP extensions (like Barcode4J). Use the
+ * super-class instead.
  */
-public class CloseBlockerOutputStream extends ProxyOutputStream {
-
-    /**
-     * Main constructor.
-     * @param out the underlying stream
-     */
-    public CloseBlockerOutputStream(OutputStream out) {
-        super(out);
-    }
-
-    /** {@inheritDoc} */
-    public void close() throws IOException {
-        try {
-            flush();
-        } catch (IOException ioe) {
-            //ignore
-        }
-    }
+public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
 
 }
