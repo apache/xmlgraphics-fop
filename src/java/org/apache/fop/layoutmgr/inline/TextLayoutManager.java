@@ -139,8 +139,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      */
     private final MinOptMax[] letterAdjustArray; //size = textArray.length + 1
 
-    private static final char NEWLINE = '\n';
-
     /** Font used for the space between words. */
     private Font spaceFont = null;
     /** Start index of next TextArea */
@@ -523,7 +521,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             || CharUtilities.isNonBreakableSpace(ch)
             || CharUtilities.isFixedWidthSpace(ch);
     }
-
+    
     /** {@inheritDoc} */
     public LinkedList getNextKnuthElements(final LayoutContext context, final int alignment) {
         this.lineStartBAP = context.getLineStartBorderAndPaddingWidth();
@@ -561,8 +559,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     TextLayoutManager.LOG.error("Unexpected breakAction: " + breakAction);
             }
             if (inWord) {
-                if (breakOpportunity || TextLayoutManager.isSpace(ch)
-                        || ch == TextLayoutManager.NEWLINE) {
+                if (breakOpportunity 
+                        || TextLayoutManager.isSpace(ch)
+                        || CharUtilities.isExplicitBreak(ch)) {
                     // this.textArray[lastIndex] == CharUtilities.SOFT_HYPHEN
                     prevAi = this.processWord(alignment, sequence, prevAi, ch,
                             breakOpportunity, true);
@@ -601,12 +600,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         (short) 0, (short) 0, ipd, false, true,
                         breakOpportunity, font);
                 this.thisStart = (short) (this.nextStart + 1);
-            } else if (ch == TextLayoutManager.NEWLINE) {
-                // linefeed; this can happen when linefeed-treatment="preserve"
+            } else if (CharUtilities.isExplicitBreak(ch)) {
+                //mandatory break-character: only advance index
                 this.thisStart = (short) (this.nextStart + 1);
             }
+            
             inWord = !TextLayoutManager.isSpace(ch)
-                    && ch != TextLayoutManager.NEWLINE;
+                    && !CharUtilities.isExplicitBreak(ch);
             inWhitespace = ch == CharUtilities.SPACE
                     && this.foText.getWhitespaceTreatment() != Constants.EN_PRESERVE;
             this.nextStart++;
@@ -620,7 +620,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         } else if (ai != null) {
             ai = this.processLeftoverAi(alignment, sequence, ai, ch,
                     ch == CharUtilities.ZERO_WIDTH_SPACE);
-        } else if (ch == TextLayoutManager.NEWLINE) {
+        } else if (CharUtilities.isExplicitBreak(ch)) {
             sequence = this.processLinebreak(returnList, sequence);
         }
 
@@ -628,6 +628,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             //Remove an empty sequence because of a trailing newline
             returnList.removeLast();
         }
+        
         this.setFinished(true);
         if (returnList.isEmpty()) {
             return null;
@@ -1000,14 +1001,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             if (this.textArray[ai.startIndex] != CharUtilities.SPACE
                     || this.foText.getWhitespaceTreatment() == Constants.EN_PRESERVE) {
                 // a breaking space that needs to be preserved
-                this
-                        .addElementsForBreakingSpace(baseList, alignment, ai,
+                this.addElementsForBreakingSpace(baseList, alignment, ai,
                                 this.auxiliaryPosition, 0, mainPosition,
                                 ai.areaIPD.opt, true);
             } else {
                 // a (possible block) of breaking spaces
-                this
-                        .addElementsForBreakingSpace(baseList, alignment, ai,
+                this.addElementsForBreakingSpace(baseList, alignment, ai,
                                 mainPosition, ai.areaIPD.opt,
                                 this.auxiliaryPosition, 0, false);
             }
@@ -1048,8 +1047,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                         this.auxiliaryPosition, false));
                 baseList.add(this.makeZeroWidthPenalty(0));
-                baseList
-                        .add(new KnuthGlue(p2WidthOffset
+                baseList.add(new KnuthGlue(p2WidthOffset
                                 - (this.lineStartBAP + this.lineEndBAP), -3
                                 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                 pos2, false));
@@ -1062,8 +1060,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                         this.auxiliaryPosition, false));
                 baseList.add(this.makeZeroWidthPenalty(0));
-                baseList
-                        .add(new KnuthGlue(ai.areaIPD.opt, -3
+                baseList.add(new KnuthGlue(ai.areaIPD.opt, -3
                                 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                 pos2, false));
             }

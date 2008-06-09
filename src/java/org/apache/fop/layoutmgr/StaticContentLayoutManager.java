@@ -364,6 +364,12 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
                 BlockSequence originalList, BlockSequence effectiveList) {
+            if (partCount > 1) {
+                PageBreakPosition pos = (PageBreakPosition)alg.getPageBreaks().getFirst();
+                int firstPartLength = ElementListUtils.calcContentLength(effectiveList,
+                        effectiveList.ignoreAtStart, pos.getLeafPos());
+                overflow += alg.totalWidth - firstPartLength;        
+            }         
             //Rendering all parts (not just the first) at once for the case where the parts that 
             //overflow should be visible.
             alg.removeAllPageBreaks();

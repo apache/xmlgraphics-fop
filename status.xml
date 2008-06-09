@@ -60,6 +60,10 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added de-duplication and externalization support for IOCA and GOCA data resource objects.
       </action -->
+      <action context="Renderers" dev="JM" type="add" fixes-bug="45115" due-to="Martin Edge">
+        Added a PCL-specific extension attribute on simple-page-master for controlling 
+        the simplex/duplex mode.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="45097">
         Corrected white-space-treatment for situations where an inline-node is the first/last
         child node of an fo:block, without preceding/following text.

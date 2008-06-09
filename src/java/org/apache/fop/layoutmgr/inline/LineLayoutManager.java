@@ -46,6 +46,7 @@ import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
+import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -1052,11 +1053,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         LinkedList returnList = new LinkedList();
         
         for (int p = 0; p < knuthParagraphs.size(); p++) {
-            // null penalty between paragraphs
-            if (p > 0 && !((BlockLevelLayoutManager) parentLM).mustKeepTogether()) {
-                returnList.add(new BreakElement(
-                        new Position(this), 0, context));
-                //returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
+            // penalty between paragraphs
+            if (p > 0) {
+                int strength = getKeepTogetherStrength();
+                int penalty = KeepUtil.getPenaltyForKeep(strength);
+                if (penalty < KnuthElement.INFINITE) {
+                    returnList.add(new BreakElement(
+                            new Position(this), penalty, context));
+                }
             }
         
             LineLayoutPossibilities llPoss;
@@ -1090,14 +1094,17 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 for (int i = 0;
                         i < llPoss.getChosenLineCount();
                         i++) {
-                    if (!((BlockLevelLayoutManager) parentLM).mustKeepTogether()
+                    if (returnList.size() > 0
+                            && i > 0 //if i==0 break generated above already
                             && i >= fobj.getOrphans()
-                            && i <= llPoss.getChosenLineCount() - fobj.getWidows()
-                            && returnList.size() > 0) {
-                        // null penalty allowing a page break between lines
-                        returnList.add(new BreakElement(
-                                returnPosition, 0, context));
-                        //returnList.add(new KnuthPenalty(0, 0, false, returnPosition, false));
+                            && i <= llPoss.getChosenLineCount() - fobj.getWidows()) {
+                        // penalty allowing a page break between lines
+                        int strength = getKeepTogetherStrength();
+                        int penalty = KeepUtil.getPenaltyForKeep(strength);
+                        if (penalty < KnuthElement.INFINITE) {
+                            returnList.add(new BreakElement(
+                                    returnPosition, penalty, context));
+                        }
                     }
                     int endIndex
                       = ((LineBreakPosition) llPoss.getChosenPosition(i)).getLeafPos();

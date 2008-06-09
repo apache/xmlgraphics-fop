@@ -395,9 +395,7 @@ public class PCLRenderer extends PrintRenderer {
         return MIME_TYPE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderPage(PageViewport page) throws IOException, FOPException {
         saveGraphicsState();
 
@@ -406,6 +404,13 @@ public class PCLRenderer extends PrintRenderer {
                 new QName(PCLElementMapping.NAMESPACE, null, "paper-source"));
         if (paperSource != null) {
             gen.selectPaperSource(Integer.parseInt(paperSource));
+        }
+
+        // Is Page duplex?
+        String pageDuplex = page.getForeignAttributeValue(
+                new QName(PCLElementMapping.NAMESPACE, null, "duplex-mode"));
+        if (pageDuplex != null) {
+            gen.selectDuplexMode(Integer.parseInt(pageDuplex));
         }
 
         //Page size
