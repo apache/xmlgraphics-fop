@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.ObjectAreaInfo;
 import org.apache.fop.render.afp.goca.GraphicsBox;
 import org.apache.fop.render.afp.goca.GraphicsData;
 import org.apache.fop.render.afp.goca.GraphicsFillet;
@@ -64,11 +65,15 @@ public class GraphicsObject extends AbstractDataObject {
     /**
      * {@inheritDoc}
      */
-    public void setViewport(int x, int y, int width, int height,
-            int widthRes, int heightRes, int rotation) {
-        super.setViewport(x, y, width, height, widthRes, heightRes, rotation);
+    public void setViewport(ObjectAreaInfo objectAreaInfo) {
+        super.setViewport(objectAreaInfo);
         getObjectEnvironmentGroup().setGraphicsData(
-                widthRes, heightRes, 0, x + width, 0, y + height);        
+                objectAreaInfo.getWidthRes(),
+                objectAreaInfo.getHeightRes(),
+                0,
+                objectAreaInfo.getX() + objectAreaInfo.getWidth(),
+                0,
+                objectAreaInfo.getY() + objectAreaInfo.getHeight());        
     }
 
     /**

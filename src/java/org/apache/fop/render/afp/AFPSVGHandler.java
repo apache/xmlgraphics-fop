@@ -153,23 +153,28 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         int height = (int)Math.round((afpInfo.getHeight() * res) / 72000f);
         
         // set the data object parameters
-        DataObjectInfo info = new DataObjectInfo();
+        DataObjectInfo dataObjectInfo = new DataObjectInfo();
         
         String docUri = ((AbstractDocument)doc).getDocumentURI();
-        info.setUri(docUri);
-        info.setX(x);
-        info.setY(y);
-        info.setWidth(width);
-        info.setHeight(height);
-        info.setWidthRes(res);
-        info.setHeightRes(res);
+        dataObjectInfo.setUri(docUri);
+
+        ObjectAreaInfo objectAreaInfo = new ObjectAreaInfo();
+        objectAreaInfo.setX(x);
+        objectAreaInfo.setY(y);
+        objectAreaInfo.setWidth(width);
+        objectAreaInfo.setHeight(height);
+        objectAreaInfo.setWidthRes(res);
+        objectAreaInfo.setHeightRes(res);
+        
+        dataObjectInfo.setObjectAreaInfo(objectAreaInfo);
+        
         Map/*<QName, String>*/ foreignAttributes
             = (Map/*<QName, String>*/)context.getProperty(
                 RendererContextConstants.FOREIGN_ATTRIBUTES);
-        info.setResourceInfoFromForeignAttributes(foreignAttributes);
+        dataObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
 
         AFPDataStream afpDataStream = afpInfo.getAFPDataStream();
-        GraphicsObject graphicsObj = (GraphicsObject)afpDataStream.createObject(info);
+        GraphicsObject graphicsObj = (GraphicsObject)afpDataStream.createObject(dataObjectInfo);
         graphics.setGraphicsObject(graphicsObj);
         
         try {

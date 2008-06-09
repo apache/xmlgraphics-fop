@@ -42,13 +42,9 @@ public class DataObjectInfo {
     private static final ResourceInfo DEFAULT_RESOURCE_INFO = new ResourceInfo();
     
     private String uri;
-    private int x;
-    private int y;
-    private int width;
-    private int height;
-    private int widthRes;
-    private int heightRes;
-    private int rotation = 0;
+    
+    /** the object area info */
+    private ObjectAreaInfo objectAreaInfo;    
     
     /** object type entry */
     private ObjectType objectType;
@@ -70,116 +66,12 @@ public class DataObjectInfo {
         this.uri = uri;
     }
 
-    /**
-     * Sets the x position of the data object
-     * @param x the x position of the data object
-     */
-    protected void setX(int x) {
-        this.x = x;
-    }
-
-    /**
-     * Sets the y position of the data object
-     * @param y the y position of the data object
-     */
-    protected void setY(int y) {
-        this.y = y;
-    }
-
-    /**
-     * Sets the data object width
-     * @param width the width of the data object
-     */
-    protected void setWidth(int width) {
-        this.width = width;
-    }
-
-    /**
-     * Sets the data object height
-     * @param height the height of the data object
-     */
-    protected void setHeight(int height) {
-        this.height = height;
-    }
-
-    /**
-     * Sets the width resolution
-     * @param widthRes the width resolution
-     */
-    protected void setWidthRes(int widthRes) {
-        this.widthRes = widthRes;
-    }
-
-    /**
-     * Sets the height resolution
-     * @param heightRes the height resolution
-     */
-    protected void setHeightRes(int heightRes) {
-        this.heightRes = heightRes;
-    }
     
     /**
      * @return the uri of this data object
      */
     public String getUri() {
         return uri;
-    }
-
-    /**
-     * @return the x coordinate of this data object
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * @return the y coordinate of this data object
-     */
-    public int getY() {
-        return y;
-    }
-
-    /**
-     * @return the width of this data object
-     */
-    public int getWidth() {
-        return width;
-    }
-
-    /**
-     * @return the height of this data object
-     */
-    public int getHeight() {
-        return height;
-    }
-
-    /**
-     * @return the width resolution of this data object
-     */
-    public int getWidthRes() {
-        return widthRes;
-    }
-
-    /**
-     * @return the height resolution of this data object
-     */
-    public int getHeightRes() {
-        return heightRes;
-    }
-    
-    /**
-     * @return the rotation of this data object
-     */
-    public int getRotation() {
-        return rotation;
-    }
-
-    /**
-     * Sets the data object rotation
-     * @param rotation the data object rotation
-     */
-    protected void setRotation(int rotation) {
-        this.rotation = rotation;
     }
 
     /**
@@ -210,6 +102,21 @@ public class DataObjectInfo {
      */
     public void setResourceInfo(ResourceInfo resourceInfo) {
         this.resourceInfo = resourceInfo;
+    }
+
+    /**
+     * Sets the object area info
+     * @param objectAreaInfo the object area info
+     */
+    public void setObjectAreaInfo(ObjectAreaInfo objectAreaInfo) {
+        this.objectAreaInfo = objectAreaInfo;
+    }
+
+    /**
+     * @return the object area info
+     */
+    public ObjectAreaInfo getObjectAreaInfo() {
+        return this.objectAreaInfo;
     }
 
     /**
@@ -278,14 +185,8 @@ public class DataObjectInfo {
      */
     public String toString() {
         return "uri=" + uri
-            + ", x=" + x
-            + ", y=" + y
-            + ", width=" + width
-            + ", height=" + height
-            + ", widthRes=" + widthRes
-            + ", heightRes=" + heightRes
-            + ", rotation=" + rotation
-            + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "")
-            + (objectType != null ? ", objectTypeEntry=" + objectType : "");
+            + (objectAreaInfo != null ? "objectAreaInfo=" + objectAreaInfo : "")
+            + (objectType != null ? ", objectType=" + objectType : "")
+            + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "");
     }
 }

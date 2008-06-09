@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.ObjectAreaInfo;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
@@ -133,8 +134,8 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         }
 
         DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
-
-        setObjectArea(dataObjectInfo.getX(), dataObjectInfo.getY());
+        ObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+        setObjectArea(objectAreaInfo.getX(), objectAreaInfo.getY());
         
         super.setFullyQualifiedName(
                 FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
@@ -147,11 +148,11 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
              ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
              objectType);
         
-        super.setMeasurementUnits(dataObjectInfo.getWidthRes(), dataObjectInfo.getHeightRes());
+        super.setMeasurementUnits(objectAreaInfo.getWidthRes(), objectAreaInfo.getHeightRes());
         
         super.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
         
-        super.setObjectAreaSize(dataObjectInfo.getWidth(), dataObjectInfo.getHeight());        
+        super.setObjectAreaSize(objectAreaInfo.getWidth(), objectAreaInfo.getHeight());        
     }
 
     /**

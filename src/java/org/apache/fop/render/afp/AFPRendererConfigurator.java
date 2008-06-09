@@ -274,7 +274,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                     afpRenderer.getAFPDataStream().setDefaultResourceGroupFile(resourceGroupFile);
                 } else {
                     log.warn("Unable to write to default external resource group file '"
-                                + resourceGroupDest);
+                                + resourceGroupDest + "'");
                 }
             }
         }

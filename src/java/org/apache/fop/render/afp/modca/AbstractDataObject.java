@@ -22,6 +22,8 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.ObjectAreaInfo;
+
 
 /**
  * Abstract base class used by the ImageObject and GraphicsObject which both
@@ -45,25 +47,11 @@ public abstract class AbstractDataObject extends AbstractPreparedObjectContainer
     /**
      * Sets the object display area position and size.
      *
-     * @param x
-     *            the x position of the object
-     * @param y
-     *            the y position of the object
-     * @param width
-     *            the width of the object
-     * @param height
-     *            the height of the object
-     * @param widthRes 
-     *            the resolution width 
-     * @param heightRes
-     *            the resolution height 
-     * @param rotation
-     *            the rotation of the object
+     * @param objectAreaInfo
+     *            the object area info
      */
-    public void setViewport(int x, int y, int width, int height,
-            int widthRes, int heightRes, int rotation) {
-        getObjectEnvironmentGroup().setObjectArea(x, y, width, height,
-                widthRes, heightRes, rotation);
+    public void setViewport(ObjectAreaInfo objectAreaInfo) {
+        getObjectEnvironmentGroup().setObjectArea(objectAreaInfo);
     }
     
     /**

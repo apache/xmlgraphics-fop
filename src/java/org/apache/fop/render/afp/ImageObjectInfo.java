@@ -29,7 +29,8 @@ public class ImageObjectInfo extends DataObjectInfo {
     private byte[] data;
     private int dataWidth;
     private int dataHeight;
-    private String mimeType;    
+    private String mimeType;
+    private boolean buffered;    
 
     /**
      * Default constructor
@@ -151,6 +152,21 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
 
     /**
+     * Sets whether or not this is info about a buffered image
+     * @param buffered true if this is info about a buffered image
+     */
+    public void setBuffered(boolean buffered) {
+        this.buffered = buffered;
+    }
+
+    /**
+     * @return true if this image info is about a buffered image
+     */
+    public boolean isBuffered() {
+        return this.buffered;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public String toString() {
@@ -161,4 +177,5 @@ public class ImageObjectInfo extends DataObjectInfo {
             + ", color=" + color
             + ", bitPerPixel=" + bitsPerPixel;
     }
+
 }

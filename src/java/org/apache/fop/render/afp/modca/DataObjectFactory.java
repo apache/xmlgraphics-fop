@@ -21,6 +21,7 @@ package org.apache.fop.render.afp.modca;
 
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ImageObjectInfo;
+import org.apache.fop.render.afp.ObjectAreaInfo;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.tools.StringUtils;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
@@ -43,25 +44,23 @@ public class DataObjectFactory {
      * 
      * @param io
      *            the target image object
-     * @param raw
-     *            the buffer containing the RGB image data
-     * @param width
-     *            the width of the image in pixels
-     * @param height
-     *            the height of the image in pixels
-     * @param bitsPerPixel
-     *            the number of bits to use per pixel
-     *            
-     * TODO: move this method somewhere appropriate in commons
+     * @param info
+     *            the image object info
+     *
+     * @return the converted image data
      */
-    private static void convertToGrayScaleImage(ImageObject io, byte[] raw, int width,
-            int height, int bitsPerPixel) {
+    private static byte[] convertToGrayScaleImage(ImageObject io, ImageObjectInfo info) {
+        byte[] raw = info.getData();
+        int width = info.getDataWidth();
+        int height = info.getDataHeight();
+        int bitsPerPixel = info.getBitsPerPixel();
+        
         int pixelsPerByte = 8 / bitsPerPixel;
         int bytewidth = (width / pixelsPerByte);
         if ((width % pixelsPerByte) != 0) {
             bytewidth++;
         }
-        byte[] bw = new byte[height * bytewidth];
+        byte[] data = new byte[height * bytewidth];
         byte ib;
         for (int y = 0; y < height; y++) {
             ib = 0;
@@ -92,27 +91,26 @@ public class DataObjectFactory {
 
                 if ((x % pixelsPerByte) == (pixelsPerByte - 1)
                         || ((x + 1) == width)) {
-                    bw[(y * bytewidth) + (x / pixelsPerByte)] = ib;
+                    data[(y * bytewidth) + (x / pixelsPerByte)] = ib;
                     ib = 0;
                 }
             }
         }
-        io.setImageIDESize((byte) bitsPerPixel);
-        io.setImageData(bw);
+        return data;
     }
 
     /**
      * Helper method to create an image on the current container and to return
      * the object.
-     * @param info the image object info
+     * @param imageObjectInfo the image object info
      * @return a newly created image object
      */
-    protected ImageObject createImage(ImageObjectInfo info) {
+    protected ImageObject createImage(ImageObjectInfo imageObjectInfo) {
         String name = IMAGE_NAME_PREFIX
                 + StringUtils.lpad(String.valueOf(++imageCount), '0', 5);
         ImageObject imageObj = new ImageObject(name);
-        if (info.hasCompression()) {
-            int compression = info.getCompression();
+        if (imageObjectInfo.hasCompression()) {
+            int compression = imageObjectInfo.getCompression();
             switch (compression) {
             case TIFFImage.COMP_FAX_G3_1D:
                 imageObj.setImageEncoding(ImageContent.COMPID_G3_MH);
@@ -128,15 +126,19 @@ public class DataObjectFactory {
                             "Invalid compression scheme: " + compression);
             }
         }
-        imageObj.setImageParameters(info.getWidthRes(), info.getHeightRes(), 
-                info.getDataWidth(), info.getDataHeight());
-        if (info.isColor()) {
-            imageObj.setImageIDESize((byte)24);
-            imageObj.setImageData(info.getData());
-        } else {
-            convertToGrayScaleImage(imageObj, info.getData(),
-                    info.getDataWidth(), info.getDataHeight(),
-                    info.getBitsPerPixel());
+        ObjectAreaInfo objectAreaInfo = imageObjectInfo.getObjectAreaInfo();
+        imageObj.setImageParameters(objectAreaInfo.getWidthRes(), objectAreaInfo.getHeightRes(), 
+                imageObjectInfo.getDataWidth(), imageObjectInfo.getDataHeight());
+        if (imageObjectInfo.isBuffered()) {
+            if (imageObjectInfo.isColor()) {
+                imageObj.setImageIDESize((byte)24);
+                imageObj.setImageData(imageObjectInfo.getData());
+            } else {
+                int bitsPerPixel = imageObjectInfo.getBitsPerPixel();
+                imageObj.setImageIDESize((byte)bitsPerPixel);
+                byte[] data = convertToGrayScaleImage(imageObj, imageObjectInfo);
+                imageObj.setImageData(data);
+            }    
         }
         return imageObj;
     }
@@ -166,10 +168,7 @@ public class DataObjectFactory {
         } else {
             dataObject = createGraphic(dataObjectInfo);
         }
-        dataObject.setViewport(dataObjectInfo.getX(), dataObjectInfo.getY(),
-                dataObjectInfo.getWidth(), dataObjectInfo.getHeight(),
-                dataObjectInfo.getWidthRes(), dataObjectInfo.getHeightRes(),
-                dataObjectInfo.getRotation());
+        dataObject.setViewport(dataObjectInfo.getObjectAreaInfo());
 
         dataObject.setFullyQualifiedName(
             FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,

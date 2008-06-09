@@ -492,7 +492,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                 }
             } else {
                 if (resourceLevel.isExternal()) {
-                    log.warn( interchangeSet
+                    log.warn(interchangeSet
                             + ": not available, object " + getName() + " will reside inline");
                 }                
             }
@@ -504,68 +504,68 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         return dataObj;
     }
 
-    /**
-     * Sets the object view port taking into account rotation.
-     * 
-     * @param x
-     *            the x position of the object
-     * @param y
-     *            the y position of the object
-     * @param w
-     *            the width of the object
-     * @param h
-     *            the height of the object
-     * @param wr
-     *            the resolution width of the object
-     * @param hr
-     *            the resolution height of the object
-     * @return a new graphics object
-     */
-    private void setObjectViewPort(AbstractDataObject dataObj, int x, int y,
-            int w, int h, int wr, int hr) {
-        int xOrigin;
-        int yOrigin;
-        int width;
-        int height;
-        int widthRes;
-        int heightRes;
-        switch (this.rotation) {
-        case 90:
-            xOrigin = getCurrentPage().getWidth() - y - yOffset;
-            yOrigin = x + xOffset;
-            width = h;
-            height = w;
-            widthRes = hr;
-            heightRes = wr;
-            break;
-        case 180:
-            xOrigin = getCurrentPage().getWidth() - x - xOffset;
-            yOrigin = getCurrentPage().getHeight() - y - yOffset;
-            width = w;
-            height = h;
-            widthRes = wr;
-            heightRes = hr;
-            break;
-        case 270:
-            xOrigin = y + yOffset;
-            yOrigin = getCurrentPage().getHeight() - x - xOffset;
-            width = h;
-            height = w;
-            widthRes = hr;
-            heightRes = wr;
-            break;
-        default:
-            xOrigin = x + xOffset;
-            yOrigin = y + yOffset;
-            width = w;
-            height = h;
-            widthRes = wr;
-            heightRes = hr;
-            break;
-        }
-        dataObj.setViewport(xOrigin, yOrigin, width, height, widthRes,
-                heightRes, rotation);
-    }
+//    /**
+//     * Sets the object view port taking into account rotation.
+//     * 
+//     * @param x
+//     *            the x position of the object
+//     * @param y
+//     *            the y position of the object
+//     * @param w
+//     *            the width of the object
+//     * @param h
+//     *            the height of the object
+//     * @param wr
+//     *            the resolution width of the object
+//     * @param hr
+//     *            the resolution height of the object
+//     * @return a new graphics object
+//     */
+//    private void setObjectViewPort(AbstractDataObject dataObj, int x, int y,
+//            int w, int h, int wr, int hr) {
+//        int xOrigin;
+//        int yOrigin;
+//        int width;
+//        int height;
+//        int widthRes;
+//        int heightRes;
+//        switch (this.rotation) {
+//        case 90:
+//            xOrigin = getCurrentPage().getWidth() - y - yOffset;
+//            yOrigin = x + xOffset;
+//            width = h;
+//            height = w;
+//            widthRes = hr;
+//            heightRes = wr;
+//            break;
+//        case 180:
+//            xOrigin = getCurrentPage().getWidth() - x - xOffset;
+//            yOrigin = getCurrentPage().getHeight() - y - yOffset;
+//            width = w;
+//            height = h;
+//            widthRes = wr;
+//            heightRes = hr;
+//            break;
+//        case 270:
+//            xOrigin = y + yOffset;
+//            yOrigin = getCurrentPage().getHeight() - x - xOffset;
+//            width = h;
+//            height = w;
+//            widthRes = hr;
+//            heightRes = wr;
+//            break;
+//        default:
+//            xOrigin = x + xOffset;
+//            yOrigin = y + yOffset;
+//            width = w;
+//            height = h;
+//            widthRes = wr;
+//            heightRes = hr;
+//            break;
+//        }
+//        dataObj.setViewport(xOrigin, yOrigin, width, height, widthRes,
+//                heightRes, rotation);
+//    }
 
     /**
      * Method to create a line on the current page.

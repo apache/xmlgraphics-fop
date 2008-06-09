@@ -22,6 +22,8 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.ObjectAreaInfo;
+
 
 /**
  * An Object Environment Group (OEG) may be associated with an object and is contained
@@ -79,20 +81,14 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
     /**
      * Sets the object area parameters.
-     * @param x the x position of the object
-     * @param y the y position of the object
-     * @param width the object width
-     * @param height the object height
-     * @param rotation the object orientation
-     * @param widthRes the object resolution width
-     * @param heightRes the object resolution height
+     * @param info the object area info
      */
-    public void setObjectArea(int x, int y, int width, int height,
-            int widthRes, int heightRes, int rotation) {
-        this.objectAreaDescriptor = new ObjectAreaDescriptor(width, height,
-                widthRes, heightRes);
-        this.objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
-
+    public void setObjectArea(ObjectAreaInfo info) {
+        this.objectAreaDescriptor = new ObjectAreaDescriptor(
+                info.getWidth(), info.getHeight(),
+                info.getWidthRes(), info.getHeightRes());
+        this.objectAreaPosition = new ObjectAreaPosition(
+                info.getX(), info.getY(), info.getRotation());
     }
 
     /**

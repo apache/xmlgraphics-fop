@@ -923,8 +923,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             getAFPDataStream().createIncludePageSegment(name, mpts2units(x),
                     mpts2units(y));
         } else {
-            ImageManager manager = getUserAgent().getFactory()
-                    .getImageManager();
+            ImageManager manager = getUserAgent().getFactory().getImageManager();
             ImageInfo info = null;
             InputStream in = null;
             try {
@@ -967,12 +966,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
                     imageObjectInfo.setUri(uri);
                     imageObjectInfo.setMimeType(mimeType);
-                    imageObjectInfo.setX(afpx);
-                    imageObjectInfo.setY(afpy);
-                    imageObjectInfo.setWidth(afpw);
-                    imageObjectInfo.setHeight(afph);
-                    imageObjectInfo.setWidthRes(afpres);
-                    imageObjectInfo.setHeightRes(afpres);
+                    
+                    ObjectAreaInfo objectAreaInfo = new ObjectAreaInfo();
+                    objectAreaInfo.setX(afpx);
+                    objectAreaInfo.setY(afpy);
+                    objectAreaInfo.setWidth(afpw);
+                    objectAreaInfo.setHeight(afph);
+                    objectAreaInfo.setWidthRes(afpres);
+                    objectAreaInfo.setHeightRes(afpres);
+                    imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
+                    
                     imageObjectInfo.setData(buf);
                     imageObjectInfo.setDataHeight(ccitt.getSize().getHeightPx());
                     imageObjectInfo.setDataWidth(ccitt.getSize().getWidthPx());
@@ -1068,23 +1071,27 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         // create image object parameters
         ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
+        imageObjectInfo.setBuffered(true);
         if (imageInfo != null) {
             imageObjectInfo.setUri(imageInfo.getOriginalURI());
             imageObjectInfo.setMimeType(imageInfo.getMimeType());
         }
-        imageObjectInfo.setX(mpts2units(x));
-        imageObjectInfo.setY(mpts2units(y));
-        imageObjectInfo.setWidth(mpts2units(w));
-        imageObjectInfo.setHeight(mpts2units(h));
-        imageObjectInfo.setWidthRes(imageRes);
-        imageObjectInfo.setHeightRes(imageRes);
+
+        ObjectAreaInfo objectAreaInfo = new ObjectAreaInfo();
+        objectAreaInfo.setX(mpts2units(x));
+        objectAreaInfo.setY(mpts2units(y));
+        objectAreaInfo.setWidth(mpts2units(w));
+        objectAreaInfo.setHeight(mpts2units(h));
+        objectAreaInfo.setWidthRes(imageRes);
+        objectAreaInfo.setHeightRes(imageRes);
+        imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
+        
         imageObjectInfo.setData(baout.toByteArray());
         imageObjectInfo.setDataHeight(image.getHeight());
         imageObjectInfo.setDataWidth(image.getWidth());
         imageObjectInfo.setColor(colorImages);
         imageObjectInfo.setBitsPerPixel(bitsPerPixel);
         imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
-
         getAFPDataStream().createObject(imageObjectInfo);
     }
 
