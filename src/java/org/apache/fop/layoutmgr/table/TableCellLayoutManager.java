@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
-import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
@@ -53,6 +52,7 @@ import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for a table-cell FO.
@@ -152,7 +152,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             if (childLC.isKeepWithNextPending()) {
                 log.debug("child LM signals pending keep with next");
             }
-            if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+            if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                 primaryGridUnit.setKeepWithPreviousStrength(childLC.getKeepWithPreviousPending());
                 childLC.clearKeepWithPreviousPending();
             }
@@ -163,7 +163,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 addInBetweenBreak(contentList, context, childLC);
             }
             contentList.addAll(returnedList);
-            if (returnedList.size() == 0) {
+            if (returnedList.isEmpty()) {
                 //Avoid NoSuchElementException below (happens with empty blocks)
                 continue;
             }
@@ -177,7 +177,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         primaryGridUnit.setKeepWithNextStrength(context.getKeepWithNextPending());
 
         returnedList = new LinkedList();
-        if (contentList.size() > 0) {
+        if (!contentList.isEmpty()) {
             wrapPositionElements(contentList, returnList);
         } else {
             // In relaxed validation mode, table-cells having no children are authorised.
@@ -193,8 +193,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             returnList.remove(0);
             assert !returnList.isEmpty();
         }
-        final KnuthElement lastItem = (KnuthElement) returnList
-                .get(returnList.size() - 1);
+        final KnuthElement lastItem = (KnuthElement) ListUtil
+                .getLast(returnList);
         if (((KnuthElement) lastItem).isForcedBreak()) {
             KnuthPenalty p = (KnuthPenalty) lastItem;
             primaryGridUnit.setBreakAfter(p.getBreakClass());

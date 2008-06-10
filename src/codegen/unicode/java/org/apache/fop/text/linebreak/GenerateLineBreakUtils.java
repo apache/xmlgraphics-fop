@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * <p>Utility for generating a Java class representing line break properties
@@ -55,6 +54,7 @@ public class GenerateLineBreakUtils {
     private static final byte COMBINING_PROHIBITED_BREAK = 3;   // @ in table
     private static final byte PROHIBITED_BREAK = 4;             // ^ in table
     private static final byte EXPLICIT_BREAK = 5;               // ! in rules
+    private static final String BREAK_CLASS_TOKENS = "_%#@^!";
     private static final String notInPairTable[] = { "AI", "BK", "CB", "CR", "LF", "NL", "SA", "SG", "SP", "XX" };
 
     private static final byte lineBreakProperties[] = new byte[0x10000];
@@ -103,27 +103,32 @@ public class GenerateLineBreakUtils {
         BufferedReader b = new BufferedReader(new FileReader(breakPairFileName));
         String line = b.readLine();
         int lineNumber = 1;
+        String[] lineTokens;
+        String name;
         // read header
         if (line != null) {
-            StringTokenizer tok = new StringTokenizer(line);
+            lineTokens = line.split("\\s+");
             byte columnNumber = 0;
-            while (tok.hasMoreTokens()) {
-                String name = tok.nextToken();
-                if (columnNumber >= columnHeader.length) {
-                    throw new Exception(breakPairFileName + ':' + lineNumber + ": unexpected column header " + name);
+            
+            for (int i = 0; i < lineTokens.length; ++i) {
+                name = lineTokens[i];
+                if (name.length() > 0) {
+                    if (columnNumber >= columnHeader.length) {
+                        throw new Exception(breakPairFileName + ':' + lineNumber + ": unexpected column header " + name);
+                    }
+                    if (notInPairTableMap.get(name) != null) {
+                        throw new Exception(breakPairFileName + ':' + lineNumber + ": invalid column header " + name);
+                    }
+                    Byte v = (Byte)lineBreakPropertyValues.get(name);
+                    if (v != null) {
+                        byte vv = v.byteValue();
+                        columnHeader[columnNumber] = vv;
+                        columnMap[vv] = columnNumber;
+                    } else {
+                        throw new Exception(breakPairFileName + ':' + lineNumber + ": unknown column header " + name);
+                    }
+                    columnNumber++;
                 }
-                if (notInPairTableMap.get(name) != null) {
-                    throw new Exception(breakPairFileName + ':' + lineNumber + ": invalid column header " + name);
-                }
-                Byte v = (Byte)lineBreakPropertyValues.get(name);
-                if (v != null) {
-                    byte vv = v.byteValue();
-                    columnHeader[columnNumber] = vv;
-                    columnMap[vv] = columnNumber;
-                } else {
-                    throw new Exception(breakPairFileName + ':' + lineNumber + ": unknown column header " + name);
-                }
-                columnNumber++;
             }
             if (columnNumber < columnHeader.length) {
                 StringBuffer missing = new StringBuffer();
@@ -156,9 +161,9 @@ public class GenerateLineBreakUtils {
                 throw new Exception(breakPairFileName + ':' + lineNumber + ": unexpected row " + line);
             }
             pairTable[rowNumber] = new byte[tableSize];
-            StringTokenizer tok = new StringTokenizer(line);
-            if (tok.hasMoreTokens()) {
-                String name = tok.nextToken();
+            lineTokens = line.split("\\s+");
+            if (lineTokens.length > 0) {
+                name = lineTokens[0];
                 if (notInPairTableMap.get(name) != null) {
                     throw new Exception(breakPairFileName + ':' + lineNumber + ": invalid row header " + name);
                 }
@@ -174,27 +179,15 @@ public class GenerateLineBreakUtils {
                 throw new Exception(breakPairFileName + ':' + lineNumber + ": can't read row header");
             }
             int columnNumber = 0;
-            while (tok.hasMoreTokens()) {
-                String token = tok.nextToken();
+            String token;
+            for (int i = 1; i < lineTokens.length; ++i) {
+                token = lineTokens[i];
                 if (token.length() == 1) {
-                    switch (token.charAt(0)) {
-                        case '^' :
-                            pairTable[rowNumber][columnNumber] = PROHIBITED_BREAK;
-                            break;
-                        case '%' :
-                            pairTable[rowNumber][columnNumber] = INDIRECT_BREAK;
-                            break;
-                        case '_' :
-                            pairTable[rowNumber][columnNumber] = DIRECT_BREAK;
-                            break;
-                        case '#' :
-                            pairTable[rowNumber][columnNumber] = COMBINING_INDIRECT_BREAK;
-                            break;
-                        case '@' :
-                            pairTable[rowNumber][columnNumber] = COMBINING_PROHIBITED_BREAK;
-                            break;
-                        default :
-                            throw new Exception(breakPairFileName + ':' + lineNumber + ": unexpected token: " + token);
+                    byte tokenBreakClass = (byte)BREAK_CLASS_TOKENS.indexOf(token.charAt(0));
+                    if (tokenBreakClass >= 0) {
+                        pairTable[rowNumber][columnNumber] = tokenBreakClass;
+                    } else {
+                        throw new Exception(breakPairFileName + ':' + lineNumber + ": unexpected token: " + token);
                     }
                 } else {
                     throw new Exception(breakPairFileName + ':' + lineNumber + ": token too long: " + token);
@@ -255,23 +248,35 @@ public class GenerateLineBreakUtils {
         out.println("package org.apache.fop.text.linebreak;");
         out.println();
         out.println("/* ");
-        out.println(" * This is a generated file, DO NOT CHANGE!");
+        out.println(" * !!! THIS IS A GENERATED FILE !!! ");
+        out.println(" * If updates to the source are needed, then:");
+        out.println(" * - apply the necessary modifications to ");
+        out.println(" *   'src/codegen/unicode/java/org/apache/fop/text/linebreak/GenerateLineBreakUtils.java'");
+        out.println(" * - run 'ant codegen-unicode', which will generate a new LineBreakUtils.java");
+        out.println(" *   in 'src/java/org/apache/fop/text/linebreak'");
+        out.println(" * - commit BOTH changed files");
         out.println(" */");
         out.println();
-        out.println("class LineBreakUtils {");
+        out.println("public final class LineBreakUtils {");
         out.println();
+        out.println("    /** Break class constant */");
         out.println("    public static final byte DIRECT_BREAK = " + DIRECT_BREAK + ';');
+        out.println("    /** Break class constant */");
         out.println("    public static final byte INDIRECT_BREAK = " + INDIRECT_BREAK + ';');
+        out.println("    /** Break class constant */");
         out.println("    public static final byte COMBINING_INDIRECT_BREAK = " + COMBINING_INDIRECT_BREAK + ';');
+        out.println("    /** Break class constant */");
         out.println("    public static final byte COMBINING_PROHIBITED_BREAK = " + COMBINING_PROHIBITED_BREAK + ';');
+        out.println("    /** Break class constant */");
         out.println("    public static final byte PROHIBITED_BREAK = " + PROHIBITED_BREAK + ';');
+        out.println("    /** Break class constant */");
         out.println("    public static final byte EXPLICIT_BREAK = " + EXPLICIT_BREAK + ';');
         out.println();
         out.println("    private static final byte PAIR_TABLE[][] = {");
         boolean printComma = false;
         for (int i = 1; i <= lineBreakPropertyValueCount; i++) {
             if (printComma) {
-                out.println(',');
+                out.println(", ");
             } else {
                 printComma = true;
             }
@@ -279,7 +284,7 @@ public class GenerateLineBreakUtils {
             boolean localPrintComma = false;
             for (int j = 1; j <= lineBreakPropertyValueCount; j++) {
                 if (localPrintComma) {
-                    out.print(',');
+                    out.print(", ");
                 } else {
                     localPrintComma = true;
                 }
@@ -313,7 +318,7 @@ public class GenerateLineBreakUtils {
                         found = true;
                         doStaticLinkCode.append("        lineBreakProperties[");
                         doStaticLinkCode.append(i);
-                        doStaticLinkCode.append("]=lineBreakProperties[");
+                        doStaticLinkCode.append("] = lineBreakProperties[");
                         doStaticLinkCode.append(j);
                         doStaticLinkCode.append("];\n");
                         break;
@@ -322,7 +327,7 @@ public class GenerateLineBreakUtils {
             }
             if (!found) {
                 if (rowsPrinted >= 64) {
-                    out.println("    };");
+                    out.println("    }");
                     out.println();
                     initSections++;
                     out.println("    private static void init_" + initSections + "() {");
@@ -334,7 +339,7 @@ public class GenerateLineBreakUtils {
                 for (int k = 0; k < blocksize; k++) {
                     row[i][k] = lineBreakProperties[idx + k];
                     if (printLocalComma) {
-                        out.print(',');
+                        out.print(", ");
                     } else {
                         printLocalComma = true;
                     }
@@ -345,20 +350,21 @@ public class GenerateLineBreakUtils {
             }
             idx += blocksize;
         }
-        out.println("    };");
+        out.println("    }");
         out.println();
         out.println("    static {");
         for (int i = 0; i <= initSections; i++) {
             out.println("        init_" + i + "();");
         }
         out.print(doStaticLinkCode);
-        out.println("    };");
+        out.println("    }");
         out.println();
         for (int i = 0; i < lineBreakPropertyShortNames.size(); i++) {
             String shortName = (String)lineBreakPropertyShortNames.get(i);
+            out.println("    /** Linebreak property constant */");
             out.print("    public static final byte LINE_BREAK_PROPERTY_");
             out.print(shortName);
-            out.print('=');
+            out.print(" = ");
             out.print(i + 1);
             out.println(';');
         }
@@ -368,9 +374,9 @@ public class GenerateLineBreakUtils {
         int lineLength = shortNamePrefix.length();
         printComma = false;
         for (int i = 0; i < lineBreakPropertyShortNames.size(); i++) {
-            String name = (String)lineBreakPropertyShortNames.get(i);
+            name = (String)lineBreakPropertyShortNames.get(i);
             if (printComma) {
-                out.print(',');
+                out.print(", ");
                 lineLength++;
             } else {
                 printComma = true;
@@ -392,7 +398,7 @@ public class GenerateLineBreakUtils {
         lineLength = longNamePrefix.length();
         printComma = false;
         for (int i = 0; i < lineBreakPropertyLongNames.size(); i++) {
-            String name = (String)lineBreakPropertyLongNames.get(i);
+            name = (String)lineBreakPropertyLongNames.get(i);
             if (printComma) {
                 out.print(',');
                 lineLength++;
@@ -411,32 +417,62 @@ public class GenerateLineBreakUtils {
         }
         out.println("};");
         out.println();
+        out.println("    /**");
+        out.println("     * Return the short name for the linebreak property corresponding ");
+        out.println("     * to the given symbolic constant.");
+        out.println("     *");
+        out.println("     * @param i the numeric value of the linebreak property");
+        out.println("     * @return the short name of the linebreak property");
+        out.println("     */");
         out.println("    public static String getLineBreakPropertyShortName(byte i) {");
-        out.println("        if (i>0 && i<=lineBreakPropertyShortNames.length) {");
-        out.println("            return lineBreakPropertyShortNames[i-1];");
+        out.println("        if (i > 0 && i <= lineBreakPropertyShortNames.length) {");
+        out.println("            return lineBreakPropertyShortNames[i - 1];");
         out.println("        } else {");
         out.println("            return null;");
         out.println("        }");
         out.println("    }");
         out.println();
+        out.println("    /**");
+        out.println("     * Return the long name for the linebreak property corresponding ");
+        out.println("     * to the given symbolic constant.");
+        out.println("     *");
+        out.println("     * @param i the numeric value of the linebreak property");
+        out.println("     * @return the long name of the linebreak property");
+        out.println("     */");
         out.println("    public static String getLineBreakPropertyLongName(byte i) {");
-        out.println("        if (i>0 && i<=lineBreakPropertyLongNames.length) {");
-        out.println("            return lineBreakPropertyLongNames[i-1];");
+        out.println("        if (i > 0 && i <= lineBreakPropertyLongNames.length) {");
+        out.println("            return lineBreakPropertyLongNames[i - 1];");
         out.println("        } else {");
         out.println("            return null;");
         out.println("        }");
         out.println("    }");
         out.println();
+        out.println("    /**");
+        out.println("     * Return the linebreak property constant for the given <code>char</code>");
+        out.println("     *");
+        out.println("     * @param c the <code>char</code> whose linebreak property to return");
+        out.println("     * @return the constant representing the linebreak property");
+        out.println("     */");
         out.println("    public static byte getLineBreakProperty(char c) {");
-        out.println("        return lineBreakProperties[c/" + blocksize + "][c%" + blocksize + "];");
+        out.println("        return lineBreakProperties[c / " + blocksize + "][c % " + blocksize + "];");
         out.println("    }");
         out.println();
+        out.println("    /**");
+        out.println("     * Return the break class constant for the given pair of linebreak ");
+        out.println("     * property constants.");
+        out.println("     *");
+        out.println("     * @param lineBreakPropertyBefore the linebreak property for the first character");
+        out.println("     *        in a two-character sequence");
+        out.println("     * @param lineBreakPropertyAfter the linebreak property for the second character");
+        out.println("     *        in a two-character sequence");
+        out.println("     * @return the constant representing the break class");
+        out.println("     */");
         out.println(
-            "    public static byte getLineBreakPairProperty(int lineBreakPropertyBefore,int lineBreakPropertyAfter) {");
-        out.println("        return PAIR_TABLE[lineBreakPropertyBefore-1][lineBreakPropertyAfter-1];");
+            "    public static byte getLineBreakPairProperty(int lineBreakPropertyBefore, int lineBreakPropertyAfter) {");
+        out.println("        return PAIR_TABLE[lineBreakPropertyBefore - 1][lineBreakPropertyAfter - 1];");
         out.println("    }");
         out.println();
-        out.println("};");
+        out.println("}");
         out.flush();
         out.close();
     }

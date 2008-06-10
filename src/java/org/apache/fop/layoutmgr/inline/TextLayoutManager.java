@@ -46,6 +46,7 @@ import org.apache.fop.text.linebreak.LineBreakStatus;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one
@@ -624,9 +625,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             sequence = this.processLinebreak(returnList, sequence);
         }
 
-        if (((List) returnList.get(returnList.size() - 1)).isEmpty()) {
+        if (((List) ListUtil.getLast(returnList)).isEmpty()) {
             //Remove an empty sequence because of a trailing newline
-            returnList.remove(returnList.size() - 1);
+            ListUtil.removeLast(returnList);
         }
         
         this.setFinished(true);
