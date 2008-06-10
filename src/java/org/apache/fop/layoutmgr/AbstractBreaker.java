@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.ListUtil;
 
 /**
  * Abstract base class for breakers (page breakers, static region handlers etc.).
@@ -116,8 +117,8 @@ public abstract class AbstractBreaker {
         public KnuthSequence endSequence(Position breakPosition) {
             // remove glue and penalty item at the end of the paragraph
             while (this.size() > ignoreAtStart
-                   && !((KnuthElement)this.get(this.size() - 1)).isBox()) {
-                this.remove(this.size() - 1);
+                    && !((KnuthElement) ListUtil.getLast(this)).isBox()) {
+                ListUtil.removeLast(this);
             }
             if (this.size() > ignoreAtStart) {
                 // add the elements representing the space at the end of the last line
@@ -215,7 +216,7 @@ public abstract class AbstractBreaker {
 
     /** @return true if there's no content that could be handled. */
     public boolean isEmpty() {
-        return (this.blockLists.size() == 0);
+        return (this.blockLists.isEmpty());
     }
     
     protected void startPart(BlockSequence list, int breakClass) {
@@ -551,7 +552,7 @@ public abstract class AbstractBreaker {
         BlockSequence blockList;
         List returnedList = getNextKnuthElements(childLC, alignment);
         if (returnedList != null) {
-            if (returnedList.size() == 0) {
+            if (returnedList.isEmpty()) {
                 nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
                 return nextSequenceStartsOn;
             }
@@ -561,10 +562,9 @@ public abstract class AbstractBreaker {
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
             
             Position breakPosition = null;
-            if (((KnuthElement) returnedList.get(returnedList.size() - 1))
-                    .isForcedBreak()) {
-                KnuthPenalty breakPenalty = (KnuthPenalty) returnedList
-                        .remove(returnedList.size() - 1);
+            if (((KnuthElement) ListUtil.getLast(returnedList)).isForcedBreak()) {
+                KnuthPenalty breakPenalty = (KnuthPenalty) ListUtil
+                        .removeLast(returnedList);
                 breakPosition = breakPenalty.getPosition();
                 switch (breakPenalty.getBreakClass()) {
                 case Constants.EN_PAGE:
@@ -745,12 +745,12 @@ public abstract class AbstractBreaker {
                     if (!bBoxSeen) {
                         // this is the first box met in this page
                         bBoxSeen = true;
-                    } else if (unconfirmedList.size() > 0) {
-                        // glue items in unconfirmedList were not after
-                        // the last box
-                        // in this page; they must be added to
-                        // blockSpaceList
-                        while (unconfirmedList.size() > 0) {
+                    } else {
+                        while (!unconfirmedList.isEmpty()) {
+                            // glue items in unconfirmedList were not after
+                            // the last box
+                            // in this page; they must be added to
+                            // blockSpaceList
                             KnuthGlue blockSpace = (KnuthGlue) unconfirmedList
                                     .removeFirst();
                             spaceMaxAdjustment.max += ((KnuthGlue) blockSpace)

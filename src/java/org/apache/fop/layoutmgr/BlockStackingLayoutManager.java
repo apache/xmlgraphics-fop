@@ -36,6 +36,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.ListUtil;
 
 /**
  * Base LayoutManager class for all areas which stack their child
@@ -296,7 +297,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
-            if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+            if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                 //Propagate keep-with-previous up from the first child
                 context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
                 childLC.clearKeepWithPreviousPending();
@@ -312,7 +313,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     break;
                 }
 
-                if (contentList.size() == 0) {
+                if (contentList.isEmpty()) {
                     // Empty fo:block, zero-length box makes sure the IDs and/or markers 
                     // are registered and borders/padding are painted.
                     returnList.add(new KnuthBox(0, notifyPos(new Position(this)), false));
@@ -339,17 +340,17 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     // before the one handled by curLM
                     addInBetweenBreak(contentList, context, childLC);
                 }
-                if (returnedList == null || returnedList.size() == 0) {
+                if (returnedList == null || returnedList.isEmpty()) {
                     //Avoid NoSuchElementException below (happens with empty blocks)
                     continue;
                 }
                 contentList.addAll(returnedList);
-                if (((ListElement) returnedList.get(returnedList.size() - 1))
+                if (((ListElement) ListUtil.getLast(returnedList))
                         .isForcedBreak()) {
                     // a descendant of this block has break-after
                     if (curLM.isFinished() && !hasNextChildLM()) {
-                        forcedBreakAfterLast = (BreakElement) contentList
-                                .remove(contentList.size() - 1);
+                        forcedBreakAfterLast = (BreakElement) ListUtil
+                                .removeLast(contentList);                                
                         context.clearPendingMarks();
                         break;
                     }
@@ -381,7 +382,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         /* end of extension */
 
         returnedList = new LinkedList();
-        if (contentList.size() > 0) {
+        if (!contentList.isEmpty()) {
             wrapPositionElements(contentList, returnList);
         } else if (forcedBreakAfterLast == null) {
             // Empty fo:block, zero-length box makes sure the IDs and/or markers 
@@ -440,8 +441,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             return;
         }
         
-        ListElement last = (ListElement) contentList
-                .get(contentList.size() - 1); 
+        ListElement last = (ListElement) ListUtil.getLast(contentList);
         if (last.isGlue()) {
             // the last element in contentList is a glue;
             // it is a feasible breakpoint, there is no need to add
@@ -695,8 +695,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     returnedList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, 
                             new Position(this), false));
                 } else if (bSomethingAdded
-                        && !((KnuthElement) returnedList.get(returnedList
-                                .size() - 1)).isGlue()) {
+                        && !((KnuthElement) ListUtil.getLast(returnedList))
+                                .isGlue()) {
                     // add a null penalty to allow a break between blocks
                     returnedList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                 }
@@ -715,8 +715,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 // currLM == this
                 // there are no more elements to add
                 // remove the last penalty added to returnedList
-                if (returnedList.size() > 0) {
-                    returnedList.remove(returnedList.size() - 1);
+                if (!returnedList.isEmpty()) {
+                    ListUtil.removeLast(returnedList);
                 }
                 //log.debug(" BLM.getChangedKnuthElements> elementi propri, ignorati, da " 
                 //  + fromIndex + " a " + workList.size());
@@ -1407,7 +1407,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             oldList.remove(0);
         }
         if (adjustedSpaceAfter > 0) {
-            oldList.remove(oldList.size() - 1);
+            ListUtil.removeLast(oldList);
         }
 
         // if space-before.conditionality is "discard", correct newList
@@ -1464,7 +1464,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             newList.addLast(new KnuthBox(wrongBox.getW() - decreasedLength,
                                          wrongBox.getPosition(), false));
             // add preserved elements
-            if (preserveList.size() > 0) {
+            if (!preserveList.isEmpty()) {
                 newList.addAll(preserveList);
             }
             // insert the correct glue

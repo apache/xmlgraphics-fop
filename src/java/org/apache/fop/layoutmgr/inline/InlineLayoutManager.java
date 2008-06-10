@@ -56,6 +56,7 @@ import org.apache.fop.layoutmgr.SpaceSpecifier;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for objects which stack children in the inline direction,
@@ -312,11 +313,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             
             // get KnuthElements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
-            if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+            if (returnList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                 childLC.clearKeepWithPreviousPending();
             }
             if (returnedList == null
-                    || returnedList.size() == 0) {
+                    || returnedList.isEmpty()) {
                 // curLM returned null or an empty list, because it finished;
                 // just iterate once more to see if there is another child
                 continue;
@@ -335,7 +336,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     returnedList.remove(0);
                 }
                 // add border and padding to the first complete sequence of this LM
-                if (!borderAdded && returnedList.size() != 0) {
+                if (!borderAdded && !returnedList.isEmpty()) {
                     addKnuthElementsForBorderPaddingStart((KnuthSequence) returnedList.get(0));
                     borderAdded = true;
                 }
@@ -367,8 +368,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
                 childLC.clearKeepsPending();
             }
-            lastSequence = (KnuthSequence) returnList
-                    .get(returnList.size() - 1);
+            lastSequence = (KnuthSequence) ListUtil.getLast(returnList);
             lastChildLM = curLM;
         }
         
@@ -379,7 +379,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         setFinished(true);
         log.trace(trace);
         
-        if (returnList.size() == 0) {
+        if (returnList.isEmpty()) {
             /*
              * if the FO itself is empty, but has an id specified 
              * or associated fo:markers, then we still need a dummy
@@ -396,7 +396,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             }
         }
         
-        return returnList.size() == 0 ? null : returnList;
+        return returnList.isEmpty() ? null : returnList;
     }
 
     /**

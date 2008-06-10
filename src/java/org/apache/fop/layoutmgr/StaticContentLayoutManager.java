@@ -38,6 +38,7 @@ import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.TextLayoutManager;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -142,7 +143,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 returnList.addAll(returnedList);
                 return returnList;
             } else {
-                if (returnList.size() > 0) {
+                if (!returnList.isEmpty()) {
                     // there is a block before this one
                     if (prevLM.mustKeepWithNext()
                         || curLM.mustKeepWithPrevious()) {
@@ -150,16 +151,16 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                         returnList.add(new KnuthPenalty(0, 
                                 KnuthElement.INFINITE, false, 
                                 new Position(this), false));
-                    } else if (!((KnuthElement) returnList.get(returnList
-                            .size() - 1)).isGlue()) {
+                    } else if (!((KnuthElement) ListUtil.getLast(returnList))
+                            .isGlue()) {
                         // add a null penalty to allow a break between blocks
                         returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                     }
                 }
-/*LF*/          if (returnedList.size() > 0) { // controllare!
+/*LF*/          if (!returnedList.isEmpty()) { // controllare!
                     returnList.addAll(returnedList);
-                    final KnuthElement last = (KnuthElement) returnedList
-                            .get(returnedList.size() - 1);
+                    final KnuthElement last = (KnuthElement) ListUtil
+                            .getLast(returnedList);
                     if (last.isPenalty()
                             && ((KnuthPenalty) last).getP() == -KnuthElement.INFINITE) {
                         // a descendant of this flow has break-after
@@ -173,10 +174,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
         setFinished(true);
 
-        if (returnList.size() > 0) {
-            return returnList;
-        } else {
+        if (returnList.isEmpty()) {
             return null;
+        } else {
+            return returnList;
         }
     }
     

@@ -19,16 +19,20 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.ListUtil;
 
 /**
  * Utilities for Knuth element lists.
  */
-public class ElementListUtils {
+public final class ElementListUtils {
+    
+    private ElementListUtils() {
+        // Utility class.
+    }
 
     /**
      * Removes legal breaks in an element list. A constraint can be specified to limit the
@@ -185,7 +189,7 @@ public class ElementListUtils {
      * @return true if the list ends with a forced break
      */
     public static boolean endsWithForcedBreak(List elems) {
-        ListElement last = (ListElement) elems.get(elems.size() - 1);
+        ListElement last = (ListElement) ListUtil.getLast(elems);
         return last.isForcedBreak();
     }
 
@@ -196,7 +200,7 @@ public class ElementListUtils {
      * @return true if the list ends with a non-infinite penalty
      */
     public static boolean endsWithNonInfinitePenalty(List elems) {
-        ListElement last = (ListElement) elems.get(elems.size() - 1);
+        ListElement last = (ListElement) ListUtil.getLast(elems);
         if (last.isPenalty() && ((KnuthPenalty)last).getP() < KnuthElement.INFINITE) {
             return true;
         } else if (last instanceof BreakElement
