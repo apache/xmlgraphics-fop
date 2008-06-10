@@ -39,6 +39,7 @@ import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for a block-container FO.
@@ -285,7 +286,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);
-                if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+                if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                     //Propagate keep-with-previous up from the first child
                     context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
                     childLC.clearKeepWithPreviousPending();
@@ -317,12 +318,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                         addInBetweenBreak(contentList, context, childLC);
                     }
                     contentList.addAll(returnedList);
-                    if (returnedList.size() == 0) {
+                    if (returnedList.isEmpty()) {
                         //Avoid NoSuchElementException below (happens with empty blocks)
                         continue;
                     }
-                    if (((ListElement) returnedList
-                            .get(returnedList.size() - 1)).isForcedBreak()) {
+                    if (((ListElement) ListUtil.getLast(returnedList))
+                            .isForcedBreak()) {
                         // a descendant of this block has break-after
                         if (curLM.isFinished()) {
                             // there is no other content in this block;
@@ -754,7 +755,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     // pos was created by this BCLM and was inside an element
                     // representing space before or after
                     // this means the space was not discarded
-                    if (positionList.size() == 0 && bcpos == null) {
+                    if (positionList.isEmpty() && bcpos == null) {
                         // pos was in the element representing space-before
                         bSpaceBefore = true;
                     } else {
@@ -801,9 +802,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 //    // between consecutive pages
                 List splitList = new LinkedList();
                 int splitLength = 0;
-                int iFirst = ((MappingPosition) positionList.get(0)).getFirstIndex();
-                int iLast = ((MappingPosition) positionList.get(positionList
-                        .size() - 1)).getLastIndex();
+                int iFirst = ((MappingPosition) positionList.get(0))
+                        .getFirstIndex();
+                int iLast = ((MappingPosition) ListUtil.getLast(positionList))
+                        .getLastIndex();
                 // copy from storedList to splitList all the elements from
                 // iFirst to iLast
                 ListIterator storedListIterator = storedList.listIterator(iFirst);
