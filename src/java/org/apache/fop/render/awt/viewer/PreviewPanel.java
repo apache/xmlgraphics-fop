@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -36,11 +37,12 @@ import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
-
 import org.apache.fop.render.awt.AWTRenderer;
 
 
@@ -155,6 +157,8 @@ public class PreviewPanel extends JPanel {
         this.renderable = renderable;
         this.renderer = renderer;
         this.foUserAgent = foUserAgent;
+        //Override target resolution for the computer screen
+        this.foUserAgent.setTargetResolution(Toolkit.getDefaultToolkit().getScreenResolution());
 
         gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(0, 1)); // rows, cols
@@ -393,8 +397,10 @@ public class PreviewPanel extends JPanel {
     public double getScaleToFit(double viewWidth, double viewHeight) throws FOPException {
         PageViewport pageViewport = renderer.getPageViewport(currentPage);
         Rectangle2D pageSize = pageViewport.getViewArea();
-        double widthScale = viewWidth / (pageSize.getWidth() / 1000f);
-        double heightScale = viewHeight / (pageSize.getHeight() / 1000f);
+        float screenResolution = Toolkit.getDefaultToolkit().getScreenResolution();
+        float screenFactor = screenResolution / UnitConv.IN2PT;
+        double widthScale = viewWidth / (pageSize.getWidth() / 1000f) / screenFactor;
+        double heightScale = viewHeight / (pageSize.getHeight() / 1000f) / screenFactor;
         return Math.min(displayMode == CONT_FACING ? widthScale / 2 : widthScale, heightScale);
     }
 

@@ -38,7 +38,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -60,8 +59,8 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.awt.AWTRenderer;
 
 /**
@@ -76,6 +75,8 @@ public class PreviewDialog extends JFrame implements StatusListener {
     protected AWTRenderer renderer;
     /** The FOUserAgent associated with this window */
     protected FOUserAgent foUserAgent;
+    /** The originally configured target resolution */
+    protected float configuredTargetResolution;
     /**
      * Renderable instance that can be used to reload and re-render a document after 
      * modifications.
@@ -107,6 +108,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
     public PreviewDialog(FOUserAgent foUserAgent, Renderable renderable) {
         renderer = (AWTRenderer) foUserAgent.getRendererOverride();
         this.foUserAgent = foUserAgent;
+        this.configuredTargetResolution = this.foUserAgent.getTargetResolution();
         this.renderable = renderable;
         translator = new Translator();
 
@@ -551,23 +553,23 @@ public class PreviewDialog extends JFrame implements StatusListener {
     }
 
     private void scaleActionPerformed(ActionEvent e) {
-        try {
-            int index = scale.getSelectedIndex();
-            if (index == 0) {
-                setScale(previewPanel.getScaleToFitWindow() * 100);
-            } else if (index == 1) {
-                setScale(previewPanel.getScaleToFitWidth() * 100);
-            } else {
-                String item = (String)scale.getSelectedItem();
-                setScale(Double.parseDouble(item.substring(0, item.indexOf('%'))));
-            }
-        } catch (FOPException fopEx) {
-            fopEx.printStackTrace();
+        int index = scale.getSelectedIndex();
+        if (index == 0) {
+            setScaleToFitWindow();
+        } else if (index == 1) {
+            setScaleToFitWidth();
+        } else {
+            String item = (String)scale.getSelectedItem();
+            setScale(Double.parseDouble(item.substring(0, item.indexOf('%'))));
         }
     }
 
     /** Prints the document */
     public void startPrinterJob(boolean showDialog) {
+        //Restore originally configured target resolution
+        float saveResolution = foUserAgent.getTargetResolution();
+        foUserAgent.setTargetResolution(this.configuredTargetResolution);
+        
         PrinterJob pj = PrinterJob.getPrinterJob();
         pj.setPageable(renderer);
         if (!showDialog || pj.printDialog()) {
@@ -577,6 +579,8 @@ public class PreviewDialog extends JFrame implements StatusListener {
                 e.printStackTrace();
             }
         }
+        
+        foUserAgent.setTargetResolution(saveResolution);
     }
 
     /**

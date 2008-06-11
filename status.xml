@@ -61,6 +61,9 @@
     <!--/release-->
     <release version="0.95" date="TBD">
       <action context="Renderers" dev="JM" type="fix">
+        Fixed resolution handling inside AWT preview dialog.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
         Fixed positioning of absolutely positioned block-containers in multi-column documents.
       </action>
       <action context="Renderers" dev="JM" type="fix">
