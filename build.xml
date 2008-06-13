@@ -457,13 +457,14 @@ list of possible build targets.
     </jar>
   </target>
   <target name="retro" depends="compile">
+<!--
     <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
       <classpath>
         <path refid="libs-build-classpath"/>
         <path refid="libs-build-tools-classpath"/>
       </classpath>
-<!-- RetroWeaver will be added here -->
     </taskdef>
+RetroWeaver will be added here -->
   </target>
 <!-- =================================================================== -->
 <!-- main FOP JARs                                                       -->
