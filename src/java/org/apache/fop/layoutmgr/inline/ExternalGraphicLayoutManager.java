@@ -29,20 +29,20 @@ import org.apache.fop.fo.flow.ExternalGraphic;
  */
 public class ExternalGraphicLayoutManager extends AbstractGraphicsLayoutManager {
     
-    private ExternalGraphic fobj;
-
     /**
-     * Constructor
-     * @param node the fo:external-graphic formatting object that creates the area
+     * Constructor.
+     * 
+     * @param node
+     *            the fo:external-graphic formatting object that creates the
+     *            area
      */
     public ExternalGraphicLayoutManager(ExternalGraphic node) {
         super(node);
-        fobj = node;
     }
 
     /** {@inheritDoc} */
     protected Area getChildArea() {
-        return new Image(fobj.getSrc());
+        return new Image(((ExternalGraphic) fobj).getSrc());
     }
     
 }
