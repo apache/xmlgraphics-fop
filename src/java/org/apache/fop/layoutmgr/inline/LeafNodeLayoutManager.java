@@ -91,7 +91,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
 
     /**
-     * Create a Leaf node layout mananger.
+     * Create a Leaf node layout manager.
      * @param node the FObj to attach to this LM.
      */
     public LeafNodeLayoutManager(FObj node) {
@@ -99,7 +99,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Create a Leaf node layout mananger.
+     * Create a Leaf node layout manager.
      */
     public LeafNodeLayoutManager() {
     }
