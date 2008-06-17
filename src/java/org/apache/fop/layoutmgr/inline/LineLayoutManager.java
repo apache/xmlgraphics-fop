@@ -386,7 +386,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 if (lack < 0) {
                     String textDiff = (lack < -50000 ? "more than 50 points" : (-lack) + "mpt");
                     log.warn(FONode.decorateWithContextInfo(
-                            "Line " + (addedPositions + 1) 
+                            "Line " + bestActiveNode.line 
                             + " of a paragraph overflows the available area by "
                             + textDiff + ".", getFObj()));
                 }
