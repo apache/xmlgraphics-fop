@@ -387,9 +387,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     InlineLevelEventProducer eventProducer
                         = InlineLevelEventProducer.Provider.get(
                             getFObj().getUserAgent().getEventBroadcaster());
-                    eventProducer.lineOverflows(this, addedPositions + 1,
+                    eventProducer.lineOverflows(this, bestActiveNode.line,
                             -lack, getFObj().getLocator());
-                    String textDiff = (lack < -50000 ? "more than 50 points" : (-lack) + "mpt");
                 }
             }
             

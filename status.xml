@@ -53,6 +53,11 @@
   
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="LF" type="fix">
+        Fixed an inconsistency in footnote handling that led to unnecessary
+        empty areas in pages whose last normal line contains footnotes
+        when the page bpd is not the same for all pages.
+      </action>
       <!-- change reverted, to be added back later
       <action context="Renderers" dev="AC" importance="high" type="add">
         Added SVG support for AFP (GOCA).
