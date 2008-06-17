@@ -27,13 +27,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.util.QName;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Base class for representation of formatting objects and their processing.
@@ -179,7 +180,7 @@ public abstract class FObj extends FONode implements Constants {
                     if (log.isWarnEnabled()) {
                         StringBuffer msg = new StringBuffer();
                         msg.append("Found non-unique id on ").append(getName());
-                        if (locator.getLineNumber() != -1) {
+                        if (locator != null && locator.getLineNumber() != -1) {
                             msg.append(" (at ").append(locator.getLineNumber())
                                 .append("/").append(locator.getColumnNumber())
                                 .append(")");
