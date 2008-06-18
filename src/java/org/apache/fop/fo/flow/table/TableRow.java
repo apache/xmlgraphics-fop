@@ -19,21 +19,23 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:table-row object.
  */
-public class TableRow extends TableCellContainer {
+public class TableRow extends TableCellContainer implements BreakPropertySet {
     // The value of properties relevant for fo:table-row.
     private LengthRangeProperty blockProgressionDimension;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;

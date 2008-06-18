@@ -36,7 +36,8 @@ public final class BreakUtil {
         case Constants.EN_PAGE:      return 2;
         case Constants.EN_EVEN_PAGE: return 3;
         case Constants.EN_ODD_PAGE:  return 3;
-        default: throw new IllegalArgumentException();
+        default: throw new IllegalArgumentException(
+                "Illegal value for breakClass: " + breakClass);
         }
     }
 

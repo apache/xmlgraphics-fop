@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -253,12 +254,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         LinkedList returnList = new LinkedList();
         
         if (!breakBeforeServed) {
-            try {
+            breakBeforeServed = true;
+            if (!context.suppressBreakBefore()) {
                 if (addKnuthElementsForBreakBefore(returnList, context)) {
+                    this.childLMForBreakSkip = new WeakReference(getChildLM());
                     return returnList;
                 }
-            } finally {
-                breakBeforeServed = true;
             }
         }
 
@@ -282,6 +283,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 childLC.setStackLimitBP(MinOptMax.subtract(context.getStackLimitBP(), stackLimit));
                 childLC.setRefIPD(relDims.ipd);
                 childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+                if (this.childLMForBreakSkip != null && curLM == this.childLMForBreakSkip.get()) {
+                    childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
+                    //Handled already by the parent (break collapsing, see above)
+                }
 
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);

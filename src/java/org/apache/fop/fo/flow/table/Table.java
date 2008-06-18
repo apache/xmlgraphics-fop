@@ -22,6 +22,8 @@ package org.apache.fop.fo.flow.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
@@ -29,18 +31,18 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.TableColLength;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the fo:table object.
  */
-public class Table extends TableFObj implements ColumnNumberManagerHolder {
+public class Table extends TableFObj implements ColumnNumberManagerHolder, BreakPropertySet {
 
     /** properties */
     private CommonBorderPaddingBackground commonBorderPaddingBackground;

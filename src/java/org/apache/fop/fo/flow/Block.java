@@ -32,6 +32,7 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.NullCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
@@ -43,7 +44,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
  /**
   * Class modelling the fo:block object.
   */
-public class Block extends FObjMixed {
+public class Block extends FObjMixed implements BreakPropertySet {
 
     // used for FO validation
     private boolean blockOrInlineItemFound = false;

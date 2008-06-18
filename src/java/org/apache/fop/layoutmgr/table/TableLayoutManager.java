@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.datatypes.LengthBase;
@@ -265,12 +266,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         addKnuthElementsForSpaceAfter(returnList, alignment);
 
-        //addKnuthElementsForBreakBefore(returnList, context);
-        int breakBefore = BreakUtil.compareBreakClasses(getTable().getBreakBefore(),
-                childLC.getBreakBefore());
-        if (breakBefore != Constants.EN_AUTO) {
-            returnList.addFirst(new BreakElement(getAuxiliaryPosition(), 
-                    0, -KnuthElement.INFINITE, breakBefore, context));
+        if (!context.suppressBreakBefore()) {
+            //addKnuthElementsForBreakBefore(returnList, context);
+            int breakBefore = BreakUtil.compareBreakClasses(getTable().getBreakBefore(),
+                    childLC.getBreakBefore());
+            if (breakBefore != Constants.EN_AUTO) {
+                returnList.addFirst(new BreakElement(getAuxiliaryPosition(), 
+                        0, -KnuthElement.INFINITE, breakBefore, context));
+            }
         }
 
         //addKnuthElementsForBreakAfter(returnList, context);

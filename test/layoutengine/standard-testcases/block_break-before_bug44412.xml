@@ -20,8 +20,7 @@
   <info>
     <p>
       This test checks Bugzilla #44412 where a break-before on the first child of an otherwise
-      empty block is set. It is expected that the parent block creates two areas, the first with
-      only border-before on the first page and zero bpd.
+      empty block is set.
     </p>
   </info>
   <fo>
@@ -44,20 +43,12 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="2" xpath="count(//block[@prod-id = 'b1'])"/>
-    <eval expected="4000 4000 4000 0" xpath="(//block[@prod-id = 'b1'])[1]/@bap"/>
-    <eval expected="4000 4000 0 4000" xpath="(//block[@prod-id = 'b1'])[2]/@bap"/>
-    <eval expected="0" xpath="(//block[@prod-id = 'b1'])[1]/@bpd"/>
-    <eval expected="43200" xpath="(//block[@prod-id = 'b1'])[2]/@bpd"/>
+    <eval expected="1" xpath="count(//block[@prod-id = 'b1'])"/>
+    <eval expected="4000 4000 4000 4000" xpath="(//block[@prod-id = 'b1'])[1]/@bap"/>
+    <eval expected="43200" xpath="(//block[@prod-id = 'b1'])[1]/@bpd"/>
     
     <element-list category="breaker" index="0">
       <box w="14400"/>
-      <penalty w="0" p="0"/>
-      <box w="0" aux="true"/>
-      <penalty w="0" p="INF"/>
-      <glue w="4000"/> <!-- border-before -->
-      <box w="0"/> <!-- first block area of the "b1" block with zero bpd -->
-      
       <skip>3</skip>
     </element-list>
   </checks>

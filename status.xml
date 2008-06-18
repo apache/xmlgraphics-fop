@@ -60,6 +60,9 @@
       -->
     <!--/release-->
     <release version="0.95" date="TBD">
+      <action context="Layout" dev="JM" type="fix" fixes-bug="44412">
+        Regression bugfix: Multiple collapsable breaks don't cause empty pages anymore.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed resolution handling inside AWT preview dialog.
       </action>

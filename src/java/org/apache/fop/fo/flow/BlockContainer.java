@@ -28,6 +28,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -37,7 +38,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 /**
  * Class modelling the fo:block-container object.
  */
-public class BlockContainer extends FObj {
+public class BlockContainer extends FObj implements BreakPropertySet {
     // The value of properties relevant for fo:block-container.
     private CommonAbsolutePosition commonAbsolutePosition;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;

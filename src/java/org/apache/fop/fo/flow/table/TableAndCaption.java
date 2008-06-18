@@ -31,7 +31,7 @@ import org.apache.fop.fo.ValidationException;
  * Class modelling the fo:table-and-caption property.
  * @todo needs implementation
  */
-public class TableAndCaption extends FObj {
+public class TableAndCaption extends FObj /*implements BreakPropertySet*/ {
     // The value of properties relevant for fo:table-and-caption.
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;

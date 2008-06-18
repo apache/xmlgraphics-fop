@@ -195,12 +195,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         LinkedList returnList = new LinkedList();
         
         if (!breakBeforeServed) {
-            try {
+            breakBeforeServed = true;
+            if (!context.suppressBreakBefore()) {
                 if (addKnuthElementsForBreakBefore(returnList, context)) {
                     return returnList;
                 }
-            } finally {
-                breakBeforeServed = true;
             }
         }
 
