@@ -566,7 +566,7 @@ public abstract class FOEventHandler {
      * @param start Offset for characters to process.
      * @param length Portion of array to process.
      */
-    public void characters(char data[], int start, int length) {
+    public void characters(char[] data, int start, int length) {
     }
 
     /**

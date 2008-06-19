@@ -150,8 +150,7 @@ public class FOTreeBuilder extends DefaultHandler {
         this.delegate.endDocument();
         if (this.rootFObj == null && empty) {
             FOValidationEventProducer eventProducer
-                = FOValidationEventProducer.Provider.get(
-                    foEventHandler.getUserAgent().getEventBroadcaster());
+                = FOValidationEventProducer.Provider.get(userAgent.getEventBroadcaster());
             eventProducer.emptyDocument(this);
         }
         rootFObj = null;
@@ -254,7 +253,7 @@ public class FOTreeBuilder extends DefaultHandler {
                         || !localName.equals("root")) {
                     FOValidationEventProducer eventProducer
                         = FOValidationEventProducer.Provider.get(
-                                foEventHandler.getUserAgent().getEventBroadcaster());
+                                userAgent.getEventBroadcaster());
                     eventProducer.invalidFORoot(this, FONode.getNodeString(namespaceURI, localName),
                             getEffectiveLocator());
                 }
@@ -379,7 +378,7 @@ public class FOTreeBuilder extends DefaultHandler {
             if (maker instanceof UnknownXMLObj.Maker) {
                 FOValidationEventProducer eventProducer
                     = FOValidationEventProducer.Provider.get(
-                        foEventHandler.getUserAgent().getEventBroadcaster());
+                        userAgent.getEventBroadcaster());
                 eventProducer.unknownFormattingObject(this, currentFObj.getName(),
                         new QName(namespaceURI, localName),
                         getEffectiveLocator());
