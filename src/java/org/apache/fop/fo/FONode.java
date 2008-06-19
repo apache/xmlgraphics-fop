@@ -22,7 +22,6 @@ package org.apache.fop.fo;
 // Java
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -158,11 +157,19 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
+     * Returns the context class providing information used during FO tree building.
+     * @return the builder context
+     */
+    public FOTreeBuilderContext getBuilderContext() {
+        return parent.getBuilderContext();
+    }
+    
+    /**
      * Indicates whether this node is a child of an fo:marker.
      * @return true if this node is a child of an fo:marker
      */
     protected boolean inMarker() {
-        return getFOEventHandler().inMarker();
+        return getBuilderContext().inMarker();
     }
 
     /**

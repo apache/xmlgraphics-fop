@@ -19,9 +19,6 @@
 
 package org.apache.fop.fo;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -75,27 +72,6 @@ public abstract class FOEventHandler {
     protected FontInfo fontInfo;
 
     /**
-     * The current set of id's in the FO tree.
-     * This is used so we know if the FO tree contains duplicates.
-     */
-    private Set idReferences = new HashSet();
-    
-    /**
-     * The property list maker.
-     */
-    protected PropertyListMaker propertyListMaker;
-
-    /**
-     * The XMLWhitespaceHandler for this tree
-     */
-    protected XMLWhiteSpaceHandler whiteSpaceHandler = new XMLWhiteSpaceHandler();
-    
-    /**
-     * Indicates whether processing descendants of a marker
-     */
-    private boolean inMarker = false;
-    
-    /**
      * Main constructor
      * @param foUserAgent the apps.FOUserAgent instance for this process
      */
@@ -103,14 +79,6 @@ public abstract class FOEventHandler {
         this.foUserAgent = foUserAgent;
         this.fontInfo = new FontInfo();
         this.fontInfo.setEventListener(new FontEventAdapter(foUserAgent.getEventBroadcaster()));
-    }
-
-    /**
-     * Retuns the set of ID references.
-     * @return the ID references
-     */
-    public Set getIDReferences() {
-        return idReferences;
     }
 
     /**
@@ -129,54 +97,6 @@ public abstract class FOEventHandler {
         return this.fontInfo;
     }
 
-    /**
-     * Return the propertyListMaker.
-     * 
-     * @return the currently active {@link PropertyListMaker}
-     */
-    public PropertyListMaker getPropertyListMaker() {
-        return propertyListMaker;
-    }
-     
-    /**
-     * Set a new propertyListMaker.
-     * 
-     * @param propertyListMaker the new {@link PropertyListMaker} to use
-     */
-    public void setPropertyListMaker(PropertyListMaker propertyListMaker) {
-        this.propertyListMaker = propertyListMaker;
-    }
-    
-    /**
-     * Return the XMLWhiteSpaceHandler
-     * @return the whiteSpaceHandler
-     */
-    public XMLWhiteSpaceHandler getXMLWhiteSpaceHandler() {
-        return whiteSpaceHandler;
-    }
-
-    /**
-     * Switch to or from marker context
-     * (used by FOTreeBuilder when processing
-     *  a marker)
-     * 
-     * @param inMarker  true if a marker is being processed; 
-     *                  false otherwise
-     *
-     */
-    protected void switchMarkerContext(boolean inMarker) {
-        this.inMarker = inMarker;
-    }
-    
-    /**
-     * Check whether in marker context
-     * 
-     * @return true if a marker is being processed
-     */
-    protected boolean inMarker() {
-        return this.inMarker;
-    }
-    
     /**
      * This method is called to indicate the start of a new document run.
      * @throws SAXException In case of a problem

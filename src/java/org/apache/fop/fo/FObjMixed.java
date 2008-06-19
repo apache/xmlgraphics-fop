@@ -68,7 +68,7 @@ public abstract class FObjMixed extends FObj {
         flushText();
         if (!inMarker()
                 || getNameId() == FO_MARKER) {
-            getFOEventHandler().whiteSpaceHandler
+            getBuilderContext().whiteSpaceHandler
                 .handleWhiteSpace(this, currentTextNode);
         }
         super.endOfNode();
@@ -83,7 +83,7 @@ public abstract class FObjMixed extends FObj {
      * @param fobj  the node for which to handle white-space
      */
     protected static void handleWhiteSpaceFor(FObjMixed fobj) {
-        fobj.getFOEventHandler().getXMLWhiteSpaceHandler()
+        fobj.getBuilderContext().getXMLWhiteSpaceHandler()
             .handleWhiteSpace(fobj, fobj.currentTextNode);
     }
     
@@ -159,7 +159,7 @@ public abstract class FObjMixed extends FObj {
                 }
             } else {
                 // handle white-space for all text up to here
-                getFOEventHandler().whiteSpaceHandler
+                getBuilderContext().whiteSpaceHandler
                     .handleWhiteSpace(this, currentTextNode, child);
                 currentTextNode = null;
             }

@@ -16,20 +16,22 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.fo.flow;
 
+import java.util.Iterator;
+
+import org.xml.sax.Locator;
+
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.flow.table.TableFObj;
 import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.apps.FOPException;
-import org.xml.sax.Locator;
-
-import java.util.Iterator;
+import org.apache.fop.fo.flow.table.TableFObj;
 
 /**
  * Abstract base class for the <a href="http://www.w3.org/TR/xsl/#fo_retrieve-marker">
@@ -80,7 +82,7 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
     }
 
     private PropertyList createPropertyListFor(FObj fo, PropertyList parent) {
-        return getFOEventHandler().getPropertyListMaker().make(fo, parent);
+        return getBuilderContext().getPropertyListMaker().make(fo, parent);
     }
 
     private void cloneSingleNode(FONode child, FONode newParent,
