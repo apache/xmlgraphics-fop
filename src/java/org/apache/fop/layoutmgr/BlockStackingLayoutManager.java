@@ -19,8 +19,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,11 +68,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected LinkedList storedList = null;
     /** Indicates whether break before has been served or not */
     protected boolean breakBeforeServed = false;
-    /**
-     * Holds a weak reference on the first layout manager for optionally skipping
-     * a break-before that has already been handled by the parent.
-     */
-    protected Reference childLMForBreakSkip;
     /** Indicates whether the first visible mark has been returned by this LM, yet */
     protected boolean firstVisibleMarkServed = false;
     /** Reference IPD available */
@@ -258,7 +251,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             breakBeforeServed = true;
             if (!context.suppressBreakBefore()) {
                 if (addKnuthElementsForBreakBefore(returnList, context)) {
-                    this.childLMForBreakSkip = new WeakReference(getChildLM());
                     return returnList;
                 }
             }
@@ -293,7 +285,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 childLC.setStackLimitBP(context.getStackLimitBP());
                 childLC.setRefIPD(referenceIPD);
             }
-            if (this.childLMForBreakSkip != null && curLM == this.childLMForBreakSkip.get()) {
+            if (curLM == this.childLMs.get(0)) {
                 childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
                 //Handled already by the parent (break collapsing, see above)
             }
@@ -959,7 +951,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      */
     protected boolean addKnuthElementsForBreakBefore(LinkedList returnList, 
             LayoutContext context) {
-        int breakBefore = getBreakBefore(true);
+        int breakBefore = getBreakBefore();
         if (breakBefore == EN_PAGE
                 || breakBefore == EN_COLUMN 
                 || breakBefore == EN_EVEN_PAGE 
@@ -975,35 +967,25 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /**
      * Returns the break-before value of the current formatting object.
-     * @param mergedWithChildren true if any break-before on first children should be checked, too
      * @return the break-before value (Constants.EN_*)
      */
-    protected int getBreakBefore(boolean mergedWithChildren) {
-        int breakBefore = getBreakBefore();
-        if (mergedWithChildren /* uncomment to only partially merge: && breakBefore != EN_AUTO*/) {
+    private int getBreakBefore() {
+        int breakBefore = EN_AUTO;
+        if (fobj instanceof BreakPropertySet) {
+            breakBefore = ((BreakPropertySet)fobj).getBreakBefore();
+        }
+        if (true /* uncomment to only partially merge: && breakBefore != EN_AUTO*/) {
             LayoutManager lm = getChildLM();
             //It is assumed this is only called when the first LM is active.
             if (lm instanceof BlockStackingLayoutManager) {
                 BlockStackingLayoutManager bslm = (BlockStackingLayoutManager)lm;
                 breakBefore = BreakUtil.compareBreakClasses(
-                        breakBefore, bslm.getBreakBefore(true));
+                        breakBefore, bslm.getBreakBefore());
             }
         }
         return breakBefore;
     }
     
-    /**
-     * Returns the break-before value of the current formatting object.
-     * @return the break-before value (Constants.EN_*)
-     */
-    protected int getBreakBefore() {
-        int breakBefore = EN_AUTO;
-        if (fobj instanceof BreakPropertySet) {
-            breakBefore = ((BreakPropertySet)fobj).getBreakBefore();
-        }
-        return breakBefore;
-    }
-
     /**
      * Creates Knuth elements for break-after and adds them to the return list.
      * @param returnList return list to add the additional elements to
