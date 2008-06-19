@@ -66,6 +66,9 @@ public class FOTreeBuilder extends DefaultHandler {
     
     /** Current delegate ContentHandler to receive the SAX events */
     protected ContentHandler delegate;
+
+    /** Provides information used during tree building stage. */
+    private FOTreeBuilderContext builderContext;
     
     /** The object that handles formatting and rendering to a stream */
     private FOEventHandler foEventHandler;
@@ -101,7 +104,8 @@ public class FOTreeBuilder extends DefaultHandler {
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = foUserAgent.getRendererFactory().createFOEventHandler(
                 foUserAgent, outputFormat, stream);
-        foEventHandler.setPropertyListMaker(new PropertyListMaker() {
+        builderContext = new FOTreeBuilderContext();
+        builderContext.setPropertyListMaker(new PropertyListMaker() {
             public PropertyList make(FObj fobj, PropertyList parentPropertyList) {
                 return new StaticPropertyList(fobj, parentPropertyList);
             }
@@ -270,6 +274,7 @@ public class FOTreeBuilder extends DefaultHandler {
                 foNode = fobjMaker.make(currentFObj);
                 if (rootFObj == null) {
                     rootFObj = (Root) foNode;
+                    rootFObj.setBuilderContext(builderContext);
                     rootFObj.setFOEventHandler(foEventHandler);
                 }
                 propertyList = foNode.createPropertyList(
@@ -277,10 +282,10 @@ public class FOTreeBuilder extends DefaultHandler {
                 foNode.processNode(localName, getEffectiveLocator(), 
                                     attlist, propertyList);
                 if (foNode.getNameId() == Constants.FO_MARKER) {
-                    if (foEventHandler.inMarker()) {
+                    if (builderContext.inMarker()) {
                         nestedMarkerDepth++;
                     } else {
-                        foEventHandler.switchMarkerContext(true);
+                        builderContext.switchMarkerContext(true);
                     }
                 }
                 foNode.startOfNode();
@@ -309,7 +314,7 @@ public class FOTreeBuilder extends DefaultHandler {
             }
 
             currentFObj = foNode;
-            if (propertyList != null && !foEventHandler.inMarker()) {
+            if (propertyList != null && !builderContext.inMarker()) {
                 currentPropertyList = propertyList;
             }
         }
@@ -332,13 +337,13 @@ public class FOTreeBuilder extends DefaultHandler {
             
             if (currentPropertyList != null
                     && currentPropertyList.getFObj() == currentFObj
-                    && !foEventHandler.inMarker()) {
+                    && !builderContext.inMarker()) {
                 currentPropertyList = currentPropertyList.getParentPropertyList();
             }
             
             if (currentFObj.getNameId() == Constants.FO_MARKER) {
                 if (nestedMarkerDepth == 0) {
-                    foEventHandler.switchMarkerContext(false);
+                    builderContext.switchMarkerContext(false);
                 } else {
                     nestedMarkerDepth--;
                 }

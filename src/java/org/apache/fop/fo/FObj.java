@@ -130,7 +130,7 @@ public abstract class FObj extends FONode implements Constants {
      */
     protected PropertyList createPropertyList(PropertyList parent, 
                     FOEventHandler foEventHandler) throws FOPException {
-        return foEventHandler.getPropertyListMaker().make(this, parent);
+        return getBuilderContext().getPropertyListMaker().make(this, parent);
     }
 
     /**
@@ -165,7 +165,7 @@ public abstract class FObj extends FONode implements Constants {
      */
     private void checkId(String id) throws ValidationException {
         if (!inMarker() && !id.equals("")) {
-            Set idrefs = getFOEventHandler().getIDReferences();
+            Set idrefs = getBuilderContext().getIDReferences();
             if (!idrefs.contains(id)) {
                 idrefs.add(id);
             } else {

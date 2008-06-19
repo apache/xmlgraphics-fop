@@ -245,7 +245,7 @@ public class FOText extends FONode {
      * text-transform property.
      */
     private void textTransform() {
-        if (getFOEventHandler().inMarker() 
+        if (getBuilderContext().inMarker() 
                 || textTransform == Constants.EN_NONE) {
             return;
         }
