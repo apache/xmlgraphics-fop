@@ -200,7 +200,9 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                 } else {
                     tableFooterFound = true;
                     if (tableBodyFound) {
-                        nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)", true);
+                        if (getUserAgent().validateStrictly()) {
+                            nodesOutOfOrderError(loc, "fo:table-footer", "(table-body+)", true);
+                        }
                         if (!isSeparateBorderModel()) {
                             TableEventProducer eventProducer = TableEventProducer.Provider.get(
                                     getUserAgent().getEventBroadcaster());
