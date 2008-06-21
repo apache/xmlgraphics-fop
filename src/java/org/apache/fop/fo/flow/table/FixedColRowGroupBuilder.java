@@ -143,8 +143,8 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endRow(TableBody body) {
-        handleRowEnd(body);
+    void endRow(TablePart part) {
+        handleRowEnd(part);
     }
 
     private void handleRowEnd(TableCellContainer container) {
@@ -172,7 +172,7 @@ class FixedColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void startTablePart(TableBody part) {
+    void startTablePart(TablePart part) {
         firstInPart = true;
         borderResolver.startPart(part);
     }

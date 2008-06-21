@@ -76,8 +76,8 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     private ColumnNumberManager columnNumberManager = new ColumnNumberManager();
 
     /** the table-header and -footer */
-    private TableBody tableHeader = null;
-    private TableBody tableFooter = null;
+    private TableHeader tableHeader = null;
+    private TableFooter tableFooter = null;
 
     /** used for validation */
     private boolean tableColumnFound = false;
@@ -279,10 +279,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             }
             switch (childId) {
             case FO_TABLE_FOOTER:
-                tableFooter = (TableBody) child;
+                tableFooter = (TableFooter) child;
                 break;
             case FO_TABLE_HEADER:
-                tableHeader = (TableBody) child;
+                tableHeader = (TableHeader) child;
                 break;
             default:
                 super.addChildNode(child);
@@ -404,12 +404,12 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     }
 
     /** @return the body for the table-header. */
-    public TableBody getTableHeader() {
+    public TableHeader getTableHeader() {
         return tableHeader;
     }
 
     /** @return the body for the table-footer. */
-    public TableBody getTableFooter() {
+    public TableFooter getTableFooter() {
         return tableFooter;
     }
 

@@ -79,9 +79,9 @@ public class TableRow extends TableCellContainer {
     public void processNode(String elementName, Locator locator,
             Attributes attlist, PropertyList pList) throws FOPException {
         if (!inMarker()) {
-            TableBody body = (TableBody) parent;
-            pendingSpans = body.pendingSpans;
-            columnNumberManager = body.columnNumberManager;
+            TablePart part = (TablePart) parent;
+            pendingSpans = part.pendingSpans;
+            columnNumberManager = part.columnNumberManager;
         }
         super.processNode(elementName, locator, attlist, pList);
     }
@@ -90,8 +90,8 @@ public class TableRow extends TableCellContainer {
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
             TableCell cell = (TableCell) child;
-            TableBody body = (TableBody) getParent();
-            addTableCellChild(cell, body.isFirst(this));
+            TablePart part = (TablePart) getParent();
+            addTableCellChild(cell, part.isFirst(this));
         }
         super.addChildNode(child);
     }
@@ -129,8 +129,8 @@ public class TableRow extends TableCellContainer {
     }
 
     /** {@inheritDoc} */
-    TableBody getTablePart() {
-        return (TableBody) parent;
+    TablePart getTablePart() {
+        return (TablePart) parent;
     }
 
     /** {@inheritDoc} */

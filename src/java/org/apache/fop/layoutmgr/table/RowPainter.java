@@ -32,7 +32,7 @@ import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
-import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -94,7 +94,7 @@ class RowPainter {
         this.firstRowOnPageIndex = -1;
     }
 
-    void startTablePart(TableBody tablePart) {
+    void startTablePart(TablePart tablePart) {
         CommonBorderPaddingBackground background = tablePart.getCommonBorderPaddingBackground();
         if (background.hasBackground()) {
             tablePartBackground = background;

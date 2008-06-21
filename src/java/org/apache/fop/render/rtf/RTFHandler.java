@@ -76,6 +76,8 @@ import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableFooter;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableHeader;
@@ -611,25 +613,29 @@ public class RTFHandler extends FOEventHandler {
     /**
      * {@inheritDoc}
      */
-    public void startHeader(TableBody th) {
+    public void startHeader(TableHeader header) {
+        startPart(header);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void endHeader(TableBody th) {
+    public void endHeader(TableHeader header) {
+        endPart(header);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void startFooter(TableBody tf) {
+    public void startFooter(TableFooter footer) {
+        startPart(footer);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void endFooter(TableBody tf) {
+    public void endFooter(TableFooter footer) {
+        endPart(footer);
     }
 
     /**
@@ -687,31 +693,25 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-     /**
-     * {@inheritDoc}
-     */
-    public void startBody(TableBody tb) {
+    private void startPart(TablePart part) {
         if (bDefer) {
             return;
         }
 
         try {
-            RtfAttributes atts = TableAttributesConverter.convertTableBodyAttributes(tb);
+            RtfAttributes atts = TableAttributesConverter.convertTablePartAttributes(part);
 
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(atts);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         } catch (Exception e) {
-            log.error("startBody: " + e.getMessage());
+            log.error("startPart: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
-        }
+        }        
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void endBody(TableBody tb) {
+    private void endPart(TablePart tb) {
         if (bDefer) {
             return;
         }
@@ -722,9 +722,25 @@ public class RTFHandler extends FOEventHandler {
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         } catch (Exception e) {
-            log.error("endBody: " + e.getMessage());
+            log.error("endPart: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
-        }
+        }        
+    }
+
+    
+     /**
+     * {@inheritDoc}
+     */
+    public void startBody(TableBody body) {
+        startPart(body);
+    }
+
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void endBody(TableBody body) {
+        endPart(body);
     }
 
     /**
@@ -1606,6 +1622,18 @@ public class RTFHandler extends FOEventHandler {
                 startTable( (Table) foNode);
             } else {
                 endTable( (Table) foNode);
+            }
+        } else if (foNode instanceof TableHeader) {
+            if (bStart) {
+                startHeader( (TableHeader) foNode);
+            } else {
+                endHeader( (TableHeader) foNode);
+            }
+        } else if (foNode instanceof TableFooter) {
+            if (bStart) {
+                startFooter( (TableFooter) foNode);
+            } else {
+                endFooter( (TableFooter) foNode);
             }
         } else if (foNode instanceof TableBody) {
             if (bStart) {

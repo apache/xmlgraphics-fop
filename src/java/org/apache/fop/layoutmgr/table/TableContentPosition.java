@@ -22,7 +22,7 @@ package org.apache.fop.layoutmgr.table;
 import java.util.List;
 
 import org.apache.fop.fo.flow.table.EffRow;
-import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.Position;
 
@@ -80,8 +80,8 @@ class TableContentPosition extends Position {
         return row;
     }
 
-    TableBody getTableBody() {
-        return ((CellPart) cellParts.get(0)).pgu.getTableBody();
+    TablePart getTablePart() {
+        return ((CellPart) cellParts.get(0)).pgu.getTablePart();
     }
 
     /**

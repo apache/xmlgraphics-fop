@@ -78,12 +78,12 @@ public class PrimaryGridUnit extends GridUnit {
      * 
      * @return the enclosing table part
      */
-    public TableBody getTableBody() {
+    public TablePart getTablePart() {
         FONode node = cell.getParent();
         if (node instanceof TableRow) {
             node = node.getParent();
         }
-        return (TableBody) node;
+        return (TablePart) node;
     }
 
     public TableCellLayoutManager getCellLM() {

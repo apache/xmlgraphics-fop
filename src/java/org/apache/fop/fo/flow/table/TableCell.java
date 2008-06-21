@@ -81,7 +81,7 @@ public class TableCell extends TableFObj {
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
         // For properly computing columnNumber
         if (startsRow() && getParent().getNameId() != FO_TABLE_ROW) {
-            ((TableBody) getParent()).signalNewRow();
+            ((TablePart) getParent()).signalNewRow();
         }
         endsRow = pList.get(PR_ENDS_ROW).getEnum();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric().getValue();
