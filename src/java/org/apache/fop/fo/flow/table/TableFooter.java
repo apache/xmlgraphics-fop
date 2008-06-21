@@ -28,7 +28,7 @@ import org.apache.fop.fo.FONode;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-footer">
  * <code>fo:table-footer</code></a> object.
  */
-public class TableFooter extends TableBody {
+public class TableFooter extends TablePart {
 
     /**
      * Create a TableFooter instance with the given {@link FONode}
@@ -67,8 +67,4 @@ public class TableFooter extends TableBody {
         return FO_TABLE_FOOTER;
     }
 
-    /** {@inheritDoc} */
-    protected boolean isTableFooter() {
-        return true;
-    }
 }

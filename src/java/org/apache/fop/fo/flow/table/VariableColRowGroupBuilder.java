@@ -82,7 +82,7 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void endRow(final TableBody part) {
+    void endRow(final TablePart part) {
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) {
                 rowGroupBuilder.endRow(part);
@@ -91,7 +91,7 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
     }
 
     /** {@inheritDoc} */
-    void startTablePart(final TableBody part) {
+    void startTablePart(final TablePart part) {
         events.add(new Event() {
             public void play(RowGroupBuilder rowGroupBuilder) {
                 rowGroupBuilder.startTablePart(part);

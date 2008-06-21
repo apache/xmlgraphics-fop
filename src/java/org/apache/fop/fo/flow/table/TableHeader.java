@@ -28,7 +28,7 @@ import org.apache.fop.fo.FONode;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-header">
  * <code>fo:table-header</code></a> object.
  */
-public class TableHeader extends TableBody {
+public class TableHeader extends TablePart {
 
     /**
      * Create a TableHeader instance with the given {@link FONode}
@@ -66,8 +66,4 @@ public class TableHeader extends TableBody {
         return FO_TABLE_HEADER;
     }
 
-    /** {@inheritDoc} */
-    protected boolean isTableHeader() {
-        return true;
-    }
 }

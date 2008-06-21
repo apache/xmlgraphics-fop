@@ -40,6 +40,9 @@ import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableFooter;
+import org.apache.fop.fo.flow.table.TableHeader;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
@@ -257,44 +260,44 @@ public abstract class FOEventHandler {
 
     /**
      *
-     * @param th TableBody that is starting;
+     * @param header TableHeader that is starting;
      */
-    public void startHeader(TableBody th) {
+    public void startHeader(TableHeader header) {
     }
 
     /**
      *
-     * @param th TableBody that is ending.
+     * @param header TableHeader that is ending.
      */
-    public void endHeader(TableBody th) {
+    public void endHeader(TableHeader header) {
     }
 
     /**
      *
-     * @param tf TableFooter that is starting.
+     * @param footer TableFooter that is starting.
      */
-    public void startFooter(TableBody tf) {
+    public void startFooter(TableFooter footer) {
     }
 
     /**
      *
-     * @param tf TableFooter that is ending.
+     * @param footer TableFooter that is ending.
      */
-    public void endFooter(TableBody tf) {
+    public void endFooter(TableFooter footer) {
     }
 
     /**
      *
-     * @param tb TableBody that is starting.
+     * @param body TableBody that is starting.
      */
-    public void startBody(TableBody tb) {
+    public void startBody(TableBody body) {
     }
 
     /**
      *
-     * @param tb TableBody that is ending.
+     * @param body TableBody that is ending.
      */
-    public void endBody(TableBody tb) {
+    public void endBody(TableBody body) {
     }
 
     /**
