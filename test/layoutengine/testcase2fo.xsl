@@ -50,16 +50,12 @@ value as subsitution value.
           </xsl:when>
           <xsl:otherwise>
             <!-- if variable isn't defined, just copy -->
-            <xsl:copy>
-              <xsl:apply-templates select="node()" mode="copy"/>
-            </xsl:copy>
+            <xsl:copy-of select="." />
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:copy>
-          <xsl:apply-templates select="node()" mode="copy"/>
-        </xsl:copy>
+        <xsl:copy-of select="." />
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
