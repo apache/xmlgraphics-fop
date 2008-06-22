@@ -38,13 +38,13 @@ public class TableBody extends TablePart {
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startBody(this);
     }
 
     /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
+    protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endBody(this);
     }

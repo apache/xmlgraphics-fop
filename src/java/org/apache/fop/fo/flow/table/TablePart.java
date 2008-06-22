@@ -79,7 +79,8 @@ public abstract class TablePart extends TableCellContainer {
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList pList)
                     throws FOPException {
-
+        
+        super.processNode(elementName, locator, attlist, pList);
         if (!inMarker()) {
             Table t = getTable();
             if (t.hasExplicitColumns()) {
@@ -93,13 +94,11 @@ public abstract class TablePart extends TableCellContainer {
             }
             columnNumberManager = new ColumnNumberManager();
         }
-        super.processNode(elementName, locator, attlist, pList);
-
+        
     }
 
     /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
-        super.endOfNode();
+    public void finalizeNode() throws FOPException {
         if (!inMarker()) {
             pendingSpans = null;
             columnNumberManager = null;

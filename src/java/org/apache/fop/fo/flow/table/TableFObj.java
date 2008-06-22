@@ -34,6 +34,8 @@ import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
+import org.xml.sax.Locator;
+import org.xml.sax.Attributes;
 
 /**
  * Common base class for table-related FOs
@@ -207,8 +209,8 @@ public abstract class TableFObj extends FObj {
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
-        super.startOfNode();
+    public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList pList) throws FOPException {
+        super.processNode(elementName, locator, attlist, pList);
         Table table = getTable();
         if (!inMarker() && !table.isSeparateBorderModel()) {
             collapsingBorderModel = CollapsingBorderModel.getBorderModelFor(table
@@ -216,15 +218,7 @@ public abstract class TableFObj extends FObj {
             setCollapsedBorders();
         }
     }
-
-    /*
-     * TODO made public so that RetrieveMarker can access it.
-     */
-    /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
-        super.endOfNode();
-    }
-
+    
     /**
      * Prepares the borders of this element if the collapsing-border model is in use.
      * Conflict resolution with parent elements is done where applicable.

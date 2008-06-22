@@ -41,13 +41,13 @@ public class TableFooter extends TablePart {
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startFooter(this);
     }
 
     /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
+    protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endFooter(this);
     }
