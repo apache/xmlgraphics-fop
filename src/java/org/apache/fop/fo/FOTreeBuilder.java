@@ -288,7 +288,6 @@ public class FOTreeBuilder extends DefaultHandler {
                         builderContext.switchMarkerContext(true);
                     }
                 }
-                foNode.startOfNode();
             } catch (IllegalArgumentException e) {
                 throw new SAXException(e);
             }
@@ -317,6 +316,7 @@ public class FOTreeBuilder extends DefaultHandler {
             if (propertyList != null && !builderContext.inMarker()) {
                 currentPropertyList = propertyList;
             }
+            currentFObj.startOfNode();
         }
 
         /** {@inheritDoc} */

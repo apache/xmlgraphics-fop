@@ -40,13 +40,13 @@ public class TableHeader extends TablePart {
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startHeader(this);
     }
 
     /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
+    protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endHeader(this);
     }

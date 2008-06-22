@@ -157,10 +157,8 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         this.propList = pList;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void startOfNode() throws FOPException {
+    /** {@inheritDoc} */
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startTable(this);
     }
@@ -218,11 +216,15 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void endOfNode() throws FOPException {
+    /** {@inheritDoc} */
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endTable(this);
+    }
 
+    /** {@inheritDoc} */
+    public void finalizeNode() throws FOPException {
+        
         if (!tableBodyFound) {
            missingChildElementError(
                    "(marker*,table-column*,table-header?,table-footer?"
@@ -244,13 +246,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             this.propList = null;
             rowGroupBuilder = null;
         }
-        getFOEventHandler().endTable(this);
-
+        
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
 
         int childId = child.getNameId();
@@ -523,17 +522,17 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
         return FO_TABLE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public FONode clone(FONode parent, boolean removeChildren)
         throws FOPException {
         Table clone = (Table) super.clone(parent, removeChildren);
-        clone.columnsFinalized = false;
         if (removeChildren) {
             clone.columns = new ArrayList();
+            clone.columnsFinalized = false;
+            clone.columnNumberManager = new ColumnNumberManager();
             clone.tableHeader = null;
             clone.tableFooter = null;
+            clone.rowGroupBuilder = null;
         }
         return clone;
     }

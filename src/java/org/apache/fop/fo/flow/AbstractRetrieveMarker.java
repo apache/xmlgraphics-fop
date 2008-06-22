@@ -102,12 +102,6 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                         getLocator(),
                         pList,
                         newPropertyList);
-                if (newChild instanceof TableFObj) {
-                    // TODO calling startOfNode (and endOfNode, below) on other fobjs may
-                    // have undesirable side-effects. This is really ugly and will need to
-                    // be addressed sooner or later
-                    ((TableFObj) newChild).startOfNode();
-                }
                 addChildTo(newChild, (FObj) newParent);
                 if (newChild.getNameId() == FO_TABLE) {
                     Table t = (Table) child;
@@ -120,15 +114,13 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                 }
                 cloneSubtree(child.getChildNodes(), newChild,
                         marker, newPropertyList);
-                if (newChild instanceof TableFObj) {
-                    // TODO this is ugly
-                    ((TableFObj) newChild).endOfNode();
-                }
             } else if (child instanceof FOText) {
                 FOText ft = (FOText) newChild;
                 ft.bind(parentPropertyList);
                 addChildTo(newChild, (FObj) newParent);
             }
+            
+            newChild.finalizeNode();
             // trigger 'end-of-node' white-space handling
             if (newChild instanceof FObjMixed) {
                 handleWhiteSpaceFor((FObjMixed) newChild, null);

@@ -298,11 +298,16 @@ public abstract class FONode implements Cloneable {
      * Primarily used for making final content model validation checks
      * and/or informing the {@link FOEventHandler} that the end of this FO
      * has been reached.
+     * The default implementation simply calls {@link #finalizeNode()}, without
+     * sending any event to the {@link FOEventHandler}.
+     * <br/><i>Note: the recommended way to override this method in subclasses is</i>
+     * <br/><br/><code>super.endOfNode(); // invoke finalizeNode()
+     * <br/>getFOEventHandler().endXXX(); // send endOfNode() notification</code>
      *
      * @throws FOPException if there's a problem during processing
      */
     protected void endOfNode() throws FOPException {
-        // do nothing by default
+        this.finalizeNode();
     }
 
     /**
@@ -324,6 +329,20 @@ public abstract class FONode implements Cloneable {
      */
     public void removeChild(FONode child) {
         //nop
+    }
+
+    /**
+     * Finalize this node.
+     * This method can be overridden by subclasses to perform finishing
+     * tasks (cleanup, validation checks, ...) without triggering
+     * endXXX() events in the {@link FOEventHandler}.
+     * The method is called by the default {@link #endOfNode()}
+     * implementation.
+     * 
+     * @throws FOPException in case there was an error
+     */
+    public void finalizeNode() throws FOPException {
+        // do nothing by default
     }
 
     /**
