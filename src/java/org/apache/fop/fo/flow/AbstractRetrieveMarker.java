@@ -111,7 +111,7 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                 addChildTo(newChild, (FObj) newParent);
                 if (newChild.getNameId() == FO_TABLE) {
                     Table t = (Table) child;
-                    cloneSubtree(t.getColumns().listIterator(),
+                    cloneSubtree(t.getColumns().iterator(),
                             newChild, marker, newPropertyList);
                     cloneSingleNode(t.getTableHeader(),
                             newChild, marker, newPropertyList);
@@ -129,8 +129,9 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                 ft.bind(parentPropertyList);
                 addChildTo(newChild, (FObj) newParent);
             }
+            // trigger 'end-of-node' white-space handling
             if (newChild instanceof FObjMixed) {
-                handleWhiteSpaceFor((FObjMixed) newChild);
+                handleWhiteSpaceFor((FObjMixed) newChild, null);
             }
         }
     }
@@ -169,7 +170,7 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
         }
         cloneSubtree(marker.getChildNodes(), this,
                         marker, propertyList);
-        handleWhiteSpaceFor(this);
+        handleWhiteSpaceFor(this, null);
     }
 
     /**
