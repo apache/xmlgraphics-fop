@@ -20,6 +20,7 @@
 package org.apache.fop.fo.flow.table;
 
 import org.apache.fop.fo.FONode;
+import org.apache.fop.apps.FOPException;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-body">
@@ -36,4 +37,28 @@ public class TableBody extends TablePart {
         super(parent);
     }
 
+    /** {@inheritDoc} */
+    public void startOfNode() throws FOPException {
+        super.startOfNode();
+        getFOEventHandler().startBody(this);
+    }
+
+    /** {@inheritDoc} */
+    public void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endBody(this);
+    }
+
+    /** {@inheritDoc} */
+    public String getLocalName() {
+        return "table-body";
+    }
+
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_BODY}
+     */
+    public int getNameId() {
+        return FO_TABLE_BODY;
+    }
 }

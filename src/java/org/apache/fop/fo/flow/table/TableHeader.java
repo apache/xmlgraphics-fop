@@ -42,15 +42,13 @@ public class TableHeader extends TablePart {
     /** {@inheritDoc} */
     public void startOfNode() throws FOPException {
         super.startOfNode();
+        getFOEventHandler().startHeader(this);
     }
 
     /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
-        if (!(tableRowsFound || tableCellsFound)) {
-            missingChildElementError("marker* (table-row+|table-cell+)");
-        } else {
-            finishLastRowGroup();
-        }
+        super.endOfNode();
+        getFOEventHandler().endHeader(this);
     }
 
     /** {@inheritDoc} */
