@@ -274,12 +274,12 @@ public abstract class FONode implements Cloneable {
      *
      * @param data array of characters containing text to be added
      * @param start starting array element to add
-     * @param end ending array element to add
+     * @param length number of elements to add
      * @param pList currently applicable PropertyList
      * @param locator location in the XSL-FO source file.
      * @throws FOPException if there's a problem during processing
      */
-    protected void addCharacters(char[] data, int start, int end,
+    protected void addCharacters(char[] data, int start, int length,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
         // ignore
