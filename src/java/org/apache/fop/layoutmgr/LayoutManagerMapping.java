@@ -41,8 +41,8 @@ import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.Inline;
-import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.flow.InlineContainer;
+import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
@@ -224,7 +224,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public static class FOTextLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
             FOText foText = (FOText) node;
-            if (foText.endIndex - foText.startIndex > 0) {
+            if (foText.length() > 0) {
                 lms.add(new TextLayoutManager(foText));
             }
         }

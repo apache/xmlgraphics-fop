@@ -144,7 +144,7 @@ public class FOTreeBuilder extends DefaultHandler {
             log.debug("Building formatting object tree");
         }
         foEventHandler.startDocument();
-        this.mainFOHandler = new MainFOHandler(); 
+        this.mainFOHandler = new MainFOHandler();
         this.mainFOHandler.startDocument();
         this.delegate = this.mainFOHandler;
     }
@@ -224,7 +224,7 @@ public class FOTreeBuilder extends DefaultHandler {
         } else {
             //No formatting results available for output formats no 
             //involving the layout engine.
-            return null;   
+            return null;
         }
     }
     
@@ -316,7 +316,13 @@ public class FOTreeBuilder extends DefaultHandler {
             if (propertyList != null && !builderContext.inMarker()) {
                 currentPropertyList = propertyList;
             }
-            currentFObj.startOfNode();
+
+            // fo:characters can potentially be removed during
+            // white-space handling.
+            // Do not notify the FOEventHandler.
+            if (currentFObj.getNameId() != Constants.FO_CHARACTER) {
+                currentFObj.startOfNode();
+            }
         }
 
         /** {@inheritDoc} */
@@ -333,7 +339,12 @@ public class FOTreeBuilder extends DefaultHandler {
                         + ") vs. " + localName + " (" + uri + ")");
             }
             
-            currentFObj.endOfNode();
+            // fo:characters can potentially be removed during
+            // white-space handling.
+            // Do not notify the FOEventHandler.
+            if (currentFObj.getNameId() != Constants.FO_CHARACTER) {
+                currentFObj.endOfNode();
+            }
             
             if (currentPropertyList != null
                     && currentPropertyList.getFObj() == currentFObj
