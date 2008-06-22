@@ -68,8 +68,7 @@ public abstract class FObjMixed extends FObj {
         flushText();
         if (!inMarker()
                 || getNameId() == FO_MARKER) {
-            getBuilderContext().whiteSpaceHandler
-                .handleWhiteSpace(this, currentTextNode);
+            handleWhiteSpaceFor(this, null);
         }
         super.endOfNode();
     }
@@ -81,10 +80,11 @@ public abstract class FObjMixed extends FObj {
      *  to trigger 'end-of-node' white-space handling)
      *  
      * @param fobj  the node for which to handle white-space
+     * @param nextChild the next child to be added
      */
-    protected static void handleWhiteSpaceFor(FObjMixed fobj) {
+    protected static void handleWhiteSpaceFor(FObjMixed fobj, FONode nextChild) {
         fobj.getBuilderContext().getXMLWhiteSpaceHandler()
-            .handleWhiteSpace(fobj, fobj.currentTextNode);
+            .handleWhiteSpace(fobj, fobj.currentTextNode, nextChild);
     }
     
     /**
@@ -159,8 +159,7 @@ public abstract class FObjMixed extends FObj {
                 }
             } else {
                 // handle white-space for all text up to here
-                getBuilderContext().whiteSpaceHandler
-                    .handleWhiteSpace(this, currentTextNode, child);
+                handleWhiteSpaceFor(this, child);
                 currentTextNode = null;
             }
         }
