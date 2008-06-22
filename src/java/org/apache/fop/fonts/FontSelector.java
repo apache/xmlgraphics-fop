@@ -88,7 +88,7 @@ public final class FontSelector {
     /**
      * Selects a font which is able to display the most of the given characters.
      * 
-     * @param textArray
+     * @param charSeq
      *            Text to go through
      * @param firstIndex
      *            first index within text.
@@ -100,9 +100,10 @@ public final class FontSelector {
      *            the Percent-based context needed for creating the actual font.
      * @return a Font object.
      */
-    public static Font selectFontForCharactersInText(char[] textArray,
+    public static Font selectFontForCharactersInText(CharSequence charSeq,
             int firstIndex, int breakIndex, FOText text,
             PercentBaseContext context) {
+
         final FontInfo fi = text.getFOEventHandler().getFontInfo();
         final CommonFont commonFont = text.getCommonFont();
         final FontTriplet[] fontkeys = commonFont.getFontState(fi);
@@ -115,7 +116,7 @@ public final class FontSelector {
                     commonFont.fontSize.getValue(context));
             fonts[fontnum] = font;
             for (int pos = firstIndex; pos < breakIndex; pos++) {
-                if (font.hasChar(textArray[pos])) {
+                if (font.hasChar(charSeq.charAt(pos))) {
                     fontCount[fontnum]++;
                 }
             }
