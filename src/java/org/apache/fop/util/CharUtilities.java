@@ -54,10 +54,14 @@ public class CharUtilities {
     public static final int XMLWHITESPACE = 4;
 
 
+    /** null char */
+    public static final char NULL_CHAR = '\u0000';
     /** linefeed character */
     public static final char LINEFEED_CHAR = '\n';
     /** carriage return */
     public static final char CARRIAGE_RETURN = '\r';
+    /** normal tab */
+    public static final char TAB = '\t';
     /** normal space */
     public static final char SPACE = '\u0020';
     /** non-breaking space */
@@ -80,9 +84,12 @@ public class CharUtilities {
     public static final char PARAGRAPH_SEPARATOR = '\u2029';
     /** missing ideograph */
     public static final char MISSING_IDEOGRAPH = '\u25A1';
+    /** Ideogreaphic space */
+    public static final char IDEOGRAPHIC_SPACE = '\u3000';
     /** Unicode value indicating the the character is "not a character". */
     public static final char NOT_A_CHARACTER = '\uFFFF';
 
+    
     /**
      * Utility class: Constructor prevents instantiating when subclassed.
      */
@@ -97,11 +104,18 @@ public class CharUtilities {
      * @return the determined character class
      */
     public static int classOf(char c) {
-        if (c == CODE_EOT) { return EOT; }
-        if (c == '\n') { return LINEFEED; }
-        if (c == ' ' || c == '\r' || c == '\t') { return XMLWHITESPACE; }
-        if (isAnySpace(c)) { return UCWHITESPACE; }
-        return NONWHITESPACE;
+        switch (c) {
+            case CODE_EOT:
+                return EOT;
+            case LINEFEED_CHAR:
+                return LINEFEED;
+            case SPACE:
+            case CARRIAGE_RETURN:
+            case TAB:
+                return XMLWHITESPACE;
+            default:
+                return isAnySpace(c) ? UCWHITESPACE : NONWHITESPACE;
+        }
     }
 
 
