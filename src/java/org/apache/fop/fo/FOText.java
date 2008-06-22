@@ -123,10 +123,9 @@ public class FOText extends FONode {
     }
 
     /** {@inheritDoc} */
-    protected void addCharacters(char[] data, int start, int end,
+    protected void addCharacters(char[] data, int start, int length,
             PropertyList list, Locator locator) throws FOPException {
 
-        int length = end - start;
         int calength = 0;
         char[] nca;
         if (ca != null) {
