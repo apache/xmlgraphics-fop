@@ -239,7 +239,7 @@ public class TableColumn extends TableFObj {
             sb.append(" number-columns-spanned=")
                 .append(getNumberColumnsSpanned());
         }
-        sb.append(" column-width=").append(getColumnWidth());
+        sb.append(" column-width=").append(((Property)getColumnWidth()).getString());
         return sb.toString();
     }
 
