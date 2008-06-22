@@ -183,7 +183,7 @@ public class FOText extends FONode {
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         textTransform();
-        getFOEventHandler().characters(ca, startIndex, endIndex);
+        getFOEventHandler().characters(ca, startIndex, endIndex - startIndex);
     }
 
     /**
