@@ -58,9 +58,6 @@ public abstract class TablePart extends TableCellContainer {
 
     private boolean lastCellEndsRow = true;
 
-    /** The last encountered table-row. */
-    private TableRow lastRow;
-
     private List rowGroups = new LinkedList();
 
     /**
@@ -82,6 +79,7 @@ public abstract class TablePart extends TableCellContainer {
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList pList)
                     throws FOPException {
+
         if (!inMarker()) {
             Table t = getTable();
             if (t.hasExplicitColumns()) {
@@ -96,33 +94,15 @@ public abstract class TablePart extends TableCellContainer {
             columnNumberManager = new ColumnNumberManager();
         }
         super.processNode(elementName, locator, attlist, pList);
-    }
 
-    /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
-        super.startOfNode();
-        if (this instanceof TableHeader) {
-            getFOEventHandler().startHeader((TableHeader)this);
-        } else if (this instanceof TableFooter) {
-            getFOEventHandler().startFooter((TableFooter)this);
-        } else {
-            getFOEventHandler().startBody((TableBody)this);
-        }
     }
 
     /** {@inheritDoc} */
     public void endOfNode() throws FOPException {
+        super.endOfNode();
         if (!inMarker()) {
             pendingSpans = null;
             columnNumberManager = null;
-        }
-
-        if (this instanceof TableHeader) {
-            getFOEventHandler().endHeader((TableHeader)this);
-        } else if (this instanceof TableFooter) {
-            getFOEventHandler().endFooter((TableFooter)this);
-        } else {
-            getFOEventHandler().endBody((TableBody)this);
         }
 
         if (!(tableRowsFound || tableCellsFound)) {
@@ -198,8 +178,7 @@ public abstract class TablePart extends TableCellContainer {
                     getTable().getRowGroupBuilder().endTableRow();
                 }
                 rowsStarted = true;
-                lastRow = (TableRow) child;
-                getTable().getRowGroupBuilder().startTableRow(lastRow);
+                getTable().getRowGroupBuilder().startTableRow((TableRow)child);
                 break;
             case FO_TABLE_CELL:
                 if (!rowsStarted) {
@@ -237,19 +216,6 @@ public abstract class TablePart extends TableCellContainer {
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
-    }
-
-    /** {@inheritDoc} */
-    public String getLocalName() {
-        return "table-body";
-    }
-
-    /**
-     * {@inheritDoc}
-     * @return {@link org.apache.fop.fo.Constants#FO_TABLE_BODY}
-     */
-    public int getNameId() {
-        return FO_TABLE_BODY;
     }
 
     /**
