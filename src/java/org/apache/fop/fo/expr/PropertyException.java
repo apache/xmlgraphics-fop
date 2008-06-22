@@ -37,7 +37,7 @@ public class PropertyException extends FOPException {
 
     /**
      * Constructor
-     * @param the Exception causing this PropertyException
+     * @param cause the Exception causing this PropertyException
      */
     public PropertyException(Exception cause) {
         super(cause);
