@@ -119,12 +119,10 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                 ft.bind(parentPropertyList);
                 addChildTo(newChild, (FObj) newParent);
             }
-            
+
+            // trigger end-of-node white-space handling
+            // and finalization for table-FOs
             newChild.finalizeNode();
-            // trigger 'end-of-node' white-space handling
-            if (newChild instanceof FObjMixed) {
-                handleWhiteSpaceFor((FObjMixed) newChild, null);
-            }
         }
     }
 

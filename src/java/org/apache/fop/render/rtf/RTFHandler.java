@@ -1568,7 +1568,7 @@ public class RTFHandler extends FOEventHandler {
         } else if (foNode instanceof FOText) {
             if (bStart) {
                 FOText text = (FOText) foNode;
-                text(text, text.ca, text.startIndex, text.endIndex);
+                text(text, text.getCharArray(), 0, text.length());
             }
         } else if (foNode instanceof Character) {
             if (bStart) {
