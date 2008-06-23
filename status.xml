@@ -53,6 +53,10 @@
   
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="LF" type="add">
+        Allowing non-zero borders and padding on page regions when
+        relaxed validation is turned on.
+      </action>
       <action context="Layout" dev="LF" type="fix">
         Fixed an inconsistency in footnote handling that led to unnecessary
         empty areas in pages whose last normal line contains footnotes

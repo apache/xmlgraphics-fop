@@ -28,7 +28,7 @@ import org.apache.fop.fo.FONode;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-footer">
  * <code>fo:table-footer</code></a> object.
  */
-public class TableFooter extends TableBody {
+public class TableFooter extends TablePart {
 
     /**
      * Create a TableFooter instance with the given {@link FONode}
@@ -41,17 +41,15 @@ public class TableFooter extends TableBody {
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
+        getFOEventHandler().startFooter(this);
     }
 
     /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
-        if (!(tableRowsFound || tableCellsFound)) {
-            missingChildElementError("marker* (table-row+|table-cell+)");
-        } else {
-            finishLastRowGroup();
-        }
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endFooter(this);
     }
 
     /** {@inheritDoc} */
@@ -67,8 +65,4 @@ public class TableFooter extends TableBody {
         return FO_TABLE_FOOTER;
     }
 
-    /** {@inheritDoc} */
-    protected boolean isTableFooter() {
-        return true;
-    }
 }

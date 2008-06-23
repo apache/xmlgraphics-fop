@@ -66,6 +66,9 @@ public class FOTreeBuilder extends DefaultHandler {
     
     /** Current delegate ContentHandler to receive the SAX events */
     protected ContentHandler delegate;
+
+    /** Provides information used during tree building stage. */
+    private FOTreeBuilderContext builderContext;
     
     /** The object that handles formatting and rendering to a stream */
     private FOEventHandler foEventHandler;
@@ -101,7 +104,8 @@ public class FOTreeBuilder extends DefaultHandler {
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = foUserAgent.getRendererFactory().createFOEventHandler(
                 foUserAgent, outputFormat, stream);
-        foEventHandler.setPropertyListMaker(new PropertyListMaker() {
+        builderContext = new FOTreeBuilderContext();
+        builderContext.setPropertyListMaker(new PropertyListMaker() {
             public PropertyList make(FObj fobj, PropertyList parentPropertyList) {
                 return new StaticPropertyList(fobj, parentPropertyList);
             }
@@ -140,7 +144,7 @@ public class FOTreeBuilder extends DefaultHandler {
             log.debug("Building formatting object tree");
         }
         foEventHandler.startDocument();
-        this.mainFOHandler = new MainFOHandler(); 
+        this.mainFOHandler = new MainFOHandler();
         this.mainFOHandler.startDocument();
         this.delegate = this.mainFOHandler;
     }
@@ -150,8 +154,7 @@ public class FOTreeBuilder extends DefaultHandler {
         this.delegate.endDocument();
         if (this.rootFObj == null && empty) {
             FOValidationEventProducer eventProducer
-                = FOValidationEventProducer.Provider.get(
-                    foEventHandler.getUserAgent().getEventBroadcaster());
+                = FOValidationEventProducer.Provider.get(userAgent.getEventBroadcaster());
             eventProducer.emptyDocument(this);
         }
         rootFObj = null;
@@ -221,7 +224,7 @@ public class FOTreeBuilder extends DefaultHandler {
         } else {
             //No formatting results available for output formats no 
             //involving the layout engine.
-            return null;   
+            return null;
         }
     }
     
@@ -254,7 +257,7 @@ public class FOTreeBuilder extends DefaultHandler {
                         || !localName.equals("root")) {
                     FOValidationEventProducer eventProducer
                         = FOValidationEventProducer.Provider.get(
-                                foEventHandler.getUserAgent().getEventBroadcaster());
+                                userAgent.getEventBroadcaster());
                     eventProducer.invalidFORoot(this, FONode.getNodeString(namespaceURI, localName),
                             getEffectiveLocator());
                 }
@@ -271,6 +274,7 @@ public class FOTreeBuilder extends DefaultHandler {
                 foNode = fobjMaker.make(currentFObj);
                 if (rootFObj == null) {
                     rootFObj = (Root) foNode;
+                    rootFObj.setBuilderContext(builderContext);
                     rootFObj.setFOEventHandler(foEventHandler);
                 }
                 propertyList = foNode.createPropertyList(
@@ -278,13 +282,12 @@ public class FOTreeBuilder extends DefaultHandler {
                 foNode.processNode(localName, getEffectiveLocator(), 
                                     attlist, propertyList);
                 if (foNode.getNameId() == Constants.FO_MARKER) {
-                    if (foEventHandler.inMarker()) {
+                    if (builderContext.inMarker()) {
                         nestedMarkerDepth++;
                     } else {
-                        foEventHandler.switchMarkerContext(true);
+                        builderContext.switchMarkerContext(true);
                     }
                 }
-                foNode.startOfNode();
             } catch (IllegalArgumentException e) {
                 throw new SAXException(e);
             }
@@ -310,8 +313,15 @@ public class FOTreeBuilder extends DefaultHandler {
             }
 
             currentFObj = foNode;
-            if (propertyList != null && !foEventHandler.inMarker()) {
+            if (propertyList != null && !builderContext.inMarker()) {
                 currentPropertyList = propertyList;
+            }
+
+            // fo:characters can potentially be removed during
+            // white-space handling.
+            // Do not notify the FOEventHandler.
+            if (currentFObj.getNameId() != Constants.FO_CHARACTER) {
+                currentFObj.startOfNode();
             }
         }
 
@@ -329,17 +339,22 @@ public class FOTreeBuilder extends DefaultHandler {
                         + ") vs. " + localName + " (" + uri + ")");
             }
             
-            currentFObj.endOfNode();
+            // fo:characters can potentially be removed during
+            // white-space handling.
+            // Do not notify the FOEventHandler.
+            if (currentFObj.getNameId() != Constants.FO_CHARACTER) {
+                currentFObj.endOfNode();
+            }
             
             if (currentPropertyList != null
                     && currentPropertyList.getFObj() == currentFObj
-                    && !foEventHandler.inMarker()) {
+                    && !builderContext.inMarker()) {
                 currentPropertyList = currentPropertyList.getParentPropertyList();
             }
             
             if (currentFObj.getNameId() == Constants.FO_MARKER) {
                 if (nestedMarkerDepth == 0) {
-                    foEventHandler.switchMarkerContext(false);
+                    builderContext.switchMarkerContext(false);
                 } else {
                     nestedMarkerDepth--;
                 }
@@ -356,7 +371,7 @@ public class FOTreeBuilder extends DefaultHandler {
         public void characters(char[] data, int start, int length) 
             throws FOPException {
             if (currentFObj != null) {
-                currentFObj.addCharacters(data, start, start + length, 
+                currentFObj.addCharacters(data, start, length, 
                         currentPropertyList, getEffectiveLocator());
             }
         }
@@ -379,7 +394,7 @@ public class FOTreeBuilder extends DefaultHandler {
             if (maker instanceof UnknownXMLObj.Maker) {
                 FOValidationEventProducer eventProducer
                     = FOValidationEventProducer.Provider.get(
-                        foEventHandler.getUserAgent().getEventBroadcaster());
+                        userAgent.getEventBroadcaster());
                 eventProducer.unknownFormattingObject(this, currentFObj.getName(),
                         new QName(namespaceURI, localName),
                         getEffectiveLocator());

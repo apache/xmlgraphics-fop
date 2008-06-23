@@ -31,7 +31,7 @@ import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
@@ -439,7 +439,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     -startIndent);
         }
 
-        TableBody body = primaryGridUnit.getTableBody();
+        TablePart body = primaryGridUnit.getTablePart();
         if (body.getCommonBorderPaddingBackground().hasBackground()) {
             painter.registerPartBackgroundArea(
                     getBackgroundArea(paddingRectBPD, borderBeforeWidth));

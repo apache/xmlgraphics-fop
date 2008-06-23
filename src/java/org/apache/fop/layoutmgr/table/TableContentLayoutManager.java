@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.table;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +34,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -324,7 +323,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         this.usedBPD = 0;
         RowPainter painter = new RowPainter(this, layoutContext);
 
-        List tablePositions = new ArrayList();
+        List tablePositions = new java.util.ArrayList();
         List headerElements = null;
         List footerElements = null;
         Position firstPos = null;
@@ -417,9 +416,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
     }
 
-    private void addHeaderFooterAreas(List elements, TableBody part, RowPainter painter,
+    private void addHeaderFooterAreas(List elements, TablePart part, RowPainter painter,
             boolean lastOnPage) {
-        List lst = new ArrayList(elements.size());
+        List lst = new java.util.ArrayList(elements.size());
         for (Iterator iter = new KnuthPossPosIter(elements); iter.hasNext();) {
             Position pos = (Position) iter.next();
             /*
@@ -446,32 +445,32 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private void addBodyAreas(Iterator iterator, RowPainter painter,
             boolean lastOnPage) {
         painter.startBody();
-        List lst = new ArrayList();
+        List lst = new java.util.ArrayList();
         TableContentPosition pos = (TableContentPosition) iterator.next();
         boolean isFirstPos = pos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
                 && pos.getRow().getFlag(EffRow.FIRST_IN_PART);
-        TableBody body = pos.getTableBody();
+        TablePart part = pos.getTablePart();
         lst.add(pos);
         while (iterator.hasNext()) {
             pos = (TableContentPosition) iterator.next();
-            if (pos.getTableBody() != body) {
-                addTablePartAreas(lst, painter, body, isFirstPos, true, false, false);
+            if (pos.getTablePart() != part) {
+                addTablePartAreas(lst, painter, part, isFirstPos, true, false, false);
                 isFirstPos = true;
                 lst.clear();
-                body = pos.getTableBody();
+                part = pos.getTablePart();
             }
             lst.add(pos);
         }
         boolean isLastPos = pos.getFlag(TableContentPosition.LAST_IN_ROWGROUP)
                 && pos.getRow().getFlag(EffRow.LAST_IN_PART);
-        addTablePartAreas(lst, painter, body, isFirstPos, isLastPos, true, lastOnPage);
+        addTablePartAreas(lst, painter, part, isFirstPos, isLastPos, true, lastOnPage);
         painter.endBody();
     }
 
     /**
      * Adds the areas corresponding to a single fo:table-header/footer/body element.
      */
-    private void addTablePartAreas(List positions, RowPainter painter, TableBody body,
+    private void addTablePartAreas(List positions, RowPainter painter, TablePart body,
             boolean isFirstPos, boolean isLastPos, boolean lastInBody, boolean lastOnPage) {
         getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
                 true, isFirstPos, isLastPos);

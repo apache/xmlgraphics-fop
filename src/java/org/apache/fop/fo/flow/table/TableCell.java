@@ -81,7 +81,7 @@ public class TableCell extends TableFObj {
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
         // For properly computing columnNumber
         if (startsRow() && getParent().getNameId() != FO_TABLE_ROW) {
-            ((TableBody) getParent()).signalNewRow();
+            ((TablePart) getParent()).signalNewRow();
         }
         endsRow = pList.get(PR_ENDS_ROW).getEnum();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric().getValue();
@@ -91,17 +91,24 @@ public class TableCell extends TableFObj {
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startCell(this);
     }
 
     /**
      * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
+     * FOEventHandler that we are at the end of the table-cell.
      * {@inheritDoc}
      */
-    public void endOfNode() throws FOPException {
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endCell(this);
+    }
+
+    /** {@inheritDoc} */
+    public void finalizeNode() throws FOPException {
+        
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+", true);
         }
@@ -111,9 +118,9 @@ public class TableCell extends TableFObj {
                     getUserAgent().getEventBroadcaster());
             eventProducer.startEndRowUnderTableRowWarning(this, getLocator());
         }
-        getFOEventHandler().endCell(this);
+        
     }
-
+    
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: marker* (%block;)+

@@ -126,6 +126,10 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
             } else {
                 rr = new RegionReference(r, rvp);
             }
+            // set borders and padding traits
+            // (a little extensions wrt what prescribed by the specs at 6.4.14)
+            TraitSetter.addBorders(rr, r.getCommonBorderPaddingBackground(), false, false, false, false, null);
+            TraitSetter.addPadding(rr, r.getCommonBorderPaddingBackground(), false, false, false, false, null);
             setRegionReferencePosition(rr, r, rvp.getViewArea());
             rvp.setRegionReference(rr);
             setRegionViewport(r.getNameId(), rvp);
@@ -288,4 +292,5 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
     }
 
 }
+
 

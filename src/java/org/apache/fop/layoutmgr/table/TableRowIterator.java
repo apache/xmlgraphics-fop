@@ -28,6 +28,7 @@ import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TablePart;
 
 
 /**
@@ -69,7 +70,7 @@ public class TableRowIterator {
             case FOOTER:
                 rowGroupsIter = table.getTableFooter().getRowGroups().iterator();
                 break;
-            default:
+            case BODY:
                 List rowGroupsList = new LinkedList();
                 // TODO this is ugly
                 for (FONodeIterator iter = table.getChildNodes(); iter.hasNext();) {
@@ -79,6 +80,9 @@ public class TableRowIterator {
                     }
                 }
                 rowGroupsIter = rowGroupsList.iterator();
+                break;
+            default:
+                throw new IllegalArgumentException("Unrecognised TablePart: " + tablePart);
         }
     }
 

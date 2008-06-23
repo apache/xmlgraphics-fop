@@ -23,7 +23,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.LengthProperty;
 
 /**
  * Custom Maker for page-height / page-width
@@ -54,8 +53,8 @@ public class PageDimensionMaker extends LengthProperty.Maker {
         Property p = super.get(0, propertyList, tryInherit, tryDefault);    
         FObj fo = propertyList.getFObj();
         String fallbackValue = (propId == Constants.PR_PAGE_HEIGHT)
-            ? fo.getFOEventHandler().getUserAgent().getPageHeight()
-                    : fo.getFOEventHandler().getUserAgent().getPageWidth();
+            ? fo.getUserAgent().getPageHeight()
+                    : fo.getUserAgent().getPageWidth();
         
         if (p.getEnum() == Constants.EN_INDEFINITE) {
             int otherId = (propId == Constants.PR_PAGE_HEIGHT) 

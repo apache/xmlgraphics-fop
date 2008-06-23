@@ -24,12 +24,11 @@ import java.awt.Color;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 
@@ -91,7 +90,7 @@ public final class TableAttributesConverter {
      *
      * @throws ConverterException On convertion error
      */
-    static RtfAttributes convertTableBodyAttributes(TableBody fobj)
+    static RtfAttributes convertTablePartAttributes(TablePart part)
             throws FOPException {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         return attrib;

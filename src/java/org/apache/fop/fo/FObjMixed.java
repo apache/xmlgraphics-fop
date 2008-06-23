@@ -28,29 +28,29 @@ import org.apache.fop.apps.FOPException;
  * (= those that can contain both child {@link FONode}s and <code>#PCDATA</code>).
  */
 public abstract class FObjMixed extends FObj {
-    
+
     /** Represents accumulated, pending FO text. See {@link #flushText()}. */
-    protected FOText ft = null;
-    
+    private FOText ft = null;
+
     /** Used for white-space handling; start CharIterator at node ... */
     protected FONode currentTextNode;
-    
+
     /** Used in creating pointers between subsequent {@link FOText} nodes
-     *  in the same {@link org.apache.fop.fo.flow.Block} 
+     *  in the same {@link org.apache.fop.fo.flow.Block}
      *  (for handling text-transform) */
     protected FOText lastFOTextProcessed = null;
-    
+
     /**
      * Base constructor
-     * 
+     *
      * @param parent FONode that is the parent of this object
      */
     protected FObjMixed(FONode parent) {
         super(parent);
     }
-    
+
     /** {@inheritDoc} */
-    protected void addCharacters(char[] data, int start, int end,
+    protected void addCharacters(char[] data, int start, int length,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
         if (ft == null) {
@@ -60,113 +60,124 @@ public abstract class FObjMixed extends FObj {
                 ft.bind(pList);
             }
         }
-        ft.addCharacters(data, start, end, null, null);
+        ft.addCharacters(data, start, length, null, null);
     }
 
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
-        flushText();
-        if (!inMarker()
-                || getNameId() == FO_MARKER) {
-            getFOEventHandler().whiteSpaceHandler
-                .handleWhiteSpace(this, currentTextNode);
-        }
+
         super.endOfNode();
+        if (!inMarker() || getNameId() == FO_MARKER) {
+            // send character[s]() events to the FOEventHandler
+            sendCharacters();
+        }
+        
     }
 
     /**
-     * Handles white-space for the node that is passed in, 
+     * Handles white-space for the node that is passed in,
      * starting at its current text-node
-     * (used by {@link org.apache.fop.fo.flow.RetrieveMarker} 
+     * (used by {@link org.apache.fop.fo.flow.RetrieveMarker}
      *  to trigger 'end-of-node' white-space handling)
-     *  
+     *
      * @param fobj  the node for which to handle white-space
+     * @param nextChild the next child to be added
      */
-    protected static void handleWhiteSpaceFor(FObjMixed fobj) {
-        fobj.getFOEventHandler().getXMLWhiteSpaceHandler()
-            .handleWhiteSpace(fobj, fobj.currentTextNode);
+    protected static void handleWhiteSpaceFor(FObjMixed fobj, FONode nextChild) {
+        fobj.getBuilderContext().getXMLWhiteSpaceHandler()
+            .handleWhiteSpace(fobj, fobj.currentTextNode, nextChild);
     }
-    
+
     /**
-     * Adds accumulated text as one FOText instance, unless
-     * the one instance's <code>char</code> array contains more than 
-     * <code>Short.MAX_VALUE</code> characters. In the latter case the 
-     * instance is split up into more manageable chunks.
-     * 
+     * Creates block-pointers between subsequent FOText nodes
+     * in the same Block. (used for handling text-transform)
+     *
+     * TODO: !! Revisit: does not take into account fo:characters !!
+     *
      * @throws FOPException if there is a problem during processing
      */
-    protected void flushText() throws FOPException {
+    private void flushText() throws FOPException {
         if (ft != null) {
             FOText lft = ft;
             /* make sure nested calls to itself have no effect */
             ft = null;
-            FOText tmpText;
-            int indexStart = 0;
-            int indexEnd = (lft.ca.length > Short.MAX_VALUE 
-                            ? Short.MAX_VALUE : lft.ca.length) - 1;
-            int charCount = 0;
-            short tmpSize;
-            while (charCount < lft.ca.length) {
-                tmpSize = (short) (indexEnd - indexStart + 1);
-                charCount += tmpSize;
-                tmpText = (FOText) lft.clone(this, false);
-                tmpText.ca = new char[tmpSize];
-                tmpText.startIndex = 0;
-                tmpText.endIndex = tmpSize;
-                System.arraycopy(lft.ca, indexStart, 
-                                tmpText.ca, 0, indexEnd - indexStart + 1);
-                if (getNameId() == FO_BLOCK) {
-                    tmpText.createBlockPointers((org.apache.fop.fo.flow.Block) this);
-                    this.lastFOTextProcessed = tmpText;
-                } else if (getNameId() != FO_MARKER
-                        && getNameId() != FO_TITLE
-                        && getNameId() != FO_BOOKMARK_TITLE) {
-                    FONode fo = parent;
-                    int foNameId = fo.getNameId();
-                    while (foNameId != FO_BLOCK
-                            && foNameId != FO_MARKER
-                            && foNameId != FO_TITLE
-                            && foNameId != FO_BOOKMARK_TITLE
-                            && foNameId != FO_PAGE_SEQUENCE) {
-                        fo = fo.getParent();
-                        foNameId = fo.getNameId();
-                    }
-                    if (foNameId == FO_BLOCK) {
-                        tmpText.createBlockPointers((org.apache.fop.fo.flow.Block) fo);
-                        ((FObjMixed) fo).lastFOTextProcessed = tmpText;
-                    } else if (foNameId == FO_PAGE_SEQUENCE
-                                && tmpText.willCreateArea()) {
-                        log.error("Could not create block pointers."
-                                + " FOText w/o Block ancestor.");
-                    }
+            if (getNameId() == FO_BLOCK) {
+                lft.createBlockPointers((org.apache.fop.fo.flow.Block) this);
+                this.lastFOTextProcessed = lft;
+            } else if (getNameId() != FO_MARKER
+                    && getNameId() != FO_TITLE
+                    && getNameId() != FO_BOOKMARK_TITLE) {
+                FONode fo = parent;
+                int foNameId = fo.getNameId();
+                while (foNameId != FO_BLOCK
+                        && foNameId != FO_MARKER
+                        && foNameId != FO_TITLE
+                        && foNameId != FO_BOOKMARK_TITLE
+                        && foNameId != FO_PAGE_SEQUENCE) {
+                    fo = fo.getParent();
+                    foNameId = fo.getNameId();
                 }
-                tmpText.endOfNode();
-                addChildNode(tmpText);
-                indexStart = indexEnd + 1;
-                indexEnd = (((lft.ca.length - charCount) < Short.MAX_VALUE)
-                    ? lft.ca.length : charCount + Short.MAX_VALUE) - 1;
+                if (foNameId == FO_BLOCK) {
+                    lft.createBlockPointers((org.apache.fop.fo.flow.Block) fo);
+                    ((FObjMixed) fo).lastFOTextProcessed = lft;
+                } else if (foNameId == FO_PAGE_SEQUENCE
+                            && lft.willCreateArea()) {
+                    log.error("Could not create block pointers."
+                            + " FOText w/o Block ancestor.");
+                }
+            }
+            this.addChildNode(lft);
+        }
+    }
+
+    private void sendCharacters() throws FOPException {
+
+        if (this.currentTextNode != null) {
+            FONodeIterator nodeIter
+                    = this.getChildNodes(this.currentTextNode);
+            FONode node;
+            while (nodeIter.hasNext()) {
+                node = nodeIter.nextNode();
+                assert (node instanceof FOText
+                        || node.getNameId() == FO_CHARACTER);
+                if (node.getNameId() == FO_CHARACTER) {
+                    node.startOfNode();
+                }
+                node.endOfNode();
             }
         }
+        this.currentTextNode = null;
     }
 
     /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
+
         flushText();
         if (!inMarker()) {
             if (child instanceof FOText || child.getNameId() == FO_CHARACTER) {
-                if (currentTextNode == null) {
-                    currentTextNode = child;
+                if (this.currentTextNode == null) {
+                    this.currentTextNode = child;
                 }
             } else {
                 // handle white-space for all text up to here
-                getFOEventHandler().whiteSpaceHandler
-                    .handleWhiteSpace(this, currentTextNode, child);
-                currentTextNode = null;
+                handleWhiteSpaceFor(this, child);
+                // send character[s]() events to the FOEventHandler
+                sendCharacters();
             }
         }
         super.addChildNode(child);
     }
-    
+
+    /** {@inheritDoc} */
+    public void finalizeNode() throws FOPException {
+
+        flushText();
+        if (!inMarker() || getNameId() == FO_MARKER) {
+            handleWhiteSpaceFor(this, null);
+        }
+
+    }
+
     /**
      * Returns a {@link CharIterator} over this FO's character content
      * 

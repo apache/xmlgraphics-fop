@@ -73,7 +73,7 @@ class CollapsingBorderResolver implements BorderResolver {
      */
     private abstract class Resolver {
 
-        protected TableBody tablePart;
+        protected TablePart tablePart;
 
         protected boolean firstInPart;
 
@@ -177,7 +177,7 @@ class CollapsingBorderResolver implements BorderResolver {
             }
         }
 
-        void startPart(TableBody part) {
+        void startPart(TablePart part) {
             tablePart = part;
             firstInPart = true;
             borderStartTableAndBody = collapsingBorderModel.determineWinner(table.borderStart,
@@ -415,8 +415,8 @@ class CollapsingBorderResolver implements BorderResolver {
     }
 
     /** {@inheritDoc} */
-    public void startPart(TableBody part) {
-        if (part.isTableHeader()) {
+    public void startPart(TablePart part) {
+        if (part instanceof TableHeader) {
             delegate = new ResolverInHeader();
         } else {
             if (leadingBorders == null || table.omitHeaderAtBreak()) {
@@ -427,7 +427,7 @@ class CollapsingBorderResolver implements BorderResolver {
                     leadingBorders.add(border);
                 }
             }
-            if (part.isTableFooter()) {
+            if (part instanceof TableFooter) {
                 resolverInFooter = new ResolverInFooter();
                 delegate = resolverInFooter;
             } else {
