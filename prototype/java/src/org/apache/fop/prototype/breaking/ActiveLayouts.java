@@ -67,7 +67,6 @@ class ActiveLayouts<L extends Layout> implements Iterable<L> {
 
                 private Set<V> nextSet;
 
-                @Override
                 public boolean hasNext() {
                     while (keyIter.hasNext()) {
                         nextSet = keyIter.next().getValue();
@@ -78,12 +77,10 @@ class ActiveLayouts<L extends Layout> implements Iterable<L> {
                     return false;
                 }
 
-                @Override
                 public Iterator<V> next() {
                     return nextSet.iterator();
                 }
 
-                @Override
                 public void remove() {
                     throw new UnsupportedOperationException("Not implemented");
                 }
@@ -153,18 +150,15 @@ class ActiveLayouts<L extends Layout> implements Iterable<L> {
 
                 L currentLayout;
 
-                @Override
                 public boolean hasNext() {
                     return backingIter.hasNext();
                 }
 
-                @Override
                 public L next() {
                     currentLayout = backingIter.next();
                     return currentLayout;
                 }
 
-                @Override
                 public void remove() {
                     backingIter.remove();
                     other.removeValue(getKey(currentLayout), currentLayout);
@@ -174,7 +168,6 @@ class ActiveLayouts<L extends Layout> implements Iterable<L> {
         }
 
         /** {@inheritDoc} */
-        @Override
         public void remove() {
             throw new UnsupportedOperationException("Not implemented");
         }
@@ -201,7 +194,6 @@ class ActiveLayouts<L extends Layout> implements Iterable<L> {
     }
 
     /** {@inheritDoc} */
-    @Override
     public Iterator<L> iterator() {
         return layouts.iterator();
     }
