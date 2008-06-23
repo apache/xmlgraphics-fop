@@ -88,7 +88,6 @@ class RowGroupLayoutManager {
      * @param alignment alignment indicator
      * @param bodyType Indicates what kind of body is being processed (BODY, HEADER or FOOTER)
      * @param returnList List to received the generated elements
-     * @param rowGroup row group to process
      */
     private void createElementsForRowGroup(LayoutContext context, int alignment, 
             int bodyType, LinkedList returnList) {
