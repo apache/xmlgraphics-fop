@@ -55,7 +55,7 @@ public interface MimeConstants {
     /** FrameMaker's MIF */
     String MIME_MIF             = "application/mif";
     
-    /** Structured Vector Graphics */
+    /** Scalable Vector Graphics */
     String MIME_SVG             = "image/svg+xml";
     
     /** GIF images */
