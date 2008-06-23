@@ -24,26 +24,21 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.fo.flow.Wrapper;
-import org.apache.fop.layoutmgr.BlockLayoutManager;
-import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.layoutmgr.*;
+
+import java.util.LinkedList;
 
 /**
  * This is the layout manager for the fo:wrapper formatting object.
  */
 public class WrapperLayoutManager extends LeafNodeLayoutManager {
     
-    private Wrapper fobj;
-
     /**
      * Creates a new LM for fo:wrapper.
      * @param node the fo:wrapper
      */
     public WrapperLayoutManager(Wrapper node) {
         super(node);
-        fobj = node;
     }
 
     /** {@inheritDoc} */
@@ -70,13 +65,13 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         if (fobj.hasId()) {
             addId();
-            InlineArea area = getEffectiveArea();
             if (parentLM instanceof BlockStackingLayoutManager
                     && !(parentLM instanceof BlockLayoutManager)) {
                 Block helperBlock = new Block();
                 TraitSetter.setProducerID(helperBlock, fobj.getId());
                 parentLM.addChildArea(helperBlock);
             } else {
+                InlineArea area = getEffectiveArea();
                 parentLM.addChildArea(area);
             }
         }
