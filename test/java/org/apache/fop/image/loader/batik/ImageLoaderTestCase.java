@@ -40,26 +40,26 @@ import org.apache.fop.apps.FopFactory;
 public class ImageLoaderTestCase extends TestCase {
 
     private static final File DEBUG_TARGET_DIR = null; //new File("D:/");
-    
+
     private FopFactory fopFactory;
-    
+
     public ImageLoaderTestCase(String name) {
         super(name);
         fopFactory = FopFactory.newInstance();
         fopFactory.setSourceResolution(72);
         fopFactory.setTargetResolution(300);
     }
-    
+
     public void testSVG() throws Exception {
         String uri = "test/resources/images/img-w-size.svg";
-        
+
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
+
         ImageManager manager = fopFactory.getImageManager();
         ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
-        
-        Image img = manager.getImage(info, ImageFlavor.XML_DOM, 
+
+        Image img = manager.getImage(info, ImageFlavor.XML_DOM,
                 userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
         assertEquals(ImageFlavor.XML_DOM, img.getFlavor());
@@ -69,7 +69,7 @@ public class ImageLoaderTestCase extends TestCase {
         info = imgDom.getInfo(); //Switch to the ImageInfo returned by the image
         assertEquals(16000, info.getSize().getWidthMpt());
         assertEquals(16000, info.getSize().getHeightMpt());
-        
+
         img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE,
                     userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
@@ -87,16 +87,61 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(16000, info.getSize().getWidthMpt());
         assertEquals(16000, info.getSize().getHeightMpt());
     }
-    
+
+    public void testSVGNoViewbox() throws Exception {
+        String uri = "test/resources/images/circles.svg";
+
+        FopFactory ff = FopFactory.newInstance();
+        ff.setSourceResolution(96);
+        ff.setTargetResolution(300);
+
+        FOUserAgent userAgent = ff.newFOUserAgent();
+
+        ImageManager manager = ff.getImageManager();
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
+        assertNotNull("ImageInfo must not be null", info);
+
+        Image img = manager.getImage(info, ImageFlavor.XML_DOM,
+                userAgent.getImageSessionContext());
+        assertNotNull("Image must not be null", img);
+        assertEquals(ImageFlavor.XML_DOM, img.getFlavor());
+        ImageXMLDOM imgDom = (ImageXMLDOM)img;
+        assertNotNull(imgDom.getDocument());
+        assertEquals("http://www.w3.org/2000/svg", imgDom.getRootNamespace());
+        info = imgDom.getInfo(); //Switch to the ImageInfo returned by the image
+        assertEquals(96, info.getSize().getDpiHorizontal(), 0);
+        assertEquals(340158, info.getSize().getWidthMpt());
+        assertEquals(340158, info.getSize().getHeightMpt());
+        assertEquals(454, info.getSize().getWidthPx());
+        assertEquals(454, info.getSize().getHeightPx());
+
+        img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE,
+                    userAgent.getImageSessionContext());
+        assertNotNull("Image must not be null", img);
+        assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
+        ImageRendered imgRed = (ImageRendered)img;
+        assertNotNull(imgRed.getRenderedImage());
+        if (DEBUG_TARGET_DIR != null) {
+            ImageWriterUtil.saveAsPNG(imgRed.getRenderedImage(),
+                    (int)userAgent.getTargetResolution(),
+                    new File(DEBUG_TARGET_DIR, "circles.svg.png"));
+        }
+        assertEquals(1418, imgRed.getRenderedImage().getWidth());
+        assertEquals(1418, imgRed.getRenderedImage().getHeight());
+        info = imgRed.getInfo(); //Switch to the ImageInfo returned by the image
+        assertEquals(340158, info.getSize().getWidthMpt());
+        assertEquals(340158, info.getSize().getHeightMpt());
+    }
+
     public void testWMF() throws Exception {
         String uri = "test/resources/images/testChart.wmf";
-        
+
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
+
         ImageManager manager = fopFactory.getImageManager();
         ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
-        
+
         Image img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE,
                 userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
@@ -114,5 +159,5 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(792000, info.getSize().getWidthMpt());
         assertEquals(612000, info.getSize().getHeightMpt());
     }
- 
+
 }

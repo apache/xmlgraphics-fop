@@ -1154,7 +1154,8 @@ public class RTFHandler extends FOEventHandler {
             
             FOUserAgent userAgent = ifo.getUserAgent();
             ImageManager manager = userAgent.getFactory().getImageManager();
-            Image converted = manager.convertImage(image, FLAVORS);
+            Map hints = ImageUtil.getDefaultHints(ua.getImageSessionContext());
+            Image converted = manager.convertImage(image, FLAVORS, hints);
             putGraphic(ifo, converted);
             
         } catch (Exception e) {

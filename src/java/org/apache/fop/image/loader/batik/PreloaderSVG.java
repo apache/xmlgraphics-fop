@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.image.loader.batik;
 
 import java.awt.geom.AffineTransform;
@@ -45,6 +45,7 @@ import org.apache.xmlgraphics.image.loader.impl.AbstractImagePreloader;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.util.MimeConstants;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.util.UnclosableInputStream;
@@ -58,8 +59,8 @@ public class PreloaderSVG extends AbstractImagePreloader {
     private static Log log = LogFactory.getLog(PreloaderSVG.class);
 
     private boolean batikAvailable = true;
-    
-    /** {@inheritDoc} */ 
+
+    /** {@inheritDoc} */
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         ImageInfo info = null;
@@ -118,10 +119,10 @@ public class PreloaderSVG extends AbstractImagePreloader {
                     in.mark(length + 1);
                     SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
                             getParserName());
-                    doc = (SVGDocument) factory.createSVGDocument(src.getSystemId(), in);
+                    doc = factory.createSVGDocument(src.getSystemId(), in);
                 }
                 ImageInfo info = createImageInfo(uri, context, doc);
-                
+
                 return info;
             } catch (NoClassDefFoundError ncdfe) {
                 if (in != null) {
@@ -153,7 +154,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
 
         private ImageInfo createImageInfo(String uri, ImageContext context, SVGDocument doc) {
             Element e = doc.getRootElement();
-            float pxUnitToMillimeter = 25.4f / context.getSourceResolution(); 
+            float pxUnitToMillimeter = UnitConv.IN2MM / context.getSourceResolution();
             SVGUserAgent userAg = new SVGUserAgent(pxUnitToMillimeter,
                         new AffineTransform());
             BridgeContext ctx = new BridgeContext(userAg);
@@ -176,9 +177,12 @@ public class PreloaderSVG extends AbstractImagePreloader {
             float height = UnitProcessor.svgVerticalLengthToUserSpace(
                     s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
 
+            int widthMpt = (int)Math.round(px2mpt(width, context.getSourceResolution()));
+            int heightMpt = (int)Math.round(px2mpt(height, context.getSourceResolution()));
+
             ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_SVG);
             ImageSize size = new ImageSize();
-            size.setSizeInMillipoints(Math.round(width * 1000), Math.round(height * 1000));
+            size.setSizeInMillipoints(widthMpt, heightMpt);
             //Set the resolution to that of the FOUserAgent
             size.setResolution(context.getSourceResolution());
             size.calcPixelsFromSize();
@@ -190,7 +194,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
             info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, xmlImage);
             return info;
         }
-        
+
         private boolean isSupportedSource(Source src) {
             if (src instanceof DOMSource) {
                 DOMSource domSrc = (DOMSource)src;
@@ -200,6 +204,10 @@ public class PreloaderSVG extends AbstractImagePreloader {
             }
         }
 
+    }
+
+    private static double px2mpt(double px, double resolution) {
+        return px * 1000 * UnitConv.IN2PT / resolution;
     }
 
 }
