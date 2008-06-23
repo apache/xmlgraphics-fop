@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks page-masters (all regions). The empty block-containers are used to check that all the base widths are set correctly so
+      length evaluation using percentages is possible.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="master1" page-width="5in" page-height="5in" margin="10pt">
+          <fo:region-body background-color="rgb(100%, 100%, 80%)" margin="50pt" border-before-width="1pt" border-color="rgb(50%, 50%, 40%)" border-style="solid" border-end-width="2pt" border-after-width="3pt" border-start-width="4pt" padding-before="9pt" padding-end="8pt" padding-after="7pt" padding-start="6pt"/>
+          <fo:region-before background-color="rgb(100%, 80%, 80%)" border="solid 5pt rgb(50%, 40%, 40%)" extent="50pt"/>
+          <fo:region-after background-color="rgb(80%, 80%, 80%)" border="solid 1pt rgb(40%, 40%, 50%)" padding="3pt" extent="50pt" precedence="true" display-align="after"/>
+          <fo:region-start background-color="rgb(80%, 100%, 80%)" padding="3pt" extent="50pt"/>
+          <fo:region-end background-color="rgb(80%, 80%, 100%)" extent="50pt" reference-orientation="270"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="master1" white-space-collapse="true" orphans="0" widows="0">
+        <fo:static-content flow-name="xsl-region-before">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block>region-before1</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block font-size="50%">region-after1 with precedence and display-align="after"</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-start">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block>region-start1</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-end">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block>region-end1</fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block>testing all-regions1</fo:block>
+          <fo:block>testing all-regions2</fo:block>
+          <fo:block>testing all-regions3</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="0 0 360000 360000" xpath="//pageViewport/@bounds"/>
+    
+    <eval expected="50000" xpath="//regionBefore/@bpda"/>
+    <eval expected="240000" xpath="//regionBefore/@ipda"/>
+    <eval expected="40000" xpath="//regionBefore/@bpd"/>
+    <eval expected="230000" xpath="//regionBefore/@ipd"/>
+    <eval expected="(solid,#806666,5000)" xpath="//regionBefore/@border-before"/>
+    <eval expected="(solid,#806666,5000)" xpath="//regionBefore/@border-after"/>
+    <eval expected="(solid,#806666,5000)" xpath="//regionBefore/@border-start"/>
+    <eval expected="(solid,#806666,5000)" xpath="//regionBefore/@border-end"/>
+    <eval expected="40000" xpath="//regionBefore/block[@positioning='absolute']/@bpda"/>
+    <eval expected="230000" xpath="//regionBefore/block[@positioning='absolute']/@ipda"/>
+    
+    <eval expected="50000" xpath="//regionAfter/@bpda"/>
+    <eval expected="340000" xpath="//regionAfter/@ipda"/>
+    <eval expected="42000" xpath="//regionAfter/@bpd"/>
+    <eval expected="332000" xpath="//regionAfter/@ipd"/>
+    <eval expected="(solid,#666680,1000)" xpath="//regionAfter/@border-before"/>
+    <eval expected="(solid,#666680,1000)" xpath="//regionAfter/@border-after"/>
+    <eval expected="(solid,#666680,1000)" xpath="//regionAfter/@border-start"/>
+    <eval expected="(solid,#666680,1000)" xpath="//regionAfter/@border-end"/>
+    <eval expected="3000" xpath="//regionAfter/@padding-before"/>
+    <eval expected="3000" xpath="//regionAfter/@padding-after"/>
+    <eval expected="3000" xpath="//regionAfter/@padding-start"/>
+    <eval expected="3000" xpath="//regionAfter/@padding-end"/>
+    <eval expected="42000" xpath="//regionAfter/block[@positioning='absolute']/@bpda"/>
+    <eval expected="332000" xpath="//regionAfter/block[@positioning='absolute']/@ipda"/>
+    
+    <eval expected="290000" xpath="//regionStart/@bpda"/>
+    <eval expected="50000" xpath="//regionStart/@ipda"/>
+    <eval expected="284000" xpath="//regionStart/@bpd"/>
+    <eval expected="44000" xpath="//regionStart/@ipd"/>
+    <eval expected="3000" xpath="//regionStart/@padding-before"/>
+    <eval expected="3000" xpath="//regionStart/@padding-after"/>
+    <eval expected="3000" xpath="//regionStart/@padding-start"/>
+    <eval expected="3000" xpath="//regionStart/@padding-end"/>
+    <eval expected="284000" xpath="//regionStart/block[@positioning='absolute']/@bpda"/>
+    <eval expected="44000" xpath="//regionStart/block[@positioning='absolute']/@ipda"/>
+    
+    <eval expected="50000" xpath="//regionEnd/@bpda"/>
+    <eval expected="290000" xpath="//regionEnd/@ipda"/>
+    <eval expected="50000" xpath="//regionEnd/@bpd"/>
+    <eval expected="290000" xpath="//regionEnd/@ipd"/>
+    <eval expected="50000" xpath="//regionEnd/block[@positioning='absolute']/@bpda"/>
+    <eval expected="290000" xpath="//regionEnd/block[@positioning='absolute']/@ipda"/>
+    
+    <eval expected="240000" xpath="//regionBody/@bpda"/>
+    <eval expected="240000" xpath="//regionBody/@ipda"/>
+    <eval expected="220000" xpath="//regionBody/@bpda"/>
+    <eval expected="220000" xpath="//regionBody/@ipda"/>
+    <eval expected="(solid,#808066,1000)" xpath="//regionBody/@border-before"/>
+    <eval expected="(solid,#808066,3000)" xpath="//regionBody/@border-after"/>
+    <eval expected="(solid,#808066,4000)" xpath="//regionBody/@border-start"/>
+    <eval expected="(solid,#808066,2000)" xpath="//regionBody/@border-end"/>
+    <eval expected="9000" xpath="//regionBody/@padding-before"/>
+    <eval expected="7000" xpath="//regionBody/@padding-after"/>
+    <eval expected="6000" xpath="//regionBody/@padding-start"/>
+    <eval expected="8000" xpath="//regionBody/@padding-end"/>
+    <eval expected="220000" xpath="//regionBody/mainReference/span/flow/block[@positioning='absolute']/@bpda"/>
+    <eval expected="220000" xpath="//regionBody/mainReference/span/flow/block[@positioning='absolute']/@ipda"/>
+    
+  </checks>
+</testcase>
