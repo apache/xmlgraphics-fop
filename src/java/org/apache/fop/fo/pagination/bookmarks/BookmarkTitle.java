@@ -51,13 +51,13 @@ public class BookmarkTitle extends FObj {
      *
      * @param data the character data
      * @param start the start position in the data array
-     * @param end the end position in the character array
+     * @param length the length of the character array
      * @param locator location in fo source file.
      */
-    protected void addCharacters(char[] data, int start, int end,
+    protected void addCharacters(char[] data, int start, int length,
                                  PropertyList pList,
                                  Locator locator) {
-        title += new String(data, start, end - start);
+        title += new String(data, start, length);
     }
 
     /**
