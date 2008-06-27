@@ -68,7 +68,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
         // set layout dimensions
         int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
-        int flowBPD = (int) getCurrentPV().getBodyRegion().getBPD();
+        int flowBPD = getCurrentPV().getBodyRegion().getBPD();
 
         // currently active LM
         LayoutManager curLM;

@@ -61,52 +61,90 @@ public class LineBreakStatus {
     }
 
     /**
-     * Check whether a line break may happen.
-     * The function returns the line breaking status of the point before the given character. 
-     * The algorithm is the table driven algorithm described in the Unicode
-     * <a href="http://unicode.org/reports/tr14/#PairBasedImplementation">technical report #14</a>.
-     * The pair table is taken from @see LineBreakUtils
+     * Check whether a line break may happen according to the rules described in
+     * the <a href="http://unicode.org/reports/tr14/#Algorithm">Unicode Line Breaking Algorithm</a>.
+     * The function returns the line breaking status of the point <em>before</em> the given character. 
+     * The algorithm is the table-driven algorithm, as described in 
+     * <a href="http://unicode.org/reports/tr14/#PairBasedImplementation">
+     * Unicode Technical Report #14</a>.
+     * The pair table is taken from {@link LineBreakUtils}.
      * 
-     * TODO: Better handling for AI, SA, CB and other line break classes.
+     * TODO: Better handling for AI, SA, SG and XX line break classes.
      * 
-     * @param c The character.
+     * @param c the character to check
      * @return the break action to be taken
+     *          one of: {@link #DIRECT_BREAK}, 
+     *                  {@link #INDIRECT_BREAK}, 
+     *                  {@link #COMBINING_INDIRECT_BREAK}, 
+     *                  {@link #COMBINING_PROHIBITED_BREAK},
+     *                  {@link #PROHIBITED_BREAK},
+     *                  {@link #EXPLICIT_BREAK}
      */
     public byte nextChar(char c) {
         
         byte currentClass = LineBreakUtils.getLineBreakProperty(c);
         
-        if (currentClass == LineBreakUtils.LINE_BREAK_PROPERTY_AI
-            || leftClass == LineBreakUtils.LINE_BREAK_PROPERTY_XX) {
-            //current "Ambiguous" or previous "Unknown": 
-            // assume current "Alphabetic"
-            currentClass = LineBreakUtils.LINE_BREAK_PROPERTY_AL;
+        /* Initial conversions */
+        switch (currentClass) {
+            case LineBreakUtils.LINE_BREAK_PROPERTY_AI:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_SG:
+            case LineBreakUtils.LINE_BREAK_PROPERTY_XX:
+                // LB 1: Resolve AI, ... SG and XX into other line breaking classes 
+                //       depending on criteria outside the scope of this algorithm.
+                //       In the absence of such criteria, it is recommended that 
+                //       classes AI, ... SG and XX be resolved to AL
+                currentClass = LineBreakUtils.LINE_BREAK_PROPERTY_AL;
+                break;
+            
+            case LineBreakUtils.LINE_BREAK_PROPERTY_SA:
+                // LB 1: Resolve ... SA ... into other line breaking classes 
+                //       depending on criteria outside the scope of this algorithm.
+                //       In the absence of such criteria, it is recommended that 
+                //       ... SA be resolved to AL, except that characters of 
+                //       class SA that have General_Category Mn or Mc be resolved to CM
+                switch (Character.getType(c)) {
+                    case Character.COMBINING_SPACING_MARK: //General_Category "Mc"
+                    case Character.NON_SPACING_MARK: //General_Category "Mn"
+                        currentClass = LineBreakUtils.LINE_BREAK_PROPERTY_CM;
+                        break;
+                    default:
+                        currentClass = LineBreakUtils.LINE_BREAK_PROPERTY_AL;
+                }
+                
+            default:
+                //nop
         }
         
-        /** Check 1: initial character after a reset/mandatory break? */
+        /* Check 1: First character or initial character after a reset/mandatory break? */
         switch (leftClass) {
             case -1:
-                //first character after a reset()
+                //first character or initial character after a reset()
                 leftClass = currentClass;
                 if (leftClass == LineBreakUtils.LINE_BREAK_PROPERTY_CM) {
-                    leftClass = LineBreakUtils.LINE_BREAK_PROPERTY_ID;
+                    // LB 10: Treat any remaining combining marks as AL
+                    leftClass = LineBreakUtils.LINE_BREAK_PROPERTY_AL;
                 }
-                // LB 2a
+                // LB 2: Never break at the start of text
                 return PROHIBITED_BREAK;
             
             case LineBreakUtils.LINE_BREAK_PROPERTY_BK:
             case LineBreakUtils.LINE_BREAK_PROPERTY_LF:
             case LineBreakUtils.LINE_BREAK_PROPERTY_NL:
                 //first character after mandatory break
+                // LB 4: Always break after hard line breaks
+                // LB 5: Treat ... LF and NL has hard line breaks
                 reset();
                 leftClass = currentClass;
                 return EXPLICIT_BREAK;
             
             case LineBreakUtils.LINE_BREAK_PROPERTY_CR:
                 //first character after a carriage return: 
-                // explicit break if it is not a linefeed
+                // LB 5: Treat CR followed by LF, as well as CR ... as hard line breaks
+                // If current is LF, then fall through to Check 2 (see below),
+                // and the hard break will be signaled for the character after LF (see above)
                 if (currentClass != LineBreakUtils.LINE_BREAK_PROPERTY_LF) {
                     reset();
+                    leftClass = currentClass;
                     return EXPLICIT_BREAK;
                 }
                 
@@ -114,16 +152,19 @@ public class LineBreakStatus {
                 //nop
         }
         
-        /** Check 2: current is a mandatory break or space? */
+        /* Check 2: current is a mandatory break or space? */
         switch (currentClass) {
             case LineBreakUtils.LINE_BREAK_PROPERTY_BK:
             case LineBreakUtils.LINE_BREAK_PROPERTY_LF:
             case LineBreakUtils.LINE_BREAK_PROPERTY_NL:
             case LineBreakUtils.LINE_BREAK_PROPERTY_CR:
+                // LB 6: Do not break before a hard break
                 leftClass = currentClass;
                 return PROHIBITED_BREAK;
             
             case LineBreakUtils.LINE_BREAK_PROPERTY_SP:
+                // LB 7: Do not break before spaces ...
+                // Zero-width spaces are in the pair-table (see below)
                 hadSpace = true;
                 return PROHIBITED_BREAK;
             
@@ -131,7 +172,7 @@ public class LineBreakStatus {
                 //nop
         }
         
-        /** Normal treatment, if the first two checks did not return */
+        /* Normal treatment, if the first two checks did not return */
         boolean savedHadSpace = hadSpace;
         hadSpace = false;
         byte breakAction = LineBreakUtils.getLineBreakPairProperty(leftClass, currentClass);

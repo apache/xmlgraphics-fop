@@ -102,18 +102,17 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         curPage = makeNewPage(false, false);
         
         PageBreaker breaker = new PageBreaker(this);
-        int flowBPD = (int)getCurrentPV().getBodyRegion().getRemainingBPD();
+        int flowBPD = getCurrentPV().getBodyRegion().getRemainingBPD();
         breaker.doLayout(flowBPD);
 
         finishPage();
     }
-        
+
     /** {@inheritDoc} */
     public void finishPageSequence() {
         if (pageSeq.hasId()) {
             idTracker.signalIDProcessed(pageSeq.getId());
         }
-
         pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum,
                 (currentPageNum - startPageNum) + 1);
         areaTreeHandler.notifyPageSequenceFinished(pageSeq,
@@ -150,9 +149,9 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
             return;
         }
 
-        StaticContentLayoutManager lm = (StaticContentLayoutManager)
-            getLayoutManagerMaker().makeStaticContentLayoutManager(
-                    this, sc, reg);
+        StaticContentLayoutManager lm = getLayoutManagerMaker()
+                                            .makeStaticContentLayoutManager(
+                                                this, sc, reg);
         lm.doLayout();
     }
 
@@ -166,5 +165,5 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         
         super.finishPage();
     }
-        
+    
 }
