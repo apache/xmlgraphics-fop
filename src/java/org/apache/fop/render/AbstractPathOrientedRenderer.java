@@ -269,6 +269,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
     }
 
+    private static final int BEFORE = 0;
+    private static final int END = 1;
+    private static final int AFTER = 2;
+    private static final int START = 3;
+
     /**
      * Draws borders.
      * @param borderRect the border rectangle
@@ -276,48 +281,49 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsAfter the border specification on the after side
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
-     */
+     */    
     protected void drawBorders(Rectangle2D.Float borderRect, 
             BorderProps bpsBefore, BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) {
+        //TODO generalize each of the four conditions into using a parameterized drawBorder()
+        boolean[] border = new boolean[] {
+                (bpsBefore != null), (bpsEnd != null), 
+                (bpsAfter != null), (bpsStart != null)};
         float startx = borderRect.x;
         float starty = borderRect.y;
         float width = borderRect.width;
         float height = borderRect.height;
-        boolean[] b = new boolean[] {
-            (bpsBefore != null), (bpsEnd != null), 
-            (bpsAfter != null), (bpsStart != null)};
-        if (!b[0] && !b[1] && !b[2] && !b[3]) {
-            return;
-        }
-        float[] bw = new float[] {
-            (b[0] ? bpsBefore.width / 1000f : 0.0f),
-            (b[1] ? bpsEnd.width / 1000f : 0.0f),
-            (b[2] ? bpsAfter.width / 1000f : 0.0f),
-            (b[3] ? bpsStart.width / 1000f : 0.0f)};
+        float[] borderWidth = new float[] {
+            (border[BEFORE] ? bpsBefore.width / 1000f : 0.0f),
+            (border[END] ? bpsEnd.width / 1000f : 0.0f),
+            (border[AFTER] ? bpsAfter.width / 1000f : 0.0f),
+            (border[START] ? bpsStart.width / 1000f : 0.0f)};
         float[] clipw = new float[] {
             BorderProps.getClippedWidth(bpsBefore) / 1000f,    
             BorderProps.getClippedWidth(bpsEnd) / 1000f,    
             BorderProps.getClippedWidth(bpsAfter) / 1000f,    
             BorderProps.getClippedWidth(bpsStart) / 1000f};
-        starty += clipw[0];
-        height -= clipw[0];
-        height -= clipw[2];
-        startx += clipw[3];
-        width -= clipw[3];
-        width -= clipw[1];
+        starty += clipw[BEFORE];
+        height -= clipw[BEFORE];
+        height -= clipw[AFTER];
+        startx += clipw[START];
+        width -= clipw[START];
+        width -= clipw[END];
         
         boolean[] slant = new boolean[] {
-            (b[3] && b[0]), (b[0] && b[1]), (b[1] && b[2]), (b[2] && b[3])};
+            (border[START] && border[BEFORE]),
+            (border[BEFORE] && border[END]),
+            (border[END] && border[AFTER]),
+            (border[AFTER] && border[START])};
         if (bpsBefore != null) {
             endTextObject();
 
             float sx1 = startx;
-            float sx2 = (slant[0] ? sx1 + bw[3] - clipw[3] : sx1);
+            float sx2 = (slant[BEFORE] ? sx1 + borderWidth[START] - clipw[START] : sx1);
             float ex1 = startx + width;
-            float ex2 = (slant[1] ? ex1 - bw[1] + clipw[1] : ex1);
-            float outery = starty - clipw[0];
-            float clipy = outery + clipw[0];
-            float innery = outery + bw[0];
+            float ex2 = (slant[END] ? ex1 - borderWidth[END] + clipw[END] : ex1);
+            float outery = starty - clipw[BEFORE];
+            float clipy = outery + clipw[BEFORE];
+            float innery = outery + borderWidth[BEFORE];
 
             saveGraphicsState();
             moveTo(sx1, clipy);
@@ -325,10 +331,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             float ex1a = ex1;
             if (bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
                 if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                    sx1a -= clipw[3];
+                    sx1a -= clipw[START];
                 }
                 if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                    ex1a += clipw[1];
+                    ex1a += clipw[END];
                 }
                 lineTo(sx1a, outery);
                 lineTo(ex1a, outery);
@@ -346,12 +352,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             endTextObject();
 
             float sy1 = starty;
-            float sy2 = (slant[1] ? sy1 + bw[0] - clipw[0] : sy1);
+            float sy2 = (slant[END] ? sy1 + borderWidth[BEFORE] - clipw[BEFORE] : sy1);
             float ey1 = starty + height;
-            float ey2 = (slant[2] ? ey1 - bw[2] + clipw[2] : ey1);
-            float outerx = startx + width + clipw[1];
-            float clipx = outerx - clipw[1];
-            float innerx = outerx - bw[1];
+            float ey2 = (slant[AFTER] ? ey1 - borderWidth[AFTER] + clipw[AFTER] : ey1);
+            float outerx = startx + width + clipw[END];
+            float clipx = outerx - clipw[END];
+            float innerx = outerx - borderWidth[END];
             
             saveGraphicsState();
             moveTo(clipx, sy1);
@@ -359,10 +365,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             float ey1a = ey1;
             if (bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
                 if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                    sy1a -= clipw[0];
+                    sy1a -= clipw[BEFORE];
                 }
                 if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                    ey1a += clipw[2];
+                    ey1a += clipw[AFTER];
                 }
                 lineTo(outerx, sy1a);
                 lineTo(outerx, ey1a);
@@ -379,12 +385,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             endTextObject();
 
             float sx1 = startx;
-            float sx2 = (slant[3] ? sx1 + bw[3] - clipw[3] : sx1);
+            float sx2 = (slant[START] ? sx1 + borderWidth[AFTER] - clipw[AFTER] : sx1);
             float ex1 = startx + width;
-            float ex2 = (slant[2] ? ex1 - bw[1] + clipw[1] : ex1);
-            float outery = starty + height + clipw[2];
-            float clipy = outery - clipw[2];
-            float innery = outery - bw[2];
+            float ex2 = (slant[AFTER] ? ex1 - borderWidth[END] + clipw[END] : ex1);
+            float outery = starty + height + clipw[AFTER];
+            float clipy = outery - clipw[AFTER];
+            float innery = outery - borderWidth[AFTER];
 
             saveGraphicsState();
             moveTo(ex1, clipy);
@@ -392,10 +398,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             float ex1a = ex1;
             if (bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
                 if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                    sx1a -= clipw[3];
+                    sx1a -= clipw[START];
                 }
                 if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                    ex1a += clipw[1];
+                    ex1a += clipw[END];
                 }
                 lineTo(ex1a, outery);
                 lineTo(sx1a, outery);
@@ -412,12 +418,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             endTextObject();
 
             float sy1 = starty;
-            float sy2 = (slant[0] ? sy1 + bw[0] - clipw[0] : sy1);
+            float sy2 = (slant[BEFORE] ? sy1 + borderWidth[BEFORE] - clipw[BEFORE] : sy1);
             float ey1 = sy1 + height;
-            float ey2 = (slant[3] ? ey1 - bw[2] + clipw[2] : ey1);
-            float outerx = startx - clipw[3];
-            float clipx = outerx + clipw[3];
-            float innerx = outerx + bw[3];
+            float ey2 = (slant[START] ? ey1 - borderWidth[AFTER] + clipw[AFTER] : ey1);
+            float outerx = startx - clipw[START];
+            float clipx = outerx + clipw[START];
+            float innerx = outerx + borderWidth[START];
 
             saveGraphicsState();
             moveTo(clipx, ey1);
@@ -425,10 +431,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             float ey1a = ey1;
             if (bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
                 if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                    sy1a -= clipw[0];
+                    sy1a -= clipw[BEFORE];
                 }
                 if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                    ey1a += clipw[2];
+                    ey1a += clipw[AFTER];
                 }
                 lineTo(outerx, ey1a);
                 lineTo(outerx, sy1a);
@@ -450,10 +456,6 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * rendered
      */
     protected void renderInlineAreaBackAndBorders(InlineArea area) {
-        float x = currentIPPosition / 1000f;
-        float y = (currentBPPosition + area.getOffset()) / 1000f;
-        float width = area.getIPD() / 1000f;
-        float height = area.getBPD() / 1000f;
         float borderPaddingStart = area.getBorderAndPaddingWidthStart() / 1000f;
         float borderPaddingBefore = area.getBorderAndPaddingWidthBefore() / 1000f;
         float bpwidth = borderPaddingStart 
@@ -461,14 +463,33 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         float bpheight = borderPaddingBefore
                 + (area.getBorderAndPaddingWidthAfter() / 1000f);
         
+        float height = area.getBPD() / 1000f;
         if (height != 0.0f || bpheight != 0.0f && bpwidth != 0.0f) {
+            float x = currentIPPosition / 1000f;
+            float y = (currentBPPosition + area.getOffset()) / 1000f;
+            float width = area.getIPD() / 1000f;
             drawBackAndBorders(area, x, y - borderPaddingBefore
                                 , width + bpwidth
                                 , height + bpheight);
         }
-        
     }
     
+//    /**
+//     * Returns the position transform.
+//     * @param bp        The block parent
+//     * @return the position transform
+//     */
+//    protected AffineTransform getPositionTransform(BlockParent bp) {
+//        AffineTransform transform = new AffineTransform();
+//        transform.translate(bp.getXOffset(), bp.getYOffset());
+//        
+//        //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
+//        transform.translate(
+//                -bp.getBorderAndPaddingWidthStart(),
+//                -bp.getBorderAndPaddingWidthBefore());
+//        return transform;
+//    }
+
     private static final QName FOX_TRANSFORM
             = new QName(ExtensionElementMapping.URI, "fox:transform");
     
