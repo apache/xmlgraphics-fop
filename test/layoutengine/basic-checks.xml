@@ -20,5 +20,6 @@
   This file contains basic checks that are performed for every tescase
 -->
 <checks>
-  <true xpath="/*" />
+  <true xpath="boolean(/areaTree)" />
+  <true xpath="boolean(/areaTree/*)" />
 </checks>
