@@ -112,11 +112,6 @@ public abstract class AbstractPageNumberCitation extends FObj {
         }
     }
 
-    /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
-        super.startOfNode();
-    }
-
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: empty
