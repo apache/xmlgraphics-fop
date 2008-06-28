@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.xmlgraphics.util.Service;
 
 /**
- * This class is reponsible for converting events into exceptions.
+ * This class is responsible for converting events into exceptions.
  */
 public class EventExceptionManager {
 
