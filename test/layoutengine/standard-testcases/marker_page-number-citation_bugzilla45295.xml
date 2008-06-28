@@ -82,11 +82,7 @@
           </fo:block>
           <fo:block id="end-of-document">
             <fo:marker marker-class-name="term">
-              <fo:instream-foreign-object width="15cm" height="1cm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15cm" height="1cm" xml:space="preserve">
-                  <rect style="fill:red;stroke:red" x="0" y="0" width="15cm" height="1cm"/>
-                </svg>
-              </fo:instream-foreign-object>
+                [marker content]
             </fo:marker>
           </fo:block>
         </fo:flow>
