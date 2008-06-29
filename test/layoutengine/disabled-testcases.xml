@@ -223,4 +223,9 @@
     relaxed validation must be switched on, otherwise there is a validation
     exception.</description>
   </testcase>
+  <testcase>
+    <name>Instream foreign objects in markers</name>
+    <file>marker_instream-foreign-object.xml</file>
+    <description>Foreign objects in markers do not work.</description>
+  </testcase>
 </disabled-testcases>
