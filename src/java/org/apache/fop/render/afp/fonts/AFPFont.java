@@ -41,7 +41,6 @@ public abstract class AFPFont extends Typeface {
      */
     public AFPFont(String name) {
         this.name = name;
-
     }
 
     /** {@inheritDoc} */
@@ -106,4 +105,8 @@ public abstract class AFPFont extends Typeface {
         return true;
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        return "name=" + name;
+    }
 }
