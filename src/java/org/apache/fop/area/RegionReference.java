@@ -160,4 +160,13 @@ public class RegionReference extends Area implements Cloneable {
         return rr;
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(super.toString());
+        sb.append(" {regionName=").append(regionName);
+        sb.append(", regionClass=").append(regionClass);
+        sb.append(", ctm=").append(ctm);
+        sb.append("}");
+        return sb.toString();
+    }
 }
