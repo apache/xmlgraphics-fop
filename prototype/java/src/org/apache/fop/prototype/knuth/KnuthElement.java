@@ -57,7 +57,7 @@ public class KnuthElement implements TypographicElement {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        if (content.equals("")) {
+        if (content.isEmpty()) {
             return "";
         } else {
             return " \"" + content + "\"";
