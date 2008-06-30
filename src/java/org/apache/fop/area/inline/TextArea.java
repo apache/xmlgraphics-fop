@@ -63,6 +63,7 @@ public class TextArea extends AbstractTextArea {
      * 
      * @param word   the word string
      * @param offset the offset for the next area
+     * @param letterAdjust the letter adjustment array (may be null)
      */
     public void addWord(String word, int offset, int[] letterAdjust) {
         WordArea wordArea = new WordArea(word, offset, letterAdjust);
@@ -98,7 +99,7 @@ public class TextArea extends AbstractTextArea {
         StringBuffer text = new StringBuffer();
         InlineArea child;
         // assemble the text
-        for (int i = 0; i < inlines.size(); i ++) {
+        for (int i = 0; i < inlines.size(); i++) {
             child = (InlineArea) inlines.get(i);
             if (child instanceof WordArea) {
                 text.append(((WordArea) child).getWord());
@@ -109,5 +110,9 @@ public class TextArea extends AbstractTextArea {
         return text.toString();
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        return "TextArea{text=" + getText() + "}";
+    }
 }
 
