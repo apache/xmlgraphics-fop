@@ -149,14 +149,11 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         Rectangle2D bounds = getPageViewport(pageNum).getViewArea();
         pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
         pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
-        double scaleX = scaleFactor 
+        double scale = scaleFactor
                 * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
-        double scaleY = scaleFactor 
-                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
-                / userAgent.getTargetPixelUnitToMillimeter();
-        int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
-        int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
+        int bitmapWidth = (int) ((pageWidth * scale) + 0.5);
+        int bitmapHeight = (int) ((pageHeight * scale) + 0.5);
         return new Dimension(bitmapWidth, bitmapHeight);
     }
 
