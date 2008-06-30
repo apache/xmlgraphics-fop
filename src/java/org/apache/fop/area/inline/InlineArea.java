@@ -221,7 +221,7 @@ public class InlineArea extends Area {
         notifyIPDVariation(ipdVariation);
     }
     
-        /**
+    /**
      * notify the parent area about the ipd variation of this area
      * or of a descendant area
      * @param ipdVariation the difference between new and old ipd
