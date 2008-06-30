@@ -139,4 +139,9 @@ public abstract class Typeface implements FontMetrics {
             }
         }
     }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return getFullName();
+    }   
 }
