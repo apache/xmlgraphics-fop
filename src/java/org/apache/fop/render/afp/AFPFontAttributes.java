@@ -96,5 +96,12 @@ public class AFPFontAttributes {
     public void setFontReference(int fontReference) {
         this.fontReference = fontReference;
     }
-
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return "fontReference=" + fontReference
+            + ", fontKey=" + fontKey
+            + ", font=" + font
+            + ", pointSize=" + pointSize; 
+    }
 }
