@@ -119,8 +119,10 @@ public class Area extends AreaTreeObject implements Serializable {
     public static final int CLASS_MAX = CLASS_SIDE_FLOAT + 1;
 
     private int areaClass = CLASS_NORMAL;
+    
     /** the area's inline-progression-dimension */
     protected int ipd;
+
     /** the area's block-progression-dimension */
     protected int bpd;
 
