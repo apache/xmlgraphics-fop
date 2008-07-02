@@ -474,22 +474,6 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         }
     }
     
-//    /**
-//     * Returns the position transform.
-//     * @param bp        The block parent
-//     * @return the position transform
-//     */
-//    protected AffineTransform getPositionTransform(BlockParent bp) {
-//        AffineTransform transform = new AffineTransform();
-//        transform.translate(bp.getXOffset(), bp.getYOffset());
-//        
-//        //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
-//        transform.translate(
-//                -bp.getBorderAndPaddingWidthStart(),
-//                -bp.getBorderAndPaddingWidthBefore());
-//        return transform;
-//    }
-
     private static final QName FOX_TRANSFORM
             = new QName(ExtensionElementMapping.URI, "fox:transform");
     
