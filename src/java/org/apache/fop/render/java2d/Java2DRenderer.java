@@ -144,9 +144,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     public Java2DRenderer() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
         userAgent.setRendererOverride(this); // for document regeneration
@@ -162,9 +160,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         return userAgent;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setupFontInfo(FontInfo inFontInfo) {
         //Don't call super.setupFontInfo() here! Java2D needs a special font setup
         // create a temp Image to test font metrics on
@@ -437,16 +433,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         state.transform(new AffineTransform(CTMHelper.toPDFArray(ctm)));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void endVParea() {
         restoreGraphicsState();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected List breakOutOfStateStack() {
         log.debug("Block.FIXED --> break out");
         List breakOutList;
@@ -459,10 +451,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         return breakOutList;
     }
 
-    /**
-     * {@inheritDoc}
-     *          java.util.List)
-     */
+    /** {@inheritDoc} */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         log.debug("Block.FIXED --> restoring context after break-out");
 
@@ -474,16 +463,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void updateColor(Color col, boolean fill) {
         state.updateColor(col);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void clip() {
         if (currentPath == null) {
             throw new IllegalStateException("No current path available!");
@@ -492,16 +477,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         currentPath = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void closePath() {
         currentPath.closePath();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void lineTo(float x, float y) {
         if (currentPath == null) {
             currentPath = new GeneralPath();
@@ -509,9 +490,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         currentPath.lineTo(x, y);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void moveTo(float x, float y) {
         if (currentPath == null) {
             currentPath = new GeneralPath();
@@ -519,27 +498,23 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         currentPath.moveTo(x, y);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
         state.updateClip(new Rectangle2D.Float(x, y, width, height));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void fillRect(float x, float y, float width, float height) {
         state.getGraph().fill(new Rectangle2D.Float(x, y, width, height));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         Graphics2D g2d = state.getGraph();
-        drawBorderLine(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1),
+        float width = x2 - x1;
+        float height = y2 - y1;
+        drawBorderLine(new Rectangle2D.Float(x1, y1, width, height),
                 horz, startOrBefore, style, col, g2d);
     }
 
@@ -704,9 +679,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
 
@@ -888,18 +861,14 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         super.renderLeader(area);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderImage(Image image, Rectangle2D pos) {
         // endTextObject();
         String url = image.getURL();
         drawImage(url, pos);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
 
         int x = currentIPPosition + (int)Math.round(pos.getX());
