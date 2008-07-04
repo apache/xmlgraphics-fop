@@ -79,7 +79,7 @@ public class AFPTextHandler implements TextHandler {
         }
         if (overrideFont != null) {
             FontInfo fontInfo = getFontInfo();
-            AFPPageFonts pageFonts = this.afpState.getPageFonts();
+            AFPPageFonts pageFonts = afpState.getPageFonts();
             String internalFontName = overrideFont.getFontName();
             int fontSize = overrideFont.getFontSize();
             if (afpState.setFontName(internalFontName) || afpState.setFontSize(fontSize)) {
