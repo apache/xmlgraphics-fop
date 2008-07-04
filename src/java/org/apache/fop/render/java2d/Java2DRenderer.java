@@ -539,7 +539,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     protected void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         Graphics2D g2d = state.getGraph();
-        drawBorderLine(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1),
+        float width = x2 - x1;
+        float height = y2 - y1;
+        drawBorderLine(new Rectangle2D.Float(x1, y1, width, height),
                 horz, startOrBefore, style, col, g2d);
     }
 
