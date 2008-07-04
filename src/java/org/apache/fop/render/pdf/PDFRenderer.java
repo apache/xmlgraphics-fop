@@ -1415,7 +1415,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         updateColor(ct, true);
         
         beginTextObject();
-        StringBuffer pdf = new StringBuffer();
 
         String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
@@ -1433,8 +1432,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
         textutil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, rx / 1000f, bl / 1000f));
-
-        currentStream.add(pdf.toString());
 
         super.renderText(text);
 
