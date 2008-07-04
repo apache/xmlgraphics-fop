@@ -209,27 +209,28 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
     /**
      * Get the region from this page.
      *
-     * @param areaclass the region area class
+     * @param areaClass the region area class
      * @return the region viewport or null if none
      */
-    public RegionViewport getRegionViewport(int areaclass) {
-        if (areaclass == Constants.FO_REGION_BEFORE) {
+    public RegionViewport getRegionViewport(int areaClass) {
+        switch (areaClass) {
+        case Constants.FO_REGION_BEFORE:
             return regionBefore;
-        } else if (areaclass == Constants.FO_REGION_START) {
+        case Constants.FO_REGION_START:
             return regionStart;
-        } else if (areaclass == Constants.FO_REGION_BODY) {
-            return regionBody;
-        } else if (areaclass == Constants.FO_REGION_END) {
+        case Constants.FO_REGION_BODY:
+            return regionBody;            
+        case Constants.FO_REGION_END:
             return regionEnd;
-        } else if (areaclass == Constants.FO_REGION_AFTER) {
+        case Constants.FO_REGION_AFTER:
             return regionAfter;
+        default:
+            throw new IllegalArgumentException("No such area class with ID = " + areaClass);
         }
-        throw new IllegalArgumentException("No such area class with ID = "
-            + areaclass);
     }
 
     /**
-     * indicates whether any FOs have been added to the body region
+     * Indicates whether any FOs have been added to the body region
      *
      * @return whether any FOs have been added to the body region
      */
