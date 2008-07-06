@@ -57,7 +57,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.inline.AbstractTextArea;
-import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
@@ -179,7 +178,6 @@ public class AreaTreeParser {
             makers.put("text", new TextMaker());
             makers.put("word", new WordMaker());
             makers.put("space", new SpaceMaker());
-            makers.put("char", new CharMaker());
             makers.put("leader", new LeaderMaker());
             makers.put("viewport", new ViewportMaker());
             makers.put("image", new ImageMaker());
@@ -805,28 +803,6 @@ public class AreaTreeParser {
                     Area parent = (Area)areaStack.peek();
                     parent.addChildArea(space);
                 }
-            }
-            
-            public boolean ignoreCharacters() {
-                return false;
-            }
-        }
-
-        private class CharMaker extends AbstractMaker {
-            
-            public void endElement() {
-                content.flip();
-                Character ch = new Character(content.charAt(0));
-                transferForeignObjects(lastAttributes, ch);
-                setAreaAttributes(lastAttributes, ch);
-                setTraits(lastAttributes, ch, SUBSET_COMMON);
-                setTraits(lastAttributes, ch, SUBSET_BOX);
-                setTraits(lastAttributes, ch, SUBSET_COLOR);
-                setTraits(lastAttributes, ch, SUBSET_FONT);
-                ch.setOffset(getAttributeAsInteger(lastAttributes, "offset", 0));
-                ch.setBaselineOffset(getAttributeAsInteger(lastAttributes, "baseline", 0));
-                Area parent = (Area)areaStack.peek();
-                parent.addChildArea(ch);
             }
             
             public boolean ignoreCharacters() {
