@@ -25,9 +25,9 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.datatypes.Length;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
@@ -44,9 +44,9 @@ public class ColumnSetup {
     private Table table;
     private List columns = new java.util.ArrayList();
     private List colWidths = new java.util.ArrayList();
-    
+
     private int maxColIndexReferenced = 0;
-    
+
     /**
      * Main Constructor.
      * @param table the table to construct this column setup for
@@ -56,7 +56,7 @@ public class ColumnSetup {
         prepareColumns();
         initializeColumnWidths();
     }
-    
+
     private void prepareColumns() {
         List rawCols = table.getColumns();
         if (rawCols != null) {
@@ -119,7 +119,7 @@ public class ColumnSetup {
             return (TableColumn) columns.get(index - 1);
         }
     }
- 
+
     /** {@inheritDoc} */
     public String toString() {
         return columns.toString();
@@ -133,15 +133,15 @@ public class ColumnSetup {
             return columns.size();
         }
    }
-    
+
     /** @return an Iterator over all columns */
     public Iterator iterator() {
         return this.columns.iterator();
     }
-    
+
     /*
     private void createColumnsFromFirstRow() {
-        //TODO Create oldColumns from first row here 
+        //TODO Create oldColumns from first row here
         //--> rule 2 in "fixed table layout", see CSS2, 17.5.2
         //Alternative: extend oldColumns on-the-fly, but in this case we need the
         //new property evaluation context so proportional-column-width() works
@@ -154,13 +154,13 @@ public class ColumnSetup {
 
     /**
      * Initializes the column's widths
-     * 
+     *
      */
     private void initializeColumnWidths() {
-        
+
         TableColumn col;
         Length colWidth;
-        
+
         for (int i = columns.size(); --i >= 0;) {
             if (columns.get(i) != null) {
                 col = (TableColumn) columns.get(i);
@@ -170,49 +170,60 @@ public class ColumnSetup {
         }
         colWidths.add(0, null);
     }
-    
+
     /**
      * Works out the base unit for resolving proportional-column-width()
      * [p-c-w(x) = x * base_unit_ipd]
-     * 
+     *
      * @param tlm   the TableLayoutManager
      * @return the computed base unit (in millipoint)
      */
     protected double computeTableUnit(TableLayoutManager tlm) {
-        
+        return computeTableUnit(tlm, tlm.getContentAreaIPD());
+    }
+
+    /**
+     * Works out the base unit for resolving proportional-column-width()
+     * [p-c-w(x) = x * base_unit_ipd]
+     *
+     * @param percentBaseContext the percent base context for relative values
+     * @param contentAreaIPD the IPD of the available content area
+     * @return the computed base unit (in millipoints)
+     */
+    public float computeTableUnit(PercentBaseContext percentBaseContext, int contentAreaIPD) {
+
         int sumCols = 0;
         float factors = 0;
-        double unit = 0;
-        
-        /* calculate the total width (specified absolute/percentages), 
+        float unit = 0;
+
+        /* calculate the total width (specified absolute/percentages),
          * and work out the total number of factors to use to distribute
          * the remaining space (if any)
          */
         for (Iterator i = colWidths.iterator(); i.hasNext();) {
             Length colWidth = (Length) i.next();
             if (colWidth != null) {
-                sumCols += colWidth.getValue(tlm);
+                sumCols += colWidth.getValue(percentBaseContext);
                 if (colWidth instanceof TableColLength) {
-                    factors += 
-                        ((TableColLength) colWidth).getTableUnits();
+                    factors += ((TableColLength) colWidth).getTableUnits();
                 }
             }
         }
-        
-        /* distribute the remaining space over the accumulated 
-         * factors (if any) 
+
+        /* distribute the remaining space over the accumulated
+         * factors (if any)
          */
         if (factors > 0) {
-            if (sumCols < tlm.getContentAreaIPD()) {
-                unit = (tlm.getContentAreaIPD() - sumCols) / factors;
+            if (sumCols < contentAreaIPD) {
+                unit = (contentAreaIPD - sumCols) / factors;
             } else {
                 log.warn("No space remaining to distribute over columns.");
             }
         }
-        
+
         return unit;
     }
-    
+
     /**
      * @param col column index (1 is first column)
      * @param context the context for percentage based calculations
@@ -252,5 +263,5 @@ public class ColumnSetup {
         }
         return sum;
     }
-    
+
 }

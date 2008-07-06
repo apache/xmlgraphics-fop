@@ -60,11 +60,13 @@ extends RtfContainer {
     public static final String HEADERY = "headery";
     /** constant for footer position */
     public static final String FOOTERY = "footery";
-
+    /** constant for itap level */
+    public static final String ITAP = "itap";
+    
     /** String array of RtfPage attributes */
     public static final String[] PAGE_ATTR = new String[]{
         PAGE_WIDTH, PAGE_HEIGHT, LANDSCAPE, MARGIN_TOP, MARGIN_BOTTOM,
-        MARGIN_LEFT, MARGIN_RIGHT, HEADERY, FOOTERY
+        MARGIN_LEFT, MARGIN_RIGHT, HEADERY, FOOTERY, ITAP
     };
 
     /**    RtfPage creates new page attributes with the parent container, the writer

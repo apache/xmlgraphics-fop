@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@ package org.apache.fop.render.rtf;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
+
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.expr.NumericOp;
@@ -46,19 +47,21 @@ final class PageAttributesConverter {
      */
     private PageAttributesConverter() {
     }
-    
+
     /** convert xsl:fo attributes to RTF text attributes */
     static RtfAttributes convertPageAttributes(SimplePageMaster pagemaster) {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
-        
+
         try {
             RegionBA before = (RegionBA) pagemaster.getRegion(Constants.FO_REGION_BEFORE);
             RegionBody body   = (RegionBody) pagemaster.getRegion(Constants.FO_REGION_BODY);
             RegionBA after  = (RegionBA) pagemaster.getRegion(Constants.FO_REGION_AFTER);
-            
+
             attrib.setTwips(RtfPage.PAGE_WIDTH, pagemaster.getPageWidth());
             attrib.setTwips(RtfPage.PAGE_HEIGHT, pagemaster.getPageHeight());
-            
+            //Sets the document level property
+            attrib.set(RtfPage.ITAP, "0");
+
             Object widthRaw = attrib.getValue(RtfPage.PAGE_WIDTH);
             Object heightRaw = attrib.getValue(RtfPage.PAGE_HEIGHT);
             if ((widthRaw instanceof Integer) && (heightRaw instanceof Integer)
@@ -84,7 +87,7 @@ final class PageAttributesConverter {
                 bodyLeft = (Length) NumericOp.addition(pageLeft, bodyMargin.marginLeft);
                 bodyRight = (Length) NumericOp.addition(pageRight, bodyMargin.marginRight);
             }
-            
+
             attrib.setTwips(RtfPage.MARGIN_TOP, bodyTop);
             attrib.setTwips(RtfPage.MARGIN_BOTTOM, bodyBottom);
             attrib.setTwips(RtfPage.MARGIN_LEFT, bodyLeft);
@@ -102,9 +105,9 @@ final class PageAttributesConverter {
             if (after != null) {
                 afterBottom = (Length) NumericOp.addition(pageBottom, after.getExtent());
             }
-            attrib.setTwips(RtfPage.FOOTERY, beforeTop);
+            attrib.setTwips(RtfPage.FOOTERY, afterBottom);
         } catch (Exception e) {
-            log.error("Exception in convertPageAttributes: " 
+            log.error("Exception in convertPageAttributes: "
                 + e.getMessage() + "- page attributes ignored");
             attrib = new FOPRtfAttributes();
         }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,8 +26,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * @author Christopher Scott, scottc@westinghouse.com
@@ -50,9 +50,9 @@ public class RtfPageNumberCitation extends RtfContainer {
     private String id = null;
 
     /** Create an RTF page number citation as a child of given container with default attributes */
-    RtfPageNumberCitation (IRtfPageNumberCitationContainer parent, Writer w, String id)
+    RtfPageNumberCitation (RtfContainer parent, Writer w, String id)
             throws IOException {
-        super((RtfContainer)parent, w);
+        super(parent, w);
         this.id = id;
     }
 
@@ -78,8 +78,8 @@ public class RtfPageNumberCitation extends RtfContainer {
             // Build page reference field
             String pageRef = RTF_FIELD_PAGEREF_MODEL;
             final int insertionIndex = pageRef.indexOf("}");
-            pageRef = pageRef.substring(0, insertionIndex) 
-                + "\"" + id 
+            pageRef = pageRef.substring(0, insertionIndex)
+                + "\"" + id
                 + "\"" + " "
                 + pageRef.substring(insertionIndex, pageRef.length());
             id = null;
@@ -92,7 +92,7 @@ public class RtfPageNumberCitation extends RtfContainer {
             writeStarControlWord(pageRef);
             writeGroupMark(false);
             writeGroupMark(true);
-            writeControlWord(RTF_FIELD_RESULT);
+            writeControlWord(RTF_FIELD_RESULT + '#'); //To see where the page-number would be
             writeGroupMark(false);
             writeGroupMark(false);
         }

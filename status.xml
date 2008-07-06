@@ -60,6 +60,13 @@
       -->
     <!--/release-->
     <release version="0.95" date="TBD">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="43824" due-to="Maximilian Aster">
+        Added support for page-number-citation for RTF output.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="43606" due-to="Maximilian Aster">
+        Fixed handling of proportional-column-width() and percentages for table column in RTF
+        output.
+      </action>
       <action context="Images" dev="JM" type="fix">
         Fixed two bugs concerning resolution handling with SVG images and their
         conversion to bitmaps for RTF output.
