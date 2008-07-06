@@ -711,15 +711,14 @@ out = proc.getOutputStream();]]></source>
       Not supported/implemented:
       <ul>
         <li>break-before/after (supported by the RTF library but not tied into the RTFHandler)</li>
-        <li>fo:leader</li>
-        <li>fo:page-number-citation(-last)</li>
-        <li>proportional-column-width() and percentages</li>
-        <li>nested tables (the flatter your FO, the better the results in RTF!)</li>
+        <li>fo:page-number-citation-last</li>
         <li>keeps (supported by the RTF library but not tied into the RTFHandler)</li>
         <li>region-start/end (RTF limitation)</li>
       </ul>
     </li>
     <li>Only a single page-master is supported</li>
+    <li>Not all variations of fo:leader are supported (RTF limitation)</li>
+    <li>percentages are not supported everywhere</li>
   </ul>
 </section>
 <section id="xml">
