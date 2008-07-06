@@ -60,6 +60,10 @@
       -->
     <!--/release-->
     <release version="0.95" date="TBD">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="43825" due-to="Maximilian Aster">
+        Added support for fo:leader for RTF output (no full support!). Fixes problems with empty leaders
+        being used to force empty lines among other issues.
+      </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="43824" due-to="Maximilian Aster">
         Added support for page-number-citation for RTF output.
       </action>

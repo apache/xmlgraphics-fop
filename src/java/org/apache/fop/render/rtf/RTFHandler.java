@@ -1299,6 +1299,26 @@ public class RTFHandler extends FOEventHandler {
 
     /** {@inheritDoc} */
     public void leader(Leader l) {
+        if (bDefer) {
+            return;
+        }
+
+        try {
+            percentManager.setDimension(l);
+            RtfAttributes rtfAttr = TextAttributesConverter.convertLeaderAttributes(
+                    l, percentManager);
+
+            IRtfTextrunContainer container
+                  = (IRtfTextrunContainer)builderContext.getContainer(
+                      IRtfTextrunContainer.class, true, this);
+            RtfTextrun textrun = container.getTextrun();
+
+            textrun.addLeader(rtfAttr);
+
+        } catch (Exception e) {
+            log.error("startLeader: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
@@ -1557,6 +1577,10 @@ public class RTFHandler extends FOEventHandler {
                 startCell( (TableCell) foNode);
             } else {
                 endCell( (TableCell) foNode);
+            }
+        } else if (foNode instanceof Leader) {
+            if (bStart) {
+                leader((Leader) foNode);
             }
         } else if (foNode instanceof PageNumberCitation) {
             if (bStart) {

@@ -249,6 +249,15 @@ public class RtfTextrun extends RtfContainer {
     }
 
     /**
+     * Inserts a leader.
+     * @param attrs Attributes for the leader
+     * @throws IOException for I/O problems
+     */
+    public void addLeader(RtfAttributes attrs) throws IOException {
+        new RtfLeader(this, writer, attrs);
+    }
+
+    /**
      * Inserts a page number.
      * @param attr Attributes for the page number to insert.
      * @throws IOException for I/O problems
