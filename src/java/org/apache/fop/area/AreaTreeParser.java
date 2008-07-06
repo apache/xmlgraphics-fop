@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.nio.CharBuffer;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -132,8 +133,10 @@ public class AreaTreeParser {
         private ElementMappingRegistry elementMappingRegistry;
 
         private Attributes lastAttributes;
-        private StringBuffer content = new StringBuffer();
 
+        private CharBuffer content = CharBuffer.allocate(64);
+        private boolean ignoreCharacters = true;
+        
         private PageViewport currentPageViewport;
         private Map pageViewportsByKey = new java.util.HashMap();
         // set of "ID firsts" that have already been assigned to a PV:
@@ -261,7 +264,10 @@ public class AreaTreeParser {
                 boolean handled = true;
                 if ("".equals(uri)) {
                     Maker maker = (Maker)makers.get(localName);
+                    content.clear();
+                    ignoreCharacters = true;
                     if (maker != null) {
+                        ignoreCharacters = maker.ignoreCharacters();
                         maker.startElement(attributes);
                     } else if ("extension-attachments".equals(localName)) {
                         //TODO implement me
@@ -311,11 +317,12 @@ public class AreaTreeParser {
                     Maker maker = (Maker)makers.get(localName);
                     if (maker != null) {
                         maker.endElement();
+                        content.clear();
                     }
+                    ignoreCharacters = true;
                 } else {
                     //log.debug("Ignoring " + localName + " in namespace: " + uri);
                 }
-                content.setLength(0); //Reset text buffer (see characters())
             }
         }
 
@@ -324,6 +331,7 @@ public class AreaTreeParser {
         private static interface Maker {
             void startElement(Attributes attributes) throws SAXException;
             void endElement();
+            boolean ignoreCharacters();
         }
 
         private abstract class AbstractMaker implements Maker {
@@ -334,6 +342,10 @@ public class AreaTreeParser {
 
             public void endElement() {
                 //nop
+            }
+            
+            public boolean ignoreCharacters() {
+                return true;
             }
         }
 
@@ -444,7 +456,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
-            }            
+            }
         }
 
         private class RegionAfterMaker extends AbstractMaker {
@@ -455,7 +467,7 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
-            }            
+            }
         }
 
         private class RegionStartMaker extends AbstractMaker {
@@ -466,7 +478,7 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
-            }            
+            }
         }
         
         private class RegionEndMaker extends AbstractMaker {
@@ -477,7 +489,7 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
-            }            
+            }
         }
 
         private class RegionBodyMaker extends AbstractMaker {
@@ -575,7 +587,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), BeforeFloat.class);
-            }            
+            }
         }
 
         private class BlockMaker extends AbstractMaker {
@@ -627,7 +639,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), Block.class);
-            }            
+            }
         }
 
         private class LineAreaMaker extends AbstractMaker {
@@ -735,7 +747,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), TextArea.class);
-            }            
+            }
         }
 
         private class WordMaker extends AbstractMaker {
@@ -759,23 +771,27 @@ public class AreaTreeParser {
             public void endElement() {
                 int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
                 int[] letterAdjust = toIntArray(lastAttributes.getValue("letter-adjust"));
-                String txt = content.toString();
-                WordArea word = new WordArea(txt, offset, letterAdjust);
+                content.flip();
+                WordArea word = new WordArea(content.toString().trim(), offset, letterAdjust);
                 AbstractTextArea text = getCurrentText();
                 word.setParentArea(text);
                 text.addChildArea(word);
-            }            
+            }
+            
+            public boolean ignoreCharacters() {
+                return false;
+            }
         }
 
         private class SpaceMaker extends AbstractMaker {
-
+            
             public void endElement() {
                 int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
-                String txt = content.toString();
                 //TODO the isAdjustable parameter is currently not used/implemented
-                if (txt.length() > 0) {
+                if (content.position() > 0) {
+                    content.flip();
                     boolean adjustable = getAttributeAsBoolean(lastAttributes, "adj", true);
-                    SpaceArea space = new SpaceArea(txt.charAt(0), offset, adjustable);
+                    SpaceArea space = new SpaceArea(content.charAt(0), offset, adjustable);
                     AbstractTextArea text = getCurrentText();
                     space.setParentArea(text);
                     text.addChildArea(space);
@@ -789,14 +805,18 @@ public class AreaTreeParser {
                     Area parent = (Area)areaStack.peek();
                     parent.addChildArea(space);
                 }
-            }            
+            }
+            
+            public boolean ignoreCharacters() {
+                return false;
+            }
         }
 
         private class CharMaker extends AbstractMaker {
-
+            
             public void endElement() {
-                String txt = content.toString();
-                Character ch = new Character(txt.charAt(0));
+                content.flip();
+                Character ch = new Character(content.charAt(0));
                 transferForeignObjects(lastAttributes, ch);
                 setAreaAttributes(lastAttributes, ch);
                 setTraits(lastAttributes, ch, SUBSET_COMMON);
@@ -807,7 +827,11 @@ public class AreaTreeParser {
                 ch.setBaselineOffset(getAttributeAsInteger(lastAttributes, "baseline", 0));
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(ch);
-            }            
+            }
+            
+            public boolean ignoreCharacters() {
+                return false;
+            }
         }
 
         private class LeaderMaker extends AbstractMaker {
@@ -830,9 +854,6 @@ public class AreaTreeParser {
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(leader);
             }
-            
-            public void endElement() {
-            }            
         }
 
         private class ViewportMaker extends AbstractMaker {
@@ -854,7 +875,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), Viewport.class);
-            }            
+            }
         }
         
         private class ImageMaker extends AbstractMaker {
@@ -1163,11 +1184,25 @@ public class AreaTreeParser {
         public void characters(char[] ch, int start, int length) throws SAXException {
             if (delegate != null) {
                 delegate.characters(ch, start, length);
-            } else {
-                content.append(ch, start, length);
+            } else if (!ignoreCharacters) {
+                int maxLength = this.content.capacity() - this.content.position();
+                if (maxLength < length) {
+                    // allocate a larger buffer and transfer content
+                    CharBuffer newContent 
+                            = CharBuffer.allocate(this.content.position() + length);
+                    this.content.flip();
+                    newContent.put(this.content);
+                    this.content = newContent;
+                }
+                // make sure the full capacity is used
+                this.content.limit(this.content.capacity());
+                // add characters to the buffer
+                this.content.put(ch, start, length);
+                // decrease the limit, if necessary
+                if (this.content.position() < this.content.limit()) {
+                    this.content.limit(this.content.position());
+                }
             }
         }
-
     }
-
 }
