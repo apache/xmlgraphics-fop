@@ -245,15 +245,25 @@ public abstract class AbstractRenderer
         last here. */
         RegionViewport viewport;
         viewport = page.getRegionViewport(FO_REGION_BEFORE);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_START);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_END);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_AFTER);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_BODY);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
     }
 
     /**
@@ -265,27 +275,25 @@ public abstract class AbstractRenderer
      * @param port  The region viewport to be rendered
      */
     protected void renderRegionViewport(RegionViewport port) {
-        if (port != null) {
-            Rectangle2D view = port.getViewArea();
-            // The CTM will transform coordinates relative to
-            // this region-reference area into page coords, so
-            // set origin for the region to 0,0.
-            currentBPPosition = 0;
-            currentIPPosition = 0;
+        Rectangle2D view = port.getViewArea();
+        // The CTM will transform coordinates relative to
+        // this region-reference area into page coords, so
+        // set origin for the region to 0,0.
+        currentBPPosition = 0;
+        currentIPPosition = 0;
 
-            RegionReference regionReference = port.getRegionReference();
-            handleRegionTraits(port);
+        RegionReference regionReference = port.getRegionReference();
+        handleRegionTraits(port);
 
-            //  shouldn't the viewport have the CTM
-            startVParea(regionReference.getCTM(), port.isClip() ? view : null);
-            // do after starting viewport area
-            if (regionReference.getRegionClass() == FO_REGION_BODY) {
-                renderBodyRegion((BodyRegion) regionReference);
-            } else {
-                renderRegion(regionReference);
-            }
-            endVParea();
+        //  shouldn't the viewport have the CTM
+        startVParea(regionReference.getCTM(), port.isClip() ? view : null);
+        // do after starting viewport area
+        if (regionReference.getRegionClass() == FO_REGION_BODY) {
+            renderBodyRegion((BodyRegion) regionReference);
+        } else {
+            renderRegion(regionReference);
         }
+        endVParea();
     }
 
     /**
@@ -500,7 +508,7 @@ public abstract class AbstractRenderer
         int saveBP = currentBPPosition;
 
         // Calculate the position of the content rectangle.
-        if (parent != null && !Boolean.TRUE.equals(parent.getTrait(Trait.IS_VIEWPORT_AREA))) {
+        if (parent != null && !parent.getTraitAsBoolean(Trait.IS_VIEWPORT_AREA)) {
             currentBPPosition += parent.getBorderAndPaddingWidthBefore();
             /* This is unnecessary now as we're going to use the *-indent traits
             currentIPPosition += parent.getBorderAndPaddingWidthStart();
@@ -556,7 +564,7 @@ public abstract class AbstractRenderer
                 // simply move position
                 currentBPPosition += block.getAllocBPD();
             }
-        } else if (Boolean.TRUE.equals(block.getTrait(Trait.IS_REFERENCE_AREA))) {
+        } else if (!block.getTraitAsBoolean(Trait.IS_REFERENCE_AREA)) {
             renderReferenceArea(block);
         } else {
             // save position and offset
