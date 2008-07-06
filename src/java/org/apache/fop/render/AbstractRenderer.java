@@ -564,7 +564,7 @@ public abstract class AbstractRenderer
                 // simply move position
                 currentBPPosition += block.getAllocBPD();
             }
-        } else if (!block.getTraitAsBoolean(Trait.IS_REFERENCE_AREA)) {
+        } else if (block.getTraitAsBoolean(Trait.IS_REFERENCE_AREA)) {
             renderReferenceArea(block);
         } else {
             // save position and offset
