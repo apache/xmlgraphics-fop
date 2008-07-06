@@ -78,6 +78,7 @@ import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
+import org.apache.fop.util.ConversionUtils;
 import org.apache.fop.util.DefaultErrorListener;
 
 /**
@@ -185,15 +186,6 @@ public class AreaTreeParser {
             makers.put("bookmarkTree", new BookmarkTreeMaker());
             makers.put("bookmark", new BookmarkMaker());
             makers.put("destination", new DestinationMaker());
-        }
-
-        private static Rectangle2D parseRect(String rect) {
-            StringTokenizer tokenizer = new StringTokenizer(rect, " ");
-            return new Rectangle2D.Double(
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()));
         }
 
         private Area findAreaType(Class clazz) {
@@ -394,7 +386,7 @@ public class AreaTreeParser {
                 if (currentPageViewport != null) {
                     throw new IllegalStateException("currentPageViewport must be null");
                 }
-                Rectangle2D viewArea = parseRect(attributes.getValue("bounds"));
+                Rectangle2D viewArea = getAttributeAsRectangle2D(attributes, "bounds");
                 int pageNumber = getAttributeAsInteger(attributes, "nr", -1);
                 String key = attributes.getValue("key");
                 String pageNumberString = attributes.getValue("formatted-nr");
@@ -430,7 +422,7 @@ public class AreaTreeParser {
                 if (rv != null) {
                     throw new IllegalStateException("Current RegionViewport must be null");
                 }
-                Rectangle2D viewArea = parseRect(attributes.getValue("rect"));
+                Rectangle2D viewArea = getAttributeAsRectangle2D(attributes, "rect");
                 rv = new RegionViewport(viewArea);
                 transferForeignObjects(attributes, rv);
                 rv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
@@ -750,25 +742,11 @@ public class AreaTreeParser {
 
         private class WordMaker extends AbstractMaker {
 
-            private int[] toIntArray(String s) {
-                if (s == null || s.length() == 0) {
-                    return null;
-                }
-                StringTokenizer tokenizer = new StringTokenizer(s, " ");
-                List values = new java.util.ArrayList();
-                while (tokenizer.hasMoreTokens()) {
-                    values.add(new Integer(tokenizer.nextToken()));
-                }
-                int[] res = new int[values.size()];
-                for (int i = 0, c = res.length; i < c; i++) {
-                    res[i] = ((Integer)values.get(i)).intValue();
-                }
-                return res;
-            }
-            
             public void endElement() {
                 int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
-                int[] letterAdjust = toIntArray(lastAttributes.getValue("letter-adjust"));
+                int[] letterAdjust 
+                        = ConversionUtils.toIntArray(
+                            lastAttributes.getValue("letter-adjust"), "\\s");
                 content.flip();
                 WordArea word = new WordArea(content.toString().trim(), offset, letterAdjust);
                 AbstractTextArea text = getCurrentText();
@@ -1094,7 +1072,7 @@ public class AreaTreeParser {
             }
         }
 
-        private boolean getAttributeAsBoolean(Attributes attributes, String name,
+        private static boolean getAttributeAsBoolean(Attributes attributes, String name,
                 boolean defaultValue) {
             String s = attributes.getValue(name);
             if (s == null) {
@@ -1104,7 +1082,7 @@ public class AreaTreeParser {
             }
         }
 
-        private int getAttributeAsInteger(Attributes attributes, String name, 
+        private static int getAttributeAsInteger(Attributes attributes, String name, 
                 int defaultValue) {
             String s = attributes.getValue(name);
             if (s == null) {
@@ -1114,36 +1092,30 @@ public class AreaTreeParser {
             }
         }
 
-        private CTM getAttributeAsCTM(Attributes attributes, String name) {
+        private static CTM getAttributeAsCTM(Attributes attributes, String name) {
             String s = attributes.getValue(name).trim();
             if (s.startsWith("[") && s.endsWith("]")) {
                 s = s.substring(1, s.length() - 1);
-                StringTokenizer tokenizer = new StringTokenizer(s, " ");
-                double[] values = new double[] {
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken())};
+                double[] values = ConversionUtils.toDoubleArray(s, "\\s");
+                if (values.length != 6) {
+                    throw new IllegalArgumentException("CTM must consist of 6 double values!");
+                }
                 return new CTM(values[0], values[1], values[2], values[3], values[4], values[5]);
             } else {
-                throw new IllegalArgumentException("CTM must be surrounded by square brackets");
+                throw new IllegalArgumentException("CTM must be surrounded by square brackets!");
             }
         }
 
-        private Rectangle2D getAttributeAsRectangle2D(Attributes attributes, String name) {
+        private static Rectangle2D getAttributeAsRectangle2D(Attributes attributes, String name) {
             String s = attributes.getValue(name).trim();
-            StringTokenizer tokenizer = new StringTokenizer(s, " ");
-            double[] values = new double[] {
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken())};
+            double[] values = ConversionUtils.toDoubleArray(s, "\\s");
+            if (values.length != 4) {
+                throw new IllegalArgumentException("Rectangle must consist of 4 double values!");
+            }
             return new Rectangle2D.Double(values[0], values[1], values[2], values[3]);
         }
 
-        private void transferForeignObjects(Attributes atts, AreaTreeObject ato) {
+        private static void transferForeignObjects(Attributes atts, AreaTreeObject ato) {
             for (int i = 0, c = atts.getLength(); i < c; i++) {
                 String ns = atts.getURI(i);
                 if (ns.length() > 0) {
