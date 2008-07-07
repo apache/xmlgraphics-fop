@@ -35,11 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
@@ -99,38 +95,16 @@ import org.apache.fop.util.ColorUtil;
  * The output can be used to build a new area tree which can be 
  * rendered to any renderer.
  */
-public class XMLRenderer extends PrintRenderer {
+public class XMLRenderer extends AbstractXMLRenderer {
 
     /** XML MIME type */
     public static final String XML_MIME_TYPE = MimeConstants.MIME_FOP_AREA_TREE;
 
-    /** Main namespace in use. */
-    public static final String NS = "";
-
-    /** CDATA type */
-    public static final String CDATA = "CDATA";
-
-    /** An empty Attributes object used when no attributes are needed. */
-    public static final Attributes EMPTY_ATTS = new AttributesImpl();
-
     private boolean startedSequence = false;
-    private RendererContext context;
     private boolean compactFormat = false;
 
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
     protected Renderer mimic;
-
-    /** ContentHandler that the generated XML is written to */
-    protected ContentHandler handler;
-
-    /** AttributesImpl instance that can be used during XML generation. */
-    protected AttributesImpl atts = new AttributesImpl();
-
-    /** The OutputStream to write the generated XML to. */
-    protected OutputStream out;
-
-    /** A list of ExtensionAttachements received through processOffDocumentItem() */
-    protected List extensionAttachments;
 
     /**
      * Creates a new XML renderer.
@@ -171,126 +145,12 @@ public class XMLRenderer extends PrintRenderer {
         }
     }
 
-    /**
-     * Sets an outside TransformerHandler to use instead of the default one
-     * create in this class in startRenderer().
-     * @param handler Overriding TransformerHandler
-     */
-    public void setContentHandler(ContentHandler handler) {
-        this.handler = handler;
-    }
-
     public void setCompactFormat(boolean compact) {
         this.compactFormat = compact;
     }
     
     private boolean isDetailedFormat() {
         return !this.compactFormat;
-    }
-
-    /**
-     * Handles SAXExceptions.
-     * @param saxe the SAXException to handle
-     */
-    protected void handleSAXException(SAXException saxe) {
-        throw new RuntimeException(saxe.getMessage());
-    }
-
-    /**
-     * Writes a comment to the generated XML.
-     * @param comment the comment
-     */
-    protected void comment(String comment) {
-        if (handler instanceof LexicalHandler) { 
-            try {
-                ((LexicalHandler) handler).comment(comment.toCharArray(), 0, comment.length());
-            } catch (SAXException saxe) {
-                handleSAXException(saxe);
-            }
-        }
-    }
-    
-    /**
-     * Starts a new element (without attributes).
-     * @param tagName tag name of the element
-     */
-    protected void startElement(String tagName) {
-        startElement(tagName, EMPTY_ATTS);
-    }
-
-    /**
-     * Starts a new element.
-     * @param tagName tag name of the element
-     * @param atts attributes to add
-     */
-    protected void startElement(String tagName, Attributes atts) {
-        try {
-            handler.startElement(NS, tagName, tagName, atts);
-        } catch (SAXException saxe) {
-            handleSAXException(saxe);
-        }
-    }
-
-    /**
-     * Ends an element.
-     * @param tagName tag name of the element
-     */
-    protected void endElement(String tagName) {
-        try {
-            handler.endElement(NS, tagName, tagName);
-        } catch (SAXException saxe) {
-            handleSAXException(saxe);
-        }
-    }
-
-    /**
-     * Sends plain text to the XML
-     * @param text the text
-     */
-    protected void characters(String text) {
-        try {
-            char[] ca = text.toCharArray();
-            handler.characters(ca, 0, ca.length);
-        } catch (SAXException saxe) {
-            handleSAXException(saxe);
-        }
-    }
-
-    /**
-     * Adds a new attribute to the protected member variable "atts".
-     * @param name name of the attribute
-     * @param value value of the attribute
-     */
-    protected void addAttribute(String name, String value) {
-        atts.addAttribute(NS, name, name, CDATA, value);
-    }
-
-    /**
-     * Adds a new attribute to the protected member variable "atts".
-     * @param name name of the attribute
-     * @param value value of the attribute
-     */
-    protected void addAttribute(QName name, String value) {
-        atts.addAttribute(name.getNamespaceURI(), name.getLocalName(), name.getQName(), 
-                CDATA, value);
-    }
-
-    /**
-     * Adds a new attribute to the protected member variable "atts".
-     * @param name name of the attribute
-     * @param value value of the attribute
-     */
-    protected void addAttribute(String name, int value) {
-        addAttribute(name, Integer.toString(value));
-    }
-
-    /**
-     * Adds a new attribute to the protected member variable "atts".
-     * @param name name of the attribute
-     * @param rect a Rectangle2D to format and use as attribute value
-     */
-    protected void addAttribute(String name, Rectangle2D rect) {
-        addAttribute(name, createString(rect));
     }
 
     /**
@@ -406,18 +266,6 @@ public class XMLRenderer extends PrintRenderer {
         }
     }
 
-    private String createString(Rectangle2D rect) {
-        return "" + (int) rect.getX() + " " + (int) rect.getY() + " "
-                  + (int) rect.getWidth() + " " + (int) rect.getHeight();
-    }
-
-    private void handleDocumentExtensionAttachments() {
-        if (extensionAttachments != null && extensionAttachments.size() > 0) {
-            handleExtensionAttachments(extensionAttachments);
-            extensionAttachments.clear();
-        }
-    }
-
     /** {@inheritDoc} */
     public void processOffDocumentItem(OffDocumentItem oDI) {
         if (oDI instanceof BookmarkData) {
@@ -518,9 +366,7 @@ public class XMLRenderer extends PrintRenderer {
         startElement("areaTree");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         endPageSequence();
         endElement("areaTree");
@@ -535,9 +381,7 @@ public class XMLRenderer extends PrintRenderer {
         log.debug("Written out Area Tree XML");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderPage(PageViewport page) throws IOException, FOPException {
         atts.clear();
         addAttribute("bounds", page.getViewArea());
@@ -561,7 +405,8 @@ public class XMLRenderer extends PrintRenderer {
         endElement("pageViewport");
     }
 
-    private void handleExtensionAttachments(List attachments) {
+    /** {@inheritDoc} */
+    protected void handleExtensionAttachments(List attachments) {
         if (attachments != null && attachments.size() > 0) {
             startElement("extension-attachments");
             Iterator i = attachments.iterator();
@@ -580,10 +425,6 @@ public class XMLRenderer extends PrintRenderer {
             }
             endElement("extension-attachments");
         }
-    }
-
-    private void handlePageExtensionAttachments(PageViewport page) {
-        handleExtensionAttachments(page.getExtensionAttachments());
     }
 
     /** {@inheritDoc} */
