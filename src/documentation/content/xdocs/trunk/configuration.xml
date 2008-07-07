@@ -294,6 +294,27 @@
       
       <fonts....
       </renderer>]]></source>
+      
+      <p>FOP supports encryption of PDF output, thanks to Patrick C. Lankswert.
+      This feature is commonly used to prevent unauthorized viewing, printing, editing, copying text
+      from the document and doing annotations. It is also possible to ask the user for a password in
+      order to view the contents. Note that there already exist third party applications which can
+      decrypt an encrypted PDF without effort and allow the aforementioned operations, therefore the
+      degree of protection is limited.  For further information about features and restrictions
+      regarding PDF encryption, look at the documentation coming with Adobe Acrobat or the technical
+      documentation on the Adobe web site.</p>
+      <source><![CDATA[
+    <renderer mime="application/pdf">
+      <encryption-params>
+         <user-password>testuserpass</user-password>
+         <owner-password>testownerpass</owner-password>
+         <noprint/>
+         <nocopy/>
+         <noedit/>
+         <noannotations/>
+      </encryption-params>
+    </renderer>]]></source>
+      
     </section>
     <section id="ps-renderer">
       <title>Special Settings for the PostScript Renderer</title>
