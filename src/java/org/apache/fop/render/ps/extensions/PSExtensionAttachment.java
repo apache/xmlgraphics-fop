@@ -78,7 +78,7 @@ public abstract class PSExtensionAttachment implements ExtensionAttachment, XMLi
      * 
      * @param handler ContentHandler instance to send the SAX events to
      * @throws SAXException if there's a problem generating the SAX events
-     * @see org.apache.fop.util.XMLizable#toSAX(org.xml.sax.ContentHandler)
+     * @see org.apache.xmlgraphics.util.XMLizable#toSAX(org.xml.sax.ContentHandler)
      */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();

@@ -54,6 +54,11 @@
             </fo:block>
             <fo:block>block10</fo:block>
           </fo:block>
+          <fo:block keep-together.within-column="5" linefeed-treatment="preserve">The quick brown fox jumps over the lazy dog.
+            The quick brown fox jumps over the lazy dog.
+            The quick brown fox jumps over the lazy dog.
+            The quick brown fox jumps over the lazy dog.
+          </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -76,7 +81,9 @@
       <box/>
       <penalty w="0" p="0"/>
       <box/> <!-- block 3 -->
+      <penalty w="0" p="999"/>
       <box/>
+      <penalty w="0" p="999"/>
       <box/>
       <penalty w="0" p="0"/>
       <box/> <!-- block4 -->
@@ -91,7 +98,17 @@
       <penalty w="0" p="INF"/>
       <box/> <!-- block9 -->
       <penalty w="0" p="999"/>
+      <box/> <!-- block10 -->
+      <penalty w="0" p="0"/>
+
       <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      
       
       <skip>3</skip>
     </element-list>

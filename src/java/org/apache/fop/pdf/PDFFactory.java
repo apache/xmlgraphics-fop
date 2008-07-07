@@ -1203,10 +1203,11 @@ public class PDFFactory {
             PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
 
             PDFFont font = null;
-            font = PDFFont.createFont(fontname, fonttype, basefont, encoding);
+            font = PDFFont.createFont(fontname, fonttype, basefont, null);
             getDocument().registerObject(font);
 
             if (fonttype == FontType.TYPE0) {
+                font.setEncoding(encoding);
                 CIDFont cidMetrics;
                 if (metrics instanceof LazyFont) {
                     cidMetrics = (CIDFont)((LazyFont) metrics).getRealFont();
@@ -1252,7 +1253,9 @@ public class PDFFactory {
                 
                 //Handle encoding
                 SingleByteEncoding mapping = singleByteFont.getEncoding();
-                if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
+                if (singleByteFont.isSymbolicFont()) {
+                    //no encoding, use the font's encoding
+                } else if (PDFEncoding.isPredefinedEncoding(mapping.getName())) {
                     font.setEncoding(mapping.getName());
                 } else {
                     Object pdfEncoding = createPDFEncoding(mapping,

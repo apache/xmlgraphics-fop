@@ -22,7 +22,6 @@ package org.apache.fop.fo;
 // Java
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -158,11 +157,19 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
+     * Returns the context class providing information used during FO tree building.
+     * @return the builder context
+     */
+    public FOTreeBuilderContext getBuilderContext() {
+        return parent.getBuilderContext();
+    }
+    
+    /**
      * Indicates whether this node is a child of an fo:marker.
      * @return true if this node is a child of an fo:marker
      */
     protected boolean inMarker() {
-        return getFOEventHandler().inMarker();
+        return getBuilderContext().inMarker();
     }
 
     /**
@@ -267,12 +274,12 @@ public abstract class FONode implements Cloneable {
      *
      * @param data array of characters containing text to be added
      * @param start starting array element to add
-     * @param end ending array element to add
+     * @param length number of elements to add
      * @param pList currently applicable PropertyList
      * @param locator location in the XSL-FO source file.
      * @throws FOPException if there's a problem during processing
      */
-    protected void addCharacters(char[] data, int start, int end,
+    protected void addCharacters(char[] data, int start, int length,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
         // ignore
@@ -291,11 +298,16 @@ public abstract class FONode implements Cloneable {
      * Primarily used for making final content model validation checks
      * and/or informing the {@link FOEventHandler} that the end of this FO
      * has been reached.
+     * The default implementation simply calls {@link #finalizeNode()}, without
+     * sending any event to the {@link FOEventHandler}.
+     * <br/><i>Note: the recommended way to override this method in subclasses is</i>
+     * <br/><br/><code>super.endOfNode(); // invoke finalizeNode()
+     * <br/>getFOEventHandler().endXXX(); // send endOfNode() notification</code>
      *
      * @throws FOPException if there's a problem during processing
      */
     protected void endOfNode() throws FOPException {
-        // do nothing by default
+        this.finalizeNode();
     }
 
     /**
@@ -317,6 +329,20 @@ public abstract class FONode implements Cloneable {
      */
     public void removeChild(FONode child) {
         //nop
+    }
+
+    /**
+     * Finalize this node.
+     * This method can be overridden by subclasses to perform finishing
+     * tasks (cleanup, validation checks, ...) without triggering
+     * endXXX() events in the {@link FOEventHandler}.
+     * The method is called by the default {@link #endOfNode()}
+     * implementation.
+     * 
+     * @throws FOPException in case there was an error
+     */
+    public void finalizeNode() throws FOPException {
+        // do nothing by default
     }
 
     /**

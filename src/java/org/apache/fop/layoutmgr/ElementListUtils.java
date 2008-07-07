@@ -19,16 +19,20 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.ListUtil;
 
 /**
  * Utilities for Knuth element lists.
  */
-public class ElementListUtils {
+public final class ElementListUtils {
+    
+    private ElementListUtils() {
+        // Utility class.
+    }
 
     /**
      * Removes legal breaks in an element list. A constraint can be specified to limit the
@@ -38,7 +42,7 @@ public class ElementListUtils {
      * @param constraint min/opt/max value to restrict the range in which the breaks are removed.
      * @return true if the opt constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaks(LinkedList elements, MinOptMax constraint) {
+    public static boolean removeLegalBreaks(List elements, MinOptMax constraint) {
         return removeLegalBreaks(elements, constraint.opt);
     }
 
@@ -50,7 +54,7 @@ public class ElementListUtils {
      * @param constraint value to restrict the range in which the breaks are removed.
      * @return true if the constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaks(LinkedList elements, int constraint) {
+    public static boolean removeLegalBreaks(List elements, int constraint) {
         int len = 0;
         ListIterator iter = elements.listIterator();
         while (iter.hasNext()) {
@@ -97,7 +101,7 @@ public class ElementListUtils {
      * @param constraint value to restrict the range in which the breaks are removed.
      * @return true if the constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaksFromEnd(LinkedList elements, int constraint) {
+    public static boolean removeLegalBreaksFromEnd(List elements, int constraint) {
         int len = 0;
         ListIterator i = elements.listIterator(elements.size());
         while (i.hasPrevious()) {
@@ -184,8 +188,8 @@ public class ElementListUtils {
      * @param elems the element list
      * @return true if the list ends with a forced break
      */
-    public static boolean endsWithForcedBreak(LinkedList elems) {
-        ListElement last = (ListElement)elems.getLast();
+    public static boolean endsWithForcedBreak(List elems) {
+        ListElement last = (ListElement) ListUtil.getLast(elems);
         return last.isForcedBreak();
     }
 
@@ -195,8 +199,8 @@ public class ElementListUtils {
      * @param elems the element list
      * @return true if the list ends with a non-infinite penalty
      */
-    public static boolean endsWithNonInfinitePenalty(LinkedList elems) {
-        ListElement last = (ListElement)elems.getLast();
+    public static boolean endsWithNonInfinitePenalty(List elems) {
+        ListElement last = (ListElement) ListUtil.getLast(elems);
         if (last.isPenalty() && ((KnuthPenalty)last).getP() < KnuthElement.INFINITE) {
             return true;
         } else if (last instanceof BreakElement

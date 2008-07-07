@@ -38,12 +38,12 @@ public class RowGroupBuilderTestCase extends AbstractTableTestCase {
      * given array, and that the number of rows inside each row group is equal to the
      * corresponding integer in the array.
      * 
-     * @param body a body whose row groups are to be checked
+     * @param part a table part whose row groups are to be checked
      * @param expectedRowLengths expected lengths of all the row groups of this part of
      * the table
      */
-    private void checkTablePartRowGroups(TableBody body, int[] expectedRowLengths) {
-        Iterator rowGroupIter = body.getRowGroups().iterator();
+    private void checkTablePartRowGroups(TablePart part, int[] expectedRowLengths) {
+        Iterator rowGroupIter = part.getRowGroups().iterator();
         for (int i = 0; i < expectedRowLengths.length; i++) {
             assertTrue(rowGroupIter.hasNext());
             List rowGroup = (List) rowGroupIter.next();

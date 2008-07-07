@@ -230,6 +230,19 @@ public class PCLGenerator {
     }
 
     /**
+     * Selects the duplexing mode for the page. 
+     * The parameter is usually printer-specific. 
+     * "0" means Simplex,
+     * "1" means Duplex, Long-Edge Binding,
+     * "2" means Duplex, Short-Edge Binding.
+     * @param selector the integer representing the duplexing mode of the page
+     * @throws IOException In case of an I/O error
+     */
+    public void selectDuplexMode(int selector) throws IOException {
+        writeCommand("&l" + selector + "S");
+    }
+
+    /**
      * Clears the horizontal margins.
      * @throws IOException In case of an I/O error
      */

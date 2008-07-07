@@ -21,10 +21,10 @@ package org.apache.fop.layoutmgr.table;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
@@ -88,7 +88,6 @@ class RowGroupLayoutManager {
      * @param alignment alignment indicator
      * @param bodyType Indicates what kind of body is being processed (BODY, HEADER or FOOTER)
      * @param returnList List to received the generated elements
-     * @param rowGroup row group to process
      */
     private void createElementsForRowGroup(LayoutContext context, int alignment, 
             int bodyType, LinkedList returnList) {
@@ -116,7 +115,7 @@ class RowGroupLayoutManager {
                     childLC.setRefIPD(spanWidth);
                     
                     //Get the element list for the cell contents
-                    LinkedList elems = primary.getCellLM().getNextKnuthElements(
+                    List elems = primary.getCellLM().getNextKnuthElements(
                                             childLC, alignment);
                     ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
                     primary.setElements(elems);
@@ -124,7 +123,7 @@ class RowGroupLayoutManager {
             }
         }
         computeRowHeights();
-        LinkedList elements = tableStepper.getCombinedKnuthElementsForRowGroup(context,
+        List elements = tableStepper.getCombinedKnuthElementsForRowGroup(context,
                 rowGroup, bodyType);
         returnList.addAll(elements);
     }

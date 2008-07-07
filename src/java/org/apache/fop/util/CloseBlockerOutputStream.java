@@ -19,25 +19,25 @@
  
 package org.apache.fop.util;
 
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.commons.io.output.ProxyOutputStream;
 
 /**
  * This is a decorator to block calls to close() to the underlying stream.
  */
-public class CloseBlockerOutputStream extends FilterOutputStream {
+public class CloseBlockerOutputStream extends ProxyOutputStream {
 
     /**
-     * @see java.io.FilterOutputStream#FilterOutputStream(OutputStream)
+     * Main constructor.
+     * @param out the underlying stream
      */
     public CloseBlockerOutputStream(OutputStream out) {
         super(out);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void close() throws IOException {
         try {
             flush();

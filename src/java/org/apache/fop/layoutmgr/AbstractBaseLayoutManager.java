@@ -34,17 +34,17 @@ import org.apache.fop.fo.FObj;
 public abstract class AbstractBaseLayoutManager 
     implements LayoutManager, PercentBaseContext {
     
-    /** Indicator if this LM generates reference areas */
+    /** Indicator if this LM generates reference areas. */
     protected boolean generatesReferenceArea = false;
-    /** Indicator if this LM generates block areas */
+    /** Indicator if this LM generates block areas. */
     protected boolean generatesBlockArea = false;
-    /** The formatting object for this LM */
+    /** The formatting object for this LM. */
     protected final FObj fobj;
 
     /**
      * logging instance
      */
-    private static Log log = LogFactory.getLog(AbstractBaseLayoutManager.class);
+    private static final Log LOG = LogFactory.getLog(AbstractBaseLayoutManager.class);
 
     /**
      * Abstract base layout manager.
@@ -69,8 +69,8 @@ public abstract class AbstractBaseLayoutManager
     // --------- Property Resolution related functions --------- //
     
     /** {@inheritDoc} */
-    public int getBaseLength(int lengthBase, FObj fobj) {
-        if (fobj == this.fobj) {
+    public int getBaseLength(int lengthBase, FObj fobjx) {
+        if (fobjx == this.fobj) {
             switch (lengthBase) {
             case LengthBase.CONTAINING_BLOCK_WIDTH:
                 return getAncestorBlockAreaIPD();
@@ -81,20 +81,20 @@ public abstract class AbstractBaseLayoutManager
             case LengthBase.CONTAINING_REFAREA_WIDTH:
                 return getReferenceAreaIPD();
             default:
-                log.error("Unknown base type for LengthBase:" + lengthBase);
+                LOG.error("Unknown base type for LengthBase:" + lengthBase);
                 return 0;
             }
         } else {
             LayoutManager lm = getParent();
-            while (lm != null && fobj != lm.getFObj()) {
+            while (lm != null && fobjx != lm.getFObj()) {
                 lm = lm.getParent();
             }
             if (lm != null) {
-                return lm.getBaseLength(lengthBase, fobj);
+                return lm.getBaseLength(lengthBase, fobjx);
             }
         }
-        log.error("Cannot find LM to handle given FO for LengthBase. ("
-                + fobj.getContextInfo() + ")");
+        LOG.error("Cannot find LM to handle given FO for LengthBase. ("
+                + fobjx.getContextInfo() + ")");
         return 0;
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractBaseLayoutManager
             }
             lm = lm.getParent();
         }
-        log.error("No parent LM found");
+        LOG.error("No parent LM found");
         return 0;
     }
 
@@ -128,7 +128,7 @@ public abstract class AbstractBaseLayoutManager
             }
             lm = lm.getParent();
         }
-        log.error("No parent LM found");
+        LOG.error("No parent LM found");
         return 0;
     }
 
@@ -141,7 +141,7 @@ public abstract class AbstractBaseLayoutManager
         if (lm != null) {
             return lm.getContentAreaIPD();
         }
-        log.error("No parent LM found");
+        LOG.error("No parent LM found");
         return 0;
     }
 
@@ -154,7 +154,7 @@ public abstract class AbstractBaseLayoutManager
         if (lm != null) {
             return lm.getContentAreaBPD();
         }
-        log.error("No parent LM found");
+        LOG.error("No parent LM found");
         return 0;
     }
 
@@ -171,7 +171,7 @@ public abstract class AbstractBaseLayoutManager
             }
             lm = lm.getParent();
         }
-        log.error("No parent LM found");
+        LOG.error("No parent LM found");
         return 0;
     }
 
@@ -188,7 +188,7 @@ public abstract class AbstractBaseLayoutManager
             }
             lm = lm.getParent();
         }
-        log.error("No parent LM found");
+        LOG.error("No parent LM found");
         return 0;
     }
 

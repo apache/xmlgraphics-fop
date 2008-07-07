@@ -59,6 +59,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionReference;
@@ -467,9 +468,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
 
@@ -590,6 +589,76 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    /** {@inheritDoc} */
+    protected void renderReferenceArea(Block block) {
+        //TODO Remove this method once concatenateTransformationMatrix() is implemented 
+        
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        at.translate(block.getXOffset(), block.getYOffset());
+        at.translate(0, block.getSpaceBefore());
+        
+        if (!at.isIdentity()) {
+            Rectangle2D contentRect
+                = new Rectangle2D.Double(at.getTranslateX(), at.getTranslateY(),
+                        block.getAllocIPD(), block.getAllocBPD());
+            pushViewPortPos(new ViewPortPos(contentRect, new CTM(at)));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        handleBlockTraits(block);
+
+        List children = block.getChildAreas();
+        if (children != null) {
+            renderBlocks(block, children);
+        }
+
+        if (!at.isIdentity()) {
+            popViewPortPos();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
+    /** {@inheritDoc} */
+    protected void renderFlow(NormalFlow flow) {
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        
+        if (!at.isIdentity()) {
+            Rectangle2D contentRect
+                = new Rectangle2D.Double(at.getTranslateX(), at.getTranslateY(),
+                        flow.getAllocIPD(), flow.getAllocBPD());
+            pushViewPortPos(new ViewPortPos(contentRect, new CTM(at)));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        super.renderFlow(flow);
+        
+        if (!at.isIdentity()) {
+            popViewPortPos();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
+    
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         //Not used here since AFPRenderer defines its own renderBlockViewport() method.
@@ -1218,20 +1287,24 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /**
-     * Restores the state stack after a break out.
-     * @param breakOutList the state stack to restore.
-     */
-    public void restoreStateStackAfterBreakOut(List breakOutList) {
-
+    /** {@inheritDoc} */
+    public List breakOutOfStateStack() {
+        log.debug("Block.FIXED --> break out");
+        List breakOutList = new java.util.ArrayList();
+        //Don't pop the last ViewPortPos (created by renderPage())
+        while (this.viewPortPositions.size() > 1) {
+            breakOutList.add(0, popViewPortPos());
+        }
+        return breakOutList;
     }
 
-    /**
-     * Breaks out of the state stack to handle fixed block-containers.
-     * @return the saved state stack to recreate later
-     */
-    public List breakOutOfStateStack() {
-        return null;
+    /** {@inheritDoc} */
+    public void restoreStateStackAfterBreakOut(List breakOutList) {
+        log.debug("Block.FIXED --> restoring context after break-out");
+        for (int i = 0, c = breakOutList.size(); i < c; i++) {
+            ViewPortPos vps = (ViewPortPos)breakOutList.get(i);
+            pushViewPortPos(vps);
+        }
     }
 
     /** Saves the graphics state of the rendering engine. */
@@ -1755,12 +1828,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         afpDataStream.setOffsets(vpp.x, vpp.y, vpp.rot);
     }
 
-    private void popViewPortPos() {
-        viewPortPositions.remove(viewPortPositions.size() - 1);
+    private ViewPortPos popViewPortPos() {
+        ViewPortPos current = (ViewPortPos)viewPortPositions.remove(viewPortPositions.size() - 1);
         if (viewPortPositions.size() > 0) {
             ViewPortPos vpp = (ViewPortPos)viewPortPositions.get(viewPortPositions.size() - 1);
             afpDataStream.setOffsets(vpp.x, vpp.y, vpp.rot);
         }
+        return current;
     }
 
     /**

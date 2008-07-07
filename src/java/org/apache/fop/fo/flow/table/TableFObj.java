@@ -34,6 +34,8 @@ import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
+import org.xml.sax.Locator;
+import org.xml.sax.Attributes;
 
 /**
  * Common base class for table-related FOs
@@ -53,9 +55,10 @@ public abstract class TableFObj extends FObj {
     CollapsingBorderModel collapsingBorderModel;
 
     /**
-     * Main constructor
+     * Create a TableFObj instance that is a child
+     * of the given {@link FONode}
      *
-     * @param parent    the parent node
+     * @param parent the parent {@link FONode}
      */
     public TableFObj(FONode parent) {
         super(parent);
@@ -79,6 +82,8 @@ public abstract class TableFObj extends FObj {
     }
 
     /**
+     * Return the value for the "border-precedence" property
+     * for the given side.
      *
      * @param side  the side for which to return the border precedence
      * @return the "border-precedence" value for the given side
@@ -100,13 +105,13 @@ public abstract class TableFObj extends FObj {
 
     /**
      * Convenience method to returns a reference
-     * to the base Table instance
+     * to the base {@link Table} instance.
      *
      * @return  the base table instance
      *
      */
     public Table getTable() {
-        // Will be overridden in Table; for any other Table-node, recursive call to
+        // Overridden in Table; for any other Table-node, recursive call to
         // parent.getTable()
         return ((TableFObj) parent).getTable();
     }
@@ -117,13 +122,13 @@ public abstract class TableFObj extends FObj {
     public abstract CommonBorderPaddingBackground getCommonBorderPaddingBackground();
 
     /**
-     * PropertyMaker subclass for the column-number property
-     *
+     * {@link PropertyMaker} subclass for the column-number property
      */
     public static class ColumnNumberPropertyMaker extends PropertyMaker {
 
         /**
          * Constructor
+         *
          * @param propId    the id of the property for which the maker should
          *                  be created
          */
@@ -142,47 +147,50 @@ public abstract class TableFObj extends FObj {
 
 
         /**
+         * {@inheritDoc}
          * Check the value of the column-number property.
-         * Return the parent's column index (initial value) in case
-         * of a negative or zero value
-         *
-         * @see org.apache.fop.fo.properties.PropertyMaker#make(PropertyList, String, FObj)
          */
         public Property make(PropertyList propertyList, String value, FObj fo)
                     throws PropertyException {
+
             Property p = super.make(propertyList, value, fo);
 
-            ColumnNumberManagerHolder parent
-                    = (ColumnNumberManagerHolder) propertyList.getParentFObj();
-            ColumnNumberManager columnIndexManager =  parent.getColumnNumberManager();
             int columnIndex = p.getNumeric().getValue();
             int colSpan = propertyList.get(Constants.PR_NUMBER_COLUMNS_SPANNED)
                                 .getNumeric().getValue();
-            
-            int i = columnIndex - 1;
-            int lastIndex = (columnIndex + colSpan) - 1;
-            while (++i < lastIndex) {
-                if (columnIndexManager.isColumnNumberUsed(i)) {
-                    /* if column-number is already in use by another
-                     * cell/column => error!
-                     */
-                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
-                            fo.getUserAgent().getEventBroadcaster());
-                    eventProducer.cellOverlap(this, propertyList.getFObj().getName(),
-                                                i, fo.getLocator());
+
+            // only check whether the column-number is occupied in case it was
+            // specified on a fo:table-cell or fo:table-column
+            int foId = propertyList.getFObj().getNameId();
+            if (foId == FO_TABLE_COLUMN || foId == FO_TABLE_CELL) {
+                ColumnNumberManagerHolder parent
+                        = (ColumnNumberManagerHolder) propertyList.getParentFObj();
+                ColumnNumberManager columnIndexManager = parent.getColumnNumberManager();
+                int lastIndex = columnIndex - 1 + colSpan;
+                for (int i = columnIndex; i <= lastIndex; ++i) {
+                    if (columnIndexManager.isColumnNumberUsed(i)) {
+                        /* if column-number is already in use by another
+                         * cell/column => error!
+                         */
+                        TableEventProducer eventProducer
+                                = TableEventProducer.Provider.get(
+                                    fo.getUserAgent().getEventBroadcaster());
+                        eventProducer.cellOverlap(
+                                this, propertyList.getFObj().getName(),
+                                i, propertyList.getFObj().getLocator());
+                    }
                 }
             }
-
             return p;
         }
-        
+
         /**
-         * If the value is not positive, return a property whose value is the next column number
-         * 
          * {@inheritDoc}
+         * If the value is not positive, return a property whose value
+         * is the next column number.
          */
-        public Property convertProperty(Property p, 
-                                        PropertyList propertyList, FObj fo) 
+        public Property convertProperty(Property p,
+                                        PropertyList propertyList, FObj fo)
                     throws PropertyException {
             if (p instanceof EnumProperty) {
                 return EnumNumber.getInstance(p);
@@ -190,11 +198,24 @@ public abstract class TableFObj extends FObj {
             Number val = p.getNumber();
             if (val != null) {
                 int i = Math.round(val.floatValue());
+                int foId = propertyList.getFObj().getNameId();
                 if (i <= 0) {
-                    ColumnNumberManagerHolder parent =
-                        (ColumnNumberManagerHolder) propertyList.getParentFObj();
-                    ColumnNumberManager columnIndexManager =  parent.getColumnNumberManager();
-                    i = columnIndexManager.getCurrentColumnNumber();
+                    if (foId == FO_TABLE_CELL || foId == FO_TABLE_COLUMN) {
+                        ColumnNumberManagerHolder parent =
+                            (ColumnNumberManagerHolder) propertyList.getParentFObj();
+                        ColumnNumberManager columnIndexManager = parent.getColumnNumberManager();
+                        i = columnIndexManager.getCurrentColumnNumber();
+                    } else {
+                        /* very exceptional case:
+                         * negative column-number specified on
+                         * a FO that is not a fo:table-cell or fo:table-column
+                         */
+                        i = 1;
+                    }
+                    TableEventProducer eventProducer =
+                        TableEventProducer.Provider.get(fo.getUserAgent().getEventBroadcaster());
+                    eventProducer.forceNextColumnNumber(this, propertyList.getFObj().getName(),
+                                                        val, i, propertyList.getFObj().getLocator());
                 }
                 return NumberProperty.getInstance(i);
             }
@@ -204,8 +225,8 @@ public abstract class TableFObj extends FObj {
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
-        super.startOfNode();
+    public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList pList) throws FOPException {
+        super.processNode(elementName, locator, attlist, pList);
         Table table = getTable();
         if (!inMarker() && !table.isSeparateBorderModel()) {
             collapsingBorderModel = CollapsingBorderModel.getBorderModelFor(table
@@ -213,15 +234,7 @@ public abstract class TableFObj extends FObj {
             setCollapsedBorders();
         }
     }
-
-    /*
-     * TODO made public so that RetrieveMarker can access it.
-     */
-    /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
-        super.endOfNode();
-    }
-
+    
     /**
      * Prepares the borders of this element if the collapsing-border model is in use.
      * Conflict resolution with parent elements is done where applicable.
@@ -236,26 +249,26 @@ public abstract class TableFObj extends FObj {
     /**
      * Creates a BorderSpecification from the border set on the given side. If no border
      * is set, a BorderSpecification with border-style none is created.
-     * 
+     *
      * @param side one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END
      */
     private void createBorder(int side) {
         BorderSpecification borderSpec = new BorderSpecification(
                 getCommonBorderPaddingBackground().getBorderInfo(side), getNameId());
         switch (side) {
-        case CommonBorderPaddingBackground.BEFORE:
-            borderBefore = new ConditionalBorder(borderSpec, collapsingBorderModel);
-            break;
-        case CommonBorderPaddingBackground.AFTER:
-            borderAfter = new ConditionalBorder(borderSpec, collapsingBorderModel);
-            break;
-        case CommonBorderPaddingBackground.START:
-            borderStart = borderSpec;
-            break;
-        case CommonBorderPaddingBackground.END:
-            borderEnd = borderSpec;
-            break;
-        default: assert false;
+            case CommonBorderPaddingBackground.BEFORE:
+                borderBefore = new ConditionalBorder(borderSpec, collapsingBorderModel);
+                break;
+            case CommonBorderPaddingBackground.AFTER:
+                borderAfter = new ConditionalBorder(borderSpec, collapsingBorderModel);
+                break;
+            case CommonBorderPaddingBackground.START:
+                borderStart = borderSpec;
+                break;
+            case CommonBorderPaddingBackground.END:
+                borderEnd = borderSpec;
+                break;
+            default: assert false;
         }
     }
 }

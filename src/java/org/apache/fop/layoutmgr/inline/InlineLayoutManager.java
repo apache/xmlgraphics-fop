@@ -56,6 +56,7 @@ import org.apache.fop.layoutmgr.SpaceSpecifier;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for objects which stack children in the inline direction,
@@ -233,14 +234,14 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         LayoutManager curLM;
 
         // the list returned by child LM
-        LinkedList returnedList;
+        List returnedList;
 
         // the list which will be returned to the parent LM
-        LinkedList returnList = new LinkedList();
+        List returnList = new LinkedList();
         KnuthSequence lastSequence = null;
 
         SpaceSpecifier leadingSpace = context.getLeadingSpace();
@@ -312,11 +313,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             
             // get KnuthElements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
-            if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+            if (returnList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                 childLC.clearKeepWithPreviousPending();
             }
             if (returnedList == null
-                    || returnedList.size() == 0) {
+                    || returnedList.isEmpty()) {
                 // curLM returned null or an empty list, because it finished;
                 // just iterate once more to see if there is another child
                 continue;
@@ -335,7 +336,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     returnedList.remove(0);
                 }
                 // add border and padding to the first complete sequence of this LM
-                if (!borderAdded && returnedList.size() != 0) {
+                if (!borderAdded && !returnedList.isEmpty()) {
                     addKnuthElementsForBorderPaddingStart((KnuthSequence) returnedList.get(0));
                     borderAdded = true;
                 }
@@ -367,7 +368,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
                 childLC.clearKeepsPending();
             }
-            lastSequence = (KnuthSequence) returnList.getLast();
+            lastSequence = (KnuthSequence) ListUtil.getLast(returnList);
             lastChildLM = curLM;
         }
         
@@ -378,7 +379,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         setFinished(true);
         log.trace(trace);
         
-        if (returnList.size() == 0) {
+        if (returnList.isEmpty()) {
             /*
              * if the FO itself is empty, but has an id specified 
              * or associated fo:markers, then we still need a dummy
@@ -395,7 +396,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             }
         }
         
-        return returnList.size() == 0 ? null : returnList;
+        return returnList.isEmpty() ? null : returnList;
     }
 
     /**
@@ -432,7 +433,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // set in the layout context, it must be also set in the
         // layout context given to lastLM, but must be cleared in the
         // layout context given to the other LMs.
-        LinkedList positionList = new LinkedList();
+        List positionList = new LinkedList();
         NonLeafPosition pos;
         LayoutManager lastLM = null;// last child LM in this iterator
         Position lastPos = null;
@@ -533,8 +534,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
-        LinkedList returnedList = new LinkedList();
+    public List getChangedKnuthElements(List oldList, int alignment) {
+        List returnedList = new LinkedList();
         addKnuthElementsForBorderPaddingStart(returnedList);
         returnedList.addAll(super.getChangedKnuthElements(oldList, alignment));
         addKnuthElementsForBorderPaddingEnd(returnedList);

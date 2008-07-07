@@ -19,9 +19,6 @@
 
 package org.apache.fop.fo;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -43,6 +40,9 @@ import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableFooter;
+import org.apache.fop.fo.flow.table.TableHeader;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
@@ -75,27 +75,6 @@ public abstract class FOEventHandler {
     protected FontInfo fontInfo;
 
     /**
-     * The current set of id's in the FO tree.
-     * This is used so we know if the FO tree contains duplicates.
-     */
-    private Set idReferences = new HashSet();
-    
-    /**
-     * The property list maker.
-     */
-    protected PropertyListMaker propertyListMaker;
-
-    /**
-     * The XMLWhitespaceHandler for this tree
-     */
-    protected XMLWhiteSpaceHandler whiteSpaceHandler = new XMLWhiteSpaceHandler();
-    
-    /**
-     * Indicates whether processing descendants of a marker
-     */
-    private boolean inMarker = false;
-    
-    /**
      * Main constructor
      * @param foUserAgent the apps.FOUserAgent instance for this process
      */
@@ -103,14 +82,6 @@ public abstract class FOEventHandler {
         this.foUserAgent = foUserAgent;
         this.fontInfo = new FontInfo();
         this.fontInfo.setEventListener(new FontEventAdapter(foUserAgent.getEventBroadcaster()));
-    }
-
-    /**
-     * Retuns the set of ID references.
-     * @return the ID references
-     */
-    public Set getIDReferences() {
-        return idReferences;
     }
 
     /**
@@ -129,54 +100,6 @@ public abstract class FOEventHandler {
         return this.fontInfo;
     }
 
-    /**
-     * Return the propertyListMaker.
-     * 
-     * @return the currently active {@link PropertyListMaker}
-     */
-    public PropertyListMaker getPropertyListMaker() {
-        return propertyListMaker;
-    }
-     
-    /**
-     * Set a new propertyListMaker.
-     * 
-     * @param propertyListMaker the new {@link PropertyListMaker} to use
-     */
-    public void setPropertyListMaker(PropertyListMaker propertyListMaker) {
-        this.propertyListMaker = propertyListMaker;
-    }
-    
-    /**
-     * Return the XMLWhiteSpaceHandler
-     * @return the whiteSpaceHandler
-     */
-    public XMLWhiteSpaceHandler getXMLWhiteSpaceHandler() {
-        return whiteSpaceHandler;
-    }
-
-    /**
-     * Switch to or from marker context
-     * (used by FOTreeBuilder when processing
-     *  a marker)
-     * 
-     * @param inMarker  true if a marker is being processed; 
-     *                  false otherwise
-     *
-     */
-    protected void switchMarkerContext(boolean inMarker) {
-        this.inMarker = inMarker;
-    }
-    
-    /**
-     * Check whether in marker context
-     * 
-     * @return true if a marker is being processed
-     */
-    protected boolean inMarker() {
-        return this.inMarker;
-    }
-    
     /**
      * This method is called to indicate the start of a new document run.
      * @throws SAXException In case of a problem
@@ -337,44 +260,44 @@ public abstract class FOEventHandler {
 
     /**
      *
-     * @param th TableBody that is starting;
+     * @param header TableHeader that is starting;
      */
-    public void startHeader(TableBody th) {
+    public void startHeader(TableHeader header) {
     }
 
     /**
      *
-     * @param th TableBody that is ending.
+     * @param header TableHeader that is ending.
      */
-    public void endHeader(TableBody th) {
+    public void endHeader(TableHeader header) {
     }
 
     /**
      *
-     * @param tf TableFooter that is starting.
+     * @param footer TableFooter that is starting.
      */
-    public void startFooter(TableBody tf) {
+    public void startFooter(TableFooter footer) {
     }
 
     /**
      *
-     * @param tf TableFooter that is ending.
+     * @param footer TableFooter that is ending.
      */
-    public void endFooter(TableBody tf) {
+    public void endFooter(TableFooter footer) {
     }
 
     /**
      *
-     * @param tb TableBody that is starting.
+     * @param body TableBody that is starting.
      */
-    public void startBody(TableBody tb) {
+    public void startBody(TableBody body) {
     }
 
     /**
      *
-     * @param tb TableBody that is ending.
+     * @param body TableBody that is ending.
      */
-    public void endBody(TableBody tb) {
+    public void endBody(TableBody body) {
     }
 
     /**
@@ -566,7 +489,7 @@ public abstract class FOEventHandler {
      * @param start Offset for characters to process.
      * @param length Portion of array to process.
      */
-    public void characters(char data[], int start, int length) {
+    public void characters(char[] data, int start, int length) {
     }
 
     /**

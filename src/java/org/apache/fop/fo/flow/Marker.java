@@ -26,8 +26,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTreeBuilderContext;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
@@ -84,10 +84,10 @@ public class Marker extends FObjMixed {
     
     /** {@inheritDoc} */
     protected void startOfNode() {
-        FOEventHandler foEventHandler = getFOEventHandler(); 
+        FOTreeBuilderContext builderContext = getBuilderContext(); 
         // Push a new property list maker which will make MarkerPropertyLists.
-        savePropertyListMaker = foEventHandler.getPropertyListMaker();
-        foEventHandler.setPropertyListMaker(new PropertyListMaker() {
+        savePropertyListMaker = builderContext.getPropertyListMaker();
+        builderContext.setPropertyListMaker(new PropertyListMaker() {
             public PropertyList make(FObj fobj, PropertyList parentPropertyList) {
                 PropertyList pList = new MarkerPropertyList(fobj, parentPropertyList);
                 descendantPropertyLists.put(fobj, pList);
@@ -100,7 +100,7 @@ public class Marker extends FObjMixed {
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         // Pop the MarkerPropertyList maker.
-        getFOEventHandler().setPropertyListMaker(savePropertyListMaker);
+        getBuilderContext().setPropertyListMaker(savePropertyListMaker);
         savePropertyListMaker = null;
     }
 

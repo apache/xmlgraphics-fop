@@ -22,7 +22,7 @@ package org.apache.fop.fo.extensions.xmp;
 import java.io.Serializable;
 
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.util.XMLizable;
+import org.apache.xmlgraphics.util.XMLizable;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.XMPConstants;
 import org.xml.sax.ContentHandler;

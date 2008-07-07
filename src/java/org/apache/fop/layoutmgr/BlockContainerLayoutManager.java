@@ -39,6 +39,7 @@ import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for a block-container FO.
@@ -189,7 +190,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
     
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         resetSpaces();
         if (isAbsoluteOrFixed()) {
             return getNextKnuthElementsAbsolute(context, alignment);
@@ -247,9 +248,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         
         MinOptMax stackLimit = new MinOptMax(relDims.bpd);
 
-        LinkedList returnedList;
-        LinkedList contentList = new LinkedList();
-        LinkedList returnList = new LinkedList();
+        List returnedList;
+        List contentList = new LinkedList();
+        List returnList = new LinkedList();
         
         if (!breakBeforeServed) {
             try {
@@ -285,13 +286,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);
-                if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+                if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                     //Propagate keep-with-previous up from the first child
                     context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
                     childLC.clearKeepWithPreviousPending();
                 }
                 if (returnedList.size() == 1
-                        && ((ListElement)returnedList.getFirst()).isForcedBreak()) {
+                        && ((ListElement)returnedList.get(0)).isForcedBreak()) {
                     // a descendant of this block has break-before
                     /*
                     if (returnList.size() == 0) {
@@ -317,11 +318,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                         addInBetweenBreak(contentList, context, childLC);
                     }
                     contentList.addAll(returnedList);
-                    if (returnedList.size() == 0) {
+                    if (returnedList.isEmpty()) {
                         //Avoid NoSuchElementException below (happens with empty blocks)
                         continue;
                     }
-                    if (((ListElement)returnedList.getLast()).isForcedBreak()) {
+                    if (((ListElement) ListUtil.getLast(returnedList))
+                            .isForcedBreak()) {
                         // a descendant of this block has break-after
                         if (curLM.isFinished()) {
                             // there is no other content in this block;
@@ -392,7 +394,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
     
-    private LinkedList getNextKnuthElementsAbsolute(LayoutContext context, int alignment) {
+    private List getNextKnuthElementsAbsolute(LayoutContext context, int alignment) {
         autoHeight = false;
 
         boolean switchedProgressionDirection
@@ -515,7 +517,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             }
             updateRelDims(0, 0, false);
         }
-        LinkedList returnList = new LinkedList();
+        List returnList = new LinkedList();
         if (!breaker.isEmpty()) {
             Position bcPosition = new BlockContainerPosition(this, breaker);
             returnList.add(new KnuthBox(0, notifyPos(bcPosition), false));
@@ -622,9 +624,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             return lc;
         }
         
-        protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        protected List getNextKnuthElements(LayoutContext context, int alignment) {
             LayoutManager curLM; // currently active LM
-            LinkedList returnList = new LinkedList();
+            List returnList = new LinkedList();
 
             while ((curLM = getChildLM()) != null) {
                 LayoutContext childLC = new LayoutContext(0);
@@ -632,7 +634,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 childLC.setRefIPD(context.getRefIPD());
                 childLC.setWritingMode(getBlockContainerFO().getWritingMode());
                 
-                LinkedList returnedList = null;
+                List returnedList = null;
                 if (!curLM.isFinished()) {
                     returnedList = curLM.getNextKnuthElements(childLC, alignment);
                 }
@@ -723,7 +725,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
-        LinkedList positionList = new LinkedList();
+        List positionList = new LinkedList();
         Position pos;
         boolean bSpaceBefore = false;
         boolean bSpaceAfter = false;
@@ -753,7 +755,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     // pos was created by this BCLM and was inside an element
                     // representing space before or after
                     // this means the space was not discarded
-                    if (positionList.size() == 0 && bcpos == null) {
+                    if (positionList.isEmpty() && bcpos == null) {
                         // pos was in the element representing space-before
                         bSpaceBefore = true;
                     } else {
@@ -798,10 +800,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 //    // the last item inside positionList is a Position;
                 //    // this means that the paragraph has been split
                 //    // between consecutive pages
-                LinkedList splitList = new LinkedList();
+                List splitList = new LinkedList();
                 int splitLength = 0;
-                int iFirst = ((MappingPosition) positionList.getFirst()).getFirstIndex();
-                int iLast = ((MappingPosition) positionList.getLast()).getLastIndex();
+                int iFirst = ((MappingPosition) positionList.get(0))
+                        .getFirstIndex();
+                int iLast = ((MappingPosition) ListUtil.getLast(positionList))
+                        .getLastIndex();
                 // copy from storedList to splitList all the elements from
                 // iFirst to iLast
                 ListIterator storedListIterator = storedList.listIterator(iFirst);

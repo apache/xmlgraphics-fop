@@ -21,7 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.Viewport;
@@ -39,16 +39,14 @@ import org.apache.fop.layoutmgr.TraitSetter;
  */
 public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManager {
     
-    /** The graphics object this LM deals with */
-    protected AbstractGraphics fobj;
-    
     /**
-     * Constructor
-     * @param node the formatting object that creates this area
+     * Constructor.
+     * 
+     * @param node
+     *            the formatting object that creates this area
      */
     public AbstractGraphicsLayoutManager(AbstractGraphics node) {
         super(node);
-        fobj = node;
     }
 
     /**
@@ -57,6 +55,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
      * @return the viewport inline area
      */
     private Viewport getInlineArea() {
+        final AbstractGraphics fobj = (AbstractGraphics)this.fobj;
         Dimension intrinsicSize = new Dimension(
                 fobj.getIntrinsicWidth(),
                 fobj.getIntrinsicHeight());
@@ -104,7 +103,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     }
     
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context,
+    public List getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         Viewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
@@ -113,6 +112,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     
     /** {@inheritDoc} */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
+        final AbstractGraphics fobj = (AbstractGraphics)this.fobj;
         return new AlignmentContext(
                 get(context).getAllocBPD()
                 , fobj.getAlignmentAdjust()
@@ -128,7 +128,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
      * the viewport.
      * @return the appropriate area
      */
-    abstract Area getChildArea();
+    protected abstract Area getChildArea();
     
     // --------- Property Resolution related functions --------- //
     
@@ -138,31 +138,14 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     public int getBaseLength(int lengthBase, FObj fobj) {
         switch (lengthBase) {
         case LengthBase.IMAGE_INTRINSIC_WIDTH:
-            return getIntrinsicWidth();
+            return ((AbstractGraphics)fobj).getIntrinsicWidth();
         case LengthBase.IMAGE_INTRINSIC_HEIGHT:
-            return getIntrinsicHeight();
+            return ((AbstractGraphics)fobj).getIntrinsicHeight();
         case LengthBase.ALIGNMENT_ADJUST:
             return get(null).getBPD();
         default: // Delegate to super class
             return super.getBaseLength(lengthBase, fobj);
         }
     }
-
-    /**
-     * Returns the intrinsic width of the e-g.
-     * @return the width of the element
-     */
-    protected int getIntrinsicWidth() {
-        return fobj.getIntrinsicWidth();
-    }
-
-    /**
-     * Returns the intrinsic height of the e-g.
-     * @return the height of the element
-     */
-    protected int getIntrinsicHeight() {
-        return fobj.getIntrinsicHeight();
-    }
-
 }
 

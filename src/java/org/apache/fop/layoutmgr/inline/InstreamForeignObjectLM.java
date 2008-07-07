@@ -29,20 +29,19 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
  */
 public class InstreamForeignObjectLM extends AbstractGraphicsLayoutManager {
     
-    private InstreamForeignObject fobj;
-    
     /**
-     * Constructor
-     * @param node the formatting object that creates this area
+     * Constructor.
+     * 
+     * @param node
+     *            the formatting object that creates this area
      */
     public InstreamForeignObjectLM(InstreamForeignObject node) {
         super(node);
-        fobj = node;
     }
 
     /** {@inheritDoc} */
     protected Area getChildArea() {
-        XMLObj child = (XMLObj) fobj.getChildXMLObj();
+        XMLObj child = ((InstreamForeignObject) fobj).getChildXMLObj();
 
         org.w3c.dom.Document doc = child.getDOMDocument();
         String ns = child.getNamespaceURI();

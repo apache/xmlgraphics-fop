@@ -20,10 +20,10 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
@@ -31,7 +31,7 @@ import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableRow;
@@ -52,6 +52,7 @@ import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for a table-cell FO.
@@ -126,16 +127,16 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     /**
      * {@inheritDoc}
      */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax stackLimit = new MinOptMax(context.getStackLimitBP());
 
         referenceIPD = context.getRefIPD();
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
 
-        LinkedList returnedList;
-        LinkedList contentList = new LinkedList();
-        LinkedList returnList = new LinkedList();
+        List returnedList;
+        List contentList = new LinkedList();
+        List returnList = new LinkedList();
 
         BlockLevelLayoutManager curLM; // currently active LM
         BlockLevelLayoutManager prevLM = null; // previously active LM
@@ -151,7 +152,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             if (childLC.isKeepWithNextPending()) {
                 log.debug("child LM signals pending keep with next");
             }
-            if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+            if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                 primaryGridUnit.setKeepWithPreviousStrength(childLC.getKeepWithPreviousPending());
                 childLC.clearKeepWithPreviousPending();
             }
@@ -162,7 +163,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 addInBetweenBreak(contentList, context, childLC);
             }
             contentList.addAll(returnedList);
-            if (returnedList.size() == 0) {
+            if (returnedList.isEmpty()) {
                 //Avoid NoSuchElementException below (happens with empty blocks)
                 continue;
             }
@@ -176,7 +177,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         primaryGridUnit.setKeepWithNextStrength(context.getKeepWithNextPending());
 
         returnedList = new LinkedList();
-        if (contentList.size() > 0) {
+        if (!contentList.isEmpty()) {
             wrapPositionElements(contentList, returnList);
         } else {
             // In relaxed validation mode, table-cells having no children are authorised.
@@ -187,13 +188,15 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         }
         //Space resolution
         SpaceResolver.resolveElementList(returnList);
-        if (((KnuthElement) returnList.getFirst()).isForcedBreak()) {
-            primaryGridUnit.setBreakBefore(((KnuthPenalty) returnList.getFirst()).getBreakClass());
-            returnList.removeFirst();
+        if (((KnuthElement) returnList.get(0)).isForcedBreak()) {
+            primaryGridUnit.setBreakBefore(((KnuthPenalty) returnList.get(0)).getBreakClass());
+            returnList.remove(0);
             assert !returnList.isEmpty();
         }
-        if (((KnuthElement) returnList.getLast()).isForcedBreak()) {
-            KnuthPenalty p = (KnuthPenalty) returnList.getLast();
+        final KnuthElement lastItem = (KnuthElement) ListUtil
+                .getLast(returnList);
+        if (((KnuthElement) lastItem).isForcedBreak()) {
+            KnuthPenalty p = (KnuthPenalty) lastItem;
             primaryGridUnit.setBreakAfter(p.getBreakClass());
             p.setP(0);
         }
@@ -436,7 +439,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                     -startIndent);
         }
 
-        TableBody body = primaryGridUnit.getTableBody();
+        TablePart body = primaryGridUnit.getTablePart();
         if (body.getCommonBorderPaddingBackground().hasBackground()) {
             painter.registerPartBackgroundArea(
                     getBackgroundArea(paddingRectBPD, borderBeforeWidth));

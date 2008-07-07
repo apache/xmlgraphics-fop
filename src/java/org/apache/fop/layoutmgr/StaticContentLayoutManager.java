@@ -38,6 +38,7 @@ import org.apache.fop.layoutmgr.PageBreakingAlgorithm.PageBreakingLayoutListener
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.TextLayoutManager;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -87,7 +88,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         if (true) {
             throw new UnsupportedOperationException(
                 "Shouldn't this method be emptied because it's never called at all?");
@@ -102,8 +103,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         BlockLevelLayoutManager curLM;
         BlockLevelLayoutManager prevLM = null;
         MinOptMax stackSize = new MinOptMax();
-        LinkedList returnedList;
-        LinkedList returnList = new LinkedList();
+        List returnedList;
+        List returnList = new LinkedList();
 
         while ((curLM = ((BlockLevelLayoutManager) getChildLM())) != null) {
             if (curLM instanceof InlineLevelLayoutManager) {
@@ -125,7 +126,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             //    + returnedList.size());
 
             // "wrap" the Position inside each element
-            LinkedList tempList = returnedList;
+            List tempList = returnedList;
             KnuthElement tempElement;
             returnedList = new LinkedList();
             ListIterator listIter = tempList.listIterator();
@@ -136,13 +137,13 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             }
 
             if (returnedList.size() == 1
-                && ((KnuthElement)returnedList.getFirst()).isPenalty()
-                && ((KnuthPenalty)returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                && ((KnuthElement)returnedList.get(0)).isPenalty()
+                && ((KnuthPenalty)returnedList.get(0)).getP() == -KnuthElement.INFINITE) {
                 // a descendant of this flow has break-before
                 returnList.addAll(returnedList);
                 return returnList;
             } else {
-                if (returnList.size() > 0) {
+                if (!returnList.isEmpty()) {
                     // there is a block before this one
                     if (prevLM.mustKeepWithNext()
                         || curLM.mustKeepWithPrevious()) {
@@ -150,16 +151,18 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                         returnList.add(new KnuthPenalty(0, 
                                 KnuthElement.INFINITE, false, 
                                 new Position(this), false));
-                    } else if (!((KnuthElement) returnList.getLast()).isGlue()) {
+                    } else if (!((KnuthElement) ListUtil.getLast(returnList))
+                            .isGlue()) {
                         // add a null penalty to allow a break between blocks
                         returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                     }
                 }
-/*LF*/          if (returnedList.size() > 0) { // controllare!
+/*LF*/          if (!returnedList.isEmpty()) { // controllare!
                     returnList.addAll(returnedList);
-                    if (((KnuthElement)returnedList.getLast()).isPenalty()
-                            && ((KnuthPenalty)returnedList.getLast()).getP() 
-                                    == -KnuthElement.INFINITE) {
+                    final KnuthElement last = (KnuthElement) ListUtil
+                            .getLast(returnedList);
+                    if (last.isPenalty()
+                            && ((KnuthPenalty) last).getP() == -KnuthElement.INFINITE) {
                         // a descendant of this flow has break-after
 /*LF*/                  //log.debug("FLM - break after!!");
                         return returnList;
@@ -171,10 +174,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
         setFinished(true);
 
-        if (returnList.size() > 0) {
-            return returnList;
-        } else {
+        if (returnList.isEmpty()) {
             return null;
+        } else {
+            return returnList;
         }
     }
     
@@ -325,9 +328,9 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             return lc;
         }
         
-        protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        protected List getNextKnuthElements(LayoutContext context, int alignment) {
             LayoutManager curLM; // currently active LM
-            LinkedList returnList = new LinkedList();
+            List returnList = new LinkedList();
 
             while ((curLM = getChildLM()) != null) {
                 LayoutContext childLC = new LayoutContext(0);
@@ -335,7 +338,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 childLC.setRefIPD(context.getRefIPD());
                 childLC.setWritingMode(context.getWritingMode());
 
-                LinkedList returnedList = null;
+                List returnedList = null;
                 //The following is a HACK! Ignore leading and trailing white space 
                 boolean ignore = curLM instanceof TextLayoutManager;
                 if (!curLM.isFinished()) {
@@ -364,6 +367,12 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
                 BlockSequence originalList, BlockSequence effectiveList) {
+            if (partCount > 1) {
+                PageBreakPosition pos = (PageBreakPosition)alg.getPageBreaks().getFirst();
+                int firstPartLength = ElementListUtils.calcContentLength(effectiveList,
+                        effectiveList.ignoreAtStart, pos.getLeafPos());
+                overflow += alg.totalWidth - firstPartLength;        
+            }         
             //Rendering all parts (not just the first) at once for the case where the parts that 
             //overflow should be visible.
             alg.removeAllPageBreaks();

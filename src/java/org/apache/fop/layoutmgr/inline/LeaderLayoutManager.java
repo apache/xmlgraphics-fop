@@ -52,7 +52,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private Leader fobj;
     private Font font = null;
     
-    private LinkedList contentList = null;
+    private List contentList = null;
     private ContentLayoutManager clm = null;
     
     private int contentAreaIPD = 0;
@@ -230,7 +230,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context,
+    public List getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         MinOptMax ipd;
         curArea = get(context);
@@ -305,13 +305,13 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public LinkedList getChangedKnuthElements(List oldList,
+    public List getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {
             return null;
         }
 
-        LinkedList returnList = new LinkedList();
+        List returnList = new LinkedList();
 
         addKnuthElementsForBorderPaddingStart(returnList);
         

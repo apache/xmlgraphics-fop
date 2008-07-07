@@ -27,8 +27,6 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
@@ -131,7 +129,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
 
         stackSize = 0;
 
-        LinkedList contentList =
+        List contentList =
             getNextKnuthElements(childLC, Constants.EN_START);
         ListIterator contentIter = contentList.listIterator();
         while (contentIter.hasNext()) {
@@ -254,9 +252,9 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        LinkedList contentList = new LinkedList();
-        LinkedList returnedList;
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
+        List contentList = new LinkedList();
+        List returnedList;
 
         childLM.initialize();
         while (!childLM.isFinished()) {
@@ -267,7 +265,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
                 // move elements to contentList, and accumulate their size
                KnuthElement contentElement;
                while (returnedList.size() > 0) {
-                    Object obj = returnedList.removeFirst();
+                    Object obj = returnedList.remove(0);
                     if (obj instanceof KnuthSequence) {
                         KnuthSequence ks = (KnuthSequence)obj;
                         for (Iterator it = ks.iterator(); it.hasNext(); ) {
@@ -312,7 +310,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         return false;
     }
 
-    public LinkedList getChangedKnuthElements(List oldList,
+    public List getChangedKnuthElements(List oldList,
                                               /*int flaggedPenalty,*/
                                               int alignment) {
         return null;

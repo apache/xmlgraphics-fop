@@ -37,6 +37,8 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.NormalFlow;
+import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
@@ -95,19 +97,20 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      */
     protected void handleRegionTraits(RegionViewport region) {
         Rectangle2D viewArea = region.getViewArea();
+        RegionReference referenceArea = region.getRegionReference();
         float startx = (float)(viewArea.getX() / 1000f);
         float starty = (float)(viewArea.getY() / 1000f);
         float width = (float)(viewArea.getWidth() / 1000f);
         float height = (float)(viewArea.getHeight() / 1000f);
 
-        if (region.getRegionReference().getRegionClass() == FO_REGION_BODY) {
-            currentBPPosition = region.getBorderAndPaddingWidthBefore();
-            currentIPPosition = region.getBorderAndPaddingWidthStart();
-        }
-        drawBackAndBorders(region, startx, starty, width, height);
+        // adjust the current position according to region borders and padding
+        currentBPPosition = referenceArea.getBorderAndPaddingWidthBefore();
+        currentIPPosition = referenceArea.getBorderAndPaddingWidthStart();
+        // draw background (traits are in the RegionViewport)
+        // and borders (traits are in the RegionReference)
+        drawBackAndBorders(region, referenceArea, startx, starty, width, height);
     }
 
-    
     /**
      * Draw the background and borders.
      * This draws the background and border traits for an area given
@@ -122,15 +125,57 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     protected void drawBackAndBorders(Area area,
                     float startx, float starty,
                     float width, float height) {
+        drawBackAndBorders(area, area, startx, starty, width, height);
+    }
+
+    /**
+     * Draw the background and borders.
+     * This draws the background and border traits for an area given
+     * the position.
+     *
+     * @param backgroundArea the area to get the background traits from
+     * @param borderArea the area to get the border traits from
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     */
+    protected void drawBackAndBorders(Area backgroundArea, Area borderArea,
+                    float startx, float starty,
+                    float width, float height) {
         // draw background then border
 
-        BorderProps bpsBefore = (BorderProps)area.getTrait(Trait.BORDER_BEFORE);
-        BorderProps bpsAfter = (BorderProps)area.getTrait(Trait.BORDER_AFTER);
-        BorderProps bpsStart = (BorderProps)area.getTrait(Trait.BORDER_START);
-        BorderProps bpsEnd = (BorderProps)area.getTrait(Trait.BORDER_END);
+        BorderProps bpsBefore = (BorderProps)borderArea.getTrait(Trait.BORDER_BEFORE);
+        BorderProps bpsAfter = (BorderProps)borderArea.getTrait(Trait.BORDER_AFTER);
+        BorderProps bpsStart = (BorderProps)borderArea.getTrait(Trait.BORDER_START);
+        BorderProps bpsEnd = (BorderProps)borderArea.getTrait(Trait.BORDER_END);
 
-        Trait.Background back;
-        back = (Trait.Background)area.getTrait(Trait.BACKGROUND);
+        drawBackground(startx, starty, width, height,
+                (Trait.Background) backgroundArea.getTrait(Trait.BACKGROUND), 
+                bpsBefore, bpsAfter, bpsStart, bpsEnd);
+        drawBorders(startx, starty, width, height,
+                bpsBefore, bpsAfter, bpsStart, bpsEnd);        
+    }
+
+    /**
+     * Draw the background.
+     * This draws the background given the position and the traits.
+     *
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     * @param back the background traits
+     * @param bpsBefore the border-before traits
+     * @param bpsAfter the border-after traits
+     * @param bpsStart the border-start traits
+     * @param bpsEnd the border-end traits
+     */
+    protected void drawBackground(float startx, float starty,
+                    float width, float height,
+                    Trait.Background back,
+                    BorderProps bpsBefore, BorderProps bpsAfter,
+                    BorderProps bpsStart, BorderProps bpsEnd) {
         if (back != null) {
             endTextObject();
 
@@ -201,7 +246,25 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 restoreGraphicsState();
             }
         }
+    }
 
+    /**
+     * Draw the borders.
+     * This draws the border traits given the position and the traits.
+     *
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     * @param bpsBefore the border-before traits
+     * @param bpsAfter the border-after traits
+     * @param bpsStart the border-start traits
+     * @param bpsEnd the border-end traits
+     */
+    protected void drawBorders(float startx, float starty,
+                    float width, float height,
+                    BorderProps bpsBefore, BorderProps bpsAfter,
+                    BorderProps bpsStart, BorderProps bpsEnd) {
         Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
         drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
     }
@@ -521,6 +584,69 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         }
     }
 
+    /** {@inheritDoc} */
+    protected void renderReferenceArea(Block block) {
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        at.translate(block.getXOffset(), block.getYOffset());
+        at.translate(0, block.getSpaceBefore());
+        
+        if (!at.isIdentity()) {
+            saveGraphicsState();
+            concatenateTransformationMatrix(mptToPt(at));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        handleBlockTraits(block);
+
+        List children = block.getChildAreas();
+        if (children != null) {
+            renderBlocks(block, children);
+        }
+
+        if (!at.isIdentity()) {
+            restoreGraphicsState();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
+    /** {@inheritDoc} */
+    protected void renderFlow(NormalFlow flow) {
+        // save position and offset
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        //Establish a new coordinate system
+        AffineTransform at = new AffineTransform();
+        at.translate(currentIPPosition, currentBPPosition);
+        
+        if (!at.isIdentity()) {
+            saveGraphicsState();
+            concatenateTransformationMatrix(mptToPt(at));
+        }
+
+        currentIPPosition = 0;
+        currentBPPosition = 0;
+        super.renderFlow(flow);
+        
+        if (!at.isIdentity()) {
+            restoreGraphicsState();
+        }
+        
+        // stacked and relative blocks effect stacking
+        currentIPPosition = saveIP;
+        currentBPPosition = saveBP;
+    }
+    
     /**
      * Concatenates the current transformation matrix with the given one, therefore establishing
      * a new coordinate system.

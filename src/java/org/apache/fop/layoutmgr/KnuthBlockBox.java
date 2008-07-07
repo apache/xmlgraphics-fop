@@ -19,9 +19,10 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.traits.MinOptMax;
-
 import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * Knuth box used to represent a line in block-progression-dimension (i.e. the width is its height).
@@ -34,9 +35,9 @@ public class KnuthBlockBox extends KnuthBox {
      * it isn't possible to get the opt value stored in a MinOptMax object.
      */
     private int bpd;
-    private LinkedList footnoteList;
+    private List footnoteList;
     /** List of Knuth elements. This is a list of LinkedList elements. */
-    private LinkedList elementLists = null;
+    private List elementLists = null;
 
     /**
      * Creates a new box.
@@ -61,7 +62,7 @@ public class KnuthBlockBox extends KnuthBox {
      * @param pos the Position stored in this box
      * @param bAux is this box auxiliary?
      */
-    public KnuthBlockBox(int w, LinkedList list, Position pos, boolean bAux) {
+    public KnuthBlockBox(int w, List list, Position pos, boolean bAux) {
         super(w, pos, bAux);
         ipdRange = new MinOptMax(0);
         bpd = 0;
@@ -71,7 +72,7 @@ public class KnuthBlockBox extends KnuthBox {
     /**
      * @return the LMs for the footnotes cited in this box.
      */
-    public LinkedList getFootnoteBodyLMs() {
+    public List getFootnoteBodyLMs() {
         return footnoteList;
     }
 
@@ -86,7 +87,7 @@ public class KnuthBlockBox extends KnuthBox {
      * Adds the given list of Knuth elements to this box' list of elements.
      * @param list elements corresponding to a footnote body
      */
-    public void addElementList(LinkedList list) {
+    public void addElementList(List list) {
         if (elementLists == null) {
             elementLists = new LinkedList();
         }
@@ -98,7 +99,7 @@ public class KnuthBlockBox extends KnuthBox {
      * @return a list of KnuthElement sequences corresponding to footnotes cited in this
      * box
      */
-    public LinkedList getElementLists() {
+    public List getElementLists() {
         return elementLists;
     }
 

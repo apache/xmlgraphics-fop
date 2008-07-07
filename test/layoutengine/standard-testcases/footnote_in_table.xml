@@ -69,5 +69,7 @@
   </fo>
   <checks>
     <eval expected="2" xpath="count(//footnote/block)"/>
+    <eval expected="1) The footnote from the normal block." xpath="//footnote/block[1]"/>
+    <eval expected="2) The footnote from the table." xpath="//footnote/block[2]"/>
   </checks>
 </testcase>

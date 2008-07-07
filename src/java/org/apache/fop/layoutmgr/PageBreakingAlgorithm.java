@@ -21,11 +21,11 @@ package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
@@ -230,7 +230,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param elementLists list of KnuthElement sequences corresponding to the footnotes
      * bodies
      */
-    private void handleFootnotes(LinkedList elementLists) {
+    private void handleFootnotes(List elementLists) {
         // initialization
         if (!footnotesPending) {
             footnotesPending = true;
@@ -286,7 +286,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return returnValue;
     }
 
-    private void resetFootnotes(LinkedList elementLists) {
+    private void resetFootnotes(List elementLists) {
         for (int i = 0; i < elementLists.size(); i++) {
             /*LinkedList removedList = (LinkedList)*/footnotesList.remove(footnotesList.size() - 1);
             lengthList.remove(lengthList.size() - 1);
@@ -325,7 +325,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 // this page contains some footnote citations
                 // add the footnote separator width
                 actualWidth += footnoteSeparatorLength.opt;
-                if (actualWidth + allFootnotes <= getLineWidth()) {
+                if (actualWidth + allFootnotes <= getLineWidth(activeNode.line)) {
                     // there is enough space to insert all footnotes:
                     // add the whole allFootnotes length
                     actualWidth += allFootnotes;
@@ -337,7 +337,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                 = checkCanDeferOldFootnotes(pageNode, elementIndex))
                             || newFootnotes)
                            && (footnoteSplit = getFootnoteSplit(pageNode,
-                                   getLineWidth() - actualWidth, canDeferOldFootnotes)) > 0) {
+                                   getLineWidth(activeNode.line) - actualWidth, canDeferOldFootnotes)) > 0) {
                     // it is allowed to break or even defer footnotes if either:
                     //  - there are new footnotes in the last piece of content, and
                     //    there is space to add at least a piece of the first one
@@ -683,7 +683,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         insertedFootnotesLength = lastNode.totalFootnotes;
         footnoteListIndex = lastNode.footnoteListIndex;
         footnoteElementIndex = lastNode.footnoteElementIndex;
-        int availableBPD = getLineWidth();
+        int availableBPD = getLineWidth(lastNode.line);
         int split = 0;
         KnuthPageNode prevNode = lastNode;
 
@@ -718,7 +718,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 removeNode(prevNode.line, prevNode);
 
                 prevNode = node;
-                availableBPD = getLineWidth();
+                availableBPD = getLineWidth(node.line);
             }
         }
         // create the last node

@@ -528,10 +528,10 @@ public class PDFDocument {
     public void setEncryption(PDFEncryptionParams params) {
         getProfile().verifyEncryptionAllowed();
         this.encryption = PDFEncryptionManager.newInstance(++this.objectcount, params);
-        ((PDFObject)this.encryption).setDocument(this);
         if (encryption != null) {
-            /**@todo this cast is ugly. PDFObject should be transformed to an interface. */
-            addTrailerObject((PDFObject)this.encryption);
+            PDFObject pdfObject = (PDFObject)encryption;
+            pdfObject.setDocument(this);
+            addTrailerObject(pdfObject);
         } else {
             log.warn(
                 "PDF encryption is unavailable. PDF will be "
