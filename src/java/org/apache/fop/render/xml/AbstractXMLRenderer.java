@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.xml;
 
@@ -185,9 +185,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
         addAttribute(name, createString(rect));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
         if (this.handler == null) {
@@ -211,9 +209,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         try {
             handler.endDocument();
@@ -241,6 +237,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
         }
     }
 
+    /** {@inheritDoc} */
     protected void handleDocumentExtensionAttachments() {
         if (extensionAttachments != null && extensionAttachments.size() > 0) {
             handleExtensionAttachments(extensionAttachments);
@@ -257,7 +254,15 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
         this.handler = handler;
     }
 
+    /**
+     * Handles a list of extension attachments
+     * @param attachments a list of extension attachments
+     */
     protected abstract void handleExtensionAttachments(List attachments);
     
+    /**
+     * Renders a bookmark tree
+     * @param odi the bookmark data
+     */
     protected abstract void renderBookmarkTree(BookmarkData odi);
 }
