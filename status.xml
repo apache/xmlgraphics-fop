@@ -53,6 +53,10 @@
   
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="LF" type="fix">
+        Fixed absolute positioning of block-containers when specified
+        using right and bottom instead of left and top.
+      </action>
       <action context="Renderers" dev="AC" type="add">
         Added PDF encryption parameter support in configuration.
       </action>
