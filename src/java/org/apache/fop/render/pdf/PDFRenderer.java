@@ -1842,5 +1842,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public void setFilterMap(Map filterMap) {
         this.filterMap = filterMap;
     }
+
+    /**
+     * Sets the encryption parameters used by the PDF renderer.
+     * @param encryptionParams the encryption parameters 
+     */
+    public void setEncryptionParams(PDFEncryptionParams encryptionParams) {
+        this.encryptionParams = encryptionParams;
+    }
 }
 

@@ -53,6 +53,9 @@
   
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AC" type="add">
+        Added PDF encryption parameter support in configuration.
+      </action>
       <action context="Layout" dev="LF" type="add">
         Allowing non-zero borders and padding on page regions when
         relaxed validation is turned on.

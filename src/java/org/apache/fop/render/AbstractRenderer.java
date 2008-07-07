@@ -54,7 +54,6 @@ import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -405,7 +404,7 @@ public abstract class AbstractRenderer
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
             for (int c = 0; c < span.getColumnCount(); c++) {
-                NormalFlow flow = (NormalFlow) span.getNormalFlow(c);
+                NormalFlow flow = span.getNormalFlow(c);
 
                 if (flow != null) {
                     currentBPPosition = saveSpanBPPos;
@@ -638,15 +637,6 @@ public abstract class AbstractRenderer
         }
     }
 
-    /**
-     * Render the given Character.
-     * @param ch the character to render
-     * @deprecated Only TextArea should be used. This method will be removed eventually.
-     */
-    protected void renderCharacter(Character ch) {
-        currentIPPosition += ch.getAllocIPD();
-    }
-
     /** 
      * Common method to render the background and borders for any inline area.
      * The all borders and padding are drawn outside the specified area.
@@ -754,6 +744,8 @@ public abstract class AbstractRenderer
             renderContainer((Container) content);
         } else if (content instanceof ForeignObject) {
             renderForeignObject((ForeignObject) content, contpos);
+        } else if (content instanceof InlineBlockParent) {
+            renderInlineBlockParent((InlineBlockParent) content);
         }
         currentIPPosition += viewport.getAllocIPD();
         currentBPPosition = saveBP;
@@ -792,7 +784,7 @@ public abstract class AbstractRenderer
      * @param pos  The target position of the foreign object
      * (todo) Make renderForeignObject() protected
      */
-    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+    protected void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         // Default: do nothing.
         // Some renderers (ex. Text) don't support foreign objects.
     }
@@ -817,8 +809,9 @@ public abstract class AbstractRenderer
                 handler.handleXML(ctx, doc, namespace);
             } catch (Exception e) {
                 // could not handle document
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        ctx.getUserAgent().getEventBroadcaster());
+                ResourceEventProducer eventProducer 
+                        = ResourceEventProducer.Provider.get(
+                            ctx.getUserAgent().getEventBroadcaster());
                 eventProducer.foreignXMLProcessingError(this, doc, namespace, e);
             }
         } else {
@@ -871,5 +864,4 @@ public abstract class AbstractRenderer
         matrix[5] = matrix[5] * 1000;
         return new AffineTransform(matrix);
     }
-    
 }
