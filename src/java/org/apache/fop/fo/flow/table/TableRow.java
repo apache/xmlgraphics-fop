@@ -78,32 +78,38 @@ public class TableRow extends TableCellContainer {
     /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator,
             Attributes attlist, PropertyList pList) throws FOPException {
-        if (!inMarker()) {
-            TableBody body = (TableBody) parent;
-            pendingSpans = body.pendingSpans;
-            columnNumberManager = body.columnNumberManager;
-        }
         super.processNode(elementName, locator, attlist, pList);
+        if (!inMarker()) {
+            TablePart part = (TablePart) parent;
+            pendingSpans = part.pendingSpans;
+            columnNumberManager = part.columnNumberManager;
+        }
     }
 
     /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         if (!inMarker()) {
             TableCell cell = (TableCell) child;
-            TableBody body = (TableBody) getParent();
-            addTableCellChild(cell, body.isFirst(this));
+            TablePart part = (TablePart) getParent();
+            addTableCellChild(cell, part.isFirst(this));
         }
         super.addChildNode(child);
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startRow(this);
     }
 
     /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endRow(this);
+    }
+
+    /** {@inheritDoc} */
+    public void finalizeNode() throws FOPException {
         if (firstChild == null) {
             missingChildElementError("(table-cell+)");
         }
@@ -111,9 +117,8 @@ public class TableRow extends TableCellContainer {
             pendingSpans = null;
             columnNumberManager = null;
         }
-        getFOEventHandler().endRow(this);
     }
-
+    
     /**
      * {@inheritDoc} String, String)
      * <br>XSL Content Model: (table-cell+)
@@ -129,8 +134,8 @@ public class TableRow extends TableCellContainer {
     }
 
     /** {@inheritDoc} */
-    TableBody getTablePart() {
-        return (TableBody) parent;
+    TablePart getTablePart() {
+        return (TablePart) parent;
     }
 
     /** {@inheritDoc} */

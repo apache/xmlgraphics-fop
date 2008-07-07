@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.nio.CharBuffer;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -56,7 +57,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.Trait.InternalLink;
 import org.apache.fop.area.inline.AbstractTextArea;
-import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
@@ -78,6 +78,7 @@ import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
+import org.apache.fop.util.ConversionUtils;
 import org.apache.fop.util.DefaultErrorListener;
 
 /**
@@ -132,8 +133,10 @@ public class AreaTreeParser {
         private ElementMappingRegistry elementMappingRegistry;
 
         private Attributes lastAttributes;
-        private StringBuffer content = new StringBuffer();
 
+        private CharBuffer content = CharBuffer.allocate(64);
+        private boolean ignoreCharacters = true;
+        
         private PageViewport currentPageViewport;
         private Map pageViewportsByKey = new java.util.HashMap();
         // set of "ID firsts" that have already been assigned to a PV:
@@ -176,7 +179,6 @@ public class AreaTreeParser {
             makers.put("text", new TextMaker());
             makers.put("word", new WordMaker());
             makers.put("space", new SpaceMaker());
-            makers.put("char", new CharMaker());
             makers.put("leader", new LeaderMaker());
             makers.put("viewport", new ViewportMaker());
             makers.put("image", new ImageMaker());
@@ -184,15 +186,6 @@ public class AreaTreeParser {
             makers.put("bookmarkTree", new BookmarkTreeMaker());
             makers.put("bookmark", new BookmarkMaker());
             makers.put("destination", new DestinationMaker());
-        }
-
-        private static Rectangle2D parseRect(String rect) {
-            StringTokenizer tokenizer = new StringTokenizer(rect, " ");
-            return new Rectangle2D.Double(
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()));
         }
 
         private Area findAreaType(Class clazz) {
@@ -261,7 +254,10 @@ public class AreaTreeParser {
                 boolean handled = true;
                 if ("".equals(uri)) {
                     Maker maker = (Maker)makers.get(localName);
+                    content.clear();
+                    ignoreCharacters = true;
                     if (maker != null) {
+                        ignoreCharacters = maker.ignoreCharacters();
                         maker.startElement(attributes);
                     } else if ("extension-attachments".equals(localName)) {
                         //TODO implement me
@@ -311,11 +307,12 @@ public class AreaTreeParser {
                     Maker maker = (Maker)makers.get(localName);
                     if (maker != null) {
                         maker.endElement();
+                        content.clear();
                     }
+                    ignoreCharacters = true;
                 } else {
                     //log.debug("Ignoring " + localName + " in namespace: " + uri);
                 }
-                content.setLength(0); //Reset text buffer (see characters())
             }
         }
 
@@ -324,6 +321,7 @@ public class AreaTreeParser {
         private static interface Maker {
             void startElement(Attributes attributes) throws SAXException;
             void endElement();
+            boolean ignoreCharacters();
         }
 
         private abstract class AbstractMaker implements Maker {
@@ -334,6 +332,10 @@ public class AreaTreeParser {
 
             public void endElement() {
                 //nop
+            }
+            
+            public boolean ignoreCharacters() {
+                return true;
             }
         }
 
@@ -384,7 +386,7 @@ public class AreaTreeParser {
                 if (currentPageViewport != null) {
                     throw new IllegalStateException("currentPageViewport must be null");
                 }
-                Rectangle2D viewArea = parseRect(attributes.getValue("bounds"));
+                Rectangle2D viewArea = getAttributeAsRectangle2D(attributes, "bounds");
                 int pageNumber = getAttributeAsInteger(attributes, "nr", -1);
                 String key = attributes.getValue("key");
                 String pageNumberString = attributes.getValue("formatted-nr");
@@ -420,7 +422,7 @@ public class AreaTreeParser {
                 if (rv != null) {
                     throw new IllegalStateException("Current RegionViewport must be null");
                 }
-                Rectangle2D viewArea = parseRect(attributes.getValue("rect"));
+                Rectangle2D viewArea = getAttributeAsRectangle2D(attributes, "rect");
                 rv = new RegionViewport(viewArea);
                 transferForeignObjects(attributes, rv);
                 rv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
@@ -444,7 +446,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
-            }            
+            }
         }
 
         private class RegionAfterMaker extends AbstractMaker {
@@ -455,7 +457,7 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
-            }            
+            }
         }
 
         private class RegionStartMaker extends AbstractMaker {
@@ -466,7 +468,7 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
-            }            
+            }
         }
         
         private class RegionEndMaker extends AbstractMaker {
@@ -477,7 +479,7 @@ public class AreaTreeParser {
 
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
-            }            
+            }
         }
 
         private class RegionBodyMaker extends AbstractMaker {
@@ -575,7 +577,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), BeforeFloat.class);
-            }            
+            }
         }
 
         private class BlockMaker extends AbstractMaker {
@@ -627,7 +629,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), Block.class);
-            }            
+            }
         }
 
         private class LineAreaMaker extends AbstractMaker {
@@ -735,47 +737,37 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), TextArea.class);
-            }            
+            }
         }
 
         private class WordMaker extends AbstractMaker {
 
-            private int[] toIntArray(String s) {
-                if (s == null || s.length() == 0) {
-                    return null;
-                }
-                StringTokenizer tokenizer = new StringTokenizer(s, " ");
-                List values = new java.util.ArrayList();
-                while (tokenizer.hasMoreTokens()) {
-                    values.add(new Integer(tokenizer.nextToken()));
-                }
-                int[] res = new int[values.size()];
-                for (int i = 0, c = res.length; i < c; i++) {
-                    res[i] = ((Integer)values.get(i)).intValue();
-                }
-                return res;
-            }
-            
             public void endElement() {
                 int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
-                int[] letterAdjust = toIntArray(lastAttributes.getValue("letter-adjust"));
-                String txt = content.toString();
-                WordArea word = new WordArea(txt, offset, letterAdjust);
+                int[] letterAdjust 
+                        = ConversionUtils.toIntArray(
+                            lastAttributes.getValue("letter-adjust"), "\\s");
+                content.flip();
+                WordArea word = new WordArea(content.toString().trim(), offset, letterAdjust);
                 AbstractTextArea text = getCurrentText();
                 word.setParentArea(text);
                 text.addChildArea(word);
-            }            
+            }
+            
+            public boolean ignoreCharacters() {
+                return false;
+            }
         }
 
         private class SpaceMaker extends AbstractMaker {
-
+            
             public void endElement() {
                 int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
-                String txt = content.toString();
                 //TODO the isAdjustable parameter is currently not used/implemented
-                if (txt.length() > 0) {
+                if (content.position() > 0) {
+                    content.flip();
                     boolean adjustable = getAttributeAsBoolean(lastAttributes, "adj", true);
-                    SpaceArea space = new SpaceArea(txt.charAt(0), offset, adjustable);
+                    SpaceArea space = new SpaceArea(content.charAt(0), offset, adjustable);
                     AbstractTextArea text = getCurrentText();
                     space.setParentArea(text);
                     text.addChildArea(space);
@@ -789,25 +781,11 @@ public class AreaTreeParser {
                     Area parent = (Area)areaStack.peek();
                     parent.addChildArea(space);
                 }
-            }            
-        }
-
-        private class CharMaker extends AbstractMaker {
-
-            public void endElement() {
-                String txt = content.toString();
-                Character ch = new Character(txt.charAt(0));
-                transferForeignObjects(lastAttributes, ch);
-                setAreaAttributes(lastAttributes, ch);
-                setTraits(lastAttributes, ch, SUBSET_COMMON);
-                setTraits(lastAttributes, ch, SUBSET_BOX);
-                setTraits(lastAttributes, ch, SUBSET_COLOR);
-                setTraits(lastAttributes, ch, SUBSET_FONT);
-                ch.setOffset(getAttributeAsInteger(lastAttributes, "offset", 0));
-                ch.setBaselineOffset(getAttributeAsInteger(lastAttributes, "baseline", 0));
-                Area parent = (Area)areaStack.peek();
-                parent.addChildArea(ch);
-            }            
+            }
+            
+            public boolean ignoreCharacters() {
+                return false;
+            }
         }
 
         private class LeaderMaker extends AbstractMaker {
@@ -830,9 +808,6 @@ public class AreaTreeParser {
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(leader);
             }
-            
-            public void endElement() {
-            }            
         }
 
         private class ViewportMaker extends AbstractMaker {
@@ -854,7 +829,7 @@ public class AreaTreeParser {
             
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), Viewport.class);
-            }            
+            }
         }
         
         private class ImageMaker extends AbstractMaker {
@@ -1097,7 +1072,7 @@ public class AreaTreeParser {
             }
         }
 
-        private boolean getAttributeAsBoolean(Attributes attributes, String name,
+        private static boolean getAttributeAsBoolean(Attributes attributes, String name,
                 boolean defaultValue) {
             String s = attributes.getValue(name);
             if (s == null) {
@@ -1107,7 +1082,7 @@ public class AreaTreeParser {
             }
         }
 
-        private int getAttributeAsInteger(Attributes attributes, String name, 
+        private static int getAttributeAsInteger(Attributes attributes, String name, 
                 int defaultValue) {
             String s = attributes.getValue(name);
             if (s == null) {
@@ -1117,36 +1092,30 @@ public class AreaTreeParser {
             }
         }
 
-        private CTM getAttributeAsCTM(Attributes attributes, String name) {
+        private static CTM getAttributeAsCTM(Attributes attributes, String name) {
             String s = attributes.getValue(name).trim();
             if (s.startsWith("[") && s.endsWith("]")) {
                 s = s.substring(1, s.length() - 1);
-                StringTokenizer tokenizer = new StringTokenizer(s, " ");
-                double[] values = new double[] {
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken()),
-                        Double.parseDouble(tokenizer.nextToken())};
+                double[] values = ConversionUtils.toDoubleArray(s, "\\s");
+                if (values.length != 6) {
+                    throw new IllegalArgumentException("CTM must consist of 6 double values!");
+                }
                 return new CTM(values[0], values[1], values[2], values[3], values[4], values[5]);
             } else {
-                throw new IllegalArgumentException("CTM must be surrounded by square brackets");
+                throw new IllegalArgumentException("CTM must be surrounded by square brackets!");
             }
         }
 
-        private Rectangle2D getAttributeAsRectangle2D(Attributes attributes, String name) {
+        private static Rectangle2D getAttributeAsRectangle2D(Attributes attributes, String name) {
             String s = attributes.getValue(name).trim();
-            StringTokenizer tokenizer = new StringTokenizer(s, " ");
-            double[] values = new double[] {
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken()),
-                    Double.parseDouble(tokenizer.nextToken())};
+            double[] values = ConversionUtils.toDoubleArray(s, "\\s");
+            if (values.length != 4) {
+                throw new IllegalArgumentException("Rectangle must consist of 4 double values!");
+            }
             return new Rectangle2D.Double(values[0], values[1], values[2], values[3]);
         }
 
-        private void transferForeignObjects(Attributes atts, AreaTreeObject ato) {
+        private static void transferForeignObjects(Attributes atts, AreaTreeObject ato) {
             for (int i = 0, c = atts.getLength(); i < c; i++) {
                 String ns = atts.getURI(i);
                 if (ns.length() > 0) {
@@ -1163,11 +1132,25 @@ public class AreaTreeParser {
         public void characters(char[] ch, int start, int length) throws SAXException {
             if (delegate != null) {
                 delegate.characters(ch, start, length);
-            } else {
-                content.append(ch, start, length);
+            } else if (!ignoreCharacters) {
+                int maxLength = this.content.capacity() - this.content.position();
+                if (maxLength < length) {
+                    // allocate a larger buffer and transfer content
+                    CharBuffer newContent 
+                            = CharBuffer.allocate(this.content.position() + length);
+                    this.content.flip();
+                    newContent.put(this.content);
+                    this.content = newContent;
+                }
+                // make sure the full capacity is used
+                this.content.limit(this.content.capacity());
+                // add characters to the buffer
+                this.content.put(ch, start, length);
+                // decrease the limit, if necessary
+                if (this.content.position() < this.content.limit()) {
+                    this.content.limit(this.content.position());
+                }
             }
         }
-
     }
-
 }

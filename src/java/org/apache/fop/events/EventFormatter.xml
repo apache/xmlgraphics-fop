@@ -65,6 +65,7 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.warnImplicitColumns">table-layout=\"fixed\" and column-width unspecified =&gt; falling back to proportional-column-width(1){{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
+  <message key="org.apache.fop.fo.flow.table.TableEventProducer.forceNextColumnNumber">Negative value {propValue} of property column-number of element {elementName} forced into the next available column number {columnNumber}.{{locator}}</message>
   <message key="org.apache.fop.fo.flow.table.TableEventProducer.breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageNotFound">Image not found.[ URI: {uri}.]{{locator}}</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageError">Image not available.[ URI: {uri}.] Reason:[ {reason}][ {e}]{{locator}}</message>

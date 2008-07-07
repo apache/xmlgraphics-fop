@@ -32,7 +32,7 @@ import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
-import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -94,7 +94,7 @@ class RowPainter {
         this.firstRowOnPageIndex = -1;
     }
 
-    void startTablePart(TableBody tablePart) {
+    void startTablePart(TablePart tablePart) {
         CommonBorderPaddingBackground background = tablePart.getCommonBorderPaddingBackground();
         if (background.hasBackground()) {
             tablePartBackground = background;
@@ -229,8 +229,12 @@ class RowPainter {
 
         // Then add areas for cells finishing on the current row
         for (int i = 0; i < colCount; i++) {
-            GridUnit currentGU = currentRow.getGridUnit(i);            
-            if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
+            GridUnit currentGU = currentRow.getGridUnit(i);
+            if (currentGU.isEmpty()) {
+                // TODO remove once missing cells are properly implemented (i.e., replaced
+                // by an fo:table-cell element containing an empty fo:block)
+                firstCellOnPage[i] = false;
+            } else if (currentGU.getColSpanIndex() == 0
                     && (lastInPart || currentGU.isLastGridUnitRowSpan())
                     && firstCellParts[i] != null) {
                 assert firstCellParts[i].pgu == currentGU.getPrimary();
@@ -260,7 +264,8 @@ class RowPainter {
                         actualRowHeight, borderBeforeWhich, borderAfterWhich,
                         lastOnPage);
                 firstCellParts[i] = null;
-                firstCellOnPage[i] = false;
+                Arrays.fill(firstCellOnPage, i, i + currentGU.getCell().getNumberColumnsSpanned(),
+                        false);
             }
         }
         currentRowOffset += actualRowHeight;

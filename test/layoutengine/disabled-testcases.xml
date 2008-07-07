@@ -98,24 +98,6 @@
     regions.</description>
   </testcase>
   <testcase>
-    <name>Footnotes swallowed in lists</name>
-    <file>footnote_in_list.xml</file>
-    <description>Element lists for lists are created by combining the 
-    element lists from list-item-label and list-item-body. The 
-    footnotes contained in the KnuthBlockBoxes are not propagated to 
-    the combined element list.</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=37579</reference>
-  </testcase>
-  <testcase>
-    <name>Footnotes swallowed in tables</name>
-    <file>footnote_in_table.xml</file>
-    <description>Element lists for tables are created by combining the 
-    element lists from the individual table-cells. The footnotes 
-    contained in the KnuthBlockBoxes are not propagated to the combined 
-    element list.</description>
-    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=37579</reference>
-  </testcase>
-  <testcase>
     <name>NPE for table inside an inline</name>
     <file>inline_block_nested_3.xml</file>
     <description>Placing a table as a child of an fo:inline produces a 
@@ -233,5 +215,17 @@
     <file>block_shy_linebreaking_hyph.xml</file>
     <description>A soft hyphen should be a preferred as break compared to a
     normal hyphenation point but is not.</description>
+  </testcase>
+  <testcase>
+    <name>Borders and padding on page regions</name>
+    <file>simple-page-master_borders_padding.xml</file>
+    <description>Borders and padding on regions are now implemented but 
+    relaxed validation must be switched on, otherwise there is a validation
+    exception.</description>
+  </testcase>
+  <testcase>
+    <name>Instream foreign objects in markers</name>
+    <file>marker_instream-foreign-object.xml</file>
+    <description>Foreign objects in markers do not work.</description>
   </testcase>
 </disabled-testcases>

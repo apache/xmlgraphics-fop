@@ -108,7 +108,7 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
         super();
     }
 
-    private static GridUnit getGridUnit(TableBody part) {
+    private static GridUnit getGridUnit(TablePart part) {
         return (GridUnit) ((List) ((List) part.getRowGroups().get(0)).get(0)).get(0);
     }
 
@@ -137,8 +137,8 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
         do {
             String baseErrorMsge = "table " + Integer.toString(tableNum) + " (0-based), ";
             Table table = (Table) tableIterator.next();
-            TableBody body = (TableBody) table.getChildNodes().nextNode();
-            GridUnit gu = getGridUnit(body);
+            TablePart part = (TablePart) table.getChildNodes().nextNode();
+            GridUnit gu = getGridUnit(part);
 
             String errorMsge = baseErrorMsge + "border-before";
             checkBorder(errorMsge, gu.borderBefore.normal, 8000, Color.black);
@@ -163,14 +163,14 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
             int borderNum = 0;
             Table table = (Table) tableIterator.next();
 
-            TableBody header = table.getTableHeader();
+            TableHeader header = table.getTableHeader();
             GridUnit gu = getGridUnit(header);
             checkBorder(errorMsge, gu.borderBefore.normal,
                     resolvedBordersHF[tableNum][borderNum++]);
             checkBorder(errorMsge, gu.borderBefore.rest,
                     resolvedBordersHF[tableNum][borderNum++]);
 
-            TableBody footer = table.getTableFooter();
+            TableFooter footer = table.getTableFooter();
             gu = getGridUnit(footer);
             checkBorder(errorMsge, gu.borderAfter.normal,
                     resolvedBordersHF[tableNum][borderNum++]);

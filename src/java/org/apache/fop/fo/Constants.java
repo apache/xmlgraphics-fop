@@ -24,9 +24,9 @@ package org.apache.fop.fo;
  * There are sets of constants describing:
  * <ul>
  * <li>Input and output formats</li>
- * <li>Formatting objects</li>
- * <li>Formatting properties</li>
- * <li>Enumerated values used in formatting properties</li>
+ * <li>Formatting objects (<em>FO_XXX</em>)</li>
+ * <li>Formatting properties (<em>PR_XXX</em>)</li>
+ * <li>Enumerated values used in formatting properties (<em>EN_XXX</em>)</li>
  * </ul>
  */
 public interface Constants {
@@ -45,124 +45,162 @@ public interface Constants {
     int FO_BLOCK = 3;
     /** FO element constant */
     int FO_BLOCK_CONTAINER = 4;
-    /** FO element constant */
-    int FO_CHARACTER = 5;
-    /** FO element constant */
-    int FO_COLOR_PROFILE = 6;
-    /** FO element constant */
-    int FO_CONDITIONAL_PAGE_MASTER_REFERENCE = 7;
-    /** FO element constant */
-    int FO_DECLARATIONS = 8;
-    /** FO element constant */
-    int FO_EXTERNAL_GRAPHIC = 9;
-    /** FO element constant */
-    int FO_FLOAT = 10;
-    /** FO element constant */
-    int FO_FLOW = 11;
-    /** FO element constant */
-    int FO_FOOTNOTE = 12;
-    /** FO element constant */
-    int FO_FOOTNOTE_BODY = 13;
-    /** FO element constant */
-    int FO_INITIAL_PROPERTY_SET = 14;
-    /** FO element constant */
-    int FO_INLINE = 15;
-    /** FO element constant */
-    int FO_INLINE_CONTAINER = 16;
-    /** FO element constant */
-    int FO_INSTREAM_FOREIGN_OBJECT = 17;
-    /** FO element constant */
-    int FO_LAYOUT_MASTER_SET = 18;
-    /** FO element constant */
-    int FO_LEADER = 19;
-    /** FO element constant */
-    int FO_LIST_BLOCK = 20;
-    /** FO element constant */
-    int FO_LIST_ITEM = 21;
-    /** FO element constant */
-    int FO_LIST_ITEM_BODY = 22;
-    /** FO element constant */
-    int FO_LIST_ITEM_LABEL = 23;
-    /** FO element constant */
-    int FO_MARKER = 24;
-    /** FO element constant */
-    int FO_MULTI_CASE = 25;
-    /** FO element constant */
-    int FO_MULTI_PROPERTIES = 26;
-    /** FO element constant */
-    int FO_MULTI_PROPERTY_SET = 27;
-    /** FO element constant */
-    int FO_MULTI_SWITCH = 28;
-    /** FO element constant */
-    int FO_MULTI_TOGGLE = 29;
-    /** FO element constant */
-    int FO_PAGE_NUMBER = 30;
-    /** FO element constant */
-    int FO_PAGE_NUMBER_CITATION = 31;
-    /** FO element constant */
-    int FO_PAGE_SEQUENCE = 32;
-    /** FO element constant */
-    int FO_PAGE_SEQUENCE_MASTER = 33;
-    /** FO element constant */
-    int FO_REGION_AFTER = 34;
-    /** FO element constant */
-    int FO_REGION_BEFORE = 35;
-    /** FO element constant */
-    int FO_REGION_BODY = 36;
-    /** FO element constant */
-    int FO_REGION_END = 37;
-    /** FO element constant */
-    int FO_REGION_START = 38;
-    /** FO element constant */
-    int FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES = 39;
-    /** FO element constant */
-    int FO_REPEATABLE_PAGE_MASTER_REFERENCE = 40;
-    /** FO element constant */
-    int FO_RETRIEVE_MARKER = 41;
-    /** FO element constant */
-    int FO_ROOT = 42;
-    /** FO element constant */
-    int FO_SIMPLE_PAGE_MASTER = 43;
-    /** FO element constant */
-    int FO_SINGLE_PAGE_MASTER_REFERENCE = 44;
-    /** FO element constant */
-    int FO_STATIC_CONTENT = 45;
-    /** FO element constant */
-    int FO_TABLE = 46;
-    /** FO element constant */
-    int FO_TABLE_AND_CAPTION = 47;
-    /** FO element constant */
-    int FO_TABLE_BODY = 48;
-    /** FO element constant */
-    int FO_TABLE_CAPTION = 49;
-    /** FO element constant */
-    int FO_TABLE_CELL = 50;
-    /** FO element constant */
-    int FO_TABLE_COLUMN = 51;
-    /** FO element constant */
-    int FO_TABLE_FOOTER = 52;
-    /** FO element constant */
-    int FO_TABLE_HEADER = 53;
-    /** FO element constant */
-    int FO_TABLE_ROW = 54;
-    /** FO element constant */
-    int FO_TITLE = 55;
-    /** FO element constant */
-    int FO_WRAPPER = 56;
     /** FO element constant - XSL 1.1 */
-    int FO_BOOKMARK_TREE = 57;
+    int FO_BOOKMARK_TREE = 5;
     /** FO element constant - XSL 1.1 */
-    int FO_BOOKMARK = 58;
+    int FO_BOOKMARK = 6;
     /** FO element constant - XSL 1.1 */
-    int FO_BOOKMARK_TITLE = 59;
+    int FO_BOOKMARK_TITLE = 7;
     /** FO element constant - XSL 1.1 */
-    int FO_PAGE_SEQUENCE_WRAPPER = 60;
+    int FO_CHANGE_BAR_BEGIN = 8;
     /** FO element constant - XSL 1.1 */
-    int FO_PAGE_NUMBER_CITATION_LAST = 61;
+    int FO_CHANGE_BAR_END = 9;
+    /** FO element constant */
+    int FO_CHARACTER = 10;
+    /** FO element constant */
+    int FO_COLOR_PROFILE = 11;
+    /** FO element constant */
+    int FO_CONDITIONAL_PAGE_MASTER_REFERENCE = 12;
+    /** FO element constant */
+    int FO_DECLARATIONS = 13;
+    /** FO element constant */
+    int FO_EXTERNAL_GRAPHIC = 14;
+    /** FO element constant */
+    int FO_FLOAT = 15;
+    /** FO element constant */
+    int FO_FLOW = 16;
     /** FO element constant - XSL 1.1 */
-    int FO_RETRIEVE_TABLE_MARKER = 62;
+    int FO_FLOW_ASSIGNMENT = 17;
+    /** FO element constant - XSL 1.1 */
+    int FO_FLOW_MAP = 18;
+    /** FO element constant - XSL 1.1 */
+    int FO_FLOW_NAME_SPECIFIER = 19;
+    /** FO element constant - XSL 1.1 */
+    int FO_FLOW_SOURCE_LIST = 20;
+    /** FO element constant - XSL 1.1 */
+    int FO_FLOW_TARGET_LIST = 21;
+    /** FO element constant - XSL 1.1 */
+    int FO_FOLIO_PREFIX = 22;
+    /** FO element constant - XSL 1.1 */
+    int FO_FOLIO_SUFFIX = 23;
+    /** FO element constant */
+    int FO_FOOTNOTE = 24;
+    /** FO element constant */
+    int FO_FOOTNOTE_BODY = 25;
+    /** FO element constant - XSL 1.1 */
+    int FO_INDEX_KEY_REFERENCE = 26;
+    /** FO element constant - XSL 1.1 */
+    int FO_INDEX_PAGE_NUMBER_PREFIX = 27;
+    /** FO element constant - XSL 1.1 */
+    int FO_INDEX_PAGE_NUMBER_SUFFIX = 28;
+    /** FO element constant - XSL 1.1 */
+    int FO_INDEX_PAGE_CITATION_LIST = 29;
+    /** FO element constant - XSL 1.1 */
+    int FO_INDEX_PAGE_CITATION_LIST_SEPARATOR = 30;
+    /** FO element constant - XSL 1.1 */
+    int FO_INDEX_PAGE_CITATION_RANGE_SEPARATOR = 31;
+    /** FO element constant - XSL 1.1 */
+    int FO_INDEX_RANGE_BEGIN = 32;
+    /** FO element constant - XSL 1.1 */
+    int FO_INDEX_RANGE_END = 33;
+    /** FO element constant */
+    int FO_INITIAL_PROPERTY_SET = 34;
+    /** FO element constant */
+    int FO_INLINE = 35;
+    /** FO element constant */
+    int FO_INLINE_CONTAINER = 36;
+    /** FO element constant */
+    int FO_INSTREAM_FOREIGN_OBJECT = 37;
+    /** FO element constant */
+    int FO_LAYOUT_MASTER_SET = 38;
+    /** FO element constant */
+    int FO_LEADER = 39;
+    /** FO element constant */
+    int FO_LIST_BLOCK = 40;
+    /** FO element constant */
+    int FO_LIST_ITEM = 41;
+    /** FO element constant */
+    int FO_LIST_ITEM_BODY = 42;
+    /** FO element constant */
+    int FO_LIST_ITEM_LABEL = 43;
+    /** FO element constant */
+    int FO_MARKER = 44;
+    /** FO element constant */
+    int FO_MULTI_CASE = 45;
+    /** FO element constant */
+    int FO_MULTI_PROPERTIES = 46;
+    /** FO element constant */
+    int FO_MULTI_PROPERTY_SET = 47;
+    /** FO element constant */
+    int FO_MULTI_SWITCH = 48;
+    /** FO element constant */
+    int FO_MULTI_TOGGLE = 49;
+    /** FO element constant */
+    int FO_PAGE_NUMBER = 50;
+    /** FO element constant */
+    int FO_PAGE_NUMBER_CITATION = 51;
+    /** FO element constant - XSL 1.1 */
+    int FO_PAGE_NUMBER_CITATION_LAST = 52;
+    /** FO element constant */
+    int FO_PAGE_SEQUENCE = 53;
+    /** FO element constant */
+    int FO_PAGE_SEQUENCE_MASTER = 54;
+    /** FO element constant - XSL 1.1 */
+    int FO_PAGE_SEQUENCE_WRAPPER = 55;
+    /** FO element constant */
+    int FO_REGION_AFTER = 56;
+    /** FO element constant */
+    int FO_REGION_BEFORE = 57;
+    /** FO element constant */
+    int FO_REGION_BODY = 58;
+    /** FO element constant */
+    int FO_REGION_END = 59;
+    /** FO element constant - XSL 1.1 */
+    int FO_REGION_NAME_SPECIFIER = 60;
+    /** FO element constant */
+    int FO_REGION_START = 61;
+    /** FO element constant */
+    int FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES = 62;
+    /** FO element constant */
+    int FO_REPEATABLE_PAGE_MASTER_REFERENCE = 63;
+    /** FO element constant */
+    int FO_RETRIEVE_MARKER = 64;
+    /** FO element constant - XSL 1.1 */
+    int FO_RETRIEVE_TABLE_MARKER = 65;
+    /** FO element constant */
+    int FO_ROOT = 66;
+    /** FO element constant - XSL 1.1 */
+    int FO_SCALING_VALUE_CITATION = 67;    
+    /** FO element constant */
+    int FO_SIMPLE_PAGE_MASTER = 68;
+    /** FO element constant */
+    int FO_SINGLE_PAGE_MASTER_REFERENCE = 69;
+    /** FO element constant */
+    int FO_STATIC_CONTENT = 70;
+    /** FO element constant */
+    int FO_TABLE = 71;
+    /** FO element constant */
+    int FO_TABLE_AND_CAPTION = 72;
+    /** FO element constant */
+    int FO_TABLE_BODY = 73;
+    /** FO element constant */
+    int FO_TABLE_CAPTION = 74;
+    /** FO element constant */
+    int FO_TABLE_CELL = 75;
+    /** FO element constant */
+    int FO_TABLE_COLUMN = 76;
+    /** FO element constant */
+    int FO_TABLE_FOOTER = 77;
+    /** FO element constant */
+    int FO_TABLE_HEADER = 78;
+    /** FO element constant */
+    int FO_TABLE_ROW = 79;
+    /** FO element constant */
+    int FO_TITLE = 80;
+    /** FO element constant */
+    int FO_WRAPPER = 81;
     /** Number of FO element constants defined */
-    int FRM_OBJ_COUNT = 62;
+    int FRM_OBJ_COUNT = 81;
 
     // Masks
     /**
@@ -308,394 +346,428 @@ public interface Constants {
     int PR_CASE_NAME = 61;
     /** Property constant */
     int PR_CASE_TITLE = 62;
-    /** Property constant */
-    int PR_CHARACTER = 63;
-    /** Property constant */
-    int PR_CLEAR = 64;
-    /** Property constant */
-    int PR_CLIP = 65;
-    /** Property constant */
-    int PR_COLOR = 66;
-    /** Property constant */
-    int PR_COLOR_PROFILE_NAME = 67;
-    /** Property constant */
-    int PR_COLUMN_COUNT = 68;
-    /** Property constant */
-    int PR_COLUMN_GAP = 69;
-    /** Property constant */
-    int PR_COLUMN_NUMBER = 70;
-    /** Property constant */
-    int PR_COLUMN_WIDTH = 71;
-    /** Property constant */
-    int PR_CONTENT_HEIGHT = 72;
-    /** Property constant */
-    int PR_CONTENT_TYPE = 73;
-    /** Property constant */
-    int PR_CONTENT_WIDTH = 74;
-    /** Property constant */
-    int PR_COUNTRY = 75;
-    /** Property constant */
-    int PR_CUE = 76;
-    /** Property constant */
-    int PR_CUE_AFTER = 77;
-    /** Property constant */
-    int PR_CUE_BEFORE = 78;
-    /** Property constant */
-    int PR_DESTINATION_PLACEMENT_OFFSET = 79;
-    /** Property constant */
-    int PR_DIRECTION = 80;
-    /** Property constant */
-    int PR_DISPLAY_ALIGN = 81;
-    /** Property constant */
-    int PR_DOMINANT_BASELINE = 82;
-    /** Property constant */
-    int PR_ELEVATION = 83;
-    /** Property constant */
-    int PR_EMPTY_CELLS = 84;
-    /** Property constant */
-    int PR_END_INDENT = 85;
-    /** Property constant */
-    int PR_ENDS_ROW = 86;
-    /** Property constant */
-    int PR_EXTENT = 87;
-    /** Property constant */
-    int PR_EXTERNAL_DESTINATION = 88;
-    /** Property constant */
-    int PR_FLOAT = 89;
-    /** Property constant */
-    int PR_FLOW_NAME = 90;
-    /** Property constant */
-    int PR_FONT = 91;
-    /** Property constant */
-    int PR_FONT_FAMILY = 92;
-    /** Property constant */
-    int PR_FONT_SELECTION_STRATEGY = 93;
-    /** Property constant */
-    int PR_FONT_SIZE = 94;
-    /** Property constant */
-    int PR_FONT_SIZE_ADJUST = 95;
-    /** Property constant */
-    int PR_FONT_STRETCH = 96;
-    /** Property constant */
-    int PR_FONT_STYLE = 97;
-    /** Property constant */
-    int PR_FONT_VARIANT = 98;
-    /** Property constant */
-    int PR_FONT_WEIGHT = 99;
-    /** Property constant */
-    int PR_FORCE_PAGE_COUNT = 100;
-    /** Property constant */
-    int PR_FORMAT = 101;
-    /** Property constant */
-    int PR_GLYPH_ORIENTATION_HORIZONTAL = 102;
-    /** Property constant */
-    int PR_GLYPH_ORIENTATION_VERTICAL = 103;
-    /** Property constant */
-    int PR_GROUPING_SEPARATOR = 104;
-    /** Property constant */
-    int PR_GROUPING_SIZE = 105;
-    /** Property constant */
-    int PR_HEIGHT = 106;
-    /** Property constant */
-    int PR_HYPHENATE = 107;
-    /** Property constant */
-    int PR_HYPHENATION_CHARACTER = 108;
-    /** Property constant */
-    int PR_HYPHENATION_KEEP = 109;
-    /** Property constant */
-    int PR_HYPHENATION_LADDER_COUNT = 110;
-    /** Property constant */
-    int PR_HYPHENATION_PUSH_CHARACTER_COUNT = 111;
-    /** Property constant */
-    int PR_HYPHENATION_REMAIN_CHARACTER_COUNT = 112;
-    /** Property constant */
-    int PR_ID = 113;
-    /** Property constant */
-    int PR_INDICATE_DESTINATION = 114;
-    /** Property constant */
-    int PR_INITIAL_PAGE_NUMBER = 115;
-    /** Property constant */
-    int PR_INLINE_PROGRESSION_DIMENSION = 116;
-    /** Property constant */
-    int PR_INTERNAL_DESTINATION = 117;
-    /** Property constant */
-    int PR_KEEP_TOGETHER = 118;
-    /** Property constant */
-    int PR_KEEP_WITH_NEXT = 119;
-    /** Property constant */
-    int PR_KEEP_WITH_PREVIOUS = 120;
-    /** Property constant */
-    int PR_LANGUAGE = 121;
-    /** Property constant */
-    int PR_LAST_LINE_END_INDENT = 122;
-    /** Property constant */
-    int PR_LEADER_ALIGNMENT = 123;
-    /** Property constant */
-    int PR_LEADER_LENGTH = 124;
-    /** Property constant */
-    int PR_LEADER_PATTERN = 125;
-    /** Property constant */
-    int PR_LEADER_PATTERN_WIDTH = 126;
-    /** Property constant */
-    int PR_LEFT = 127;
-    /** Property constant */
-    int PR_LETTER_SPACING = 128;
-    /** Property constant */
-    int PR_LETTER_VALUE = 129;
-    /** Property constant */
-    int PR_LINEFEED_TREATMENT = 130;
-    /** Property constant */
-    int PR_LINE_HEIGHT = 131;
-    /** Property constant */
-    int PR_LINE_HEIGHT_SHIFT_ADJUSTMENT = 132;
-    /** Property constant */
-    int PR_LINE_STACKING_STRATEGY = 133;
-    /** Property constant */
-    int PR_MARGIN = 134;
-    /** Property constant */
-    int PR_MARGIN_BOTTOM = 135;
-    /** Property constant */
-    int PR_MARGIN_LEFT = 136;
-    /** Property constant */
-    int PR_MARGIN_RIGHT = 137;
-    /** Property constant */
-    int PR_MARGIN_TOP = 138;
-    /** Property constant */
-    int PR_MARKER_CLASS_NAME = 139;
-    /** Property constant */
-    int PR_MASTER_NAME = 140;
-    /** Property constant */
-    int PR_MASTER_REFERENCE = 141;
-    /** Property constant */
-    int PR_MAX_HEIGHT = 142;
-    /** Property constant */
-    int PR_MAXIMUM_REPEATS = 143;
-    /** Property constant */
-    int PR_MAX_WIDTH = 144;
-    /** Property constant */
-    int PR_MEDIA_USAGE = 145;
-    /** Property constant */
-    int PR_MIN_HEIGHT = 146;
-    /** Property constant */
-    int PR_MIN_WIDTH = 147;
-    /** Property constant */
-    int PR_NUMBER_COLUMNS_REPEATED = 148;
-    /** Property constant */
-    int PR_NUMBER_COLUMNS_SPANNED = 149;
-    /** Property constant */
-    int PR_NUMBER_ROWS_SPANNED = 150;
-    /** Property constant */
-    int PR_ODD_OR_EVEN = 151;
-    /** Property constant */
-    int PR_ORPHANS = 152;
-    /** Property constant */
-    int PR_OVERFLOW = 153;
-    /** Property constant */
-    int PR_PADDING = 154;
-    /** Property constant */
-    int PR_PADDING_AFTER = 155;
-    /** Property constant */
-    int PR_PADDING_BEFORE = 156;
-    /** Property constant */
-    int PR_PADDING_BOTTOM = 157;
-    /** Property constant */
-    int PR_PADDING_END = 158;
-    /** Property constant */
-    int PR_PADDING_LEFT = 159;
-    /** Property constant */
-    int PR_PADDING_RIGHT = 160;
-    /** Property constant */
-    int PR_PADDING_START = 161;
-    /** Property constant */
-    int PR_PADDING_TOP = 162;
-    /** Property constant */
-    int PR_PAGE_BREAK_AFTER = 163;
-    /** Property constant */
-    int PR_PAGE_BREAK_BEFORE = 164;
-    /** Property constant */
-    int PR_PAGE_BREAK_INSIDE = 165;
-    /** Property constant */
-    int PR_PAGE_HEIGHT = 166;
-    /** Property constant */
-    int PR_PAGE_POSITION = 167;
-    /** Property constant */
-    int PR_PAGE_WIDTH = 168;
-    /** Property constant */
-    int PR_PAUSE = 169;
-    /** Property constant */
-    int PR_PAUSE_AFTER = 170;
-    /** Property constant */
-    int PR_PAUSE_BEFORE = 171;
-    /** Property constant */
-    int PR_PITCH = 172;
-    /** Property constant */
-    int PR_PITCH_RANGE = 173;
-    /** Property constant */
-    int PR_PLAY_DURING = 174;
-    /** Property constant */
-    int PR_POSITION = 175;
-    /** Property constant */
-    int PR_PRECEDENCE = 176;
-    /** Property constant */
-    int PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS = 177;
-    /** Property constant */
-    int PR_PROVISIONAL_LABEL_SEPARATION = 178;
-    /** Property constant */
-    int PR_REFERENCE_ORIENTATION = 179;
-    /** Property constant */
-    int PR_REF_ID = 180;
-    /** Property constant */
-    int PR_REGION_NAME = 181;
-    /** Property constant */
-    int PR_RELATIVE_ALIGN = 182;
-    /** Property constant */
-    int PR_RELATIVE_POSITION = 183;
-    /** Property constant */
-    int PR_RENDERING_INTENT = 184;
-    /** Property constant */
-    int PR_RETRIEVE_BOUNDARY = 185;
-    /** Property constant */
-    int PR_RETRIEVE_CLASS_NAME = 186;
-    /** Property constant */
-    int PR_RETRIEVE_POSITION = 187;
-    /** Property constant */
-    int PR_RICHNESS = 188;
-    /** Property constant */
-    int PR_RIGHT = 189;
-    /** Property constant */
-    int PR_ROLE = 190;
-    /** Property constant */
-    int PR_RULE_STYLE = 191;
-    /** Property constant */
-    int PR_RULE_THICKNESS = 192;
-    /** Property constant */
-    int PR_SCALING = 193;
-    /** Property constant */
-    int PR_SCALING_METHOD = 194;
-    /** Property constant */
-    int PR_SCORE_SPACES = 195;
-    /** Property constant */
-    int PR_SCRIPT = 196;
-    /** Property constant */
-    int PR_SHOW_DESTINATION = 197;
-    /** Property constant */
-    int PR_SIZE = 198;
-    /** Property constant */
-    int PR_SOURCE_DOCUMENT = 199;
-    /** Property constant */
-    int PR_SPACE_AFTER = 200;
-    /** Property constant */
-    int PR_SPACE_BEFORE = 201;
-    /** Property constant */
-    int PR_SPACE_END = 202;
-    /** Property constant */
-    int PR_SPACE_START = 203;
-    /** Property constant */
-    int PR_SPAN = 204;
-    /** Property constant */
-    int PR_SPEAK = 205;
-    /** Property constant */
-    int PR_SPEAK_HEADER = 206;
-    /** Property constant */
-    int PR_SPEAK_NUMERAL = 207;
-    /** Property constant */
-    int PR_SPEAK_PUNCTUATION = 208;
-    /** Property constant */
-    int PR_SPEECH_RATE = 209;
-    /** Property constant */
-    int PR_SRC = 210;
-    /** Property constant */
-    int PR_START_INDENT = 211;
-    /** Property constant */
-    int PR_STARTING_STATE = 212;
-    /** Property constant */
-    int PR_STARTS_ROW = 213;
-    /** Property constant */
-    int PR_STRESS = 214;
-    /** Property constant */
-    int PR_SUPPRESS_AT_LINE_BREAK = 215;
-    /** Property constant */
-    int PR_SWITCH_TO = 216;
-    /** Property constant */
-    int PR_TABLE_LAYOUT = 217;
-    /** Property constant */
-    int PR_TABLE_OMIT_FOOTER_AT_BREAK = 218;
-    /** Property constant */
-    int PR_TABLE_OMIT_HEADER_AT_BREAK = 219;
-    /** Property constant */
-    int PR_TARGET_PRESENTATION_CONTEXT = 220;
-    /** Property constant */
-    int PR_TARGET_PROCESSING_CONTEXT = 221;
-    /** Property constant */
-    int PR_TARGET_STYLESHEET = 222;
-    /** Property constant */
-    int PR_TEXT_ALIGN = 223;
-    /** Property constant */
-    int PR_TEXT_ALIGN_LAST = 224;
-    /** Property constant */
-    int PR_TEXT_ALTITUDE = 225;
-    /** Property constant */
-    int PR_TEXT_DECORATION = 226;
-    /** Property constant */
-    int PR_TEXT_DEPTH = 227;
-    /** Property constant */
-    int PR_TEXT_INDENT = 228;
-    /** Property constant */
-    int PR_TEXT_SHADOW = 229;
-    /** Property constant */
-    int PR_TEXT_TRANSFORM = 230;
-    /** Property constant */
-    int PR_TOP = 231;
-    /** Property constant */
-    int PR_TREAT_AS_WORD_SPACE = 232;
-    /** Property constant */
-    int PR_UNICODE_BIDI = 233;
-    /** Property constant */
-    int PR_VERTICAL_ALIGN = 234;
-    /** Property constant */
-    int PR_VISIBILITY = 235;
-    /** Property constant */
-    int PR_VOICE_FAMILY = 236;
-    /** Property constant */
-    int PR_VOLUME = 237;
-    /** Property constant */
-    int PR_WHITE_SPACE = 238;
-    /** Property constant */
-    int PR_WHITE_SPACE_COLLAPSE = 239;
-    /** Property constant */
-    int PR_WHITE_SPACE_TREATMENT = 240;
-    /** Property constant */
-    int PR_WIDOWS = 241;
-    /** Property constant */
-    int PR_WIDTH = 242;
-    /** Property constant */
-    int PR_WORD_SPACING = 243;
-    /** Property constant */
-    int PR_WRAP_OPTION = 244;
-    /** Property constant */
-    int PR_WRITING_MODE = 245;
-    /** Property constant */
-    int PR_XML_LANG = 246;
-    /** Property constant */
-    int PR_Z_INDEX = 247;
-    /** Property constant */
-    int PR_INTRUSION_DISPLACE = 248;
     /** Property constant - XSL 1.1 */
-    int PR_INDEX_CLASS = 249;
+    int PR_CHANGE_BAR_CLASS = 63;
     /** Property constant - XSL 1.1 */
-    int PR_INDEX_KEY = 250;
+    int PR_CHANGE_BAR_COLOR = 64;
+    /** Property constant - XSL 1.1 */
+    int PR_CHANGE_BAR_OFFSET = 65;
+    /** Property constant - XSL 1.1 */
+    int PR_CHANGE_BAR_PLACEMENT = 66;
+    /** Property constant - XSL 1.1 */
+    int PR_CHANGE_BAR_STYLE = 67;
+    /** Property constant - XSL 1.1 */
+    int PR_CHANGE_BAR_WIDTH = 68;
+    /** Property constant */
+    int PR_CHARACTER = 69;
+    /** Property constant */
+    int PR_CLEAR = 70;
+    /** Property constant */
+    int PR_CLIP = 71;
+    /** Property constant */
+    int PR_COLOR = 72;
+    /** Property constant */
+    int PR_COLOR_PROFILE_NAME = 73;
+    /** Property constant */
+    int PR_COLUMN_COUNT = 74;
+    /** Property constant */
+    int PR_COLUMN_GAP = 75;
+    /** Property constant */
+    int PR_COLUMN_NUMBER = 76;
+    /** Property constant */
+    int PR_COLUMN_WIDTH = 77;
+    /** Property constant */
+    int PR_CONTENT_HEIGHT = 78;
+    /** Property constant */
+    int PR_CONTENT_TYPE = 79;
+    /** Property constant */
+    int PR_CONTENT_WIDTH = 80;
+    /** Property constant */
+    int PR_COUNTRY = 81;
+    /** Property constant */
+    int PR_CUE = 82;
+    /** Property constant */
+    int PR_CUE_AFTER = 83;
+    /** Property constant */
+    int PR_CUE_BEFORE = 84;
+    /** Property constant */
+    int PR_DESTINATION_PLACEMENT_OFFSET = 85;
+    /** Property constant */
+    int PR_DIRECTION = 86;
+    /** Property constant */
+    int PR_DISPLAY_ALIGN = 87;
+    /** Property constant */
+    int PR_DOMINANT_BASELINE = 88;
+    /** Property constant */
+    int PR_ELEVATION = 89;
+    /** Property constant */
+    int PR_EMPTY_CELLS = 90;
+    /** Property constant */
+    int PR_END_INDENT = 91;
+    /** Property constant */
+    int PR_ENDS_ROW = 92;
+    /** Property constant */
+    int PR_EXTENT = 93;
+    /** Property constant */
+    int PR_EXTERNAL_DESTINATION = 94;
+    /** Property constant */
+    int PR_FLOAT = 95;
+    /** Property constant -- XSL 1.1 */
+    int PR_FLOW_MAP_NAME = 96;
+    /** Property constant -- XSL 1.1 */
+    int PR_FLOW_MAP_REFERENCE = 97;
+    /** Property constant */
+    int PR_FLOW_NAME = 98;
+    /** Property constant -- XSL 1.1 */
+    int PR_FLOW_NAME_REFERENCE = 99;
+    /** Property constant */
+    int PR_FONT = 100;
+    /** Property constant */
+    int PR_FONT_FAMILY = 101;
+    /** Property constant */
+    int PR_FONT_SELECTION_STRATEGY = 102;
+    /** Property constant */
+    int PR_FONT_SIZE = 103;
+    /** Property constant */
+    int PR_FONT_SIZE_ADJUST = 104;
+    /** Property constant */
+    int PR_FONT_STRETCH = 105;
+    /** Property constant */
+    int PR_FONT_STYLE = 106;
+    /** Property constant */
+    int PR_FONT_VARIANT = 107;
+    /** Property constant */
+    int PR_FONT_WEIGHT = 108;
+    /** Property constant */
+    int PR_FORCE_PAGE_COUNT = 109;
+    /** Property constant */
+    int PR_FORMAT = 110;
+    /** Property constant */
+    int PR_GLYPH_ORIENTATION_HORIZONTAL = 111;
+    /** Property constant */
+    int PR_GLYPH_ORIENTATION_VERTICAL = 112;
+    /** Property constant */
+    int PR_GROUPING_SEPARATOR = 113;
+    /** Property constant */
+    int PR_GROUPING_SIZE = 114;
+    /** Property constant */
+    int PR_HEIGHT = 115;
+    /** Property constant */
+    int PR_HYPHENATE = 116;
+    /** Property constant */
+    int PR_HYPHENATION_CHARACTER = 117;
+    /** Property constant */
+    int PR_HYPHENATION_KEEP = 118;
+    /** Property constant */
+    int PR_HYPHENATION_LADDER_COUNT = 119;
+    /** Property constant */
+    int PR_HYPHENATION_PUSH_CHARACTER_COUNT = 120;
+    /** Property constant */
+    int PR_HYPHENATION_REMAIN_CHARACTER_COUNT = 121;
+    /** Property constant */
+    int PR_ID = 122;
+    /** Property constant */
+    int PR_INDICATE_DESTINATION = 123;
+    /** Property constant - XSL 1.1 */
+    int PR_INDEX_CLASS = 124;
+    /** Property constant - XSL 1.1 */
+    int PR_INDEX_KEY = 125;
+    /** Property constant */
+    int PR_INITIAL_PAGE_NUMBER = 126;
+    /** Property constant */
+    int PR_INLINE_PROGRESSION_DIMENSION = 127;
+    /** Property constant */
+    int PR_INTERNAL_DESTINATION = 128;
+    /** Property constant - XSL 1.1 */
+    int PR_INTRINSIC_SCALE_VALUE = 129;
+    /** Property constant */
+    int PR_INTRUSION_DISPLACE = 130;
+    /** Property constant */
+    int PR_KEEP_TOGETHER = 131;
+    /** Property constant */
+    int PR_KEEP_WITH_NEXT = 132;
+    /** Property constant */
+    int PR_KEEP_WITH_PREVIOUS = 133;
+    /** Property constant */
+    int PR_LANGUAGE = 134;
+    /** Property constant */
+    int PR_LAST_LINE_END_INDENT = 135;
+    /** Property constant */
+    int PR_LEADER_ALIGNMENT = 136;
+    /** Property constant */
+    int PR_LEADER_LENGTH = 137;
+    /** Property constant */
+    int PR_LEADER_PATTERN = 138;
+    /** Property constant */
+    int PR_LEADER_PATTERN_WIDTH = 139;
+    /** Property constant */
+    int PR_LEFT = 140;
+    /** Property constant */
+    int PR_LETTER_SPACING = 141;
+    /** Property constant */
+    int PR_LETTER_VALUE = 142;
+    /** Property constant */
+    int PR_LINEFEED_TREATMENT = 143;
+    /** Property constant */
+    int PR_LINE_HEIGHT = 144;
+    /** Property constant */
+    int PR_LINE_HEIGHT_SHIFT_ADJUSTMENT = 145;
+    /** Property constant */
+    int PR_LINE_STACKING_STRATEGY = 146;
+    /** Property constant */
+    int PR_MARGIN = 147;
+    /** Property constant */
+    int PR_MARGIN_BOTTOM = 148;
+    /** Property constant */
+    int PR_MARGIN_LEFT = 149;
+    /** Property constant */
+    int PR_MARGIN_RIGHT = 150;
+    /** Property constant */
+    int PR_MARGIN_TOP = 151;
+    /** Property constant */
+    int PR_MARKER_CLASS_NAME = 152;
+    /** Property constant */
+    int PR_MASTER_NAME = 153;
+    /** Property constant */
+    int PR_MASTER_REFERENCE = 154;
+    /** Property constant */
+    int PR_MAX_HEIGHT = 155;
+    /** Property constant */
+    int PR_MAXIMUM_REPEATS = 156;
+    /** Property constant */
+    int PR_MAX_WIDTH = 157;
+    /** Property constant - XSL 1.1 */
+    int PR_MERGE_PAGES_ACROSS_INDEX_KEY_REFERENCES = 158;
+    /** Property constant - XSL 1.1 */
+    int PR_MERGE_RANGES_ACROSS_INDEX_KEY_REFERENCES = 159;
+    /** Property constant - XSL 1.1 */
+    int PR_MERGE_SEQUENTIAL_PAGE_NUMBERS = 160;
+    /** Property constant */
+    int PR_MEDIA_USAGE = 161;
+    /** Property constant */
+    int PR_MIN_HEIGHT = 162;
+    /** Property constant */
+    int PR_MIN_WIDTH = 163;
+    /** Property constant */
+    int PR_NUMBER_COLUMNS_REPEATED = 164;
+    /** Property constant */
+    int PR_NUMBER_COLUMNS_SPANNED = 165;
+    /** Property constant */
+    int PR_NUMBER_ROWS_SPANNED = 166;
+    /** Property constant */
+    int PR_ODD_OR_EVEN = 167;
+    /** Property constant */
+    int PR_ORPHANS = 168;
+    /** Property constant */
+    int PR_OVERFLOW = 169;
+    /** Property constant */
+    int PR_PADDING = 170;
+    /** Property constant */
+    int PR_PADDING_AFTER = 171;
+    /** Property constant */
+    int PR_PADDING_BEFORE = 172;
+    /** Property constant */
+    int PR_PADDING_BOTTOM = 173;
+    /** Property constant */
+    int PR_PADDING_END = 174;
+    /** Property constant */
+    int PR_PADDING_LEFT = 175;
+    /** Property constant */
+    int PR_PADDING_RIGHT = 176;
+    /** Property constant */
+    int PR_PADDING_START = 177;
+    /** Property constant */
+    int PR_PADDING_TOP = 178;
+    /** Property constant */
+    int PR_PAGE_BREAK_AFTER = 179;
+    /** Property constant */
+    int PR_PAGE_BREAK_BEFORE = 180;
+    /** Property constant */
+    int PR_PAGE_BREAK_INSIDE = 181;
+    /** Property constant - XSL 1.1 */
+    int PR_PAGE_CITATION_STRATEGY = 182;
+    /** Property constant */
+    int PR_PAGE_HEIGHT = 183;
+    /** Property constant - XSL 1.1 */
+    int PR_PAGE_NUMBER_TREATMENT = 184;
+    /** Property constant */
+    int PR_PAGE_POSITION = 185;
+    /** Property constant */
+    int PR_PAGE_WIDTH = 186;
+    /** Property constant */
+    int PR_PAUSE = 187;
+    /** Property constant */
+    int PR_PAUSE_AFTER = 188;
+    /** Property constant */
+    int PR_PAUSE_BEFORE = 189;
+    /** Property constant */
+    int PR_PITCH = 190;
+    /** Property constant */
+    int PR_PITCH_RANGE = 191;
+    /** Property constant */
+    int PR_PLAY_DURING = 192;
+    /** Property constant */
+    int PR_POSITION = 193;
+    /** Property constant */
+    int PR_PRECEDENCE = 194;
+    /** Property constant */
+    int PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS = 195;
+    /** Property constant */
+    int PR_PROVISIONAL_LABEL_SEPARATION = 196;
+    /** Property constant */
+    int PR_REFERENCE_ORIENTATION = 197;
+    /** Property constant */
+    int PR_REF_ID = 198;
+    /** Property constant */
+    int PR_REGION_NAME = 199;
+    /** Property constant - XSL 1.1 */
+    int PR_REGION_NAME_REFERENCE = 200;
+    /** Property constant - XSL 1.1 */
+    int PR_REF_INDEX_KEY = 201;
+    /** Property constant */
+    int PR_RELATIVE_ALIGN = 202;
+    /** Property constant */
+    int PR_RELATIVE_POSITION = 203;
+    /** Property constant */
+    int PR_RENDERING_INTENT = 204;
+    /** Property constant */
+    int PR_RETRIEVE_BOUNDARY = 205;
+    /** Property constant - XSL 1.1 */
+    int PR_RETRIEVE_BOUNDARY_WITHIN_TABLE = 206;
+    /** Property constant */
+    int PR_RETRIEVE_CLASS_NAME = 207;
+    /** Property constant */
+    int PR_RETRIEVE_POSITION = 208;
+    /** Property constant - XSL 1.1 */
+    int PR_RETRIEVE_POSITION_WITHIN_TABLE = 209;
+    /** Property constant */
+    int PR_RICHNESS = 210;
+    /** Property constant */
+    int PR_RIGHT = 211;
+    /** Property constant */
+    int PR_ROLE = 212;
+    /** Property constant */
+    int PR_RULE_STYLE = 213;
+    /** Property constant */
+    int PR_RULE_THICKNESS = 214;
+    /** Property constant */
+    int PR_SCALING = 215;
+    /** Property constant */
+    int PR_SCALING_METHOD = 216;
+    /** Property constant */
+    int PR_SCORE_SPACES = 217;
+    /** Property constant */
+    int PR_SCRIPT = 218;
+    /** Property constant */
+    int PR_SHOW_DESTINATION = 219;
+    /** Property constant */
+    int PR_SIZE = 220;
+    /** Property constant */
+    int PR_SOURCE_DOCUMENT = 221;
+    /** Property constant */
+    int PR_SPACE_AFTER = 222;
+    /** Property constant */
+    int PR_SPACE_BEFORE = 223;
+    /** Property constant */
+    int PR_SPACE_END = 224;
+    /** Property constant */
+    int PR_SPACE_START = 225;
+    /** Property constant */
+    int PR_SPAN = 226;
+    /** Property constant */
+    int PR_SPEAK = 227;
+    /** Property constant */
+    int PR_SPEAK_HEADER = 228;
+    /** Property constant */
+    int PR_SPEAK_NUMERAL = 229;
+    /** Property constant */
+    int PR_SPEAK_PUNCTUATION = 230;
+    /** Property constant */
+    int PR_SPEECH_RATE = 231;
+    /** Property constant */
+    int PR_SRC = 232;
+    /** Property constant */
+    int PR_START_INDENT = 233;
+    /** Property constant */
+    int PR_STARTING_STATE = 234;
+    /** Property constant */
+    int PR_STARTS_ROW = 235;
+    /** Property constant */
+    int PR_STRESS = 236;
+    /** Property constant */
+    int PR_SUPPRESS_AT_LINE_BREAK = 237;
+    /** Property constant */
+    int PR_SWITCH_TO = 238;
+    /** Property constant */
+    int PR_TABLE_LAYOUT = 239;
+    /** Property constant */
+    int PR_TABLE_OMIT_FOOTER_AT_BREAK = 240;
+    /** Property constant */
+    int PR_TABLE_OMIT_HEADER_AT_BREAK = 241;
+    /** Property constant */
+    int PR_TARGET_PRESENTATION_CONTEXT = 242;
+    /** Property constant */
+    int PR_TARGET_PROCESSING_CONTEXT = 243;
+    /** Property constant */
+    int PR_TARGET_STYLESHEET = 244;
+    /** Property constant */
+    int PR_TEXT_ALIGN = 245;
+    /** Property constant */
+    int PR_TEXT_ALIGN_LAST = 246;
+    /** Property constant */
+    int PR_TEXT_ALTITUDE = 247;
+    /** Property constant */
+    int PR_TEXT_DECORATION = 248;
+    /** Property constant */
+    int PR_TEXT_DEPTH = 249;
+    /** Property constant */
+    int PR_TEXT_INDENT = 250;
+    /** Property constant */
+    int PR_TEXT_SHADOW = 251;
+    /** Property constant */
+    int PR_TEXT_TRANSFORM = 252;
+    /** Property constant */
+    int PR_TOP = 253;
+    /** Property constant */
+    int PR_TREAT_AS_WORD_SPACE = 254;
+    /** Property constant */
+    int PR_UNICODE_BIDI = 255;
+    /** Property constant */
+    int PR_VERTICAL_ALIGN = 256;
+    /** Property constant */
+    int PR_VISIBILITY = 257;
+    /** Property constant */
+    int PR_VOICE_FAMILY = 258;
+    /** Property constant */
+    int PR_VOLUME = 259;
+    /** Property constant */
+    int PR_WHITE_SPACE = 260;
+    /** Property constant */
+    int PR_WHITE_SPACE_COLLAPSE = 261;
+    /** Property constant */
+    int PR_WHITE_SPACE_TREATMENT = 262;
+    /** Property constant */
+    int PR_WIDOWS = 263;
+    /** Property constant */
+    int PR_WIDTH = 264;
+    /** Property constant */
+    int PR_WORD_SPACING = 265;
+    /** Property constant */
+    int PR_WRAP_OPTION = 266;
+    /** Property constant */
+    int PR_WRITING_MODE = 267;
+    /** Property constant */
+    int PR_XML_LANG = 268;
+    /** Property constant */
+    int PR_Z_INDEX = 269;
     /** Property constant - FOP proprietary: Custom extension for line alignment */
-    int PR_X_BLOCK_PROGRESSION_UNIT = 251;
+    int PR_X_BLOCK_PROGRESSION_UNIT = 270;
     /** Property constant - FOP proprietary: limit for widow content in lists and tables */
-    int PR_X_WIDOW_CONTENT_LIMIT = 252;
+    int PR_X_WIDOW_CONTENT_LIMIT = 271;
     /** Property constant - FOP proprietary: limit for orphan content in lists and tables */
-    int PR_X_ORPHAN_CONTENT_LIMIT = 253;
-    /** Property constant */
-    int PR_RETRIEVE_POSITION_WITHIN_TABLE = 254;
-    /** Property constant */
-    int PR_RETRIEVE_BOUNDARY_WITHIN_TABLE = 255;
+    int PR_X_ORPHAN_CONTENT_LIMIT = 272;
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 255;
+    int PROPERTY_COUNT = 272;
 
     // compound property constants
 
@@ -1113,6 +1185,16 @@ public interface Constants {
     int EN_TABLE = 194;
     /** Enumeration constant -- for fo:retrieve-table-marker */
     int EN_TABLE_FRAGMENT = 195;
+    /** Enumeration constant -- XSL 1.1 */
+    int EN_MERGE = 196;
+    /** Enumeration constant -- XSL 1.1 */
+    int EN_LEAVE_SEPARATE = 197;
+    /** Enumeration constant -- XSL 1.1 */
+    int EN_LINK = 198;
+    /** Enumeration constant -- XSL 1.1 */
+    int EN_NO_LINK = 199;
+    /** Enumeration constant -- XSL 1.1 */
+    int EN_ALTERNATE = 200;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 195;
+    int ENUM_COUNT = 200;
 }

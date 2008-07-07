@@ -22,6 +22,7 @@ package org.apache.fop.fo.flow;
 import java.awt.Color;
 
 import org.xml.sax.Locator;
+import org.xml.sax.Attributes;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
@@ -104,9 +105,9 @@ public abstract class AbstractPageNumberCitation extends FObj {
     }
 
     /** {@inheritDoc} */
-    protected void startOfNode() throws FOPException {
-        super.startOfNode();
-        if (refId.equals("")) {
+    public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList pList) throws FOPException {
+        super.processNode(elementName, locator, attlist, pList);
+        if (!inMarker() && (refId == null || "".equals(refId))) {
             missingPropertyError("ref-id");
         }
     }

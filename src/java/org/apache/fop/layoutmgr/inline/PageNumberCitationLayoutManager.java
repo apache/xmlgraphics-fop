@@ -44,7 +44,7 @@ public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationL
     
     /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
-        curArea = getPageNumberCitationInlineArea(parentLM);
+        curArea = getPageNumberCitationInlineArea();
         return curArea;
     }
     
@@ -52,7 +52,7 @@ public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationL
      * if id can be resolved then simply return a word, otherwise
      * return a resolvable area
      */
-    private InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
+    private InlineArea getPageNumberCitationInlineArea() {
         PageViewport page = getPSLM().getFirstPVWithID(fobj.getRefId());
         TextArea text = null;
         if (page != null) {

@@ -28,7 +28,7 @@ public interface EventListener extends java.util.EventListener {
      * This method is called for each event that is generated. With the event's ID it is possible
      * to react to certain events. Events can also simply be recorded and presented to a user.
      * It is possible to throw an (unchecked) exception if the processing needs to be aborted
-     * because some special event occured. This way the client can configure the behaviour of
+     * because some special event occurred. This way the client can configure the behaviour of
      * the observed application.
      * @param event the event
      */

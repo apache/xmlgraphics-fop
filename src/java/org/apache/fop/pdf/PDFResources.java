@@ -28,6 +28,8 @@ import java.util.Set;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.base14.Symbol;
+import org.apache.fop.fonts.base14.ZapfDingbats;
 import org.apache.fop.util.ColorProfileUtil;
 
 /**
@@ -109,8 +111,12 @@ public class PDFResources extends PDFObject {
                 if (font instanceof FontDescriptor) {
                     desc = (FontDescriptor)font;
                 }
+                String encoding = font.getEncodingName();
+                if (font instanceof Symbol || font instanceof ZapfDingbats) {
+                    encoding = null; //Symbolic fonts shouldn't specify an encoding value in PDF
+                }
                 addFont(doc.getFactory().makeFont(
-                    f, font.getEmbedFontName(), font.getEncodingName(), font, desc));
+                    f, font.getEmbedFontName(), encoding, font, desc));
             }
         }
     }

@@ -418,13 +418,8 @@ public class Area extends AreaTreeObject implements Serializable {
      * @param oTraitCode the trait key
      * @return the trait value
      */
-    public boolean getBooleanTrait(Object oTraitCode) {
-        final Object obj = getTrait(oTraitCode);
-        if (obj instanceof Boolean) {
-            return ((Boolean)obj).booleanValue();
-        } else {
-            return false;
-        }
+    public boolean getTraitAsBoolean(Object oTraitCode) {
+        return Boolean.TRUE.equals(getTrait(oTraitCode));
     }
 
     /**

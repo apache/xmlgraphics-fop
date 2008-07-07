@@ -54,7 +54,6 @@ import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -246,15 +245,25 @@ public abstract class AbstractRenderer
         last here. */
         RegionViewport viewport;
         viewport = page.getRegionViewport(FO_REGION_BEFORE);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_START);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_END);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_AFTER);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
         viewport = page.getRegionViewport(FO_REGION_BODY);
-        renderRegionViewport(viewport);
+        if (viewport != null) {
+            renderRegionViewport(viewport);
+        }
     }
 
     /**
@@ -266,27 +275,25 @@ public abstract class AbstractRenderer
      * @param port  The region viewport to be rendered
      */
     protected void renderRegionViewport(RegionViewport port) {
-        if (port != null) {
-            Rectangle2D view = port.getViewArea();
-            // The CTM will transform coordinates relative to
-            // this region-reference area into page coords, so
-            // set origin for the region to 0,0.
-            currentBPPosition = 0;
-            currentIPPosition = 0;
+        Rectangle2D view = port.getViewArea();
+        // The CTM will transform coordinates relative to
+        // this region-reference area into page coords, so
+        // set origin for the region to 0,0.
+        currentBPPosition = 0;
+        currentIPPosition = 0;
 
-            RegionReference regionReference = port.getRegionReference();
-            handleRegionTraits(port);
+        RegionReference regionReference = port.getRegionReference();
+        handleRegionTraits(port);
 
-            //  shouldn't the viewport have the CTM
-            startVParea(regionReference.getCTM(), port.isClip() ? view : null);
-            // do after starting viewport area
-            if (regionReference.getRegionClass() == FO_REGION_BODY) {
-                renderBodyRegion((BodyRegion) regionReference);
-            } else {
-                renderRegion(regionReference);
-            }
-            endVParea();
+        //  shouldn't the viewport have the CTM
+        startVParea(regionReference.getCTM(), port.isClip() ? view : null);
+        // do after starting viewport area
+        if (regionReference.getRegionClass() == FO_REGION_BODY) {
+            renderBodyRegion((BodyRegion) regionReference);
+        } else {
+            renderRegion(regionReference);
         }
+        endVParea();
     }
 
     /**
@@ -320,8 +327,7 @@ public abstract class AbstractRenderer
      * @param region  The region reference area
      */
     protected void renderRegion(RegionReference region) {
-        List blocks = region.getBlocks();
-        renderBlocks(null, blocks);
+        renderBlocks(null, region.getBlocks());
     }
 
     /**
@@ -398,7 +404,7 @@ public abstract class AbstractRenderer
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
             for (int c = 0; c < span.getColumnCount(); c++) {
-                NormalFlow flow = (NormalFlow) span.getNormalFlow(c);
+                NormalFlow flow = span.getNormalFlow(c);
 
                 if (flow != null) {
                     currentBPPosition = saveSpanBPPos;
@@ -484,6 +490,13 @@ public abstract class AbstractRenderer
     }
 
     /**
+     * Renders a block area that represents a reference area. The reference area establishes
+     * a new coordinate system.
+     * @param block the block area
+     */
+    protected abstract void renderReferenceArea(Block block);
+    
+    /**
      * Renders a list of block areas.
      *
      * @param parent  the parent block if the parent is a block, otherwise
@@ -495,7 +508,7 @@ public abstract class AbstractRenderer
         int saveBP = currentBPPosition;
 
         // Calculate the position of the content rectangle.
-        if (parent != null && !Boolean.TRUE.equals(parent.getTrait(Trait.IS_VIEWPORT_AREA))) {
+        if (parent != null && !parent.getTraitAsBoolean(Trait.IS_VIEWPORT_AREA)) {
             currentBPPosition += parent.getBorderAndPaddingWidthBefore();
             /* This is unnecessary now as we're going to use the *-indent traits
             currentIPPosition += parent.getBorderAndPaddingWidthStart();
@@ -551,6 +564,8 @@ public abstract class AbstractRenderer
                 // simply move position
                 currentBPPosition += block.getAllocBPD();
             }
+        } else if (block.getTraitAsBoolean(Trait.IS_REFERENCE_AREA)) {
+            renderReferenceArea(block);
         } else {
             // save position and offset
             int saveIP = currentIPPosition;
@@ -620,15 +635,6 @@ public abstract class AbstractRenderer
         } else if (inlineArea instanceof Leader) {
             renderLeader((Leader) inlineArea);
         }
-    }
-
-    /**
-     * Render the given Character.
-     * @param ch the character to render
-     * @deprecated Only TextArea should be used. This method will be removed eventually.
-     */
-    protected void renderCharacter(Character ch) {
-        currentIPPosition += ch.getAllocIPD();
     }
 
     /** 
@@ -738,6 +744,8 @@ public abstract class AbstractRenderer
             renderContainer((Container) content);
         } else if (content instanceof ForeignObject) {
             renderForeignObject((ForeignObject) content, contpos);
+        } else if (content instanceof InlineBlockParent) {
+            renderInlineBlockParent((InlineBlockParent) content);
         }
         currentIPPosition += viewport.getAllocIPD();
         currentBPPosition = saveBP;
@@ -776,7 +784,7 @@ public abstract class AbstractRenderer
      * @param pos  The target position of the foreign object
      * (todo) Make renderForeignObject() protected
      */
-    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+    protected void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         // Default: do nothing.
         // Some renderers (ex. Text) don't support foreign objects.
     }
@@ -801,8 +809,9 @@ public abstract class AbstractRenderer
                 handler.handleXML(ctx, doc, namespace);
             } catch (Exception e) {
                 // could not handle document
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        ctx.getUserAgent().getEventBroadcaster());
+                ResourceEventProducer eventProducer 
+                        = ResourceEventProducer.Provider.get(
+                            ctx.getUserAgent().getEventBroadcaster());
                 eventProducer.foreignXMLProcessingError(this, doc, namespace, e);
             }
         } else {

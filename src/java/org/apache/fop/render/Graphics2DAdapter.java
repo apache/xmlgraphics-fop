@@ -47,4 +47,23 @@ public interface Graphics2DAdapter {
             RendererContext context,
             int x, int y, int width, int height) throws IOException;
     
+    /**
+     * Paints an arbitrary images on a given Graphics2D instance. The renderer
+     * providing this functionality must set up a Graphics2D instance so that
+     * the image with the given extents (in mpt) can be painted by the painter
+     * passed to this method. The Graphics2DImagePainter is then passed this
+     * Graphics2D instance so the image can be painted.
+     * @param painter the painter which will paint the actual image
+     * @param context the renderer context for the current renderer
+     * @param x X position of the image
+     * @param y Y position of the image
+     * @param width width of the image
+     * @param height height of the image
+     * @throws IOException In case of an I/O error while writing the output format
+     * @deprecated Use the variant with the Graphics2DImagePainter from XML Graphics Commons instead
+     */
+    void paintImage(Graphics2DImagePainter painter, 
+            RendererContext context,
+            int x, int y, int width, int height) throws IOException;
+    
 }

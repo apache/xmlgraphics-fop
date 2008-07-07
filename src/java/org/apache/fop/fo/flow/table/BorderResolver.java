@@ -40,7 +40,7 @@ interface BorderResolver {
      * 
      * @param part the part that has started
      */
-    void startPart(TableBody part);
+    void startPart(TablePart part);
 
     /**
      * Receives notification of the end of a table-header/footer/body.

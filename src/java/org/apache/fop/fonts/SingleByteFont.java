@@ -50,8 +50,8 @@ public class SingleByteFont extends CustomFont {
     
     /** {@inheritDoc} */
     public boolean isEmbeddable() {
-        return (getEmbedFileName() == null && getEmbedResourceName() == null) ? false
-               : true;
+        return (!(getEmbedFileName() == null 
+                && getEmbedResourceName() == null));
     }
 
     /** {@inheritDoc} */

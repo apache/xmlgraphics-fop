@@ -214,7 +214,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
      */
     protected void addCharacters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) {
-        String str = new String(data, start, length - start);
+        String str = new String(data, start, length);
         org.w3c.dom.Text text = doc.createTextNode(str);
         element.appendChild(text);
     }

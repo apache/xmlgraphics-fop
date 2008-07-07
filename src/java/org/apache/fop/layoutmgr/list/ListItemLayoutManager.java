@@ -26,7 +26,6 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
@@ -39,12 +38,14 @@ import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KeepUtil;
+import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -71,8 +72,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
     private Block curBlockArea = null;
 
-    private LinkedList labelList = null;
-    private LinkedList bodyList = null;
+    private List labelList = null;
+    private List bodyList = null;
 
     private boolean discardBorderBefore;
     private boolean discardBorderAfter;
@@ -189,11 +190,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     }
     
     /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         referenceIPD = context.getRefIPD();
         LayoutContext childLC;
         
-        LinkedList returnList = new LinkedList();
+        List returnList = new LinkedList();
         
         if (!breakBeforeServed) {
             try {
@@ -242,7 +243,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         this.keepWithNextPendingOnBody = childLC.getKeepWithNextPending();
 
         // create a combined list
-        LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
+        List returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
 
         // "wrap" the Position inside each element
         wrapPositionElements(returnedList, returnList, true);
@@ -261,10 +262,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
 
-    private LinkedList getCombinedKnuthElementsForListItem(LinkedList labelElements,
-                                                           LinkedList bodyElements,
-                                                           LayoutContext context) {
-        //Copy elements to array lists to improve element access performance
+    private List getCombinedKnuthElementsForListItem(List labelElements,
+            List bodyElements, LayoutContext context) {
+        // Copy elements to array lists to improve element access performance
         List[] elementLists = {new ArrayList(labelElements),
                                new ArrayList(bodyElements)};
         int[] fullHeights = {ElementListUtils.calcContentLength(elementLists[0]),
@@ -279,8 +279,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         int keepWithNextActive = BlockLevelLayoutManager.KEEP_AUTO;
 
         LinkedList returnList = new LinkedList();
-        while ((step = getNextStep(elementLists, start, end, partialHeights))
-               > 0) {
+        while ((step = getNextStep(elementLists, start, end, partialHeights)) > 0) {
             
             if (end[0] + 1 == elementLists[0].size()) {
                 keepWithNextActive = Math.max(keepWithNextActive, keepWithNextPendingOnLabel);
@@ -312,11 +311,33 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             int boxHeight = step - addedBoxHeight - penaltyHeight;
             penaltyHeight += additionalPenaltyHeight; //Add AFTER calculating boxHeight!
 
+            // collect footnote information
+            // TODO this should really not be done like this. ListItemLM should remain as
+            // footnote-agnostic as possible
+            LinkedList footnoteList = null;
+            ListElement el;
+            for (int i = 0; i < elementLists.length; i++) {
+                for (int j = start[i]; j <= end[i]; j++) {
+                    el = (ListElement) elementLists[i].get(j);
+                    if (el instanceof KnuthBlockBox && ((KnuthBlockBox) el).hasAnchors()) {
+                        if (footnoteList == null) {
+                            footnoteList = new LinkedList();
+                        }
+                        footnoteList.addAll(((KnuthBlockBox) el).getFootnoteBodyLMs());
+                    }
+                }
+            }
+
             // add the new elements
             addedBoxHeight += boxHeight;
             ListItemPosition stepPosition = new ListItemPosition(this, 
                     start[0], end[0], start[1], end[1]);
-            returnList.add(new KnuthBox(boxHeight, stepPosition, false));
+            if (footnoteList == null) {
+                returnList.add(new KnuthBox(boxHeight, stepPosition, false));
+            } else {
+                returnList.add(new KnuthBlockBox(boxHeight, footnoteList, stepPosition, false));
+            }
+
             if (addedBoxHeight < totalHeight) {
                 int strength = BlockLevelLayoutManager.KEEP_AUTO;
                 strength = Math.max(strength, keepWithNextActive);
@@ -407,7 +428,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     /**
      * {@inheritDoc} 
      */
-    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         //log.debug(" LILM.getChanged> label");
         // label
         labelList = label.getChangedKnuthElements(labelList, alignment);
@@ -436,9 +457,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        LinkedList returnedList = body.getChangedKnuthElements(oldList, alignment);
+        List returnedList = body.getChangedKnuthElements(oldList, alignment);
         // "wrap" the Position inside each element
-        LinkedList tempList = returnedList;
+        List tempList = returnedList;
         KnuthElement tempElement;
         returnedList = new LinkedList();
         ListIterator listIter = tempList.listIterator();

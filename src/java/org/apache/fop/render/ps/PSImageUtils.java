@@ -16,22 +16,14 @@
  */
 
 /* $Id$ */
-
+ 
 package org.apache.fop.render.ps;
 
 /**
- * Thrown to indicate that a formatting error has occured when
- * trying to parse a postscript dictionary object
+ * Utility code for rendering images in PostScript.
+ * @deprecated Kept for compatibility with older FOP extensions (like Barcode4J). Use the
+ * super-class instead.
  */
-public class PSDictionaryFormatException extends Exception {
+public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
 
-    private static final long serialVersionUID = 6492321557297860931L;
-
-    /**
-     * Default constructor
-     * @param string error message
-     */
-    public PSDictionaryFormatException(String string) {
-        super(string);
-    }
 }

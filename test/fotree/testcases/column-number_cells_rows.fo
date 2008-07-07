@@ -181,6 +181,10 @@
           </fo:table-row>
         </fo:table-body>
       </fo:table>
+      <fo:block column-number="4">
+        <test:assert property="column-number" expected="4" />
+        Test column-number when specified on fo:block
+      </fo:block>
     </fo:flow>
   </fo:page-sequence>
 </fo:root>

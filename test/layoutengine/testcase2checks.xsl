@@ -19,15 +19,19 @@
 <!-- This stylesheet extracts the checks from the testcase so the list of checks can be built in Java code. -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
-  <xsl:template match="testcase">
-    <checks>
-      <xsl:apply-templates select="checks/*" mode="copy"/>
-    </checks>
-  </xsl:template>
+<xsl:variable name="basic-checks" select="document('basic-checks.xml')/checks/*" />
 
-  <xsl:template match="node()|@*" mode="copy">
-    <xsl:copy>
-      <xsl:apply-templates select="@*|node()" mode="copy"/>
-    </xsl:copy>
-  </xsl:template>
+<xsl:template match="testcase">
+  <xsl:apply-templates select="checks" />
+</xsl:template>
+
+<xsl:template match="checks">
+  <checks>
+    <xsl:copy-of select="$basic-checks" />
+    <xsl:copy-of select="*" />
+  </checks>
+</xsl:template>
+
+<xsl:template match="text()" />
+
 </xsl:stylesheet>

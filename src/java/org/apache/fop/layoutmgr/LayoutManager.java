@@ -19,7 +19,6 @@
  
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
@@ -135,10 +134,10 @@ public interface LayoutManager extends PercentBaseContext {
      * of the node assigned to the LM
      * 
      * @param context   the LayoutContext used to store layout information
-     * @param alignment the desired text alignement
+     * @param alignment the desired text alignment
      * @return          the list of KnuthElements
      */
-    LinkedList getNextKnuthElements(LayoutContext context, int alignment);
+    List getNextKnuthElements(LayoutContext context, int alignment);
 
     /**
      * Get a sequence of KnuthElements representing the content 
@@ -146,7 +145,7 @@ public interface LayoutManager extends PercentBaseContext {
      *
      * In the context of line breaking, this method is called after hyphenation has
      * been performed, in order to receive the sequence of elements representing the 
-     * text together with all possibile hyphenation points.
+     * text together with all possible hyphenation points.
      * For example, if the text "representation" originates a single box element
      * when getNextKnuthElements() is called, it will be now split in syllables
      * (rep-re-sen-ta-tion) each one originating a box and divided by additional
@@ -175,7 +174,7 @@ public interface LayoutManager extends PercentBaseContext {
      * @param alignment      the desired text alignment
      * @return               the updated list of KnuthElements
      */
-    LinkedList getChangedKnuthElements(List oldList, int alignment);
+    List getChangedKnuthElements(List oldList, int alignment);
     
     /**
      * Returns the IPD of the content area

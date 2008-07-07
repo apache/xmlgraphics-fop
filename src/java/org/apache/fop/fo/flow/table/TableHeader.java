@@ -28,7 +28,7 @@ import org.apache.fop.fo.FONode;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-header">
  * <code>fo:table-header</code></a> object.
  */
-public class TableHeader extends TableBody {
+public class TableHeader extends TablePart {
 
     /**
      * Create a TableHeader instance with the given {@link FONode}
@@ -40,17 +40,15 @@ public class TableHeader extends TableBody {
     }
 
     /** {@inheritDoc} */
-    public void startOfNode() throws FOPException {
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
+        getFOEventHandler().startHeader(this);
     }
 
     /** {@inheritDoc} */
-    public void endOfNode() throws FOPException {
-        if (!(tableRowsFound || tableCellsFound)) {
-            missingChildElementError("marker* (table-row+|table-cell+)");
-        } else {
-            finishLastRowGroup();
-        }
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endHeader(this);
     }
 
     /** {@inheritDoc} */
@@ -66,8 +64,4 @@ public class TableHeader extends TableBody {
         return FO_TABLE_HEADER;
     }
 
-    /** {@inheritDoc} */
-    protected boolean isTableHeader() {
-        return true;
-    }
 }
