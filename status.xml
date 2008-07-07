@@ -70,7 +70,7 @@
         when the page bpd is not the same for all pages.
       </action>
       <action context="Code" dev="AD" type="update" importance="high">
-        Changed FONode.characters() parameter to closer match the signature of 
+        Changed FONode.addCharacters() parameter to closer match the signature of 
         the standard SAX characters() event (reduces confusion and computations).
         <em>!! Implementors of extensions that subclass FONode directly, and 
         offer an implementation for addCharacters() should take care to make 
