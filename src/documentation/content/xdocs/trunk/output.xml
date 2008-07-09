@@ -714,6 +714,7 @@ out = proc.getOutputStream();]]></source>
         <li>fo:page-number-citation-last</li>
         <li>keeps (supported by the RTF library but not tied into the RTFHandler)</li>
         <li>region-start/end (RTF limitation)</li>
+        <li>multiple columns</li>
       </ul>
     </li>
     <li>Only a single page-master is supported</li>
