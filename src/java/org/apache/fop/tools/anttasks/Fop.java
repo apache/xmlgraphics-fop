@@ -77,7 +77,7 @@ public class Fop extends Task {
     private boolean logFiles = true;
     private boolean force = false;
     private boolean relativebase = false;
-    private boolean throwExceptions = false;
+    private boolean throwExceptions = true;
 
     /**
      * Sets the filename for the userconfig.xml.
