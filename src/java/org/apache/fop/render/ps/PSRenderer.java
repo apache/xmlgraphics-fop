@@ -734,8 +734,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         gen.useColor(col);
     }
 
-    /** {@inheritDoc}
-     * Area, float, float, float, float) */
+    /** {@inheritDoc} */
     protected void drawBackAndBorders(Area area, float startx, float starty,
             float width, float height) {
         if (area.hasTrait(Trait.BACKGROUND)
@@ -904,9 +903,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
         log.debug("Rendering areas to PostScript...");
@@ -980,9 +977,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         //Notify resource usage for font which are not supplied
         /* done in useFont now
@@ -1134,9 +1129,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderPage(PageViewport page)
             throws IOException, FOPException {
         log.debug("renderPage(): " + page);
@@ -1313,9 +1306,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderText(TextArea area) {
         renderInlineAreaBackAndBorders(area);
         String fontkey = getInternalFontNameForArea(area);
@@ -1346,17 +1337,13 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         renderTextDecoration(tf, fontsize, area, bl, rx);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void renderWord(WordArea word) {
         renderText((TextArea)word.getParentArea(), word.getWord(), word.getLetterAdjustArray());
         super.renderWord(word);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void renderSpace(SpaceArea space) {
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
         String s = space.getSpace();
