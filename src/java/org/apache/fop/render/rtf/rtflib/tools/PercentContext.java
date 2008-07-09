@@ -37,18 +37,6 @@ import org.apache.fop.fo.pagination.PageSequence;
 public class PercentContext implements PercentBaseContext {
     private static Log log = LogFactory.getLog(PercentContext.class);
 
-    private static final String BLOCKCONTAINER = "fo:block-container";
-    private static final String INLINECONTAINER = "fo:inline-container";
-    private static final String TABLE = "fo:table";
-    private static final String TABLECOLUMN = "fo:table-column";
-    private static final String PAGESEQUENCE = "fo:page-sequence";
-    private static final String EXTERNALGRAPHIC = "fo:external-graphic";
-
-    /** String array of Elements having a width property */
-    public static final String[] WIDTH_OBJECTS = new String[] {
-            BLOCKCONTAINER, INLINECONTAINER,
-            TABLE, TABLECOLUMN, PAGESEQUENCE, EXTERNALGRAPHIC};
-
     /** Map containing the FObj and its width */
     private Map lengthMap = new java.util.HashMap();
 
@@ -83,15 +71,6 @@ public class PercentContext implements PercentBaseContext {
             }
         case LengthBase.TABLE_UNITS:
             Object unit = tableUnitMap.get(fobj);
-            /*
-            if (unit == null && !(fobj instanceof Table)) {
-                FONode node = fobj;
-                do {
-                    node = node.getParent();
-                } while (!(node instanceof FObj) || node != null);
-                return getBaseLength(lengthBase, (FObj)node);
-            }
-            */
             return (unit != null) ? ((Integer)unit).intValue() : 0;
         default:
             log.error(new Exception("Unsupported base type for LengthBase:" + lengthBase));
