@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,7 +65,7 @@ public class RtfExternalGraphic extends RtfElement {
             super(reason);
         }
     }
-    
+
     //////////////////////////////////////////////////
     // Supported Formats
     //////////////////////////////////////////////////
@@ -83,7 +83,7 @@ public class RtfExternalGraphic extends RtfElement {
         public static boolean isFormat(byte[] data) {
             return false;
         }
-        
+
         /**
          * Convert image data if necessary - for example when format is not supported by rtf.
          *
@@ -93,7 +93,7 @@ public class RtfExternalGraphic extends RtfElement {
         public FormatBase convert(FormatBase format, byte[] data) {
             return format;
         }
-        
+
         /**
          * Determine image file format.
          *
@@ -118,7 +118,7 @@ public class RtfExternalGraphic extends RtfElement {
                 return null;
             }
         }
-        
+
         /**
          * Get image type.
          *
@@ -127,7 +127,7 @@ public class RtfExternalGraphic extends RtfElement {
         public int getType() {
             return ImageConstants.I_NOT_SUPPORTED;
         }
-        
+
         /**
          * Get rtf tag.
          *
@@ -137,7 +137,7 @@ public class RtfExternalGraphic extends RtfElement {
             return "";
         }
     }
-    
+
     private static class FormatGIF extends FormatBase {
         public static boolean isFormat(byte[] data) {
             // Indentifier "GIF8" on position 0
@@ -145,12 +145,12 @@ public class RtfExternalGraphic extends RtfElement {
 
             return ImageUtil.compareHexValues(pattern, data, 0, true);
         }
-        
+
         public int getType() {
             return ImageConstants.I_GIF;
         }
     }
-    
+
     private static class FormatEMF extends FormatBase {
         public static boolean isFormat(byte[] data) {
             // No offical Indentifier known
@@ -158,28 +158,28 @@ public class RtfExternalGraphic extends RtfElement {
 
             return ImageUtil.compareHexValues(pattern, data, 0, true);
         }
-        
+
         public int getType() {
             return ImageConstants.I_EMF;
         }
-        
+
         public String getRtfTag() {
             return "emfblip";
         }
     }
-    
+
     private  static class FormatBMP extends FormatBase {
         public static boolean isFormat(byte[] data) {
             byte [] pattern = new byte [] {(byte) 0x42, (byte) 0x4D};
 
             return ImageUtil.compareHexValues(pattern, data, 0, true);
         }
-        
+
         public int getType() {
             return ImageConstants.I_BMP;
         }
     }
-    
+
     private static class FormatJPG extends FormatBase {
         public static boolean isFormat(byte[] data) {
             // Indentifier "0xFFD8" on position 0
@@ -187,16 +187,16 @@ public class RtfExternalGraphic extends RtfElement {
 
             return ImageUtil.compareHexValues(pattern, data, 0, true);
         }
-      
+
         public int getType() {
             return ImageConstants.I_JPG;
         }
-        
+
         public String getRtfTag() {
             return "jpegblip";
         }
     }
-    
+
     private static class FormatPNG extends FormatBase {
         public static boolean isFormat(byte[] data) {
             // Indentifier "PNG" on position 1
@@ -204,16 +204,16 @@ public class RtfExternalGraphic extends RtfElement {
 
             return ImageUtil.compareHexValues(pattern, data, 1, true);
         }
-        
+
         public int getType() {
             return ImageConstants.I_PNG;
         }
-        
+
         public String getRtfTag() {
             return "pngblip";
         }
     }
-    
+
     //////////////////////////////////////////////////
     // @@ Members
     //////////////////////////////////////////////////
@@ -268,6 +268,9 @@ public class RtfExternalGraphic extends RtfElement {
      * Flag whether the image size shall be adjusted
      */
     protected boolean scaleUniform = false;
+
+    /** cropping on left/top/right/bottom edges for \piccrop*N */
+    private int[] cropValues = new int[4];
 
     /**
      * Graphic compression rate
@@ -370,7 +373,7 @@ public class RtfExternalGraphic extends RtfElement {
                 throw new ExternalGraphicException("The attribute 'src' of "
                         + "<fo:external-graphic> has a invalid value: '"
                         + url + "' (" + e + ")");
-            }            
+            }
         }
 
         if (imagedata == null) {
@@ -383,8 +386,8 @@ public class RtfExternalGraphic extends RtfElement {
         if (imageformat != null) {
             imageformat = imageformat.convert(imageformat, imagedata);
         }
-        
-        if (imageformat == null 
+
+        if (imageformat == null
                 || imageformat.getType() == ImageConstants.I_NOT_SUPPORTED
                 || "".equals(imageformat.getRtfTag())) {
             throw new ExternalGraphicException("The tag <fo:external-graphic> "
@@ -406,6 +409,7 @@ public class RtfExternalGraphic extends RtfElement {
 
         computeImageSize();
         writeSizeInfo();
+        writeAttributes(getRtfAttributes(), null);
 
         for (int i = 0; i < imagedata.length; i++) {
             int iData = imagedata [i];
@@ -465,17 +469,17 @@ public class RtfExternalGraphic extends RtfElement {
             }
         } else if (imageformat.getType() == ImageConstants.I_EMF) {
             int i = 0;
-            
+
             i = ImageUtil.getIntFromByteArray(imagedata, 151, 4, false);
             if (i != 0 ) {
-                width = i; 
+                width = i;
             }
-            
+
             i = ImageUtil.getIntFromByteArray(imagedata, 155, 4, false);
             if (i != 0 ) {
                 height = i;
             }
-            
+
         }
     }
 
@@ -519,6 +523,19 @@ public class RtfExternalGraphic extends RtfElement {
                 writeControlWord("picscaley" + widthDesired * 100 / width);
             }
         }
+
+        if (this.cropValues[0] != 0) {
+            writeOneAttribute("piccropl", new Integer(this.cropValues[0]));
+        }
+        if (this.cropValues[1] != 0) {
+            writeOneAttribute("piccropt", new Integer(this.cropValues[1]));
+        }
+        if (this.cropValues[2] != 0) {
+            writeOneAttribute("piccropr", new Integer(this.cropValues[2]));
+        }
+        if (this.cropValues[3] != 0) {
+            writeOneAttribute("piccropb", new Integer(this.cropValues[3]));
+        }
     }
 
     //////////////////////////////////////////////////
@@ -546,6 +563,24 @@ public class RtfExternalGraphic extends RtfElement {
     }
 
     /**
+     * Sets the desired width of the image.
+     * @param twips The desired image width (in twips)
+     */
+    public void setWidthTwips(int twips) {
+        this.widthDesired = twips;
+        this.perCentW = false;
+    }
+
+    /**
+     * Sets the desired height of the image.
+     * @param twips The desired image height (in twips)
+     */
+    public void setHeightTwips(int twips) {
+        this.heightDesired = twips;
+        this.perCentH = false;
+    }
+
+    /**
      * Sets the flag whether the image size shall be adjusted.
      *
      * @param value
@@ -553,11 +588,36 @@ public class RtfExternalGraphic extends RtfElement {
      * false   no adjustment
      */
     public void setScaling(String value) {
-        if (value.equalsIgnoreCase("uniform")) {
-            this.scaleUniform = true;
-        }
+        setUniformScaling("uniform".equalsIgnoreCase(value));
     }
-    
+
+    /**
+     * Sets the flag whether the image size shall be adjusted.
+     *
+     * @param uniform
+     *                true    image width or height shall be adjusted automatically\n
+     *                false   no adjustment
+     */
+    public void setUniformScaling(boolean uniform) {
+        this.scaleUniform = uniform;
+    }
+
+    /**
+     * Sets cropping values for all four edges for the \piccrop*N commands.
+     * A positive value crops toward the center of the picture;
+     * a negative value crops away from the center, adding a space border around the picture
+     * @param left left cropping value (in twips)
+     * @param top top cropping value (in twips)
+     * @param right right cropping value (in twips)
+     * @param bottom bottom cropping value (in twips)
+     */
+    public void setCropping(int left, int top, int right, int bottom) {
+        this.cropValues[0] = left;
+        this.cropValues[1] = top;
+        this.cropValues[2] = right;
+        this.cropValues[3] = bottom;
+    }
+
     /**
      * Sets the binary imagedata of the image.
      *

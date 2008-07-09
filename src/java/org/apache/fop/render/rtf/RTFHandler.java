@@ -20,6 +20,8 @@
 package org.apache.fop.render.rtf;
 
 // Java
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,10 +52,12 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.flow.BasicLink;
@@ -87,6 +91,7 @@ import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.EnumLength;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.layoutmgr.inline.ImageLayout;
 import org.apache.fop.layoutmgr.table.ColumnSetup;
 import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
@@ -1112,7 +1117,7 @@ public class RTFHandler extends FOEventHandler {
             throws IOException {
         byte[] rawData = null;
 
-        ImageInfo info = image.getInfo();
+        final ImageInfo info = image.getInfo();
 
         if (image instanceof ImageRawStream) {
             ImageRawStream rawImage = (ImageRawStream)image;
@@ -1130,6 +1135,25 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
+        //Set up percentage calculations
+        this.percentManager.setDimension(abstractGraphic);
+        PercentBaseContext pContext = new PercentBaseContext() {
+
+            public int getBaseLength(int lengthBase, FObj fobj) {
+                switch (lengthBase) {
+                case LengthBase.IMAGE_INTRINSIC_WIDTH:
+                    return info.getSize().getWidthMpt();
+                case LengthBase.IMAGE_INTRINSIC_HEIGHT:
+                    return info.getSize().getHeightMpt();
+                default:
+                    return percentManager.getBaseLength(lengthBase, fobj);
+                }
+            }
+
+        };
+        ImageLayout layout = new ImageLayout(abstractGraphic, pContext,
+                image.getInfo().getSize().getDimensionMpt());
+
         final IRtfTextrunContainer c
             = (IRtfTextrunContainer)builderContext.getContainer(
                 IRtfTextrunContainer.class, true, this);
@@ -1142,63 +1166,23 @@ public class RTFHandler extends FOEventHandler {
         }
         rtfGraphic.setImageData(rawData);
 
-        //set scaling
-        if (abstractGraphic.getScaling() == Constants.EN_UNIFORM) {
-            rtfGraphic.setScaling ("uniform");
-        }
+        FoUnitsConverter converter = FoUnitsConverter.getInstance();
+        Dimension viewport = layout.getViewportSize();
+        Rectangle placement = layout.getPlacement();
+        int cropLeft = Math.round(converter.convertMptToTwips(-placement.x));
+        int cropTop = Math.round(converter.convertMptToTwips(-placement.y));
+        int cropRight = Math.round(converter.convertMptToTwips(
+                -1 * (viewport.width - placement.x - placement.width)));
+        int cropBottom = Math.round(converter.convertMptToTwips(
+                -1 * (viewport.height - placement.y - placement.height)));
+        rtfGraphic.setCropping(cropLeft, cropTop, cropRight, cropBottom);
 
-        //get width
-        int width = 0;
-        if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
-            width = info.getSize().getWidthMpt();
-        } else {
-            width = abstractGraphic.getWidth().getValue();
-        }
-
-        //get height
-        int height = 0;
-        if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
-            height = info.getSize().getHeightMpt();
-        } else {
-            height = abstractGraphic.getHeight().getValue();
-        }
-
-        //get content-width
-        int contentwidth = 0;
-        if (abstractGraphic.getContentWidth().getEnum()
-                == Constants.EN_AUTO) {
-            contentwidth = info.getSize().getWidthMpt();
-        } else if (abstractGraphic.getContentWidth().getEnum()
-                == Constants.EN_SCALE_TO_FIT) {
-            contentwidth = width;
-        } else {
-            //TODO: check, if the value is a percent value
-            contentwidth = abstractGraphic.getContentWidth().getValue();
-        }
-
-        //get content-width
-        int contentheight = 0;
-        if (abstractGraphic.getContentHeight().getEnum()
-                == Constants.EN_AUTO) {
-
-            contentheight = info.getSize().getHeightMpt();
-
-        } else if (abstractGraphic.getContentHeight().getEnum()
-                == Constants.EN_SCALE_TO_FIT) {
-
-            contentheight = height;
-        } else {
-            //TODO: check, if the value is a percent value
-            contentheight = abstractGraphic.getContentHeight().getValue();
-        }
-
-        //set width in rtf
-        //newGraphic.setWidth((long) (contentwidth / 1000f) + FixedLength.POINT);
-        rtfGraphic.setWidth((long) (contentwidth / 50f) + "twips");
-
-        //set height in rtf
-        //newGraphic.setHeight((long) (contentheight / 1000f) + FixedLength.POINT);
-        rtfGraphic.setHeight((long) (contentheight / 50f) + "twips");
+        int width = Math.round(converter.convertMptToTwips(viewport.width));
+        int height = Math.round(converter.convertMptToTwips(viewport.height));
+        width += cropLeft + cropRight;
+        height += cropTop + cropBottom;
+        rtfGraphic.setWidthTwips(width);
+        rtfGraphic.setHeightTwips(height);
 
         //TODO: make this configurable:
         //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();
