@@ -45,7 +45,7 @@
   <!-- Produces new test files (function)                                  -->
   <!-- =================================================================== -->
   <target name="newTestFiles">
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" relativebase="true">
+    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" relativebase="true" throwexceptions="false">
       <fileset dir="basic">
         <include name="**/*.fo"/>
       </fileset>

@@ -77,6 +77,7 @@ public class Fop extends Task {
     private boolean logFiles = true;
     private boolean force = false;
     private boolean relativebase = false;
+    private boolean throwExceptions = false;
 
     /**
      * Sets the filename for the userconfig.xml.
@@ -209,6 +210,24 @@ public class Fop extends Task {
      */
     public String getFormat() {
         return this.format;
+    }
+
+    /**
+     * Set whether exceptions are thrown.
+     * default is false.
+     *
+     * @param force true if always generate.
+     */
+    public void setThrowexceptions(boolean throwExceptions) {
+        this.throwExceptions = throwExceptions;
+    }
+
+    /**
+     * Gets the throw exceptions attribute
+     * @return the throw exceptions attribute
+     */
+    public boolean getThrowexceptions() {
+        return this.throwExceptions;
     }
 
     /**
@@ -558,7 +577,10 @@ class FOPTaskStarter {
             inputHandler.renderTo(userAgent, outputFormat, out);
             success = true;
         } catch (Exception ex) {
-            throw new BuildException(ex);
+            if (task.getThrowexceptions()) {
+                throw new BuildException(ex);
+	    }
+            logger.error("Error rendering fo file: " + foFile, ex);
         } finally {
             try {
                 out.close();
