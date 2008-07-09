@@ -256,19 +256,19 @@ public abstract class TableFObj extends FObj {
         BorderSpecification borderSpec = new BorderSpecification(
                 getCommonBorderPaddingBackground().getBorderInfo(side), getNameId());
         switch (side) {
-            case CommonBorderPaddingBackground.BEFORE:
-                borderBefore = new ConditionalBorder(borderSpec, collapsingBorderModel);
-                break;
-            case CommonBorderPaddingBackground.AFTER:
-                borderAfter = new ConditionalBorder(borderSpec, collapsingBorderModel);
-                break;
-            case CommonBorderPaddingBackground.START:
-                borderStart = borderSpec;
-                break;
-            case CommonBorderPaddingBackground.END:
-                borderEnd = borderSpec;
-                break;
-            default: assert false;
+        case CommonBorderPaddingBackground.BEFORE:
+            borderBefore = new ConditionalBorder(borderSpec, collapsingBorderModel);
+            break;
+        case CommonBorderPaddingBackground.AFTER:
+            borderAfter = new ConditionalBorder(borderSpec, collapsingBorderModel);
+            break;
+        case CommonBorderPaddingBackground.START:
+            borderStart = borderSpec;
+            break;
+        case CommonBorderPaddingBackground.END:
+            borderEnd = borderSpec;
+            break;
+        default: assert false;
         }
     }
 }

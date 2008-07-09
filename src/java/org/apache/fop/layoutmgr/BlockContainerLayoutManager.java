@@ -694,9 +694,17 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         int y = 0;
         if (abProps.left.getEnum() != EN_AUTO) {
             x = abProps.left.getValue(this);
+        } else if (abProps.right.getEnum() != EN_AUTO
+                && width.getEnum() != EN_AUTO) {
+            x = getReferenceAreaIPD() 
+                - abProps.right.getValue(this) - width.getValue(this);
         }
         if (abProps.top.getEnum() != EN_AUTO) {
             y = abProps.top.getValue(this);
+        } else if (abProps.bottom.getEnum() != EN_AUTO
+                && height.getEnum() != EN_AUTO) {
+            y = getReferenceAreaBPD()
+                - abProps.bottom.getValue(this) - height.getValue(this);
         }
         return new Point(x, y);
     }
@@ -1084,4 +1092,5 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
 }
+
 
