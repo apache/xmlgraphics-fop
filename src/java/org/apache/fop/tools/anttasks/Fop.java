@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ import org.xml.sax.SAXException;
  * <li>format -> MIME type of the format to generate ex. "application/pdf"</li>
  * <li>outfile -> output filename</li>
  * <li>baseDir -> directory to work from</li>
- * <li>relativebase -> (true | false) control whether to use each FO's 
+ * <li>relativebase -> (true | false) control whether to use each FO's
  *      directory as base directory. false uses the baseDir parameter.</li>
  * <li>userconfig -> file with user configuration (same as the "-c" command
  *      line option)</li>
@@ -77,6 +77,7 @@ public class Fop extends Task {
     private boolean logFiles = true;
     private boolean force = false;
     private boolean relativebase = false;
+    private boolean throwExceptions = true;
 
     /**
      * Sets the filename for the userconfig.xml.
@@ -136,7 +137,7 @@ public class Fop extends Task {
     public void setRelativebase(boolean relbase) {
         this.relativebase = relbase;
     }
-    
+
     /**
      * Gets the relative base attribute
      * @return the relative base attribute
@@ -212,6 +213,24 @@ public class Fop extends Task {
     }
 
     /**
+     * Set whether exceptions are thrown.
+     * default is false.
+     *
+     * @param force true if always generate.
+     */
+    public void setThrowexceptions(boolean throwExceptions) {
+        this.throwExceptions = throwExceptions;
+    }
+
+    /**
+     * Gets the throw exceptions attribute
+     * @return the throw exceptions attribute
+     */
+    public boolean getThrowexceptions() {
+        return this.throwExceptions;
+    }
+
+    /**
      * Sets the message level to be used while processing.
      * @param messageLevel (error | warn| info | verbose | debug)
      */
@@ -275,7 +294,7 @@ public class Fop extends Task {
     public boolean getLogFiles() {
         return this.logFiles;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -311,7 +330,7 @@ class FOPTaskStarter {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
-    
+
     private Fop task;
     private String baseURL = null;
 
@@ -392,13 +411,13 @@ class FOPTaskStarter {
         {MimeConstants.MIME_AFP_ALT,         ".afp"},
         {MimeConstants.MIME_XSL_FO,          ".fo"}
     };
-    
+
     private String determineExtension(String outputFormat) {
         for (int i = 0; i < EXTENSIONS.length; i++) {
             if (EXTENSIONS[i][0].equals(outputFormat)) {
                 String ext = EXTENSIONS[i][1];
                 if (ext == null) {
-                    throw new RuntimeException("Output format '" 
+                    throw new RuntimeException("Output format '"
                             + outputFormat + "' does not produce a file.");
                 } else {
                     return ext;
@@ -448,7 +467,7 @@ class FOPTaskStarter {
         // actioncount = # of fofiles actually processed through FOP
         int actioncount = 0;
         // skippedcount = # of fofiles which haven't changed (force = "false")
-        int skippedcount = 0; 
+        int skippedcount = 0;
 
         // deal with single source file
         if (task.getFofile() != null) {
@@ -460,14 +479,14 @@ class FOPTaskStarter {
                 if (task.getOutdir() != null) {
                     outf = new File(task.getOutdir(), outf.getName());
                 }
-                // Render if "force" flag is set OR 
+                // Render if "force" flag is set OR
                 // OR output file doesn't exist OR
                 // output file is older than input file
-                if (task.getForce() || !outf.exists() 
+                if (task.getForce() || !outf.exists()
                     || (task.getFofile().lastModified() > outf.lastModified() )) {
                     render(task.getFofile(), outf, outputFormat);
                     actioncount++;
-                } else if (outf.exists() 
+                } else if (outf.exists()
                         && (task.getFofile().lastModified() <= outf.lastModified() )) {
                     skippedcount++;
                 }
@@ -512,10 +531,10 @@ class FOPTaskStarter {
                     task.log("Error setting base URL", Project.MSG_DEBUG);
                 }
 
-                // Render if "force" flag is set OR 
+                // Render if "force" flag is set OR
                 // OR output file doesn't exist OR
                 // output file is older than input file
-                if (task.getForce() || !outf.exists() 
+                if (task.getForce() || !outf.exists()
                     || (f.lastModified() > outf.lastModified() )) {
                     render(f, outf, outputFormat);
                     actioncount++;
@@ -524,11 +543,11 @@ class FOPTaskStarter {
                 }
             }
         }
-        
+
         if (actioncount + skippedcount == 0) {
             task.log("No files processed. No files were selected by the filesets "
                 + "and no fofile was set." , Project.MSG_WARN);
-        } else if (skippedcount > 0) {  
+        } else if (skippedcount > 0) {
             task.log(skippedcount + " xslfo file(s) skipped (no change found"
                 + " since last generation; set force=\"true\" to override)."
                 , Project.MSG_INFO);
@@ -558,7 +577,10 @@ class FOPTaskStarter {
             inputHandler.renderTo(userAgent, outputFormat, out);
             success = true;
         } catch (Exception ex) {
-            throw new BuildException(ex);
+            if (task.getThrowexceptions()) {
+                throw new BuildException(ex);
+            }
+            logger.error("Error rendering fo file: " + foFile, ex);
         } finally {
             try {
                 out.close();
