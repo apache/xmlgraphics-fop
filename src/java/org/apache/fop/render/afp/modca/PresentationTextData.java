@@ -110,7 +110,8 @@ public class PresentationTextData extends AbstractAFPObject {
      *            The control sequence indicator.
      */
     public PresentationTextData(boolean controlInd) {
-        final byte[] data = { 0x5A, // Structured field identifier
+        final byte[] data = {
+                0x5A, // Structured field identifier
                 0x00, // Record length byte 1
                 0x00, // Record length byte 2
                 (byte) 0xD3, // PresentationTextData identifier byte 1
@@ -123,7 +124,7 @@ public class PresentationTextData extends AbstractAFPObject {
         baos.write(data, 0, 9);
 
         if (controlInd) {
-            baos.write(new byte[] { 0x2B, (byte) 0xD3 }, 0, 2);
+            baos.write(new byte[] {0x2B, (byte) 0xD3}, 0, 2);
         }
     }
 
@@ -145,7 +146,7 @@ public class PresentationTextData extends AbstractAFPObject {
             currentFont = String.valueOf(font);
         }
 
-        afpdata.write(new byte[] { 0x03, (byte) 0xF1, font, }, 0, 3);
+        afpdata.write(new byte[] {0x03, (byte) 0xF1, font}, 0, 3);
     }
 
     /**
@@ -161,7 +162,7 @@ public class PresentationTextData extends AbstractAFPObject {
     private void absoluteMoveInline(int coordinate,
             ByteArrayOutputStream afpdata) {
         byte[] b = BinaryUtils.convert(coordinate, 2);
-        afpdata.write(new byte[] { 0x04, (byte) 0xC7, b[0], b[1], }, 0, 4);
+        afpdata.write(new byte[] {0x04, (byte) 0xC7, b[0], b[1]}, 0, 4);
         currentXCoordinate = coordinate;
     }
 
@@ -178,10 +179,12 @@ public class PresentationTextData extends AbstractAFPObject {
     private void absoluteMoveBaseline(int coordinate,
             ByteArrayOutputStream afpdata) {
         byte[] b = BinaryUtils.convert(coordinate, 2);
-        afpdata.write(new byte[] { 0x04, (byte) 0xD3, b[0], b[1], }, 0, 4);
+        afpdata.write(new byte[] {0x04, (byte) 0xD3, b[0], b[1]}, 0, 4);
         currentYCoordinate = coordinate;
     }
 
+    private static final int TRANSPARENT_MAX_SIZE = 253;
+    
     /**
      * The Transparent Data control sequence contains a sequence of code points
      * that are presented without a scan for embedded control sequences.
@@ -197,9 +200,9 @@ public class PresentationTextData extends AbstractAFPObject {
         if (l > 255) {
             // Check that we are not exceeding the maximum length
             throw new IllegalArgumentException(
-                    "Transparent data is longer than 253 bytes: " + data);
+                    "Transparent data is longer than " + TRANSPARENT_MAX_SIZE + " bytes: " + data);
         }
-        afpdata.write(new byte[] { BinaryUtils.convert(l)[0], (byte) 0xDB, },
+        afpdata.write(new byte[] {BinaryUtils.convert(l)[0], (byte) 0xDB},
                 0, 2);
         afpdata.write(data, 0, data.length);
     }
@@ -218,7 +221,8 @@ public class PresentationTextData extends AbstractAFPObject {
      */
     private void drawBaxisRule(int length, int width,
             ByteArrayOutputStream afpdata) {
-        afpdata.write(new byte[] { 0x07, // Length
+        afpdata.write(new byte[] {
+                0x07, // Length
                 (byte) 0xE7, // Type
         }, 0, 2);
         // Rule length
@@ -245,7 +249,8 @@ public class PresentationTextData extends AbstractAFPObject {
      */
     private void drawIaxisRule(int length, int width,
             ByteArrayOutputStream afpdata) {
-        afpdata.write(new byte[] { 0x07, // Length
+        afpdata.write(new byte[] {
+                0x07, // Length
                 (byte) 0xE5, // Type
         }, 0, 2);
         // Rule length
@@ -314,7 +319,26 @@ public class PresentationTextData extends AbstractAFPObject {
 
         setCodedFont(BinaryUtils.convert(textDataInfo.getFontReference())[0],
                 afpdata);
-        addTransparentData(textDataInfo.getData(), afpdata);
+        
+        // Add transparent data
+        byte[] data = textDataInfo.getData();
+        if (data.length <= TRANSPARENT_MAX_SIZE) {
+            addTransparentData(data, afpdata);            
+        } else {
+            // data size greater than TRANSPARENT_MAX_SIZE so slice
+            int numTransData = data.length / TRANSPARENT_MAX_SIZE;
+            byte[] buff = new byte[TRANSPARENT_MAX_SIZE];
+            int currIndex = 0;
+            for (int transDataCnt = 0; transDataCnt < numTransData; transDataCnt++) {
+                currIndex = transDataCnt * TRANSPARENT_MAX_SIZE;
+                System.arraycopy(data, currIndex, buff, 0, TRANSPARENT_MAX_SIZE);
+                addTransparentData(buff, afpdata);
+            }
+            int remainingTransData = data.length / TRANSPARENT_MAX_SIZE;
+            buff = new byte[remainingTransData];
+            System.arraycopy(data, currIndex, buff, 0, remainingTransData);        
+            addTransparentData(buff, afpdata);
+        }
         currentXCoordinate = -1;
 
         int dataSize = afpdata.size();
