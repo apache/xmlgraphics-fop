@@ -185,12 +185,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @param newScaleFactor ]0 ; 1]
      */
     public void setScaleFactor(double newScaleFactor) {
-        scaleFactor = newScaleFactor;
+        this.scaleFactor = newScaleFactor;
     }
 
     /** @return the scale factor */
     public double getScaleFactor() {
-        return scaleFactor;
+        return this.scaleFactor;
     }
 
     /** {@inheritDoc} */
@@ -288,22 +288,19 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         this.currentPageViewport = pageViewport;
         try {
             Rectangle2D bounds = pageViewport.getViewArea();
-            pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
-            pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
+            this.pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
+            this.pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
 
             log.info(
                     "Rendering Page " + pageViewport.getPageNumberString()
                             + " (pageWidth " + pageWidth + ", pageHeight "
                             + pageHeight + ")");
 
-            double scaleX = scaleFactor
-                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+            double scale = scaleFactor
+                * (25.4f / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
-            double scaleY = scaleFactor
-                * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
-                / userAgent.getTargetPixelUnitToMillimeter();
-            int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
-            int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
+            int bitmapWidth = (int) ((pageWidth * scale) + 0.5);
+            int bitmapHeight = (int) ((pageHeight * scale) + 0.5);
 
 
             BufferedImage currentPageImage = getBufferedImage(bitmapWidth, bitmapHeight);
@@ -326,7 +323,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
             // transform page based on scale factor supplied
             AffineTransform at = graphics.getTransform();
-            at.scale(scaleX, scaleY);
+            at.scale(scale, scale);
             graphics.setTransform(at);
 
             // draw page frame
@@ -455,11 +452,11 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         log.debug("Block.FIXED --> restoring context after break-out");
 
-        Iterator i = breakOutList.iterator();
-        while (i.hasNext()) {
-            Java2DGraphicsState s = (Java2DGraphicsState)i.next();
+        Iterator it = breakOutList.iterator();
+        while (it.hasNext()) {
+            Java2DGraphicsState s = (Java2DGraphicsState)it.next();
             stateStack.push(state);
-            state = s;
+            this.state = s;
         }
     }
 
@@ -982,5 +979,4 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     public void setTransparentPageBackground(boolean transparentPageBackground) {
         this.transparentPageBackground = transparentPageBackground;
     }
-
 }
