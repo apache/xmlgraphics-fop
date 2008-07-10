@@ -380,6 +380,7 @@ list of possible build targets.
         <include name="META-INF/**"/>
         <include name="**/*.icm"/>
         <include name="**/*.LICENSE.txt"/>
+        <include name="**/*.xsl"/>
       </fileset>
     </copy>
     <mkdir dir="${build.viewer.resources.dir}"/>
