@@ -22,6 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -51,10 +52,7 @@ public class ImageObject extends AbstractDataObject {
      * @param height the image height
      */
     public void setImageParameters(int xresol, int yresol, int width, int height) {
-        if (objectEnvironmentGroup == null) {
-            objectEnvironmentGroup = new ObjectEnvironmentGroup();
-        }
-        objectEnvironmentGroup.setImageData(xresol, yresol, width, height);
+        getObjectEnvironmentGroup().setImageData(xresol, yresol, width, height);
         if (imageSegment == null) {
             imageSegment = new ImageSegment();
         }

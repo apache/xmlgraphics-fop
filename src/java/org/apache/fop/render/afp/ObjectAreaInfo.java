@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,12 +26,12 @@ public class ObjectAreaInfo {
     private int widthRes;
     private int heightRes;
     private int rotation = 0;
-    
+
     /**
      * Sets the x position of the data object
      * @param x the x position of the data object
      */
-    protected void setX(int x) {
+    public void setX(int x) {
         this.x = x;
     }
 
@@ -39,7 +39,7 @@ public class ObjectAreaInfo {
      * Sets the y position of the data object
      * @param y the y position of the data object
      */
-    protected void setY(int y) {
+    public void setY(int y) {
         this.y = y;
     }
 
@@ -47,7 +47,7 @@ public class ObjectAreaInfo {
      * Sets the data object width
      * @param width the width of the data object
      */
-    protected void setWidth(int width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
@@ -55,7 +55,7 @@ public class ObjectAreaInfo {
      * Sets the data object height
      * @param height the height of the data object
      */
-    protected void setHeight(int height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
@@ -63,7 +63,7 @@ public class ObjectAreaInfo {
      * Sets the width resolution
      * @param widthRes the width resolution
      */
-    protected void setWidthRes(int widthRes) {
+    public void setWidthRes(int widthRes) {
         this.widthRes = widthRes;
     }
 
@@ -71,10 +71,10 @@ public class ObjectAreaInfo {
      * Sets the height resolution
      * @param heightRes the height resolution
      */
-    protected void setHeightRes(int heightRes) {
+    public void setHeightRes(int heightRes) {
         this.heightRes = heightRes;
     }
-    
+
     /**
      * @return the x coordinate of this data object
      */
@@ -116,7 +116,7 @@ public class ObjectAreaInfo {
     public int getHeightRes() {
         return heightRes;
     }
-    
+
     /**
      * @return the rotation of this data object
      */
@@ -128,10 +128,10 @@ public class ObjectAreaInfo {
      * Sets the data object rotation
      * @param rotation the data object rotation
      */
-    protected void setRotation(int rotation) {
+    public void setRotation(int rotation) {
         this.rotation = rotation;
     }
-    
+
     /**
      * {@inheritDoc}
      */
