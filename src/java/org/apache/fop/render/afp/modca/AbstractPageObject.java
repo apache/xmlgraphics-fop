@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.fop.render.afp.AFPTextDataInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
 
 /**
@@ -189,27 +190,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * Helper method to create text on the current page, this method delegates
      * to the presentation text object in order to construct the text.
      *
-     * @param fontRef
-     *            the font number used as the resource identifier
-     * @param x
-     *            the x coordinate of the text data
-     * @param y
-     *            the y coordinate of the text data
-     * @param textRotation
-     *            the rotation of the text data
-     * @param col
-     *            the text color
-     * @param vsci
-     *            The variable space character increment.
-     * @param ica
-     *            The inter character adjustment.
-     * @param data
-     *            the text data to create
+     * @param textDataInfo
+     *            the afp text data
      */
-    public void createText(int fontRef, int x, int y, int textRotation, Color col,
-            int vsci, int ica, byte[] data) {
-        getPresentationTextObject().createTextData(
-                fontRef, x, y, textRotation, col, vsci, ica, data);
+    public void createText(AFPTextDataInfo textDataInfo) {
+        getPresentationTextObject().createTextData(textDataInfo);
     }
 
     /**

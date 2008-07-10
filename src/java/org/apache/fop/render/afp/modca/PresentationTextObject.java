@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.fop.render.afp.AFPTextDataInfo;
+
 /**
  * The Presentation Text object is the data object used in document processing
  * environments for representing text which has been prepared for presentation.
@@ -76,58 +78,18 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     /**
      * Create the presentation text data for the byte array of data.
      *
-     * @param fontNum
-     *            The font resource identifier.
-     * @param x
-     *            The x coordinate for the text data.
-     * @param y
-     *            The y coordinate for the text data.
-     * @param col
-     *            The text color.
-     * @param vsci
-     *            The variable space character increment.
-     * @param ica
-     *            The inter character increment.
-     * @param data
-     *            The text data to be created.
+     * @param textDataInfo
+     *            The afp text data
      */
-    public void createTextData(int fontNum, int x, int y, Color col,
-            int vsci, int ica, byte[] data) {
-        // Use a default orientation of zero
-        createTextData(fontNum, x, y, 0, col, vsci, ica, data);
-    }
-
-    /**
-     * Create the presentation text data for the byte array of data.
-     *
-     * @param fontRef
-     *            The font resource identifier.
-     * @param x
-     *            The x coordinate for the text data.
-     * @param y
-     *            The y coordinate for the text data.
-     * @param orientation
-     *            The orientation of the text data.
-     * @param col
-     *            The text color.
-     * @param vsci
-     *            The variable space character increment.
-     * @param ica
-     *            The inter character adjustment.
-     * @param data
-     *            The text data to be created.
-     */
-    public void createTextData(int fontRef, int x, int y, int orientation,
-        Color col, int vsci, int ica, byte[] data) {
+    public void createTextData(AFPTextDataInfo textDataInfo) {
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
         try {
-            currentPresentationTextData.createTextData(fontRef, x, y,
-                orientation, col, vsci, ica, data);
+            currentPresentationTextData.createTextData(textDataInfo);
         } catch (MaximumSizeExceededException msee) {
             endPresentationTextData();
-            createTextData(fontRef, x, y, orientation, col, vsci, ica, data);
+            createTextData(textDataInfo);
         }
     }
 

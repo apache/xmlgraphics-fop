@@ -19,157 +19,183 @@
 
 package org.apache.fop.render.afp;
 
-import java.awt.Color;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * This keeps information about the current state when writing to pdf.
+ * This keeps information about the current state when writing to an AFP datastream.
  */
-public class AFPState {
-    private Data data = new Data();
-    
-    private List stateStack = new java.util.ArrayList();
+public class AFPState extends org.apache.fop.render.AbstractState {
+
+    private static Log log = LogFactory.getLog("org.apache.fop.render.afp.AFPState");
 
     /**
-     * Set the current color.
-     * Check if the new color is a change and then set the current color.
-     *
-     * @param col the color to set
-     * @return true if the color has changed
+     * The portrait rotation
      */
-    protected boolean setColor(Color col) {
-        if (!col.equals(getData().color)) {
-            getData().color = col;
-            return true;
+    private int portraitRotation = 0;
+
+    /**
+     * The landscape rotation
+     */
+    private int landscapeRotation = 270;
+
+    /**
+     * Flag to the set the output object type for images
+     */
+    private boolean colorImages = false;
+
+    /**
+     * Default value for image depth
+     */
+    private int bitsPerPixel = 8;
+
+    /**
+     * The output resolution
+     */
+    private int resolution = 240; // 240 dpi
+
+    /**
+     * The current page 
+     */
+    private AFPPageState pageState = new AFPPageState();
+    
+    /**
+     * Sets the rotation to be used for portrait pages, valid values are 0
+     * (default), 90, 180, 270.
+     * 
+     * @param rotation
+     *            The rotation in degrees.
+     */
+    protected void setPortraitRotation(int rotation) {
+        if (rotation == 0 || rotation == 90 || rotation == 180
+                || rotation == 270) {
+            portraitRotation = rotation;
+        } else {
+            throw new IllegalArgumentException(
+                    "The portrait rotation must be one"
+                            + " of the values 0, 90, 180, 270");
+
         }
-        return false;
     }
 
+    /**
+     * @return the rotation to be used for portrait pages
+     */
+    protected int getPortraitRotation() {
+        return this.portraitRotation;
+    }
+
+    /**
+     * Sets the rotation to be used for landscape pages, valid values are 0, 90,
+     * 180, 270 (default).
+     * 
+     * @param rotation
+     *            The rotation in degrees.
+     */
+    protected void setLandscapeRotation(int rotation) {
+        if (rotation == 0 || rotation == 90 || rotation == 180
+                || rotation == 270) {
+            landscapeRotation = rotation;
+        } else {
+            throw new IllegalArgumentException(
+                    "The landscape rotation must be one"
+                            + " of the values 0, 90, 180, 270");
+        }
+    }
+
+    /**
+     * @return the landscape rotation
+     */
+    protected int getLandscapeRotation() {
+        return this.landscapeRotation;
+    }
+
+    /**
+     * Sets the number of bits used per pixel
+     * 
+     * @param bitsPerPixel
+     *            number of bits per pixel
+     */
+    public void setBitsPerPixel(int bitsPerPixel) {
+        this.bitsPerPixel = bitsPerPixel;
+        switch (bitsPerPixel) {
+        case 1:
+        case 4:
+        case 8:
+            break;
+        default:
+            log.warn("Invalid bits_per_pixel value, must be 1, 4 or 8.");
+            bitsPerPixel = 8;
+            break;
+        }
+    }
+
+    /**
+     * @return the number of bits per pixel
+     */
+    public int getBitsPerPixel() {
+        return this.bitsPerPixel;
+    }
+
+    /**
+     * Sets whether images are color or not
+     * 
+     * @param colorImages
+     *            color image output
+     */
+    public void setColorImages(boolean colorImages) {
+        this.colorImages = colorImages;
+    }
+
+    /**
+     * @return true if color images are to be used
+     */
+    protected boolean isColorImages() {
+        return this.colorImages;
+    }
+
+    /**
+     * Sets the output/device resolution
+     * 
+     * @param resolution
+     *            the output resolution (dpi)
+     */
+    public void setResolution(int resolution) {
+        if (log.isDebugEnabled()) {
+            log.debug("renderer-resolution set to: " + resolution + "dpi");
+        }
+        this.resolution = resolution;
+    }
+
+    /**
+     * Returns the output/device resolution.
+     * 
+     * @return the resolution in dpi
+     */
+    protected int getResolution() {
+        return this.resolution;
+    }
+
+    /** {@inheritDoc} */
+    protected AbstractData instantiateData() {
+        return new AFPData();
+    }
+
+    /**
+     * @return the state of the current page
+     */
+    protected AFPPageState getPageState() {
+        return this.pageState;
+    }
+    
     /**
      * Sets if the current painted shape is to be filled
      * @param fill true if the current painted shape is to be filled
      * @return true if the fill value has changed
      */
     protected boolean setFill(boolean fill) {
-        if (fill != getData().filled) {
-            getData().filled = fill;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Get the color.
-     * @return the color
-     */
-    protected Color getColor() {
-        if (getData().color == null) {
-            getData().color = Color.black;
-        }
-        return getData().color;
-    }
-
-    /**
-     * Set the current line width.
-     * @param width the line width in points
-     * @return true if the line width has changed
-     */
-    protected boolean setLineWidth(float width) {
-        if (getData().lineWidth != width) {
-            getData().lineWidth = width;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Sets the dash array (line type) for the current basic stroke
-     * @param dash the line dash array
-     * @return true if the dash array has changed
-     */
-    public boolean setDashArray(float[] dash) {
-        if (!Arrays.equals(dash, getData().dashArray)) {
-            getData().dashArray = dash;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets the current line width
-     * @return the current line width
-     */
-    protected float getLineWidth() {
-        return getData().lineWidth;
-    }
-
-    /**
-     * Get the background color.
-     * @return the background color
-     */
-    protected Color getBackColor() {
-        if (getData().backColor == null) {
-            getData().backColor = Color.white;
-        }
-        return getData().backColor;
-    }
-
-    /**
-     * Set the current background color.
-     * Check if the new background color is a change and then set the current background color.
-     *
-     * @param col the background color to set
-     * @return true if the color has changed
-     */
-    protected boolean setBackColor(Color col) {
-        if (!col.equals(getData().backColor)) {
-            getData().backColor = col;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Set the current font name
-     * @param internalFontName the internal font name
-     * @return true if the font name has changed
-     */
-    protected boolean setFontName(String internalFontName) {
-        if (!internalFontName.equals(getData().fontName)) {
-            getData().fontName = internalFontName;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets the current font name
-     * @return the current font name
-     */
-    protected String getFontName() {
-        return getData().fontName;
-    }
-    
-    /**
-     * Gets the current font size
-     * @return the current font size
-     */
-    protected int getFontSize() {
-        return getData().fontSize;
-    }
-
-    /**
-     * Set the current font size.
-     * Check if the font size is a change and then set the current font size.
-     *
-     * @param size the font size to set
-     * @return true if the font size has changed
-     */
-    protected boolean setFontSize(int size) {
-        if (size != getData().fontSize) {
-            getData().fontSize = size;
+        if (fill != ((AFPData)getData()).filled) {
+            ((AFPData)getData()).filled = fill;
             return true;
         }
         return false;
@@ -180,137 +206,177 @@ public class AFPState {
      * @return the current page fonts
      */
     protected AFPPageFonts getPageFonts() {
-        if (getData().pageFonts == null) {
-            getData().pageFonts = new AFPPageFonts();
+        return pageState.getFonts();
+    }
+
+    /**
+     * Increments and returns the page font count
+     * @return the page font count
+     */
+    public int incrementPageFontCount() {
+        return pageState.incrementFontCount();
+    }
+
+    /**
+     * Sets the page width
+     * @param pageWidth the page width
+     */
+    public void setPageWidth(int pageWidth) {
+        pageState.setWidth(pageWidth);
+    }
+
+    /**
+     * @return the page width
+     */
+    public int getPageWidth() {
+        return pageState.getWidth();
+    }
+
+    /**
+     * Sets the page height
+     * @param pageHeight the page height
+     */
+    public void setPageHeight(int pageHeight) {
+        pageState.setHeight(pageHeight);
+    }
+
+    /**
+     * @return the page height
+     */
+    public int getPageHeight() {
+        return pageState.getHeight();
+    }
+
+    /**
+     * Sets the uri of the current image
+     * @param uri the uri of the current image
+     */
+    protected void setImageUri(String uri) {
+        ((AFPData)getData()).imageUri = uri;
+    }
+
+    /**
+     * Gets the uri of the current image
+     * @return the uri of the current image
+     */
+    public String getImageUri() {
+        return ((AFPData)getData()).imageUri;
+    }    
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "AFPState{portraitRotation=" + portraitRotation
+        + ", landscapeRotation=" + landscapeRotation
+        + ", colorImages=" + colorImages
+        + ", bitsPerPixel=" + bitsPerPixel
+        + ", resolution=" + resolution
+        + ", pageState=" + pageState
+        + "}";
+    }
+
+    /**
+     * Page level state data 
+     */
+    private class AFPPageState {
+        /** The current page width */
+        private int width = 0;
+
+        /** The current page height */
+        private int height = 0;
+
+        /** The current page fonts */
+        private AFPPageFonts fonts = new AFPPageFonts();
+
+        /** The current page font count */
+        private int fontCount = 0;
+
+        /**
+         * @return the page width
+         */
+        protected int getWidth() {
+            return width;
         }
-        return getData().pageFonts;
-    }
 
-    /**
-     * Sets the image uri of the current image being processed
-     * @param uri the image uri of the current image being processed
-     * @return true if the image uri has changed
-     */
-    public boolean setImageUri(String uri) {
-        if (!uri.equals(getData().imageUri)) {
-            getData().imageUri = uri;
-            return true;
+        /**
+         * Sets the page width
+         * @param width the page width
+         */
+        protected void setWidth(int width) {
+            this.width = width;
         }
-        return false;
-    }
 
-    /**
-     * Returns the image uri of the current image being processed
-     * @return the image uri of the current image being processed
-     */
-    protected String getImageUri() {
-        return getData().imageUri;
-    }
-    
-    /**
-     * Push the current state onto the stack.
-     * This call should be used when the q operator is used
-     * so that the state is known when popped.
-     */
-    public void push() {
-        Data copy;
-        try {
-            copy = (Data)getData().clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e.getMessage());
+        /**
+         * @return the page height
+         */
+        protected int getHeight() {
+            return height;
         }
-        stateStack.add(copy);
-    }
 
-    /**
-     * Get the current stack level.
-     *
-     * @return the current stack level
-     */
-    public int getStackLevel() {
-        return stateStack.size();
-    }
+        /**
+         * Sets the page height
+         * @param height the page height
+         */
+        protected void setHeight(int height) {
+            this.height = height;
+        }
 
-    /**
-     * Pop the state from the stack and set current values to popped state.
-     * This should be called when a Q operator is used so
-     * the state is restored to the correct values.
-     * @return the restored state, null if the stack is empty
-     */
-    public Data pop() {
-        if (getStackLevel() > 0) {
-            Data popped = (Data)stateStack.remove(stateStack.size() - 1);
-            data = popped;
-            return popped;
-        } else {
-            return null;
+        /**
+         * @return the page fonts
+         */
+        protected AFPPageFonts getFonts() {
+            return fonts;
+        }
+
+        /**
+         * Sets the current page fonts
+         * @param fonts the current page fonts
+         */
+        protected void setFonts(AFPPageFonts fonts) {
+            this.fonts = fonts;
+        }
+
+        /**
+         * @return increment and return the current page font count
+         */
+        protected int incrementFontCount() {
+            return ++fontCount;
+        }
+        
+        /** {@inheritDoc} */
+        public String toString() {
+            return "AFPPageState{width=" + width
+            + ", height=" + height
+            + ", fonts=" + fonts
+            + ", fontCount=" + fontCount
+            + "}";
         }
     }
 
     /**
-     * @return the currently valid state
+     * Block level data
      */
-    public Data getData() {
-        return data;
-    }
-    
-    /** the state data instance */
-    public class Data implements Cloneable, Serializable {
+    private class AFPData extends org.apache.fop.render.AbstractState.AbstractData {
         private static final long serialVersionUID = -1789481244175275686L;
-
-        /** The current color */
-        private Color color = null;
-
-        /** The current background color */
-        private Color backColor = null;
-
-        /** The current font name */
-        private String fontName = null;
-
-        /** The current font size */
-        private int fontSize = 0;
-
-        /** The current line width */
-        private float lineWidth = 0;
-
-        /** The dash array for the current basic stroke (line type) */
-        private float[] dashArray = null;
 
         /** The current fill status */
         private boolean filled = false;
         
-        /** The fonts on the current page */
-        private AFPPageFonts pageFonts = null;
-
-        /** The current image uri */
         private String imageUri = null;
         
         /** {@inheritDoc} */
         public Object clone() throws CloneNotSupportedException {
-            Data obj = new Data();
-            obj.color = this.color;
-            obj.backColor = this.backColor;
-            obj.fontName = this.fontName;
-            obj.fontSize = this.fontSize;
-            obj.lineWidth = this.lineWidth;
-            obj.dashArray = this.dashArray;
+            AFPData obj = (AFPData)super.clone();
             obj.filled = this.filled;
-            obj.pageFonts = this.pageFonts;
             obj.imageUri = this.imageUri;
             return obj;
         }
         
-        /** {@inheritDoc} */        
+        /** {@inheritDoc} */
         public String toString() {
-            return "color=" + color
-            + ", backColor=" + backColor
-            + ", fontName=" + fontName
-            + ", fontSize=" + fontSize
-            + ", lineWidth=" + lineWidth
-            + ", dashArray=" + dashArray
+            return "AFPData{" + super.toString()
             + ", filled=" + filled
-            + ", pageFonts=" + pageFonts
-            + ", imageUri=" + imageUri;
+            + ", imageUri=" + imageUri
+            + "}";
         }
     }
 }

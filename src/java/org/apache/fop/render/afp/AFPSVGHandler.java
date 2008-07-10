@@ -34,6 +34,7 @@ import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
+import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.GraphicsObject;
 import org.apache.fop.svg.SVGUserAgent;
@@ -71,19 +72,13 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         afpi.setHandlerConfiguration((Configuration)context.getProperty(HANDLER_CONFIGURATION));
         afpi.setFontInfo((org.apache.fop.fonts.FontInfo)context.getProperty(
                 AFPRendererContextConstants.AFP_FONT_INFO));
-        afpi.setResolution(((Integer)context.getProperty(
-                AFPRendererContextConstants.AFP_RESOLUTION)).intValue());
         afpi.setState((AFPState)context.getProperty(
                 AFPRendererContextConstants.AFP_STATE));
         afpi.setAFPDataStream((AFPDataStream)context.getProperty(
                 AFPRendererContextConstants.AFP_DATASTREAM));
-        afpi.setColor(!((Boolean)context.getProperty(
-                AFPRendererContextConstants.AFP_GRAYSCALE)).booleanValue());
-        afpi.setBitsPerPixel(((Integer)context.getProperty(
-                AFPRendererContextConstants.AFP_BITS_PER_PIXEL)).intValue());
         return afpi;
     }
-
+    
     /**
      * Render the SVG document.
      * 
@@ -137,20 +132,20 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         double h = ctx.getDocumentSize().getHeight() * 1000f;
         
         // convert to afp inches
-        double sx = ((afpInfo.getWidth() / w) * res) / 72f;
-        double sy = ((afpInfo.getHeight() / h) * res) / 72f;
-        double xOffset = (afpInfo.getX() * res) / 72000f;
-        double yOffset = ((afpInfo.getHeight() - afpInfo.getY()) * res) / 72000f;
+        double scaleX = ((afpInfo.getWidth() / w) * res) / AFPConstants.DPI_72;
+        double scaleY = ((afpInfo.getHeight() / h) * res) / AFPConstants.DPI_72;
+        double xOffset = (afpInfo.getX() * res) / AFPConstants.DPI_72_MPTS;
+        double yOffset = ((afpInfo.getHeight() - afpInfo.getY()) * res) / AFPConstants.DPI_72_MPTS;
 
         // Transformation matrix that establishes the local coordinate system for the SVG graphic
         // in relation to the current coordinate system (note: y axis is inverted)
-        AffineTransform trans = new AffineTransform(sx, 0, 0, -sy, xOffset, yOffset);
+        AffineTransform trans = new AffineTransform(scaleX, 0, 0, -scaleY, xOffset, yOffset);
         graphics.setTransform(trans);
         
-        int x = (int)Math.round((afpInfo.getX() * 25.4f) / 1000);
-        int y = (int)Math.round((afpInfo.getY() * 25.4f) / 1000);
-        int width = (int)Math.round((afpInfo.getWidth() * res) / 72000f);
-        int height = (int)Math.round((afpInfo.getHeight() * res) / 72000f);
+        int x = (int)Math.round((afpInfo.getX() * 25.4f) / 1000f);
+        int y = (int)Math.round((afpInfo.getY() * 25.4f) / 1000f);
+        int width = (int)Math.round((afpInfo.getWidth() * res) / AFPConstants.DPI_72_MPTS);
+        int height = (int)Math.round((afpInfo.getHeight() * res) / AFPConstants.DPI_72_MPTS);
         
         // set the data object parameters
         DataObjectInfo dataObjectInfo = new DataObjectInfo();

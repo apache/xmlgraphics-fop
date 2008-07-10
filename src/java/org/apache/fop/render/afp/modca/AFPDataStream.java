@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.render.afp.AFPFontAttributes;
+import org.apache.fop.render.afp.AFPTextDataInfo;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ObjectAreaInfo;
 import org.apache.fop.render.afp.ResourceInfo;
@@ -122,19 +123,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     private int landscapeRotation = 270;
 
     /**
-     * The x offset
-     */
-    private int xOffset = 0;
-
-    /**
-     * The y offset
-     */
-    private int yOffset = 0;
-
-    /**
      * The rotation
      */
-    private int rotation;
+    private int orientation;
 
     /**
      * The outputstream for the data stream
@@ -276,7 +267,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                 pageRotation, pageWidthRes, pageHeightRes);
         currentPage = currentPageObject;
         currentOverlay = null;
-        setOffsets(0, 0, 0);
+//        setOffsets(0, 0, 0);
     }
 
     /**
@@ -315,7 +306,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
         currentPageObject.createIncludePageOverlay(overlayName, x, y, 0);
         currentPage = currentOverlay;
-        setOffsets(0, 0, 0);
+//        setOffsets(0, 0, 0);
     }
 
     /**
@@ -380,15 +371,24 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            the offset in the x direction
      * @param yOff
      *            the offset in the y direction
-     * @param rot
+     * @param orientation
      *            the rotation
+     * @deprecated offsets are no longer used, use setOrientation() for setting the orientation
      */
-    public void setOffsets(int xOff, int yOff, int rot) {
-        this.xOffset = xOff;
-        this.yOffset = yOff;
-        this.rotation = rot;
+    public void setOffsets(int xOff, int yOff, int orientation) {
+        setOrientation(orientation);
     }
 
+    /**
+     * Sets the orientation to be used for element positioning
+     * 
+     * @param orientation
+     *            the orientation used for element positioning
+     */
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
+    }
+    
     /**
      * Creates the given page fonts in the current page
      *
@@ -425,25 +425,12 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      * Helper method to create text on the current page, this method delegates
      * to the current presentation text object in order to construct the text.
      *
-     * @param fontReference
-     *            the font reference used as the resource identifier
-     * @param x
-     *            the x coordinate of the text
-     * @param y
-     *            the y coordinate of the text
-     * @param col
-     *            the text color
-     * @param vsci
-     *            The variable space character increment.
-     * @param ica
-     *            The inter character adjustment.
-     * @param data
-     *            the text data to create
+     * @param textDataInfo
+     *            the afp text data
      */
-    public void createText(int fontReference, int x, int y, Color col,
-            int vsci, int ica, byte[] data) {
-        getCurrentPage().createText(fontReference, x + xOffset, y + yOffset,
-                rotation, col, vsci, ica, data);
+    public void createText(AFPTextDataInfo textDataInfo) {
+        textDataInfo.setOrientation(orientation);
+        getCurrentPage().createText(textDataInfo);
     }
 
     /**
@@ -469,8 +456,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
         //Update placement with current state
         ObjectAreaInfo areaInfo = dataObjectInfo.getObjectAreaInfo();
-        areaInfo.setX(areaInfo.getX() + this.xOffset);
-        areaInfo.setY(areaInfo.getY() + this.yOffset);
+        areaInfo.setX(areaInfo.getX());
+        areaInfo.setY(areaInfo.getY());
         areaInfo.setRotation(this.rotation);
 
         Registry registry = Registry.getInstance();
@@ -593,8 +580,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void createLine(int x1, int y1, int x2, int y2, int thickness,
             Color col) {
-        getCurrentPage().createLine(x1 + xOffset, y1 + yOffset, x2 + xOffset,
-                y2 + yOffset, thickness, rotation, col);
+        getCurrentPage().createLine(x1, y1, x2, y2, thickness, orientation, col);
     }
 
     /**
@@ -614,8 +600,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            the shading color
      */
     public void createShading(int x, int y, int w, int h, Color col) {
-        currentPageObject.createShading(x + xOffset, y + xOffset, w, h,
-                col.getRed(), col.getGreen(), col.getBlue());
+        currentPageObject.createShading(x, y, w, h, col.getRed(), col.getGreen(), col.getBlue());
     }
 
     /**
@@ -626,7 +611,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            the name of the static overlay
      */
     public void createIncludePageOverlay(String name) {
-        currentPageObject.createIncludePageOverlay(name, 0, 0, rotation);
+        currentPageObject.createIncludePageOverlay(name, 0, 0, orientation);
         currentPageObject.getActiveEnvironmentGroup().createOverlay(name);
     }
 
@@ -653,22 +638,22 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     public void createIncludePageSegment(String name, int x, int y) {
         int xOrigin;
         int yOrigin;
-        switch (rotation) {
+        switch (orientation) {
         case 90:
-            xOrigin = getCurrentPage().getWidth() - y - yOffset;
-            yOrigin = x + xOffset;
+            xOrigin = getCurrentPage().getWidth() - y;
+            yOrigin = x;
             break;
         case 180:
-            xOrigin = getCurrentPage().getWidth() - x - xOffset;
-            yOrigin = getCurrentPage().getHeight() - y - yOffset;
+            xOrigin = getCurrentPage().getWidth() - x;
+            yOrigin = getCurrentPage().getHeight() - y;
             break;
         case 270:
-            xOrigin = y + yOffset;
-            yOrigin = getCurrentPage().getHeight() - x - xOffset;
+            xOrigin = y;
+            yOrigin = getCurrentPage().getHeight() - x;
             break;
         default:
-            xOrigin = x + xOffset;
-            yOrigin = y + yOffset;
+            xOrigin = x;
+            yOrigin = y;
             break;
         }
         getCurrentPage().createIncludePageSegment(name, xOrigin, yOrigin);

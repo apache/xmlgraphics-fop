@@ -593,6 +593,7 @@ RetroWeaver will be added here -->
       <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
       <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
       <include name="org/apache/fop/render/*RendererConfigurator**"/>
+      <include name="org/apache/fop/render/*State*"/>
       <include name="org/apache/fop/pdf/**"/>
     </patternset>
 <!-- PS transcoder -->

@@ -29,27 +29,27 @@ import org.apache.fop.render.afp.modca.AFPDataStream;
 public final class AFPInfo {
     /** see WIDTH */
     private int width;
+
     /** see HEIGHT */
     private int height;
+
     /** see XPOS */
     private int x;
+
     /** see YPOS */
     private int y;
+
     /** see HANDLER_CONFIGURATION */
     private Configuration cfg;
 
     /** see AFP_FONT_INFO */
     private FontInfo fontInfo;
+
     /** See AFP_DATASTREAM */
     private AFPDataStream afpDataStream;
+
     /** See AFP_STATE */
     private AFPState afpState;
-    /** see AFP_GRAYSCALE */
-    private boolean color;
-    /** see AFP_RESOLUTION */
-    private int resolution;
-    /** see AFP_BITS_PER_PIXEL */
-    private int bitsPerPixel;
 
     /**
      * Returns the width.
@@ -123,7 +123,7 @@ public final class AFPInfo {
      * @return true if supports color
      */
     public boolean isColorSupported() {
-        return this.color;
+        return getState().isColorImages();
     }
 
     /**
@@ -144,14 +144,14 @@ public final class AFPInfo {
      * @return the resolution
      */
     protected int getResolution() {
-        return resolution;
+        return getState().getResolution();
     }
 
     /**
      * @return the number of bits per pixel to use
      */
     protected int getBitsPerPixel() {
-        return bitsPerPixel;
+        return getState().getBitsPerPixel();
     }
 
     /**
@@ -168,14 +168,6 @@ public final class AFPInfo {
      */
     protected void setY(int y) {
         this.y = y;
-    }
-
-    /**
-     * Sets the current resolution
-     * @param resolution the current resolution
-     */
-    protected void setResolution(int resolution) {
-        this.resolution = resolution;
     }
 
     /**
@@ -196,25 +188,21 @@ public final class AFPInfo {
     
     /**
      * Sets the AFP datastream
-     * @param afpDataStream the AFP datastream
+     * @param dataStream the AFP datastream
      */
-    public void setAFPDataStream(AFPDataStream afpDataStream) {
-        this.afpDataStream = afpDataStream;
+    public void setAFPDataStream(AFPDataStream dataStream) {
+        this.afpDataStream = dataStream;
     }
 
-    /**
-     * Sets if we are supporing color 
-     * @param color true if color is supported
-     */
-    public void setColor(boolean color) {
-        this.color = color;
-    }
-
-    /**
-     * Sets the number of bits per pixel
-     * @param bitsPerPixel the number of bits per pixel 
-     */
-    public void setBitsPerPixel(int bitsPerPixel) {
-        this.bitsPerPixel = bitsPerPixel;
+    /** {@inheritDoc} */
+    public String toString() {
+        return "width=" + width
+            + ",height=" + height
+            + ",x=" + x
+            + ",y=" + y
+            + ",cfg=" + cfg
+            + ",fontInfo=" + fontInfo
+            + ",afpDatastream=" + afpDataStream
+            + ",afpState=" + afpState;
     }
 }
