@@ -62,7 +62,7 @@ public class Main {
             fopJar = new File(baseDir, "fop.jar");
         }
         if (!fopJar.exists()) {
-            throw new RuntimeException("fop.jar not found in directory: " 
+            throw new RuntimeException("fop.jar not found in directory: "
                     + baseDir.getAbsolutePath() + " (or below)");
         }
         List jars = new java.util.ArrayList();
@@ -99,7 +99,7 @@ public class Main {
         }*/
         return urls;
     }
-    
+
     /**
      * @return true if FOP's dependecies are available in the current ClassLoader setup.
      */
@@ -115,7 +115,7 @@ public class Main {
             return false;
         }
     }
-    
+
     /**
      * Dynamically builds a ClassLoader and executes FOP.
      * @param args command-line arguments
@@ -123,7 +123,7 @@ public class Main {
     public static void startFOPWithDynamicClasspath(String[] args) {
         try {
             URL[] urls = getJARList();
-            //System.out.println("CCL: " 
+            //System.out.println("CCL: "
             //    + Thread.currentThread().getContextClassLoader().toString());
             ClassLoader loader = new java.net.URLClassLoader(urls, null);
             Thread.currentThread().setContextClassLoader(loader);
@@ -137,13 +137,13 @@ public class Main {
             System.exit(-1);
         }
     }
-    
+
     /**
      * Executes FOP with the given ClassLoader setup.
      * @param args command-line arguments
      */
     public static void startFOP(String[] args) {
-        //System.out.println("static CCL: " 
+        //System.out.println("static CCL: "
         //    + Thread.currentThread().getContextClassLoader().toString());
         //System.out.println("static CL: " + Fop.class.getClassLoader().toString());
         CommandLineOptions options = null;
@@ -155,7 +155,7 @@ public class Main {
             if (!options.parse(args)) {
                 System.exit(1);
             }
-            
+
             foUserAgent = options.getFOUserAgent();
             String outputFormat = options.getOutputFormat();
 
@@ -164,6 +164,8 @@ public class Main {
                     out = new java.io.BufferedOutputStream(
                             new java.io.FileOutputStream(options.getOutputFile()));
                     foUserAgent.setOutputFile(options.getOutputFile());
+                } else if (options.isOutputToStdOut()) {
+                    out = new java.io.BufferedOutputStream(System.out);
                 }
                 if (!MimeConstants.MIME_XSL_FO.equals(outputFormat)) {
                     options.getInputHandler().renderTo(foUserAgent, outputFormat, out);
@@ -190,7 +192,7 @@ public class Main {
             System.exit(1);
         }
     }
-    
+
     /**
      * The main routine for the command line interface
      * @param args the command line parameters

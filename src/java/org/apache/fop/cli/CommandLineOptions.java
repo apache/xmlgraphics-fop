@@ -59,7 +59,7 @@ public class CommandLineOptions {
     /** Used to indicate that only the result of the XSL transformation should be output */
     public static final int RENDER_NONE = -1;
 
-    /* These following constants are used to describe the input (either .FO, .XML/.XSL or 
+    /* These following constants are used to describe the input (either .FO, .XML/.XSL or
      * intermediate format)
      */
 
@@ -96,11 +96,15 @@ public class CommandLineOptions {
     private int inputmode = NOT_SET;
     /* output mode */
     private String outputmode = null;
+    /* true if System.in (stdin) should be used for the input file */
+    private boolean useStdIn = false;
+    /* true if System.out (stdout) should be used for the output file */
+    private boolean useStdOut = false;
     /* rendering options (for the user agent) */
     private Map renderingOptions = new java.util.HashMap();
     /* target resolution (for the user agent) */
     private int targetResolution = 0;
-    
+
     private FopFactory factory = FopFactory.newInstance();
     private FOUserAgent foUserAgent;
 
@@ -149,7 +153,7 @@ public class CommandLineOptions {
                 }
                 checkSettings();
                 setUserConfig();
-                
+
                 //Factory config is set up, now we can create the user agent
                 foUserAgent = factory.newFOUserAgent();
                 foUserAgent.getRendererOptions().putAll(renderingOptions);
@@ -372,7 +376,12 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the fo file for the '-fo' option");
         } else {
-            fofile = new File(args[i + 1]);
+            String filename = args[i + 1];
+            if (isSystemInOutFile(filename)) {
+                this.useStdIn = true;
+            } else {
+                fofile = new File(filename);
+            }
             return 1;
         }
     }
@@ -396,7 +405,12 @@ public class CommandLineOptions {
             throw new FOPException("you must specify the input file "
                             + "for the '-xml' option");
         } else {
-            xmlfile = new File(args[i + 1]);
+            String filename = args[i + 1];
+            if (isSystemInOutFile(filename)) {
+                this.useStdIn = true;
+            } else {
+                xmlfile = new File(filename);
+            }
             return 1;
         }
     }
@@ -412,7 +426,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the PDF output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             if (pdfAMode != null) {
                 if (renderingOptions.get("pdf-a-mode") != null) {
                     throw new FOPException("PDF/A mode already set");
@@ -423,13 +437,25 @@ public class CommandLineOptions {
         }
     }
 
+    private void setOutputFile(String filename) {
+        if (isSystemInOutFile(filename)) {
+            this.useStdOut = true;
+        } else {
+            outfile = new File(filename);
+        }
+    }
+
+    private boolean isSystemInOutFile(String filename) {
+        return "#".equals(filename);
+    }
+
     private int parseMIFOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_MIF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the MIF output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -440,7 +466,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the RTF output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -451,7 +477,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the TIFF output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -462,7 +488,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the PNG output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -508,7 +534,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the PDF output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -519,7 +545,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the PostScript output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -530,7 +556,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the text output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -541,7 +567,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the SVG output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -552,7 +578,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the AFP output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -563,7 +589,7 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the FO output file");
         } else {
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         }
     }
@@ -588,7 +614,7 @@ public class CommandLineOptions {
             throw new FOPException("you must specify the output format and the output file");
         } else {
             setOutputMode(mime);
-            outfile = new File(args[i + 2]);
+            setOutputFile(args[i + 2]);
             return 2;
         }
     }
@@ -599,7 +625,7 @@ public class CommandLineOptions {
             fofile = new File(args[i]);
         } else if (outputmode == null) {
             outputmode = MimeConstants.MIME_PDF;
-            outfile = new File(args[i]);
+            setOutputFile(args[i]);
         } else {
             throw new FOPException("Don't know what to do with "
                            + args[i]);
@@ -612,15 +638,15 @@ public class CommandLineOptions {
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the area-tree output file");
-          } else if ((i + 2 == args.length)
+        } else if ((i + 2 == args.length)
                 || (args[i + 2].charAt(0) == '-')) {
             // only output file is specified
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         } else {
             // mimic format and output file have been specified
             mimicRenderer = args[i + 1];
-            outfile = new File(args[i + 2]);
+            setOutputFile(args[i + 2]);
             return 2;
         }
     }
@@ -631,7 +657,12 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the Area Tree file for the '-atin' option");
         } else {
-            areatreefile = new File(args[i + 1]);
+            String filename = args[i + 1];
+            if (isSystemInOutFile(filename)) {
+                this.useStdIn = true;
+            } else {
+                areatreefile = new File(filename);
+            }
             return 1;
         }
     }
@@ -642,14 +673,19 @@ public class CommandLineOptions {
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the image file for the '-imagein' option");
         } else {
-            imagefile = new File(args[i + 1]);
+            String filename = args[i + 1];
+            if (isSystemInOutFile(filename)) {
+                this.useStdIn = true;
+            } else {
+                imagefile = new File(filename);
+            }
             return 1;
         }
     }
 
     private PDFEncryptionParams getPDFEncryptionParams() throws FOPException {
         PDFEncryptionParams params = (PDFEncryptionParams)renderingOptions.get(
-                        PDFRenderer.ENCRYPTION_PARAMS); 
+                        PDFRenderer.ENCRYPTION_PARAMS);
         if (params == null) {
             if (!PDFEncryptionManager.checkAvailableAlgorithms()) {
                 throw new FOPException("PDF encryption requested but it is not available."
@@ -760,7 +796,7 @@ public class CommandLineOptions {
 
         if (inputmode == XSLT_INPUT) {
             // check whether xml *and* xslt file have been set
-            if (xmlfile == null) {
+            if (xmlfile == null && !this.useStdIn) {
                 throw new FOPException("XML file must be specified for the transform mode");
             }
             if (xsltfile == null) {
@@ -777,7 +813,7 @@ public class CommandLineOptions {
                                        + "\n  fofile: "
                                        + fofile.getAbsolutePath());
             }
-            if (!xmlfile.exists()) {
+            if (xmlfile != null && !xmlfile.exists()) {
                 throw new FileNotFoundException("Error: xml file "
                                                 + xmlfile.getAbsolutePath()
                                                 + " not found ");
@@ -795,10 +831,10 @@ public class CommandLineOptions {
             }
             if (xmlfile != null || xsltfile != null) {
                 log.warn("fo input mode, but xmlfile or xslt file are set:");
-                log.error("xml file: " + xmlfile.toString());
-                log.error("xslt file: " + xsltfile.toString());
+                log.error("xml file: " + xmlfile);
+                log.error("xslt file: " + xsltfile);
             }
-            if (!fofile.exists()) {
+            if (fofile != null && !fofile.exists()) {
                 throw new FileNotFoundException("Error: fo file "
                                                 + fofile.getAbsolutePath()
                                                 + " not found ");
@@ -813,10 +849,10 @@ public class CommandLineOptions {
             }
             if (xmlfile != null || xsltfile != null) {
                 log.warn("area tree input mode, but xmlfile or xslt file are set:");
-                log.error("xml file: " + xmlfile.toString());
-                log.error("xslt file: " + xsltfile.toString());
+                log.error("xml file: " + xmlfile);
+                log.error("xslt file: " + xsltfile);
             }
-            if (!areatreefile.exists()) {
+            if (areatreefile != null && !areatreefile.exists()) {
                 throw new FileNotFoundException("Error: area tree file "
                                               + areatreefile.getAbsolutePath()
                                               + " not found ");
@@ -830,7 +866,7 @@ public class CommandLineOptions {
                 log.warn("image input mode, but XML file is set:");
                 log.error("XML file: " + xmlfile.toString());
             }
-            if (!imagefile.exists()) {
+            if (imagefile != null && !imagefile.exists()) {
                 throw new FileNotFoundException("Error: image file "
                                               + imagefile.getAbsolutePath()
                                               + " not found ");
@@ -945,6 +981,22 @@ public class CommandLineOptions {
     }
 
     /**
+     * Indicates whether input comes from standard input (stdin).
+     * @return true if input comes from standard input (stdin)
+     */
+    public boolean isInputFromStdIn() {
+        return this.useStdIn;
+    }
+
+    /**
+     * Indicates whether output is sent to standard output (stdout).
+     * @return true if output is sent to standard output (stdout)
+     */
+    public boolean isOutputToStdOut() {
+        return this.useStdOut;
+    }
+
+    /**
      * Returns the input file.
      * @return either the fofile or the xmlfile
      */
@@ -986,15 +1038,17 @@ public class CommandLineOptions {
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
+            + "                    (use # for infile to pipe input from stdin)\n"
             + "  -fo  infile       xsl:fo input file  \n"
             + "  -xml infile       xml input file, must be used together with -xsl \n"
             + "  -atin infile      area tree input file \n"
-            + "  -imagein infile   image input file \n"
+            + "  -imagein infile   image input file (piping through stdin not supported)\n"
             + "  -xsl stylesheet   xslt stylesheet \n \n"
             + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
             + "                    (repeat '-param name value' for each parameter)\n \n"
             + " [OUTPUT] \n"
             + "  outfile           input will be rendered as PDF into outfile\n"
+            + "                    (use # for outfile to pipe output to stdout)\n"
             + "  -pdf outfile      input will be rendered as PDF (outfile req'd)\n"
             + "  -pdfa1b outfile   input will be rendered as PDF/A-1b compliant PDF\n"
             + "                    (outfile req'd, same as \"-pdf outfile -pdfprofile PDF/A-1b\")\n"
@@ -1027,6 +1081,7 @@ public class CommandLineOptions {
             + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
             + "  Fop -xml foo.xml -xsl foo.xsl -pdf foo.pdf\n"
             + "  Fop -xml foo.xml -xsl foo.xsl -foout foo.fo\n"
+            + "  Fop -xml # -xsl foo.xsl -pdf #\n"
             + "  Fop foo.fo -mif foo.mif\n"
             + "  Fop foo.fo -rtf foo.rtf\n"
             + "  Fop foo.fo -print\n"
@@ -1057,11 +1112,19 @@ public class CommandLineOptions {
             break;
         case FO_INPUT:
             log.info("FO ");
-            log.info("fo input file: " + fofile.toString());
+            if (this.useStdIn) {
+                log.info("fo input file: from stdin");
+            } else {
+                log.info("fo input file: " + fofile.toString());
+            }
             break;
         case XSLT_INPUT:
             log.info("xslt transformation");
-            log.info("xml input file: " + xmlfile.toString());
+            if (this.useStdIn) {
+                log.info("xml input file: from stdin");
+            } else {
+                log.info("xml input file: " + xmlfile.toString());
+            }
             log.info("xslt stylesheet: " + xsltfile.toString());
             break;
         default:
@@ -1074,7 +1137,7 @@ public class CommandLineOptions {
             log.info("awt on screen");
             if (outfile != null) {
                 log.error("awt mode, but outfile is set:");
-                log.info("out file: " + outfile.toString());
+                log.error("out file: " + outfile.toString());
             }
         } else if (MimeConstants.MIME_FOP_PRINT.equals(outputmode)) {
             log.info("print directly");
@@ -1087,10 +1150,18 @@ public class CommandLineOptions {
             if (mimicRenderer != null) {
               log.info("mimic renderer: " + mimicRenderer);
             }
-            log.info("output file: " + outfile.toString());
+            if (this.useStdOut) {
+                log.info("output file: to stdout");
+            } else {
+                log.info("output file: " + outfile.toString());
+            }
         } else {
             log.info(outputmode);
-            log.info("output file: " + outfile.toString());
+            if (this.useStdOut) {
+                log.info("output file: to stdout");
+            } else {
+                log.info("output file: " + outfile.toString());
+            }
         }
 
         log.info("OPTIONS");
