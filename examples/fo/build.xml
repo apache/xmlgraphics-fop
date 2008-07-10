@@ -45,7 +45,7 @@
   <!-- Produces new test files (function)                                  -->
   <!-- =================================================================== -->
   <target name="newTestFiles">
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" relativebase="true">
+    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" relativebase="true" throwexceptions="false">
       <fileset dir="basic">
         <include name="**/*.fo"/>
       </fileset>
@@ -96,11 +96,21 @@
     </antcall>
   </target>
   <!-- =================================================================== -->
-  <!-- Produces new test ps files                                         -->
+  <!-- Produces new test PS files                                          -->
   <!-- =================================================================== -->
   <target name="newPS" depends="init" description="Creates a new set of PostScript test files">
     <antcall target="newTestFiles">
       <param name="mimetype" value="application/postscript"/>
+      <param name="msglevel" value="warn"/>
+      <param name="outDir" value="${testDir}"/>
+    </antcall>
+  </target>
+  <!-- =================================================================== -->
+  <!-- Produces new test AFP files                                         -->
+  <!-- =================================================================== -->
+  <target name="newAFP" depends="init" description="Creates a new set of AFP test files">
+    <antcall target="newTestFiles">
+      <param name="mimetype" value="application/x-afp"/>
       <param name="msglevel" value="warn"/>
       <param name="outDir" value="${testDir}"/>
     </antcall>

@@ -53,6 +53,10 @@
   
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="LF" type="fix">
+        Fixed absolute positioning of block-containers when specified
+        using right and bottom instead of left and top.
+      </action>
       <action context="Renderers" dev="AC" type="add">
         Added PDF encryption parameter support in configuration.
       </action>
@@ -64,6 +68,13 @@
         Fixed an inconsistency in footnote handling that led to unnecessary
         empty areas in pages whose last normal line contains footnotes
         when the page bpd is not the same for all pages.
+      </action>
+      <action context="Code" dev="AD" type="update" importance="high">
+        Changed FONode.addCharacters() parameter to closer match the signature of 
+        the standard SAX characters() event (reduces confusion and computations).
+        <em>!! Implementors of extensions that subclass FONode directly, and 
+        offer an implementation for addCharacters() should take care to make 
+        similar modifications in their code !!</em>
       </action>
       <!-- change reverted, to be added back later
       <action context="Renderers" dev="AC" importance="high" type="add">
