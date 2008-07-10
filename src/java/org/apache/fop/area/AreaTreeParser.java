@@ -21,12 +21,11 @@ package org.apache.fop.area;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.nio.CharBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.StringTokenizer;
-import java.nio.CharBuffer;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -37,22 +36,8 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.util.QName;
-
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.Trait.InternalLink;
@@ -80,6 +65,16 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.ConversionUtils;
 import org.apache.fop.util.DefaultErrorListener;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.util.QName;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This is a parser for the area tree XML (intermediate format) which is used to reread an area
@@ -559,6 +554,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 Footnote fn = getCurrentBodyRegion().getFootnote();
                 transferForeignObjects(attributes, fn);
+                fn.setTop(getAttributeAsInteger(attributes, "top-offset", 0));
                 areaStack.push(fn);
             }
             
