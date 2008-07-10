@@ -45,6 +45,7 @@ import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTRenderer;
+import org.apache.fop.render.iform.IFRenderer;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
@@ -197,6 +198,13 @@ public class CommandLineOptions {
 
             //Make sure the prepared XMLRenderer is used
             foUserAgent.setRendererOverride(xmlRenderer);
+        } else if (MimeConstants.MIME_FOP_IF.equals(outputmode)) {
+            // render from FO to Intermediate Format
+            IFRenderer xml2Renderer = new IFRenderer();
+            xml2Renderer.setUserAgent(foUserAgent);
+
+            //Make sure the prepared IFRenderer is used
+            foUserAgent.setRendererOverride(xml2Renderer);
         }
         return true;
     }
@@ -302,6 +310,8 @@ public class CommandLineOptions {
                 i = i + parseUnknownOption(args, i);
             } else if (args[i].equals("-at")) {
                 i = i + parseAreaTreeOption(args, i);
+            } else if (args[i].equals("-if")) {
+                i = i + parseIntermediateFormatOption(args, i);
             } else if (args[i].equals("-v")) {
                 System.out.println("FOP Version " + Version.getVersion());
             } else if (args[i].equals("-param")) {
@@ -612,7 +622,7 @@ public class CommandLineOptions {
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the area-tree output file");
-          } else if ((i + 2 == args.length)
+        } else if ((i + 2 == args.length)
                 || (args[i + 2].charAt(0) == '-')) {
             // only output file is specified
             outfile = new File(args[i + 1]);
@@ -620,6 +630,23 @@ public class CommandLineOptions {
         } else {
             // mimic format and output file have been specified
             mimicRenderer = args[i + 1];
+            outfile = new File(args[i + 2]);
+            return 2;
+        }
+    }
+
+    private int parseIntermediateFormatOption(String[] args, int i) throws FOPException {
+        setOutputMode(MimeConstants.MIME_FOP_IF);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the intermediate format output file");
+        } else if ((i + 2 == args.length)
+                || (args[i + 2].charAt(0) == '-')) {
+            // only output file is specified
+            outfile = new File(args[i + 1]);
+            return 1;
+        } else {
+            // mimic format and output file have been specified
             outfile = new File(args[i + 2]);
             return 2;
         }
@@ -1009,6 +1036,7 @@ public class CommandLineOptions {
             + "  -at [mime] out    representation of area tree as XML (outfile req'd) \n"
             + "                    specify optional mime output to allow AT to be converted\n"
             + "                    to final format later\n"
+            + "  -if out           representation of area tree as intermediate format XML (outfile req'd)\n"
             + "  -print            input file will be rendered and sent to the printer \n"
             + "                    see options with \"-print help\" \n"
             + "  -out mime outfile input will be rendered using the given MIME type\n"
@@ -1087,6 +1115,9 @@ public class CommandLineOptions {
             if (mimicRenderer != null) {
               log.info("mimic renderer: " + mimicRenderer);
             }
+            log.info("output file: " + outfile.toString());
+        } else if (MimeConstants.MIME_FOP_IF.equals(outputmode)) {
+            log.info("intermediate format");
             log.info("output file: " + outfile.toString());
         } else {
             log.info(outputmode);
