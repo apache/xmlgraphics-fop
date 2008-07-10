@@ -133,18 +133,18 @@ import org.apache.fop.render.afp.modca.PageObject;
  * handle all types of inline area, text, image etc and draws various lines and
  * rectangles.
  * </p>
- * 
+ *
  * Note: There are specific extensions that have been added to the FO. They are
  * specific to their location within the FO and have to be processed accordingly
  * (ie. at the start or end of the page).
- * 
+ *
  */
 public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     private static final int X = 0;
-    
+
     private static final int Y = 1;
-    
+
     private static final int X1 = 0;
 
     private static final int Y1 = 1;
@@ -297,7 +297,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new AFPGraphics2DAdapter();
     }
-    
+
     /** {@inheritDoc} */
     public void startVParea(CTM ctm, Rectangle2D clippingRect) {
         saveGraphicsState();
@@ -306,9 +306,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             concatenateTransformationMatrix(at);
         }
         if (clippingRect != null) {
-            clipRect((float)clippingRect.getX() / 1000f, 
-                    (float)clippingRect.getY() / 1000f, 
-                    (float)clippingRect.getWidth() / 1000f, 
+            clipRect((float)clippingRect.getX() / 1000f,
+                    (float)clippingRect.getY() / 1000f,
+                    (float)clippingRect.getWidth() / 1000f,
                     (float)clippingRect.getHeight() / 1000f);
         }
     }
@@ -330,10 +330,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         currentState.clear();
 
         Rectangle2D bounds = pageViewport.getViewArea();
-        
+
         AffineTransform basicPageTransform = new AffineTransform();
         int resolution = currentState.getResolution();
-        double scale = (double)1 / (AFPConstants.DPI_72_MPTS / resolution);
+        double scale = mpt2units(1);
         basicPageTransform.scale(scale, scale);
 
         currentState.concatenate(basicPageTransform);
@@ -343,10 +343,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     (PageObject)getPages().remove(pageViewport));
         } else {
             int pageWidth
-                = (int)Math.round(bounds.getWidth() / (AFPConstants.DPI_72_MPTS / resolution));
+                = (int)Math.round(mpt2units((float)bounds.getWidth()));
             currentState.setPageWidth(pageWidth);
             int pageHeight
-                = (int)Math.round(bounds.getHeight() / (AFPConstants.DPI_72_MPTS / resolution));
+                = (int)Math.round(mpt2units((float)bounds.getHeight()));
             currentState.setPageHeight(pageHeight);
 
             final int pageRotation = 0;
@@ -355,7 +355,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
             renderPageObjectExtensions(pageViewport);
         }
-        
+
         super.renderPage(pageViewport);
 
         AFPPageFonts pageFonts = currentState.getPageFonts();
@@ -412,14 +412,17 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         return transformPoints(srcPts, null, false);
     }
 
+    private float mpt2units(float mpt) {
+        return mpt / ((float)AFPConstants.DPI_72_MPTS / currentState.getResolution());
+    }
+
     /** {@inheritDoc} */
     public void fillRect(float x, float y, float width, float height) {
         float[] srcPts = new float[] {x * 1000, y * 1000};
         float[] dstPts = new float[srcPts.length];
-        int[] coords = mpts2units(srcPts, dstPts);        
-        int resolution = currentState.getResolution();
-        int x2 = Math.round(dstPts[X] + ((width * 1000) / (AFPConstants.DPI_72_MPTS / resolution)));
-        int thickness = Math.round((height * 1000) / (AFPConstants.DPI_72_MPTS / resolution));
+        int[] coords = mpts2units(srcPts, dstPts);
+        int x2 = coords[X] + Math.round(mpt2units(width * 1000));
+        int thickness = Math.round(mpt2units(height * 1000));
         getAFPDataStream().createLine(
                 coords[X],
                 coords[Y],
@@ -575,7 +578,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         Math.round(w3),
                         leftcol);
                 afpDataStream.createLine(
-                        Math.round(xm1 + w3), 
+                        Math.round(xm1 + w3),
                         coords[Y1],
                         Math.round(xm1 + w3),
                         coords[Y2],
@@ -634,7 +637,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         Point origin = new Point(currentIPPosition, currentBPPosition);
         int x = origin.x + posInt.x;
         int y = origin.y + posInt.y;
-        
+
         String name = (String)getPageSegments().get(uri);
         if (name != null) {
             float[] srcPts = {x, y};
@@ -687,23 +690,19 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     imageObjectInfo.setBuffered(false);
                     imageObjectInfo.setUri(uri);
                     imageObjectInfo.setMimeType(mimeType);
-                    
+
                     ObjectAreaInfo objectAreaInfo = new ObjectAreaInfo();
                     objectAreaInfo.setX(coords[X]);
                     objectAreaInfo.setY(coords[Y]);
                     int resolution = currentState.getResolution();
-                    int w = Math.round(
-                            ((float)posInt.getWidth() * 1000)
-                            / (AFPConstants.DPI_72_MPTS / resolution));
-                    int h = Math.round(
-                            ((float)posInt.getHeight() * 1000)
-                            / (AFPConstants.DPI_72_MPTS / resolution));
+                    int w = Math.round(mpt2units((float)posInt.getWidth() * 1000));
+                    int h = Math.round(mpt2units((float)posInt.getHeight() * 1000));
                     objectAreaInfo.setWidth(w);
                     objectAreaInfo.setHeight(h);
                     objectAreaInfo.setWidthRes(resolution);
                     objectAreaInfo.setHeightRes(resolution);
                     imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
-                    
+
                     imageObjectInfo.setData(buf);
                     imageObjectInfo.setDataHeight(ccitt.getSize().getHeightPx());
                     imageObjectInfo.setDataWidth(ccitt.getSize().getWidthPx());
@@ -746,7 +745,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Writes a RenderedImage to an OutputStream as raw sRGB bitmaps.
-     * 
+     *
      * @param image
      *            the RenderedImage
      * @param out
@@ -763,7 +762,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Draws a BufferedImage to AFP.
-     * 
+     *
      * @param imageInfo
      *            the image info
      * @param image
@@ -811,16 +810,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         int[] coords = mpts2units(srcPts);
         objectAreaInfo.setX(coords[X]);
         objectAreaInfo.setY(coords[Y]);
-        int resolution = currentState.getResolution();
-        int w = Math.round(
-                (width * 1000)
-                / (AFPConstants.DPI_72_MPTS / resolution));
-        int h = Math.round(
-                (height * 1000)
-                / (AFPConstants.DPI_72_MPTS / resolution));
+        int w = Math.round(mpt2units(width));
+        int h = Math.round(mpt2units(height));
         objectAreaInfo.setWidth(w);
         objectAreaInfo.setHeight(h);
-        
+
         objectAreaInfo.setWidthRes(imageRes);
         objectAreaInfo.setHeightRes(imageRes);
         imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
@@ -896,7 +890,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void renderText(TextArea text) { 
+    public void renderText(TextArea text) {
         log.debug(text.getText());
         renderInlineAreaBackAndBorders(text);
 
@@ -956,11 +950,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         int variableSpaceCharacterIncrement = font.getWidth(' ', fontSize) / 1000
           + text.getTextWordSpaceAdjust()
           + text.getTextLetterSpaceAdjust();
-        int resolution = currentState.getResolution();
-        variableSpaceCharacterIncrement /= (AFPConstants.DPI_72_MPTS / resolution);
-      
-        int interCharacterAdjustment = text.getTextLetterSpaceAdjust();
-        interCharacterAdjustment /= (AFPConstants.DPI_72_MPTS / resolution);
+        variableSpaceCharacterIncrement = Math.round(mpt2units(variableSpaceCharacterIncrement));
+
+        int interCharacterAdjustment = Math.round(mpt2units(text.getTextLetterSpaceAdjust()));
 
         AFPTextDataInfo textDataInfo = new AFPTextDataInfo();
         textDataInfo.setFontReference(fontReference);
@@ -983,7 +975,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Render leader area. This renders a leader area which is an area with a
      * rule.
-     * 
+     *
      * @param area
      *            the leader area to render
      */
@@ -1018,7 +1010,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
      * (default), 90, 180, 270.
-     * 
+     *
      * @param rotation
      *            The rotation in degrees.
      */
@@ -1029,7 +1021,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Sets the rotation to be used for landsacpe pages, valid values are 0, 90,
      * 180, 270 (default).
-     * 
+     *
      * @param rotation
      *            The rotation in degrees.
      */
@@ -1039,7 +1031,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Get the MIME type of the renderer.
-     * 
+     *
      * @return The MIME type of the renderer
      */
     public String getMimeType() {
@@ -1056,7 +1048,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Method to render the page extension.
      * <p>
-     * 
+     *
      * @param pageViewport
      *            the page object
      */
@@ -1103,7 +1095,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Sets the number of bits used per pixel
-     * 
+     *
      * @param bitsPerPixel
      *            number of bits per pixel
      */
@@ -1113,7 +1105,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Sets whether images are color or not
-     * 
+     *
      * @param colorImages
      *            color image output
      */
@@ -1123,7 +1115,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Returns the AFPDataStream
-     * 
+     *
      * @return the AFPDataStream
      */
     public AFPDataStream getAFPDataStream() {
@@ -1135,7 +1127,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Sets the output/device resolution
-     * 
+     *
      * @param resolution
      *            the output resolution (dpi)
      */
@@ -1145,7 +1137,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Returns the output/device resolution.
-     * 
+     *
      * @return the resolution in dpi
      */
     public int getResolution() {
@@ -1176,8 +1168,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     protected boolean isGOCAEnabled() {
         return this.gocaEnabled;
     }
-    
-    // TODO: remove this and use the superclass implementation 
+
+    // TODO: remove this and use the superclass implementation
     /** {@inheritDoc} */
     protected void renderReferenceArea(Block block) {
         // save position and offset
@@ -1189,7 +1181,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         at.translate(currentIPPosition, currentBPPosition);
         at.translate(block.getXOffset(), block.getYOffset());
         at.translate(0, block.getSpaceBefore());
-        
+
         if (!at.isIdentity()) {
             saveGraphicsState();
             concatenateTransformationMatrix(at);
@@ -1207,7 +1199,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         if (!at.isIdentity()) {
             restoreGraphicsState();
         }
-        
+
         // stacked and relative blocks effect stacking
         currentIPPosition = saveIP;
         currentBPPosition = saveBP;
@@ -1231,6 +1223,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             }
             coords[i] = Math.round(dstPts[i]);
         }
-        return coords;        
+        return coords;
     }
+
 }

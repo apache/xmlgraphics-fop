@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,14 +55,14 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     private int resolution = 240; // 240 dpi
 
     /**
-     * The current page 
+     * The current page
      */
     private AFPPageState pageState = new AFPPageState();
-    
+
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
      * (default), 90, 180, 270.
-     * 
+     *
      * @param rotation
      *            The rotation in degrees.
      */
@@ -88,7 +88,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     /**
      * Sets the rotation to be used for landscape pages, valid values are 0, 90,
      * 180, 270 (default).
-     * 
+     *
      * @param rotation
      *            The rotation in degrees.
      */
@@ -112,20 +112,20 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets the number of bits used per pixel
-     * 
+     *
      * @param bitsPerPixel
      *            number of bits per pixel
      */
     public void setBitsPerPixel(int bitsPerPixel) {
-        this.bitsPerPixel = bitsPerPixel;
         switch (bitsPerPixel) {
         case 1:
         case 4:
         case 8:
+            this.bitsPerPixel = bitsPerPixel;
             break;
         default:
             log.warn("Invalid bits_per_pixel value, must be 1, 4 or 8.");
-            bitsPerPixel = 8;
+            this.bitsPerPixel = 8;
             break;
         }
     }
@@ -139,7 +139,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets whether images are color or not
-     * 
+     *
      * @param colorImages
      *            color image output
      */
@@ -156,7 +156,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets the output/device resolution
-     * 
+     *
      * @param resolution
      *            the output resolution (dpi)
      */
@@ -169,7 +169,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Returns the output/device resolution.
-     * 
+     *
      * @return the resolution in dpi
      */
     protected int getResolution() {
@@ -187,7 +187,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     protected AFPPageState getPageState() {
         return this.pageState;
     }
-    
+
     /**
      * Sets if the current painted shape is to be filled
      * @param fill true if the current painted shape is to be filled
@@ -261,7 +261,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
      */
     public String getImageUri() {
         return ((AFPData)getData()).imageUri;
-    }    
+    }
 
     /** {@inheritDoc} */
     public String toString() {
@@ -275,7 +275,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
-     * Page level state data 
+     * Page level state data
      */
     private class AFPPageState {
         /** The current page width */
@@ -341,7 +341,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         protected int incrementFontCount() {
             return ++fontCount;
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             return "AFPPageState{width=" + width
@@ -360,9 +360,9 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /** The current fill status */
         private boolean filled = false;
-        
+
         private String imageUri = null;
-        
+
         /** {@inheritDoc} */
         public Object clone() throws CloneNotSupportedException {
             AFPData obj = (AFPData)super.clone();
@@ -370,7 +370,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
             obj.imageUri = this.imageUri;
             return obj;
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             return "AFPData{" + super.toString()
