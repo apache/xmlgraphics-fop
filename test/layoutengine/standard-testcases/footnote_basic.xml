@@ -68,6 +68,7 @@
     <eval expected="6000" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea/inlineparent/text/@font-size"/>
     <eval expected=" in it." xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea/text[2]"/>
     <!-- the footnote -->
+    <eval expected="201600" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/@top-offset"/>
     <eval expected="360000" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[1]/@ipd"/>
     <eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[1]/@bpd"/>
     <eval expected="11100" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[1]/lineArea/@bpd"/>

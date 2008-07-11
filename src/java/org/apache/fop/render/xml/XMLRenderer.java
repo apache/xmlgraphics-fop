@@ -544,7 +544,9 @@ public class XMLRenderer extends AbstractXMLRenderer {
      * {@inheritDoc}
      */
     protected void renderFootnote(Footnote footnote) {
-        startElement("footnote");
+        atts.clear();
+        addAttribute("top-offset", footnote.getTop());
+        startElement("footnote", atts);
         super.renderFootnote(footnote);
         endElement("footnote");
     }
