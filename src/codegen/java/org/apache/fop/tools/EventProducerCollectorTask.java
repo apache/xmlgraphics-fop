@@ -56,13 +56,17 @@ public class EventProducerCollectorTask extends Task {
     private List filesets = new java.util.ArrayList();
     private File modelFile;
     private File translationFile;
-    
+
     /** {@inheritDoc} */
     public void execute() throws BuildException {
         try {
             EventProducerCollector collector = new EventProducerCollector();
             processFileSets(collector);
-            getModelFile().getParentFile().mkdirs();
+            File parentDir = getModelFile().getParentFile();
+            if (!parentDir.exists() && !parentDir.mkdirs()) {
+                throw new BuildException(
+                        "Could not create target directory for event model file: " + parentDir);
+            }
             collector.saveModelToXML(getModelFile());
             log("Event model written to " + getModelFile());
             if (getTranslationFile() != null) {
@@ -76,10 +80,10 @@ public class EventProducerCollectorTask extends Task {
             throw new BuildException(ioe);
         }
     }
-    
+
     private static final String MODEL2TRANSLATION = "model2translation.xsl";
     private static final String MERGETRANSLATION = "merge-translation.xsl";
-    
+
     /**
      * Updates the translation file with new entries for newly found event producer methods.
      * @throws IOException if an I/O error occurs
@@ -89,7 +93,7 @@ public class EventProducerCollectorTask extends Task {
             boolean resultExists = getTranslationFile().exists();
             SAXTransformerFactory tFactory
                 = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
-            
+
             //Generate fresh generated translation file as template
             Source src = new StreamSource(getModelFile());
             StreamSource xslt1 = new StreamSource(
@@ -101,7 +105,7 @@ public class EventProducerCollectorTask extends Task {
             Transformer transformer = tFactory.newTransformer(xslt1);
             transformer.transform(src, domres);
             final Node generated = domres.getNode();
-            
+
             Node sourceDocument;
             if (resultExists) {
                 //Load existing translation file into memory (because we overwrite it later)
@@ -176,7 +180,7 @@ public class EventProducerCollectorTask extends Task {
     public void addFileset(FileSet set) {
         filesets.add(set);
     }
-    
+
     /**
      * Sets the model file to be written.
      * @param f the model file
@@ -184,7 +188,7 @@ public class EventProducerCollectorTask extends Task {
     public void setModelFile(File f) {
         this.modelFile = f;
     }
-    
+
     /**
      * Returns the model file to be written.
      * @return the model file
@@ -192,7 +196,7 @@ public class EventProducerCollectorTask extends Task {
     public File getModelFile() {
         return this.modelFile;
     }
-    
+
     /**
      * Sets the translation file for the event producer methods.
      * @param f the translation file
@@ -200,7 +204,7 @@ public class EventProducerCollectorTask extends Task {
     public void setTranslationFile(File f) {
         this.translationFile = f;
     }
-    
+
     /**
      * Returns the translation file for the event producer methods.
      * @return the translation file
@@ -208,7 +212,7 @@ public class EventProducerCollectorTask extends Task {
     public File getTranslationFile() {
         return this.translationFile;
     }
-    
+
     /**
      * Command-line interface for testing purposes.
      * @param args the command-line arguments
@@ -222,15 +226,15 @@ public class EventProducerCollectorTask extends Task {
             project.setName("Test");
             FileSet fileset = new FileSet();
             fileset.setDir(new File("test/java"));
-            
+
             FilenameSelector selector = new FilenameSelector();
             selector.setName("**/*.java");
             fileset.add(selector);
             generator.addFileset(fileset);
-            
+
             File targetDir = new File("build/codegen1");
             targetDir.mkdirs();
-            
+
             generator.setModelFile(new File("D:/out.xml"));
             generator.setTranslationFile(new File("D:/out1.xml"));
             generator.execute();
