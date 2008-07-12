@@ -46,15 +46,15 @@ import org.apache.xmlgraphics.util.XMLizable;
 public class EventModel implements Serializable, XMLizable {
 
     private static final long serialVersionUID = 7468592614934605082L;
-    
+
     private Map producers = new java.util.LinkedHashMap();
-    
+
     /**
      * Creates a new, empty event model
      */
     public EventModel() {
     }
-    
+
     /**
      * Adds the model of an event producer to the event model.
      * @param producer the event producer model
@@ -62,7 +62,7 @@ public class EventModel implements Serializable, XMLizable {
     public void addProducer(EventProducerModel producer) {
         this.producers.put(producer.getInterfaceName(), producer);
     }
-    
+
     /**
      * Returns an iterator over the contained event producer models.
      * @return an iterator (Iterator&lt;EventProducerModel&gt;)
@@ -79,7 +79,7 @@ public class EventModel implements Serializable, XMLizable {
     public EventProducerModel getProducer(String interfaceName) {
         return (EventProducerModel)this.producers.get(interfaceName);
     }
-    
+
     /**
      * Returns the model of an event producer with the given interface.
      * @param clazz the interface of the event producer
@@ -88,7 +88,7 @@ public class EventModel implements Serializable, XMLizable {
     public EventProducerModel getProducer(Class clazz) {
         return getProducer(clazz.getName());
     }
-    
+
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
@@ -102,8 +102,9 @@ public class EventModel implements Serializable, XMLizable {
     }
 
     private void writeXMLizable(XMLizable object, File outputFile) throws IOException {
-        Result res = new StreamResult(outputFile);
-        
+        //Result res = new StreamResult(outputFile); //Does not seem to work in all environments
+        Result res = new StreamResult(outputFile.toURI().toURL().toExternalForm());
+
         try {
             SAXTransformerFactory tFactory
                 = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
