@@ -157,7 +157,7 @@ public final class AFPFontReader {
             if (url == null) {
                 try {
                     File file = new File(path);
-                    url = file.toURL();
+                    url = file.toURI().toURL();
                     if (url == null) {
                         String msg = "CharacterSet file not found for "
                             + characterset + " in classpath: " + path;
@@ -194,7 +194,7 @@ public final class AFPFontReader {
                 log.warn(msg);
             }
 
-            inputStream = csfont[0].toURL().openStream();
+            inputStream = csfont[0].toURI().toURL().openStream();
             if (inputStream == null) {
                 String msg = "Failed to open character set resource "
                     + characterset;
@@ -258,7 +258,7 @@ public final class AFPFontReader {
         if (url == null) {
             try {
                 File file = new File(path);
-                url = file.toURL();
+                url = file.toURI().toURL();
                 if (url == null) {
                     String msg = "CodePage file not found for " + codePage
                         + " in classpath: " + path;
@@ -300,7 +300,7 @@ public final class AFPFontReader {
             log.warn(msg);
         }
 
-        InputStream is = codepage[0].toURL().openStream();
+        InputStream is = codepage[0].toURI().toURL().openStream();
 
         if (is == null) {
             String msg = "AFPFontReader:: loadCodePage(String):: code page file not found for "

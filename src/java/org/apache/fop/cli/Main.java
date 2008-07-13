@@ -66,7 +66,7 @@ public class Main {
                     + baseDir.getAbsolutePath() + " (or below)");
         }
         List jars = new java.util.ArrayList();
-        jars.add(fopJar.toURL());
+        jars.add(fopJar.toURI().toURL());
         File[] files;
         FileFilter filter = new FileFilter() {
             public boolean accept(File pathname) {
@@ -80,7 +80,7 @@ public class Main {
         files = libDir.listFiles(filter);
         if (files != null) {
             for (int i = 0, size = files.length; i < size; i++) {
-                jars.add(files[i].toURL());
+                jars.add(files[i].toURI().toURL());
             }
         }
         String optionalLib = System.getProperty("fop.optional.lib");
@@ -88,7 +88,7 @@ public class Main {
             files = new File(optionalLib).listFiles(filter);
             if (files != null) {
                 for (int i = 0, size = files.length; i < size; i++) {
-                    jars.add(files[i].toURL());
+                    jars.add(files[i].toURI().toURL());
                 }
             }
         }
@@ -172,9 +172,9 @@ public class Main {
                 } else {
                     options.getInputHandler().transformTo(out);
                 }
-             } finally {
-                 IOUtils.closeQuietly(out);
-             }
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
 
             // System.exit(0) called to close AWT/SVG-created threads, if any.
             // AWTRenderer closes with window shutdown, so exit() should not
@@ -185,9 +185,9 @@ public class Main {
         } catch (Exception e) {
             if (options != null) {
                 options.getLogger().error("Exception", e);
-            }
-            if (options.getOutputFile() != null) {
-                options.getOutputFile().delete();
+                if (options.getOutputFile() != null) {
+                    options.getOutputFile().delete();
+                }
             }
             System.exit(1);
         }

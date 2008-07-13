@@ -77,7 +77,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
         }
         File dir = new File(base);
         try {
-            base = (dir.isDirectory() ? dir.toURL() : new URL(base)).toExternalForm();
+            base = (dir.isDirectory() ? dir.toURI().toURL() : new URL(base)).toExternalForm();
         } catch (MalformedURLException mfue) {
             if (throwExceptions) {
                 throw mfue;
@@ -173,9 +173,9 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
             if (file.canRead() && file.isFile()) {
                 try {
                     if (fragment != null) {
-                        absoluteURL = new URL(file.toURL().toExternalForm() + fragment);
+                        absoluteURL = new URL(file.toURI().toURL().toExternalForm() + fragment);
                     } else {
-                        absoluteURL = file.toURL();
+                        absoluteURL = file.toURI().toURL();
                     }
                 } catch (MalformedURLException mfue) {
                     handleException(mfue, "Could not convert filename '" + href

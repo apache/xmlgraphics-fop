@@ -92,7 +92,7 @@ public class SVGElement extends SVGObj {
 
         try {
             URL baseURL = new URL(getUserAgent().getBaseURL() == null 
-                            ? new java.io.File("").toURL().toExternalForm() 
+                            ? new java.io.File("").toURI().toURL().toExternalForm() 
                             : getUserAgent().getBaseURL());
             if (baseURL != null) {
                 SVGOMDocument svgdoc = (SVGOMDocument)doc; 

@@ -224,11 +224,11 @@ public class RunTest extends Task {
      */
     private URL[] createUrls(String mainJar) throws MalformedURLException {
         ArrayList urls = new ArrayList();
-        urls.add(new File(mainJar).toURL());
+        urls.add(new File(mainJar).toURI().toURL());
         File[] libFiles = new File("lib").listFiles();
         for (int i = 0; i < libFiles.length; i++) {
             if (libFiles[i].getPath().endsWith(".jar")) {
-                urls.add(libFiles[i].toURL());
+                urls.add(libFiles[i].toURI().toURL());
             }
         }
         return (URL[]) urls.toArray(new URL[urls.size()]);
