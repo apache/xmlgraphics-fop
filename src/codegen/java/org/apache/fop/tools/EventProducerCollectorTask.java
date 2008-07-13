@@ -95,7 +95,7 @@ public class EventProducerCollectorTask extends Task {
                 = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
             //Generate fresh generated translation file as template
-            Source src = new StreamSource(getModelFile());
+            Source src = new StreamSource(getModelFile().toURI().toURL().toExternalForm());
             StreamSource xslt1 = new StreamSource(
                     getClass().getResourceAsStream(MODEL2TRANSLATION));
             if (xslt1.getInputStream() == null) {
@@ -109,7 +109,7 @@ public class EventProducerCollectorTask extends Task {
             Node sourceDocument;
             if (resultExists) {
                 //Load existing translation file into memory (because we overwrite it later)
-                src = new StreamSource(getTranslationFile());
+                src = new StreamSource(getTranslationFile().toURI().toURL().toExternalForm());
                 domres = new DOMResult();
                 transformer = tFactory.newTransformer();
                 transformer.transform(src, domres);
@@ -121,7 +121,7 @@ public class EventProducerCollectorTask extends Task {
 
             //Generate translation file (with potentially new translations)
             src = new DOMSource(sourceDocument);
-            Result res = new StreamResult(getTranslationFile());
+            Result res = new StreamResult(getTranslationFile().toURI().toURL().toExternalForm());
             StreamSource xslt2 = new StreamSource(
                     getClass().getResourceAsStream(MERGETRANSLATION));
             if (xslt2.getInputStream() == null) {
