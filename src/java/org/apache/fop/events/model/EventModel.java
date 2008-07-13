@@ -93,12 +93,12 @@ public class EventModel implements Serializable, XMLizable {
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
         String elName = "event-model";
-        handler.startElement(null, elName, elName, atts);
+        handler.startElement("", elName, elName, atts);
         Iterator iter = getProducers();
         while (iter.hasNext()) {
             ((XMLizable)iter.next()).toSAX(handler);
         }
-        handler.endElement(null, elName, elName);
+        handler.endElement("", elName, elName);
     }
 
     private void writeXMLizable(XMLizable object, File outputFile) throws IOException {
