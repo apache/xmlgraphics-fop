@@ -22,6 +22,7 @@ package org.apache.fop.tools;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Node;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -121,29 +123,38 @@ public class EventProducerCollectorTask extends Task {
 
             //Generate translation file (with potentially new translations)
             src = new DOMSource(sourceDocument);
-            Result res = new StreamResult(getTranslationFile().toURI().toURL().toExternalForm());
-            StreamSource xslt2 = new StreamSource(
-                    getClass().getResourceAsStream(MERGETRANSLATION));
-            if (xslt2.getInputStream() == null) {
-                throw new FileNotFoundException(MERGETRANSLATION + " not found");
-            }
-            transformer = tFactory.newTransformer(xslt2);
-            transformer.setURIResolver(new URIResolver() {
-                public Source resolve(String href, String base) throws TransformerException {
-                    if ("my:dom".equals(href)) {
-                        return new DOMSource(generated);
-                    }
-                    return null;
+
+            //The following triggers a bug in older Xalan versions
+            //Result res = new StreamResult(getTranslationFile());
+            OutputStream out = new java.io.FileOutputStream(getTranslationFile());
+            out = new java.io.BufferedOutputStream(out);
+            Result res = new StreamResult(out);
+            try {
+                StreamSource xslt2 = new StreamSource(
+                        getClass().getResourceAsStream(MERGETRANSLATION));
+                if (xslt2.getInputStream() == null) {
+                    throw new FileNotFoundException(MERGETRANSLATION + " not found");
                 }
-            });
-            if (resultExists) {
-                transformer.setParameter("generated-url", "my:dom");
-            }
-            transformer.transform(src, res);
-            if (resultExists) {
-                log("Translation file updated: " + getTranslationFile());
-            } else {
-                log("Translation file generated: " + getTranslationFile());
+                transformer = tFactory.newTransformer(xslt2);
+                transformer.setURIResolver(new URIResolver() {
+                    public Source resolve(String href, String base) throws TransformerException {
+                        if ("my:dom".equals(href)) {
+                            return new DOMSource(generated);
+                        }
+                        return null;
+                    }
+                });
+                if (resultExists) {
+                    transformer.setParameter("generated-url", "my:dom");
+                }
+                transformer.transform(src, res);
+                if (resultExists) {
+                    log("Translation file updated: " + getTranslationFile());
+                } else {
+                    log("Translation file generated: " + getTranslationFile());
+                }
+            } finally {
+                IOUtils.closeQuietly(out);
             }
         } catch (TransformerException te) {
             throw new IOException(te.getMessage());
