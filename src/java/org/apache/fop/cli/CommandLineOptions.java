@@ -45,7 +45,7 @@ import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTRenderer;
-import org.apache.fop.render.iform.IFRenderer;
+import org.apache.fop.render.intermediate.IFRenderer;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
