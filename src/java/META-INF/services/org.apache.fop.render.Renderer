@@ -8,3 +8,4 @@ org.apache.fop.render.awt.AWTRendererMaker
 org.apache.fop.render.print.PrintRendererMaker
 org.apache.fop.render.afp.AFPRendererMaker
 org.apache.fop.render.pcl.PCLRendererMaker
+org.apache.fop.render.intermediate.IFRendererMaker
