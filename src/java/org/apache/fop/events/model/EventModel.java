@@ -21,6 +21,7 @@ package org.apache.fop.events.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
@@ -37,6 +38,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import org.apache.commons.io.IOUtils;
 
 import org.apache.xmlgraphics.util.XMLizable;
 
@@ -102,12 +105,18 @@ public class EventModel implements Serializable, XMLizable {
     }
 
     private void writeXMLizable(XMLizable object, File outputFile) throws IOException {
-        //Result res = new StreamResult(outputFile); //Does not seem to work in all environments
-        Result res = new StreamResult(outputFile.toURI().toURL().toExternalForm());
+        //These two approaches do not seem to work in all environments:
+        //Result res = new StreamResult(outputFile);
+        //Result res = new StreamResult(outputFile.toURI().toURL().toExternalForm());
+        //With an old Xalan version: file:/C:/.... --> file:\C:\.....
+        OutputStream out = new java.io.FileOutputStream(outputFile);
+        out = new java.io.BufferedOutputStream(out);
+        Result res = new StreamResult(out);
 
         try {
             SAXTransformerFactory tFactory
                 = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+            System.out.println(tFactory.getClass().getName());
             TransformerHandler handler = tFactory.newTransformerHandler();
             Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -121,6 +130,8 @@ public class EventModel implements Serializable, XMLizable {
             throw new IOException(e.getMessage());
         } catch (SAXException e) {
             throw new IOException(e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(out);
         }
     }
 
