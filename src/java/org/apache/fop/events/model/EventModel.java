@@ -116,7 +116,6 @@ public class EventModel implements Serializable, XMLizable {
         try {
             SAXTransformerFactory tFactory
                 = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
-            System.out.println(tFactory.getClass().getName());
             TransformerHandler handler = tFactory.newTransformerHandler();
             Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
