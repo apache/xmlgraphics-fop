@@ -74,8 +74,12 @@ import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fonts.CustomFontCollection;
+import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.base14.Base14FontCollection;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.base14.TimesRoman;
@@ -85,6 +89,7 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.fonts.AFPFont;
+import org.apache.fop.render.afp.fonts.AFPFontCollection;
 import org.apache.fop.render.afp.fonts.AFPFontInfo;
 import org.apache.fop.render.afp.fonts.CharacterSet;
 import org.apache.fop.render.afp.fonts.FopCharacterSet;
@@ -279,53 +284,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
-        int num = 1;
-        if (super.embedFontInfoList != null && super.embedFontInfoList.size() > 0) {
-            for (Iterator it = super.embedFontInfoList.iterator(); it.hasNext();) {
-                AFPFontInfo afi = (AFPFontInfo)it.next();
-                AFPFont bf = (AFPFont)afi.getAFPFont();
-                for (Iterator it2 = afi.getFontTriplets().iterator(); it2.hasNext();) {
-                    FontTriplet ft = (FontTriplet)it2.next();
-                    this.fontInfo.addFontProperties("F" + num, ft.getName()
-                                                    , ft.getStyle(), ft.getWeight());
-                    this.fontInfo.addMetrics("F" + num, bf);
-                    num++;
-                }
-            }
-        } else {
-            AFPEventProducer eventProducer = AFPEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.warnDefaultFontSetup(this);
-        }
-        if (this.fontInfo.fontLookup("sans-serif", "normal", 400) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZH200  ",
-                    1, new Helvetica());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            this.fontInfo.addFontProperties("F" + num, "sans-serif", "normal", 400);
-            this.fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (this.fontInfo.fontLookup("serif", "normal", 400) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZN200  ",
-                    1, new TimesRoman());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            this.fontInfo.addFontProperties("F" + num, "serif", "normal", 400);
-            this.fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (this.fontInfo.fontLookup("monospace", "normal", 400) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZ4200  ",
-                    1, new Courier());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            this.fontInfo.addFontProperties("F" + num, "monospace", "normal", 400);
-            this.fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (this.fontInfo.fontLookup("any", "normal", 400) == null) {
-            FontTriplet ft = this.fontInfo.fontLookup("sans-serif", "normal", 400);
-            this.fontInfo.addFontProperties(
-                    this.fontInfo.getInternalFontKey(ft), "any", "normal", 400);
-        }
+        FontManager fontManager = userAgent.getFactory().getFontManager();
+        FontCollection[] fontCollections = new FontCollection[] {
+            new AFPFontCollection(userAgent.getEventBroadcaster(), getFontList())
+        };
+        fontManager.setup(getFontInfo(), fontCollections);
     }
 
     /**
