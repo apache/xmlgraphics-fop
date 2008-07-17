@@ -69,6 +69,7 @@ import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
@@ -172,7 +173,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
-        userAgent.getFactory().getFontManager().setupRenderer(this, graphics2D);
+        FontCollection[] fontCollections = new FontCollection[] {
+                new Base14FontCollection(graphics2D),
+                new InstalledFontCollection(graphics2D),
+                new ConfiguredFontCollection(getFontResolver(), getFontList())
+        };
+        userAgent.getFactory().getFontManager().setup(
+                getFontInfo(), fontCollections);
     }
 
     /** {@inheritDoc} */

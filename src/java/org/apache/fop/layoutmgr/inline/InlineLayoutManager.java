@@ -36,6 +36,7 @@ import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fonts.Font;
@@ -115,9 +116,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         InlineLevel fobj = (InlineLevel) this.fobj;
 
         int padding = 0;
+        
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
-        font = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
+        CommonFont commonFont = fobj.getCommonFont();
+        FontTriplet[] fontkeys = commonFont.getFontState(fi);
+        font = fi.getFontInstance(fontkeys[0], commonFont.fontSize.getValue(this));
+        
         lineHeight = fobj.getLineHeight();
         borderProps = fobj.getCommonBorderPaddingBackground();
         inlineProps = fobj.getCommonMarginInline();

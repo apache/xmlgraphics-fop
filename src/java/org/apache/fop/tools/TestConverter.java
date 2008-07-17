@@ -274,7 +274,7 @@ public class TestConverter {
             File xmlFile = new File(baseDir + "/" + xml);
             String baseURL = null;
             try {
-                baseURL = xmlFile.getParentFile().toURL().toExternalForm();
+                baseURL = xmlFile.getParentFile().toURI().toURL().toExternalForm();
             } catch (Exception e) {
                 logger.error("Error setting base directory");
             }

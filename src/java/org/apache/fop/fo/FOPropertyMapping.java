@@ -963,7 +963,7 @@ public final class FOPropertyMapping implements Constants {
         // font-family
         m  = new FontFamilyProperty.Maker(PR_FONT_FAMILY);
         m.setInherited(true);
-        m.setDefault("sans-serif,Symbol,ZapfDingbats");
+        m.setDefault("sans-serif");
         m.addShorthand(s_generics[PR_FONT]);
         addPropertyMaker("font-family", m);
 
