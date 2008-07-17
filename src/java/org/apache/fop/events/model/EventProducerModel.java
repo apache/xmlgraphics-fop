@@ -35,18 +35,18 @@ import org.apache.xmlgraphics.util.XMLizable;
 public class EventProducerModel implements Serializable, XMLizable {
 
     private static final long serialVersionUID = 122267104123721902L;
-    
+
     private String interfaceName;
     private Map methods = new java.util.LinkedHashMap();
-    
+
     /**
      * Creates a new instance.
-     * @param interfaceName the fully qualified interface name of the event producer 
+     * @param interfaceName the fully qualified interface name of the event producer
      */
     public EventProducerModel(String interfaceName) {
         this.interfaceName = interfaceName;
     }
-    
+
     /**
      * Returns the fully qualified interface name of the event producer.
      * @return the fully qualified interface name
@@ -54,7 +54,7 @@ public class EventProducerModel implements Serializable, XMLizable {
     public String getInterfaceName() {
         return this.interfaceName;
     }
-    
+
     /**
      * Sets the fully qualified interface name of the event producer.
      * @param name the fully qualified interface name
@@ -62,7 +62,7 @@ public class EventProducerModel implements Serializable, XMLizable {
     public void setInterfaceName(String name) {
         this.interfaceName = name;
     }
-    
+
     /**
      * Adds a model instance of an event method.
      * @param method the event method model
@@ -70,7 +70,7 @@ public class EventProducerModel implements Serializable, XMLizable {
     public void addMethod(EventMethodModel method) {
         this.methods.put(method.getMethodName(), method);
     }
-    
+
     /**
      * Returns the model instance of an event method for the given method name.
      * @param methodName the method name
@@ -79,7 +79,7 @@ public class EventProducerModel implements Serializable, XMLizable {
     public EventMethodModel getMethod(String methodName) {
         return (EventMethodModel)this.methods.get(methodName);
     }
-    
+
     /**
      * Returns an iterator over the contained event producer methods.
      * @return an iterator (Iterator&lt;EventMethodModel&gt;)
@@ -91,15 +91,15 @@ public class EventProducerModel implements Serializable, XMLizable {
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(null, "name", "name", "CDATA", getInterfaceName());
+        atts.addAttribute("", "name", "name", "CDATA", getInterfaceName());
         String elName = "producer";
-        handler.startElement(null, elName, elName, atts);
+        handler.startElement("", elName, elName, atts);
         Iterator iter = getMethods();
         while (iter.hasNext()) {
             ((XMLizable)iter.next()).toSAX(handler);
         }
-        handler.endElement(null, elName, elName);
+        handler.endElement("", elName, elName);
     }
 
-    
+
 }

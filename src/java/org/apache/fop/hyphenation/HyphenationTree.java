@@ -125,7 +125,7 @@ public class HyphenationTree extends TernaryTree
     public void loadPatterns(String filename) throws HyphenationException {
         File f = new File(filename);
         try {
-            InputSource src = new InputSource(f.toURL().toExternalForm());
+            InputSource src = new InputSource(f.toURI().toURL().toExternalForm());
             loadPatterns(src);
         } catch (MalformedURLException e) {
             throw new HyphenationException("Error converting the File '" + f + "' to a URL: " 

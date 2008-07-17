@@ -92,7 +92,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
      */
     public void parse(File file) throws HyphenationException {
         try {
-            InputSource src = new InputSource(file.toURL().toExternalForm());
+            InputSource src = new InputSource(file.toURI().toURL().toExternalForm());
             parse(src);
         } catch (MalformedURLException e) {
             throw new HyphenationException("Error converting the File '" + file + "' to a URL: " 

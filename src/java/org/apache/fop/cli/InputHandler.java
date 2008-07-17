@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,8 @@ package org.apache.fop.cli;
 
 // Imported java.io classes
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 
@@ -58,7 +58,7 @@ import org.apache.fop.render.awt.viewer.Renderable;
  * parameters) or FO File input alone
  */
 public class InputHandler implements ErrorListener, Renderable {
-     
+
     /** original source file */
     protected File sourcefile = null;
     private File stylesheet = null;  // for XML/XSLT usage
@@ -66,12 +66,12 @@ public class InputHandler implements ErrorListener, Renderable {
 
     /** the logger */
     protected Log log = LogFactory.getLog(InputHandler.class);
-    
+
     /**
      * Constructor for XML->XSLT->FO input
      * @param xmlfile XML file
      * @param xsltfile XSLT file
-     * @param params Vector of command-line parameters (name, value, 
+     * @param params Vector of command-line parameters (name, value,
      *      name, value, ...) for XSL stylesheet, null if none
      */
     public InputHandler(File xmlfile, File xsltfile, Vector params) {
@@ -95,7 +95,7 @@ public class InputHandler implements ErrorListener, Renderable {
      * @param out the output stream to write the generated output to (may be null if not applicable)
      * @throws FOPException in case of an error during processing
      */
-    public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out) 
+    public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out)
                 throws FOPException {
 
         FopFactory factory = userAgent.getFactory();
@@ -107,12 +107,12 @@ public class InputHandler implements ErrorListener, Renderable {
         }
 
         // if base URL was not explicitly set in FOUserAgent, obtain here
-        if (fop.getUserAgent().getBaseURL() == null) {
+        if (fop.getUserAgent().getBaseURL() == null && sourcefile != null) {
             String baseURL = null;
 
             try {
                 baseURL = new File(sourcefile.getAbsolutePath()).
-                        getParentFile().toURL().toExternalForm();
+                        getParentFile().toURI().toURL().toExternalForm();
             } catch (Exception e) {
                 baseURL = "";
             }
@@ -124,7 +124,7 @@ public class InputHandler implements ErrorListener, Renderable {
 
         transformTo(res);
     }
-    
+
     /** {@inheritDoc} */
     public void renderTo(FOUserAgent userAgent, String outputFormat) throws FOPException {
         renderTo(userAgent, outputFormat, null);
@@ -140,34 +140,53 @@ public class InputHandler implements ErrorListener, Renderable {
         Result res = new StreamResult(out);
         transformTo(res);
     }
-    
+
     /**
      * Creates a Source for the main input file. Processes XInclude if
      * available in the XML parser.
-     * 
+     *
      * @return the Source for the main input file
      */
     protected Source createMainSource() {
         Source result;
+        InputStream in;
+        String uri;
+        if (this.sourcefile != null) {
+            try {
+                in = new java.io.FileInputStream(this.sourcefile);
+                uri = this.sourcefile.toURI().toASCIIString();
+            } catch (FileNotFoundException e) {
+                //handled elsewhere
+                return new StreamSource(this.sourcefile);
+            }
+        } else {
+            in = System.in;
+            uri = null;
+        }
         try {
-            InputSource is = new InputSource(new FileInputStream(
-                    this.sourcefile));
-            is.setSystemId(this.sourcefile.toURI().toASCIIString());
+            InputSource is = new InputSource(in);
+            is.setSystemId(uri);
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setFeature("http://xml.org/sax/features/namespaces", true);
             spf.setFeature("http://apache.org/xml/features/xinclude", true);
             XMLReader xr = spf.newSAXParser().getXMLReader();
             result = new SAXSource(xr, is);
         } catch (SAXException e) {
-            result = new StreamSource(this.sourcefile);
-        } catch (IOException e) {
-            result = new StreamSource(this.sourcefile);
+            if (this.sourcefile != null) {
+                result = new StreamSource(this.sourcefile);
+            } else {
+                result = new StreamSource(in, uri);
+            }
         } catch (ParserConfigurationException e) {
-            result = new StreamSource(this.sourcefile);
+            if (this.sourcefile != null) {
+                result = new StreamSource(this.sourcefile);
+            } else {
+                result = new StreamSource(in, uri);
+            }
         }
         return result;
     }
-    
+
     /**
      * Creates a Source for the selected stylesheet.
      * @return the Source for the selected stylesheet or null if there's no stylesheet
@@ -179,7 +198,7 @@ public class InputHandler implements ErrorListener, Renderable {
             return null;
         }
     }
-    
+
     /**
      * Transforms the input document to the input format expected by FOP using XSLT.
      * @param result the Result object where the result of the XSL transformation is sent to
@@ -190,15 +209,15 @@ public class InputHandler implements ErrorListener, Renderable {
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer;
-            
+
             Source xsltSource = createXSLTSource();
             if (xsltSource == null) {   // FO Input
                 transformer = factory.newTransformer();
             } else {    // XML/XSLT input
                 transformer = factory.newTransformer(xsltSource);
-            
+
                 // Set the value of parameters, if any, defined for stylesheet
-                if (xsltParams != null) { 
+                if (xsltParams != null) {
                     for (int i = 0; i < xsltParams.size(); i += 2) {
                         transformer.setParameter((String) xsltParams.elementAt(i),
                             (String) xsltParams.elementAt(i + 1));

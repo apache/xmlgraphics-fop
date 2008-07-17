@@ -62,11 +62,11 @@ public class Main {
             fopJar = new File(baseDir, "fop.jar");
         }
         if (!fopJar.exists()) {
-            throw new RuntimeException("fop.jar not found in directory: " 
+            throw new RuntimeException("fop.jar not found in directory: "
                     + baseDir.getAbsolutePath() + " (or below)");
         }
         List jars = new java.util.ArrayList();
-        jars.add(fopJar.toURL());
+        jars.add(fopJar.toURI().toURL());
         File[] files;
         FileFilter filter = new FileFilter() {
             public boolean accept(File pathname) {
@@ -80,7 +80,7 @@ public class Main {
         files = libDir.listFiles(filter);
         if (files != null) {
             for (int i = 0, size = files.length; i < size; i++) {
-                jars.add(files[i].toURL());
+                jars.add(files[i].toURI().toURL());
             }
         }
         String optionalLib = System.getProperty("fop.optional.lib");
@@ -88,7 +88,7 @@ public class Main {
             files = new File(optionalLib).listFiles(filter);
             if (files != null) {
                 for (int i = 0, size = files.length; i < size; i++) {
-                    jars.add(files[i].toURL());
+                    jars.add(files[i].toURI().toURL());
                 }
             }
         }
@@ -99,7 +99,7 @@ public class Main {
         }*/
         return urls;
     }
-    
+
     /**
      * @return true if FOP's dependecies are available in the current ClassLoader setup.
      */
@@ -115,7 +115,7 @@ public class Main {
             return false;
         }
     }
-    
+
     /**
      * Dynamically builds a ClassLoader and executes FOP.
      * @param args command-line arguments
@@ -123,7 +123,7 @@ public class Main {
     public static void startFOPWithDynamicClasspath(String[] args) {
         try {
             URL[] urls = getJARList();
-            //System.out.println("CCL: " 
+            //System.out.println("CCL: "
             //    + Thread.currentThread().getContextClassLoader().toString());
             ClassLoader loader = new java.net.URLClassLoader(urls, null);
             Thread.currentThread().setContextClassLoader(loader);
@@ -137,13 +137,13 @@ public class Main {
             System.exit(-1);
         }
     }
-    
+
     /**
      * Executes FOP with the given ClassLoader setup.
      * @param args command-line arguments
      */
     public static void startFOP(String[] args) {
-        //System.out.println("static CCL: " 
+        //System.out.println("static CCL: "
         //    + Thread.currentThread().getContextClassLoader().toString());
         //System.out.println("static CL: " + Fop.class.getClassLoader().toString());
         CommandLineOptions options = null;
@@ -155,7 +155,7 @@ public class Main {
             if (!options.parse(args)) {
                 System.exit(1);
             }
-            
+
             foUserAgent = options.getFOUserAgent();
             String outputFormat = options.getOutputFormat();
 
@@ -164,15 +164,17 @@ public class Main {
                     out = new java.io.BufferedOutputStream(
                             new java.io.FileOutputStream(options.getOutputFile()));
                     foUserAgent.setOutputFile(options.getOutputFile());
+                } else if (options.isOutputToStdOut()) {
+                    out = new java.io.BufferedOutputStream(System.out);
                 }
                 if (!MimeConstants.MIME_XSL_FO.equals(outputFormat)) {
                     options.getInputHandler().renderTo(foUserAgent, outputFormat, out);
                 } else {
                     options.getInputHandler().transformTo(out);
                 }
-             } finally {
-                 IOUtils.closeQuietly(out);
-             }
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
 
             // System.exit(0) called to close AWT/SVG-created threads, if any.
             // AWTRenderer closes with window shutdown, so exit() should not
@@ -183,14 +185,14 @@ public class Main {
         } catch (Exception e) {
             if (options != null) {
                 options.getLogger().error("Exception", e);
-            }
-            if (options.getOutputFile() != null) {
-                options.getOutputFile().delete();
+                if (options.getOutputFile() != null) {
+                    options.getOutputFile().delete();
+                }
             }
             System.exit(1);
         }
     }
-    
+
     /**
      * The main routine for the command line interface
      * @param args the command line parameters
