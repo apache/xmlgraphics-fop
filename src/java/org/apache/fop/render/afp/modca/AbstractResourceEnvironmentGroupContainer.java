@@ -36,6 +36,7 @@ public abstract class AbstractResourceEnvironmentGroupContainer
 
     /**
      * Main constructor
+     * 
      * @param name the name of this resource container
      */
     public AbstractResourceEnvironmentGroupContainer(String name) {
@@ -44,6 +45,7 @@ public abstract class AbstractResourceEnvironmentGroupContainer
 
     /**
      * Adds a page to the resource container.
+     * 
      * @param page - the Page object
      */
     public void addPage(PageObject page) {
@@ -52,6 +54,7 @@ public abstract class AbstractResourceEnvironmentGroupContainer
 
     /**
      * Adds a PageGroup to the resource container.
+     * 
      * @param pageGroup the PageGroup object
      */
     public void addPageGroup(PageGroup pageGroup) {
@@ -68,9 +71,7 @@ public abstract class AbstractResourceEnvironmentGroupContainer
         addObject(new InvokeMediumMap(name));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (resourceEnvironmentGroup != null) {
@@ -79,6 +80,8 @@ public abstract class AbstractResourceEnvironmentGroupContainer
     }
     
     /**
+     * Returns the resource environment group
+     * 
      * @return the resource environment group
      */
     protected ResourceEnvironmentGroup getResourceEnvironmentGroup() {

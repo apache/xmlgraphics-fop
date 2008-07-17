@@ -35,11 +35,6 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
     protected String name = null;
     
     /**
-     * The name of the object in EBCIDIC bytes
-     */
-    protected byte[] nameBytes;
-    
-    /**
      * Default constructor
      */
     protected AbstractNamedAFPObject() {
@@ -48,16 +43,26 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
      * name parameter which should be 8 characters long.
+     * 
      * @param name the object name
      */
     protected AbstractNamedAFPObject(String name) {
         this.name = name;
-        if (name.length() < 8) {
-            name = (name + "       ").substring(0, 8);
-        } else if (name.length() > 8) {
-            log.warn("Constructor:: name truncated to 8 chars" + name);
-            name = name.substring(0, 8);
+    }
+    
+    /**
+     * Returns the name as a byte array in EBCIDIC encoding
+     * 
+     * @return the name as a byte array in EBCIDIC encoding
+     */
+    protected byte[] getNameBytes() {
+        if (name.length() < DEFAULT_NAME_LENGTH) {
+            name = (name + "       ").substring(0, DEFAULT_NAME_LENGTH);
+        } else if (name.length() > DEFAULT_NAME_LENGTH) {
+            log.warn("Constructor:: name truncated to " + DEFAULT_NAME_LENGTH + " chars" + name);
+            name = name.substring(0, DEFAULT_NAME_LENGTH);
         }
+        byte[] nameBytes = null;
         try {
             nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
@@ -66,17 +71,20 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
                 "Constructor:: UnsupportedEncodingException translating the name "
                 + name);
         }
+        return nameBytes;
     }
     
-    /**
-     * @return the name length of this object
-     */
-    protected int getNameLength() {
-        return DEFAULT_NAME_LENGTH;
+    /** {@inheritDoc} */
+    protected void copySF(byte[] data, byte type, byte category) {
+        super.copySF(data, type, category);
+        byte[] nameData = getNameBytes();
+        System.arraycopy(nameData, 0, data, 9, nameData.length);
     }
 
     /**
-     * @return the name of the page group
+     * Returns the name of this object
+     * 
+     * @return the name of this object
      */
     public String getName() {
         return name;

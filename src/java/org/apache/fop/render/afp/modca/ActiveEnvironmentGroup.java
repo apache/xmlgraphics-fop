@@ -77,6 +77,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
 
     /**
      * Default constructor for the ActiveEnvironmentGroup.
+     * 
      * @param width the page width
      * @param height the page height
      * @param widthRes the page width resolution
@@ -89,6 +90,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
      * name parameter which must be 8 characters long.
+     * 
      * @param name the active environment group name
      * @param width the page width
      * @param height the page height
@@ -112,6 +114,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
 
     /**
      * Set the position of the object area
+     * 
      * @param x the x offset
      * @param y the y offset
      * @param rotation the rotation
@@ -124,6 +127,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * Accessor method to obtain the PageDescriptor object of the
      * active environment group.
+     * 
      * @return the page descriptor object
      */
     public PageDescriptor getPageDescriptor() {
@@ -133,15 +137,14 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * Accessor method to obtain the PresentationTextDataDescriptor object of
      * the active environment group.
+     * 
      * @return the presentation text descriptor
      */
     public PresentationTextDescriptor getPresentationTextDataDescriptor() {
         return presentationTextDataDescriptor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         super.writeTriplets(os);
         
@@ -161,43 +164,17 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA8; // Structured field id byte 2
-        data[5] = (byte) 0xC9; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.BEGIN, Category.ACTIVE_ENVIRONMENT_GROUP);
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA9; // Structured field id byte 2
-        data[5] = (byte) 0xC9; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.END, Category.ACTIVE_ENVIRONMENT_GROUP);
         os.write(data);
     }
 
@@ -208,15 +185,16 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         return mapCodedFonts;
     }
 
-    private List getMapDataResources() {
-        if (mapDataResources == null) {
-            mapDataResources = new java.util.ArrayList();
-        }
-        return mapDataResources;
-    }
+//    private List getMapDataResources() {
+//        if (mapDataResources == null) {
+//            mapDataResources = new java.util.ArrayList();
+//        }
+//        return mapDataResources;
+//    }
 
     /**
      * Method to create a map coded font object
+     * 
      * @param fontRef the font number used as the resource identifier
      * @param font the font
      * @param size the point size of the font
@@ -247,6 +225,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * Getter method for the most recent MapCodedFont added to the
      * Active Environment Group (returns null if no MapCodedFonts exist)
+     * 
      * @return the most recent Map Coded Font.
      */
     private MapCodedFont getCurrentMapCodedFont() {
@@ -258,11 +237,11 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         }
     }
     
-    /**
-     * Method to create a map data resource object
-     * @param dataObjectAccessor a data object accessor
-     */
-    protected void createMapDataResource(DataObjectAccessor dataObjectAccessor) {
-        getMapDataResources().add(new MapDataResource(dataObjectAccessor));
-    }
+//    /**
+//     * Method to create a map data resource object
+//     * @param dataObjectAccessor a data object accessor
+//     */
+//    protected void createMapDataResource(DataObjectAccessor dataObjectAccessor) {
+//        getMapDataResources().add(new MapDataResource(dataObjectAccessor));
+//    }
 }

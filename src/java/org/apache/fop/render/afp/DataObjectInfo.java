@@ -39,18 +39,14 @@ public class DataObjectInfo {
     private static final String RESOURCE_LEVEL = "afp:resource-level";
     private static final String RESOURCE_GROUP_FILE = "afp:resource-group-file";
 
-    private static final ResourceInfo DEFAULT_RESOURCE_INFO = new ResourceInfo();
-    
-    private String uri;
-    
     /** the object area info */
     private ObjectAreaInfo objectAreaInfo;    
     
     /** object type entry */
-    private ObjectType objectType;
+    private Registry.ObjectType objectType;
     
     /** resource info */
-    private ResourceInfo resourceInfo = DEFAULT_RESOURCE_INFO;
+    private ResourceInfo resourceInfo;
     
     /**
      * Default constructor
@@ -59,23 +55,8 @@ public class DataObjectInfo {
     }
 
     /**
-     * Sets the data object uri
-     * @param uri the data object uri
-     */
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    
-    /**
-     * @return the uri of this data object
-     */
-    public String getUri() {
-        return uri;
-    }
-
-    /**
      * Sets the object type
+     * 
      * @param objectType the object type
      */    
     public void setObjectType(Registry.ObjectType objectType) {
@@ -83,6 +64,8 @@ public class DataObjectInfo {
     }
 
     /**
+     * Returns the object type MOD:CA Registry entry
+     * 
      * @return the object type MOD:CA Registry entry
      */
     public ObjectType getObjectType() {
@@ -90,14 +73,20 @@ public class DataObjectInfo {
     }
 
     /**
+     * Returns the resource level at which this data object should reside
+     * 
      * @return the resource level at which this data object should reside
      */
     public ResourceInfo getResourceInfo() {
+        if (resourceInfo == null) {
+            this.resourceInfo = new ResourceInfo();
+        }
         return resourceInfo;
     }
 
     /**
      * Sets the resource level at which this object should reside
+     * 
      * @param resourceInfo the resource level at which this data object should reside
      */
     public void setResourceInfo(ResourceInfo resourceInfo) {
@@ -106,6 +95,7 @@ public class DataObjectInfo {
 
     /**
      * Sets the object area info
+     * 
      * @param objectAreaInfo the object area info
      */
     public void setObjectAreaInfo(ObjectAreaInfo objectAreaInfo) {
@@ -113,6 +103,8 @@ public class DataObjectInfo {
     }
 
     /**
+     * Returns the object area info
+     * 
      * @return the object area info
      */
     public ObjectAreaInfo getObjectAreaInfo() {
@@ -121,6 +113,7 @@ public class DataObjectInfo {
 
     /**
      * Sets the resource group settings using the given foreign attributes
+     * 
      * @param foreignAttributes a mapping of element attributes names to values
      */
     public void setResourceInfoFromForeignAttributes(Map/*<QName, String>*/ foreignAttributes) {
@@ -165,7 +158,7 @@ public class DataObjectInfo {
                                 log.warn("overwritting external resource file: "
                                         + resourceExternalDest);
                             }
-                            resourceLevel.setExternalResourceGroupFile(resourceExternalGroupFile);
+                            resourceLevel.setExternalFilePath(resourceExternalDest);
                         } catch (SecurityException ex) {
                             log.error("unable to gain read access to external resource file: "
                                     + resourceExternalDest);
@@ -180,13 +173,28 @@ public class DataObjectInfo {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
-        return "uri=" + uri
-            + (objectAreaInfo != null ? "objectAreaInfo=" + objectAreaInfo : "")
+        return (objectAreaInfo != null ? ", objectAreaInfo=" + objectAreaInfo : "")
             + (objectType != null ? ", objectType=" + objectType : "")
             + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "");
+    }
+
+    /**
+     * Returns the uri of this data object
+     * 
+     * @return the uri of this data object
+     */
+    public String getUri() {
+        return getResourceInfo().getUri();
+    }
+
+    /**
+     * Sets the data object uri
+     * 
+     * @param uri the data object uri
+     */
+    public void setUri(String uri) {
+        getResourceInfo().setUri(uri);
     }
 }

@@ -69,25 +69,13 @@ public class ImageCellPosition extends AbstractAFPObject {
         yOffset = y;
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Image Cell Position
-     * @param os The stream to write to
-     * @throws java.io.IOException if an I/O exception occurred
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
         byte[] data = new byte[21];
-
-        data[0] = 0x5A;
-
-        data[1] = 0x00;
+        copySF(data, Type.POSITION, Category.IM_IMAGE);
+        
+        data[1] = 0x00; // length
         data[2] = 0x14;
-
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xAC;
-        data[5] = (byte) 0x7B;
-        data[6] = 0x00;
-        data[7] = 0x00;
-        data[8] = 0x00;
 
         /**
          * Specifies the offset along the Xp direction, in image points,

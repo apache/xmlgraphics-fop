@@ -15,24 +15,32 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
-package org.apache.fop.render.afp.modca;
-
-import java.io.IOException;
-import java.io.OutputStream;
+package org.apache.fop.render.afp;
 
 /**
- * Implementing object is able to write to an AFPDataStream
+ *  A graphics object info which contains necessary painting objects
  */
-public interface Writable {
-    
+public class GraphicsObjectInfo extends DataObjectInfo {
+
+    private GraphicsObjectPainter painter;
+
     /**
-     * DataStream objects must implement the write()
-     * method to write its data to the given OutputStream
+     * Returns the graphics painter
      * 
-     * @param outputStream The outputsteam stream
-     * @throws java.io.IOException an I/O exception of some sort has occurred.
+     * @return the graphics painter
      */
-    void write(OutputStream outputStream) throws IOException;
+    public GraphicsObjectPainter getPainter() {
+        return painter;
+    }
+
+    /**
+     * Sets the graphics painter
+     * 
+     * @param graphicsPainter the graphics painter
+     */
+    public void setPainter(GraphicsObjectPainter graphicsPainter) {
+        this.painter = graphicsPainter;
+    }
 }

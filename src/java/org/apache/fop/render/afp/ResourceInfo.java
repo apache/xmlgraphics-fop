@@ -23,19 +23,36 @@ package org.apache.fop.render.afp;
  * The level at which a resource is to reside in the AFP output
  */
 public class ResourceInfo {
+    /** the uri of this resource */
+    private String uri;
             
-    /**
-     * the reference name of this resource
-     */
+    /** the reference name of this resource */
     private String name = null;
         
-    /**
-     * the resource level (default to print-file)
-     */
+    /** the resource level (default to print-file) */
     private ResourceLevel level = new ResourceLevel(ResourceLevel.PRINT_FILE);
     
     /**
+     * Sets the data object uri
+     * 
+     * @param uri the data object uri
+     */
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+    
+    /**
+     * Returns the uri of this data object
+     * 
+     * @return the uri of this data object
+     */
+    public String getUri() {
+        return uri;
+    }
+
+    /**
      * Sets the resource reference name
+     * 
      * @param resourceName the resource reference name
      */
     public void setName(String resourceName) {
@@ -43,6 +60,8 @@ public class ResourceInfo {
     } 
 
     /**
+     * Returns the resource reference name
+     * 
      * @return the resource reference name
      */
     public String getName() {
@@ -50,14 +69,8 @@ public class ResourceInfo {
     }
     
     /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        return "ResourceInfo(" + (name != null ? "name=" + name
-                + ", " : "") + "level=" + level + ")";
-    }
-
-    /**
+     * Returns the resource level
+     * 
      * @return the resource level
      */
     public ResourceLevel getLevel() {
@@ -66,9 +79,41 @@ public class ResourceInfo {
 
     /**
      * Sets the resource level
+     * 
      * @param resourceLevel the resource level
      */
     public void setLevel(ResourceLevel resourceLevel) {
         this.level = resourceLevel;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "ResourceInfo(uri=" + uri
+            + (name != null ? ", name=" + name : "")
+            + (level != null ? ", level=" + level : "") + ")";
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || !(obj instanceof ResourceInfo)) {
+            return false;
+        }
+
+        ResourceInfo ri = (ResourceInfo)obj;
+        return (uri == ri.uri || uri != null && uri.equals(ri.uri))
+            && (name == ri.name || name != null && name.equals(ri.name))
+            && (level == ri.level || level != null && level.equals(ri.level));
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (null == uri ? 0 : uri.hashCode());
+        hash = 31 * hash + (null == name ? 0 : name.hashCode());
+        hash = 31 * hash + (null == level ? 0 : level.hashCode());
+        return hash;
     }
 }

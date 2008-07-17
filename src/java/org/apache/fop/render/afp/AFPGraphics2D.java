@@ -218,24 +218,24 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                 // coordinates
                 int type = iter.currentSegment(vals);
                 if (type == PathIterator.SEG_MOVETO) {
-                    log.debug("SEG_MOVETO");
+//                    log.debug("SEG_MOVETO");
                     openingCoords[0] = currCoords[0] = (int)Math.round(vals[0]);
                     openingCoords[1] = currCoords[1] = (int)Math.round(vals[1]);
                 } else {
                     int numCoords;
                     if (type == PathIterator.SEG_LINETO) {
-                        log.debug("SEG_LINETO");
+//                        log.debug("SEG_LINETO");
                         numCoords = 2;
                     } else if (type == PathIterator.SEG_QUADTO) {
-                        log.debug("SEG_QUADTO");
+//                        log.debug("SEG_QUADTO");
                         numCoords = 4;
                     } else if (type == PathIterator.SEG_CUBICTO) {
-                        log.debug("SEG_CUBICTO");
+//                        log.debug("SEG_CUBICTO");
                         numCoords = 6;
                     } else {
                         // close of the graphics segment
                         if (type == PathIterator.SEG_CLOSE) {
-                            log.debug("SEG_CLOSE");
+//                            log.debug("SEG_CLOSE");
                             coords = new int[] {
                                     coords[coords.length - 2],
                                     coords[coords.length - 1],
@@ -317,17 +317,13 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void draw(Shape shape) {
         log.debug("draw() shape=" + shape);
         doDrawing(shape, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void fill(Shape shape) {
         log.debug("fill() shape=" + shape);
         doDrawing(shape, true);
@@ -345,9 +341,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         ioe.printStackTrace();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void drawString(String s, float x, float y) {
         try {
             if (customTextHandler != null && !textAsShapes) {
@@ -360,78 +354,86 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public GraphicsConfiguration getDeviceConfiguration() {
         return new AFPGraphicsConfiguration();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
         log.debug("copyArea() NYI: ");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Graphics create() {
         return new AFPGraphics2D(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void dispose() {
         this.graphicsObj = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
         return drawImage(img, x, y, img.getWidth(observer), img.getHeight(observer), observer);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+//    private BufferedImage buildBufferedImage(Dimension size) {
+//        return new BufferedImage(size.width, size.height,
+//                                 BufferedImage.TYPE_INT_ARGB);
+//    }
+
+    /** {@inheritDoc} */
     public boolean drawImage(Image img, int x, int y, int width, int height,
             ImageObserver observer) {
-        //TODO: this might be achieved by creating a new IOCA image (ImageObject)
-        // and placing it in an Overlay - but then stacking order would not be preserved.
         log.debug("drawImage(): NYI img=" + img + ", x=" + x + ", y=" + y
                 + ", width=" + width + ", height=" + height + ", obs=" + observer);
         return false;
+//        Dimension size = new Dimension(width, height);
+//        BufferedImage buf = buildBufferedImage(size);
+//
+//        java.awt.Graphics2D graphics2D = buf.createGraphics();
+//        graphics2D.setComposite(AlphaComposite.SrcOver);
+//        graphics2D.setBackground(new Color(1, 1, 1, 0));
+//        graphics2D.setPaint(new Color(1, 1, 1, 0));
+//        graphics2D.fillRect(0, 0, width, height);
+//        graphics2D.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
+//        graphics2D.setComposite(gc.getComposite());
+//
+//        if (!graphics2D.drawImage(img, 0, 0, buf.getWidth(), buf.getHeight(), observer)) {
+//            return false;
+//        }
+//        
+//        ImageInfo info = new ImageInfo(null, "image/unknown");
+//        
+//        ImageSize bufsize = new ImageSize(buf.getWidth(), buf.getHeight(), 72);
+//        info.setSize(bufsize);
+//        ImageRendered imgRend = new ImageRendered(info, buf, null);
+//
+//        AFPDataStream afpDataStream = afpInfo.getAFPDataStream();
+//        ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
+//        afpDataStream.createObject(imageObjectInfo);
+//        return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
         log.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         log.debug("drawRenderedImage() NYI: img=" + img + ", xform=" + xform);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public FontMetrics getFontMetrics(Font f) {
         log.debug("getFontMetrics() NYI: f=" + f);
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setXORMode(Color col) {
         log.debug("setXORMode() NYI: col=" + col);
     }
@@ -449,6 +451,8 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     }
 
     /**
+     * Returns the GOCA graphics object
+     * 
      * @return the GOCA graphics object
      */
     protected GraphicsObject getGraphicsObject() {
@@ -456,18 +460,12 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     }
 
     /**
-     * Sets the graphics object
-     * @param obj the graphics object
+     * Sets the GOCA graphics object
+     * 
+     * @param obj the GOCA graphics object
      */
-    protected void setGraphicsObject(GraphicsObject obj) {
+    public void setGraphicsObject(GraphicsObject obj) {
         this.graphicsObj = obj;
     }
     
-//  /**
-//  * Sets the SVG document URI
-//  * @param documentURI the SVG document URI
-//  */
-// public void setDocumentURI(String documentURI) {
-//     this.documentURI = documentURI;
-// }
 }

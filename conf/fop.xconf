@@ -111,7 +111,6 @@ the location of this file.
       <images mode="b+w" bits-per-pixel="8"/>
       <renderer-resolution>240</renderer-resolution>
       <resource-group-file>resources.afp</resource-group-file>
-      <goca-enabled/>
 
       <fonts>
       <!--

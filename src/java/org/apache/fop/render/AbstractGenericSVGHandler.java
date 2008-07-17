@@ -64,6 +64,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
 
     /**
      * Render the SVG document.
+     * 
      * @param context the renderer context
      * @param doc the SVG document
      * @throws IOException In case of an I/O error while painting the image
@@ -84,12 +85,12 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
 
         //Build the GVT tree
         final GraphicsNode root;
-        final String uri = getDocumentURI(doc);
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
+            final String uri = getDocumentURI(doc);
             eventProducer.svgNotBuilt(this, e, uri);
             return;
         }
@@ -123,6 +124,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
 
     /**
      * Gets the document URI from a Document instance if possible.
+     * 
      * @param doc the Document
      * @return the URI or null
      */
@@ -138,6 +140,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
     /**
      * Override this method to update the renderer context if it needs special settings for
      * certain conditions.
+     * 
      * @param context the renderer context
      */
     protected void updateRendererContext(RendererContext context) {

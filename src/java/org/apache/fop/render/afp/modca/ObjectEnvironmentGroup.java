@@ -73,6 +73,7 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * Constructor for the ObjectEnvironmentGroup, this takes a
      * name parameter which must be 8 characters long.
+     * 
      * @param name the object environment group name
      */
     public ObjectEnvironmentGroup(String name) {
@@ -81,6 +82,7 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
     /**
      * Sets the object area parameters.
+     * 
      * @param info the object area info
      */
     public void setObjectArea(ObjectAreaInfo info) {
@@ -93,6 +95,7 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
     /**
      * Set the dimensions of the image.
+     * 
      * @param xresol the x resolution of the image
      * @param yresol the y resolution of the image
      * @param width the image width
@@ -104,6 +107,7 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
     /**
      * Set the graphics data descriptor.
+     * 
      * @param xresol the x resolution of the graphics window
      * @param yresol the y resolution of the graphics window
      * @param xlwind the left edge of the graphics window 
@@ -117,35 +121,14 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
                 xlwind, xrwind, ybwind, ytwind);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
-        byte[] data = new byte[] {
-            0x5A, // Structured field identifier
-            0x00, // Length byte 1
-            0x10, // Length byte 2
-            (byte) 0xD3, // Structured field id byte 1
-            (byte) 0xA8, // Structured field id byte 2
-            (byte) 0xC7, // Structured field id byte 3
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved
-            nameBytes[0], // Name
-            nameBytes[1], //
-            nameBytes[2], //
-            nameBytes[3], //
-            nameBytes[4], //
-            nameBytes[5], //
-            nameBytes[6], //
-            nameBytes[7] //
-        };
+        byte[] data = new byte[17];
+        copySF(data, Type.BEGIN, Category.OBJECT_ENVIRONMENT_GROUP);
         os.write(data);
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         
@@ -160,30 +143,11 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
             graphicsDataDescriptor.write(os);
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
-        byte[] data = new byte[] {
-            0x5A, // Structured field identifier
-            0x00, // Length byte 1
-            0x10, // Length byte 2
-            (byte) 0xD3, // Structured field id byte 1
-            (byte) 0xA9, // Structured field id byte 2
-            (byte) 0xC7, // Structured field id byte 3
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved                
-            nameBytes[0], // Name
-            nameBytes[1], //
-            nameBytes[2], //
-            nameBytes[3], //
-            nameBytes[4], //
-            nameBytes[5], //
-            nameBytes[6], //
-            nameBytes[7], //
-        };
+        byte[] data = new byte[17];
+        copySF(data, Type.END, Category.OBJECT_ENVIRONMENT_GROUP);
         os.write(data);
     }
 }

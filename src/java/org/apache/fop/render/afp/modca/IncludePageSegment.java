@@ -45,56 +45,46 @@ public class IncludePageSegment extends AbstractNamedAFPObject {
     /**
      * The x position where we need to put this object on the page
      */
-    private byte[] x;
-
+    private int x;
+    
     /**
      * The y position where we need to put this object on the page
      */
-    private byte[] y;
-
+    private int y;
+    
     /**
      * Constructor for the Include Page Segment
+     * 
      * @param name Name of the page segment
      * @param x The x position
      * @param y The y position
      */
     public IncludePageSegment(String name, int x, int y) {
         super(name);
-        this.x = BinaryUtils.convert(x, 3);
-        this.y = BinaryUtils.convert(y, 3);
+        
+        this.x = x;
+        this.y = y;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
-
         byte[] data = new byte[23]; //(9 +14)
-
-        data[0] = 0x5A;
+        copySF(data, Type.INCLUDE, Category.PAGE_SEGMENT);
 
         // Set the total record length
         byte[] len = BinaryUtils.convert(22, 2); //Ignore first byte
         data[1] = len[0];
         data[2] = len[1];
 
-        // Structured field ID for a IPS
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xAF;
-        data[5] = (byte) 0x5F;
-        data[6] = 0x00; // Reserved
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
+        byte[] xPos = BinaryUtils.convert(x, 3);
+        data[17] = xPos[0]; // x coordinate
+        data[18] = xPos[1];
+        data[19] = xPos[2];
 
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
-        data[17] = x[0]; // x coordinate
-        data[18] = x[1];
-        data[19] = x[2];
-        data[20] = y[0]; // y coordinate
-        data[21] = y[1];
-        data[22] = y[2];
+        byte[] yPos = BinaryUtils.convert(y, 3);
+        data[20] = yPos[0]; // y coordinate
+        data[21] = yPos[1];
+        data[22] = yPos[2];
 
         os.write(data);
     }

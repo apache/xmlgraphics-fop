@@ -38,6 +38,7 @@ public class ImageObject extends AbstractDataObject {
     /**
      * Constructor for the image object with the specified name,
      * the name must be a fixed length of eight characters.
+     * 
      * @param name The name of the image.
      */
     public ImageObject(String name) {
@@ -46,6 +47,7 @@ public class ImageObject extends AbstractDataObject {
 
     /**
      * Set the dimensions of the image.
+     * 
      * @param xresol the x resolution of the image
      * @param yresol the y resolution of the image
      * @param width the image width
@@ -61,6 +63,7 @@ public class ImageObject extends AbstractDataObject {
 
     /**
      * Sets the image encoding.
+     * 
      * @param encoding The image encoding.
      */
     public void setImageEncoding(byte encoding) {
@@ -72,6 +75,7 @@ public class ImageObject extends AbstractDataObject {
 
     /**
      * Sets the image compression.
+     * 
      * @param compression The image compression.
      */
     public void setImageCompression(byte compression) {
@@ -83,6 +87,7 @@ public class ImageObject extends AbstractDataObject {
 
     /**
      * Sets the image IDE size.
+     * 
      * @param size The IDE size.
      */
     public void setImageIDESize(byte size) {
@@ -94,6 +99,7 @@ public class ImageObject extends AbstractDataObject {
 
     /**
      * Sets the image IDE color model.
+     * 
      * @param colorModel    the IDE color model.
      */
     public void setImageIDEColorModel(byte colorModel) {
@@ -105,6 +111,7 @@ public class ImageObject extends AbstractDataObject {
 
     /**
      * Set the data of the image.
+     * 
      * @param data The image data
      */
     public void setImageData(byte[] data) {
@@ -116,6 +123,7 @@ public class ImageObject extends AbstractDataObject {
 
     /**
      * Helper method to return the start of the image object.
+     * 
      * @param len the length of this ipd start
      * @return byte[] The data stream.
      */
@@ -135,9 +143,14 @@ public class ImageObject extends AbstractDataObject {
         return data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    protected void writeStart(OutputStream os) throws IOException {
+        byte[] data = new byte[17];
+        copySF(data, Type.BEGIN, Category.IMAGE);
+        os.write(data);
+    }
+
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (imageSegment != null) {
@@ -154,45 +167,10 @@ public class ImageObject extends AbstractDataObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected void writeStart(OutputStream os) throws IOException {
-        byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA8; // Structured field id byte 2
-        data[5] = (byte) 0xFB; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
-        os.write(data);
-    }
-
-    /**
-     * Helper method to write the end of the Image Object.
-     * @param os The stream to write to
-     * @throws IOException in the event
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA9; // Structured field id byte 2
-        data[5] = (byte) 0xFB; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.END, Category.IMAGE);
         os.write(data);
     }
 }

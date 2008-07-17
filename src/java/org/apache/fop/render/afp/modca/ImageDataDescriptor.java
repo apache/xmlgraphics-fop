@@ -27,35 +27,29 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class ImageDataDescriptor extends AbstractAFPObject {
 
-    private int _xresol = 0;
-    private int _yresol = 0;
-    private int _width = 0;
-    private int _height = 0;
-
+    private int widthRes = 0;
+    private int heightRes = 0;
+    private int width = 0;
+    private int height = 0;
+    
     /**
      * Constructor for a ImageDataDescriptor for the specified
      * resolution, width and height.
-     * @param xresol The horizontal resolution of the image.
-     * @param yresol The vertical resolution of the image.
+     * 
+     * @param widthRes The horizontal resolution of the image.
+     * @param heightRes The vertical resolution of the image.
      * @param width The width of the image.
      * @param height The height of the height.
      */
-    public ImageDataDescriptor(int xresol, int yresol, int width, int height) {
-
-        _xresol = xresol;
-        _yresol = yresol;
-        _width = width;
-        _height = height;
-
+    public ImageDataDescriptor(int widthRes, int heightRes, int width, int height) {
+        this.widthRes = widthRes;
+        this.heightRes = heightRes;
+        this.width = width;
+        this.height = height;
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Image Data Descriptor
-     * @param os The stream to write to
-     * @throws java.io.IOException
-     */
-    public void write(OutputStream os)
-        throws IOException {
+    /** {@inheritDoc} */
+    public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[] {
             0x5A,
@@ -86,24 +80,22 @@ public class ImageDataDescriptor extends AbstractAFPObject {
         data[1] = l[0];
         data[2] = l[1];
 
-        byte[] x = BinaryUtils.convert(_xresol, 2);
+        byte[] x = BinaryUtils.convert(widthRes, 2);
         data[10] = x[0];
         data[11] = x[1];
 
-        byte[] y = BinaryUtils.convert(_yresol, 2);
+        byte[] y = BinaryUtils.convert(heightRes, 2);
         data[12] = y[0];
         data[13] = y[1];
 
-        byte[] w = BinaryUtils.convert(_width, 2);
+        byte[] w = BinaryUtils.convert(width, 2);
         data[14] = w[0];
         data[15] = w[1];
 
-        byte[] h = BinaryUtils.convert(_height, 2);
+        byte[] h = BinaryUtils.convert(height, 2);
         data[16] = h[0];
         data[17] = h[1];
 
         os.write(data);
-
     }
-
 }

@@ -34,6 +34,7 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * required for presentation.
  */
 public class MapDataResource extends AbstractStructuredAFPObject {
+
     /**
      * Static default generated name reference
      */
@@ -41,6 +42,7 @@ public class MapDataResource extends AbstractStructuredAFPObject {
 
     /**
      * Main constructor
+     * 
      * @param dataObjectAccessor a data object accessor
      */
     public MapDataResource(DataObjectAccessor dataObjectAccessor) {
@@ -49,7 +51,7 @@ public class MapDataResource extends AbstractStructuredAFPObject {
         ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         ResourceLevel resourceLevel = resourceInfo.getLevel();
         if (resourceLevel.isExternal()) {
-            String url = resourceLevel.getExternalResourceGroupFilePath();
+            String url = resourceLevel.getExternalFilePath();
             if (url != null) {
                 super.setFullyQualifiedName(
                         FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_EXTERNAL_RESOURCE_REF,
@@ -69,30 +71,20 @@ public class MapDataResource extends AbstractStructuredAFPObject {
                 objectType);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
+        byte[] data = new byte[9];
+        copySF(data, Type.MAP, Category.DATA_RESOURCE);
         
         byte[] len = BinaryUtils.convert(10 + getTripletDataLength(), 2);
-        byte[] data = new byte[] {
-            0x5A, // Structured field identifier
-            len[0], // Length byte 1
-            len[1], // Length byte 2
-            (byte) 0xD3, // Structured field id byte 1
-            (byte) 0xAB, // Structured field id byte 2
-            (byte) 0xC3, // Structured field id byte 3
-            0x00, // Flags
-            0x00, // Reserved
-            0x00  // Reserved
-        };
+        data[1] = len[0];
+        data[2] = len[1];
+        
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         // RGLength
         byte[] len = BinaryUtils.convert(2 + getTripletDataLength(), 2);

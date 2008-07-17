@@ -24,20 +24,18 @@ import java.io.OutputStream;
 
 import org.apache.fop.render.afp.ObjectAreaInfo;
 
-
 /**
  * Abstract base class used by the ImageObject and GraphicsObject which both
  * have define an ObjectEnvironmentGroup
  */
 public abstract class AbstractDataObject extends AbstractPreparedObjectContainer {
 
-    /**
-     * The object environment group
-     */
+    /** The object environment group */
     protected ObjectEnvironmentGroup objectEnvironmentGroup = null;
 
     /**
      * Named constructor
+     * 
      * @param name data object name
      */
     public AbstractDataObject(String name) {
@@ -56,6 +54,7 @@ public abstract class AbstractDataObject extends AbstractPreparedObjectContainer
     
     /**
      * Gets the ObjectEnvironmentGroup
+     * 
      * @return the object environment group
      */
     protected ObjectEnvironmentGroup getObjectEnvironmentGroup() {
@@ -67,15 +66,14 @@ public abstract class AbstractDataObject extends AbstractPreparedObjectContainer
     
     /**
      * Sets the ObjectEnvironmentGroup.
+     * 
      * @param objectEnvironmentGroup The objectEnvironmentGroup to set
      */
     public void setObjectEnvironmentGroup(ObjectEnvironmentGroup objectEnvironmentGroup) {
         this.objectEnvironmentGroup = objectEnvironmentGroup;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         if (objectEnvironmentGroup != null) {
             objectEnvironmentGroup.write(os);

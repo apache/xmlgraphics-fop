@@ -33,6 +33,7 @@ public class PageDescriptor extends AbstractDescriptor {
     /**
      * Construct a page descriptor for the specified page width
      * and page height.
+     * 
      * @param width The page width.
      * @param height The page height.
      * @param widthResolution The page width resolution
@@ -42,13 +43,8 @@ public class PageDescriptor extends AbstractDescriptor {
         super(width, height, widthResolution, heightResolution);
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Page Descriptor
-     * @param os The stream to write to
-     * @throws java.io.IOException in the event that an I/O Exception occurred
-     */
-    public void write(OutputStream os)
-        throws IOException {
+    /** {@inheritDoc} */
+    public void write(OutputStream os) throws IOException {
 
         log.debug("width=" + width);
         log.debug("height=" + height);

@@ -22,11 +22,6 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.DataObjectInfo;
-import org.apache.fop.render.afp.ObjectAreaInfo;
-import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
-import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
-import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -42,32 +37,32 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * data objects in the page segment.
  * </p>
  */
-public class IncludeObject extends AbstractNamedAFPObject implements DataObjectAccessor {
+public class IncludeObject extends AbstractNamedAFPObject {
 
     /**
      * the include object is of type page segment
      */
-    protected static final byte TYPE_PAGE_SEGMENT = (byte)0x5F;
+    public static final byte TYPE_PAGE_SEGMENT = (byte)0x5F;
 
     /**
      * the include object is of type other
      */
-    protected static final byte TYPE_OTHER = (byte)0x92;
+    public static final byte TYPE_OTHER = (byte)0x92;
 
     /**
      * the include object is of type graphic
      */
-    protected static final byte TYPE_GRAPHIC = (byte)0xBB;
+    public static final byte TYPE_GRAPHIC = (byte)0xBB;
 
     /**
      * the included object is of type barcode
      */
-    protected static final byte TYPE_BARCODE = (byte)0xEB;
+    public static final byte TYPE_BARCODE = (byte)0xEB;
     
     /**
      * the included object is of type image
      */
-    protected static final byte TYPE_IMAGE = (byte)0xFB;
+    public static final byte TYPE_IMAGE = (byte)0xFB;
         
     /**
      * The object type (default is other)
@@ -99,10 +94,10 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
      */
     private int yContentOffset = 0;
 
-    /**
-     * the referenced data object
-     */
-    private DataObjectAccessor dataObjectAccessor = null;
+//    /**
+//     * the referenced data object
+//     */
+//    private DataObjectAccessor dataObjectAccessor = null;
     
     /**
      * Constructor for the include object with the specified name, the name must
@@ -112,69 +107,69 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
      * @param name the name of this include object
      * @param dataObjectAccessor the data object accessor
      */
-    public IncludeObject(String name, DataObjectAccessor dataObjectAccessor) {
+    public IncludeObject(String name/*, DataObjectAccessor dataObjectAccessor*/) {
         super(name);
 
-        this.dataObjectAccessor = dataObjectAccessor;
+//        this.dataObjectAccessor = dataObjectAccessor;
         
-        AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
-        if (dataObject instanceof ImageObject) {
-            this.dataObjectType = TYPE_IMAGE;
-        } else if (dataObject instanceof GraphicsObject) {
-            this.dataObjectType = TYPE_GRAPHIC;
-        } else if (dataObject instanceof PageSegment) {
-            this.dataObjectType = TYPE_PAGE_SEGMENT;
-        } else {
-            this.dataObjectType = TYPE_OTHER;
-            // Strip any object container
-            if (dataObject instanceof ObjectContainer) {
-                ObjectContainer objectContainer = (ObjectContainer)dataObject;
-                dataObject = objectContainer.getDataObject();
-            }
-        }
+//        AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
+//        if (dataObject instanceof ImageObject) {
+//            this.dataObjectType = TYPE_IMAGE;
+//        } else if (dataObject instanceof GraphicsObject) {
+//            this.dataObjectType = TYPE_GRAPHIC;
+//        } else if (dataObject instanceof PageSegment) {
+//            this.dataObjectType = TYPE_PAGE_SEGMENT;
+//        } else {
+//            this.dataObjectType = TYPE_OTHER;
+//            // Strip any object container
+//            if (dataObject instanceof ObjectContainer) {
+//                ObjectContainer objectContainer = (ObjectContainer)dataObject;
+//                dataObject = objectContainer.getDataObject();
+//            }
+//        }
 
-        DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
-        ObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-        setObjectArea(objectAreaInfo.getX(), objectAreaInfo.getY());
-        
-        super.setFullyQualifiedName(
-                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
-                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-                dataObjectInfo.getUri());
-
-        Registry registry = Registry.getInstance();
-        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
-        super.setObjectClassification(
-             ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
-             objectType);
-        
-        super.setMeasurementUnits(objectAreaInfo.getWidthRes(), objectAreaInfo.getHeightRes());
-        
-        super.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
-        
-        super.setObjectAreaSize(objectAreaInfo.getWidth(), objectAreaInfo.getHeight());        
+//        DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
+//        ObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+//        setObjectArea(objectAreaInfo.getX(), objectAreaInfo.getY());
+//        
+//        super.setFullyQualifiedName(
+//                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
+//                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
+//                dataObjectInfo.getUri());
+//
+//        Registry registry = Registry.getInstance();
+//        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
+//        super.setObjectClassification(
+//             ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+//             objectType);
+//        
+//        super.setMeasurementUnits(objectAreaInfo.getWidthRes(), objectAreaInfo.getHeightRes());
+//        
+//        super.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
+//        
+//        super.setObjectAreaSize(objectAreaInfo.getWidth(), objectAreaInfo.getHeight());        
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public AbstractNamedAFPObject getDataObject() {
-        return dataObjectAccessor.getDataObject();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public DataObjectInfo getDataObjectInfo() {
-        return dataObjectAccessor.getDataObjectInfo();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
-        dataObjectAccessor.setDataObjectInfo(dataObjectInfo);
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public AbstractNamedAFPObject getDataObject() {
+//        return dataObjectAccessor.getDataObject();
+//    }
+//    
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public DataObjectInfo getDataObjectInfo() {
+//        return dataObjectAccessor.getDataObjectInfo();
+//    }
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
+//        dataObjectAccessor.setDataObjectInfo(dataObjectInfo);
+//    }
 
     /**
      * Sets the orientation to use for the Include Object.
@@ -194,6 +189,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
 
     /**
      * Sets the x and y offset to the origin in the object area 
+     * 
      * @param x the X-axis origin of the object area
      * @param y the Y-axis origin of the object area
      */
@@ -203,7 +199,8 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
     }
     
     /**
-     * Sets the x and y offset of the content area to the object area 
+     * Sets the x and y offset of the content area to the object area
+     *  
      * @param x the X-axis origin defined in the object
      * @param y the Y-axis origin defined in the object
      */
@@ -213,29 +210,23 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
     }
     
     /**
-     * {@inheritDoc}
+     * Sets the data object type
+     * 
+     * @param type the data object type
      */
+    public void setDataObjectType(byte type) {
+        this.dataObjectType = type;
+    }
+    
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {       
         byte[] data = new byte[36];
-        data[0] = 0x5A;
+        super.copySF(data, Type.INCLUDE, Category.DATA_RESOURCE);
 
         // Set the total record length
         byte[] len = BinaryUtils.convert(35 + getTripletDataLength(), 2); //Ignore first byte
         data[1] = len[0];
         data[2] = len[1];
-
-        // Structured field ID for a IOB
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xAF;
-        data[5] = (byte) 0xC3;
-
-        data[6] = 0x00; // Reserved
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
 
         data[17] = 0x00; // reserved
         data[18] = dataObjectType;
@@ -330,9 +321,7 @@ public class IncludeObject extends AbstractNamedAFPObject implements DataObjectA
         os.write(tripletData);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return "IOB: " + this.getName();
     }

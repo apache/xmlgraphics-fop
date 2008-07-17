@@ -29,36 +29,27 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     private static Log log = LogFactory.getLog("org.apache.fop.render.afp.AFPState");
 
-    /**
-     * The portrait rotation
-     */
+    /** The portrait rotation */
     private int portraitRotation = 0;
 
-    /**
-     * The landscape rotation
-     */
+    /** The landscape rotation */
     private int landscapeRotation = 270;
 
-    /**
-     * Flag to the set the output object type for images
-     */
+    /** Flag to the set the output object type for images */
     private boolean colorImages = false;
 
-    /**
-     * Default value for image depth
-     */
+    /** Default value for image depth */
     private int bitsPerPixel = 8;
 
-    /**
-     * The output resolution
-     */
+    /** The output resolution */
     private int resolution = 240; // 240 dpi
 
-    /**
-     * The current page
-     */
+    /** The current page */
     private AFPPageState pageState = new AFPPageState();
 
+    /** Whether or not GOCA is used for handling SVG */
+    private boolean goca = false; // false by default
+    
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
      * (default), 90, 180, 270.
@@ -79,6 +70,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
+     * Returns the rotation to be used for portrait pages
+     * 
      * @return the rotation to be used for portrait pages
      */
     protected int getPortraitRotation() {
@@ -104,6 +97,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
+     * Returns the landscape rotation
+     * 
      * @return the landscape rotation
      */
     protected int getLandscapeRotation() {
@@ -131,6 +126,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
+     * Returns the number of bits per pixel
+     * 
      * @return the number of bits per pixel
      */
     public int getBitsPerPixel() {
@@ -148,6 +145,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
+     * Returns true if color images are to be used
+     * 
      * @return true if color images are to be used
      */
     protected boolean isColorImages() {
@@ -182,6 +181,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
+     * Returns the state of the current page
+     * 
      * @return the state of the current page
      */
     protected AFPPageState getPageState() {
@@ -189,7 +190,26 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
+     * Sets if GOCA is to be used for SVG handling
+     * 
+     * @param value is true if GOCA is used for SVG handling
+     */
+    public void setUseGOCA(boolean value) {
+        this.goca = value;
+    }
+    
+    /**
+     * Returns true if GOCA is enabled for SVG handling
+     * 
+     * @return true if GOCA is enabled for SVG handling
+     */
+    public boolean useGOCA() {
+        return this.goca;
+    }
+
+    /**
      * Sets if the current painted shape is to be filled
+     * 
      * @param fill true if the current painted shape is to be filled
      * @return true if the fill value has changed
      */
@@ -203,6 +223,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Gets the current page fonts
+     * 
      * @return the current page fonts
      */
     protected AFPPageFonts getPageFonts() {
@@ -211,6 +232,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Increments and returns the page font count
+     * 
      * @return the page font count
      */
     public int incrementPageFontCount() {
@@ -219,6 +241,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets the page width
+     * 
      * @param pageWidth the page width
      */
     public void setPageWidth(int pageWidth) {
@@ -226,6 +249,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
+     * Returns the page width
+     * 
      * @return the page width
      */
     public int getPageWidth() {
@@ -234,6 +259,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets the page height
+     * 
      * @param pageHeight the page height
      */
     public void setPageHeight(int pageHeight) {
@@ -241,6 +267,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
+     * Returns the page height
+     * 
      * @return the page height
      */
     public int getPageHeight() {
@@ -249,6 +277,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets the uri of the current image
+     * 
      * @param uri the uri of the current image
      */
     protected void setImageUri(String uri) {
@@ -257,6 +286,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Gets the uri of the current image
+     * 
      * @return the uri of the current image
      */
     public String getImageUri() {
@@ -291,6 +321,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         private int fontCount = 0;
 
         /**
+         * Returns the page width
+         * 
          * @return the page width
          */
         protected int getWidth() {
@@ -299,6 +331,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Sets the page width
+         * 
          * @param width the page width
          */
         protected void setWidth(int width) {
@@ -306,6 +339,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         }
 
         /**
+         * Returns the page height
+         * 
          * @return the page height
          */
         protected int getHeight() {
@@ -314,6 +349,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Sets the page height
+         * 
          * @param height the page height
          */
         protected void setHeight(int height) {
@@ -321,6 +357,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         }
 
         /**
+         * Returns the page fonts
+         * 
          * @return the page fonts
          */
         protected AFPPageFonts getFonts() {
@@ -329,6 +367,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Sets the current page fonts
+         * 
          * @param fonts the current page fonts
          */
         protected void setFonts(AFPPageFonts fonts) {
@@ -336,6 +375,8 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         }
 
         /**
+         * Increments and returns the current page font count
+         * 
          * @return increment and return the current page font count
          */
         protected int incrementFontCount() {

@@ -103,58 +103,32 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
         
     /**
      * Returns an indication if the resource environment group is complete
+     * 
      * @return whether or not this resource environment group is complete or not
      */
     public boolean isComplete() {
         return complete;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA8; // Structured field id byte 2
-        data[5] = (byte) 0xD9; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.BEGIN, Category.RESOURCE_ENVIROMENT_GROUP);
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    protected void writeEnd(OutputStream os) throws IOException {
+        byte[] data = new byte[17];
+        copySF(data, Type.END, Category.RESOURCE_ENVIROMENT_GROUP);
+        os.write(data);
+    }
+
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         writeObjects(mapDataResources, os);
         writeObjects(mapPageOverlays, os);
         writeObjects(preProcessPresentationObjects, os);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected void writeEnd(OutputStream os) throws IOException {
-        byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA9; // Structured field id byte 2
-        data[5] = (byte) 0xD9; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
-        os.write(data);
-    }
 }

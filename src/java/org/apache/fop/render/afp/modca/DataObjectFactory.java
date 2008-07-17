@@ -19,24 +19,45 @@
 
 package org.apache.fop.render.afp.modca;
 
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.DataObjectInfo;
+import org.apache.fop.render.afp.GraphicsObjectInfo;
+import org.apache.fop.render.afp.GraphicsObjectPainter;
 import org.apache.fop.render.afp.ImageObjectInfo;
 import org.apache.fop.render.afp.ObjectAreaInfo;
+import org.apache.fop.render.afp.ResourceInfo;
+import org.apache.fop.render.afp.ResourceLevel;
+import org.apache.fop.render.afp.modca.Registry.ObjectType;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
+import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
+import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.tools.StringUtils;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
 
 /**
- * Creator of MO;DCA data objects
+ * Creator of MO:DCA data objects
  */
 public class DataObjectFactory {
     private static final String IMAGE_NAME_PREFIX = "IMG";
     private static final String GRAPHIC_NAME_PREFIX = "GRA";
 //    private static final String BARCODE_NAME_PREFIX = "BAR";
 //    private static final String OTHER_NAME_PREFIX = "OTH";
+    private static final String OBJECT_CONTAINER_NAME_PREFIX = "OC";
+    private static final String RESOURCE_NAME_PREFIX = "RES";
 
     private int imageCount = 0;
     private int graphicCount = 0;
+    private int objectContainerCount = 0;
+    private int resourceCount = 0;
+    
+    private Map/*<ResourceInfo,IncludeObject>*/ includeMap
+        = new java.util.HashMap/*<ResourceInfo,IncludeObject>*/();
+    
+    /** Static logging instance */
+    private static final Log log = LogFactory.getLog(DataObjectFactory.class);
     
     /**
      * Converts a byte array containing 24 bit RGB image data to a grayscale
@@ -102,10 +123,11 @@ public class DataObjectFactory {
     /**
      * Helper method to create an image on the current container and to return
      * the object.
+     * 
      * @param imageObjectInfo the image object info
      * @return a newly created image object
      */
-    protected ImageObject createImage(ImageObjectInfo imageObjectInfo) {
+    private ImageObject createImage(ImageObjectInfo imageObjectInfo) {
         String name = IMAGE_NAME_PREFIX
                 + StringUtils.lpad(String.valueOf(++imageCount), '0', 5);
         ImageObject imageObj = new ImageObject(name);
@@ -144,36 +166,215 @@ public class DataObjectFactory {
     }
     
     /**
-     * Helper method to create a graphic in the current container and to return
-     * the object.
-     * @param info the data object info
-     * @return a newly created graphics object
+     * Creates and returns a new graphics object.
+     * 
+     * @param graphicsObjectInfo the graphics object info
+     * @return a new graphics object
      */
-    protected GraphicsObject createGraphic(DataObjectInfo info) {
+    private GraphicsObject createGraphic(GraphicsObjectInfo graphicsObjectInfo) {
         String name = GRAPHIC_NAME_PREFIX
             + StringUtils.lpad(String.valueOf(++graphicCount), '0', 5);
         GraphicsObject graphicsObj = new GraphicsObject(name);
+        
+        // paint the graphic using batik
+        GraphicsObjectPainter painter = graphicsObjectInfo.getPainter();
+        painter.paint(graphicsObj);
+        
         return graphicsObj;
     }
 
     /**
+     * Creates and returns a new include object.
+     * 
+     * @param name the name of this include object
+     * @param dataObjectInfo a data object info
+     * 
+     * @return a new include object
+     */
+    public IncludeObject createInclude(String name, DataObjectInfo dataObjectInfo) {
+        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        IncludeObject includeObj = (IncludeObject)includeMap.get(resourceInfo);
+        if (includeObj == null) {
+            includeObj = new IncludeObject(name);
+        
+            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+            if (objectType.isImage()) {
+                includeObj.setDataObjectType(IncludeObject.TYPE_IMAGE);
+            } else if (objectType.isGraphic()) {
+                includeObj.setDataObjectType(IncludeObject.TYPE_GRAPHIC);
+    //        } else if (dataObject instanceof PageSegment) {
+    //            includeObj.setDataObjectType(IncludeObject.TYPE_PAGE_SEGMENT);
+            } else {
+                includeObj.setDataObjectType(IncludeObject.TYPE_OTHER);
+                // Strip any object container
+    //            AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
+    //            if (dataObject instanceof ObjectContainer) {
+    //                ObjectContainer objectContainer = (ObjectContainer)dataObject;
+    //                dataObject = objectContainer.getDataObject();
+    //            }
+            }
+            
+//            includeObj.setFullyQualifiedName(
+//                    FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
+//                    FullyQualifiedNameTriplet.FORMAT_CHARSTR,
+//                    dataObjectInfo.getUri());
+    
+            includeObj.setObjectClassification(
+                 ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+                 objectType);
+            
+            ObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+            
+            includeObj.setObjectArea(objectAreaInfo.getX(), objectAreaInfo.getY());
+    
+            includeObj.setObjectAreaSize(
+                    objectAreaInfo.getWidth(), objectAreaInfo.getHeight());        
+    
+            includeObj.setMeasurementUnits(
+                    objectAreaInfo.getWidthRes(), objectAreaInfo.getHeightRes());
+            
+            includeObj.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
+            
+            includeMap.put(resourceInfo, includeObj);
+        }
+        
+        return includeObj;
+    }
+
+    /**
+     * Creates and returns a new object container
+     * 
+     * @return a new object container
+     */
+    private ObjectContainer createObjectContainer() {
+        String name = OBJECT_CONTAINER_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++objectContainerCount), '0', 6);
+        return new ObjectContainer(name);
+    }
+
+    /**
+     * Creates and returns a new resource object
+     * 
+     * @param resourceName the resource name
+     * @return a new resource object
+     */
+    private ResourceObject createResource(String resourceName) {
+        return new ResourceObject(resourceName);
+    }
+
+    /**
+     * Creates and returns a new resource object
+     * 
+     * @return a new resource object
+     */
+    private ResourceObject createResource() {
+        String name = RESOURCE_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++resourceCount ), '0', 5);
+        return createResource(name);
+    }
+
+    /**
+     * Creates and returns a new Overlay.
+     *
+     * @param overlayName
+     *            the name of the overlay
+     * @param width
+     *            the width of the overlay
+     * @param height
+     *            the height of the overlay
+     * @param widthRes
+     *            the width resolution of the overlay
+     * @param heightRes
+     *            the height resolution of the overlay
+     * @param overlayRotation
+     *            the rotation of the overlay
+     * 
+     * @return a new overlay object
+     */
+    public Overlay createOverlay(String overlayName, int width, int height,
+            int widthRes, int heightRes, int overlayRotation) {
+        Overlay overlay = new Overlay(overlayName, width, height,
+                overlayRotation, widthRes, heightRes);
+        return overlay;        
+    }
+    
+    /**
      * Creates and returns a new data object
+     * 
      * @param dataObjectInfo the data object info
+     * 
      * @return a newly created data object
      */
-    public AbstractDataObject create(DataObjectInfo dataObjectInfo) {
-        AbstractDataObject dataObject;
+    public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
+        AbstractNamedAFPObject dataObj;
+        
         if (dataObjectInfo instanceof ImageObjectInfo) {
-            dataObject = createImage((ImageObjectInfo)dataObjectInfo);
+            dataObj = createImage((ImageObjectInfo)dataObjectInfo);
+        } else if (dataObjectInfo instanceof GraphicsObjectInfo) {
+            dataObj = createGraphic((GraphicsObjectInfo)dataObjectInfo);
         } else {
-            dataObject = createGraphic(dataObjectInfo);
+            throw new IllegalArgumentException("Unknown data object type: " + dataObjectInfo);
         }
-        dataObject.setViewport(dataObjectInfo.getObjectAreaInfo());
+        
+        if (dataObj instanceof AbstractDataObject) {
+            ((AbstractDataObject)dataObj).setViewport(dataObjectInfo.getObjectAreaInfo());
+        }
+        
+        dataObj.setFullyQualifiedName(
+                FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
+                FullyQualifiedNameTriplet.FORMAT_CHARSTR, dataObj.getName());
 
-        dataObject.setFullyQualifiedName(
-            FullyQualifiedNameTriplet.TYPE_DATA_OBJECT_INTERNAL_RESOURCE_REF,
-            FullyQualifiedNameTriplet.FORMAT_CHARSTR, dataObject.getName());
+        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        ResourceLevel resourceLevel = resourceInfo.getLevel();
 
-        return dataObject;
-    }
+        if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
+            
+            ObjectType objectType = dataObjectInfo.getObjectType();
+            
+            if (objectType != null && objectType.canBeIncluded()) {
+                
+                // Wrap newly created data object in a resource object
+                // if it is to reside within a resource group at print-file or external level
+                if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
+                    ResourceObject resourceObj = null;
+                    String resourceName = resourceInfo.getName();
+                    if (resourceName != null) {
+                        resourceObj = createResource(resourceName);
+                    } else {
+                        resourceObj = createResource();
+                    }
+                    
+                    if (dataObj instanceof ObjectContainer) {
+                        resourceObj.setType(ResourceObject.OBJECT_CONTAINER);
+                    } else if (dataObj instanceof ImageObject) {
+                        resourceObj.setType(ResourceObject.IMAGE_OBJECT);
+                    } else if (dataObj instanceof GraphicsObject) {
+                        resourceObj.setType(ResourceObject.GRAPHICS_OBJECT);
+                    } else if (dataObj instanceof Document) {
+                        resourceObj.setType(ResourceObject.DOCUMENT_OBJECT);
+                    } else if (dataObj instanceof PageSegment) {
+                        resourceObj.setType(ResourceObject.PAGE_SEGMENT_OBJECT);
+                    } else if (dataObj instanceof Overlay) {
+                        resourceObj.setType(ResourceObject.OVERLAY_OBJECT);
+                    } else {
+                        throw new UnsupportedOperationException(
+                          "Unsupported resource object type " + dataObj);
+                    }
+                                
+                    resourceObj.setObjectClassification(
+                    ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+                    objectType);
+                    
+                    resourceObj.setDataObject(dataObj);
+                    dataObj = resourceObj;
+                }
+            } else {
+                String uri = dataObjectInfo.getUri();
+                log.warn("Data object '" + uri + "' not supported at "
+                        + resourceLevel.toString() + " level, will be embedded in page.");
+            }
+        }
+        
+        return dataObj;
+    }    
 }

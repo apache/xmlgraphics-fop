@@ -41,6 +41,7 @@ public class ImageObjectInfo extends DataObjectInfo {
 
     /**
      * Sets the number of bits per pixel
+     * 
      * @param bitsPerPixel the number of bits per pixel
      */
     public void setBitsPerPixel(int bitsPerPixel) {
@@ -49,6 +50,7 @@ public class ImageObjectInfo extends DataObjectInfo {
 
     /**
      * Sets if this image is color
+     * 
      * @param color true if this is a color image
      */
     public void setColor(boolean color) {
@@ -57,6 +59,7 @@ public class ImageObjectInfo extends DataObjectInfo {
 
     /**
      * Sets the image data
+     * 
      * @param data the image data
      */
     public void setData(byte[] data) {
@@ -65,6 +68,7 @@ public class ImageObjectInfo extends DataObjectInfo {
 
     /**
      * Sets the image mime type
+     * 
      * @param mimeType the image mime type
      */
     public void setMimeType(String mimeType) {
@@ -72,6 +76,8 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
 
     /**
+     * Returns the number of bits used per pixel
+     * 
      * @return the number of bits used per pixel
      */
     public int getBitsPerPixel() {
@@ -79,6 +85,8 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
     
     /**
+     * Returns true if this is a color image
+     * 
      * @return true if this is a color image
      */
     public boolean isColor() {
@@ -86,6 +94,8 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
 
     /**
+     * Returns the image data
+     * 
      * @return the image data
      */
     public byte[] getData() {
@@ -93,13 +103,17 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
     
     /**
-     * @return true of this image uses compression
+     * Returns true if this image uses compression
+     * 
+     * @return true if this image uses compression
      */
     public boolean hasCompression() {
         return compression > -1;
     }
     
     /**
+     * Returns the compression type
+     * 
      * @return the compression type
      */
     public int getCompression() {
@@ -107,7 +121,8 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
     
     /**
-     * Sets the compression used with this image 
+     * Sets the compression used with this image
+     * 
      * @param compression the type of compression used with this image
      */
     public void setCompression(int compression) {
@@ -115,6 +130,8 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
     
     /**
+     * Returns the image data width
+     * 
      * @return the image data width
      */
     public int getDataWidth() {
@@ -123,6 +140,7 @@ public class ImageObjectInfo extends DataObjectInfo {
 
     /**
      * Sets the image data width
+     * 
      * @param imageDataWidth the image data width
      */
     public void setDataWidth(int imageDataWidth) {
@@ -130,6 +148,8 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
 
     /**
+     * Returns the image data height
+     * 
      * @return the image data height
      */
     public int getDataHeight() {
@@ -138,6 +158,7 @@ public class ImageObjectInfo extends DataObjectInfo {
 
     /**
      * Sets the image data height
+     * 
      * @param imageDataHeight the image data height
      */
     public void setDataHeight(int imageDataHeight) {
@@ -145,6 +166,8 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
 
     /**
+     * Returns the mime type of this image
+     * 
      * @return the mime type of this image
      */
     public String getMimeType() {
@@ -153,6 +176,7 @@ public class ImageObjectInfo extends DataObjectInfo {
 
     /**
      * Sets whether or not this is info about a buffered image
+     * 
      * @param buffered true if this is info about a buffered image
      */
     public void setBuffered(boolean buffered) {
@@ -160,15 +184,15 @@ public class ImageObjectInfo extends DataObjectInfo {
     }
 
     /**
+     * Returns true if this image info is about a buffered image
+     * 
      * @return true if this image info is about a buffered image
      */
     public boolean isBuffered() {
         return this.buffered;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return super.toString() 
             + ", mimeType=" + mimeType

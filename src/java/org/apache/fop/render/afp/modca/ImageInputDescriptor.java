@@ -36,11 +36,7 @@ public class ImageInputDescriptor extends AbstractAFPObject {
     private int resolution = 240;
 
 
-    /**
-     * Accessor method to write the AFP datastream for the Image Input Descriptor
-     * @param os The stream to write to
-     * @throws java.io.IOException if an I/O exception occurred
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[45];

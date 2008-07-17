@@ -67,17 +67,11 @@ public class ImageOutputControl extends AbstractAFPObject {
      *            The Y-axis offset.
      */
     public ImageOutputControl(int x, int y) {
-
         xCoord = x;
         yCoord = y;
-
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Image Output Control
-     * @param os The stream to write to
-     * @throws java.io.IOException if an I/O exception occured
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[33];
@@ -170,7 +164,6 @@ public class ImageOutputControl extends AbstractAFPObject {
         data[32] = (byte) 0xFF;
 
         os.write(data);
-
     }
 
     /**

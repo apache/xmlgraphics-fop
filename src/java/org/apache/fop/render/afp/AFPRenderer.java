@@ -136,6 +136,9 @@ import org.apache.fop.render.afp.modca.PageObject;
  */
 public class AFPRenderer extends AbstractPathOrientedRenderer {
 
+    /** Normal PDF resolution (72dpi) */
+    public static final int NORMAL_AFP_RESOLUTION = 72;
+
     private static final int X = 0;
 
     private static final int Y = 1;
@@ -165,8 +168,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** drawing state */
     private AFPState currentState = new AFPState();
-
-    private boolean gocaEnabled = false;
 
     /**
      * Constructor for AFPRenderer.
@@ -226,7 +227,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         renderPageObjectExtensions(page);
 
-        getPages().put(page, getAFPDataStream().savePage());
+        PageObject currentPage = getAFPDataStream().savePage();
+        getPages().put(page, currentPage);
     }
 
     private Map/*<PageViewport, PageObject>*/ getPages() {
@@ -987,6 +989,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         return MimeConstants.MIME_AFP;
     }
 
+    /**
+     * Returns the page segments map
+     * 
+     * @return the page segments map
+     */
     private Map/*<String,String>*/getPageSegments() {
         if (pageSegmentsMap == null) {
             pageSegmentsMap = new java.util.HashMap/*<String,String>*/();
@@ -1002,7 +1009,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            the page object
      */
     private void renderPageObjectExtensions(PageViewport pageViewport) {
-
         this.pageSegmentsMap = null;
         if (pageViewport.getExtensionAttachments() != null
                 && pageViewport.getExtensionAttachments().size() > 0) {
@@ -1094,6 +1100,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * Returns the current AFP state
+     * 
      * @return the current AFP state
      */
     protected AbstractState getState() {
@@ -1101,21 +1109,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             currentState = new AFPState();
         }
         return currentState;
-    }
-
-    /**
-     * @param enabled
-     *            true if AFP GOCA is enabled for SVG support
-     */
-    protected void setGOCAEnabled(boolean enabled) {
-        this.gocaEnabled = enabled;
-    }
-
-    /**
-     * @return true of AFP GOCA is enabled for SVG support
-     */
-    protected boolean isGOCAEnabled() {
-        return this.gocaEnabled;
     }
 
     // TODO: remove this and use the superclass implementation

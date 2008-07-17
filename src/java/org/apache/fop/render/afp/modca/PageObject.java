@@ -225,49 +225,21 @@ public class PageObject extends AbstractResourceGroupContainer {
         addObject(imImageObject);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA8; // Structured field id byte 2
-        data[5] = (byte) 0xAF; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.BEGIN, Category.PAGE);
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA9; // Structured field id byte 2
-        data[5] = (byte) 0xAF; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.END, Category.PAGE);
         os.write(data);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return this.getName();
     }

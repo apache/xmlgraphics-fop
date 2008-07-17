@@ -48,9 +48,7 @@ import org.apache.fop.render.afp.goca.GraphicsString;
  */
 public class GraphicsObject extends AbstractDataObject {
         
-    /**
-     * The graphics data
-     */
+    /** The graphics data */
     private GraphicsData graphicsData = null;
 
     /**
@@ -62,9 +60,7 @@ public class GraphicsObject extends AbstractDataObject {
         super(name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setViewport(ObjectAreaInfo objectAreaInfo) {
         super.setViewport(objectAreaInfo);
         getObjectEnvironmentGroup().setGraphicsData(
@@ -76,62 +72,26 @@ public class GraphicsObject extends AbstractDataObject {
                 objectAreaInfo.getY() + objectAreaInfo.getHeight());        
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    protected byte getCategoryCode() {
+        return (byte)0xBB;
+    }
+
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
-        super.writeStart(os);
-        byte[] data = new byte[] {
-            0x5A, // Structured field identifier
-            0x00, //sfLen[0], // Length byte 1
-            0x10, //sfLen[1], // Length byte 2
-            (byte) 0xD3, // Structured field id byte 1
-            (byte) 0xA8, // Structured field id byte 2
-            (byte) 0xBB, // Structured field id byte 3
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved
-            super.nameBytes[0], // gdoName
-            super.nameBytes[1],
-            super.nameBytes[2],
-            super.nameBytes[3],
-            super.nameBytes[4],
-            super.nameBytes[5],
-            super.nameBytes[6],
-            super.nameBytes[7]
-        };
+        byte[] data = new byte[17];
+        copySF(data, Type.BEGIN, Category.GRAPHICS);
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
-        byte[] data = new byte[] {
-            0x5A, // Structured field identifier
-            0x00, // sfLen[0], // Length byte 1
-            0x10, // sfLen[1], // Length byte 2
-            (byte) 0xD3, // Structured field id byte 1
-            (byte) 0xA9, // Structured field id byte 2
-            (byte) 0xBB, // Structured field id byte 3
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved
-            super.nameBytes[0], // gdoName
-            super.nameBytes[1],
-            super.nameBytes[2],
-            super.nameBytes[3],
-            super.nameBytes[4],
-            super.nameBytes[5],
-            super.nameBytes[6],
-            super.nameBytes[7]
-        };
+        byte[] data = new byte[17];
+        copySF(data, Type.END, Category.GRAPHICS);
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
         if (graphicsData == null
                 || (graphicsData.getDataLength() + drawingOrder.getDataLength())
@@ -144,6 +104,7 @@ public class GraphicsObject extends AbstractDataObject {
     
     /**
      * Gets the current graphics data, creating a new one if necessary
+     * 
      * @return the current graphics data
      */
     private GraphicsData getData() {
@@ -155,6 +116,7 @@ public class GraphicsObject extends AbstractDataObject {
     
     /**
      * Creates a new graphics data
+     * 
      * @return a newly created graphics data
      */
     private GraphicsData newData() {
@@ -165,6 +127,7 @@ public class GraphicsObject extends AbstractDataObject {
     
     /**
      * Sets the current color
+     * 
      * @param col the active color to use
      */
     public void setColor(Color col) {
@@ -173,6 +136,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Sets the current position
+     * 
      * @param coords the x and y coordinates of the current position
      */
     public void setCurrentPosition(int[] coords) {
@@ -181,6 +145,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Sets the line width
+     * 
      * @param multiplier the line width multiplier
      */
     public void setLineWidth(int multiplier) {
@@ -190,6 +155,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Sets the line type
+     * 
      * @param type the line type
      */
     public void setLineType(byte type) {
@@ -199,6 +165,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Sets whether to fill the next shape
+     * 
      * @param fill whether to fill the next shape
      */
     public void setFill(boolean fill) {
@@ -211,6 +178,7 @@ public class GraphicsObject extends AbstractDataObject {
     
     /**
      * Sets the character set to use
+     * 
      * @param fontReference the character set (font) reference
      */
     public void setCharacterSet(int fontReference) {
@@ -219,6 +187,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds a line at the given x/y coordinates
+     * 
      * @param coords the x/y coordinates (can be a series)
      */
     public void addLine(int[] coords) {
@@ -227,6 +196,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds a box at the given coordinates
+     * 
      * @param coords the x/y coordinates
      */
     public void addBox(int[] coords) {
@@ -235,6 +205,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds a fillet (curve) at the given coordinates
+     * 
      * @param coords the x/y coordinates
      */
     public void addFillet(int[] coords) {
@@ -242,7 +213,8 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /**
-     * Sets the arc parameters 
+     * Sets the arc parameters
+     *  
      * @param xmaj the maximum value of the x coordinate
      * @param ymin the minimum value of the y coordinate
      * @param xmin the minimum value of the x coordinate
@@ -254,6 +226,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds an arc
+     * 
      * @param x the x coordinate
      * @param y the y coordinate
      * @param mh the integer portion of the multiplier
@@ -265,6 +238,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds an image
+     * 
      * @param x the x coordinate
      * @param y the y coordinate
      * @param width the image width
@@ -283,6 +257,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds a string
+     * 
      * @param str the string
      * @param x the x coordinate
      * @param y the y coordinate
@@ -310,9 +285,7 @@ public class GraphicsObject extends AbstractDataObject {
         }
     }
         
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return "GraphicsObject: " + getName();
     }

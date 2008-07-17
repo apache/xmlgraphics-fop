@@ -41,6 +41,7 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
     
     /**
      * Main constructor
+     * 
      * @param prePresObj the presentation object to be preprocessed 
      */
     public PreprocessPresentationObject(AbstractStructuredAFPObject prePresObj) {
@@ -66,6 +67,7 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
     
     /**
      * Sets the object orientations relative to media leading edge
+     * 
      * @param orientation the object orientations relative to media leading edge
      */
     public void setOrientation(byte orientation) {
@@ -74,6 +76,7 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
     
     /**
      * Sets the X axis origin for object content
+     * 
      * @param xOffset the X axis origin for object content
      */
     public void setXOffset(int xOffset) {
@@ -82,15 +85,14 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
     
     /**
      * Sets the Y axis origin for object content
+     * 
      * @param yOffset the Y axis origin for object content
      */
     public void setYOffset(int yOffset) {
         this.objYOffset = yOffset;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
 
@@ -109,9 +111,7 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
         os.write(data);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         byte[] data = new byte[12];
         byte[] l = BinaryUtils.convert(12 + getTripletDataLength(), 2);
@@ -145,5 +145,10 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
         
         // Triplets
         super.writeContent(os);
+    }
+
+    /** {@inheritDoc} */
+    protected byte getCategoryCode() {
+        return (byte)0xC3;
     }
 }

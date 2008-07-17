@@ -35,13 +35,52 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class AbstractAFPObject implements Writable {
 
-    /**
-     * Static logging instance
-     */
+    /** Static logging instance */
     protected static final Log log = LogFactory.getLog("org.apache.fop.render.afp.modca");
+
+    private static final byte SF_CLASS = (byte)0xD3;
+    
+    private static final byte[] SF = new byte[] {
+        0x5A, // Structured field identifier
+        0x00, // Length byte 1
+        0x10, // Length byte 2
+        (byte) SF_CLASS, // Structured field id byte 1
+        (byte) 0x00, // Structured field id byte 2
+        (byte) 0x00, // Structured field id byte 3
+        0x00, // Flags
+        0x00, // Reserved
+        0x00, // Reserved                
+    };    
+
+    /**
+     * Copies the template structured field data array to the given byte array
+     * 
+     * @param data the structured field data byte array
+     * @param type the type code
+     * @param category the category code
+     */
+    protected void copySF(byte[] data, byte type, byte category) {
+        copySF(data, SF_CLASS, type, category);
+    }    
+
+    /**
+     * Copies the template structured field data array to the given byte array
+     * 
+     * @param data the structured field data byte array
+     * @param clazz the class code
+     * @param type the type code
+     * @param category the category code
+     */
+    protected void copySF(byte[] data, byte clazz, byte type, byte category) {
+        System.arraycopy(SF, 0, data, 0, SF.length);
+        data[3] = clazz;
+        data[4] = type;
+        data[5] = category;
+    }    
 
     /**
      * Help method to write a set of AFPObjects to the AFP datastream.
+     * 
      * @param objects a list of AFPObjects
      * @param os The stream to write to
      * @throws java.io.IOException an I/O exception of some sort has occurred.
@@ -55,5 +94,146 @@ public abstract class AbstractAFPObject implements Writable {
             }
         }
     }
+    
+    /** structured field type codes */
+    interface Type {
+            
+        // Attribute
+        byte ATTRIBUTE = (byte)0x0A;
+        
+        // Copy Count
+        byte COPY_COUNT = (byte)0xA2;
+        
+        // Descriptor
+        byte DESCRIPTOR = (byte)0xA6;
+        
+        // Control
+        byte CONTROL = (byte)0xA7;
+        
+        // Begin
+        byte BEGIN = (byte)0xA8;
+        
+        // End
+        byte END = (byte)0xA9;
+        
+        // Map
+        byte MAP = (byte)0xAB;
+        
+        // Position
+        byte POSITION = (byte)0xAC;
+        
+        // Process
+        byte PROCESS = (byte)0xAD;
+        
+        // Include
+        byte INCLUDE = (byte)0xAF;
+        
+        // Table
+        byte TABLE = (byte)0xB0;
+        
+        // Migration
+        byte MIGRATION = (byte)0xB1;
+        
+        // Variable
+        byte VARIABLE = (byte)0xB2;
+        
+        // Link
+        byte LINK = (byte)0xB4;
+        
+        // Data
+        byte DATA = (byte)0xEE;
+    }
+        
+    /** structured field category codes */
+    interface Category {
+        
+        // Page Segment
+        byte PAGE_SEGMENT = (byte)0x5F;
+
+        // Object Area
+        byte OBJECT_AREA = (byte)0x6B;
+        
+        // Color Attribute Table
+        byte COLOR_ATTRIBUTE_TABLE = (byte)0x77;
+
+        // IM Image
+        byte IM_IMAGE = (byte)0x7B;
+        
+        // Medium
+        byte MEDIUM = (byte)0x88;
+        
+        // Coded Font
+        byte CODED_FONT = (byte)0x8A;
+        
+        // Process Element
+        byte PROCESS_ELEMENT = (byte)0x90;
+
+        // Object Container
+        byte OBJECT_CONTAINER = (byte)0x92;
+
+        // Presentation Text
+        byte PRESENTATION_TEXT = (byte)0x9B;
+
+        // Index
+        byte INDEX = (byte)0xA7;
+        
+        // Document
+        byte DOCUMENT = (byte)0xA8;
+        
+        // Page Group
+        byte PAGE_GROUP = (byte)0xAD;
+        
+        // Page
+        byte PAGE = (byte)0xAF;
+        
+        // Graphics
+        byte GRAPHICS = (byte)0xBB;
+        
+        // Data Resource
+        byte DATA_RESOURCE = (byte)0xC3;
+        
+        // Document Environment Group (DEG)
+        byte DOCUMENT_ENVIRONMENT_GROUP = (byte)0xC4;
+        
+        // Resource Group
+        byte RESOURCE_GROUP = (byte)0xC6;
+
+        // Object Environment Group (OEG)
+        byte OBJECT_ENVIRONMENT_GROUP = (byte)0xC7;
+        
+        // Active Environment Group (AEG)
+        byte ACTIVE_ENVIRONMENT_GROUP = (byte)0xC9;
+        
+        // Medium Map
+        byte MEDIUM_MAP = (byte)0xCC;
+        
+        // Form Map
+        byte FORM_MAP = (byte)0xCD;
+        
+        // Name Resource
+        byte NAME_RESOURCE = (byte)0xCE;
+        
+        // Page Overlay
+        byte PAGE_OVERLAY = (byte)0xD8;
+        
+        // Resource Environment Group (REG)
+        byte RESOURCE_ENVIROMENT_GROUP = (byte)0xD9;
+        
+        // Overlay
+        byte OVERLAY = (byte)0xDF;
+        
+        // Data Suppression
+        byte DATA_SUPRESSION = (byte)0xEA;
+        
+        // Bar Code
+        byte BARCODE = (byte)0xEB;
+        
+        // No Operation
+        byte NO_OPERATION = (byte)0xEE;
+        
+        // Image
+        byte IMAGE = (byte)0xFB;
+    }
+    
 }
 

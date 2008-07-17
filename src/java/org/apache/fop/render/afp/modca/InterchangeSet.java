@@ -46,6 +46,8 @@ public class InterchangeSet {
     private int value;
 
     /**
+     * Returns the interchange set value of a given string
+     * 
      * @param str an interchange set value
      * @return an interchange set
      */
@@ -60,6 +62,7 @@ public class InterchangeSet {
             throw new IllegalArgumentException("Invalid MO:DCA interchange set :" + str);
         }
     }
+
     /**
      * Main constructor
      * 
@@ -70,6 +73,8 @@ public class InterchangeSet {
     }
 
     /**
+     * Returns true if complies with MOD:CA interchange set 1
+     * 
      * @return true if complies with MOD:CA interchange set 1
      */
     protected boolean is1() {
@@ -77,6 +82,8 @@ public class InterchangeSet {
     }
     
     /**
+     * Returns true if complies with MOD:CA interchange set 2
+     * 
      * @return true if complies with MOD:CA interchange set 2
      */
     public boolean is2() {
@@ -84,20 +91,22 @@ public class InterchangeSet {
     }
     
     /**
+     * Returns true if complies with MOD:CA resource set
+     * 
      * @return true if complies with MOD:CA resource set
      */
     public boolean isResource() {
         return value == RESOURCE_SET;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return NAMES[value];
     }
     
     /**
+     * Returns true if MOD:CA interchange set 2 (resource groups) is supported
+     * 
      * @return true if MOD:CA interchange set 2 (resource groups) is supported
      */
     public boolean supportsLevel2() {

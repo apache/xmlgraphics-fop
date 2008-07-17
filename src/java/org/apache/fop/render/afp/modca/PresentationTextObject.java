@@ -171,6 +171,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
 
     /**
      * Accessor method to write the AFP datastream for the PresentationTextObject.
+     * 
      * @param os The stream to write to
      * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
      */
@@ -182,49 +183,24 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
 
     /**
      * Returns the name of this presentation text object
+     * 
      * @return the name of this presentation text object
      */
     public String getName() {
         return name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA8; // Structured field id byte 2
-        data[5] = (byte) 0x9B; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.BEGIN, Category.PRESENTATION_TEXT);
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA9; // Structured field id byte 2
-        data[5] = (byte) 0x9B; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.END, Category.PRESENTATION_TEXT);
         os.write(data);
     }
 
@@ -247,9 +223,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         if (presentationTextDataList != null) {
             return presentationTextDataList.toString();

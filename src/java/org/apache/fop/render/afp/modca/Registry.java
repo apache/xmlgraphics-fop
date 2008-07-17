@@ -128,6 +128,32 @@ public final class Registry {
                         MimeConstants.MIME_PCL
                 )
         );
+        mimeEntryMap.put(
+                MimeConstants.MIME_SVG,
+                new ObjectType(
+                        COMPID_EPS,
+                        null, // no component id
+                        "Scaleable Vector Graphics",
+                        false,
+                        MimeConstants.MIME_SVG
+                )
+        );
+    }
+
+    /**
+     * Returns the Registry ObjectType for a given mimetype
+     * 
+     * @param mimeType the object mime type
+     * @return the Registry ObjectType for a given data object info
+     */
+    public Registry.ObjectType getObjectType(String mimeType) {
+        ObjectType entry = null;
+        if (mimeType != null) {
+            entry = (Registry.ObjectType)mimeEntryMap.get(mimeType);
+        } else {
+            log.info("mimetype '" + mimeType + "' not found");
+        }
+        return entry;
     }
 
     /**
@@ -141,15 +167,11 @@ public final class Registry {
         if (dataObjectInfo instanceof ImageObjectInfo) {
             ImageObjectInfo imageInfo = (ImageObjectInfo)dataObjectInfo;
             String mimeType = imageInfo.getMimeType();
-            if (mimeType != null) {
-                entry = (Registry.ObjectType)mimeEntryMap.get(mimeType);
-            } else {
-                log.info("mimetype for " + dataObjectInfo + " is null");
-            }
+            return getObjectType(mimeType);
         }
         return entry;
     }
-    
+
     /**
      * Encapsulates a MOD:CA Registry Object Type entry
      */
@@ -212,6 +234,22 @@ public final class Registry {
          */
         public String getMimeType() {
             return this.mimeType;
+        }
+
+        /**
+         * @return true if this is an image type
+         */
+        public boolean isImage() {
+            return mimeType == MimeConstants.MIME_TIFF
+            || mimeType == MimeConstants.MIME_GIF
+            || mimeType == MimeConstants.MIME_JPEG;
+        }
+
+        /**
+         * @return true if this is a graphic type
+         */
+        public boolean isGraphic() {
+            return mimeType == MimeConstants.MIME_SVG;
         }
 
         /**

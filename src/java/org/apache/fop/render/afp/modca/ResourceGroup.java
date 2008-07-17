@@ -24,7 +24,9 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.fop.render.afp.DataObjectCache;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.ResourceLevel;
@@ -35,15 +37,11 @@ import org.apache.fop.render.afp.tools.StringUtils;
  */
 public final class ResourceGroup extends AbstractNamedAFPObject {
     
-    /**
-     * Default name for the resource group
-     */
+    /** Default name for the resource group */
     private static final String DEFAULT_NAME = "RG000001";
 
-    /**
-     * Mapping of resource uri to data resource object (image/graphic) 
-     */
-    private Map/*<String,Writeable>*/ resourceMap = null;
+    /** Set of resource uri */
+    private Set/*<String>*/ resourceSet = new java.util.HashSet/*<String>*/();
 
     /**
      * Default constructor
@@ -55,67 +53,62 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     /**
      * Constructor for the ResourceGroup, this takes a
      * name parameter which must be 8 characters long.
+     * 
      * @param name the resource group name
      */
     public ResourceGroup(String name) {
         super(name);
     }
-
-    private static final String OBJECT_CONTAINER_NAME_PREFIX = "OC";
-
-    private ObjectContainer createObjectContainer() {
-        String name = OBJECT_CONTAINER_NAME_PREFIX
-        + StringUtils.lpad(String.valueOf(getResourceCount() + 1), '0', 6);
-        return new ObjectContainer(name);
-    }
     
-    private DataObjectFactory dataObjectFactory = new DataObjectFactory();
-    
-    /**
-     * Creates a data object in this resource group
-     * @param dataObjectInfo the data object info
-     * @return an include object reference
-     */
-    public IncludeObject createObject(DataObjectInfo dataObjectInfo) {
-        DataObjectAccessor dataObjectAccessor
-            = (DataObjectAccessor)getResourceMap().get(dataObjectInfo.getUri());
-        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-        ResourceLevel resourceLevel = resourceInfo.getLevel();
-        AbstractDataObject dataObj;
-        if (dataObjectAccessor == null) {
-            dataObj = dataObjectFactory.create(dataObjectInfo);
-            ObjectContainer objectContainer = null;
-            String resourceName = resourceInfo.getName();
-            if (resourceName != null) {
-                objectContainer = new ObjectContainer(resourceName);
-            } else {
-                objectContainer = createObjectContainer();
-                resourceName = objectContainer.getName();
-            }
-            objectContainer.setDataObject(dataObj);
-            objectContainer.setDataObjectInfo(dataObjectInfo);
-            
-            // When located at print-file level or externally,
-            // wrap the object container in a resource object
-            if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
-                ResourceObject resourceObject = new ResourceObject(resourceName);
-                resourceObject.setDataObject(objectContainer);
-                resourceObject.setDataObjectInfo(dataObjectInfo);
-                dataObjectAccessor = resourceObject;
-            } else { // Access data object through container
-                dataObjectAccessor = objectContainer;
-            }
-            
-            // Add to resource map
-            getResourceMap().put(dataObjectInfo.getUri(), dataObjectAccessor);            
-        }
-        String name = dataObjectAccessor.getName();
-        IncludeObject includeObj = new IncludeObject(name, dataObjectAccessor);
-        return includeObj;
-    }
+//    /**
+//     * Creates a data object in this resource group
+//     * 
+//     * @param dataObjectInfo the data object info
+//     * @return an include object reference
+//     */
+//    public IncludeObject createObject(DataObjectInfo dataObjectInfo) {
+//        String uri = dataObjectInfo.getUri();
+//        resourceSet.get();
+//        DataObjectAccessor dataObjectAccessor
+//            = (DataObjectAccessor)getResourceMap().getData(dataObjectInfo.getUri());
+//        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+//        ResourceLevel resourceLevel = resourceInfo.getLevel();
+//        AbstractDataObject dataObj;
+//        if (dataObjectAccessor == null) {
+//            dataObj = dataObjectFactory.createObject(dataObjectInfo);
+//            ObjectContainer objectContainer = null;
+//            String resourceName = resourceInfo.getName();
+//            if (resourceName != null) {
+//                objectContainer = new ObjectContainer(resourceName);
+//            } else {
+//                objectContainer = createObjectContainer();
+//                resourceName = objectContainer.getName();
+//            }
+//            objectContainer.setDataObject(dataObj);
+//            objectContainer.setDataObjectInfo(dataObjectInfo);
+//            
+//            // When located at print-file level or externally,
+//            // wrap the object container in a resource object
+//            if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
+//                ResourceObject resourceObject = new ResourceObject(resourceName);
+//                resourceObject.setDataObject(objectContainer);
+//                resourceObject.setDataObjectInfo(dataObjectInfo);
+//                dataObjectAccessor = resourceObject;
+//            } else { // Access data object through container
+//                dataObjectAccessor = objectContainer;
+//            }
+//            
+//            // Add to resource map
+//            getResourceMap().put(dataObjectInfo.getUri(), dataObjectAccessor);            
+//        }
+//        String name = dataObjectAccessor.getName();
+//        IncludeObject includeObj = dataObjectFactory.createInclude(dataObjectInfo);
+//        return includeObj;
+//    }
     
     /**
      * Checks if a named object is of a valid type to be added to a resource group
+     * 
      * @param namedObj a named object
      * @return true if the named object is of a valid type to be added to a resource group
      */
@@ -131,26 +124,23 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
                 // || namedObj instanceof BarcodeObject 
                 );
     }
+
     /**
-     * Adds a named object to this resource group
-     * @param namedObj a named AFP object
+     * Add this object cache resource info to this resource group
+     * 
+     * @param resourceInfo the resource info
      */
-    protected void addObject(AbstractNamedAFPObject namedObj) {
-        if (isValidObjectType(namedObj)) {
-            getResourceMap().put(namedObj.getName(), namedObj);
-        } else {
-            throw new IllegalArgumentException("invalid object type " + namedObj);
-        }
+    public void addObject(ResourceInfo resourceInfo) {
+        resourceSet.add(resourceInfo);
     }
     
     /**
+     * Returns the number of resources contained in this resource group
+     * 
      * @return the number of resources contained in this resource group
      */
     public int getResourceCount() {
-        if (resourceMap != null) {
-            return resourceMap.size(); 
-        }
-        return 0;
+        return resourceSet.size(); 
     }
     
     /**
@@ -161,78 +151,42 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * @return true if the resource exists within this resource group
      */
     public boolean resourceExists(String uri) {
-        return getResourceMap().containsKey(uri);
+        return resourceSet.contains(uri);
     }
     
-    /**
-     * Returns the list of resources
-     * @return the list of resources
-     */
-    public Map/*<String, DataObjectAccessor>*/ getResourceMap() {
-        if (resourceMap == null) {
-            resourceMap = new java.util.HashMap/*<String, Writeable>*/();
-        }
-        return resourceMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
-        if (resourceMap != null) {
-            Collection includes = resourceMap.values();
-            Iterator it = includes.iterator();
+        Iterator it = resourceSet.iterator();
+        if (it.hasNext()) {
+            DataObjectCache cache = DataObjectCache.getInstance();
             while (it.hasNext()) {
-                Writable dataObject = (Writable)it.next();
-                dataObject.write(os);
+                ResourceInfo resourceInfo = (ResourceInfo)it.next();
+                byte[] data = cache.get(resourceInfo);
+                if (data != null) {
+                    os.write(data);
+                } else {
+                    log.error("data was null");
+                }
             }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA8; // Structured field id byte 2
-        data[5] = (byte) 0xC6; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.BEGIN, Category.RESOURCE_GROUP);
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
-        data[0] = 0x5A; // Structured field identifier
-        data[1] = 0x00; // Length byte 1
-        data[2] = 0x10; // Length byte 2
-        data[3] = (byte) 0xD3; // Structured field id byte 1
-        data[4] = (byte) 0xA9; // Structured field id byte 2
-        data[5] = (byte) 0xC6; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
+        copySF(data, Type.END, Category.RESOURCE_GROUP);
         os.write(data);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
-        return this.name + " " + getResourceMap();
+        return this.name + " " + resourceSet/*getResourceMap()*/;
     }
 }

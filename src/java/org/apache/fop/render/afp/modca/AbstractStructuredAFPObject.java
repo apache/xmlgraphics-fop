@@ -38,8 +38,7 @@ import org.apache.fop.render.afp.modca.triplets.Triplet;
 /**
  * An abstract class encapsulating an MODCA structured object
  */
-public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
-   
+public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {    
     /**
      * list of object triplets
      */
@@ -57,6 +56,8 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
     
     /**
+     * Returns the triplet data length
+     * 
      * @return the triplet data length
      */
     protected int getTripletDataLength() {
@@ -74,6 +75,8 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
     
     /**
+     * Returns the triplet data
+     * 
      * @return the triplet data
      * @throws IOException throws an I/O exception if one occurred
      */
@@ -88,6 +91,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     
     /**
      * Writes any triplet data
+     * 
      * @param os The stream to write to
      * @throws IOException The stream to write to
      */
@@ -101,6 +105,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Helper method to write the start of the Object.
+     * 
      * @param os The stream to write to
      * @throws IOException throws an I/O exception if one occurred
      */
@@ -109,7 +114,17 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
 
     /**
+     * Helper method to write the end of the Object.
+     * 
+     * @param os The stream to write to
+     * @throws IOException an I/O exception if one occurred
+     */
+    protected void writeEnd(OutputStream os) throws IOException {
+    }
+
+    /**
      * Helper method to write the contents of the Object.
+     * 
      * @param os The stream to write to
      * @throws IOException throws an I/O exception if one occurred
      */
@@ -118,15 +133,8 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
     
     /**
-     * Helper method to write the end of the Object.
-     * @param os The stream to write to
-     * @throws IOException an I/O exception if one occurred
-     */
-    protected void writeEnd(OutputStream os) throws IOException {
-    }    
-    
-    /**
-     * Accessor method to write the AFP datastream for the Image Object
+     * Accessor method to write the AFP datastream for this structure field object
+     * 
      * @param os The stream to write to
      * @throws IOException in the event that an I/O exception occurred
      */
@@ -137,7 +145,8 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
 
     /**
-     * Returns the first matching triplet found in the structured field triplet list 
+     * Returns the first matching triplet found in the structured field triplet list
+     *  
      * @param tripletId the triplet identifier
      */
     private Triplet getTriplet(byte tripletId) {
@@ -152,6 +161,8 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
     
     /**
+     * Returns true of this structured field has the given triplet
+     * 
      * @param tripletId the triplet identifier
      * @return true if the structured field has the given triplet
      */
@@ -161,6 +172,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Adds a triplet to this structured object
+     * 
      * @param triplet the triplet to add
      */
     private void addTriplet(Triplet triplet) {
@@ -169,6 +181,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Adds a list of triplets to the triplets contained within this structured field
+     * 
      * @param tripletCollection a collection of triplets
      */
     private void addTriplets(Collection/*<Triplet>*/ tripletCollection) {
@@ -177,9 +190,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         }
     }
 
-    /**
-     * @return the triplet list pertaining to this resource
-     */
+    /** @return the triplet list pertaining to this resource */
     protected List/*<Triplet>*/ getTriplets() {
         if (triplets == null) {
             triplets = new java.util.ArrayList();
@@ -189,6 +200,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         
     /**
      * Sets the fully qualified name of this resource
+     * 
      * @param fqnType the fully qualified name type of this resource
      * @param fqnFormat the fully qualified name format of this resource
      * @param fqName the fully qualified name of this resource
@@ -197,9 +209,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         addTriplet(new FullyQualifiedNameTriplet(fqnType, fqnFormat, fqName));
     }
 
-    /**
-     * @return the fully qualified name of this triplet or null if it does not exist
-     */
+    /** @return the fully qualified name of this triplet or null if it does not exist */
     public String getFullyQualifiedName() {
         FullyQualifiedNameTriplet fqNameTriplet
             = (FullyQualifiedNameTriplet)getTriplet(Triplet.FULLY_QUALIFIED_NAME);
@@ -212,6 +222,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     
     /**
      * Sets the objects classification
+     * 
      * @param objectClass the classification of the object
      * @param objectType the MOD:CA registry object type entry for the given
      *        object/component type of the object
@@ -224,6 +235,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Sets the objects classification with the default structure flags
+     * 
      * @param objectClass the classification of the object
      * @param objectType the MOD:CA registry object type entry for the given
      *        object/component type of the object
@@ -234,6 +246,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         
     /**
      * Sets the extent of an object area in the X and Y directions
+     * 
      * @param x the x direction extent
      * @param y the y direction extent
      */
@@ -243,6 +256,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Sets the measurement units used to specify the units of measure
+     * 
      * @param xRes units per base on the x-axis
      * @param yRes units per base on the y-axis
      */
@@ -252,6 +266,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Sets the mapping option
+     * 
      * @param optionValue the mapping option value
      */
     public void setMappingOption(byte optionValue) {
@@ -260,6 +275,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     
     /**
      * Sets a comment on this resource
+     * 
      * @param comment a comment string
      */
     public void setComment(String comment) {

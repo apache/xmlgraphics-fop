@@ -22,7 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.DataObjectInfo;
+//import org.apache.fop.render.afp.DataObjectInfo;
 
 /**
  * An abstract container of resource objects
@@ -34,11 +34,6 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
     private ResourceGroup resourceGroup = null;
 
     /**
-     * The data object factory
-     */
-    private DataObjectFactory dataObjectFactory = new DataObjectFactory();
-
-    /**
      * Default constructor
      */
     public AbstractResourceGroupContainer() {
@@ -47,6 +42,7 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
 
     /**
      * Named constructor
+     * 
      * @param name the name of this resource container
      */
     public AbstractResourceGroupContainer(String name) {
@@ -102,14 +98,14 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
         return resourceGroup;
     }
     
-    /**
-     * Creates and returns a new data object
-     * @param dataObjectInfo the data object info
-     * @return a newly created data object
-     */
-    public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
-        return dataObjectFactory.create(dataObjectInfo);
-    }
+//    /**
+//     * Creates and returns a new data object
+//     * @param dataObjectInfo the data object info
+//     * @return a newly created data object
+//     */
+//    public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
+//        return dataObjectFactory.create(dataObjectInfo);
+//    }
 
     /**
      * {@inheritDoc}

@@ -56,6 +56,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
 
     /**
      * Constructor for the Include Page Overlay
+     * 
      * @param overlayName Name of the page segment
      * @param x The x position
      * @param y The y position
@@ -63,6 +64,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
      */
     public IncludePageOverlay(String overlayName, int x, int y, int orientation) {
         super(overlayName);
+        
         this.x = x;
         this.y = y;
         setOrientation(orientation);
@@ -84,40 +86,25 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
         byte[] data = new byte[25]; //(9 +16)
-        data[0] = 0x5A;
+        copySF(data, Type.INCLUDE, Category.PAGE_OVERLAY);
 
         // Set the total record length
         byte[] len = BinaryUtils.convert(24, 2); //Ignore first byte
         data[1] = len[0];
         data[2] = len[1];
 
-        // Structured field ID for a IPO
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xAF;
-        data[5] = (byte) 0xD8;
+        byte[] xPos = BinaryUtils.convert(x, 3);
+        data[17] = xPos[0]; // x coordinate
+        data[18] = xPos[1];
+        data[19] = xPos[2];
 
-        data[6] = 0x00; // Reserved
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
-
-        byte[] xcoord = BinaryUtils.convert(x, 3);
-        data[17] = xcoord[0]; // x coordinate
-        data[18] = xcoord[1];
-        data[19] = xcoord[2];
-
-        byte[] ycoord = BinaryUtils.convert(y, 3);
-        data[20] = ycoord[0]; // y coordinate
-        data[21] = ycoord[1];
-        data[22] = ycoord[2];
+        byte[] yPos = BinaryUtils.convert(y, 3);
+        data[20] = yPos[0]; // y coordinate
+        data[21] = yPos[1];
+        data[22] = yPos[2];
 
         switch (orientation) {
             case 90:

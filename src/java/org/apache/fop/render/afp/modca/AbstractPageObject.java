@@ -22,9 +22,12 @@ package org.apache.fop.render.afp.modca;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.render.afp.AFPTextDataInfo;
+import org.apache.fop.render.afp.DataObjectCache;
+import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
 
 /**
@@ -112,6 +115,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Named constructor
+     * 
      * @param name the name of this page object
      */
     public AbstractPageObject(String name) {
@@ -218,6 +222,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     /**
      * Helper method to create a presentation text object
      * on the current page and to return the object.
+     * 
      * @return the presentation text object
      */
     private PresentationTextObject getPresentationTextObject() {
@@ -305,6 +310,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Returns an indication if the page is complete
+     * 
      * @return whether this page is complete
      */
     public boolean isComplete() {
@@ -313,6 +319,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Returns the height of the page
+     * 
      * @return the height of the page
      */
     public int getHeight() {
@@ -321,6 +328,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Returns the width of the page
+     * 
      * @return the width of the page
      */
     public int getWidth() {
@@ -329,15 +337,14 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Returns the rotation of the page
+     * 
      * @return the rotation of the page
      */
     public int getRotation() {
         return rotation;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (this instanceof PageObject || this instanceof Overlay) {
@@ -345,23 +352,37 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
         }
         writeObjects(this.includePageSegments, os);
         writeObjects(this.tagLogicalElements, os);
-        writeObjects(this.objects, os);
+        
+        DataObjectCache cache = DataObjectCache.getInstance();
+        
+        // Write objects from cache
+        Iterator it = objects.iterator();
+        while (it.hasNext()) {
+            Object obj = it.next();
+            if (obj instanceof Writable) {
+                Writable writableObject = (Writable)obj;
+                writableObject.write(os);
+            } else if (obj instanceof ResourceInfo) {
+                ResourceInfo resourceInfo = (ResourceInfo)obj;
+                byte[] data = cache.get(resourceInfo);
+                os.write(data);
+            }
+        }
     }
     
     /**
-     * Adds an AFP object to the resource group in this container
+     * Adds an AFP object reference to this page
+     * 
      * @param obj an AFP object
      */
-    protected void addObject(AbstractAFPObject obj) {
+    protected void addObject(Object obj) {
         if (objects == null) {
-            this.objects = new java.util.ArrayList/*<AbstractAFPObject>*/();
+            this.objects = new java.util.ArrayList();
         }
         objects.add(obj);
     }
 
-//    /**
-//     * {@inheritDoc}
-//     */
+//    /** {@inheritDoc} */
 //    protected void addObject(AbstractAFPObject obj) {
 //        if (obj instanceof DataObjectAccessor) {
 //            DataObjectAccessor dataObjectAccessor = (DataObjectAccessor)obj;

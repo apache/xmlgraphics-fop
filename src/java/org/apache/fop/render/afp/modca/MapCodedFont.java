@@ -56,9 +56,7 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
         fontList = new java.util.ArrayList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
         byte[] startData = new byte[] {
             0x5A,

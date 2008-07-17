@@ -48,11 +48,7 @@ public class ImageSizeParameter extends AbstractAFPObject {
         this.vSize = vsize;
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Image Size Parameter
-     * @param os The stream to write to
-     * @throws java.io.IOException if an I/O exception occured
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             (byte)0x94, // ID = Image Size Parameter

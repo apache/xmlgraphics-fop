@@ -37,7 +37,6 @@ import org.apache.fop.render.afp.fonts.FopCharacterSet;
 import org.apache.fop.render.afp.fonts.OutlineFont;
 import org.apache.fop.render.afp.fonts.RasterFont;
 import org.apache.fop.render.afp.modca.AFPDataStream;
-import org.apache.fop.render.afp.modca.InterchangeSet;
 import org.apache.fop.util.LogUtil;
 
 /**
@@ -47,6 +46,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
     
     /**
      * Default constructor
+     * 
      * @param userAgent user agent
      */
     public AFPRendererConfigurator(FOUserAgent userAgent) {
@@ -183,6 +183,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
     
     /**
      * Builds a list of AFPFontInfo objects for use with the setup() method.
+     * 
      * @param cfg Configuration object
      * @return List the newly created list of fonts
      * @throws ConfigurationException if something's wrong with the config data
@@ -212,6 +213,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
 
     /**
      * Configure the AFP renderer.
+     * 
      * @param renderer AFP renderer
      * @throws FOPException fop exception
      * @see org.apache.fop.render.PrintRendererConfigurator#configure(Renderer)
@@ -252,12 +254,6 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
 //                afpRenderer.getAFPDataStream().setInterchangeSet(interchangeSet);
 //            }
 
-            // goca enabled
-            Configuration gocaSupportCfg = cfg.getChild("goca-enabled", false);
-            if (gocaSupportCfg != null) {
-                afpRenderer.setGOCAEnabled(true);
-            }
-            
             // a default external resource group file setting
             Configuration resourceGroupFileCfg
                 = cfg.getChild("resource-group-file", false);
@@ -271,7 +267,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 }
                 File resourceGroupFile = new File(resourceGroupDest);
                 if (resourceGroupFile.canWrite()) {
-                    afpRenderer.getAFPDataStream().setDefaultResourceGroupFile(resourceGroupFile);
+                    AFPDataStream datastream = afpRenderer.getAFPDataStream();
+                    datastream.setDefaultResourceGroupFilePath(resourceGroupDest);
                 } else {
                     log.warn("Unable to write to default external resource group file '"
                                 + resourceGroupDest + "'");

@@ -33,6 +33,7 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
     /**
      * Construct an object area descriptor for the specified object width
      * and object height.
+     * 
      * @param width The page width.
      * @param height The page height.
      * @param widthResolution The page width resolution.
@@ -42,13 +43,8 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         super(width, height, widthResolution, heightResolution);
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Object Area Descriptor
-     * @param os The stream to write to
-     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
-     */
-    public void write(OutputStream os)
-        throws IOException {
+    /** {@inheritDoc} */
+    public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[29];
         data[0] = 0x5A; 

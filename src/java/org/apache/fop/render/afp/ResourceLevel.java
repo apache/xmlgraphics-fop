@@ -19,12 +19,11 @@
 
 package org.apache.fop.render.afp;
 
-import java.io.File;
-
 /**
  * A resource level
  */
 public class ResourceLevel {
+    
     /** page level **/
     public static final int PAGE = 0;
 
@@ -48,19 +47,18 @@ public class ResourceLevel {
 
     private static final String[] NAMES
         = new String[] {NAME_PAGE, NAME_PAGE_GROUP, NAME_DOCUMENT, NAME_PRINT_FILE, NAME_EXTERNAL};
+
     
-    /**
-     * where the resource will reside in the AFP output
-     */
+    
+    /** where the resource will reside in the AFP output */
     private int level = PRINT_FILE; // default is print-file level
 
-    /**
-     * the external resource group file
-     */
-    private File externalResourceGroupFile = null;
+    /** the external resource group file path */
+    private String extFilePath = null;
 
     /**
      * Sets the resource placement level within the AFP output
+     * 
      * @param lvl the resource level (page, page-group, document, print-file or external)
      * @return true if the resource level was successfully set
      */
@@ -80,13 +78,25 @@ public class ResourceLevel {
     
     /**
      * Main constructor
+     * 
      * @param level the resource level
      */
     public ResourceLevel(int level) {
+        setLevel(level);
+    }
+
+    /**
+     * Sets the resource level
+     * 
+     * @param level the resource level
+     */
+    public void setLevel(int level) {
         this.level = level;
     }
 
     /**
+     * Returns true if this is a page level resource group
+     * 
      * @return true if this is a page level resource group
      */
     public boolean isPage() {
@@ -94,6 +104,8 @@ public class ResourceLevel {
     }
     
     /**
+     * Returns true if this is a page group level resource group
+     * 
      * @return true if this is a page group level resource group
      */
     public boolean isPageGroup() {
@@ -101,6 +113,8 @@ public class ResourceLevel {
     }
 
     /**
+     * Returns true if this is a document level resource group
+     * 
      * @return true if this is a document level resource group
      */
     public boolean isDocument() {
@@ -108,6 +122,8 @@ public class ResourceLevel {
     }
 
     /**
+     * Returns true if this is an external level resource group
+     * 
      * @return true if this is an external level resource group
      */
     public boolean isExternal() {
@@ -115,6 +131,8 @@ public class ResourceLevel {
     }
 
     /**
+     * Returns true if this is a print-file level resource group
+     * 
      * @return true if this is a print-file level resource group
      */
     public boolean isPrintFile() {
@@ -122,39 +140,48 @@ public class ResourceLevel {
     }
     
     /**
-     * @return the external resource group file of this resource
-     */
-    public File getExternalResourceGroupFile() {
-        return this.externalResourceGroupFile;
-    }
-
-    /**
+     * Returns the destination file path of the external resource group file
+     * 
      * @return the destination file path of the external resource group file
      */
-    public String getExternalResourceGroupFilePath() {
-        if (externalResourceGroupFile != null) {
-            return externalResourceGroupFile.getAbsolutePath();
-        }
-        return null;
+    public String getExternalFilePath() {
+        return this.extFilePath;
     }
 
     /**
      * Sets the external destination of the resource
-     * @param file the external resource group file
+     * 
+     * @param filePath the external resource group file
      */
-    public void setExternalResourceGroupFile(File file) {
-        this.externalResourceGroupFile = file;
-    }
-
-    /**
-     * @return true if this resource has a defined external resource group file destination
-     */
-    public boolean hasExternalResourceGroupFile() {
-        return getExternalResourceGroupFile() != null;
+    public void setExternalFilePath(String filePath) {
+        this.extFilePath = filePath;
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return NAMES[level] +  (isExternal() ? ", file=" + externalResourceGroupFile : "");
+        return NAMES[level] +  (isExternal() ? ", file=" + extFilePath : "");
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || !(obj instanceof ResourceLevel)) {
+            return false;
+        }
+
+        ResourceLevel rl = (ResourceLevel)obj;
+        return (level == level)
+            && (extFilePath == rl.extFilePath
+                    || extFilePath != null && extFilePath.equals(rl.extFilePath));
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + level;
+        hash = 31 * hash + (null == extFilePath ? 0 : extFilePath.hashCode());
+        return hash;
     }
 }

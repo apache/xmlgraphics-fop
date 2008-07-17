@@ -91,6 +91,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
         pdfi.cfg = (Configuration)context.getProperty(HANDLER_CONFIGURATION);
         Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+        
         QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
         if (foreign != null 
                 && "bitmap".equalsIgnoreCase((String)foreign.get(qName))) {

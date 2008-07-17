@@ -41,15 +41,14 @@ implements PreparedAFPObject {
 
     /**
      * Named constructor
+     * 
      * @param name the name of this AFP object
      */
     public AbstractPreparedAFPObject(String name) {
         super(name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os); // write triplets
         if (this.data != null) {
@@ -83,6 +82,7 @@ implements PreparedAFPObject {
     
     /**
      * Sets the data
+     * 
      * @param data the data
      */
     protected void setData(byte[] data) {

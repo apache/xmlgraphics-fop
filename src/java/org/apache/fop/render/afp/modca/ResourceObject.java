@@ -22,9 +22,6 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.DataObjectInfo;
-import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
-import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.modca.triplets.Triplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -32,18 +29,10 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * This resource structured field begins an envelope that is used to carry
  * resource objects in print-file-level (external) resource groups. 
  */
-public class ResourceObject extends AbstractPreparedAFPObject implements DataObjectAccessor {
+public class ResourceObject extends AbstractPreparedAFPObject {
     
-    /**
-     * the object container of this resource object
-     */
     private AbstractNamedAFPObject namedObject;
-        
-    /**
-     * the data object info
-     */
-    private DataObjectInfo dataObjectInfo;
-
+    
     /**
      * Default constructor
      * 
@@ -55,102 +44,71 @@ public class ResourceObject extends AbstractPreparedAFPObject implements DataObj
 
     /**
      * Sets the data object referenced by this resource object
+     * 
      * @param obj the named data object
      */
     public void setDataObject(AbstractNamedAFPObject obj) {
-        this.namedObject = obj; 
-        
-        String fqn = obj.getFullyQualifiedName();
-        if (fqn != null) {
-            super.setFullyQualifiedName(
-                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
-                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-                fqn);
-        }
-        
-        byte type;
-        if (obj instanceof ObjectContainer) {
-            type = ResourceObjectTypeTriplet.OBJECT_CONTAINER;
-        } else if (obj instanceof ImageObject) {
-            type = ResourceObjectTypeTriplet.IMAGE_OBJECT;
-        } else if (obj instanceof GraphicsObject) {
-            type = ResourceObjectTypeTriplet.GRAPHICS_OBJECT;
-        } else if (obj instanceof Document) {
-            type = ResourceObjectTypeTriplet.DOCUMENT_OBJECT;
-        } else if (obj instanceof PageSegment) {
-            type = ResourceObjectTypeTriplet.PAGE_SEGMENT_OBJECT;
-        } else if (obj instanceof Overlay) {
-            type = ResourceObjectTypeTriplet.OVERLAY_OBJECT;
-        } else {
-            throw new UnsupportedOperationException(
-                    "Unsupported resource object type " + obj);
-        }
-        getTriplets().add(new ResourceObjectTypeTriplet(type));
+        this.namedObject = obj;
+//        
+//        String fqn = obj.getFullyQualifiedName();
+//        if (fqn != null) {
+//            super.setFullyQualifiedName(
+//                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
+//                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
+//                fqn);
+//        }
+//        
+//        byte type;
+//        if (obj instanceof ObjectContainer) {
+//            type = ResourceObjectTypeTriplet.OBJECT_CONTAINER;
+//        } else if (obj instanceof ImageObject) {
+//            type = ResourceObjectTypeTriplet.IMAGE_OBJECT;
+//        } else if (obj instanceof GraphicsObject) {
+//            type = ResourceObjectTypeTriplet.GRAPHICS_OBJECT;
+//        } else if (obj instanceof Document) {
+//            type = ResourceObjectTypeTriplet.DOCUMENT_OBJECT;
+//        } else if (obj instanceof PageSegment) {
+//            type = ResourceObjectTypeTriplet.PAGE_SEGMENT_OBJECT;
+//        } else if (obj instanceof Overlay) {
+//            type = ResourceObjectTypeTriplet.OVERLAY_OBJECT;
+//        } else {
+//            throw new UnsupportedOperationException(
+//                    "Unsupported resource object type " + obj);
+//        }
+//        getTriplets().add(new ResourceObjectTypeTriplet(type));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public AbstractNamedAFPObject getDataObject() {
-        return namedObject;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public DataObjectInfo getDataObjectInfo() {
-        return this.dataObjectInfo;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
-        this.dataObjectInfo = dataObjectInfo;
+//    /** {@inheritDoc} */
+//    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
+//        this.dataObjectInfo = dataObjectInfo;
+//        
+//        if (namedObject instanceof ObjectContainer) {
+//            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+//            super.setObjectClassification(
+//                    ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+//                    objectType);
+//        }
+//    }
         
-        if (namedObject instanceof ObjectContainer) {
-            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
-            super.setObjectClassification(
-                    ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
-                    objectType);
-        }
-    }
-        
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
-        
+
+        byte[] data = new byte[19];
+        copySF(data, Type.BEGIN, Category.NAME_RESOURCE);
+
         // Set the total record length
         byte[] len = BinaryUtils.convert(18 + getTripletDataLength(), 2);
-        byte[] data = new byte[] {
-            0x5A, // Structured field identifier
-            len[0], // Length byte 1
-            len[1], // Length byte 2
-            (byte)0xD3, // Structured field id byte 1
-            (byte)0xA8, // Structured field id byte 2
-            (byte)0xCE, // Structured field id byte 3
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved
-            nameBytes[0],            
-            nameBytes[1],
-            nameBytes[2],
-            nameBytes[3],
-            nameBytes[4],
-            nameBytes[5],
-            nameBytes[6],
-            nameBytes[7],
-            0x00, // Reserved
-            0x00, // Reserved
-        };
+        data[1] = len[0]; // Length byte 1
+        data[2] = len[1]; // Length byte 2
+            
+        // Set reserved bits
+        data[17] = 0x00; // Reserved
+        data[18] = 0x00; // Reserved
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os); // write triplets
         if (namedObject != null) {
@@ -158,58 +116,46 @@ public class ResourceObject extends AbstractPreparedAFPObject implements DataObj
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
-        byte[] data = new byte[] {
-           0x5A, // Structured field identifier
-           0x00, // Length byte 1
-           0x10, // Length byte 2
-           (byte)0xD3, // Structured field id byte 1
-           (byte)0xA9, // Structured field id byte 2
-           (byte)0xCE, // Structured field id byte 3
-           0x00, // Flags
-           0x00, // Reserved
-           0x00, // Reserved
-           nameBytes[0],            
-           nameBytes[1],
-           nameBytes[2],
-           nameBytes[3],
-           nameBytes[4],
-           nameBytes[5],
-           nameBytes[6],
-           nameBytes[7],
-        };
+        byte[] data = new byte[17];
+        copySF(data, Type.END, Category.NAME_RESOURCE);
         os.write(data);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return this.getName();
     }
     
+    /**
+     * Sets Resource Object Type triplet
+     * 
+     * @param type the resource object type
+     */
+    public void setType(byte type) {
+        getTriplets().add(new ResourceObjectTypeTriplet(type));
+    }
+
+    /**
+     * Resource object types
+     */
+    protected static final byte GRAPHICS_OBJECT = 0x03;
+//    private static final byte BARCODE_OBJECT = 0x05;
+    protected static final byte IMAGE_OBJECT = 0x06;
+//    private static final byte FONT_CHARACTER_SET_OBJECT = 0x40;
+//    private static final byte CODE_PAGE_OBJECT = 0x41;
+//    private static final byte CODED_FONT_OBJECT = 0x42;
+    protected static final byte OBJECT_CONTAINER = (byte) 0x92;
+    protected static final byte DOCUMENT_OBJECT = (byte) 0xA8;
+    protected static final byte PAGE_SEGMENT_OBJECT = (byte) 0xFB;
+    protected static final byte OVERLAY_OBJECT = (byte) 0xFC;
+//    private static final byte PAGEDEF_OBJECT = (byte) 0xFD;
+//    private static final byte FORMDEF_OBJECT = (byte) 0xFE;
+
     private class ResourceObjectTypeTriplet extends Triplet {
 
         private static final byte RESOURCE_OBJECT = 0x21;
-
-        /**
-         * Resource object types
-         */
-        private static final byte GRAPHICS_OBJECT = 0x03;
-//        private static final byte BARCODE_OBJECT = 0x05;
-        private static final byte IMAGE_OBJECT = 0x06;
-//        private static final byte FONT_CHARACTER_SET_OBJECT = 0x40;
-//        private static final byte CODE_PAGE_OBJECT = 0x41;
-//        private static final byte CODED_FONT_OBJECT = 0x42;
-        private static final byte OBJECT_CONTAINER = (byte) 0x92;
-        private static final byte DOCUMENT_OBJECT = (byte) 0xA8;
-        private static final byte PAGE_SEGMENT_OBJECT = (byte) 0xFB;
-        private static final byte OVERLAY_OBJECT = (byte) 0xFC;
-//        private static final byte PAGEDEF_OBJECT = (byte) 0xFD;
-//        private static final byte FORMDEF_OBJECT = (byte) 0xFE;
 
         /**
          * Main constructor

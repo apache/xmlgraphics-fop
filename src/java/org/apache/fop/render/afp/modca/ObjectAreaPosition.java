@@ -33,9 +33,12 @@ public class ObjectAreaPosition extends AbstractAFPObject {
     private int x;
     private int y;
     private int rotation;
-
+    private int xOffset;
+    private int yOffset;
+    
     /**
      * Construct an object area position for the specified object y, y position.
+     * 
      * @param x The x coordinate.
      * @param y The y coordinate.
      * @param rotation The coordinate system rotation (must be 0, 90, 180, 270).
@@ -46,50 +49,52 @@ public class ObjectAreaPosition extends AbstractAFPObject {
         this.rotation = rotation;
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Object Area Position
-     * @param os The stream to write to
-     * @throws java.io.IOException in the event that an I/O exception of some sort has occurred.
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
+        byte[] data = new byte[33];
+        copySF(data, Type.POSITION, Category.OBJECT_AREA);
+
         byte[] len = BinaryUtils.convert(32, 2);
+        data[1] = len[0]; // Length
+        data[2] = len[1];
+            
+        data[9] = 0x01; // OAPosID = 1
+        data[10] = 0x17; // RGLength = 23
+
         byte[] xcoord = BinaryUtils.convert(x, 3);
+        data[11] = xcoord[0]; // XoaOSet
+        data[12] = xcoord[1];
+        data[13] = xcoord[2];
+
         byte[] ycoord = BinaryUtils.convert(y, 3);
-        byte[] data = new byte[] {
-            0x5A,
-            len[0], // Length
-            len[1], // Length
-            (byte) 0xD3,
-            (byte) 0xAC,
-            (byte) 0x6B,
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved
-            0x01, // OAPosID = 1
-            0x17, // RGLength = 23
-            xcoord[0], // XoaOSet
-            xcoord[1],
-            xcoord[2],
-            ycoord[0], // YoaOSet
-            ycoord[1],
-            ycoord[2],
-            (byte)(rotation / 2), // XoaOrent
-            0x00,
-            (byte)(rotation / 2 + 45), // YoaOrent
-            0x00,
-            0x00, // Reserved
-            0x00, // XocaOSet
-            0x00,
-            0x00,
-            0x00, // YocaOSet
-            0x00,
-            0x00,
-            0x00, // XocaOrent
-            0x00,
-            0x2D, // YocaOrent
-            0x00,
-            0x00, // RefCSys
-        };
+        data[14] = ycoord[0]; // YoaOSet
+        data[15] = ycoord[1];
+        data[16] = ycoord[2];
+        
+        byte xorient = (byte)(rotation / 2);
+        data[17] = xorient; // XoaOrent
+        
+        byte yorient = (byte)(rotation / 2 + 45);
+        data[19] = yorient; // YoaOrent
+
+        byte[] xoffset = BinaryUtils.convert(xOffset, 3);
+        data[22] = xoffset[0]; // XocaOSet
+        data[23] = xoffset[1];
+        data[24] = xoffset[2];
+
+        byte[] yoffset = BinaryUtils.convert(yOffset, 3);
+        data[25] = yoffset[0]; // YocaOSet
+        data[26] = yoffset[1];
+        data[27] = yoffset[2];
+
+        data[28] = 0x00; // XocaOrent
+        data[29] = 0x00;
+        
+        data[30] = 0x2D; // YocaOrent
+        data[31] = 0x00;
+
+        data[32] = 0x01; // RefCSys
+        
         os.write(data);
     }
 }

@@ -51,8 +51,12 @@ public final class AFPInfo {
     /** See AFP_STATE */
     private AFPState afpState;
 
+    /** true if SVG should be rendered as a bitmap instead of natively */
+    public boolean paintAsBitmap;
+    
     /**
      * Returns the width.
+     * 
      * @return the width
      */
     public int getWidth() {
@@ -61,6 +65,7 @@ public final class AFPInfo {
 
     /**
      * Sets the width.
+     * 
      * @param width The pageWidth to set
      */
     public void setWidth(int width) {
@@ -69,6 +74,7 @@ public final class AFPInfo {
 
     /**
      * Returns the height.
+     * 
      * @return the height
      */
     public int getHeight() {
@@ -77,6 +83,7 @@ public final class AFPInfo {
 
     /**
      * Sets the height.
+     * 
      * @param height The height to set
      */
     public void setHeight(int height) {
@@ -84,7 +91,9 @@ public final class AFPInfo {
     }
 
     /**
-     * @return Configuration the handler configuration
+     * Returns the handler configuration
+     * 
+     * @return the handler configuration
      */
     public Configuration getHandlerConfiguration() {
         return this.cfg;
@@ -92,6 +101,7 @@ public final class AFPInfo {
 
     /**
      * Sets the handler configuration
+     * 
      * @param cfg the handler configuration
      */
     public void setHandlerConfiguration(Configuration cfg) {
@@ -99,27 +109,35 @@ public final class AFPInfo {
     }
     
     /**
-     * @return FontInfo the font info
+     * Return the font info
+     * 
+     * @return the font info
      */
     public FontInfo getFontInfo() {
         return this.fontInfo;
     }
 
     /**
-     * @return Map the current page fonts
+     * Returns the current AFP state
+     * 
+     * @return the current AFP state
      */
     public AFPState getState() {
         return this.afpState;
     }
 
     /**
-     * @return AFPDataStream the afp datastream
+     * Returns the AFPDataStream the afp datastream
+     * 
+     * @return the AFPDataStream the afp datastream
      */
     public AFPDataStream getAFPDataStream() {
         return this.afpDataStream;
     }
     
     /**
+     * Returns true if supports color
+     * 
      * @return true if supports color
      */
     public boolean isColorSupported() {
@@ -127,6 +145,8 @@ public final class AFPInfo {
     }
 
     /**
+     * Returns the current x position coordinate
+     * 
      * @return the current x position coordinate
      */
     protected int getX() {
@@ -134,6 +154,8 @@ public final class AFPInfo {
     }
 
     /**
+     * Returns the current y position coordinate
+     * 
      * @return the current y position coordinate
      */
     protected int getY() {
@@ -141,6 +163,8 @@ public final class AFPInfo {
     }
 
     /**
+     * Returns the resolution
+     * 
      * @return the resolution
      */
     protected int getResolution() {
@@ -148,6 +172,7 @@ public final class AFPInfo {
     }
 
     /**
+     * Returns the number of bits per pixel to use
      * @return the number of bits per pixel to use
      */
     protected int getBitsPerPixel() {
@@ -156,6 +181,7 @@ public final class AFPInfo {
 
     /**
      * Sets the current x position coordinate
+     * 
      * @param x the current x position coordinate
      */
     protected void setX(int x) {
@@ -164,6 +190,7 @@ public final class AFPInfo {
 
     /**
      * Sets the current y position coordinate
+     * 
      * @param y the current y position coordinate
      */
     protected void setY(int y) {
@@ -172,6 +199,7 @@ public final class AFPInfo {
 
     /**
      * Sets the current font info
+     * 
      * @param fontInfo the current font info
      */
     protected void setFontInfo(FontInfo fontInfo) {
@@ -180,6 +208,7 @@ public final class AFPInfo {
 
     /**
      * Sets the AFP state
+     * 
      * @param state the AFP state
      */
     public void setState(AFPState state) {
@@ -188,12 +217,14 @@ public final class AFPInfo {
     
     /**
      * Sets the AFP datastream
+     * 
      * @param dataStream the AFP datastream
      */
     public void setAFPDataStream(AFPDataStream dataStream) {
         this.afpDataStream = dataStream;
     }
 
+    
     /** {@inheritDoc} */
     public String toString() {
         return "width=" + width

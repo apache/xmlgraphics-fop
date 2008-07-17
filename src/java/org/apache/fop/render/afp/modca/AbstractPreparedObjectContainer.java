@@ -30,9 +30,7 @@ import java.util.List;
 public abstract class AbstractPreparedObjectContainer extends AbstractNamedAFPObject
 implements PreparedAFPObject {
     
-    /**
-     * list of objects contained within this container  
-     */
+    /** list of objects contained within this container */
     protected List/*<PreparedAFPObject>*/ objects = null;
 
     /**
@@ -43,15 +41,14 @@ implements PreparedAFPObject {
 
     /**
      * Named constructor
+     * 
      * @param name the name of the container
      */
     protected AbstractPreparedObjectContainer(String name) {
         super(name);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         if (objects != null) {
             super.writeObjects(objects, os);
@@ -67,16 +64,19 @@ implements PreparedAFPObject {
     
     /**
      * Adds a given prepared object to this container
+     * 
      * @param preparedObject the prepared object
      * @return the drawingOrder if it was added, null otherwise
      */
     public PreparedAFPObject addObject(PreparedAFPObject preparedObject) {
-        log.debug(this + " adding " + preparedObject);
+//        log.debug(this + " adding " + preparedObject);
         getObjects().add(preparedObject);
         return preparedObject;
     }
     
     /**
+     * Returns the current data length
+     * 
      * @return the current data length of this container including
      * all enclosed objects (and their containers)
      */

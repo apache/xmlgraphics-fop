@@ -50,6 +50,7 @@ public class PresentationTextDescriptor extends AbstractDescriptor {
     /**
      * Constructor a PresentationTextDescriptor for the specified
      * width and height.
+     * 
      * @param width The width of the page.
      * @param height The height of the page.
      * @param widthResolution The width resolution of the page.
@@ -60,13 +61,8 @@ public class PresentationTextDescriptor extends AbstractDescriptor {
         super(width, height, widthResolution, heightResolution);
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Presentation Text Descriptor
-     * @param os The stream to write to
-     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
-     */
-    public void write(OutputStream os)
-        throws IOException {
+    /** {@inheritDoc} */
+    public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[23];
         data[0] = 0x5A;

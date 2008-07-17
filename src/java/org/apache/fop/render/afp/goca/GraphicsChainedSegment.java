@@ -31,9 +31,7 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public final class GraphicsChainedSegment extends AbstractPreparedObjectContainer {
 
-    /**
-     * The maximum segment data length
-     */
+    /** The maximum segment data length */
     protected static final int MAX_DATA_LEN = 8192;
 
     /** the current area */
@@ -69,9 +67,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         this.previous = previous;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getDataLength() {
         int dataLen = 14 + super.getDataLength();
         if (previous == null) {
@@ -84,9 +80,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         return dataLen;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected int getNameLength() {
         return 4;
     }
@@ -95,20 +89,20 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
 //    private static final byte PROLOG = 4;
 //    private static final byte APPEND_TO_EXISING = 48;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
         int len = super.getDataLength();
         byte[] segLen = BinaryUtils.convert(len, 2);
+        
+        byte[] nameBytes = getNameBytes();
         byte[] data = new byte[] {
             0x70, // BEGIN_SEGMENT
             0x0C, // Length of following parameters
-            this.nameBytes[0],
-            this.nameBytes[1],
-            this.nameBytes[2],
-            this.nameBytes[3],
+            nameBytes[0],
+            nameBytes[1],
+            nameBytes[2],
+            nameBytes[3],
             0x00, // FLAG1 (ignored)
             APPEND_NEW_SEGMENT,
             segLen[0], // SEGL
@@ -120,17 +114,13 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         };
         // P/S NAME (predecessor name)
         if (previous != null) {
-            data[10] = previous.nameBytes[0];
-            data[11] = previous.nameBytes[1];
-            data[12] = previous.nameBytes[2];
-            data[13] = previous.nameBytes[3];
+            nameBytes = previous.getNameBytes();
+            System.arraycopy(nameBytes, 0, data, 10, 4);
         }
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         // I am the first segment in the chain so write out the rest
         if (previous == null) {
@@ -142,24 +132,18 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         }
     }
 
-    /**
-     * Begins a graphics area (start of fill)
-     */
+    /** Begins a graphics area (start of fill) */
     protected void beginArea() {
         this.currentArea = new GraphicsArea();
         super.addObject(currentArea);
     }
 
-    /**
-     * Ends a graphics area (end of fill)
-     */
+    /** Ends a graphics area (end of fill) */
     protected void endArea() {
         this.currentArea = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
         if (currentArea != null) {
             currentArea.addObject(drawingOrder);
@@ -169,9 +153,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         return drawingOrder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return "GraphicsChainedSegment(name=" + super.getName() + ")";
     }

@@ -36,6 +36,7 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
 
     /**
      * Main constructor
+     * 
      * @param name the object name
      */
     public AbstractEnvironmentGroup(String name) {
@@ -52,6 +53,7 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * Actually creates the MPO object.
      * Also creates the supporting object (an IPO)
+     * 
      * @param name the name of the overlay to be used
      */
     public void createOverlay(String name) {
@@ -78,6 +80,7 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * Getter method for the most recent MapPageOverlay added to the
      * Active Environment Group (returns null if no MapPageOverlay exist)
+     * 
      * @return the most recent Map Coded Font
      */
     private MapPageOverlay getCurrentMapPageOverlay() {
@@ -88,9 +91,7 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (mapPageOverlays != null) {

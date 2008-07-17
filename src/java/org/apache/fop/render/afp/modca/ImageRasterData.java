@@ -58,11 +58,7 @@ public class ImageRasterData extends AbstractAFPObject {
         this.rasterData = data;
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Image Raster Data
-     * @param os The stream to write to
-     * @throws java.io.IOException if an I/O exception occurred
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[9];

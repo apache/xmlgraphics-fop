@@ -34,38 +34,24 @@ public class InvokeMediumMap extends AbstractNamedAFPObject {
 
     /**
      * Constructor for the Invoke Medium Map
+     * 
      * @param name the name of the medium map
      */
     public InvokeMediumMap(String name) {
         super(name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[17];
-
-        data[0] = 0x5A;
+        copySF(data, Type.MAP, Category.MEDIUM_MAP);
 
         // Set the total record length
         byte[] len = BinaryUtils.convert(16, 2); //Ignore first byte
         data[1] = len[0];
         data[2] = len[1];
 
-        // Structured field ID for a IPO
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xAB;
-        data[5] = (byte) 0xCC;
-
-        data[6] = 0x00; // Reserved
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-
-        for (int i = 0; i < nameBytes.length; i++) {
-            data[9 + i] = nameBytes[i];
-        }
         os.write(data);
     }
 }

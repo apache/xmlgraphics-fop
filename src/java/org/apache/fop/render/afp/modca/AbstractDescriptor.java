@@ -35,6 +35,7 @@ public abstract class AbstractDescriptor extends AbstractAFPObject {
     /**
      * Constructor a PresentationTextDescriptor for the specified
      * width and height.
+     * 
      * @param width The width of the page.
      * @param height The height of the page.
      * @param widthResolution The width resolution of the page.

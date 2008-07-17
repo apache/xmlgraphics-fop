@@ -18,6 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop.render.afp.modca;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -59,16 +60,14 @@ public class ImageSegment extends AbstractNamedAFPObject {
         super(name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected int getNameLength() {
         return 4;
     }
 
     /**
-     * Sets the image size parameters
-     * resolution, hsize and vsize.
+     * Sets the image size parameters resolution, hsize and vsize.
+     * 
      * @param hresol The horizontal resolution of the image.
      * @param vresol The vertical resolution of the image.
      * @param hsize The horizontal size of the image.
@@ -83,6 +82,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
 
     /**
      * Sets the image encoding.
+     * 
      * @param encoding The image encoding.
      */
     public void setImageEncoding(byte encoding) {
@@ -94,6 +94,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
 
     /**
      * Sets the image compression.
+     * 
      * @param compression The image compression.
      */
     public void setImageCompression(byte compression) {
@@ -105,6 +106,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
 
     /**
      * Sets the image IDE size.
+     * 
      * @param size The IDE size.
      */
     public void setImageIDESize(byte size) {
@@ -116,6 +118,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
 
     /**
      * Sets the image IDE color model.
+     * 
      * @param colorModel    the IDE color model.
      */
     public void setImageIDEColorModel(byte colorModel) {
@@ -127,6 +130,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
 
     /**
      * Set the data of the image.
+     * 
      * @param data the image data
      */
     public void setImageData(byte[] data) {
@@ -136,19 +140,16 @@ public class ImageSegment extends AbstractNamedAFPObject {
         imageContent.setImageData(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         if (imageContent != null) {
             imageContent.write(os);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
+        byte[] nameBytes = getNameBytes();
         byte[] data = new byte[] {
             0x70, // ID
             0x04, // Length
@@ -160,11 +161,8 @@ public class ImageSegment extends AbstractNamedAFPObject {
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
-
         byte[] data = new byte[] {
             0x71, // ID
             0x00, // Length
