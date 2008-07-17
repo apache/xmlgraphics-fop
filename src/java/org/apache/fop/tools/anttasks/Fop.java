@@ -444,14 +444,14 @@ class FOPTaskStarter {
         //Set base directory
         if (task.getBasedir() != null) {
             try {
-                this.baseURL = task.getBasedir().toURL().toExternalForm();
+                this.baseURL = task.getBasedir().toURI().toURL().toExternalForm();
             } catch (MalformedURLException mfue) {
                 logger.error("Error creating base URL from base directory", mfue);
             }
         } else {
             try {
                 if (task.getFofile() != null) {
-                    this.baseURL =  task.getFofile().getParentFile().toURL().
+                    this.baseURL =  task.getFofile().getParentFile().toURI().toURL().
                                       toExternalForm();
                 }
             } catch (MalformedURLException mfue) {
@@ -519,11 +519,11 @@ class FOPTaskStarter {
 
                 try {
                     if (task.getRelativebase()) {
-                        this.baseURL = f.getParentFile().toURL().
+                        this.baseURL = f.getParentFile().toURI().toURL().
                                          toExternalForm();
                     }
                     if (this.baseURL == null) {
-                        this.baseURL = fs.getDir(task.getProject()).toURL().
+                        this.baseURL = fs.getDir(task.getProject()).toURI().toURL().
                                           toExternalForm();
                     }
 

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
 
 package org.apache.fop.fonts;
 
-import java.awt.Graphics2D;
 import java.net.MalformedURLException;
 
 import javax.xml.transform.Source;
@@ -27,7 +26,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.fonts.FontTriplet.Matcher;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
-import org.apache.fop.render.PrintRenderer;
 
 // TODO: Refactor fonts package so major font activities (autodetection etc)
 // are all centrally managed and delegated from this class, also remove dependency on FopFactory
@@ -144,55 +142,17 @@ public class FontManager {
     }
 
     /**
-     * Sets up the fonts on a given PrintRenderer
-     * @param renderer a print renderer
+     * Sets up the fonts on a given FontInfo object. The fonts to setup are defined by an
+     * array of {@code FontCollection} objects.
+     * @param fontInfo the FontInfo object to set up
+     * @param fontCollections the array of font collections/sources
      */
-    public void setupRenderer(PrintRenderer renderer) {
-        FontInfo fontInfo = renderer.getFontInfo();
-
+    public void setup(FontInfo fontInfo, FontCollection[] fontCollections) {
         int startNum = 1;
 
-        // Configure base 14 fonts
-        org.apache.fop.fonts.base14.Base14FontCollection base14FontCollection
-            = new org.apache.fop.fonts.base14.Base14FontCollection(this.enableBase14Kerning);
-        startNum = base14FontCollection.setup(startNum, fontInfo);
-
-        // Configure any custom font collection
-        org.apache.fop.fonts.CustomFontCollection customFontCollection
-            = new org.apache.fop.fonts.CustomFontCollection(renderer);
-        startNum = customFontCollection.setup(startNum, fontInfo);
-
-        // Make any defined substitutions in the font info
-        getFontSubstitutions().adjustFontInfo(fontInfo);
-    }
-
-    /**
-     * Sets up the fonts on a given PrintRenderer with Graphics2D
-     * @param renderer a print renderer
-     * @param graphics2D a graphics 2D
-     */
-    public void setupRenderer(PrintRenderer renderer, Graphics2D graphics2D) {
-        FontInfo fontInfo = renderer.getFontInfo();
-
-        int startNum = 1;
-
-        // setup base 14 fonts
-        org.apache.fop.render.java2d.Base14FontCollection base14FontCollection
-            = new org.apache.fop.render.java2d.Base14FontCollection(graphics2D);
-
-        // setup any custom font collection
-        startNum = base14FontCollection.setup(startNum, fontInfo);
-
-        // setup any installed fonts
-        org.apache.fop.render.java2d.InstalledFontCollection installedFontCollection
-            = new org.apache.fop.render.java2d.InstalledFontCollection(graphics2D);
-        startNum = installedFontCollection.setup(startNum, fontInfo);
-
-        // setup any configured fonts
-        org.apache.fop.render.java2d.ConfiguredFontCollection configuredFontCollection
-            = new org.apache.fop.render.java2d.ConfiguredFontCollection(renderer);
-        startNum = configuredFontCollection.setup(startNum, fontInfo);
-
+        for (int i = 0, c = fontCollections.length; i < c; i++) {
+            startNum = fontCollections[i].setup(startNum, fontInfo);
+        }
         // Make any defined substitutions in the font info
         getFontSubstitutions().adjustFontInfo(fontInfo);
     }
