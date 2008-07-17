@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,6 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.render.PrintRenderer;
 
 /**
  * A java2d configured font collection
@@ -44,37 +43,36 @@ public class ConfiguredFontCollection implements FontCollection {
 
     private static Log log = LogFactory.getLog(ConfiguredFontCollection.class);
 
-    private PrintRenderer renderer = null;
+    private FontResolver fontResolver;
+    private List/*<EmbedFontInfo>*/ embedFontInfoList;
 
     /**
      * Main constructor
-     * 
-     * @param renderer a print renderer
+     * @param fontResolver a font resolver
+     * @param customFonts the list of custom fonts
      */
-    public ConfiguredFontCollection(PrintRenderer renderer) {
-        this.renderer = renderer;
+    public ConfiguredFontCollection(FontResolver fontResolver,
+            List/*<EmbedFontInfo>*/ customFonts) {
+        this.fontResolver = fontResolver;
+        if (this.fontResolver == null) {
+            //Ensure that we have minimal font resolution capabilities
+            this.fontResolver = FontManager.createMinimalFontResolver();
+        }
+        this.embedFontInfoList = customFonts;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int setup(int start, FontInfo fontInfo) {
-        List/*<EmbedFontInfo>*/ fontList = renderer.getFontList();
-        FontResolver resolver = renderer.getFontResolver();
         int num = start;
-        if (fontList == null || fontList.size() < 1) {
+        if (embedFontInfoList == null || embedFontInfoList.size() < 1) {
             log.debug("No user configured fonts found.");
             return num;
         }
-        if (resolver == null) {
-            // Ensure that we have minimal font resolution capabilities
-            resolver = FontManager.createMinimalFontResolver();
-        }
         String internalName = null;
 
-        for (int i = 0; i < fontList.size(); i++) {
+        for (int i = 0; i < embedFontInfoList.size(); i++) {
 
-            EmbedFontInfo configFontInfo = (EmbedFontInfo) fontList.get(i);
+            EmbedFontInfo configFontInfo = (EmbedFontInfo) embedFontInfoList.get(i);
             String fontFile = configFontInfo.getEmbedFile();
             internalName = "F" + num;
             num++;
@@ -84,11 +82,12 @@ public class ConfiguredFontCollection implements FontCollection {
                 // If the user specified an XML-based metrics file, we'll use it
                 // Otherwise, calculate metrics directly from the font file.
                 if (metricsUrl != null) {
-                    LazyFont fontMetrics = new LazyFont(configFontInfo, resolver);
-                    Source fontSource = resolver.resolve(configFontInfo.getEmbedFile());
+                    LazyFont fontMetrics = new LazyFont(configFontInfo, fontResolver);
+                    Source fontSource = fontResolver.resolve(configFontInfo.getEmbedFile());
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
-                    CustomFont fontMetrics = FontLoader.loadFont(fontFile, null, true, resolver);
+                    CustomFont fontMetrics = FontLoader.loadFont(
+                            fontFile, null, true, fontResolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
                 }
 

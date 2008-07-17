@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -82,6 +82,7 @@ import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.render.Graphics2DAdapter;
@@ -89,7 +90,10 @@ import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.RendererEventProducer;
+import org.apache.fop.render.java2d.Base14FontCollection;
+import org.apache.fop.render.java2d.ConfiguredFontCollection;
 import org.apache.fop.render.java2d.FontMetricsMapper;
+import org.apache.fop.render.java2d.InstalledFontCollection;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
@@ -207,7 +211,13 @@ public class PCLRenderer extends PrintRenderer {
         graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
-        userAgent.getFactory().getFontManager().setupRenderer(this, graphics2D);
+        FontCollection[] fontCollections = new FontCollection[] {
+                new Base14FontCollection(graphics2D),
+                new InstalledFontCollection(graphics2D),
+                new ConfiguredFontCollection(getFontResolver(), getFontList())
+        };
+        userAgent.getFactory().getFontManager().setup(
+                getFontInfo(), fontCollections);
     }
 
     /**
@@ -1035,7 +1045,7 @@ public class PCLRenderer extends PrintRenderer {
         //So there's some optimization potential but not otherwise PCLRenderer is a little
         //difficult to derive from AbstractPathOrientedRenderer. Maybe an additional layer
         //between PrintRenderer and AbstractPathOrientedRenderer is necessary.
-        
+
         // save position and offset
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
@@ -1045,7 +1055,7 @@ public class PCLRenderer extends PrintRenderer {
         at.translate(currentIPPosition, currentBPPosition);
         at.translate(block.getXOffset(), block.getYOffset());
         at.translate(0, block.getSpaceBefore());
-        
+
         if (!at.isIdentity()) {
             saveGraphicsState();
             concatenateTransformationMatrix(mptToPt(at));
@@ -1063,12 +1073,12 @@ public class PCLRenderer extends PrintRenderer {
         if (!at.isIdentity()) {
             restoreGraphicsState();
         }
-        
+
         // stacked and relative blocks effect stacking
         currentIPPosition = saveIP;
         currentBPPosition = saveBP;
     }
-    
+
     /** {@inheritDoc} */
     protected void renderFlow(NormalFlow flow) {
         //TODO This is the same code as in AbstractPathOrientedRenderer
@@ -1083,7 +1093,7 @@ public class PCLRenderer extends PrintRenderer {
         //Establish a new coordinate system
         AffineTransform at = new AffineTransform();
         at.translate(currentIPPosition, currentBPPosition);
-        
+
         if (!at.isIdentity()) {
             saveGraphicsState();
             concatenateTransformationMatrix(mptToPt(at));
@@ -1092,16 +1102,16 @@ public class PCLRenderer extends PrintRenderer {
         currentIPPosition = 0;
         currentBPPosition = 0;
         super.renderFlow(flow);
-        
+
         if (!at.isIdentity()) {
             restoreGraphicsState();
         }
-        
+
         // stacked and relative blocks effect stacking
         currentIPPosition = saveIP;
         currentBPPosition = saveBP;
     }
-    
+
     /**
      * Concatenates the current transformation matrix with the given one, therefore establishing
      * a new coordinate system.
@@ -1225,7 +1235,7 @@ public class PCLRenderer extends PrintRenderer {
         renderDocument(doc, ns, pos, fo.getForeignAttributes());
     }
 
-    /** 
+    /**
      * Common method to render the background and borders for any inline area.
      * The all borders and padding are drawn outside the specified area.
      * @param area the inline area for which the background, border and padding is to be

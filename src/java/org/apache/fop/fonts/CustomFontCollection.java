@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,36 +21,33 @@ package org.apache.fop.fonts;
 
 import java.util.List;
 
-import org.apache.fop.render.PrintRenderer;
-
 /**
  * Sets up a set of custom (embedded) fonts
  */
 public class CustomFontCollection implements FontCollection {
 
-    private PrintRenderer renderer = null;
+    private FontResolver fontResolver;
+    private List/*<EmbedFontInfo>*/ embedFontInfoList;
 
     /**
-     * A print renderer to configure
-     * @param renderer a print renderer
+     * Main constructor.
+     * @param fontResolver a font resolver
+     * @param customFonts the list of custom fonts
      */
-    public CustomFontCollection(PrintRenderer renderer) {
-        this.renderer = renderer;
+    public CustomFontCollection(FontResolver fontResolver,
+            List/*<EmbedFontInfo>*/ customFonts) {
+        this.fontResolver = fontResolver;
+        if (this.fontResolver == null) {
+            //Ensure that we have minimal font resolution capabilities
+            this.fontResolver = FontManager.createMinimalFontResolver();
+        }
+        this.embedFontInfoList = customFonts;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int setup(int num, FontInfo fontInfo) {
-        List/*<EmbedFontInfo>*/ embedFontInfoList = renderer.getFontList();
         if (embedFontInfoList == null) {
             return num; //No fonts to process
-        }
-
-        FontResolver resolver = renderer.getFontResolver();
-        if (resolver == null) {
-            //Ensure that we have minimal font resolution capabilities
-            resolver = FontManager.createMinimalFontResolver();
         }
 
         String internalName = null;
@@ -69,7 +66,7 @@ public class CustomFontCollection implements FontCollection {
             fontInfo.addMetrics(internalName, reader.getFont());
             */
 
-            LazyFont font = new LazyFont(embedFontInfo, resolver);
+            LazyFont font = new LazyFont(embedFontInfo, this.fontResolver);
             fontInfo.addMetrics(internalName, font);
 
             List triplets = embedFontInfo.getFontTriplets();
