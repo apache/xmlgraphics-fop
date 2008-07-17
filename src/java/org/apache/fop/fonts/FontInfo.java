@@ -219,7 +219,7 @@ public class FontInfo {
     private FontTriplet fuzzyFontLookup(String family, String style,
             int weight, FontTriplet startKey, boolean substFont) {
         FontTriplet key;
-        String internalFontKey;
+        String internalFontKey = null;
         if (!family.equals(startKey.getName())) {
             key = createFontKey(family, style, weight);
             internalFontKey = getInternalFontKey(key);
@@ -230,8 +230,10 @@ public class FontInfo {
 
         // adjust weight, favouring normal or bold
         key = findAdjustWeight(family, style, weight);
-        internalFontKey = getInternalFontKey(key);
-
+        if (key != null) {
+            internalFontKey = getInternalFontKey(key);
+        }
+        
         if (!substFont && internalFontKey == null) {
             return null;
         }
@@ -364,7 +366,8 @@ public class FontInfo {
         FontTriplet triplet;
         List tmpTriplets = new java.util.ArrayList();
         for (int i = 0, c = families.length; i < c; i++) {
-            triplet = fontLookup(families[i], style, weight, (i >= families.length - 1));
+            boolean substitutable = (i >= families.length - 1);
+            triplet = fontLookup(families[i], style, weight, substitutable);
             if (triplet != null) {
                 tmpTriplets.add(triplet);
             }
