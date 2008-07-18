@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import org.apache.fop.render.afp.modca.triplets.DescriptorPositionTriplet;
 import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
-import org.apache.fop.render.afp.modca.triplets.PresentationSpaceMixingRulesTriplet;
 import org.apache.fop.render.afp.modca.triplets.PresentationSpaceResetMixingTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
