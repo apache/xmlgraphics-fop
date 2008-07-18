@@ -27,6 +27,7 @@ import org.apache.fop.render.afp.modca.triplets.DescriptorPositionTriplet;
 import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.render.afp.modca.triplets.PresentationSpaceMixingRulesTriplet;
+import org.apache.fop.render.afp.modca.triplets.PresentationSpaceResetMixingTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -53,15 +54,18 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
     protected byte[] getTripletData() throws IOException {
         if (tripletData == null) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final byte descriptorPositionId = 0x01;
-            new DescriptorPositionTriplet(descriptorPositionId).write(bos);
+            
+            // Specifies the associated ObjectAreaPosition structured field
+            final byte oapId = 0x01;
+            new DescriptorPositionTriplet(oapId).write(bos);
+
             new MeasurementUnitsTriplet(widthRes, heightRes).write(bos);
+
             new ObjectAreaSizeTriplet(width, height).write(bos);
-            byte[] mixingRules = new byte[] {
-                 PresentationSpaceMixingRulesTriplet.RULE_FORE_ON_BACK, 
-                 PresentationSpaceMixingRulesTriplet.OVERPAINT
-            };
-            new PresentationSpaceMixingRulesTriplet(mixingRules).write(bos);
+            
+            new PresentationSpaceResetMixingTriplet(
+                    PresentationSpaceResetMixingTriplet.NOT_RESET).write(bos);
+            
             this.tripletData = bos.toByteArray();
         }
         return this.tripletData;
