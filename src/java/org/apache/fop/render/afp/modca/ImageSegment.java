@@ -54,6 +54,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
     /**
      * Constructor for the image segment with the specified name,
      * the name must be a fixed length of eight characters.
+     * 
      * @param name The name of the image.
      */
     public ImageSegment(String name) {

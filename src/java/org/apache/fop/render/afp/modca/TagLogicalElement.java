@@ -49,72 +49,41 @@ public class TagLogicalElement extends AbstractAFPObject {
     /**
      * Name of the key, used within the TLE
      */
-    private String tleName = null;
+    private String name = null;
 
     /**
      * Value returned by the key
      */
-    private String tleValue = null;
-
-    /**
-     * Byte representaion of the name
-     */
-    private byte[] tleByteName = null;
-
-    /**
-     * Byte representaion of the value
-     */
-    private byte[] tleByteValue = null;
+    private String value = null;
 
     /**
      * Construct a tag logical element with the name and value specified.
+     * 
      * @param name the name of the tag logical element
      * @param value the value of the tag logical element
      */
     public TagLogicalElement(String name, String value) {
-
-        this.tleName = name;
-        this.tleValue = value;
-
-        try {
-
-            this.tleByteName = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-            this.tleByteValue = value.getBytes(AFPConstants.EBCIDIC_ENCODING);
-
-        } catch (UnsupportedEncodingException usee) {
-
-            this.tleByteName = name.getBytes();
-            this.tleByteValue = value.getBytes();
-            log.warn(
-                "Constructor:: UnsupportedEncodingException translating the name "
-                + name);
-
-        }
-
+        this.name = name;
+        this.value = value;
     }
 
-    /**
-     * Accessor method to obtain the byte array AFP datastream for the
-     * TagLogicalElement.
-     * @param os The outputsteam stream
-     * @throws java.io.IOException if an I/O exception occurred
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
 
-        byte[] data = new byte[17 + tleName.length() + tleValue.length()];
+        byte[] data = new byte[17 + name.length() + value.length()];
 
         data[0] = 0x5A;
         // Set the total record length
         byte[] rl1
-            = BinaryUtils.convert(16 + tleName.length() + tleValue.length(), 2);
+            = BinaryUtils.convert(16 + name.length() + value.length(), 2);
         //Ignore first byte
         data[1] = rl1[0];
         data[2] = rl1[1];
 
         // Structured field ID for a TLE
         data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xA0;
-        data[5] = (byte) 0x90;
+        data[4] = (byte) Type.ATTRIBUTE;
+        data[5] = (byte) Category.PROCESS_ELEMENT;
 
         data[6] = 0x00; // Reserved
         data[7] = 0x00; // Reserved
@@ -122,11 +91,24 @@ public class TagLogicalElement extends AbstractAFPObject {
 
         //Use 2 triplets, attrubute name and value (the key for indexing)
 
-        byte[] rl2 = BinaryUtils.convert(tleName.length() + 4, 1);
+        byte[] rl2 = BinaryUtils.convert(name.length() + 4, 1);
         data[9] = rl2[0]; // length of the triplet, including this field
         data[10] = 0x02; //Identifies it as a FQN triplet
         data[11] = 0x0B; // GID format
         data[12] = 0x00;
+
+        byte[] tleByteName = null;
+        byte[] tleByteValue = null;
+        try {
+            tleByteName = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
+            tleByteValue = value.getBytes(AFPConstants.EBCIDIC_ENCODING);
+        } catch (UnsupportedEncodingException usee) {
+            tleByteName = name.getBytes();
+            tleByteValue = value.getBytes();
+            log.warn(
+                "Constructor:: UnsupportedEncodingException translating the name "
+                + name);
+        }
 
         int pos = 13;
         for (int i = 0; i < tleByteName.length; i++) {

@@ -90,6 +90,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
     /**
      * Sets the image size parameters
      * resolution, hsize and vsize.
+     * 
      * @param hresol The horizontal resolution of the image.
      * @param vresol The vertical resolution of the image.
      * @param hsize The horizontal size of the image.
@@ -101,6 +102,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Sets the image encoding.
+     * 
      * @param encoding The image encoding.
      */
     public void setImageEncoding(byte encoding) {
@@ -109,6 +111,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Sets the image compression.
+     * 
      * @param compression The image compression.
      */
     public void setImageCompression(byte compression) {
@@ -117,6 +120,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Sets the image IDE size.
+     * 
      * @param size The IDE size.
      */
     public void setImageIDESize(byte size) {
@@ -125,6 +129,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Sets the image IDE color model.
+     * 
      * @param colorModel    the IDE color model.
      */
     public void setImageIDEColorModel(byte colorModel) {
@@ -133,15 +138,14 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Set the data of the image.
+     * 
      * @param data the image data
      */
     public void setImageData(byte[] data) {
         this.imageData = data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         if (imageSizeParameter != null) {
             imageSizeParameter.write(os);
@@ -161,9 +165,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             (byte)0x91, // ID
@@ -173,9 +175,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             (byte)0x93, // ID
@@ -186,17 +186,16 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Helper method to return the start of the image segment.
+     * 
      * @return byte[] The data stream.
      */
     private byte[] getImageDataStart(int len) {
-
         byte[] data = new byte[] {
             (byte)0xFE, // ID
             (byte)0x92, // ID
             0x00, // Length
             0x00, // Length
         };
-
         byte[] l = BinaryUtils.convert(len, 2);
         data[2] = l[0];
         data[3] = l[1];
@@ -206,6 +205,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Helper method to return the image encoding parameter.
+     * 
      * @return byte[] The data stream.
      */
     private byte[] getImageEncodingParameter() {
@@ -220,6 +220,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Helper method to return the external algorithm parameter.
+     * 
      * @return byte[] The data stream.
      */
     private byte[] getExternalAlgorithmParameter() {
@@ -246,6 +247,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Helper method to return the image encoding parameter.
+     * 
      * @return byte[] The data stream.
      */
     private byte[] getImageIDESizeParameter() {
@@ -259,6 +261,7 @@ public class ImageContent extends AbstractStructuredAFPObject {
 
     /**
      * Helper method to return the external algorithm parameter.
+     * 
      * @return byte[] The data stream.
      */
     private byte[] getIDEStructureParameter() {

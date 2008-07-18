@@ -96,54 +96,6 @@ public class PageObject extends AbstractResourceGroupContainer {
         addObject(ipo);
     }
 
-//    /**
-//     * @return a new page segment object
-//     */
-//    private PageSegment createPageSegment() {
-//        String name = PAGE_SEGMENT_NAME_PREFIX
-//        + StringUtils.lpad(String.valueOf(++pageSegmentCount), '0', 5);
-//        PageSegment pageSegment = new PageSegment(name);
-//        return pageSegment;
-//    }
-    
-//    /**
-//     * @return the current page segment
-//     */
-//    private PageSegment getCurrentPageSegment() {
-//        if (currentPageSegment == null) {
-//            this.currentPageSegment = createPageSegment();        
-//            super.addObject(currentPageSegment);
-//        }
-//        return this.currentPageSegment;
-//    }
-//    
-//    private static final String PAGE_SEGMENT_NAME_PREFIX = "PSG";
-
-//    /**
-//     * Starts a new page segment and makes it current.
-//     */
-//    public void startPageSegment() {
-//        getCurrentPageSegment();
-//    }
-//
-//    /**
-//     * Ends the current page segment.
-//     */
-//    public void endPageSegment() {
-//        this.currentPageSegment = null;
-//    }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    protected void addObject(AbstractAFPObject obj) {
-////        if (currentPageSegment != null) {
-////            getCurrentPageSegment().addObject(obj);
-////        } else {
-//            super.addObject(obj);
-////        }
-//    }
-
     /**
      * This method will create shading on the page using the specified
      * coordinates (the shading contrast is controlled via the red, green blue

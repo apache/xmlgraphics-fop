@@ -32,7 +32,6 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
 /**
  * The Object Area Descriptor structured field specifies the size and attributes
  * of an object area presentation space.
- *
  */
 public class ObjectAreaDescriptor extends AbstractDescriptor {
 

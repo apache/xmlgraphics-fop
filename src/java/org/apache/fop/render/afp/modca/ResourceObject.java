@@ -49,46 +49,7 @@ public class ResourceObject extends AbstractPreparedAFPObject {
      */
     public void setDataObject(AbstractNamedAFPObject obj) {
         this.namedObject = obj;
-//        
-//        String fqn = obj.getFullyQualifiedName();
-//        if (fqn != null) {
-//            super.setFullyQualifiedName(
-//                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
-//                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-//                fqn);
-//        }
-//        
-//        byte type;
-//        if (obj instanceof ObjectContainer) {
-//            type = ResourceObjectTypeTriplet.OBJECT_CONTAINER;
-//        } else if (obj instanceof ImageObject) {
-//            type = ResourceObjectTypeTriplet.IMAGE_OBJECT;
-//        } else if (obj instanceof GraphicsObject) {
-//            type = ResourceObjectTypeTriplet.GRAPHICS_OBJECT;
-//        } else if (obj instanceof Document) {
-//            type = ResourceObjectTypeTriplet.DOCUMENT_OBJECT;
-//        } else if (obj instanceof PageSegment) {
-//            type = ResourceObjectTypeTriplet.PAGE_SEGMENT_OBJECT;
-//        } else if (obj instanceof Overlay) {
-//            type = ResourceObjectTypeTriplet.OVERLAY_OBJECT;
-//        } else {
-//            throw new UnsupportedOperationException(
-//                    "Unsupported resource object type " + obj);
-//        }
-//        getTriplets().add(new ResourceObjectTypeTriplet(type));
     }
-
-//    /** {@inheritDoc} */
-//    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
-//        this.dataObjectInfo = dataObjectInfo;
-//        
-//        if (namedObject instanceof ObjectContainer) {
-//            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
-//            super.setObjectClassification(
-//                    ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
-//                    objectType);
-//        }
-//    }
         
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {

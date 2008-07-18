@@ -80,11 +80,7 @@ public class MapPageOverlay extends AbstractAFPObject {
         }
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the Map Page Overlay
-     * @param os The stream to write to
-     * @throws java.io.IOException if an I/O exception occurred
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
         int oLayCount = getOverlays().size();
         int recordlength = oLayCount * 18;
@@ -102,8 +98,8 @@ public class MapPageOverlay extends AbstractAFPObject {
 
         // Structured field ID for a MPO
         data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xAB;
-        data[5] = (byte) 0xD8;
+        data[4] = (byte) Type.MAP;
+        data[5] = (byte) Category.PAGE_OVERLAY;
 
         data[6] = 0x00; // Reserved
         data[7] = 0x00; // Reserved

@@ -34,6 +34,7 @@ public class TagLogicalElementBean {
 
     /**
      * Constructor for the TagLogicalElementBean.
+     * 
      * @param key the key attribute
      * @param value the value attribute
      */
@@ -44,6 +45,7 @@ public class TagLogicalElementBean {
 
     /**
      * Getter for the key attribute.
+     * 
      * @return the key
      */
     public String getKey() {
@@ -52,6 +54,7 @@ public class TagLogicalElementBean {
 
     /**
      * Getter for the value attribute.
+     * 
      * @return the value
      */
     public String getValue() {

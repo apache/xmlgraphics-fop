@@ -21,16 +21,11 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.fop.render.afp.DataObjectCache;
-import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ResourceInfo;
-import org.apache.fop.render.afp.ResourceLevel;
-import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
  * A Resource Group contains a set of overlays.
@@ -106,24 +101,24 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
 //        return includeObj;
 //    }
     
-    /**
-     * Checks if a named object is of a valid type to be added to a resource group
-     * 
-     * @param namedObj a named object
-     * @return true if the named object is of a valid type to be added to a resource group
-     */
-    private boolean isValidObjectType(AbstractNamedAFPObject namedObj) {
-        return (namedObj instanceof Overlay
-                || namedObj instanceof ResourceObject
-                || namedObj instanceof PageSegment
-                || namedObj instanceof GraphicsObject
-                || namedObj instanceof ImageObject
-                || namedObj instanceof ObjectContainer
-                || namedObj instanceof Document
-                // || namedObj instanceof FormMap
-                // || namedObj instanceof BarcodeObject 
-                );
-    }
+//    /**
+//     * Checks if a named object is of a valid type to be added to a resource group
+//     * 
+//     * @param namedObj a named object
+//     * @return true if the named object is of a valid type to be added to a resource group
+//     */
+//    private boolean isValidObjectType(AbstractNamedAFPObject namedObj) {
+//        return (namedObj instanceof Overlay
+//                || namedObj instanceof ResourceObject
+//                || namedObj instanceof PageSegment
+//                || namedObj instanceof GraphicsObject
+//                || namedObj instanceof ImageObject
+//                || namedObj instanceof ObjectContainer
+//                || namedObj instanceof Document
+//                // || namedObj instanceof FormMap
+//                // || namedObj instanceof BarcodeObject 
+//                );
+//    }
 
     /**
      * Add this object cache resource info to this resource group

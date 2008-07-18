@@ -47,30 +47,20 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
     /**
      * The collection of map coded fonts (maximum of 254)
      */
-    private List fontList = null;
+    private List/*<FontDefinition>*/ fontList = new java.util.ArrayList();
 
     /**
      * Constructor for the MapCodedFont
      */
     public MapCodedFont() {
-        fontList = new java.util.ArrayList();
     }
 
     /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
-        byte[] startData = new byte[] {
-            0x5A,
-            0x00, // Reserved
-            0x00, // Reserved
-            (byte)0xD3,
-            (byte)0xAB, // Format 2
-            (byte)0x8A,
-            0x00, // Reserved
-            0x00, // Reserved
-            0x00, // Reserved
-        };
-        
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        byte[] startData = new byte[9];
+        copySF(startData, Type.MAP, Category.CODED_FONT);
         baos.write(startData);
 
         Iterator iter = fontList.iterator();

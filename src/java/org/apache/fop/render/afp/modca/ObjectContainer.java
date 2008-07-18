@@ -23,9 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.DataObjectInfo;
-import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
-import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -41,9 +38,6 @@ public class ObjectContainer extends AbstractNamedAFPObject /*implements DataObj
     /** the object data */
     private byte[] objectData = null;
 
-//    /** the data object info */
-//    private DataObjectInfo dataObjectInfo;
-    
     /**
      * Default constructor
      */
@@ -69,35 +63,6 @@ public class ObjectContainer extends AbstractNamedAFPObject /*implements DataObj
         this.dataObj = dataObj;        
     }
 
-//    /** {@inheritDoc} */
-//    public AbstractNamedAFPObject getDataObject() {
-//        return this.dataObj;
-//    }
-//    
-//    /** {@inheritDoc} */
-//    public DataObjectInfo getDataObjectInfo() {
-//        return this.dataObjectInfo;
-//    }
-
-//    /** {@inheritDoc} */
-//    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
-//        this.dataObjectInfo = dataObjectInfo;
-//        
-//        Registry registry = Registry.getInstance();
-//        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
-//        if (objectType != null) {
-//            super.setObjectClassification(
-//                    ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
-//                    objectType);
-//        } else {
-//            log.warn("no object type for " + dataObjectInfo.getUri());
-//        }
-//        super.setFullyQualifiedName(
-//                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
-//                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-//                dataObjectInfo.getUri());
-//    }
-
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         // create object data from data object
@@ -122,8 +87,7 @@ public class ObjectContainer extends AbstractNamedAFPObject /*implements DataObj
         
         // write out object data in chunks of object container data
         for (int i = 0; i <= objectData.length; i += ObjectContainerData.MAX_DATA_LEN) {
-            ObjectContainerData objectContainerData = new ObjectContainerData(objectData, i);
-            objectContainerData.write(os);
+            new ObjectContainerData(objectData, i).write(os);
         }
     }
     
@@ -142,32 +106,36 @@ public class ObjectContainer extends AbstractNamedAFPObject /*implements DataObj
         /** The maximum object container data length */ 
         private static final int MAX_DATA_LEN = 32759;
         
+        private byte[] objData = null;
+        
+        private int startIndex;
+        
         /**
          * Main constructor
          * 
          * @param objData the object data
          */
         public ObjectContainerData(byte[] objData, int startIndex) {
+            this.objData = objData;
+            this.startIndex = startIndex;
+        }
+        
+        /** {@inheritDoc} */
+        public void write(OutputStream os) throws IOException {
             int dataLen = MAX_DATA_LEN;
             if (startIndex + MAX_DATA_LEN >= objData.length) {
                 dataLen = objData.length - startIndex - 1;
             }
-            byte[] len = BinaryUtils.convert(8 + dataLen, 2);
             byte[] data = new byte[9 + dataLen];
-            data[0] = 0x5A; // Structured field identifier 
+            copySF(data, Type.DATA, Category.OBJECT_CONTAINER);
+
+            byte[] len = BinaryUtils.convert(8 + dataLen, 2);
             data[1] = len[0]; // Length byte 1
             data[2] = len[1]; // Length byte 2
-            data[3] = (byte)0xD3; // Structured field id byte 1
-            data[4] = (byte)0xEE; // Structured field id byte 2
-            data[5] = getCategoryCode(); // Structured field id byte 3
-            data[6] = 0x00; // Flags
-            data[7] = 0x00; // Reserved
-            data[8] = 0x00; // Reserved
             
             // copy object data chunk
             System.arraycopy(objData, startIndex, data, 9, dataLen);
-            
-            super.setData(data);
+            os.write(data);
         }
         
         /** {@inheritDoc} */
@@ -177,14 +145,5 @@ public class ObjectContainer extends AbstractNamedAFPObject /*implements DataObj
                 + ")";
         }
 
-        /** {@inheritDoc} */
-        protected byte getCategoryCode() {
-            return (byte)0x92;
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected byte getCategoryCode() {
-        return (byte)0x92;
     }
 }

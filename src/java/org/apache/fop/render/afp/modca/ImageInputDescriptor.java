@@ -40,16 +40,10 @@ public class ImageInputDescriptor extends AbstractAFPObject {
     public void write(OutputStream os) throws IOException {
 
         byte[] data = new byte[45];
-
-        data[0] = 0x5A;
-        data[1] = 0x00;
+        copySF(data, Type.DESCRIPTOR, Category.IM_IMAGE);
+        
+        data[1] = 0x00; // length
         data[2] = 0x2C;
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xA6;
-        data[5] = (byte) 0x7B;
-        data[6] = 0x00;
-        data[7] = 0x00;
-        data[8] = 0x00;
 
         // Constant data.
         data[9] = 0x00;
@@ -127,12 +121,12 @@ public class ImageInputDescriptor extends AbstractAFPObject {
         data[44] = (byte)0xFF;
 
         os.write(data);
-
     }
 
     /**
      * Sets the resolution information for the raster image
      * the default value is a resolution of 240 dpi.
+     * 
      * @param resolution The resolution value
      */
     public void setResolution(int resolution) {

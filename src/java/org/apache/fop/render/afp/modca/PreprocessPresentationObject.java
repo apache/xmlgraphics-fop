@@ -96,18 +96,13 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
     public void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
 
-        byte[] l = BinaryUtils.convert(19 + getTripletDataLength(), 2);
         byte[] data = new byte[9];
-        data[0] = 0x5A; // Structured field identifier
+        copySF(data, Type.PROCESS, Category.DATA_RESOURCE);
+
+        byte[] l = BinaryUtils.convert(19 + getTripletDataLength(), 2);
         data[1] = l[0]; // Length byte 1
         data[2] = l[1]; // Length byte 1
-        data[3] = (byte)0xD3; // Structured field id byte 1
-        data[4] = (byte)0xAD; // Structured field id byte 2
-        data[5] = (byte)0xC3; // Structured field id byte 3
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        
+
         os.write(data);
     }
     
@@ -147,8 +142,4 @@ public class PreprocessPresentationObject extends AbstractStructuredAFPObject {
         super.writeContent(os);
     }
 
-    /** {@inheritDoc} */
-    protected byte getCategoryCode() {
-        return (byte)0xC3;
-    }
 }

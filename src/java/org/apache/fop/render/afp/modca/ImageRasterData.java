@@ -60,22 +60,13 @@ public class ImageRasterData extends AbstractAFPObject {
 
     /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
-
         byte[] data = new byte[9];
-
-        data[0] = 0x5A;
-
+        copySF(data, Type.DATA, Category.IM_IMAGE);
+        
         // The size of the structured field
-        byte[] x = BinaryUtils.convert(rasterData.length + 8, 2);
-        data[1] = x[0];
-        data[2] = x[1];
-
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xEE;
-        data[5] = (byte) 0x7B;
-        data[6] = 0x00;
-        data[7] = 0x00;
-        data[8] = 0x00;
+        byte[] len = BinaryUtils.convert(rasterData.length + 8, 2);
+        data[1] = len[0];
+        data[2] = len[1];
 
         os.write(data);
         os.write(rasterData);
