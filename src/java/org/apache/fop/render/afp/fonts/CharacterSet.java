@@ -20,7 +20,6 @@
 package org.apache.fop.render.afp.fonts;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -47,54 +46,34 @@ import org.apache.fop.render.afp.tools.StringUtils;
  */
 public class CharacterSet {
 
-    /**
-     * Static logging instance
-     */
+    /** Static logging instance */
     protected static final Log log = LogFactory.getLog(CharacterSet.class.getName());
 
-    /**
-     * The code page to which the character set relates
-     */
+    /** The code page to which the character set relates */
     protected String codePage;
 
-    /**
-     * The encoding used for the code page
-     */
+    /** The encoding used for the code page */
     protected String encoding;
 
-    /**
-     * The character set relating to the font
-     */
+    /** The character set relating to the font */
     protected String name;
 
-    /**
-     * The name of the character set as EBCIDIC bytes
-     */
-    private byte[] nameBytes;
-
-    /**
-     * The path to the installed fonts
-     */
+    /** The path to the installed fonts */
     protected String path;
 
-    /**
-     * Indicator as to whether to metrics have been loaded
-     */
+    /** Indicator as to whether to metrics have been loaded */
     private boolean isMetricsLoaded = false;
 
-    /**
-     * The current orientation (currently only 0 is suppoted by FOP)
-     */
+    /** The current orientation (currently only 0 is suppoted by FOP) */
     private String currentOrientation = "0";
 
-    /**
-     * The collection of objects for each orientation
-     */
+    /** The collection of objects for each orientation */
     private Map characterSetOrientations = null;
 
     /**
      * Constructor for the CharacterSetMetric object, the character set is used
      * to load the font information from the actual AFP font.
+     * 
      * @param codePage the code page identifier
      * @param encoding the encoding of the font
      * @param name the character set name
@@ -118,36 +97,21 @@ public class CharacterSet {
             this.name = name;
         }
 
-        try {
-
-            this.nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-
-        } catch (UnsupportedEncodingException usee) {
-
-            this.nameBytes = name.getBytes();
-            log.warn(
-                "Constructor:: UnsupportedEncodingException translating the name "
-                + name);
-
-        }
-
         this.codePage = codePage;
         this.encoding = encoding;
         this.path = path;
-        this.characterSetOrientations = new HashMap(4);
-
+        this.characterSetOrientations = new java.util.HashMap(4);
     }
 
     /**
      * Add character set metric information for the different orientations
+     * 
      * @param cso the metrics for the orientation
      */
     public void addCharacterSetOrientation(CharacterSetOrientation cso) {
-
         characterSetOrientations.put(
             String.valueOf(cso.getOrientation()),
             cso);
-
     }
 
     /**
@@ -160,6 +124,7 @@ public class CharacterSet {
      * Ascender Height is the character�s most positive y-axis value.
      * For bounded character boxes, for a given character having an
      * ascender, ascender height and baseline offset are equal.
+     * 
      * @return the ascender value in millipoints
      */
     public int getAscender() {
@@ -171,6 +136,7 @@ public class CharacterSet {
      * Cap height is the average height of the uppercase characters in
      * a font. This value is specified by the designer of a font and is
      * usually the height of the uppercase M.
+     * 
      * @return the cap height value in millipoints
      */
     public int getCapHeight() {
@@ -182,6 +148,7 @@ public class CharacterSet {
      * Descender depth is the distance from the character baseline to
      * the bottom of a character box. A negative descender depth signifies
      * that all of the graphic character is above the character baseline.
+     * 
      * @return the descender value in millipoints
      */
     public int getDescender() {
@@ -191,6 +158,7 @@ public class CharacterSet {
 
     /**
      * The first character in the character set
+     * 
      * @return the first character
      */
     public int getFirstChar() {
@@ -199,7 +167,8 @@ public class CharacterSet {
     }
 
     /**
-     * The last character in the character set
+     * Returns the last character in the character set
+     * 
      * @return the last character
      */
     public int getLastChar() {
@@ -208,6 +177,8 @@ public class CharacterSet {
     }
 
     /**
+     * Returns the path where the font resources are installed
+     * 
      * @return the path where the font resources are installed
      */
     public String getPath() {
@@ -216,6 +187,7 @@ public class CharacterSet {
 
     /**
      * Get the width (in 1/1000ths of a point size) of all characters
+     * 
      * @return the widths of all characters
      */
     public int[] getWidths() {
@@ -235,6 +207,7 @@ public class CharacterSet {
     /**
      * Get the width (in 1/1000ths of a point size) of the character
      * identified by the parameter passed.
+     * 
      * @param character the character from which the width will be calculated
      * @return the width of the character
      */
@@ -248,19 +221,16 @@ public class CharacterSet {
      * be processed on a method call requiring the metric information.
      */
     private void load() {
-
         if (!isMetricsLoaded) {
-
             AFPFontReader afpFontReader = new AFPFontReader();
             afpFontReader.loadCharacterSetMetric(this);
             isMetricsLoaded = true;
-
         }
-
     }
 
     /**
      * Returns the AFP character set identifier
+     * 
      * @return String
      */
     public String getName() {
@@ -269,15 +239,26 @@ public class CharacterSet {
 
     /**
      * Returns the AFP character set identifier
-     * @return byte[]
+     * 
+     * @return the AFP character set identifier
      */
     public byte[] getNameBytes() {
+        byte[] nameBytes = null;
+        try {
+            nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
+        } catch (UnsupportedEncodingException usee) {
+            nameBytes = name.getBytes();
+            log.warn(
+                "UnsupportedEncodingException translating the name "
+                + name);
+        }
         return nameBytes;
     }
 
     /**
      * Returns the AFP code page identifier
-     * @return String
+     * 
+     * @return the AFP code page identifier
      */
     public String getCodePage() {
         return codePage;
@@ -285,7 +266,8 @@ public class CharacterSet {
 
     /**
      * Returns the AFP code page encoding
-     * @return String
+     * 
+     * @return the AFP code page encoding
      */
     public String getEncoding() {
         return encoding;
@@ -300,6 +282,7 @@ public class CharacterSet {
      * the case for landscape prints which use an orientation of 270 degrees,
      * in 99.9% of cases the font metrics will be the same as the 0 degrees
      * therefore the implementation currely will always use 0 degrees.
+     * 
      * @return characterSetOrentation The current orientation metrics.
      */
     private CharacterSetOrientation getCharacterSetOrientation() {
@@ -314,6 +297,7 @@ public class CharacterSet {
      * Map a Unicode character to a code point in the font.
      * The code tables are already converted to Unicode therefore
      * we can use the identity mapping.
+     * 
      * @param c character to map
      * @return the mapped character
      */
