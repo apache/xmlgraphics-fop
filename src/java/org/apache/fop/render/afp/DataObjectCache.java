@@ -48,9 +48,9 @@ public final class DataObjectCache {
         = new java.util.HashMap/*<Integer,DataObjectCache>*/();    
     
     
-    /** Mapping of data object uri --> cache entry */
-    private Map/*<String,DataObjectCache.Entry>*/ cacheRecordMap
-        = new java.util.HashMap/*<String,DataObjectCache.Entry>*/();
+    /** Mapping of data object uri --> cache record */
+    private Map/*<ResourceInfo,DataObjectCache.Record>*/ recordMap
+        = new java.util.HashMap/*<ResourceInfo,DataObjectCache.Record>*/();
     
     /** Used for create data objects */
     private DataObjectFactory factory = new DataObjectFactory();
@@ -64,9 +64,6 @@ public final class DataObjectCache {
     /** The temporary cache file */
     private File tempFile;
     
-    /** The cache id */
-    private int id;
-
     /** The next file pointer position in the cache file */
     private long nextPos;
     
@@ -82,7 +79,7 @@ public final class DataObjectCache {
             DataObjectCache cache = (DataObjectCache)cacheMap.get(cacheKey);
             if (cache == null) {
                 try {
-                    cache = new DataObjectCache();
+                    cache = new DataObjectCache(id);
                     cacheMap.put(cacheKey, cache);
                 } catch (IOException e) {
                     log.error("Failed to create cache");
@@ -94,9 +91,10 @@ public final class DataObjectCache {
 
     /**
      * Default constructor
+     * 
+     * @param id the cache id
      */
-    private DataObjectCache() throws IOException {
-        this.id = System.identityHashCode(Thread.currentThread());        
+    private DataObjectCache(int id) throws IOException {
         this.tempFile = File.createTempFile(CACHE_FILENAME_PREFIX + id, null);
         this.raFile = new RandomAccessFile(tempFile, "rw");
         this.channel = raFile.getChannel();
@@ -123,7 +121,7 @@ public final class DataObjectCache {
      */
     public String put(DataObjectInfo dataObjectInfo) {
         ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-        Record record = (Record)cacheRecordMap.get(resourceInfo);
+        Record record = (Record)recordMap.get(resourceInfo);
         if (record == null) {
             record = new Record();
             AbstractNamedAFPObject dataObj = factory.createObject(dataObjectInfo);
@@ -145,7 +143,7 @@ public final class DataObjectCache {
                 log.error("Failed to write cache record for '"
                         + resourceInfo + "', " + e.getMessage());
             }
-            cacheRecordMap.put(resourceInfo, record);
+            recordMap.put(resourceInfo, record);
         }
         return record.objectName;
     }
@@ -157,7 +155,7 @@ public final class DataObjectCache {
      * @return the binary data of the AbstractDataObject or null if failed.
      */
     public byte[] get(ResourceInfo resourceInfo) {
-        Record record = (Record)cacheRecordMap.get(resourceInfo);
+        Record record = (Record)recordMap.get(resourceInfo);
         if (record == null) {
             throw new IllegalArgumentException("Unknown data object " + resourceInfo);
         }
