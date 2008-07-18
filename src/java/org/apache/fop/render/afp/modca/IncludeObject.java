@@ -93,11 +93,6 @@ public class IncludeObject extends AbstractNamedAFPObject {
      * The Y-axis origin defined in the object
      */
     private int yContentOffset = 0;
-
-//    /**
-//     * the referenced data object
-//     */
-//    private DataObjectAccessor dataObjectAccessor = null;
     
     /**
      * Constructor for the include object with the specified name, the name must
@@ -105,71 +100,10 @@ public class IncludeObject extends AbstractNamedAFPObject {
      * object.
      *
      * @param name the name of this include object
-     * @param dataObjectAccessor the data object accessor
      */
-    public IncludeObject(String name/*, DataObjectAccessor dataObjectAccessor*/) {
+    public IncludeObject(String name) {
         super(name);
-
-//        this.dataObjectAccessor = dataObjectAccessor;
-        
-//        AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
-//        if (dataObject instanceof ImageObject) {
-//            this.dataObjectType = TYPE_IMAGE;
-//        } else if (dataObject instanceof GraphicsObject) {
-//            this.dataObjectType = TYPE_GRAPHIC;
-//        } else if (dataObject instanceof PageSegment) {
-//            this.dataObjectType = TYPE_PAGE_SEGMENT;
-//        } else {
-//            this.dataObjectType = TYPE_OTHER;
-//            // Strip any object container
-//            if (dataObject instanceof ObjectContainer) {
-//                ObjectContainer objectContainer = (ObjectContainer)dataObject;
-//                dataObject = objectContainer.getDataObject();
-//            }
-//        }
-
-//        DataObjectInfo dataObjectInfo = dataObjectAccessor.getDataObjectInfo();
-//        ObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-//        setObjectArea(objectAreaInfo.getX(), objectAreaInfo.getY());
-//        
-//        super.setFullyQualifiedName(
-//                FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
-//                FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-//                dataObjectInfo.getUri());
-//
-//        Registry registry = Registry.getInstance();
-//        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
-//        super.setObjectClassification(
-//             ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
-//             objectType);
-//        
-//        super.setMeasurementUnits(objectAreaInfo.getWidthRes(), objectAreaInfo.getHeightRes());
-//        
-//        super.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
-//        
-//        super.setObjectAreaSize(objectAreaInfo.getWidth(), objectAreaInfo.getHeight());        
     }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public AbstractNamedAFPObject getDataObject() {
-//        return dataObjectAccessor.getDataObject();
-//    }
-//    
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public DataObjectInfo getDataObjectInfo() {
-//        return dataObjectAccessor.getDataObjectInfo();
-//    }
-//
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public void setDataObjectInfo(DataObjectInfo dataObjectInfo) {
-//        dataObjectAccessor.setDataObjectInfo(dataObjectInfo);
-//    }
 
     /**
      * Sets the orientation to use for the Include Object.
