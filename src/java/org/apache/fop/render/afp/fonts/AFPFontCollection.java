@@ -97,22 +97,6 @@ public class AFPFontCollection implements FontCollection {
             fontInfo.addMetrics("F" + num, bf);
             num++;
         }
-        if (fontInfo.fontLookup("Symbol", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            FontTriplet ft = fontInfo.fontLookup(
-                    "sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            fontInfo.addFontProperties(
-                    fontInfo.getInternalFontKey(ft),
-                    "Symbol", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            num++;
-        }
-        if (fontInfo.fontLookup("ZapfDingbats", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            FontTriplet ft = fontInfo.fontLookup(
-                    "sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            fontInfo.addFontProperties(
-                    fontInfo.getInternalFontKey(ft),
-                    "ZapfDingbats", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            num++;
-        }
         if (fontInfo.fontLookup("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
             FontTriplet ft = fontInfo.fontLookup(
                     "sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
