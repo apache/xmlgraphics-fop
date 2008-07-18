@@ -64,12 +64,12 @@ public class PageDescriptor extends AbstractDescriptor {
         data[10] = 0x00; // YpgBase = 10 inches 
         
         // XpgUnits
-        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
+        byte[] xdpi = BinaryUtils.convert(widthRes * 10, 2);
         data[11] = xdpi[0];
         data[12] = xdpi[1];
 
         // YpgUnits
-        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
+        byte[] ydpi = BinaryUtils.convert(heightRes * 10, 2);
         data[13] = ydpi[0];
         data[14] = ydpi[1];
             

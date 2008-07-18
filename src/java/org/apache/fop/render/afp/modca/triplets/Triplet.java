@@ -88,18 +88,15 @@ public class Triplet extends AbstractAFPObject {
     public static final byte CMR_TAG_FIDELITY = (byte)0x96;
     public static final byte DEVICE_APPEARANCE = (byte)0x97;
 
-    /**
-     * the triplet identifier
-     */
+    /** the triplet identifier */
     private byte id;
 
-    /**
-     * the triplet's data contents
-     */
+    /** the triplet's data contents */
     private byte[] data;
 
     /**
      * Main constructor
+     * 
      * @param id the triplet identifier (see static definitions above)
      * @param data the data item contained in this triplet
      */
@@ -110,6 +107,7 @@ public class Triplet extends AbstractAFPObject {
 
     /**
      * Constructor
+     * 
      * @param id the triplet identifier (see static definitions above)
      */
     public Triplet(byte id) {
@@ -118,6 +116,7 @@ public class Triplet extends AbstractAFPObject {
 
     /**
      * Constructor
+     * 
      * @param id the triplet identifier (see static definitions above)
      * @param content the content byte data
      */
@@ -127,6 +126,7 @@ public class Triplet extends AbstractAFPObject {
 
     /**
      * Constructor
+     * 
      * @param id the triplet identifier (see static definitions above)
      * @param data the data item (in String form) contained in this triplet
      * @throws UnsupportedEncodingException EBCIDIC encoding is not supported
@@ -135,9 +135,7 @@ public class Triplet extends AbstractAFPObject {
         this(id, data.getBytes(AFPConstants.EBCIDIC_ENCODING));
     }
         
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
         os.write((byte)data.length + 2);
         os.write(id);
@@ -145,6 +143,8 @@ public class Triplet extends AbstractAFPObject {
     }
     
     /**
+     * Returns the triplet identifier
+     * 
      * @return the triplet identifier
      */
     public byte getId() {
@@ -153,6 +153,7 @@ public class Triplet extends AbstractAFPObject {
 
     /**
      * Sets the data contents of this triplet
+     * 
      * @param data the data contents
      */
     protected void setData(byte[] data) {

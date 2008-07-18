@@ -19,8 +19,14 @@
 
 package org.apache.fop.render.afp.modca;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.fop.render.afp.modca.triplets.DescriptorPositionTriplet;
+import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
+import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
+import org.apache.fop.render.afp.modca.triplets.PresentationSpaceMixingRulesTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -36,63 +42,40 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
      * 
      * @param width The page width.
      * @param height The page height.
-     * @param widthResolution The page width resolution.
-     * @param heightResolution The page height resolution.
+     * @param widthRes The page width resolution.
+     * @param heightRes The page height resolution.
      */
-    public ObjectAreaDescriptor(int width, int height, int widthResolution, int heightResolution) {
-        super(width, height, widthResolution, heightResolution);
+    public ObjectAreaDescriptor(int width, int height, int widthRes, int heightRes) {
+        super(width, height, widthRes, heightRes);
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    protected byte[] getTripletData() throws IOException {
+        if (tripletData == null) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            final byte descriptorPositionId = 0x01;
+            new DescriptorPositionTriplet(descriptorPositionId).write(bos);
+            new MeasurementUnitsTriplet(widthRes, heightRes).write(bos);
+            new ObjectAreaSizeTriplet(width, height).write(bos);
+            byte[] mixingRules = new byte[] {
+                 PresentationSpaceMixingRulesTriplet.RULE_FORE_ON_BACK, 
+                 PresentationSpaceMixingRulesTriplet.OVERPAINT
+            };
+            new PresentationSpaceMixingRulesTriplet(mixingRules).write(bos);
+            this.tripletData = bos.toByteArray();
+        }
+        return this.tripletData;
+    }
 
-        byte[] data = new byte[29];
-        data[0] = 0x5A; 
-
-        byte[] len = BinaryUtils.convert(data.length - 1, 2);
+    /** {@inheritDoc} */
+    public void writeStart(OutputStream os) throws IOException {
+        super.writeStart(os);
+        byte[] data = new byte[9];
+        copySF(data, Type.DESCRIPTOR, Category.OBJECT_AREA);
+        byte[] len = BinaryUtils.convert(data.length + tripletData.length - 1, 2);
         data[1] = len[0]; // Length
         data[2] = len[1];
-
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xA6;
-        data[5] = (byte) 0x6B;
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00; // Reserved
-        data[9] = 0x03; // Triplet length
-        data[10] = 0x43; // tid = Descriptor Position Triplet
-        data[11] = 0x01; // DesPosId = 1
-        data[12] = 0x08; // Triplet length
-        data[13] = 0x4B; // tid = Measurement Units Triplet
-        data[14] = 0x00; // XaoBase = 10 inches
-        data[15] = 0x00; // YaoBase = 10 inches
-        
-        // XaoUnits
-        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
-        data[16] = xdpi[0];
-        data[17] = xdpi[1];
-
-        // YaoUnits
-        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
-        data[18] = ydpi[0];
-        data[19] = ydpi[1];
-        
-        data[20] = 0x09; // Triplet length
-        data[21] = 0x4C; // tid = Object Area Size
-        data[22] = 0x02; // Size Type
-
-        byte[] x = BinaryUtils.convert(width, 3);
-        data[23] = x[0];
-        data[24] = x[1];
-        data[25] = x[2];
-
-        byte[] y = BinaryUtils.convert(height, 3);
-        data[26] = y[0];
-        data[27] = y[1];
-        data[28] = y[2];
-
         os.write(data);
-
     }
 
 }

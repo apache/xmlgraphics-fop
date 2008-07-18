@@ -137,7 +137,8 @@ public final class DataObjectCache {
                 record.size = os.size();
                 MappedByteBuffer byteBuffer
                     = channel.map(FileChannel.MapMode.READ_WRITE, record.position, record.size);
-                byteBuffer.put(os.toByteArray());
+                byte[] data = os.toByteArray();
+                byteBuffer.put(data);
                 channel.write(byteBuffer);
                 nextPos += record.size + 1;
             } catch (IOException e) {
@@ -192,5 +193,12 @@ public final class DataObjectCache {
         protected long position; 
         protected int size;
         protected String objectName;
+        
+        public String toString() {
+            return "Record{name=" + objectName
+                + ", pos=" + position
+                + ", size=" + size
+                + "}";
+        }
     }
 }

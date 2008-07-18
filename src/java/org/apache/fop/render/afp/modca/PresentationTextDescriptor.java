@@ -77,11 +77,11 @@ public class PresentationTextDescriptor extends AbstractDescriptor {
         data[9] = 0x00;
         data[10] = 0x00;
 
-        byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
+        byte[] xdpi = BinaryUtils.convert(widthRes * 10, 2);
         data[11] = xdpi[0]; // xdpi
         data[12] = xdpi[1];
 
-        byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
+        byte[] ydpi = BinaryUtils.convert(heightRes * 10, 2);
         data[13] = ydpi[0]; // ydpi
         data[14] = ydpi[1];
 

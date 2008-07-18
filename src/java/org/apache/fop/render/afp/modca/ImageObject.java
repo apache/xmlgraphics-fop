@@ -127,19 +127,12 @@ public class ImageObject extends AbstractDataObject {
      * @param len the length of this ipd start
      * @return byte[] The data stream.
      */
-    private byte[] getIPDStart(int len) {
+    private byte[] getImageData(int len) {
+        byte[] data = new byte[9];
+        copySF(data, SF_CLASS, Type.DATA, Category.IMAGE);
         byte[] l = BinaryUtils.convert(len + 8, 2);
-        byte[] data = new byte[] {
-            0x5A, // Structured field identifier
-            l[0], // Length byte 1
-            l[1], // Length byte 2
-            (byte) 0xD3, // Structured field id byte 1
-            (byte) 0xEE, // Structured field id byte 2
-            (byte) 0xFB, // Structured field id byte 3
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved
-        };
+        data[1] = l[0];
+        data[2] = l[1];
         return data;
     }
 
@@ -160,7 +153,7 @@ public class ImageObject extends AbstractDataObject {
             int off = 0;
             while (off < b.length) {
                 int len = Math.min(30000, b.length - off);
-                os.write(getIPDStart(len));
+                os.write(getImageData(len));
                 os.write(b, off, len);
                 off += len;
             }

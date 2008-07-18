@@ -22,15 +22,15 @@ package org.apache.fop.render.afp.modca;
 /**
  * Base class for AFP descriptor objects
  */
-public abstract class AbstractDescriptor extends AbstractAFPObject {
+public abstract class AbstractDescriptor extends AbstractStructuredAFPObject {
     /** width of this descriptor */
     protected int width = 0;
     /** height of this descriptor */
     protected int height = 0;
     /** width resolution of this descriptor */
-    protected int widthResolution = 0;
+    protected int widthRes = 0;
     /** height resolution of this descriptor */
-    protected int heightResolution = 0;
+    protected int heightRes = 0;
 
     /**
      * Constructor a PresentationTextDescriptor for the specified
@@ -38,13 +38,13 @@ public abstract class AbstractDescriptor extends AbstractAFPObject {
      * 
      * @param width The width of the page.
      * @param height The height of the page.
-     * @param widthResolution The width resolution of the page.
-     * @param heightResolution The height resolution of the page.
+     * @param widthRes The width resolution of the page.
+     * @param heightRes The height resolution of the page.
      */
-    public AbstractDescriptor(int width, int height, int widthResolution, int heightResolution) {
+    public AbstractDescriptor(int width, int height, int widthRes, int heightRes) {
         this.width = width;
         this.height = height;
-        this.widthResolution = widthResolution;
-        this.heightResolution = heightResolution;
+        this.widthRes = widthRes;
+        this.heightRes = heightRes;
     }
 }

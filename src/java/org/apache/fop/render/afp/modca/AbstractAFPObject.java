@@ -38,7 +38,7 @@ public abstract class AbstractAFPObject implements Writable {
     /** Static logging instance */
     protected static final Log log = LogFactory.getLog("org.apache.fop.render.afp.modca");
 
-    private static final byte SF_CLASS = (byte)0xD3;
+    protected static final byte SF_CLASS = (byte)0xD3;
     
     private static final byte[] SF = new byte[] {
         0x5A, // Structured field identifier
