@@ -188,12 +188,12 @@ public class FontInfo {
      * @param family font family
      * @param style font style
      * @param weight font weight
-     * @param substFont true if the font may be substituted with the
+     * @param substitutable true if the font may be substituted with the
      *                  default font if not found
      * @return internal font triplet key
      */
     private FontTriplet fontLookup(String family, String style,
-                             int weight, boolean substFont) {
+                             int weight, boolean substitutable) {
         if (log.isTraceEnabled()) {
             log.trace("Font lookup: " + family + " " + style + " " + weight);
         }
@@ -203,7 +203,7 @@ public class FontInfo {
         // first try given parameters
         String internalFontKey = getInternalFontKey(fontTriplet);
         if (internalFontKey == null) {
-            fontTriplet = fuzzyFontLookup(family, style, weight, startKey, substFont);
+            fontTriplet = fuzzyFontLookup(family, style, weight, startKey, substitutable);
         }
 
         if (fontTriplet != null) {
@@ -345,6 +345,19 @@ public class FontInfo {
         return fontLookup(family, style, weight, true);
     }
 
+    private List/*<FontTriplet>*/ fontLookup(String[] families, String style,
+            int weight, boolean substitutable) {
+        List matchingTriplets = new java.util.ArrayList();
+        FontTriplet triplet = null;
+        for (int i = 0; i < families.length; i++) {
+            triplet = fontLookup(families[i], style, weight, substitutable);
+            if (triplet != null) {
+                matchingTriplets.add(triplet);
+            }
+        }
+        return matchingTriplets;
+    }
+
     /**
      * Looks up a set of fonts.
      * <br>
@@ -363,28 +376,32 @@ public class FontInfo {
         if (families.length == 0) {
             throw new IllegalArgumentException("Specify at least one font family");
         }
-        FontTriplet triplet;
-        List tmpTriplets = new java.util.ArrayList();
-        for (int i = 0, c = families.length; i < c; i++) {
-            boolean substitutable = (i >= families.length - 1);
-            triplet = fontLookup(families[i], style, weight, substitutable);
-            if (triplet != null) {
-                tmpTriplets.add(triplet);
+        
+        // try matching without substitutions
+        List/*<FontTriplet>*/ matchedTriplets = fontLookup(families, style, weight, false);
+        
+        // if there are no matching font triplets found try with substitutions
+        if (matchedTriplets.size() == 0) {
+            matchedTriplets = fontLookup(families, style, weight, true);
+        }
+
+        // no matching font triplets found!
+        if (matchedTriplets.size() == 0) {
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0, c = families.length; i < c; i++) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(families[i]);
             }
+            throw new IllegalStateException(
+                        "fontLookup must return an array with at least one "
+                        + "FontTriplet on the last call. Lookup: " + sb.toString());
+            
         }
-        if (tmpTriplets.size() != 0) {
-            return (FontTriplet[]) tmpTriplets.toArray(TRIPLETS_TYPE);
-        }
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0, c = families.length; i < c; i++) {
-            if (i > 0) {
-                sb.append(", ");
-            }
-            sb.append(families[i]);
-        }
-        throw new IllegalStateException(
-                    "fontLookup must return an array with at least one "
-                    + "FontTriplet on the last call. Lookup: " + sb.toString());
+
+        // found some matching fonts so return them
+        return (FontTriplet[]) matchedTriplets.toArray(TRIPLETS_TYPE);
     }
 
     private Set/*<FontTriplet>*/ getLoggedFontKeys() {
