@@ -442,7 +442,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             
                 // Can this data object use the include object (IOB) referencing
                 // mechanism?
-                if (objectType.canBeIncluded()) {
+                if (objectType.isIncludable()) {
                     
                     // Create and return include
                     DataObjectFactory factory = cache.getFactory();

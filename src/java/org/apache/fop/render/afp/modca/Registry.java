@@ -201,7 +201,7 @@ public final class Registry {
          * 
          * @return true if this component can be included with an IOB structured field
          */
-        public boolean canBeIncluded() {
+        public boolean isIncludable() {
             return this.includable;
         }
 

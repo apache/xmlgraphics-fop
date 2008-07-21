@@ -320,7 +320,7 @@ public class DataObjectFactory {
             
             ObjectType objectType = dataObjectInfo.getObjectType();
             
-            if (objectType != null && objectType.canBeIncluded()) {
+            if (objectType != null && objectType.isIncludable()) {
                 
                 // Wrap newly created data object in a resource object
                 // if it is to reside within a resource group at print-file or external level
