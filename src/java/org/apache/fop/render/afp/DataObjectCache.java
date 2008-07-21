@@ -112,11 +112,12 @@ public final class DataObjectCache {
         try {
             raFile.close();
             tempFile.delete();
+        } catch (IOException e) {
+            log.error("Failed to close temporary file");
+        } finally {
             synchronized (cacheMap) {
                 cacheMap.remove(id); // remove ourselves from the cache map
             }
-        } catch (IOException e) {
-            log.error("Failed to close temporary file");
         }
     }
 
