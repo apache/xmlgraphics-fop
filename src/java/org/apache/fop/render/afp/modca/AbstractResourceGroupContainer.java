@@ -22,12 +22,11 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-//import org.apache.fop.render.afp.DataObjectInfo;
-
 /**
  * An abstract container of resource objects
  */
 public abstract class AbstractResourceGroupContainer extends AbstractPageObject {
+
     /**
      * The resource group object
      */
@@ -72,6 +71,8 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
     }
 
     /**
+     * Return the number of resources in this container
+     * 
      * @return the number of resources in this container
      */
     protected int getResourceCount() {
@@ -82,6 +83,8 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
     }
     
     /**
+     * Returns true if this resource group container contains resources
+     * 
      * @return true if this resource group container contains resources
      */
     protected boolean hasResources() {
@@ -98,18 +101,7 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
         return resourceGroup;
     }
     
-//    /**
-//     * Creates and returns a new data object
-//     * @param dataObjectInfo the data object info
-//     * @return a newly created data object
-//     */
-//    public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
-//        return dataObjectFactory.create(dataObjectInfo);
-//    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         if (resourceGroup != null) {
             resourceGroup.write(os);

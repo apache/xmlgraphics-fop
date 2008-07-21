@@ -27,20 +27,22 @@ import java.util.List;
 public class AFPFontInfo {
 
     private AFPFont font;
-    private List fontTriplets;
+    private List/*<FontTriplet>*/ tripletList;
 
     /**
      * Main constructor
+     * 
      * @param afpFont The AFP Font
-     * @param fontTriplets List of font triplets to associate with this font
+     * @param tripletList List of font triplets to associate with this font
      */
-    public AFPFontInfo(AFPFont afpFont, List fontTriplets) {
+    public AFPFontInfo(AFPFont afpFont, List/*<FontTriplet>*/ tripletList) {
         this.font = afpFont;
-        this.fontTriplets = fontTriplets;
+        this.tripletList = tripletList;
     }
 
     /**
      * Returns the afp font
+     * 
      * @return the afp font
      */
     public AFPFont getAFPFont() {
@@ -49,10 +51,11 @@ public class AFPFontInfo {
 
     /**
      * Returns the list of font triplets associated with this font.
+     * 
      * @return List of font triplets
      */
-    public List getFontTriplets() {
-        return fontTriplets;
+    public List/*<FontTriplet>*/ getFontTriplets() {
+        return tripletList;
     }
 
 }

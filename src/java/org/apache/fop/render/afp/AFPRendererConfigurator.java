@@ -57,16 +57,17 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         throws ConfigurationException {
 
         Configuration[] triple = fontCfg.getChildren("font-triplet");
-        List tripleList = new java.util.ArrayList();
+        List/*<FontTriplet>*/ tripletList = new java.util.ArrayList();
         if (triple.length == 0) {
             log.error("Mandatory font configuration element '<font-triplet...' is missing");
             return null;
         }
         for (int j = 0; j < triple.length; j++) {
             int weight = FontUtil.parseCSS2FontWeight(triple[j].getAttribute("weight"));
-            tripleList.add(new FontTriplet(triple[j].getAttribute("name"),
-                                           triple[j].getAttribute("style"),
-                                           weight));
+            FontTriplet triplet = new FontTriplet(triple[j].getAttribute("name"),
+                    triple[j].getAttribute("style"),
+                    weight);
+            tripletList.add(triplet);
         }
 
         //build the fonts
@@ -140,7 +141,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                         codepage, encoding, characterset, path));
                 }
             }
-            return new AFPFontInfo(font, tripleList);
+            return new AFPFontInfo(font, tripletList);
 
         } else if ("outline".equalsIgnoreCase(type)) {
             String characterset = afpFontCfg.getAttribute("characterset");
@@ -174,7 +175,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
             }
             // Create a new font object
             OutlineFont font = new OutlineFont(name, characterSet);
-            return new AFPFontInfo(font, tripleList);
+            return new AFPFontInfo(font, tripletList);
         } else {
             log.error("No or incorrect type attribute");
         }
@@ -244,16 +245,6 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(240));
             }
 
-            // TODO: provide support for different MO:DCA interchange sets
-            // the MO:DCA interchange set in use (defaults to MO:DCA-L)
-//            Configuration modcaCfg = cfg.getChild("modca", false);
-//            if (modcaCfg != null) {
-//                String interchangeSetString = cfg.getAttribute(
-//                        "interchange-set", InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
-//                InterchangeSet interchangeSet = InterchangeSet.valueOf(interchangeSetString);
-//                afpRenderer.getAFPDataStream().setInterchangeSet(interchangeSet);
-//            }
-
             // a default external resource group file setting
             Configuration resourceGroupFileCfg
                 = cfg.getChild("resource-group-file", false);
@@ -274,6 +265,16 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                                 + resourceGroupDest + "'");
                 }
             }
+
+            // TODO: provide support for different MO:DCA interchange sets
+            // the MO:DCA interchange set in use (defaults to MO:DCA-L)
+//            Configuration modcaCfg = cfg.getChild("modca", false);
+//            if (modcaCfg != null) {
+//                String interchangeSetString = cfg.getAttribute(
+//                        "interchange-set", InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
+//                InterchangeSet interchangeSet = InterchangeSet.valueOf(interchangeSetString);
+//                afpRenderer.getAFPDataStream().setInterchangeSet(interchangeSet);
+//            }
         }
     }
 }

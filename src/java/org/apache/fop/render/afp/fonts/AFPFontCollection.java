@@ -57,13 +57,14 @@ public class AFPFontCollection implements FontCollection {
         int num = 1;
         if (embedFontInfoList != null && embedFontInfoList.size() > 0) {
             for (Iterator it = embedFontInfoList.iterator(); it.hasNext();) {
-                AFPFontInfo afi = (AFPFontInfo)it.next();
-                AFPFont bf = (AFPFont)afi.getAFPFont();
-                for (Iterator it2 = afi.getFontTriplets().iterator(); it2.hasNext();) {
-                    FontTriplet ft = (FontTriplet)it2.next();
-                    fontInfo.addFontProperties("F" + num, ft.getName()
-                                                    , ft.getStyle(), ft.getWeight());
-                    fontInfo.addMetrics("F" + num, bf);
+                AFPFontInfo afpFontInfo = (AFPFontInfo)it.next();
+                AFPFont afpFont = (AFPFont)afpFontInfo.getAFPFont();
+                List/*<FontTriplet>*/ tripletList = afpFontInfo.getFontTriplets();
+                for (Iterator it2 = tripletList.iterator(); it2.hasNext();) {
+                    FontTriplet triplet = (FontTriplet)it2.next();
+                    fontInfo.addFontProperties("F" + num,
+                            triplet.getName(), triplet.getStyle(), triplet.getWeight());
+                    fontInfo.addMetrics("F" + num, afpFont);
                     num++;
                 }
             }
@@ -71,6 +72,8 @@ public class AFPFontCollection implements FontCollection {
             AFPEventProducer eventProducer = AFPEventProducer.Provider.get(eventBroadcaster);
             eventProducer.warnDefaultFontSetup(this);
         }
+
+        // note: these fonts may not exist on your AFP installation
         if (fontInfo.fontLookup("sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
             CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZH200  ",
                     1, new Helvetica());

@@ -382,12 +382,4 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
         objects.add(obj);
     }
 
-//    /** {@inheritDoc} */
-//    protected void addObject(AbstractAFPObject obj) {
-//        if (obj instanceof DataObjectAccessor) {
-//            DataObjectAccessor dataObjectAccessor = (DataObjectAccessor)obj;
-//            getActiveEnvironmentGroup().createMapDataResource(dataObjectAccessor);
-//        }
-//        endPresentationObject();
-//    }    
 }
