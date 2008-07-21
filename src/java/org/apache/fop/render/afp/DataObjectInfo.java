@@ -32,7 +32,7 @@ import org.apache.xmlgraphics.util.QName;
 /**
  * A list of parameters associated with an AFP data objects
  */
-public class DataObjectInfo {
+public abstract class DataObjectInfo {
     private static final Log log = LogFactory.getLog("org.apache.fop.afp");
 
     private static final String RESOURCE_NAME = "afp:resource-name";
@@ -175,7 +175,8 @@ public class DataObjectInfo {
 
     /** {@inheritDoc} */
     public String toString() {
-        return (objectAreaInfo != null ? ", objectAreaInfo=" + objectAreaInfo : "")
+        return "mimeType=" + getMimeType()
+            + (objectAreaInfo != null ? ", objectAreaInfo=" + objectAreaInfo : "")
             + (objectType != null ? ", objectType=" + objectType : "")
             + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "");
     }
@@ -197,4 +198,12 @@ public class DataObjectInfo {
     public void setUri(String uri) {
         getResourceInfo().setUri(uri);
     }
+
+    /**
+     * Returns the mime type of this data object
+     * 
+     * @return the mime type of this data object
+     */
+    public abstract String getMimeType();
+
 }

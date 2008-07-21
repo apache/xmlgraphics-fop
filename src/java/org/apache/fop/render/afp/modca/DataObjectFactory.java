@@ -368,10 +368,6 @@ public class DataObjectFactory {
                     resourceObj.setDataObject(dataObj);
                     dataObj = resourceObj;
                 }
-            } else {
-                String uri = dataObjectInfo.getUri();
-                log.warn("Data object '" + uri + "' not supported at "
-                        + resourceLevel.toString() + " level, will be embedded in page.");
             }
         }
         

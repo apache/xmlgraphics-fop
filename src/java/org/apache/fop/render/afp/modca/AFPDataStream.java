@@ -428,6 +428,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
         if (objectType != null) {
             dataObjectInfo.setObjectType(objectType);
+        } else {
+            log.info("Unknown object type for '" + dataObjectInfo + "'");
         }
         
         DataObjectCache.Record record = cache.store(dataObjectInfo);
@@ -457,7 +459,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                     log.warn("Data object located at '" + uri + "'"
                             + " of type '" + objectType.getMimeType() + "'"
                             + " cannot be referenced with an include"
-                            + " so it will be embedded directly");
+                            + " so it will be embedded directly in the page");
                 }                
             } else {
                 if (resourceLevel.isExternal()) {

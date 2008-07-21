@@ -165,11 +165,7 @@ public class ImageObjectInfo extends DataObjectInfo {
         this.dataHeight = imageDataHeight;
     }
 
-    /**
-     * Returns the mime type of this image
-     * 
-     * @return the mime type of this image
-     */
+    /** {@inheritDoc} */
     public String getMimeType() {
         return mimeType;
     }
@@ -194,12 +190,12 @@ public class ImageObjectInfo extends DataObjectInfo {
     
     /** {@inheritDoc} */
     public String toString() {
-        return super.toString() 
-            + ", mimeType=" + mimeType
+        return "ImageObjectInfo{" + super.toString() 
             + ", dataWidth=" + dataWidth
             + ", dataHeight=" + dataHeight
             + ", color=" + color
-            + ", bitPerPixel=" + bitsPerPixel;
+            + ", bitPerPixel=" + bitsPerPixel
+            + "}";
     }
 
 }

@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.afp;
 
+import org.apache.xmlgraphics.util.MimeConstants;
+
 /**
  *  A graphics object info which contains necessary painting objects
  */
@@ -42,5 +44,15 @@ public class GraphicsObjectInfo extends DataObjectInfo {
      */
     public void setPainter(GraphicsObjectPainter graphicsPainter) {
         this.painter = graphicsPainter;
+    }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return "GraphicsObjectInfo{" + super.toString() + "}";
+    }
+
+    /** {@inheritDoc} */
+    public String getMimeType() {
+        return MimeConstants.MIME_SVG;
     }
 }

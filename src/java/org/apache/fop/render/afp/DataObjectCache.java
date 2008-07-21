@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;

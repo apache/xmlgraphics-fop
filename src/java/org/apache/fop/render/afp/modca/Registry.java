@@ -45,7 +45,7 @@ public final class Registry {
     private static final byte COMPID_TIFF = 14;
 
     /** mime type entry mapping */
-    private java.util.Map/*<String, Registry.ObjectType>*/ mimeEntryMap
+    private java.util.Map/*<String, Registry.ObjectType>*/ mimeObjectTypeMap
         = Collections.synchronizedMap(
                 new java.util.HashMap/*<String, Registry.ObjectType>*/());
 
@@ -69,7 +69,7 @@ public final class Registry {
     }
     
     private void init() {
-        mimeEntryMap.put(
+        mimeObjectTypeMap.put(
                 MimeConstants.MIME_EPS,
                 new ObjectType(
                         COMPID_EPS,
@@ -79,7 +79,7 @@ public final class Registry {
                         MimeConstants.MIME_EPS
                 )
         );
-        mimeEntryMap.put(
+        mimeObjectTypeMap.put(
                 MimeConstants.MIME_TIFF,
                 new ObjectType(
                         COMPID_TIFF,
@@ -89,7 +89,7 @@ public final class Registry {
                         MimeConstants.MIME_TIFF
                 )
         );
-        mimeEntryMap.put(
+        mimeObjectTypeMap.put(
                 MimeConstants.MIME_GIF,
                 new ObjectType(
                         COMPID_GIF,
@@ -99,7 +99,7 @@ public final class Registry {
                         MimeConstants.MIME_GIF
                 )
         );
-        mimeEntryMap.put(
+        mimeObjectTypeMap.put(
                 MimeConstants.MIME_JPEG,
                 new ObjectType(
                         COMPID_JFIF,
@@ -109,7 +109,7 @@ public final class Registry {
                         MimeConstants.MIME_JPEG
                 )
         );
-        mimeEntryMap.put(MimeConstants.MIME_PDF,
+        mimeObjectTypeMap.put(MimeConstants.MIME_PDF,
                 new ObjectType(
                         COMPID_PDF_SINGLE_PAGE,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x19},
@@ -118,7 +118,7 @@ public final class Registry {
                         MimeConstants.MIME_PDF
                 )
         );         
-        mimeEntryMap.put(
+        mimeObjectTypeMap.put(
                 MimeConstants.MIME_PCL,
                 new ObjectType(
                         COMPID_PCL_PAGE_OBJECT,
@@ -130,14 +130,14 @@ public final class Registry {
         );
         
         // Entries without component and object ids
-        mimeEntryMap.put(
+        mimeObjectTypeMap.put(
                 MimeConstants.MIME_SVG,
                 new ObjectType(
                         "Scaleable Vector Graphics",
                         MimeConstants.MIME_SVG
                 )
         );
-        mimeEntryMap.put(
+        mimeObjectTypeMap.put(
                 MimeConstants.MIME_PNG,
                 new ObjectType(
                         "Portable Network Graphics",
@@ -147,35 +147,15 @@ public final class Registry {
     }
 
     /**
-     * Returns the Registry ObjectType for a given mimetype
-     * 
-     * @param mimeType the object mime type
-     * @return the Registry ObjectType for a given data object info
-     */
-    public Registry.ObjectType getObjectType(String mimeType) {
-        ObjectType entry = null;
-        if (mimeType != null) {
-            entry = (Registry.ObjectType)mimeEntryMap.get(mimeType);
-        } else {
-            log.info("mimetype '" + mimeType + "' not found");
-        }
-        return entry;
-    }
-
-    /**
      * Returns the Registry ObjectType for a given data object info
      * 
      * @param dataObjectInfo the data object info
      * @return the Registry ObjectType for a given data object info
      */
     public Registry.ObjectType getObjectType(DataObjectInfo dataObjectInfo) {
-        ObjectType entry = null;
-        if (dataObjectInfo instanceof ImageObjectInfo) {
-            ImageObjectInfo imageInfo = (ImageObjectInfo)dataObjectInfo;
-            String mimeType = imageInfo.getMimeType();
-            return getObjectType(mimeType);
-        }
-        return entry;
+        String mimeType = dataObjectInfo.getMimeType();
+        ObjectType objectType = (Registry.ObjectType)mimeObjectTypeMap.get(mimeType);
+        return objectType;
     }
 
     /**
