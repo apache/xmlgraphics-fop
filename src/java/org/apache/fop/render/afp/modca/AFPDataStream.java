@@ -209,7 +209,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
         this.outputStream = null;
 
-        DataObjectCache.getInstance().clear();
+        cache.clear();
     }
 
     /**

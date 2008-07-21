@@ -66,6 +66,9 @@ public final class DataObjectCache {
     
     /** The next file pointer position in the cache file */
     private long nextPos;
+
+    /** Our assigned cache id */
+    private Integer id;
     
     /**
      * Returns an instance of the cache
@@ -74,13 +77,12 @@ public final class DataObjectCache {
      */
     public static DataObjectCache getInstance() {
         synchronized (cacheMap) {
-            int id = System.identityHashCode(Thread.currentThread());
-            Integer cacheKey = new Integer(id);
-            DataObjectCache cache = (DataObjectCache)cacheMap.get(cacheKey);
+            Integer cacheId = new Integer(System.identityHashCode(Thread.currentThread()));
+            DataObjectCache cache = (DataObjectCache)cacheMap.get(cacheId);
             if (cache == null) {
                 try {
-                    cache = new DataObjectCache(id);
-                    cacheMap.put(cacheKey, cache);
+                    cache = new DataObjectCache(cacheId);
+                    cacheMap.put(cacheId, cache);
                 } catch (IOException e) {
                     log.error("Failed to create cache");
                 }
@@ -92,10 +94,11 @@ public final class DataObjectCache {
     /**
      * Default constructor
      * 
-     * @param id the cache id
+     * @param cacheId the cache id
      */
-    private DataObjectCache(int id) throws IOException {
-        this.tempFile = File.createTempFile(CACHE_FILENAME_PREFIX + id, null);
+    private DataObjectCache(Integer cacheId) throws IOException {
+        this.id = cacheId;
+        this.tempFile = File.createTempFile(CACHE_FILENAME_PREFIX + cacheId, null);
         this.raFile = new RandomAccessFile(tempFile, "rw");
         this.channel = raFile.getChannel();
     }
@@ -107,6 +110,7 @@ public final class DataObjectCache {
         try {
             raFile.close();
             tempFile.delete();
+            cacheMap.remove(id); // remove ourselves from the cache map
         } catch (IOException e) {
             log.error("Failed to close temporary file");
         }
@@ -129,8 +133,7 @@ public final class DataObjectCache {
             record.size = os.size();
             MappedByteBuffer byteBuffer
                 = channel.map(FileChannel.MapMode.READ_WRITE, record.position, record.size);
-            byte[] data = os.toByteArray();
-            byteBuffer.put(data);
+            byteBuffer.put(os.toByteArray());
             channel.write(byteBuffer);
             nextPos += record.size + 1;
         } catch (IOException e) {
@@ -152,12 +155,20 @@ public final class DataObjectCache {
         Record record = null;
         if (!objectType.canBeIncluded()) {
             AbstractNamedAFPObject dataObj = factory.createObject(dataObjectInfo);
+            if (dataObj == null) {
+                log.error("Failed to create object: " + dataObjectInfo);
+                return null;
+            }
             record = store(dataObj);
         } else {
             ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
             record = (Record)includableMap.get(resourceInfo);
             if (record == null) {
                 AbstractNamedAFPObject dataObj = factory.createObject(dataObjectInfo);
+                if (dataObj == null) {
+                    log.error("Failed to create object: " + dataObjectInfo);
+                    return null;
+                }
                 record = store(dataObj);
                 includableMap.put(resourceInfo, record);
             }
@@ -166,10 +177,10 @@ public final class DataObjectCache {
     }
 
     /**
-     * Returns the written binary data of the AbstractDataObject from the cache file
+     * Returns the written binary data of the AbstractNamedDataObject from the cache file
      * 
      * @param record the cache record
-     * @return the binary data of the AbstractDataObject or null if failed.
+     * @return the binary data of the AbstractNamedDataObject or null if failed.
      */
     public byte[] retrieve(Record record) {
         if (record == null) {
