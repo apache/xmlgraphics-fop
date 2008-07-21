@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -47,6 +48,7 @@ public final class DataObjectCache {
     /** Static mapping of data object caches id --> cache */
     private static Map/*<Integer,DataObjectCache>*/ cacheMap
         = new java.util.HashMap/*<Integer,DataObjectCache>*/();    
+    
     
     /** Mapping of data object uri --> cache record */
     private Map/*<ResourceInfo,Record>*/ includableMap
@@ -110,7 +112,9 @@ public final class DataObjectCache {
         try {
             raFile.close();
             tempFile.delete();
-            cacheMap.remove(id); // remove ourselves from the cache map
+            synchronized (cacheMap) {
+                cacheMap.remove(id); // remove ourselves from the cache map
+            }
         } catch (IOException e) {
             log.error("Failed to close temporary file");
         }
