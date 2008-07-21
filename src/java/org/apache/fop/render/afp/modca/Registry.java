@@ -21,8 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.util.Collections;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.xmlgraphics.util.MimeConstants;
 
