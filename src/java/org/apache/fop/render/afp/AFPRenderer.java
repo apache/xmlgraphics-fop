@@ -476,7 +476,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     coords[X1] += 2 * height;
                 }
             } else {
-                while (y1 + width < y2) {
+                while (coords[Y1] + width < coords[Y2]) {
                     afpDataStream.createLine(
                             coords[X1],
                             coords[Y1],
