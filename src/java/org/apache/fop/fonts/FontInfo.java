@@ -319,10 +319,10 @@ public class FontInfo {
         Integer size = new Integer(fontSize);
         Font font = (Font)sizes.get(size);
         if (font == null) {
-            String fname = getInternalFontKey(triplet);
-            useFont(fname);
-            FontMetrics metrics = getMetricsFor(fname);
-            font = new Font(fname, triplet, metrics, fontSize);
+            String fontKey = getInternalFontKey(triplet);
+            useFont(fontKey);
+            FontMetrics metrics = getMetricsFor(fontKey);
+            font = new Font(fontKey, triplet, metrics, fontSize);
             sizes.put(size, font);
         }
         return font;
@@ -504,7 +504,7 @@ public class FontInfo {
      * @param weight font weight
      * @return internal key
      */
-    public static FontTriplet createFontKey(String family, String style,
+    public static synchronized FontTriplet createFontKey(String family, String style,
                                        int weight) {
         return new FontTriplet(family, style, weight);
     }
