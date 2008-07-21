@@ -57,7 +57,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         throws ConfigurationException {
 
         Configuration[] triple = fontCfg.getChildren("font-triplet");
-        List/*<FontTriplet>*/ tripletList = new java.util.ArrayList();
+        List/*<FontTriplet>*/ tripletList = new java.util.ArrayList/*<FontTriplet>*/();
         if (triple.length == 0) {
             log.error("Mandatory font configuration element '<font-triplet...' is missing");
             return null;
