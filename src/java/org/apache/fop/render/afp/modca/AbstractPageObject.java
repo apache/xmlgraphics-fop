@@ -362,9 +362,9 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
             if (obj instanceof Writable) {
                 Writable writableObject = (Writable)obj;
                 writableObject.write(os);
-            } else if (obj instanceof ResourceInfo) {
-                ResourceInfo resourceInfo = (ResourceInfo)obj;
-                byte[] data = cache.get(resourceInfo);
+            } else if (obj instanceof DataObjectCache.Record) {
+                DataObjectCache.Record record = (DataObjectCache.Record)obj;
+                byte[] data = cache.retrieve(record);
                 os.write(data);
             }
         }

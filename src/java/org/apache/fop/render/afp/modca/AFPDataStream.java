@@ -60,84 +60,57 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     /** Static logging instance */
     protected static Log log = LogFactory.getLog("org.apache.fop.render.afp.modca");
 
-    /**
-     * Boolean completion indicator
-     */
+    /** Boolean completion indicator */
     private boolean complete = false;
 
-    /**
-     * The application producing the AFP document
-     */
+    /** The application producing the AFP document */
     // not used
     // private String producer = null;
-    /**
-     * The AFP document object
-     */
+    
+    /** The AFP document object */
     private Document document = null;
 
-    /**
-     * The current page group object
-     */
+    /** The current page group object */
     private PageGroup currentPageGroup = null;
 
-    /**
-     * The current page object
-     */
+    /** The current page object */
     private PageObject currentPageObject = null;
 
-    /**
-     * The current overlay object
-     */
+    /** The current overlay object */
     private Overlay currentOverlay = null;
 
-    /**
-     * The current page
-     */
+    /** The current page */
     private AbstractPageObject currentPage = null;
 
-    /**
-     * The page count
-     */
+    /** The page count */
     private int pageCount = 0;
 
-    /**
-     * The page group count
-     */
+    /** The page group count */
     private int pageGroupCount = 0;
 
-    /**
-     * The overlay count
-     */
+    /** The overlay count */
     private int overlayCount = 0;
 
-    /**
-     * The portrait rotation
-     */
+    /** The portrait rotation */
     private int portraitRotation = 0;
 
-    /**
-     * The landscape rotation
-     */
+    /** The landscape rotation */
     private int landscapeRotation = 270;
 
-    /**
-     * The rotation
-     */
+    /** The rotation */
     private int orientation;
 
-    /**
-     * The outputstream for the data stream
-     */
+    /** The outputstream for the data stream */
     private OutputStream outputStream = null;
 
     /** Maintain a reference count of instream objects for referencing purposes */
     private int instreamObjectCount = 0;
 
-    /**
-     * The MO:DCA interchange set in use (default to MO:DCA-P IS/2 set)
-     */
+    /** The MO:DCA interchange set in use (default to MO:DCA-P IS/2 set) */
     private InterchangeSet interchangeSet
         = InterchangeSet.valueOf(InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
+
+    private DataObjectCache cache = DataObjectCache.getInstance();
 
     /**
      * The external resource group manager
@@ -152,6 +125,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     }
 
     /**
+     * Returns the document object
+     * 
      * @return the document object
      */
     private Document getDocument() {
@@ -159,6 +134,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     }
 
     /**
+     * Returns the current page
+     * 
      * @return the current page
      */
     protected AbstractPageObject getCurrentPage() {
@@ -259,7 +236,6 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                 pageRotation, pageWidthRes, pageHeightRes);
         currentPage = currentPageObject;
         currentOverlay = null;
-//        setOffsets(0, 0, 0);
     }
 
     /**
@@ -454,8 +430,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             dataObjectInfo.setObjectType(objectType);
         }
         
-        DataObjectCache cache = DataObjectCache.getInstance();
-        String includeName = cache.put(dataObjectInfo);
+        DataObjectCache.Record record = cache.store(dataObjectInfo);
 
         if (objectType != null) {
             
@@ -470,17 +445,19 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                     
                     // Create and return include
                     DataObjectFactory factory = cache.getFactory();                         
-                    IncludeObject includeObj = factory.createInclude(includeName, dataObjectInfo);
+                    IncludeObject includeObj = factory.createInclude(
+                            record.getObjectName(), dataObjectInfo);
                     getCurrentPage().addObject(includeObj);
                     
                     // Record the resource cache key (uri) in the ResourceGroup
                     ResourceGroup resourceGroup = getResourceGroup(resourceLevel);
-                    resourceGroup.addObject(resourceInfo);
+                    resourceGroup.addObject(record);
                     return;   
                 } else {
                     log.warn("Data object located at '" + uri + "'"
                             + " of type '" + objectType.getMimeType() + "'"
-                            + " cannot be included with an IOB so it will be embedded directly");
+                            + " cannot be referenced with an include"
+                            + " so it will be embedded directly");
                 }                
             } else {
                 if (resourceLevel.isExternal()) {
@@ -490,7 +467,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             }
         }
         // Unrecognised/unsupported object type so add object reference directly in current page
-        currentPageObject.addObject(resourceInfo);
+        currentPageObject.addObject(record);
     }
 
 //    /**

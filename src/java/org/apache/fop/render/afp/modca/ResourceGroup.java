@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.fop.render.afp.DataObjectCache;
-import org.apache.fop.render.afp.ResourceInfo;
+import org.apache.fop.render.afp.DataObjectCache.Record;
 
 /**
  * A Resource Group contains a set of overlays.
@@ -37,6 +37,8 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
 
     /** Set of resource uri */
     private Set/*<String>*/ resourceSet = new java.util.HashSet/*<String>*/();
+
+    private DataObjectCache cache = DataObjectCache.getInstance();
 
     /**
      * Default constructor
@@ -121,12 +123,12 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
 //    }
 
     /**
-     * Add this object cache resource info to this resource group
+     * Add this object cache record to this resource group
      * 
-     * @param resourceInfo the resource info
+     * @param record the cache record
      */
-    public void addObject(ResourceInfo resourceInfo) {
-        resourceSet.add(resourceInfo);
+    public void addObject(Record record) {
+        resourceSet.add(record);
     }
     
     /**
@@ -152,16 +154,13 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         Iterator it = resourceSet.iterator();
-        if (it.hasNext()) {
-            DataObjectCache cache = DataObjectCache.getInstance();
-            while (it.hasNext()) {
-                ResourceInfo resourceInfo = (ResourceInfo)it.next();
-                byte[] data = cache.get(resourceInfo);
-                if (data != null) {
-                    os.write(data);
-                } else {
-                    log.error("data was null");
-                }
+        while (it.hasNext()) {
+            Record record = (Record)it.next();
+            byte[] data = cache.retrieve(record);
+            if (data != null) {
+                os.write(data);
+            } else {
+                log.error("data was null");
             }
         }
     }

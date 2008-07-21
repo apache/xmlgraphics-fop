@@ -128,14 +128,20 @@ public final class Registry {
                         MimeConstants.MIME_PCL
                 )
         );
+        
+        // Entries without component and object ids
         mimeEntryMap.put(
                 MimeConstants.MIME_SVG,
                 new ObjectType(
-                        COMPID_EPS,
-                        null, // no component id
                         "Scaleable Vector Graphics",
-                        false,
                         MimeConstants.MIME_SVG
+                )
+        );
+        mimeEntryMap.put(
+                MimeConstants.MIME_PNG,
+                new ObjectType(
+                        "Portable Network Graphics",
+                        MimeConstants.MIME_PNG
                 )
         );
     }
@@ -181,9 +187,33 @@ public final class Registry {
         private String name;
         private boolean canBeIncluded;
         private String mimeType;
-        
+
+        /**
+         * Constructor
+         * 
+         * @param name the object type name
+         * @param canBeIncluded true if this object can be included with an IOB structured field
+         * @param mimeType the mime type associated with this object type
+         */
+        private ObjectType(String name, boolean canBeIncluded, String mimeType) {
+            this.name = name;
+            this.canBeIncluded = canBeIncluded;
+            this.mimeType = mimeType;
+        }
+
+        /**
+         * Constructor
+         * 
+         * @param name the object type name
+         * @param mimeType the mime type associated with this object type
+         */
+        private ObjectType(String name, String mimeType) {
+            this(name, false, mimeType);
+        }
+
         /**
          * Main constructor
+         * 
          * @param componentId the component id of this object type
          * @param oid the object id of this object type
          * @param name the object type name
@@ -192,15 +222,14 @@ public final class Registry {
          */
         public ObjectType(byte componentId, byte[] oid, String name,
                 boolean canBeIncluded, String mimeType) {
+            this(name, canBeIncluded, mimeType);
             this.componentId = componentId;
             this.oid = oid;
-            this.name = name;
-            this.canBeIncluded = canBeIncluded;
-            this.mimeType = mimeType;
         }
-                
+     
         /**
          * Returns a MOD:CA object type OID from a given a componentId
+         * 
          * @return the corresponding object type id for a given component id
          * or null if the component id is unknown and the object type OID was not found.
          */
@@ -209,6 +238,8 @@ public final class Registry {
         }
 
         /**
+         * Returns the object type name for the given componentId
+         * 
          * @return the object type name for the given componentId 
          */
         public String getName() {
@@ -216,6 +247,8 @@ public final class Registry {
         }
 
         /**
+         * Returns the compontentId for this entry
+         * 
          * @return the compontentId for this entry
          */
         public byte getComponentId() {
@@ -223,6 +256,8 @@ public final class Registry {
         }
 
         /**
+         * Returns true if this component can be included with an IOB structured field
+         * 
          * @return true if this component can be included with an IOB structured field
          */
         public boolean canBeIncluded() {
@@ -230,6 +265,8 @@ public final class Registry {
         }
 
         /**
+         * Returns the mime type associated with this object type
+         * 
          * @return the mime type associated with this object type
          */
         public String getMimeType() {
@@ -237,24 +274,27 @@ public final class Registry {
         }
 
         /**
+         * Returns true if this is an image type
+         * 
          * @return true if this is an image type
          */
         public boolean isImage() {
             return mimeType == MimeConstants.MIME_TIFF
             || mimeType == MimeConstants.MIME_GIF
+            || mimeType == MimeConstants.MIME_PNG
             || mimeType == MimeConstants.MIME_JPEG;
         }
 
         /**
+         * Returns true if this is a graphic type
+         * 
          * @return true if this is a graphic type
          */
         public boolean isGraphic() {
             return mimeType == MimeConstants.MIME_SVG;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String toString() {
             return this.getName();
         }

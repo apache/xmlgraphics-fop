@@ -89,4 +89,9 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
     public String getName() {
         return name;
     }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return getName();
+    }
 }

@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.render.afp.modca.DataObjectFactory;
+import org.apache.fop.render.afp.modca.Registry;
 
 /**
  * Caches and creates (as necessary using an instance of DataObjectFactory)
@@ -47,10 +48,9 @@ public final class DataObjectCache {
     private static Map/*<Integer,DataObjectCache>*/ cacheMap
         = new java.util.HashMap/*<Integer,DataObjectCache>*/();    
     
-    
     /** Mapping of data object uri --> cache record */
-    private Map/*<ResourceInfo,DataObjectCache.Record>*/ recordMap
-        = new java.util.HashMap/*<ResourceInfo,DataObjectCache.Record>*/();
+    private Map/*<ResourceInfo,Record>*/ includableMap
+        = new java.util.HashMap/*<ResourceInfo,Record>*/();
     
     /** Used for create data objects */
     private DataObjectFactory factory = new DataObjectFactory();
@@ -111,59 +111,75 @@ public final class DataObjectCache {
             log.error("Failed to close temporary file");
         }
     }
+
+    /**
+     * Stores a named data object in the cache
+     * 
+     * @param dataObj a named data object
+     * @return a new cache record
+     */
+    public Record store(AbstractNamedAFPObject dataObj) {
+        Record record = new Record();
+        record.objectName = dataObj.getName();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            channel.position(nextPos);
+            record.position = channel.position();
+            dataObj.write(os);
+            record.size = os.size();
+            MappedByteBuffer byteBuffer
+                = channel.map(FileChannel.MapMode.READ_WRITE, record.position, record.size);
+            byte[] data = os.toByteArray();
+            byteBuffer.put(data);
+            channel.write(byteBuffer);
+            nextPos += record.size + 1;
+        } catch (IOException e) {
+            log.error("Failed to write cache record for '"
+                    + dataObj + "', " + e.getMessage());
+        }
+        return record;
+    }
     
     /**
      * Creates and adds a new data object and record to the cache as necessary.  
      * 
      * @param dataObjectInfo a data object info
      * 
-     * @return the name of the related data object
+     * @return a cache record
      */
-    public String put(DataObjectInfo dataObjectInfo) {
-        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-        Record record = (Record)recordMap.get(resourceInfo);
-        if (record == null) {
-            record = new Record();
+    public Record store(DataObjectInfo dataObjectInfo) {
+        Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+        Record record = null;
+        if (!objectType.canBeIncluded()) {
             AbstractNamedAFPObject dataObj = factory.createObject(dataObjectInfo);
-            record.objectName = dataObj.getName();
-
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            try {
-                channel.position(nextPos);
-                record.position = channel.position();
-                dataObj.write(os);
-                record.size = os.size();
-                MappedByteBuffer byteBuffer
-                    = channel.map(FileChannel.MapMode.READ_WRITE, record.position, record.size);
-                byte[] data = os.toByteArray();
-                byteBuffer.put(data);
-                channel.write(byteBuffer);
-                nextPos += record.size + 1;
-            } catch (IOException e) {
-                log.error("Failed to write cache record for '"
-                        + resourceInfo + "', " + e.getMessage());
+            record = store(dataObj);
+        } else {
+            ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+            record = (Record)includableMap.get(resourceInfo);
+            if (record == null) {
+                AbstractNamedAFPObject dataObj = factory.createObject(dataObjectInfo);
+                record = store(dataObj);
+                includableMap.put(resourceInfo, record);
             }
-            recordMap.put(resourceInfo, record);
         }
-        return record.objectName;
+        return record;
     }
-    
+
     /**
      * Returns the written binary data of the AbstractDataObject from the cache file
      * 
-     * @param resourceInfo the data resource info
+     * @param record the cache record
      * @return the binary data of the AbstractDataObject or null if failed.
      */
-    public byte[] get(ResourceInfo resourceInfo) {
-        Record record = (Record)recordMap.get(resourceInfo);
+    public byte[] retrieve(Record record) {
         if (record == null) {
-            throw new IllegalArgumentException("Unknown data object " + resourceInfo);
+            throw new IllegalArgumentException("Cache record is null");
         }
         MappedByteBuffer byteBuffer = null;
         try {
             byteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, record.position, record.size);
         } catch (IOException e) {
-            log.error("Failed to read cache record for '" + resourceInfo + "', " + e.getMessage());
+            log.error("Failed to read cache record for '" + record + "', " + e.getMessage());
             return null;
         }
         if (byteBuffer.hasArray()) {
@@ -174,7 +190,7 @@ public final class DataObjectCache {
             return data;
         }
     }
-    
+        
     /**
      * Returns the data object factory
      * 
@@ -184,19 +200,30 @@ public final class DataObjectCache {
         return this.factory;
     }
 
+    
     /**
      * A cache record
      */
-    private class Record {
-        protected long position; 
-        protected int size;
-        protected String objectName;
+    public class Record {
+        private long position; 
+        private int size;
+        private String objectName;
         
+        /** {@inheritDoc} */
         public String toString() {
             return "Record{name=" + objectName
                 + ", pos=" + position
                 + ", size=" + size
                 + "}";
+        }
+        
+        /**
+         * Returns the object name
+         * 
+         * @return the object name
+         */
+        public String getObjectName() {
+            return this.objectName;
         }
     }
 }

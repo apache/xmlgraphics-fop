@@ -69,7 +69,6 @@ implements PreparedAFPObject {
      * @return the drawingOrder if it was added, null otherwise
      */
     public PreparedAFPObject addObject(PreparedAFPObject preparedObject) {
-//        log.debug(this + " adding " + preparedObject);
         getObjects().add(preparedObject);
         return preparedObject;
     }
