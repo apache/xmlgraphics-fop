@@ -149,7 +149,7 @@ public final class Registry {
         private byte componentId; 
         private byte[] oid;
         private String name;
-        private boolean canBeIncluded;
+        private boolean includable;
         private String mimeType;
 
         /**
@@ -158,13 +158,13 @@ public final class Registry {
          * @param componentId the component id of this object type
          * @param oid the object id of this object type
          * @param name the object type name
-         * @param canBeIncluded true if this object can be included with an IOB structured field
+         * @param includable true if this object can be included with an IOB structured field
          * @param mimeType the mime type associated with this object type
          */
         public ObjectType(byte componentId, byte[] oid, String name,
-                boolean canBeIncluded, String mimeType) {
+                boolean includable, String mimeType) {
             this.name = name;
-            this.canBeIncluded = canBeIncluded;
+            this.includable = includable;
             this.mimeType = mimeType;
             this.componentId = componentId;
             this.oid = oid;
@@ -204,7 +204,7 @@ public final class Registry {
          * @return true if this component can be included with an IOB structured field
          */
         public boolean canBeIncluded() {
-            return this.canBeIncluded;
+            return this.includable;
         }
 
         /**
@@ -214,26 +214,6 @@ public final class Registry {
          */
         public String getMimeType() {
             return this.mimeType;
-        }
-
-        /**
-         * Returns true if this is an image type
-         * 
-         * @return true if this is an image type
-         */
-        public boolean isImage() {
-            return mimeType == MimeConstants.MIME_TIFF
-            || mimeType == MimeConstants.MIME_GIF
-            || mimeType == MimeConstants.MIME_JPEG;
-        }
-
-        /**
-         * Returns true if this is a graphic type
-         * 
-         * @return true if this is a graphic type
-         */
-        public boolean isGraphic() {
-            return mimeType == MimeConstants.MIME_SVG;
         }
 
         /** {@inheritDoc} */
