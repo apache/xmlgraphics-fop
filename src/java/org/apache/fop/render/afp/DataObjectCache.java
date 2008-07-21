@@ -155,9 +155,9 @@ public final class DataObjectCache {
      * @return a cache record
      */
     public Record store(DataObjectInfo dataObjectInfo) {
-        Registry.ObjectType objectType = dataObjectInfo.getObjectType();
         Record record = null;
-        if (!objectType.canBeIncluded()) {
+        Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+        if (objectType == null || !objectType.canBeIncluded()) {
             AbstractNamedAFPObject dataObj = factory.createObject(dataObjectInfo);
             if (dataObj == null) {
                 log.error("Failed to create object: " + dataObjectInfo);

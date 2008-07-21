@@ -24,16 +24,12 @@ import java.util.Collections;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.DataObjectInfo;
-import org.apache.fop.render.afp.ImageObjectInfo;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 /**
  * MOD:CA Registry of object types 
  */
 public final class Registry {
-    /** logging instance */
-    private static final Log log = LogFactory.getLog("org.apache.fop.afp");
-
     /** IOB supported object types */    
     private static final byte COMPID_GIF = 22;
     private static final byte COMPID_JFIF = 23; // jpeg file interchange format 
@@ -127,35 +123,23 @@ public final class Registry {
                         true,
                         MimeConstants.MIME_PCL
                 )
-        );
-        
-        // Entries without component and object ids
-        mimeObjectTypeMap.put(
-                MimeConstants.MIME_SVG,
-                new ObjectType(
-                        "Scaleable Vector Graphics",
-                        MimeConstants.MIME_SVG
-                )
-        );
-        mimeObjectTypeMap.put(
-                MimeConstants.MIME_PNG,
-                new ObjectType(
-                        "Portable Network Graphics",
-                        MimeConstants.MIME_PNG
-                )
-        );
+        );        
     }
 
     /**
      * Returns the Registry ObjectType for a given data object info
+     * or null if not registered
      * 
      * @param dataObjectInfo the data object info
      * @return the Registry ObjectType for a given data object info
+     * or null if not registered
      */
     public Registry.ObjectType getObjectType(DataObjectInfo dataObjectInfo) {
         String mimeType = dataObjectInfo.getMimeType();
-        ObjectType objectType = (Registry.ObjectType)mimeObjectTypeMap.get(mimeType);
-        return objectType;
+        if (mimeType != null) {
+            return (Registry.ObjectType)mimeObjectTypeMap.get(mimeType);
+        }
+        return null; 
     }
 
     /**
@@ -169,29 +153,6 @@ public final class Registry {
         private String mimeType;
 
         /**
-         * Constructor
-         * 
-         * @param name the object type name
-         * @param canBeIncluded true if this object can be included with an IOB structured field
-         * @param mimeType the mime type associated with this object type
-         */
-        private ObjectType(String name, boolean canBeIncluded, String mimeType) {
-            this.name = name;
-            this.canBeIncluded = canBeIncluded;
-            this.mimeType = mimeType;
-        }
-
-        /**
-         * Constructor
-         * 
-         * @param name the object type name
-         * @param mimeType the mime type associated with this object type
-         */
-        private ObjectType(String name, String mimeType) {
-            this(name, false, mimeType);
-        }
-
-        /**
          * Main constructor
          * 
          * @param componentId the component id of this object type
@@ -202,7 +163,9 @@ public final class Registry {
          */
         public ObjectType(byte componentId, byte[] oid, String name,
                 boolean canBeIncluded, String mimeType) {
-            this(name, canBeIncluded, mimeType);
+            this.name = name;
+            this.canBeIncluded = canBeIncluded;
+            this.mimeType = mimeType;
             this.componentId = componentId;
             this.oid = oid;
         }
@@ -261,7 +224,6 @@ public final class Registry {
         public boolean isImage() {
             return mimeType == MimeConstants.MIME_TIFF
             || mimeType == MimeConstants.MIME_GIF
-            || mimeType == MimeConstants.MIME_PNG
             || mimeType == MimeConstants.MIME_JPEG;
         }
 

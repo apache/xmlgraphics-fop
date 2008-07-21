@@ -263,7 +263,6 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         String overlayName = "OVL"
                 + StringUtils.lpad(String.valueOf(++overlayCount), '0', 5);
 
-        DataObjectCache cache = DataObjectCache.getInstance();
         DataObjectFactory factory = cache.getFactory();
         this.currentOverlay = factory.createOverlay(
                 overlayName, width, height, widthRes, heightRes, overlayRotation);
@@ -446,9 +445,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                 if (objectType.canBeIncluded()) {
                     
                     // Create and return include
-                    DataObjectFactory factory = cache.getFactory();                         
-                    IncludeObject includeObj = factory.createInclude(
-                            record.getObjectName(), dataObjectInfo);
+                    DataObjectFactory factory = cache.getFactory();
+                    String objectName = record.getObjectName();
+                    IncludeObject includeObj = factory.createInclude(objectName, dataObjectInfo);
                     getCurrentPage().addObject(includeObj);
                     
                     // Record the resource cache key (uri) in the ResourceGroup

@@ -197,31 +197,20 @@ public class DataObjectFactory {
         if (includeObj == null) {
             includeObj = new IncludeObject(name);
         
-            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
-            if (objectType.isImage()) {
+            if (dataObjectInfo instanceof ImageObjectInfo) {
                 includeObj.setDataObjectType(IncludeObject.TYPE_IMAGE);
-            } else if (objectType.isGraphic()) {
+            } else if (dataObjectInfo instanceof GraphicsObjectInfo) {
                 includeObj.setDataObjectType(IncludeObject.TYPE_GRAPHIC);
-    //        } else if (dataObject instanceof PageSegment) {
-    //            includeObj.setDataObjectType(IncludeObject.TYPE_PAGE_SEGMENT);
             } else {
                 includeObj.setDataObjectType(IncludeObject.TYPE_OTHER);
-                // Strip any object container
-    //            AbstractNamedAFPObject dataObject = dataObjectAccessor.getDataObject();
-    //            if (dataObject instanceof ObjectContainer) {
-    //                ObjectContainer objectContainer = (ObjectContainer)dataObject;
-    //                dataObject = objectContainer.getDataObject();
-    //            }
             }
             
-//            includeObj.setFullyQualifiedName(
-//                    FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
-//                    FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-//                    dataObjectInfo.getUri());
-    
-            includeObj.setObjectClassification(
-                 ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
-                 objectType);
+            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+            if (objectType != null) {
+                includeObj.setObjectClassification(
+                   ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+                   objectType);
+            }
             
             ObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
             

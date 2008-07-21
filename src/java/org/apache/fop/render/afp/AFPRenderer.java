@@ -635,12 +635,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                             (float)posInt.getHeight()
                     };
                     int[] coords = mpts2units(srcPts);
-                    String mimeType = info.getMimeType();
+                    
                     // create image object parameters
                     ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
                     imageObjectInfo.setBuffered(false);
                     imageObjectInfo.setUri(uri);
-                    imageObjectInfo.setMimeType(mimeType);
+                    
+                    String mimeType = info.getMimeType();
+                    if (mimeType != null) {
+                        imageObjectInfo.setMimeType(mimeType);
+                    }
 
                     ObjectAreaInfo objectAreaInfo = new ObjectAreaInfo();
                     objectAreaInfo.setX(coords[X]);
