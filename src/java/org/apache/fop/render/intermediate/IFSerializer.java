@@ -56,6 +56,11 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
+    public String getMimeType() {
+        return MIME_TYPE;
+    }
+
+    /** {@inheritDoc} */
     public void startDocument() throws IFException {
         try {
             handler.startDocument();

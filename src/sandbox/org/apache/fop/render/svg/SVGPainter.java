@@ -78,6 +78,11 @@ public class SVGPainter extends AbstractSVGPainter {
     }
 
     /** {@inheritDoc} */
+    public String getMimeType() {
+        return MIME_TYPE;
+    }
+
+    /** {@inheritDoc} */
     public void setResult(Result result) throws IFException {
         if (result instanceof StreamResult) {
             multiFileUtil = new MultiFileRenderingUtil(FILE_EXTENSION_SVG,

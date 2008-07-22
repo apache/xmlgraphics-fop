@@ -57,6 +57,11 @@ public class SVGPrintPainter extends AbstractSVGPainter {
     }
 
     /** {@inheritDoc} */
+    public String getMimeType() {
+        return MIME_SVG_PRINT;
+    }
+
+    /** {@inheritDoc} */
     public void startDocument() throws IFException {
         try {
             handler.startDocument();

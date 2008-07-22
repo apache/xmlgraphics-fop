@@ -45,15 +45,12 @@ public abstract class AbstractIFPainterMaker {
     public abstract String[] getSupportedMimeTypes();
 
     /**
-     * Returns a renderer config object that can be used to
+     * Returns a configurator object that can be used to
      * configure the painter.
-     * @param userAgent user agent
-     * @return a config object that can be used to configure the painter
+     * @param userAgent the user agent
+     * @return a configurator object that can be used to configure the painter
      */
-    /*
-    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
-        return null;
-    }*/
+    public abstract IFPainterConfigurator getConfigurator(FOUserAgent userAgent);
 
     /**
      * Indicates whether a specific MIME type is supported by this painter.

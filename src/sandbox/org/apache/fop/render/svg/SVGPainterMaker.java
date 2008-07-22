@@ -22,6 +22,7 @@ package org.apache.fop.render.svg;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
 import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.render.intermediate.IFPainterConfigurator;
 
 /**
  * Painter factory for SVG output.
@@ -43,6 +44,12 @@ public class SVGPainterMaker extends AbstractIFPainterMaker {
     /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
+    }
+
+    /** {@inheritDoc} */
+    public IFPainterConfigurator getConfigurator(FOUserAgent userAgent) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

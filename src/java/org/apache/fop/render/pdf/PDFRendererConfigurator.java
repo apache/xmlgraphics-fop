@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,12 +33,15 @@ import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.render.intermediate.IFPainterConfigurator;
 import org.apache.fop.util.LogUtil;
 
 /**
- * PDF renderer configurator 
+ * PDF renderer configurator
  */
-public class PDFRendererConfigurator extends PrintRendererConfigurator {
+public class PDFRendererConfigurator extends PrintRendererConfigurator
+            implements IFPainterConfigurator {
 
     /**
      * Default constructor
@@ -59,75 +62,93 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
         Configuration cfg = super.getRendererConfig(renderer);
         if (cfg != null) {
             PDFRenderer pdfRenderer = (PDFRenderer)renderer;
-            //PDF filters
-            try {
-                Map filterMap = buildFilterMapFromConfiguration(cfg);
-                if (filterMap != null) {
-                    pdfRenderer.setFilterMap(filterMap);
-                }
-            } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
-            }
-    
             super.configure(renderer);
-    
-            String s = cfg.getChild(PDFRenderer.PDF_A_MODE, true).getValue(null);
-            if (s != null) {
-                pdfRenderer.setAMode(PDFAMode.valueOf(s));
+
+            PDFRenderingUtil pdfUtil = pdfRenderer.getPDFUtil();
+            configure(cfg, pdfUtil);
+        }
+    }
+
+    private void configure(Configuration cfg, PDFRenderingUtil pdfUtil) throws FOPException {
+        //PDF filters
+        try {
+            Map filterMap = buildFilterMapFromConfiguration(cfg);
+            if (filterMap != null) {
+                pdfUtil.setFilterMap(filterMap);
             }
-            s = cfg.getChild(PDFRenderer.PDF_X_MODE, true).getValue(null);
-            if (s != null) {
-                pdfRenderer.setXMode(PDFXMode.valueOf(s));
+        } catch (ConfigurationException e) {
+            LogUtil.handleException(log, e, false);
+        }
+
+        String s = cfg.getChild(PDFRenderer.PDF_A_MODE, true).getValue(null);
+        if (s != null) {
+            pdfUtil.setAMode(PDFAMode.valueOf(s));
+        }
+        s = cfg.getChild(PDFRenderer.PDF_X_MODE, true).getValue(null);
+        if (s != null) {
+            pdfUtil.setXMode(PDFXMode.valueOf(s));
+        }
+        Configuration encryptionParamsConfig = cfg.getChild(PDFRenderer.ENCRYPTION_PARAMS, false);
+        if (encryptionParamsConfig != null) {
+            PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
+            Configuration ownerPasswordConfig = encryptionParamsConfig.getChild(
+                    PDFRenderer.OWNER_PASSWORD, false);
+            if (ownerPasswordConfig != null) {
+                String ownerPassword = ownerPasswordConfig.getValue(null);
+                if (ownerPassword != null) {
+                    encryptionParams.setOwnerPassword(ownerPassword);
+                }
             }
-            Configuration encryptionParamsConfig = cfg.getChild(PDFRenderer.ENCRYPTION_PARAMS, false);
-            if (encryptionParamsConfig != null) {
-                PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
-                Configuration ownerPasswordConfig = encryptionParamsConfig.getChild(
-                        PDFRenderer.OWNER_PASSWORD, false);
-                if (ownerPasswordConfig != null) {
-                    String ownerPassword = ownerPasswordConfig.getValue(null);
-                    if (ownerPassword != null) {
-                        encryptionParams.setOwnerPassword(ownerPassword);
-                    }
+            Configuration userPasswordConfig = encryptionParamsConfig.getChild(
+                    PDFRenderer.USER_PASSWORD, false);
+            if (userPasswordConfig != null) {
+                String userPassword = userPasswordConfig.getValue(null);
+                if (userPassword != null) {
+                    encryptionParams.setUserPassword(userPassword);
                 }
-                Configuration userPasswordConfig = encryptionParamsConfig.getChild(
-                        PDFRenderer.USER_PASSWORD, false);
-                if (userPasswordConfig != null) {
-                    String userPassword = userPasswordConfig.getValue(null);
-                    if (userPassword != null) {
-                        encryptionParams.setUserPassword(userPassword);
-                    }
-                }
-                Configuration noPrintConfig = encryptionParamsConfig.getChild(
-                        PDFRenderer.NO_PRINT, false);
-                if (noPrintConfig != null) {
-                    encryptionParams.setAllowPrint(false);
-                }
-                Configuration noCopyContentConfig = encryptionParamsConfig.getChild(
-                        PDFRenderer.NO_COPY_CONTENT, false);
-                if (noCopyContentConfig != null) {
-                    encryptionParams.setAllowCopyContent(false);
-                }
-                Configuration noEditContentConfig = encryptionParamsConfig.getChild(
-                        PDFRenderer.NO_EDIT_CONTENT, false);
-                if (noEditContentConfig != null) {
-                    encryptionParams.setAllowEditContent(false);
-                }
-                Configuration noAnnotationsConfig = encryptionParamsConfig.getChild(
-                        PDFRenderer.NO_ANNOTATIONS, false);
-                if (noAnnotationsConfig != null) {
-                    encryptionParams.setAllowEditAnnotations(false);
-                }
-                pdfRenderer.setEncryptionParams(encryptionParams);
             }
-            s = cfg.getChild(PDFRenderer.KEY_OUTPUT_PROFILE, true).getValue(null);
-            if (s != null) {
-                pdfRenderer.setOutputProfileURI(s);
+            Configuration noPrintConfig = encryptionParamsConfig.getChild(
+                    PDFRenderer.NO_PRINT, false);
+            if (noPrintConfig != null) {
+                encryptionParams.setAllowPrint(false);
             }
-            Configuration disableColorSpaceConfig = cfg.getChild(PDFRenderer.KEY_DISABLE_SRGB_COLORSPACE, false);
-            if (disableColorSpaceConfig != null) {
-                pdfRenderer.disableSRGBColorSpace = disableColorSpaceConfig.getValueAsBoolean(false);
+            Configuration noCopyContentConfig = encryptionParamsConfig.getChild(
+                    PDFRenderer.NO_COPY_CONTENT, false);
+            if (noCopyContentConfig != null) {
+                encryptionParams.setAllowCopyContent(false);
             }
+            Configuration noEditContentConfig = encryptionParamsConfig.getChild(
+                    PDFRenderer.NO_EDIT_CONTENT, false);
+            if (noEditContentConfig != null) {
+                encryptionParams.setAllowEditContent(false);
+            }
+            Configuration noAnnotationsConfig = encryptionParamsConfig.getChild(
+                    PDFRenderer.NO_ANNOTATIONS, false);
+            if (noAnnotationsConfig != null) {
+                encryptionParams.setAllowEditAnnotations(false);
+            }
+            pdfUtil.setEncryptionParams(encryptionParams);
+        }
+        s = cfg.getChild(PDFRenderer.KEY_OUTPUT_PROFILE, true).getValue(null);
+        if (s != null) {
+            pdfUtil.setOutputProfileURI(s);
+        }
+        Configuration disableColorSpaceConfig
+            = cfg.getChild(PDFRenderer.KEY_DISABLE_SRGB_COLORSPACE, false);
+        if (disableColorSpaceConfig != null) {
+            pdfUtil.setDisableSRGBColorSpace(
+                    disableColorSpaceConfig.getValueAsBoolean(false));
+        }
+    }
+
+    public void configure(IFPainter painter) throws FOPException {
+        Configuration cfg = super.getRendererConfig(painter.getMimeType());
+        if (cfg != null) {
+            PDFPainter pdfPainter = (PDFPainter)painter;
+            PDFRenderingUtil pdfUtil = pdfPainter.getPDFUtil();
+            configure(cfg, pdfUtil);
+
+            //TODO Configure fonts
         }
     }
 
@@ -137,7 +158,7 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
      * @return Map the newly built filter map
      * @throws ConfigurationException if a filter list is defined twice
      */
-    public static Map buildFilterMapFromConfiguration(Configuration cfg) 
+    public static Map buildFilterMapFromConfiguration(Configuration cfg)
                 throws ConfigurationException {
         Map filterMap = new java.util.HashMap();
         Configuration[] filterLists = cfg.getChildren("filterList");
@@ -150,11 +171,11 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
                 String name = filt[j].getValue();
                 filterList.add(name);
             }
-            
+
             if (type == null) {
                 type = PDFFilterList.DEFAULT_FILTER;
             }
-    
+
             if (!filterList.isEmpty() && log.isDebugEnabled()) {
                 StringBuffer debug = new StringBuffer("Adding PDF filter");
                 if (filterList.size() != 1) {
@@ -169,13 +190,14 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
                 }
                 log.debug(debug.toString());
             }
-            
+
             if (filterMap.get(type) != null) {
-                throw new ConfigurationException("A filterList of type '" 
+                throw new ConfigurationException("A filterList of type '"
                     + type + "' has already been defined");
             }
             filterMap.put(type, filterList);
         }
-        return filterMap;                
+        return filterMap;
     }
+
 }

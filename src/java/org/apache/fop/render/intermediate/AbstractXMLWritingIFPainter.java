@@ -57,11 +57,6 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
     protected ContentHandler handler;
 
     /** {@inheritDoc} */
-    public ContentHandler getContentHandler() {
-        return this.handler;
-    }
-
-    /** {@inheritDoc} */
     public void setResult(Result result) throws IFException {
         if (result instanceof SAXResult) {
             SAXResult saxResult = (SAXResult)result;
