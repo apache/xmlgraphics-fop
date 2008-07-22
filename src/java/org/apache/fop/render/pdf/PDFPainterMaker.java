@@ -17,23 +17,24 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.svg;
+package org.apache.fop.render.pdf;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.intermediate.IFPainterConfigurator;
 
 /**
- * Painter factory for SVG Print output.
+ * Painter factory for PDF output.
  */
-public class SVGPrintPainterMaker extends AbstractIFPainterMaker {
+public class PDFPainterMaker extends AbstractIFPainterMaker {
 
-    private static final String[] MIMES = new String[] {SVGConstants.MIME_SVG_PRINT};
+    private static final String[] MIMES = new String[] {MimeConstants.MIME_PDF};
 
     /** {@inheritDoc} */
     public IFPainter makePainter(FOUserAgent ua) {
-        return new SVGPrintPainter();
+        return new PDFPainter();
     }
 
     /** {@inheritDoc} */
@@ -46,10 +47,8 @@ public class SVGPrintPainterMaker extends AbstractIFPainterMaker {
         return MIMES;
     }
 
-    /** {@inheritDoc} */
     public IFPainterConfigurator getConfigurator(FOUserAgent userAgent) {
-        // TODO Auto-generated method stub
-        return null;
+        return new PDFRendererConfigurator(userAgent);
     }
 
 }

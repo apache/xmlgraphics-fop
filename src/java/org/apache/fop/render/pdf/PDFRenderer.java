@@ -23,32 +23,21 @@ package org.apache.fop.render.pdf;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.color.ICC_Profile;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.commons.io.IOUtils;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
-import org.apache.xmlgraphics.xmp.Metadata;
-import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
-import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -84,26 +73,16 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.pdf.PDFConformanceException;
-import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFGoTo;
-import org.apache.fop.pdf.PDFICCBasedColorSpace;
-import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFLink;
-import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFNumber;
-import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutline;
-import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPage;
-import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFState;
@@ -115,61 +94,33 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.util.ColorProfileUtil;
 
 /**
  * Renderer that renders areas to PDF.
  */
-public class PDFRenderer extends AbstractPathOrientedRenderer {
-    
-    /**
-     * The mime type for pdf
-     */
+public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConfigurationConstants {
+
+    /** The MIME type for PDF */
     public static final String MIME_TYPE = MimeConstants.MIME_PDF;
 
     /** Normal PDF resolution (72dpi) */
     public static final int NORMAL_PDF_RESOLUTION = 72;
-    
-    /** PDF encryption parameter: all parameters as object, datatype: PDFEncryptionParams */
-    public static final String ENCRYPTION_PARAMS = "encryption-params";
-    /** PDF encryption parameter: user password, datatype: String */
-    public static final String USER_PASSWORD = "user-password";
-    /** PDF encryption parameter: owner password, datatype: String */
-    public static final String OWNER_PASSWORD = "owner-password";
-    /** PDF encryption parameter: Forbids printing, datatype: Boolean or "true"/"false" */
-    public static final String NO_PRINT = "noprint";
-    /** PDF encryption parameter: Forbids copying content, datatype: Boolean or "true"/"false" */
-    public static final String NO_COPY_CONTENT = "nocopy";
-    /** PDF encryption parameter: Forbids editing content, datatype: Boolean or "true"/"false" */
-    public static final String NO_EDIT_CONTENT = "noedit";
-    /** PDF encryption parameter: Forbids annotations, datatype: Boolean or "true"/"false" */
-    public static final String NO_ANNOTATIONS = "noannotations";
-    /** Rendering Options key for the PDF/A mode. */
-    public static final String PDF_A_MODE = "pdf-a-mode";
-    /** Rendering Options key for the PDF/X mode. */
-    public static final String PDF_X_MODE = "pdf-x-mode";
-    /** Rendering Options key for the ICC profile for the output intent. */
-    public static final String KEY_OUTPUT_PROFILE = "output-profile";
-    /**
-     * Rendering Options key for disabling the sRGB color space (only possible if no PDF/A or
-     * PDF/X profile is active).
-     */
-    public static final String KEY_DISABLE_SRGB_COLORSPACE = "disable-srgb-colorspace";
+
 
     /** Controls whether comments are written to the PDF stream. */
     protected static final boolean WRITE_COMMENTS = true;
-    
+
     /**
      * the PDF Document being created
      */
     protected PDFDocument pdfDoc;
 
-    /** the PDF/A mode (Default: disabled) */
-    protected PDFAMode pdfAMode = PDFAMode.DISABLED;
-    
-    /** the PDF/X mode (Default: disabled) */
-    protected PDFXMode pdfXMode = PDFXMode.DISABLED;
-    
+    /**
+     * Utility class which enables all sorts of features that are not directly connected to the
+     * normal rendering process.
+     */
+    protected PDFRenderingUtil pdfUtil;
+
     /**
      * Map of pages using the PageViewport as the key
      * this is used for prepared pages that cannot be immediately
@@ -185,7 +136,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /**
      *  Maps unique PageViewport key back to PageViewport itself
      */
-    protected Map pvReferences = new java.util.HashMap();
+    //protected Map pvReferences = new java.util.HashMap();
 
     /**
      * Maps XSL-FO element IDs to their on-page XY-positions
@@ -236,19 +187,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected String currentPageRef;
 
-    /** the (optional) encryption parameters */
-    protected PDFEncryptionParams encryptionParams;
-
-    /** the ICC stream used as output profile by this document for PDF/A and PDF/X functionality. */
-    protected PDFICCStream outputProfile;
-    /** the default sRGB color space. */
-    protected PDFICCBasedColorSpace sRGBColorSpace;
-    /** controls whether the sRGB color space should be installed */
-    protected boolean disableSRGBColorSpace = false;
-    
-    /** Optional URI to an output profile to be used. */
-    protected String outputProfileURI; 
-    
     /** drawing state */
     protected PDFState currentState = null;
 
@@ -257,225 +195,32 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** page height */
     protected int pageHeight;
 
-    /** Registry of PDF filters */
-    protected Map filterMap;
-
     /** Image handler registry */
     private PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
-    
+
     /**
      * create the PDF renderer
      */
     public PDFRenderer() {
     }
 
-    private boolean booleanValueOf(Object obj) {
-        if (obj instanceof Boolean) {
-            return ((Boolean)obj).booleanValue();
-        } else if (obj instanceof String) {
-            return Boolean.valueOf((String)obj).booleanValue();
-        } else {
-            throw new IllegalArgumentException("Boolean or \"true\" or \"false\" expected.");
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
-        PDFEncryptionParams params 
-                = (PDFEncryptionParams)agent.getRendererOptions().get(ENCRYPTION_PARAMS);
-        if (params != null) {
-            this.encryptionParams = params; //overwrite if available
-        }
-        String pwd;
-        pwd = (String)agent.getRendererOptions().get(USER_PASSWORD);
-        if (pwd != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setUserPassword(pwd);
-        }
-        pwd = (String)agent.getRendererOptions().get(OWNER_PASSWORD);
-        if (pwd != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setOwnerPassword(pwd);
-        }
-        Object setting;
-        setting = agent.getRendererOptions().get(NO_PRINT);
-        if (setting != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setAllowPrint(!booleanValueOf(setting));
-        }
-        setting = agent.getRendererOptions().get(NO_COPY_CONTENT);
-        if (setting != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setAllowCopyContent(!booleanValueOf(setting));
-        }
-        setting = agent.getRendererOptions().get(NO_EDIT_CONTENT);
-        if (setting != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setAllowEditContent(!booleanValueOf(setting));
-        }
-        setting = agent.getRendererOptions().get(NO_ANNOTATIONS);
-        if (setting != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setAllowEditAnnotations(!booleanValueOf(setting));
-        }
-        String s = (String)agent.getRendererOptions().get(PDF_A_MODE);
-        if (s != null) {
-            this.pdfAMode = PDFAMode.valueOf(s);
-        }
-        s = (String)agent.getRendererOptions().get(PDF_X_MODE);
-        if (s != null) {
-            this.pdfXMode = PDFXMode.valueOf(s);
-        }
-        s = (String)agent.getRendererOptions().get(KEY_OUTPUT_PROFILE);
-        if (s != null) {
-            this.outputProfileURI = s;
-        }
-        setting = agent.getRendererOptions().get(KEY_DISABLE_SRGB_COLORSPACE);
-        if (setting != null) {
-            this.disableSRGBColorSpace = booleanValueOf(setting);
-        }
+        this.pdfUtil = new PDFRenderingUtil(getUserAgent());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    PDFRenderingUtil getPDFUtil() {
+        return this.pdfUtil;
+    }
+
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream stream) throws IOException {
         if (userAgent == null) {
             throw new IllegalStateException("UserAgent must be set before starting the renderer");
         }
         ostream = stream;
-        this.pdfDoc = new PDFDocument(
-                userAgent.getProducer() != null ? userAgent.getProducer() : "");
-        this.pdfDoc.getProfile().setPDFAMode(this.pdfAMode);
-        this.pdfDoc.getProfile().setPDFXMode(this.pdfXMode);
-        this.pdfDoc.getInfo().setCreator(userAgent.getCreator());
-        this.pdfDoc.getInfo().setCreationDate(userAgent.getCreationDate());
-        this.pdfDoc.getInfo().setAuthor(userAgent.getAuthor());
-        this.pdfDoc.getInfo().setTitle(userAgent.getTitle());
-        this.pdfDoc.getInfo().setKeywords(userAgent.getKeywords());
-        this.pdfDoc.setFilterMap(filterMap);
-        this.pdfDoc.outputHeader(ostream);
-
-        //Setup encryption if necessary
-        PDFEncryptionManager.setupPDFEncryption(encryptionParams, this.pdfDoc);
-
-        addsRGBColorSpace();
-        if (this.outputProfileURI != null) {
-            addDefaultOutputProfile();
-        }
-        if (pdfXMode != PDFXMode.DISABLED) {
-            log.debug(pdfXMode + " is active.");
-            log.warn("Note: " + pdfXMode 
-                    + " support is work-in-progress and not fully implemented, yet!");
-            addPDFXOutputIntent();
-        }
-        if (pdfAMode.isPDFA1LevelB()) {
-            log.debug("PDF/A is active. Conformance Level: " + pdfAMode);
-            addPDFA1OutputIntent();
-        }
-        
-    }
-
-    private void addsRGBColorSpace() throws IOException {
-        if (disableSRGBColorSpace) {
-            if (this.pdfAMode != PDFAMode.DISABLED
-                    || this.pdfXMode != PDFXMode.DISABLED
-                    || this.outputProfileURI != null) {
-                throw new IllegalStateException("It is not possible to disable the sRGB color"
-                        + " space if PDF/A or PDF/X functionality is enabled or an"
-                        + " output profile is set!");
-            }
-        } else {
-            if (this.sRGBColorSpace != null) {
-                return;
-            }
-            //Map sRGB as default RGB profile for DeviceRGB
-            this.sRGBColorSpace = PDFICCBasedColorSpace.setupsRGBAsDefaultRGBColorSpace(pdfDoc);
-        }
-    }
-    
-    private void addDefaultOutputProfile() throws IOException {
-        if (this.outputProfile != null) {
-            return;
-        }
-        ICC_Profile profile;
-        InputStream in = null;
-        if (this.outputProfileURI != null) {
-            this.outputProfile = pdfDoc.getFactory().makePDFICCStream();
-            Source src = userAgent.resolveURI(this.outputProfileURI);
-            if (src == null) {
-                throw new IOException("Output profile not found: " + this.outputProfileURI);
-            }
-            if (src instanceof StreamSource) {
-                in = ((StreamSource)src).getInputStream();
-            } else {
-                in = new URL(src.getSystemId()).openStream();
-            }
-            try {
-                profile = ICC_Profile.getInstance(in);
-            } finally {
-                IOUtils.closeQuietly(in);
-            }
-            this.outputProfile.setColorSpace(profile, null);
-        } else {
-            //Fall back to sRGB profile
-            outputProfile = sRGBColorSpace.getICCStream();
-        }
-    }
-    
-    /**
-     * Adds an OutputIntent to the PDF as mandated by PDF/A-1 when uncalibrated color spaces
-     * are used (which is true if we use DeviceRGB to represent sRGB colors).
-     * @throws IOException in case of an I/O problem
-     */
-    private void addPDFA1OutputIntent() throws IOException {
-        addDefaultOutputProfile();
-        
-        String desc = ColorProfileUtil.getICCProfileDescription(this.outputProfile.getICCProfile());
-        PDFOutputIntent outputIntent = pdfDoc.getFactory().makeOutputIntent();
-        outputIntent.setSubtype(PDFOutputIntent.GTS_PDFA1);
-        outputIntent.setDestOutputProfile(this.outputProfile);
-        outputIntent.setOutputConditionIdentifier(desc);
-        outputIntent.setInfo(outputIntent.getOutputConditionIdentifier());
-        pdfDoc.getRoot().addOutputIntent(outputIntent);
-    }
-
-    /**
-     * Adds an OutputIntent to the PDF as mandated by PDF/X when uncalibrated color spaces
-     * are used (which is true if we use DeviceRGB to represent sRGB colors).
-     * @throws IOException in case of an I/O problem
-     */
-    private void addPDFXOutputIntent() throws IOException {
-        addDefaultOutputProfile();
-        
-        String desc = ColorProfileUtil.getICCProfileDescription(this.outputProfile.getICCProfile());
-        int deviceClass = this.outputProfile.getICCProfile().getProfileClass();
-        if (deviceClass != ICC_Profile.CLASS_OUTPUT) {
-            throw new PDFConformanceException(pdfDoc.getProfile().getPDFXMode() + " requires that"
-                    + " the DestOutputProfile be an Output Device Profile. "
-                    + desc + " does not match that requirement.");
-        }
-        PDFOutputIntent outputIntent = pdfDoc.getFactory().makeOutputIntent();
-        outputIntent.setSubtype(PDFOutputIntent.GTS_PDFX);
-        outputIntent.setDestOutputProfile(this.outputProfile);
-        outputIntent.setOutputConditionIdentifier(desc);
-        outputIntent.setInfo(outputIntent.getOutputConditionIdentifier());
-        pdfDoc.getRoot().addOutputIntent(outputIntent);
+        this.pdfDoc = pdfUtil.setupPDFDocument(stream);
     }
 
     /**
@@ -498,9 +243,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         finishOpenGoTos();
 
@@ -513,7 +256,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         pages = null;
 
         pageReferences.clear();
-        pvReferences.clear();
+        //pvReferences.clear();
         pdfResources = null;
         currentStream = null;
         currentContext = null;
@@ -546,7 +289,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         } else if (odi instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
             if (XMPMetadata.CATEGORY.equals(attachment.getCategory())) {
-                renderXMPMetadata((XMPMetadata)attachment);
+                pdfUtil.renderXMPMetadata((XMPMetadata)attachment);
             }
         }
     }
@@ -606,27 +349,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    private void renderXMPMetadata(XMPMetadata metadata) {
-        Metadata docXMP = metadata.getMetadata();
-        Metadata fopXMP = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
-        //Merge FOP's own metadata into the one from the XSL-FO document
-        fopXMP.mergeInto(docXMP);
-        XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
-        //Metadata was changed so update metadata date
-        xmpBasic.setMetadataDate(new java.util.Date());
-        PDFMetadata.updateInfoFromMetadata(docXMP, pdfDoc.getInfo());
-
-        PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
-                docXMP, metadata.isReadOnly());
-        pdfDoc.getRoot().setMetadata(pdfMetadata);
-    }
-
     /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
         return new PDFGraphics2DAdapter(this);
     }
 
-    /** 
+    /**
      * writes out a comment.
      * @param text text for the comment
      */
@@ -698,14 +426,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 pdfDoc.getRoot().setLanguage(langCode);
             }
         }
-        if (pdfDoc.getRoot().getMetadata() == null) {
-            //If at this time no XMP metadata for the overall document has been set, create it
-            //from the PDFInfo object.
-            Metadata xmp = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
-            PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
-                    xmp, true);
-            pdfDoc.getRoot().setMetadata(pdfMetadata);
-        }
+        pdfUtil.generateDefaultXMPMetadata();
     }
 
     /**
@@ -731,30 +452,18 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         Rectangle2D bounds = page.getViewArea();
         double w = bounds.getWidth();
         double h = bounds.getHeight();
-        currentPage = this.pdfDoc.getFactory().makePage(
+        this.currentPage = this.pdfDoc.getFactory().makePage(
             this.pdfResources,
             (int) Math.round(w / 1000), (int) Math.round(h / 1000),
             page.getPageIndex());
         pageReferences.put(page.getKey(), currentPage.referencePDF());
-        pvReferences.put(page.getKey(), page);
-        
-        //Produce page labels
-        PDFPageLabels pageLabels = this.pdfDoc.getRoot().getPageLabels();
-        if (pageLabels == null) {
-            //Set up PageLabels
-            pageLabels = this.pdfDoc.getFactory().makePageLabels();
-            this.pdfDoc.getRoot().setPageLabels(pageLabels);
-        }
-        PDFNumsArray nums = pageLabels.getNums(); 
-        PDFDictionary dict = new PDFDictionary(nums);
-        dict.put("P", page.getPageNumberString());
-        //TODO If the sequence of generated page numbers were inspected, this could be
-        //expressed in a more space-efficient way
-        nums.put(page.getPageIndex(), dict);
+        //pvReferences.put(page.getKey(), page);
+
+        pdfUtil.generatePageLabel(page.getPageIndex(), page.getPageNumberString());
     }
-    
+
     /**
-     * This method creates a pdf stream for the current page
+     * This method creates a PDF stream for the current page
      * uses it as the contents of a new page. The page is written
      * immediately to the output stream.
      * {@inheritDoc}
@@ -788,7 +497,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 pageHeight / 1000f);
         currentState.concatenate(basicPageTransform);
         currentStream.add(CTMHelper.toPDFString(basicPageTransform, false) + " cm\n");
-        
+
         super.renderPage(page);
 
         this.pdfDoc.registerObject(currentStream);
@@ -810,9 +519,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
         if (clippingRect != null) {
-            clipRect((float)clippingRect.getX() / 1000f, 
-                    (float)clippingRect.getY() / 1000f, 
-                    (float)clippingRect.getWidth() / 1000f, 
+            clipRect((float)clippingRect.getX() / 1000f,
+                    (float)clippingRect.getY() / 1000f,
+                    (float)clippingRect.getWidth() / 1000f,
                     (float)clippingRect.getHeight() / 1000f);
         }
         // multiply with current CTM
@@ -831,7 +540,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
         }
     }
-    
+
     /**
      * Formats a float value (normally coordinates) as Strings.
      * @param value the value
@@ -840,9 +549,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected static String format(float value) {
         return PDFNumber.doubleOut(value);
     }
-    
+
     /** {@inheritDoc} */
-    protected void drawBorderLine(float x1, float y1, float x2, float y2, 
+    protected void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         float w = x2 - x1;
         float h = y2 - y1;
@@ -852,7 +561,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             return;
         }
         switch (style) {
-            case Constants.EN_DASHED: 
+            case Constants.EN_DASHED:
                 setColor(col, false, null);
                 if (horz) {
                     float unit = Math.abs(2 * h);
@@ -864,7 +573,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add("[" + format(unit) + "] 0 d ");
                     currentStream.add(format(h) + " w\n");
                     float ym = y1 + (h / 2);
-                    currentStream.add(format(x1) + " " + format(ym) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym) + " m "
                             + format(x2) + " " + format(ym) + " l S\n");
                 } else {
                     float unit = Math.abs(2 * w);
@@ -876,7 +585,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add("[" + format(unit) + "] 0 d ");
                     currentStream.add(format(w) + " w\n");
                     float xm = x1 + (w / 2);
-                    currentStream.add(format(xm) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm) + " " + format(y1) + " m "
                             + format(xm) + " " + format(y2) + " l S\n");
                 }
                 break;
@@ -893,7 +602,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add("[0 " + format(unit) + "] 0 d ");
                     currentStream.add(format(h) + " w\n");
                     float ym = y1 + (h / 2);
-                    currentStream.add(format(x1) + " " + format(ym) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym) + " m "
                             + format(x2) + " " + format(ym) + " l S\n");
                 } else {
                     float unit = Math.abs(2 * w);
@@ -905,7 +614,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add("[0 " + format(unit) + " ] 0 d ");
                     currentStream.add(format(w) + " w\n");
                     float xm = x1 + (w / 2);
-                    currentStream.add(format(xm) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm) + " " + format(y1) + " m "
                             + format(xm) + " " + format(y2) + " l S\n");
                 }
                 break;
@@ -917,18 +626,18 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add(format(h3) + " w\n");
                     float ym1 = y1 + (h3 / 2);
                     float ym2 = ym1 + h3 + h3;
-                    currentStream.add(format(x1) + " " + format(ym1) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym1) + " m "
                             + format(x2) + " " + format(ym1) + " l S\n");
-                    currentStream.add(format(x1) + " " + format(ym2) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym2) + " m "
                             + format(x2) + " " + format(ym2) + " l S\n");
                 } else {
                     float w3 = w / 3;
                     currentStream.add(format(w3) + " w\n");
                     float xm1 = x1 + (w3 / 2);
                     float xm2 = xm1 + w3 + w3;
-                    currentStream.add(format(xm1) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm1) + " " + format(y1) + " m "
                             + format(xm1) + " " + format(y2) + " l S\n");
-                    currentStream.add(format(xm2) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm2) + " " + format(y1) + " m "
                             + format(xm2) + " " + format(y2) + " l S\n");
                 }
                 break;
@@ -944,13 +653,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add(format(h3) + " w\n");
                     float ym1 = y1 + (h3 / 2);
                     setColor(uppercol, false, null);
-                    currentStream.add(format(x1) + " " + format(ym1) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym1) + " m "
                             + format(x2) + " " + format(ym1) + " l S\n");
                     setColor(col, false, null);
-                    currentStream.add(format(x1) + " " + format(ym1 + h3) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym1 + h3) + " m "
                                         + format(x2) + " " + format(ym1 + h3) + " l S\n");
                     setColor(lowercol, false, null);
-                    currentStream.add(format(x1) + " " + format(ym1 + h3 + h3) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym1 + h3 + h3) + " m "
                                         + format(x2) + " " + format(ym1 + h3 + h3) + " l S\n");
                 } else {
                     Color leftcol = lightenColor(col, -colFactor);
@@ -959,13 +668,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add(format(w3) + " w\n");
                     float xm1 = x1 + (w3 / 2);
                     setColor(leftcol, false, null);
-                    currentStream.add(format(xm1) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm1) + " " + format(y1) + " m "
                             + format(xm1) + " " + format(y2) + " l S\n");
                     setColor(col, false, null);
-                    currentStream.add(format(xm1 + w3) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm1 + w3) + " " + format(y1) + " m "
                                         + format(xm1 + w3) + " " + format(y2) + " l S\n");
                     setColor(rightcol, false, null);
-                    currentStream.add(format(xm1 + w3 + w3) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm1 + w3 + w3) + " " + format(y1) + " m "
                                         + format(xm1 + w3 + w3) + " " + format(y2) + " l S\n");
                 }
                 break;
@@ -981,14 +690,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add(format(h) + " w\n");
                     float ym1 = y1 + (h / 2);
                     setColor(c, false, null);
-                    currentStream.add(format(x1) + " " + format(ym1) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym1) + " m "
                             + format(x2) + " " + format(ym1) + " l S\n");
                 } else {
                     c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
                     currentStream.add(format(w) + " w\n");
                     float xm1 = x1 + (w / 2);
                     setColor(c, false, null);
-                    currentStream.add(format(xm1) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm1) + " " + format(y1) + " m "
                             + format(xm1) + " " + format(y2) + " l S\n");
                 }
                 break;
@@ -1001,17 +710,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 if (horz) {
                     currentStream.add(format(h) + " w\n");
                     float ym = y1 + (h / 2);
-                    currentStream.add(format(x1) + " " + format(ym) + " m " 
+                    currentStream.add(format(x1) + " " + format(ym) + " m "
                             + format(x2) + " " + format(ym) + " l S\n");
                 } else {
                     currentStream.add(format(w) + " w\n");
                     float xm = x1 + (w / 2);
-                    currentStream.add(format(xm) + " " + format(y1) + " m " 
+                    currentStream.add(format(xm) + " " + format(y1) + " m "
                             + format(xm) + " " + format(y2) + " l S\n");
                 }
         }
     }
-    
+
     /**
      * Sets the current line width in points.
      * @param width line width in points
@@ -1022,10 +731,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             currentStream.add(format(width) + " w\n");
         }
     }
-    
+
     /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
-        currentStream.add(format(x) + " " + format(y) + " " 
+        currentStream.add(format(x) + " " + format(y) + " "
                 + format(width) + " " + format(height) + " re ");
         clip();
     }
@@ -1039,42 +748,42 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Moves the current point to (x, y), omitting any connecting line segment. 
+     * Moves the current point to (x, y), omitting any connecting line segment.
      * @param x x coordinate
      * @param y y coordinate
      */
     protected void moveTo(float x, float y) {
         currentStream.add(format(x) + " " + format(y) + " m ");
     }
-    
+
     /**
-     * Appends a straight line segment from the current point to (x, y). The 
-     * new current point is (x, y). 
+     * Appends a straight line segment from the current point to (x, y). The
+     * new current point is (x, y).
      * @param x x coordinate
      * @param y y coordinate
      */
     protected void lineTo(float x, float y) {
         currentStream.add(format(x) + " " + format(y) + " l ");
     }
-    
+
     /**
-     * Closes the current subpath by appending a straight line segment from 
+     * Closes the current subpath by appending a straight line segment from
      * the current point to the starting point of the subpath.
      */
     protected void closePath() {
         currentStream.add("h ");
     }
 
-    /** 
-     * {@inheritDoc} 
+    /**
+     * {@inheritDoc}
      */
     protected void fillRect(float x, float y, float w, float h) {
         if (w != 0 && h != 0) {
-            currentStream.add(format(x) + " " + format(y) + " " 
+            currentStream.add(format(x) + " " + format(y) + " "
                     + format(w) + " " + format(h) + " re f\n");
         }
     }
-    
+
     /**
      * Draw a line.
      *
@@ -1130,7 +839,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Returns area's id if it is the first area in the document with that id 
+     * Returns area's id if it is the first area in the document with that id
      * (i.e. if the area qualifies as a link target).
      * Otherwise, or if the area has no id, null is returned.
      *
@@ -1215,7 +924,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param pdfPageRef the PDF page reference string
      * @param relativeIPP the *relative* IP position in millipoints
      * @param relativeBPP the *relative* BP position in millipoints
-     * @param tf the transformation to apply once the relative positions have been 
+     * @param tf the transformation to apply once the relative positions have been
      *           converted to points
      */
     protected void saveAbsolutePosition(String id, String pdfPageRef,
@@ -1257,13 +966,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param relativeBPP the *relative* BP position in millipoints
      */
     protected void saveAbsolutePosition(String id, int relativeIPP, int relativeBPP) {
-        saveAbsolutePosition(id, currentPageRef, 
+        saveAbsolutePosition(id, currentPageRef,
                              relativeIPP, relativeBPP, currentState.getTransform());
     }
 
     /**
-     * If the given block area is a possible link target, its id + absolute position will 
-     * be saved. The saved position is only correct if this function is called at the very 
+     * If the given block area is a possible link target, its id + absolute position will
+     * be saved. The saved position is only correct if this function is called at the very
      * start of renderBlock!
      *
      * @param block the block area in question
@@ -1391,7 +1100,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         // warn if link trait found but not allowed, else create link
         if (linkTraitFound) {
             if (!annotsAllowed) {
-                log.warn("Skipping annotation for a link due to PDF profile: " 
+                log.warn("Skipping annotation for a link due to PDF profile: "
                          + pdfDoc.getProfile());
             } else if (action != null) {
                 PDFLink pdfLink = factory.makeLink(ipRect, action);
@@ -1407,23 +1116,23 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
         return tf;
     }
-    
+
     /** {@inheritDoc} */
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
         Color ct = (Color) text.getTrait(Trait.COLOR);
         updateColor(ct, true);
-        
+
         beginTextObject();
 
         String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
-        
+
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface tf = getTypeface(fontName);
-        
+
         textutil.updateTf(fontName, size / 1000f, tf.isMultiByte());
-        
+
 
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
@@ -1436,7 +1145,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         super.renderText(text);
 
         textutil.writeTJ();
-        
+
         renderTextDecoration(tf, size, text, bl, rx);
     }
 
@@ -1445,7 +1154,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         Font font = getFontFromArea(word.getParentArea());
         String s = word.getWord();
 
-        escapeText(s, word.getLetterAdjustArray(), 
+        escapeText(s, word.getLetterAdjustArray(),
                 font, (AbstractTextArea)word.getParentArea());
 
         super.renderWord(word);
@@ -1455,7 +1164,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public void renderSpace(SpaceArea space) {
         Font font = getFontFromArea(space.getParentArea());
         String s = space.getSpace();
-        
+
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
         escapeText(s, null, font, textArea);
 
@@ -1484,7 +1193,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                            Font font, AbstractTextArea parentArea) {
         escapeText(s, 0, s.length(), letterAdjust, font, parentArea);
     }
-    
+
     /**
      * Escapes text according to PDF rules.
      * @param s Text to escape
@@ -1506,7 +1215,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
 
         int l = s.length();
-        
+
         for (int i = start; i < end; i++) {
             char orgChar = s.charAt(i);
             char ch;
@@ -1552,21 +1261,19 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /**
      * Establishes a new foreground or fill color. In contrast to updateColor
      * this method does not check the PDFState for optimization possibilities.
-     * @param col the color to apply 
+     * @param col the color to apply
      * @param fill true to set the fill color, false for the foreground color
      * @param pdf StringBuffer to write the PDF code to, if null, the code is
      *     written to the current stream.
      */
     protected void setColor(Color col, boolean fill, StringBuffer pdf) {
-        PDFColor color = new PDFColor(this.pdfDoc, col);
-
         if (pdf != null) {
-            pdf.append(color.getColorSpaceOut(fill));
+            pdfUtil.setColor(col, fill, pdf);
         } else {
-            currentStream.add(color.getColorSpaceOut(fill));
+            pdfUtil.setColor(col, fill, this.currentStream);
         }
     }
-    
+
     /**
      * Establishes a new foreground or fill color.
      * @param col the color to apply (null skips this operation)
@@ -1594,7 +1301,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected void updateColor(Color col, boolean fill) {
         updateColor(col, fill, null);
     }
-    
+
     /** {@inheritDoc} */
     public void renderImage(Image image, Rectangle2D pos) {
         endTextObject();
@@ -1607,7 +1314,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         endTextObject();
         putImage(url, pos, foreignAttributes);
     }
-    
+
     /**
      * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
      * @param uri URL of the bitmap
@@ -1617,7 +1324,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected void putImage(String uri, Rectangle2D pos) {
         putImage(uri, pos, null);
     }
-    
+
     /**
      * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
      * @param uri URL of the bitmap
@@ -1649,11 +1356,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         try {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
             info = manager.getImageInfo(uri, sessionContext);
-            
+
             Map hints = ImageUtil.getDefaultHints(sessionContext);
             org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, imageHandlerRegistry.getSupportedFlavors(), hints, sessionContext);
-            
+
             //First check for a dynamically registered handler
             PDFImageHandler handler = imageHandlerRegistry.getHandler(img.getClass());
             if (handler != null) {
@@ -1710,13 +1417,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentStream.add(format(w) + " 0 0 "
                           + format(-h) + " "
                           + format(currentIPPosition / 1000f + x) + " "
-                          + format(currentBPPosition / 1000f + h + y) 
+                          + format(currentBPPosition / 1000f + h + y)
                           + " cm\n" + xobj.getName() + " Do\n");
         restoreGraphicsState();
     }
 
     /** {@inheritDoc} */
-    protected RendererContext createRendererContext(int x, int y, int width, int height, 
+    protected RendererContext createRendererContext(int x, int y, int width, int height,
             Map foreignAttributes) {
         RendererContext context = super.createRendererContext(
                 x, y, width, height, foreignAttributes);
@@ -1747,7 +1454,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int style = area.getRuleStyle();
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
         float starty = (currentBPPosition + area.getOffset()) / 1000f;
-        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
+        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                         + area.getIPD()) / 1000f;
         float ruleThickness = area.getRuleThickness() / 1000f;
         Color col = (Color)area.getTrait(Trait.COLOR);
@@ -1756,7 +1463,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             case EN_SOLID:
             case EN_DASHED:
             case EN_DOUBLE:
-                drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                drawBorderLine(startx, starty, endx, starty + ruleThickness,
                         true, true, style, col);
                 break;
             case EN_DOTTED:
@@ -1764,7 +1471,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 //This displaces the dots to the right by half a dot's width
                 //TODO There's room for improvement here
                 currentStream.add("1 0 0 1 " + format(ruleThickness / 2) + " 0 cm\n");
-                drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                drawBorderLine(startx, starty, endx, starty + ruleThickness,
                         true, true, style, col);
                 break;
             case EN_GROOVE:
@@ -1809,13 +1516,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public String getMimeType() {
         return MIME_TYPE;
     }
-    
+
     /**
      * Sets the PDF/A mode for the PDF renderer.
      * @param mode the PDF/A mode
      */
     public void setAMode(PDFAMode mode) {
-        this.pdfAMode = mode;
+        this.pdfUtil.setAMode(mode);
     }
 
     /**
@@ -1823,7 +1530,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param mode the PDF/X mode
      */
     public void setXMode(PDFXMode mode) {
-        this.pdfXMode = mode;        
+        this.pdfUtil.setXMode(mode);
     }
 
     /**
@@ -1831,7 +1538,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param outputProfileURI the URI to the output color profile
      */
     public void setOutputProfileURI(String outputProfileURI) {
-        this.outputProfileURI = outputProfileURI;
+        this.pdfUtil.setOutputProfileURI(outputProfileURI);
     }
 
     /**
@@ -1839,15 +1546,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param filterMap the filter map
      */
     public void setFilterMap(Map filterMap) {
-        this.filterMap = filterMap;
+        this.pdfUtil.setFilterMap(filterMap);
     }
 
     /**
      * Sets the encryption parameters used by the PDF renderer.
-     * @param encryptionParams the encryption parameters 
+     * @param encryptionParams the encryption parameters
      */
     public void setEncryptionParams(PDFEncryptionParams encryptionParams) {
-        this.encryptionParams = encryptionParams;
+        this.pdfUtil.setEncryptionParams(encryptionParams);
     }
 }
 

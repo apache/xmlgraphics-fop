@@ -36,6 +36,7 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
 import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.render.intermediate.IFPainterConfigurator;
 import org.apache.fop.render.intermediate.IFRenderer;
 
 /**
@@ -247,7 +248,7 @@ public class RendererFactory {
                 if (painterMaker != null) {
                     IFRenderer rend = new IFRenderer();
                     rend.setUserAgent(userAgent);
-                    IFPainter painter = painterMaker.makePainter(userAgent);
+                    IFPainter painter = createPainter(userAgent, outputFormat);
                     rend.setPainter(painter);
                     return rend;
                 } else {
@@ -281,7 +282,9 @@ public class RendererFactory {
                 boolean outputStreamMissing = (userAgent.getRendererOverride() == null);
                 if (rendMaker == null) {
                     painterMaker = getPainterMaker(outputFormat);
-                    outputStreamMissing &= (out == null) && (painterMaker.needsOutputStream());
+                    if (painterMaker != null) {
+                        outputStreamMissing &= (out == null) && (painterMaker.needsOutputStream());
+                    }
                 } else {
                     outputStreamMissing &= (out == null) && (rendMaker.needsOutputStream());
                 }
@@ -325,12 +328,10 @@ public class RendererFactory {
             }
             IFPainter painter = maker.makePainter(userAgent);
             painter.setUserAgent(userAgent);
-            //TODO Add configuration
-            /*
-            RendererConfigurator configurator = maker.getConfigurator(userAgent);
+            IFPainterConfigurator configurator = maker.getConfigurator(userAgent);
             if (configurator != null) {
                 configurator.configure(painter);
-            }*/
+            }
             return painter;
         //}
     }

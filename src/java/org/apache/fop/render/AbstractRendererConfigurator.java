@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -68,7 +69,7 @@ public abstract class AbstractRendererConfigurator {
      * @param mimeType the MIME type of the renderer
      * @return the requested configuration subtree, null if there's no configuration
      */
-    private Configuration getRendererConfig(String mimeType) {
+    protected Configuration getRendererConfig(String mimeType) {
         Configuration cfg = userAgent.getFactory().getUserConfig();
         if (cfg == null) {
             if (log.isDebugEnabled()) {
