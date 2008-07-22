@@ -513,7 +513,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 afpDataStream.createLine(lineDataInfo);
                 
                 lineDataInfo.color = lightenColor(col, colFactor);
-                lineDataInfo.y1 = lineDataInfo.y2 = Math.round(dstPts[Y1] + h3 + h3);                
+                lineDataInfo.y1 = lineDataInfo.y2
+                    = Math.round(dstPts[Y1] + h3 + h3);                
                 afpDataStream.createLine(lineDataInfo);
                 
             } else {
