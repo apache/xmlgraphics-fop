@@ -137,7 +137,6 @@ public class CommandLineOptions {
      * Parse the command line arguments.
      * @param args the command line arguments.
      * @throws FOPException for general errors
-     * @throws FileNotFoundException if an input file wasn't found
      * @throws IOException if the the configuration file could not be loaded
      * @return true if the processing can continue, false to abort
      */
@@ -302,8 +301,6 @@ public class CommandLineOptions {
                 i = i + parseFOOutputOption(args, i);
             } else if (args[i].equals("-out")) {
                 i = i + parseCustomOutputOption(args, i);
-            } else if (args[i].charAt(0) != '-') {
-                i = i + parseUnknownOption(args, i);
             } else if (args[i].equals("-at")) {
                 i = i + parseAreaTreeOption(args, i);
             } else if (args[i].equals("-v")) {
@@ -330,6 +327,8 @@ public class CommandLineOptions {
                 getPDFEncryptionParams().setAllowEditContent(false);
             } else if (args[i].equals("-noannotations")) {
                 getPDFEncryptionParams().setAllowEditAnnotations(false);
+            } else if (!isOption(args[i])) {
+                i = i + parseUnknownOption(args, i);
             } else {
                 printUsage();
                 return false;
@@ -340,7 +339,7 @@ public class CommandLineOptions {
 
     private int parseConfigurationOption(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("if you use '-c', you must specify "
               + "the name of the configuration file");
         } else {
@@ -351,7 +350,7 @@ public class CommandLineOptions {
 
     private int parseLanguageOption(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("if you use '-l', you must specify a language");
         } else {
             Locale.setDefault(new Locale(args[i + 1], ""));
@@ -361,7 +360,7 @@ public class CommandLineOptions {
 
     private int parseResolution(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException(
                     "if you use '-dpi', you must specify a resolution (dots per inch)");
         } else {
@@ -373,7 +372,7 @@ public class CommandLineOptions {
     private int parseFOInputOption(String[] args, int i) throws FOPException {
         inputmode = FO_INPUT;
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the fo file for the '-fo' option");
         } else {
             String filename = args[i + 1];
@@ -389,7 +388,7 @@ public class CommandLineOptions {
     private int parseXSLInputOption(String[] args, int i) throws FOPException {
         inputmode = XSLT_INPUT;
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the stylesheet "
                             + "file for the '-xsl' option");
         } else {
@@ -401,7 +400,7 @@ public class CommandLineOptions {
     private int parseXMLInputOption(String[] args, int i) throws FOPException {
         inputmode = XSLT_INPUT;
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the input file "
                             + "for the '-xml' option");
         } else {
@@ -423,7 +422,7 @@ public class CommandLineOptions {
     private int parsePDFOutputOption(String[] args, int i, String pdfAMode) throws FOPException {
         setOutputMode(MimeConstants.MIME_PDF);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the PDF output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -445,14 +444,28 @@ public class CommandLineOptions {
         }
     }
 
+    /**
+     * Checks whether the given argument is the next option or the specification of
+     * stdin/stdout.
+     *
+     * TODO this is very ad-hoc and should be better handled. Consider the adoption of
+     * Apache Commons CLI.
+     *
+     * @param arg an argument
+     * @return true if the argument is an option ("-something"), false otherwise
+     */
+    private boolean isOption(String arg) {
+        return arg.length() > 1 && arg.startsWith("-");
+    }
+
     private boolean isSystemInOutFile(String filename) {
-        return "#".equals(filename);
+        return "-".equals(filename);
     }
 
     private int parseMIFOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_MIF);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the MIF output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -463,7 +476,7 @@ public class CommandLineOptions {
     private int parseRTFOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_RTF);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the RTF output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -474,7 +487,7 @@ public class CommandLineOptions {
     private int parseTIFFOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_TIFF);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the TIFF output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -485,7 +498,7 @@ public class CommandLineOptions {
     private int parsePNGOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_PNG);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the PNG output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -520,7 +533,7 @@ public class CommandLineOptions {
 
     private int parseCopiesOption(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the number of copies");
         } else {
             renderingOptions.put(PrintRenderer.COPIES, new Integer(args[i + 1]));
@@ -531,7 +544,7 @@ public class CommandLineOptions {
     private int parsePCLOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_PCL);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the PDF output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -542,7 +555,7 @@ public class CommandLineOptions {
     private int parsePostscriptOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_POSTSCRIPT);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the PostScript output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -553,7 +566,7 @@ public class CommandLineOptions {
     private int parseTextOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_PLAIN_TEXT);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the text output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -564,7 +577,7 @@ public class CommandLineOptions {
     private int parseSVGOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_SVG);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the SVG output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -575,7 +588,7 @@ public class CommandLineOptions {
     private int parseAFPOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_AFP);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the AFP output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -586,7 +599,7 @@ public class CommandLineOptions {
     private int parseFOOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_XSL_FO);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the FO output file");
         } else {
             setOutputFile(args[i + 1]);
@@ -609,8 +622,8 @@ public class CommandLineOptions {
             }
         }
         if ((i + 2 >= args.length)
-                || (args[i + 1].charAt(0) == '-')
-                || (args[i + 2].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))
+                || (isOption(args[i + 2]))) {
             throw new FOPException("you must specify the output format and the output file");
         } else {
             setOutputMode(mime);
@@ -622,7 +635,12 @@ public class CommandLineOptions {
     private int parseUnknownOption(String[] args, int i) throws FOPException {
         if (inputmode == NOT_SET) {
             inputmode = FO_INPUT;
-            fofile = new File(args[i]);
+            String filename = args[i];
+            if (isSystemInOutFile(filename)) {
+                this.useStdIn = true;
+            } else {
+                fofile = new File(filename);
+            }
         } else if (outputmode == null) {
             outputmode = MimeConstants.MIME_PDF;
             setOutputFile(args[i]);
@@ -636,10 +654,10 @@ public class CommandLineOptions {
     private int parseAreaTreeOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_FOP_AREA_TREE);
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the area-tree output file");
         } else if ((i + 2 == args.length)
-                || (args[i + 2].charAt(0) == '-')) {
+                || (isOption(args[i + 2]))) {
             // only output file is specified
             setOutputFile(args[i + 1]);
             return 1;
@@ -654,7 +672,7 @@ public class CommandLineOptions {
     private int parseAreaTreeInputOption(String[] args, int i) throws FOPException {
         inputmode = AREATREE_INPUT;
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the Area Tree file for the '-atin' option");
         } else {
             String filename = args[i + 1];
@@ -670,7 +688,7 @@ public class CommandLineOptions {
     private int parseImageInputOption(String[] args, int i) throws FOPException {
         inputmode = IMAGE_INPUT;
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the image file for the '-imagein' option");
         } else {
             String filename = args[i + 1];
@@ -699,7 +717,7 @@ public class CommandLineOptions {
 
     private int parsePDFOwnerPassword(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             getPDFEncryptionParams().setOwnerPassword("");
             return 0;
         } else {
@@ -710,7 +728,7 @@ public class CommandLineOptions {
 
     private int parsePDFUserPassword(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             getPDFEncryptionParams().setUserPassword("");
             return 0;
         } else {
@@ -721,7 +739,7 @@ public class CommandLineOptions {
 
     private int parsePDFProfile(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
-                || (args[i + 1].charAt(0) == '-')) {
+                || (isOption(args[i + 1]))) {
             throw new FOPException("You must specify a PDF profile");
         } else {
             String profile = args[i + 1];
@@ -909,7 +927,7 @@ public class CommandLineOptions {
      * @return a new InputHandler instance
      * @throws IllegalArgumentException if invalid/missing parameters
      */
-    private InputHandler createInputHandler() throws IllegalArgumentException {
+    private InputHandler createInputHandler() {
         switch (inputmode) {
             case FO_INPUT:
                 return new InputHandler(fofile);
@@ -1038,7 +1056,7 @@ public class CommandLineOptions {
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
-            + "                    (use # for infile to pipe input from stdin)\n"
+            + "                    (use '-' for infile to pipe input from stdin)\n"
             + "  -fo  infile       xsl:fo input file  \n"
             + "  -xml infile       xml input file, must be used together with -xsl \n"
             + "  -atin infile      area tree input file \n"
@@ -1048,7 +1066,7 @@ public class CommandLineOptions {
             + "                    (repeat '-param name value' for each parameter)\n \n"
             + " [OUTPUT] \n"
             + "  outfile           input will be rendered as PDF into outfile\n"
-            + "                    (use # for outfile to pipe output to stdout)\n"
+            + "                    (use '-' for outfile to pipe output to stdout)\n"
             + "  -pdf outfile      input will be rendered as PDF (outfile req'd)\n"
             + "  -pdfa1b outfile   input will be rendered as PDF/A-1b compliant PDF\n"
             + "                    (outfile req'd, same as \"-pdf outfile -pdfprofile PDF/A-1b\")\n"
@@ -1081,7 +1099,7 @@ public class CommandLineOptions {
             + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
             + "  Fop -xml foo.xml -xsl foo.xsl -pdf foo.pdf\n"
             + "  Fop -xml foo.xml -xsl foo.xsl -foout foo.fo\n"
-            + "  Fop -xml # -xsl foo.xsl -pdf #\n"
+            + "  Fop -xml - -xsl foo.xsl -pdf -\n"
             + "  Fop foo.fo -mif foo.mif\n"
             + "  Fop foo.fo -rtf foo.rtf\n"
             + "  Fop foo.fo -print\n"
