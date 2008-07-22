@@ -40,8 +40,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FontInfo {
 
-    private static final FontTriplet[] TRIPLETS_TYPE = new FontTriplet[1];
-
     /** logging instance */
     protected static Log log = LogFactory.getLog(FontInfo.class);
 
@@ -399,9 +397,11 @@ public class FontInfo {
                         + "FontTriplet on the last call. Lookup: " + sb.toString());
             
         }
-
+        FontTriplet[] fontTriplets = new FontTriplet[matchedTriplets.size()];
+        matchedTriplets.toArray(fontTriplets);
+        
         // found some matching fonts so return them
-        return (FontTriplet[]) matchedTriplets.toArray(TRIPLETS_TYPE);
+        return fontTriplets; 
     }
 
     private Set/*<FontTriplet>*/ getLoggedFontKeys() {
@@ -504,7 +504,7 @@ public class FontInfo {
      * @param weight font weight
      * @return internal key
      */
-    public static synchronized FontTriplet createFontKey(String family, String style,
+    public static FontTriplet createFontKey(String family, String style,
                                        int weight) {
         return new FontTriplet(family, style, weight);
     }
