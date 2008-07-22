@@ -37,7 +37,13 @@ import org.apache.fop.render.afp.AFPEventProducer;
  */
 public class AFPFontCollection implements FontCollection {
 
+    private static final String DEFAULT_CODEPAGE = "T1V10500";
+    
+    private static final String DEFAULT_ENCODING = "Cp500";
+
+    
     private EventBroadcaster eventBroadcaster;
+    
     private List/*<EmbedFontInfo>*/ embedFontInfoList;
     
     /**
@@ -51,7 +57,7 @@ public class AFPFontCollection implements FontCollection {
         this.eventBroadcaster = eventBroadcaster;
         this.embedFontInfoList = embedFontInfoList;
     }
-    
+        
     /** {@inheritDoc} */
     public int setup(int start, FontInfo fontInfo) {
         int num = 1;
@@ -75,7 +81,7 @@ public class AFPFontCollection implements FontCollection {
 
         // note: these fonts may not exist on your AFP installation
         if (fontInfo.fontLookup("sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZH200  ",
+            CharacterSet cs  = new FopCharacterSet(DEFAULT_CODEPAGE, DEFAULT_ENCODING, "CZH200",
                     1, new Helvetica());
             AFPFont bf = new OutlineFont("Helvetica", cs);
             fontInfo.addFontProperties(
@@ -84,7 +90,7 @@ public class AFPFontCollection implements FontCollection {
             num++;
         }
         if (fontInfo.fontLookup("serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZN200  ",
+            CharacterSet cs  = new FopCharacterSet(DEFAULT_CODEPAGE, DEFAULT_ENCODING, "CZN200",
                     1, new TimesRoman());
             AFPFont bf = new OutlineFont("Helvetica", cs);
             fontInfo.addFontProperties("F" + num, "serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
@@ -92,7 +98,7 @@ public class AFPFontCollection implements FontCollection {
             num++;
         }
         if (fontInfo.fontLookup("monospace", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZ4200  ",
+            CharacterSet cs  = new FopCharacterSet(DEFAULT_CODEPAGE, DEFAULT_ENCODING, "CZ4200",
                     1, new Courier());
             AFPFont bf = new OutlineFont("Helvetica", cs);
             fontInfo.addFontProperties(
