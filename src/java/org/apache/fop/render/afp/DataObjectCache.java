@@ -109,17 +109,33 @@ public final class DataObjectCache {
      */
     public void clear() {
         try {
-            raFile.close();
-            tempFile.delete();
+            if (raFile != null) {
+                raFile.close();
+                raFile = null;
+            }
+            if (tempFile != null) {
+                tempFile.delete();
+                tempFile = null;
+            }
         } catch (IOException e) {
-            log.error("Failed to close temporary file: " + e.getMessage());
+            log.error("Failed to close/delete temporary file: " + e.getMessage());
         } finally {
             synchronized (cacheMap) {
-                cacheMap.remove(id); // remove ourselves from the cache map
+                // remove ourselves from the cache map
+                cacheMap.remove(id); 
             }
         }
     }
 
+    /** {@inheritDoc} */
+    public void finalize() throws Throwable {
+        try {
+            clear();
+        } finally {
+            super.finalize();
+        }
+    }
+    
     /**
      * Stores a named data object in the cache
      * 
