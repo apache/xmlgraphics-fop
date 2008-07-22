@@ -29,7 +29,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.render.afp.AFPFontAttributes;
-import org.apache.fop.render.afp.AFPTextDataInfo;
+import org.apache.fop.render.afp.LineDataInfo;
+import org.apache.fop.render.afp.TextDataInfo;
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.ExternalResourceGroupManager;
 import org.apache.fop.render.afp.ObjectAreaInfo;
@@ -390,7 +391,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      * @param textDataInfo
      *            the afp text data
      */
-    public void createText(AFPTextDataInfo textDataInfo) {
+    public void createText(TextDataInfo textDataInfo) {
         textDataInfo.setOrientation(orientation);
         getCurrentPage().createText(textDataInfo);
     }
@@ -537,22 +538,11 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     /**
      * Method to create a line on the current page.
      *
-     * @param x1
-     *            the first x coordinate of the line
-     * @param y1
-     *            the first y coordinate of the line
-     * @param x2
-     *            the second x coordinate of the line
-     * @param y2
-     *            the second y coordinate of the line
-     * @param thickness
-     *            the thickness of the line
-     * @param col
-     *            The text color.
+     * @param lineDataInfo the line data information.
      */
-    public void createLine(int x1, int y1, int x2, int y2, int thickness,
-            Color col) {
-        getCurrentPage().createLine(x1, y1, x2, y2, thickness, orientation, col);
+    public void createLine(LineDataInfo lineDataInfo) {
+        lineDataInfo.setOrientation(orientation);
+        getCurrentPage().createLine(lineDataInfo);
     }
 
     /**

@@ -30,16 +30,23 @@ import java.util.Stack;
  * A base class which holds information about the current rendering state.
  */
 public abstract class AbstractState {
+    
+    /** current state data */
     private AbstractData currentData = null;
+    
+    /** the state stack */
     private Stack/*<AbstractData>*/ stateStack = null;
 
     /**
      * Instantiates a new state data object
+     * 
      * @return a new state data object
      */
     protected abstract AbstractData instantiateData();
     
     /**
+     * Returns the currently valid state
+     * 
      * @return the currently valid state
      */
     public AbstractData getData() {
@@ -66,6 +73,7 @@ public abstract class AbstractState {
 
     /**
      * Get the color.
+     * 
      * @return the color
      */
     public Color getColor() {
@@ -77,6 +85,7 @@ public abstract class AbstractState {
 
     /**
      * Get the background color.
+     * 
      * @return the background color
      */
     public Color getBackColor() {
@@ -103,6 +112,7 @@ public abstract class AbstractState {
 
     /**
      * Set the current font name
+     * 
      * @param internalFontName the internal font name
      * @return true if the font name has changed
      */
@@ -116,6 +126,7 @@ public abstract class AbstractState {
 
     /**
      * Gets the current font name
+     * 
      * @return the current font name
      */
     public String getFontName() {
@@ -124,6 +135,7 @@ public abstract class AbstractState {
     
     /**
      * Gets the current font size
+     * 
      * @return the current font size
      */
     public int getFontSize() {
@@ -147,6 +159,7 @@ public abstract class AbstractState {
 
     /**
      * Set the current line width.
+     * 
      * @param width the line width in points
      * @return true if the line width has changed
      */
@@ -159,7 +172,8 @@ public abstract class AbstractState {
     }
 
     /**
-     * Gets the current line width
+     * Returns the current line width
+     * 
      * @return the current line width
      */
     public float getLineWidth() {
@@ -168,6 +182,7 @@ public abstract class AbstractState {
 
     /**
      * Sets the dash array (line type) for the current basic stroke
+     * 
      * @param dash the line dash array
      * @return true if the dash array has changed
      */
@@ -228,6 +243,7 @@ public abstract class AbstractState {
     
     /**
      * Concatenates the given AffineTransform to the current one.
+     * 
      * @param tf the transform to concatenate to the current level transform
      */
     public void concatenate(AffineTransform tf) {
@@ -260,6 +276,7 @@ public abstract class AbstractState {
      * Pop the state from the stack and set current values to popped state.
      * This should be called when a Q operator is used so
      * the state is restored to the correct values.
+     * 
      * @return the restored state, null if the stack is empty
      */
     public AbstractData pop() {
@@ -280,6 +297,8 @@ public abstract class AbstractState {
     }
 
     /**
+     * Return the state stack
+     * 
      * @return the state stack
      */
     protected Stack/*<AbstractData>*/ getStateStack() {
@@ -299,6 +318,7 @@ public abstract class AbstractState {
      * A base state data holding object 
      */
     public abstract class AbstractData implements Cloneable, Serializable {
+
         /** The current color */
         private Color color = null;
 
@@ -325,6 +345,7 @@ public abstract class AbstractState {
          * a new viewport. Note that all concatenation operations are logged
          * so they can be replayed if necessary (ex. for block-containers with
          * "fixed" positioning.
+         * 
          * @param at Transformation to perform
          */
         public void concatenate(AffineTransform at) {
@@ -333,6 +354,7 @@ public abstract class AbstractState {
 
         /**
          * Get the current AffineTransform.
+         * 
          * @return the current transform
          */
         public AffineTransform getTransform() {

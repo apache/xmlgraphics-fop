@@ -281,7 +281,6 @@ public class CharacterSet {
      * in 99.9% of cases the font metrics will be the same as the 0 degrees
      * therefore the implementation currently will always use 0 degrees.
      * 
-     * 
      * @return characterSetOrentation The current orientation metrics.
      */
     private CharacterSetOrientation getCharacterSetOrientation() {

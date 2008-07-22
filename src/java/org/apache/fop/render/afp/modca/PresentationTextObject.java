@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.fop.render.afp.AFPTextDataInfo;
+import org.apache.fop.render.afp.LineDataInfo;
+import org.apache.fop.render.afp.TextDataInfo;
 
 /**
  * The Presentation Text object is the data object used in document processing
@@ -81,7 +82,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param textDataInfo
      *            The afp text data
      */
-    public void createTextData(AFPTextDataInfo textDataInfo) {
+    public void createTextData(TextDataInfo textDataInfo) {
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
@@ -94,56 +95,20 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     }
 
     /**
-     * Drawing of lines using the starting and ending coordinates, thickness.
-     *
-     * @param x1
-     *            The first x coordinate of the line.
-     * @param y1
-     *            The first y coordinate of the line.
-     * @param x2
-     *            The second x coordinate of the line.
-     * @param y2
-     *            The second y coordinate of the line.
-     * @param thickness
-     *            The thickness of the line.
-     * @param col
-     *            The text color.
-     */
-    public void createLineData(int x1, int y1, int x2, int y2, int thickness, Color col) {
-        // Default orientation
-        createLineData(x1, y1, x2, y2, thickness, 0, col);
-    }
-
-    /**
      * Drawing of lines using the starting and ending coordinates, thickness and
      * orientation arguments.
      *
-     * @param x1
-     *            The first x coordinate of the line.
-     * @param y1
-     *            The first y coordinate of the line.
-     * @param x2
-     *            The second x coordinate of the line.
-     * @param y2
-     *            The second y coordinate of the line.
-     * @param thickness
-     *            The thickness of the line.
-     * @param orientation
-     *            The orientation of the line.
-     * @param col
-     *            The text color.
+     * @param lineDataInfo the line data information.
      */
-    public void createLineData(int x1, int y1, int x2, int y2, int thickness,
-        int orientation, Color col) {
+    public void createLineData(LineDataInfo lineDataInfo) {
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
         try {
-            currentPresentationTextData.createLineData(x1, y1, x2, y2,
-                thickness, orientation, col);
+            currentPresentationTextData.createLineData(lineDataInfo);
         } catch (MaximumSizeExceededException msee) {
             endPresentationTextData();
-            createLineData(x1, y1, x2, y2, thickness, orientation, col);
+            createLineData(lineDataInfo);
         }
     }
 

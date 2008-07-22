@@ -373,14 +373,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         float[] dstPts = new float[srcPts.length];
         int[] coords = mpts2units(srcPts, dstPts);
         int x2 = coords[X] + Math.round(mpt2units(width * 1000));
-        int thickness = Math.round(mpt2units(height * 1000));
-        getAFPDataStream().createLine(
-                coords[X],
-                coords[Y],
-                x2,
-                coords[Y],
-                thickness,
-                currentState.getColor());
+        LineDataInfo lineDataInfo = new LineDataInfo();
+        lineDataInfo.x1 = coords[X];
+        lineDataInfo.y1 = coords[Y];
+        lineDataInfo.x2 = x2;
+        lineDataInfo.y2 = coords[Y];
+        lineDataInfo.thickness = Math.round(mpt2units(height * 1000));
+        lineDataInfo.color = currentState.getColor();
+        getAFPDataStream().createLine(lineDataInfo);
     }
 
     /** {@inheritDoc} */
@@ -397,166 +397,168 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             return;
         }
 
+        LineDataInfo lineDataInfo = new LineDataInfo();
+        lineDataInfo.color = col;
+
         switch (style) {
+        
         case Constants.EN_DOUBLE:
+            
+            lineDataInfo.x1 = coords[X1];
+            lineDataInfo.y1 = coords[Y1];
+
             if (horz) {
                 float h3 = height / 3;
-                float ym2 = dstPts[Y1] + h3 + h3;
-                afpDataStream.createLine(
-                        coords[X1],
-                        coords[Y1],
-                        coords[X2],
-                        coords[Y1],
-                        Math.round(h3),
-                        col);
-                afpDataStream.createLine(
-                        coords[X1],
-                        Math.round(ym2),
-                        coords[X2],
-                        Math.round(ym2),
-                        Math.round(h3),
-                        col);
+                lineDataInfo.thickness = Math.round(h3);
+                
+                lineDataInfo.x2 = coords[X2];
+                lineDataInfo.y2 = coords[Y1];
+                afpDataStream.createLine(lineDataInfo);
+                                
+                int ym2 = Math.round(dstPts[Y1] + h3 + h3);
+                lineDataInfo.y1 = ym2;
+                lineDataInfo.y2 = ym2;
+                afpDataStream.createLine(lineDataInfo);
             } else {
                 float w3 = width / 3;
-                float xm2 = dstPts[X1] + w3 + w3;
-                afpDataStream.createLine(
-                        coords[X1],
-                        coords[Y1],
-                        coords[X1],
-                        coords[Y2],
-                        Math.round(w3),
-                        col);
-                afpDataStream.createLine(
-                        Math.round(xm2),
-                        coords[Y1],
-                        Math.round(xm2),
-                        coords[Y2],
-                        Math.round(w3),
-                        col);
+                lineDataInfo.thickness = Math.round(w3);
+
+                lineDataInfo.x2 = coords[X1];
+                lineDataInfo.y2 = coords[Y2];                
+                afpDataStream.createLine(lineDataInfo);
+                
+                int xm2 = Math.round(dstPts[X1] + w3 + w3);
+                lineDataInfo.x1 = xm2;
+                lineDataInfo.x2 = xm2;
+                afpDataStream.createLine(lineDataInfo);
             }
             break;
+            
         case Constants.EN_DASHED:
+            lineDataInfo.x1 = coords[X1];
+
             if (horz) {
                 float w2 = 2 * height;
-                while (coords[X1] + w2 < coords[X2]) {
-                    afpDataStream.createLine(
-                            coords[X1],
-                            coords[Y1],
-                            coords[X1] + Math.round(w2),
-                            coords[Y1],
-                            Math.round(height),
-                            col);
-                    coords[X1] += 2 * w2;
+
+                lineDataInfo.y1 = coords[Y1];
+                lineDataInfo.x2 = coords[X1] + Math.round(w2);
+                lineDataInfo.y2 = coords[Y1];
+                lineDataInfo.thickness = Math.round(height);
+                
+                while (lineDataInfo.x1 + w2 < coords[X2]) {
+                    afpDataStream.createLine(lineDataInfo);                    
+                    lineDataInfo.x1 += 2 * w2; 
                 }
             } else {
                 float h2 = 2 * width;
-                while (coords[Y1] + h2 < coords[Y2]) {
-                    afpDataStream.createLine(
-                            coords[X1],
-                            coords[Y2],
-                            coords[X1],
-                            coords[Y1] + Math.round(h2),
-                            Math.round(width),
-                            col);
-                    coords[Y1] += 2 * h2;
+
+                lineDataInfo.y1 = coords[Y2];
+                lineDataInfo.x2 = coords[X1];
+                lineDataInfo.y2 = coords[Y1] + Math.round(h2);
+                lineDataInfo.thickness = Math.round(width);
+
+                while (lineDataInfo.y2 < coords[Y2]) {
+                    afpDataStream.createLine(lineDataInfo);
+                    lineDataInfo.y2 += 2 * h2;
                 }
             }
             break;
+            
         case Constants.EN_DOTTED:
+
+            lineDataInfo.x1 = coords[X1];
+            lineDataInfo.y1 = coords[Y1];
+
             if (horz) {
-                while (coords[X1] + height < coords[X2]) {
-                    afpDataStream.createLine(
-                            coords[X1],
-                            coords[Y1],
-                            coords[X1] + Math.round(height),
-                            coords[Y1],
-                            Math.round(height),
-                            col
-                    );
+                lineDataInfo.thickness = Math.round(height);
+                lineDataInfo.x2 = coords[X1] + lineDataInfo.thickness;
+                lineDataInfo.y2 = coords[Y1];
+                while (lineDataInfo.x2 < coords[X2]) {
+                    afpDataStream.createLine(lineDataInfo);
                     coords[X1] += 2 * height;
+                    lineDataInfo.x1 = coords[X1];
+                    lineDataInfo.x2 = coords[X1] + lineDataInfo.thickness;
                 }
             } else {
-                while (coords[Y1] + width < coords[Y2]) {
-                    afpDataStream.createLine(
-                            coords[X1],
-                            coords[Y1],
-                            coords[X1],
-                            coords[Y1] + Math.round(width),
-                            Math.round(width),
-                            col);
+                lineDataInfo.thickness = Math.round(width);
+                lineDataInfo.x2 = coords[X1];
+                lineDataInfo.y2 = coords[Y1] + lineDataInfo.thickness;
+                
+                while (lineDataInfo.y2 < coords[Y2]) {
+                    afpDataStream.createLine(lineDataInfo);
                     coords[Y1] += 2 * width;
+                    lineDataInfo.y1 = coords[Y1];
+                    lineDataInfo.y2 = coords[Y1] + lineDataInfo.thickness;
                 }
             }
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE: {
+            
             float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
             if (horz) {
-                Color uppercol = lightenColor(col, -colFactor);
-                Color lowercol = lightenColor(col, colFactor);
+
+                lineDataInfo.x1 = coords[X1];
+                lineDataInfo.x2 = coords[X2];                
+
                 float h3 = height / 3;
-                afpDataStream.createLine(
-                        coords[X1],
-                        coords[Y1],
-                        coords[X2],
-                        coords[Y1],
-                        Math.round(h3),
-                        uppercol);
-                afpDataStream.createLine(
-                        coords[X1],
-                        Math.round(dstPts[Y1] + h3),
-                        coords[X2],
-                        Math.round(dstPts[Y1] + h3),
-                        Math.round(h3),
-                        col);
-                afpDataStream.createLine(
-                        coords[X1],
-                        Math.round(dstPts[Y1] + h3 + h3),
-                        coords[X2],
-                        Math.round(dstPts[Y1] + h3 + h3),
-                        Math.round(h3),
-                        lowercol);
+                
+                lineDataInfo.color = lightenColor(col, -colFactor);
+                lineDataInfo.thickness = Math.round(h3);
+                lineDataInfo.y1 = lineDataInfo.y2 = coords[Y1];
+                afpDataStream.createLine(lineDataInfo);
+                
+                lineDataInfo.color = col;                 
+                lineDataInfo.y1 = lineDataInfo.y2 = Math.round(dstPts[Y1] + h3);
+                afpDataStream.createLine(lineDataInfo);
+                
+                lineDataInfo.color = lightenColor(col, colFactor);
+                lineDataInfo.y1 = lineDataInfo.y2 = Math.round(dstPts[Y1] + h3 + h3);                
+                afpDataStream.createLine(lineDataInfo);
+                
             } else {
-                Color leftcol = lightenColor(col, -colFactor);
-                Color rightcol = lightenColor(col, colFactor);
+
+                lineDataInfo.y1 = coords[Y1];
+                lineDataInfo.y2 = coords[Y2];                
+
                 float w3 = width / 3;
                 float xm1 = dstPts[X1] + (w3 / 2);
-                afpDataStream.createLine(
-                        Math.round(xm1),
-                        coords[Y1],
-                        Math.round(xm1),
-                        coords[Y2],
-                        Math.round(w3),
-                        leftcol);
-                afpDataStream.createLine(
-                        Math.round(xm1 + w3),
-                        coords[Y1],
-                        Math.round(xm1 + w3),
-                        coords[Y2],
-                        Math.round(w3),
-                        col);
-                afpDataStream.createLine(
-                        Math.round(xm1 + w3 + w3),
-                        coords[Y1],
-                        Math.round(xm1 + w3 + w3),
-                        coords[Y2],
-                        Math.round(w3),
-                        rightcol);
+
+                lineDataInfo.color = lightenColor(col, -colFactor);
+                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1);
+                afpDataStream.createLine(lineDataInfo);
+                
+                lineDataInfo.color = col;
+                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1 + w3);
+                afpDataStream.createLine(lineDataInfo);
+
+                lineDataInfo.color = lightenColor(col, colFactor);
+                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1 + w3 + w3);
+                afpDataStream.createLine(lineDataInfo);
             }
             break;
         }
+        
         case Constants.EN_HIDDEN:
             break;
+            
         case Constants.EN_INSET:
         case Constants.EN_OUTSET:
         default:
-              afpDataStream.createLine(
-                      coords[X1],
-                      coords[Y1],
-                      (horz ? coords[X2] : coords[X1]),
-                      (horz ? coords[Y1] : coords[Y2]),
-                      Math.abs(Math.round(horz ? height : width)),
-                      col);
+              lineDataInfo.x1 = coords[X1]; 
+              lineDataInfo.y1 = coords[Y1];
+              if (horz) {
+                  lineDataInfo.thickness = Math.round(height); 
+                  lineDataInfo.x2 = coords[X2];
+                  lineDataInfo.y2 = coords[Y1];
+              } else {
+                  lineDataInfo.thickness = Math.round(width); 
+                  lineDataInfo.x2 = coords[X1];
+                  lineDataInfo.y2 = coords[Y2];                  
+              }
+              lineDataInfo.x2 = (horz ? coords[X2] : coords[X1]);
+              lineDataInfo.y2 = (horz ? coords[Y1] : coords[Y2]);
+              afpDataStream.createLine(lineDataInfo);
         }
     }
 
@@ -846,7 +848,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void renderText(TextArea text) {
-        log.debug(text.getText());
+//        log.debug(text.getText());
         renderInlineAreaBackAndBorders(text);
 
         String name = getInternalFontNameForArea(text);
@@ -909,7 +911,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         int interCharacterAdjustment = Math.round(mpt2units(text.getTextLetterSpaceAdjust()));
 
-        AFPTextDataInfo textDataInfo = new AFPTextDataInfo();
+        TextDataInfo textDataInfo = new TextDataInfo();
         textDataInfo.setFontReference(fontReference);
         textDataInfo.setX(coords[X]);
         textDataInfo.setY(coords[Y]);
@@ -917,6 +919,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         textDataInfo.setVariableSpaceCharacterIncrement(variableSpaceCharacterIncrement);
         textDataInfo.setInterCharacterAdjustment(interCharacterAdjustment);
         textDataInfo.setData(data);
+        textDataInfo.setOrientation(currentState.getOrientation());
         getAFPDataStream().createText(textDataInfo);
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero

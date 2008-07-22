@@ -25,7 +25,8 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.fop.render.afp.AFPTextDataInfo;
+import org.apache.fop.render.afp.LineDataInfo;
+import org.apache.fop.render.afp.TextDataInfo;
 import org.apache.fop.render.afp.DataObjectCache;
 import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
@@ -169,25 +170,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     /**
      * Helper method to create a line on the current page, this method delegates
      * to the presentation text object in order to construct the line.
-     *
-     * @param x1
-     *            the first x coordinate of the line
-     * @param y1
-     *            the first y coordinate of the line
-     * @param x2
-     *            the second x coordinate of the line
-     * @param y2
-     *            the second y coordinate of the line
-     * @param thickness
-     *            the thickness of the line
-     * @param lineRotation
-     *            the rotation of the line
-     * @param col
-     *            The text color.
+     * 
+     * @param lineDataInfo the line data information.
      */
-    public void createLine(int x1, int y1, int x2, int y2, int thickness,
-            int lineRotation, Color col) {
-        getPresentationTextObject().createLineData(x1, y1, x2, y2, thickness, lineRotation, col);
+    public void createLine(LineDataInfo lineDataInfo) {
+        getPresentationTextObject().createLineData(lineDataInfo);
     }
 
     /**
@@ -197,7 +184,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param textDataInfo
      *            the afp text data
      */
-    public void createText(AFPTextDataInfo textDataInfo) {
+    public void createText(TextDataInfo textDataInfo) {
         getPresentationTextObject().createTextData(textDataInfo);
     }
 

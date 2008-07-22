@@ -47,9 +47,6 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     /** The current page */
     private AFPPageState pageState = new AFPPageState();
 
-    /** Whether or not GOCA is used for handling SVG */
-    private boolean goca = false; // false by default
-    
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
      * (default), 90, 180, 270.
@@ -187,24 +184,6 @@ public class AFPState extends org.apache.fop.render.AbstractState {
      */
     protected AFPPageState getPageState() {
         return this.pageState;
-    }
-
-    /**
-     * Sets if GOCA is to be used for SVG handling
-     * 
-     * @param value is true if GOCA is used for SVG handling
-     */
-    public void setUseGOCA(boolean value) {
-        this.goca = value;
-    }
-    
-    /**
-     * Returns true if GOCA is enabled for SVG handling
-     * 
-     * @return true if GOCA is enabled for SVG handling
-     */
-    public boolean useGOCA() {
-        return this.goca;
     }
 
     /**
@@ -420,4 +399,14 @@ public class AFPState extends org.apache.fop.render.AbstractState {
             + "}";
         }
     }
+
+    /**
+     * Returns the current text orientation
+     * TODO the current text orientation
+     * @return the current text orientation
+     */
+    public int getOrientation() {
+        return 0;
+    }
+
 }

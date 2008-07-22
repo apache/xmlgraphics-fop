@@ -62,7 +62,6 @@ public class AFPTextPainter implements TextPainter {
     protected Log log = LogFactory.getLog(AFPTextPainter.class);
     
     private AFPTextHandler nativeTextHandler;
-    //private FontInfo fontInfo;
 
     /**
      * Use the stroking text painter to get the bounds and shape.

@@ -24,7 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.AFPTextDataInfo;
+import org.apache.fop.render.afp.LineDataInfo;
+import org.apache.fop.render.afp.TextDataInfo;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -271,7 +272,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * @throws MaximumSizeExceededException
      *             thrown if the maximum number of text data is exceeded
      */
-    public void createTextData(AFPTextDataInfo textDataInfo)
+    public void createTextData(TextDataInfo textDataInfo)
             throws MaximumSizeExceededException {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
@@ -357,28 +358,22 @@ public class PresentationTextData extends AbstractAFPObject {
      * Drawing of lines using the starting and ending coordinates, thickness and
      * colour arguments.
      * 
-     * @param x1
-     *            The starting X coordinate.
-     * @param y1
-     *            The starting Y coordinate.
-     * @param x2
-     *            The ending X coordinate.
-     * @param y2
-     *            The ending Y coordinate.
-     * @param thickness
-     *            The line thickness.
-     * @param orientation
-     *            The orientation of the text data.
-     * @param col
-     *            The text color.
+     * @param lineDataInfo the line data information.
      * @throws MaximumSizeExceededException
      *            thrown if the maximum number of line data has been exceeded
      */
-    public void createLineData(int x1, int y1, int x2, int y2, int thickness,
-            int orientation, Color col) throws MaximumSizeExceededException {
+    public void createLineData(LineDataInfo lineDataInfo) throws MaximumSizeExceededException {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
 
+        int thickness = lineDataInfo.getThickness();
+        int orientation = lineDataInfo.getOrientation();
+        int x1 = lineDataInfo.getX1();
+        int y1 = lineDataInfo.getY1();
+        int x2 = lineDataInfo.getX2();
+        int y2 = lineDataInfo.getY2();
+        Color col = lineDataInfo.getColor();
+        
         if (currentOrientation != orientation) {
             setTextOrientation(orientation, afpdata);
             currentOrientation = orientation;
@@ -407,9 +402,9 @@ public class PresentationTextData extends AbstractAFPObject {
             return;
         }
 
-        int s = afpdata.size();
+        int dataSize = afpdata.size();
 
-        if (baos.size() + s > MAX_SIZE) {
+        if (baos.size() + dataSize > MAX_SIZE) {
             currentXCoordinate = -1;
             currentYCoordinate = -1;
             throw new MaximumSizeExceededException();
@@ -533,9 +528,7 @@ public class PresentationTextData extends AbstractAFPObject {
                 }, 0, 5);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void write(OutputStream os) throws IOException {
         byte[] data = baos.toByteArray();
         byte[] size = BinaryUtils.convert(data.length - 1, 2);

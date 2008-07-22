@@ -22,19 +22,29 @@ package org.apache.fop.render.afp;
 import java.awt.Color;
 
 /**
- * Contains text data information
+ * Text data information
  */
-public class AFPTextDataInfo {
+public class TextDataInfo {
+
     private int fontReference;
+    
     private int x;
+    
     private int y;
+    
     private Color color;
+    
     private int variableSpaceCharacterIncrement;
+    
     private int interCharacterAdjustment;
+    
     private byte[] data;
+    
     private int orientation;
     
     /**
+     * Returns the font reference
+     * 
      * @return the font reference
      */
     public int getFontReference() {
@@ -43,6 +53,7 @@ public class AFPTextDataInfo {
     
     /**
      * Sets the font reference
+     * 
      * @param fontReference the font reference
      */
     protected void setFontReference(int fontReference) {
@@ -50,6 +61,8 @@ public class AFPTextDataInfo {
     }
     
     /**
+     * Returns the x coordinate
+     * 
      * @return the x coordinate
      */
     public int getX() {
@@ -58,6 +71,7 @@ public class AFPTextDataInfo {
     
     /**
      * Sets the X coordinate
+     * 
      * @param x the X coordinate
      */
     protected void setX(int x) {
@@ -65,6 +79,8 @@ public class AFPTextDataInfo {
     }
     
     /**
+     * Returns the y coordinate
+     * 
      * @return the y coordinate
      */
     public int getY() {
@@ -73,6 +89,7 @@ public class AFPTextDataInfo {
     
     /**
      * Sets the Y coordinate
+     * 
      * @param y the Y coordinate
      */
     protected void setY(int y) {
@@ -80,6 +97,8 @@ public class AFPTextDataInfo {
     }
     
     /**
+     * Returns the color
+     * 
      * @return the color
      */
     public Color getColor() {
@@ -88,6 +107,7 @@ public class AFPTextDataInfo {
     
     /**
      * Sets the color
+     * 
      * @param color the color
      */
     protected void setColor(Color color) {
@@ -95,6 +115,8 @@ public class AFPTextDataInfo {
     }
     
     /**
+     * Return the variable space character increment
+     * 
      * @return the variable space character increment
      */
     public int getVariableSpaceCharacterIncrement() {
@@ -103,6 +125,7 @@ public class AFPTextDataInfo {
     
     /**
      * Sets the variable space character increment
+     * 
      * @param variableSpaceCharacterIncrement the variable space character increment
      */
     protected void setVariableSpaceCharacterIncrement(
@@ -111,6 +134,8 @@ public class AFPTextDataInfo {
     }
     
     /**
+     * Return the inter character adjustment
+     * 
      * @return the inter character adjustment
      */
     public int getInterCharacterAdjustment() {
@@ -119,6 +144,7 @@ public class AFPTextDataInfo {
     
     /**
      * Sets the inter character adjustment
+     * 
      * @param interCharacterAdjustment the inter character adjustment
      */
     protected void setInterCharacterAdjustment(int interCharacterAdjustment) {
@@ -126,6 +152,8 @@ public class AFPTextDataInfo {
     }
     
     /**
+     * Return the text data
+     * 
      * @return the text data
      */
     public byte[] getData() {
@@ -134,6 +162,7 @@ public class AFPTextDataInfo {
     
     /**
      * Sets the text data
+     * 
      * @param data the text orientation
      */
     protected void setData(byte[] data) {
@@ -142,6 +171,7 @@ public class AFPTextDataInfo {
 
     /**
      * Sets the text orientation
+     * 
      * @param orientation the text orientation
      */
     public void setOrientation(int orientation) {
@@ -149,6 +179,8 @@ public class AFPTextDataInfo {
     }
     
     /**
+     * Returns the text orientation
+     * 
      * @return the text orientation
      */
     public int getOrientation() {
@@ -157,7 +189,7 @@ public class AFPTextDataInfo {
     
     /** {@inheritDoc} */
     public String toString() {
-        return "AFPTextDataInfo{fontReference=" + fontReference
+        return "TextDataInfo{fontReference=" + fontReference
         + ", x=" + x
         + ", y=" + y
         + ", color=" + color
