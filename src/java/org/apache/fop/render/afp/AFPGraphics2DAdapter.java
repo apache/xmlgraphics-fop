@@ -76,32 +76,5 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
             Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
             painter.paint(graphics, area);
         }
-
-//      RendererContext.RendererContextWrapper wrappedContext
-//      = new RendererContext.RendererContextWrapper(context);
-//AFPRenderer renderer = (AFPRenderer)context.getRenderer();
-//Boolean grayObj = (Boolean)context.getProperty(AFPRendererContextConstants.AFP_GRAYSCALE);
-//boolean gray = (grayObj != null ? grayObj.booleanValue() : false);
-//
-//FOUserAgent userAgent = context.getUserAgent();
-//
-////Paint to a BufferedImage
-//int resolution = (int)Math.round(userAgent.getTargetResolution());
-//BufferedImage bi
-//  = paintToBufferedImage(painter, wrappedContext, resolution, gray, false);
-//
-//ImageManager manager = userAgent.getFactory().getImageManager();
-//ImageSessionContext sessionContext = userAgent.getImageSessionContext();                
-//AFPState state = (AFPState)context.getProperty(AFPRendererContextConstants.AFP_STATE);
-//String uri = state.getImageUri();
-//try {
-//  ImageInfo info = manager.getImageInfo(uri, sessionContext);
-//  java.util.Map foreignAttributes = null;
-//  renderer.drawBufferedImage(info, bi, resolution, x, y, width, height, foreignAttributes);
-//} catch (ImageException e) {
-//  log.error(e);
-//}
-
-//        painter.paint(g2d, area)
     }
 }
