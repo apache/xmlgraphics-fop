@@ -41,6 +41,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.logging.Log;
@@ -49,7 +50,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
@@ -167,7 +167,7 @@ public class IFParser implements IFConstants {
                 delegate.startDocument();
                 delegate.startElement(uri, localName, qName, attributes);
             } else {
-                lastAttributes = attributes;
+                lastAttributes = new AttributesImpl(attributes);
                 boolean handled = true;
                 if (NAMESPACE.equals(uri)) {
                     ElementHandler elementHandler = (ElementHandler)elementHandlers.get(localName);
@@ -456,21 +456,13 @@ public class IFParser implements IFConstants {
          * Handles objects created by "sub-parsers" that implement the ObjectSource interface.
          * An example of object handled here are ExtensionAttachments.
          * @param obj the Object to be handled.
+         * @throws SAXException if an error occurs while handling the extension object
          */
-        protected void handleExternallyGeneratedObject(Object obj) {
-            if (obj instanceof ExtensionAttachment) {
-                ExtensionAttachment attachment = (ExtensionAttachment)obj;
-                //TODO Implement me
-                /*
-                if (this.currentPageViewport == null) {
-                    this.treeModel.handleOffDocumentItem(
-                            new OffDocumentExtensionAttachment(attachment));
-                } else {
-                    this.currentPageViewport.addExtensionAttachment(attachment);
-                }
-                            */
-            } else {
-                log.warn("Don't know how to handle externally generated object: " + obj);
+        protected void handleExternallyGeneratedObject(Object obj) throws SAXException {
+            try {
+                painter.handleExtensionObject(obj);
+            } catch (IFException ife) {
+                handleIFException(ife);
             }
         }
 

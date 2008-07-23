@@ -28,36 +28,34 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.area.AreaTreeModel;
-import org.apache.fop.area.AreaTreeParser;
-import org.apache.fop.area.RenderPagesModel;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.xml.XMLRenderer;
+import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.render.intermediate.IFParser;
+import org.apache.fop.render.intermediate.IFRenderer;
+import org.apache.fop.render.intermediate.IFSerializer;
 
 /**
- * Tests the area tree parser.
+ * Tests the intermediate format parser.
  */
-public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
+public class IFParserTestCase extends AbstractIntermediateTestCase {
 
     /**
      * Constructor for the test suite that is used for each test file.
      * @param testFile the test file to run
      */
-    public AreaTreeParserTestCase(File testFile) {
+    public IFParserTestCase(File testFile) {
         super(testFile);
     }
 
     /** {@inheritDoc} */
     protected String getIntermediateFileExtension() {
-        return ".at.xml";
+        return ".if.xml";
     }
 
     /** {@inheritDoc} */
@@ -71,9 +69,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         }
 
         //Set up XMLRenderer to render to a DOM
-        TransformerHandler handler = tFactory.newTransformerHandler();
         DOMResult domResult = new DOMResult();
-        handler.setResult(domResult);
 
         FOUserAgent userAgent = createUserAgent();
 
@@ -81,14 +77,20 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         Renderer targetRenderer = userAgent.getRendererFactory().createRenderer(
                 userAgent, getTargetMIME());
 
-        XMLRenderer renderer = new XMLRenderer();
-        renderer.mimicRenderer(targetRenderer);
-        renderer.setContentHandler(handler);
+        //Setup renderer
+        IFRenderer renderer = new IFRenderer();
         renderer.setUserAgent(userAgent);
+        renderer.mimicRenderer(targetRenderer);
 
+        //Setup painter
+        IFSerializer serializer = new IFSerializer();
+        serializer.setUserAgent(userAgent);
+        serializer.setResult(domResult);
+
+        renderer.setPainter(serializer);
         userAgent.setRendererOverride(renderer);
 
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_AREA_TREE, userAgent);
+        Fop fop = fopFactory.newFop(userAgent);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
 
@@ -97,36 +99,29 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
 
     /** {@inheritDoc} */
     protected void parseAndRender(Source src, OutputStream out) throws Exception {
-        AreaTreeParser parser = new AreaTreeParser();
+        IFParser parser = new IFParser();
 
         FOUserAgent userAgent = createUserAgent();
-        FontInfo fontInfo = new FontInfo();
-        AreaTreeModel treeModel = new RenderPagesModel(userAgent,
-                getTargetMIME(), fontInfo, out);
-        parser.parse(src, treeModel, userAgent);
-        treeModel.endDocument();
+
+        IFPainter painter = userAgent.getRendererFactory().createPainter(
+                userAgent, getTargetMIME());
+        painter.setResult(new StreamResult(out));
+        painter.setDefaultFontInfo();
+        parser.parse(src, painter, userAgent);
     }
 
     /** {@inheritDoc} */
     protected Document parseAndRenderToIntermediateFormat(Source src) throws Exception {
-        AreaTreeParser parser = new AreaTreeParser();
-
-        //Set up XMLRenderer to render to a DOM
-        TransformerHandler handler = tFactory.newTransformerHandler();
-        DOMResult domResult = new DOMResult();
-        handler.setResult(domResult);
-        XMLRenderer renderer = new XMLRenderer();
-        renderer.setContentHandler(handler);
+        IFParser parser = new IFParser();
 
         FOUserAgent userAgent = createUserAgent();
-        userAgent.setRendererOverride(renderer);
-        renderer.setUserAgent(userAgent);
 
-        FontInfo fontInfo = new FontInfo();
-        AreaTreeModel treeModel = new RenderPagesModel(userAgent,
-                MimeConstants.MIME_FOP_AREA_TREE, fontInfo, null);
-        parser.parse(src, treeModel, userAgent);
-        treeModel.endDocument();
+        IFSerializer serializer = new IFSerializer();
+        serializer.setUserAgent(userAgent);
+        DOMResult domResult = new DOMResult();
+        serializer.setResult(domResult);
+
+        parser.parse(src, serializer, userAgent);
 
         return (Document)domResult.getNode();
     }

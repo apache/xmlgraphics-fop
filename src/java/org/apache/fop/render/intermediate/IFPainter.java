@@ -28,6 +28,7 @@ import java.awt.geom.AffineTransform;
 import javax.xml.transform.Result;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fonts.FontInfo;
 
 /**
  * Interface used to paint whole documents layouted by Apache FOP.
@@ -88,6 +89,17 @@ public interface IFPainter {
      * @throws IFException if an error occurs setting up the output
      */
     void setResult(Result result) throws IFException;
+
+    /**
+     * Sets the font set to work with.
+     * @param fontInfo the font info object
+     */
+    void setFontInfo(FontInfo fontInfo);
+
+    /**
+     * Sets the default font set (with no custom configuration).
+     */
+    void setDefaultFontInfo();
 
     /**
      * Indicates whether the painter supports to handle the pages in mixed order rather than
