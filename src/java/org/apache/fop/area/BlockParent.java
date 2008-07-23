@@ -51,7 +51,7 @@ public class BlockParent extends Area {
     protected List children = null;
 
     // orientation if reference area
-    private int orientation = ORIENT_0;
+//    private int orientation = ORIENT_0;
 
     /** {@inheritDoc} */
     public void addChildArea(Area childArea) {
