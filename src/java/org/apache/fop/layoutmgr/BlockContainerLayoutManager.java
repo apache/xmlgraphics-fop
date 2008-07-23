@@ -196,8 +196,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             return getNextKnuthElementsAbsolute(context, alignment);
         }
         
-        boolean switchedProgressionDirection
-            = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         autoHeight = false;
         //boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         int maxbpd = context.getStackLimitBP().opt;
@@ -354,6 +352,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             if (autoHeight) {
                 //Update content BPD now that it is known
                 int newHeight = breaker.deferredAlg.totalWidth;
+                boolean switchedProgressionDirection
+                    = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
                 if (switchedProgressionDirection) {
                     setContentAreaIPD(newHeight);
                 } else {
