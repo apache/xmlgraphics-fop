@@ -30,6 +30,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.xmp.Metadata;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
@@ -423,6 +425,9 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     }
 
     private Typeface getTypeface(String fontName) {
+        if (fontName == null) {
+            throw new NullPointerException("fontName must not be null");
+        }
         Typeface tf = (Typeface) fontInfo.getFonts().get(fontName);
         if (tf instanceof LazyFont) {
             tf = ((LazyFont)tf).getRealFont();
@@ -528,6 +533,9 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof XMPMetadata) {
             pdfUtil.renderXMPMetadata((XMPMetadata)extension);
+        } else if (extension instanceof Metadata) {
+            XMPMetadata wrapper = new XMPMetadata(((Metadata)extension));
+            pdfUtil.renderXMPMetadata(wrapper);
         } else {
             throw new UnsupportedOperationException(
                     "Don't know how to handle extension object: " + extension);

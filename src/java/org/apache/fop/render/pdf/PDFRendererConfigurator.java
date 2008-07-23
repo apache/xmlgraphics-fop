@@ -27,10 +27,18 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fonts.CustomFontCollection;
+import org.apache.fop.fonts.FontCollection;
+import org.apache.fop.fonts.FontEventAdapter;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontManager;
+import org.apache.fop.fonts.FontResolver;
+import org.apache.fop.fonts.base14.Base14FontCollection;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFXMode;
+import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -141,17 +149,6 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator
         }
     }
 
-    public void configure(IFPainter painter) throws FOPException {
-        Configuration cfg = super.getRendererConfig(painter.getMimeType());
-        if (cfg != null) {
-            PDFPainter pdfPainter = (PDFPainter)painter;
-            PDFRenderingUtil pdfUtil = pdfPainter.getPDFUtil();
-            configure(cfg, pdfUtil);
-
-            //TODO Configure fonts
-        }
-    }
-
     /**
      * Builds a filter map from an Avalon Configuration object.
      * @param cfg the Configuration object
@@ -198,6 +195,39 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator
             filterMap.put(type, filterList);
         }
         return filterMap;
+    }
+
+    // ---=== IFPainter configuration ===---
+
+    /** {@inheritDoc} */
+    public void configure(IFPainter painter) throws FOPException {
+        Configuration cfg = super.getRendererConfig(painter.getMimeType());
+        if (cfg != null) {
+            PDFPainter pdfPainter = (PDFPainter)painter;
+            PDFRenderingUtil pdfUtil = pdfPainter.getPDFUtil();
+            configure(cfg, pdfUtil);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void setupFontInfo(IFPainter painter) throws FOPException {
+        FontManager fontManager = userAgent.getFactory().getFontManager();
+        List fontCollections = new java.util.ArrayList();
+        fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
+
+        Configuration cfg = super.getRendererConfig(painter.getMimeType());
+        if (cfg != null) {
+            FontResolver fontResolver = new DefaultFontResolver(userAgent);
+            List fontList = buildFontList(cfg, fontResolver);
+            fontCollections.add(new CustomFontCollection(fontResolver, fontList));
+        }
+
+        FontInfo fontInfo = new FontInfo();
+        fontInfo.setEventListener(new FontEventAdapter(userAgent.getEventBroadcaster()));
+        fontManager.setup(fontInfo,
+                (FontCollection[])fontCollections.toArray(
+                        new FontCollection[fontCollections.size()]));
+        painter.setFontInfo(fontInfo);
     }
 
 }

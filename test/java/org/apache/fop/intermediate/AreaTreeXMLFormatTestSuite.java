@@ -30,9 +30,9 @@ import junit.framework.TestSuite;
 import org.apache.fop.layoutengine.LayoutEngineTestSuite;
 
 /**
- * JUnit test suite for the intermediate format
+ * JUnit test suite for the area tree XML format
  */
-public class IntermediateFormatTestSuite {
+public class AreaTreeXMLFormatTestSuite {
 
     /**
      * @return the test suite with all the tests (one for each XML file)
@@ -46,15 +46,15 @@ public class IntermediateFormatTestSuite {
         Iterator i = files.iterator();
         while (i.hasNext()) {
             File f = (File)i.next();
-            addIFTestCase(suite, f);
+            addATTestCase(suite, f);
         }
 
         return suite;
     }
 
-    private static void addIFTestCase(TestSuite suite,
+    private static void addATTestCase(TestSuite suite,
             final File f) {
-        suite.addTest(new IFParserTestCase(f) {
+        suite.addTest(new AreaTreeParserTestCase(f) {
             public void runTest() throws Exception {
                 try {
                     testParserToIntermediateFormat();

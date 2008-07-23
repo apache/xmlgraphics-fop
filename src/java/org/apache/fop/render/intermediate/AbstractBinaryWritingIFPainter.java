@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.List;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
@@ -31,13 +30,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import org.apache.fop.fonts.CustomFontCollection;
 import org.apache.fop.fonts.FontCollection;
+import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.base14.Base14FontCollection;
-import org.apache.fop.render.DefaultFontResolver;
 
 /**
  * Abstract base class for binary-writing IFPainter implementations.
@@ -51,12 +48,6 @@ public abstract class AbstractBinaryWritingIFPainter extends AbstractIFPainter {
 
     /** Font configuration */
     protected FontInfo fontInfo;
-
-    /** Font resolver */
-    protected FontResolver fontResolver = null;
-
-    /** list of fonts */
-    protected List/*<EmbedFontInfo>*/ embedFontInfoList = null;
 
     /** {@inheritDoc} */
     public void setResult(Result result) throws IFException {
@@ -93,43 +84,6 @@ public abstract class AbstractBinaryWritingIFPainter extends AbstractIFPainter {
     }
 
     /**
-     * Adds a font list to current list of fonts
-     * @param fontList a font info list
-     */
-    public void addFontList(List/*<EmbedFontInfo>*/ fontList) {
-        if (embedFontInfoList == null) {
-            setFontList(fontList);
-        } else {
-            embedFontInfoList.addAll(fontList);
-        }
-    }
-
-    /**
-     * @param embedFontInfoList list of available fonts
-     */
-    public void setFontList(List/*<EmbedFontInfo>*/ embedFontInfoList) {
-        this.embedFontInfoList = embedFontInfoList;
-    }
-
-    /**
-     * @return list of available embedded fonts
-     */
-    public List/*<EmbedFontInfo>*/ getFontList() {
-        return this.embedFontInfoList;
-    }
-
-    /**
-     * Returns the {@code FontResolver} used by this painter.
-     * @return the font resolver
-     */
-    public FontResolver getFontResolver() {
-        if (this.fontResolver == null) {
-            this.fontResolver = new DefaultFontResolver(getUserAgent());
-        }
-        return this.fontResolver;
-    }
-
-    /**
      * Returns the {@code FontInfo} object.
      * @return the font info
      */
@@ -137,23 +91,22 @@ public abstract class AbstractBinaryWritingIFPainter extends AbstractIFPainter {
         return this.fontInfo;
     }
 
+    /** {@inheritDoc} */
     public void setFontInfo(FontInfo fontInfo) {
         this.fontInfo = fontInfo;
     }
 
-    /**
-     * Set up the font info
-     *
-     * @param inFontInfo  font info to set up
-     */
-    public void setupFontInfo(FontInfo inFontInfo) {
-        setFontInfo(inFontInfo);
+    /** {@inheritDoc} */
+    public void setDefaultFontInfo() {
         FontManager fontManager = getUserAgent().getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
-                new Base14FontCollection(fontManager.isBase14KerningEnabled()),
-                new CustomFontCollection(getFontResolver(), getFontList())
+                new Base14FontCollection(fontManager.isBase14KerningEnabled())
         };
-        fontManager.setup(getFontInfo(), fontCollections);
+
+        FontInfo fi = new FontInfo();
+        fi.setEventListener(new FontEventAdapter(getUserAgent().getEventBroadcaster()));
+        fontManager.setup(fi, fontCollections);
+        setFontInfo(fi);
     }
 
     /** {@inheritDoc} */

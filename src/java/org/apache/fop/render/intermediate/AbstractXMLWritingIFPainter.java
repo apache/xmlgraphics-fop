@@ -37,6 +37,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.fop.fonts.FontInfo;
+
 /**
  * Abstract base class for XML-writing IFPainter implementations.
  */
@@ -64,6 +66,16 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
         } else {
             this.handler = createContentHandler(result);
         }
+    }
+
+    /** {@inheritDoc} */
+    public void setFontInfo(FontInfo fontInfo) {
+        //nop, not used
+    }
+
+    /** {@inheritDoc} */
+    public void setDefaultFontInfo() {
+        //nop, not used
     }
 
     /**

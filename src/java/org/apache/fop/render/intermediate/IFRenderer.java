@@ -165,10 +165,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                     this.painter = new IFSerializer();
                 }
                 this.painter.setUserAgent(getUserAgent());
-                if (this.painter instanceof AbstractBinaryWritingIFPainter) {
-                    //TODO THIS IS UGLY. FIX ME!!!
-                    ((AbstractBinaryWritingIFPainter)this.painter).setFontInfo(fontInfo);
-                }
+                this.painter.setFontInfo(fontInfo);
                 this.painter.setResult(result);
             }
             super.startRenderer(null);

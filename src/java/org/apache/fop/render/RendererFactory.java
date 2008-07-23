@@ -331,6 +331,7 @@ public class RendererFactory {
             IFPainterConfigurator configurator = maker.getConfigurator(userAgent);
             if (configurator != null) {
                 configurator.configure(painter);
+                configurator.setupFontInfo(painter);
             }
             return painter;
         //}

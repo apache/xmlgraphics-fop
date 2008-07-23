@@ -32,4 +32,11 @@ public interface IFPainterConfigurator {
      * @throws FOPException if an error occurs while configuring the object
      */
     void configure(IFPainter painter) throws FOPException;
+
+    /**
+     * Sets up the {@code FontInfo} object for the IFPainter.
+     * @param painter the painter instance
+     * @throws FOPException if an error occurs while configuring the object
+     */
+    void setupFontInfo(IFPainter painter) throws FOPException;
 }
