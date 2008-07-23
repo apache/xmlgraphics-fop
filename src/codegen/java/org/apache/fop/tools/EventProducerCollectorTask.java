@@ -63,16 +63,21 @@ public class EventProducerCollectorTask extends Task {
     public void execute() throws BuildException {
         try {
             EventProducerCollector collector = new EventProducerCollector();
-            processFileSets(collector);
+            long lastModified = processFileSets(collector);
             File parentDir = getModelFile().getParentFile();
             if (!parentDir.exists() && !parentDir.mkdirs()) {
                 throw new BuildException(
                         "Could not create target directory for event model file: " + parentDir);
             }
-            collector.saveModelToXML(getModelFile());
-            log("Event model written to " + getModelFile());
+            if (!getModelFile().exists() || lastModified > getModelFile().lastModified()) {
+                collector.saveModelToXML(getModelFile());
+                log("Event model written to " + getModelFile());
+            }
             if (getTranslationFile() != null) {
-                updateTranslationFile();
+                if (!getTranslationFile().exists()
+                        || lastModified > getTranslationFile().lastModified()) {
+                    updateTranslationFile();
+                }
             }
         } catch (ClassNotFoundException e) {
             throw new BuildException(e);
@@ -164,12 +169,14 @@ public class EventProducerCollectorTask extends Task {
     /**
      * Processes the file sets defined for the task.
      * @param collector the collector to use for collecting the event producers
+     * @return the time of the latest modification of any of the files inspected
      * @throws IOException if an I/O error occurs
      * @throws EventConventionException if the EventProducer conventions are violated
      * @throws ClassNotFoundException if a required class cannot be found
      */
-    protected void processFileSets(EventProducerCollector collector)
+    protected long processFileSets(EventProducerCollector collector)
             throws IOException, EventConventionException, ClassNotFoundException {
+        long lastModified = 0;
         Iterator iter = filesets.iterator();
         while (iter.hasNext()) {
             FileSet fs = (FileSet)iter.next();
@@ -179,9 +186,13 @@ public class EventProducerCollectorTask extends Task {
             for (int i = 0, c = srcFiles.length; i < c; i++) {
                 String filename = srcFiles[i];
                 File src = new File(directory, filename);
-                collector.scanFile(src);
+                boolean eventProducerFound = collector.scanFile(src);
+                if (eventProducerFound) {
+                    lastModified = Math.max(lastModified, src.lastModified());
+                }
             }
         }
+        return lastModified;
     }
 
     /**
