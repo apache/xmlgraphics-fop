@@ -30,7 +30,7 @@ public class LayoutResult {
     private Document areaTree;
     private ElementListCollector elCollector;
     private FormattingResults results;
-    
+
     /**
      * Creates a new LayoutResult instance.
      * @param areaTree the area tree DOM
@@ -43,12 +43,12 @@ public class LayoutResult {
         this.elCollector = elCollector;
         this.results = results;
     }
- 
+
     /** @return the generated area tree as DOM tree */
     public Document getAreaTree() {
         return this.areaTree;
     }
-    
+
     /** @return the element list collector */
     public ElementListCollector getElementListCollector() {
         return this.elCollector;
@@ -60,5 +60,5 @@ public class LayoutResult {
     public FormattingResults getResults() {
         return results;
     }
-    
+
 }

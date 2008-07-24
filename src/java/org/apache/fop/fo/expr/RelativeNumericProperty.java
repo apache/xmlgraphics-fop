@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,10 +27,10 @@ import org.apache.fop.fo.properties.TableColLength;
 
 
 /**
- * This class represent a node in a property expression tree. 
+ * This class represent a node in a property expression tree.
  * It is created when an operation involve relative expression and is used
  * to delay evaluation of the operation until the time where getNumericValue()
- * or getValue() is called. 
+ * or getValue() is called.
  */
 public class RelativeNumericProperty extends Property implements Length {
     public static final int ADDITION = 1;
@@ -42,10 +42,10 @@ public class RelativeNumericProperty extends Property implements Length {
     public static final int ABS = 7;
     public static final int MAX = 8;
     public static final int MIN = 9;
-    
+
     // Used in the toString() method, indexed by operation id.
     private static String operations = " +-*/%";
-    
+
     /**
      * The operation identifier.
      */
@@ -62,7 +62,7 @@ public class RelativeNumericProperty extends Property implements Length {
      * The dimension of the result.
      */
     private int dimension;
-    
+
     /**
      * Constructor for a two argument operation.
      * @param operation the operation opcode: ADDITION, SUBTRACTION, ...
@@ -124,12 +124,12 @@ public class RelativeNumericProperty extends Property implements Length {
         case MIN:
             return NumericOp.min2(op1, op2, context);
         default:
-            throw new PropertyException("Unknown expr operation " + operation);  
+            throw new PropertyException("Unknown expr operation " + operation);
         }
     }
 
     /**
-     * Return the resolved (calculated) value of the expression. 
+     * Return the resolved (calculated) value of the expression.
      * {@inheritDoc}
      */
     public double getNumericValue() throws PropertyException {
@@ -152,14 +152,14 @@ public class RelativeNumericProperty extends Property implements Length {
 
     /**
      * Return false since an expression is only created when there is relative
-     * numerics involved. 
+     * numerics involved.
      */
     public boolean isAbsolute() {
         return false;
     }
 
     /**
-     * Cast this numeric as a Length. 
+     * Cast this numeric as a Length.
      */
     public Length getLength() {
         if (dimension == 1) {
@@ -205,7 +205,7 @@ public class RelativeNumericProperty extends Property implements Length {
      * If this value is not 0, the actual value of the Length cannot be known
      * without looking at all of the columns in the table to determine the value
      * of a "table-unit".
-     * 
+     *
      * @return The number of table units which are included in this length
      *         specification.
      */
@@ -261,7 +261,7 @@ public class RelativeNumericProperty extends Property implements Length {
      */
     public String toString() {
         switch (operation) {
-        case ADDITION: case SUBTRACTION: 
+        case ADDITION: case SUBTRACTION:
         case DIVIDE: case MULTIPLY: case MODULO:
             return "(" + op1 + " " + operations.charAt(operation) + op2 + ")";
         case NEGATE:

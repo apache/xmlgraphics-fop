@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -246,7 +246,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
             nativeTextHandler = new NativeTextHandler(graphics, psInfo.getFontInfo());
             graphics.setCustomTextHandler(nativeTextHandler);
             PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
-            ctx.setTextPainter(textPainter);            
+            ctx.setTextPainter(textPainter);
             PSTextElementBridge tBridge = new PSTextElementBridge(textPainter);
             ctx.putBridge(tBridge);
         }
@@ -279,10 +279,10 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
              * an fo:block-container
              */
             gen.writeln("newpath");
-            gen.defineRect(xOffset / 1000f, yOffset / 1000f, 
+            gen.defineRect(xOffset / 1000f, yOffset / 1000f,
                     psInfo.getWidth() / 1000f, psInfo.getHeight() / 1000f);
             gen.writeln("clip");
-            
+
             // transform so that the coordinates (0,0) is from the top left
             // and positive is down and to the right. (0,0) is where the
             // viewBox puts it.
@@ -323,6 +323,6 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof PSRenderer);
     }
-    
+
 }
 

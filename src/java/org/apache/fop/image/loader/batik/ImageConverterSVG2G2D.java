@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.image.loader.batik;
 
 import java.awt.Dimension;
@@ -51,7 +51,7 @@ import org.apache.fop.svg.SimpleSVGUserAgent;
  * Note: The target flavor is "generic" Java2D. No Batik-specific bridges are hooked into the
  * conversion process. Specialized renderers may want to provide specialized adapters to profit
  * from target-format features (for example with PDF or PS). This converter is mainly for formats
- * which only support bitmap images or rudimentary Java2D support. 
+ * which only support bitmap images or rudimentary Java2D support.
  */
 public class ImageConverterSVG2G2D extends AbstractImageConverter {
 
@@ -126,7 +126,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
                 //TODO Refine and pipe through to caller
                 log.debug(message);
             }
-            
+
         };
     }
 

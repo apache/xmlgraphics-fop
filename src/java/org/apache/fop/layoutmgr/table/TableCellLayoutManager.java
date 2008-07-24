@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -240,7 +240,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     /**
      * Sets the total height of this cell on the current page. That is, the cell's bpd
      * plus before and after borders and paddings, plus the table's border-separation.
-     * 
+     *
      * @param h the height of cell
      */
     public void setTotalHeight(int h) {
@@ -250,12 +250,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     /**
      * Add the areas for the break points. The cell contains block stacking layout
      * managers that add block areas.
-     * 
+     *
      * <p>In the collapsing-border model, the borders of a cell that spans over several
      * rows or columns are drawn separately for each grid unit. Therefore we must know the
      * height of each grid row spanned over by the cell. Also, if the cell is broken over
      * two pages we must know which spanned grid rows are present on the current page.</p>
-     * 
+     *
      * @param parentIter the iterator of the break positions
      * @param layoutContext the layout context for adding the areas
      * @param spannedGridRowHeights in collapsing-border model for a spanning cell, height
@@ -296,7 +296,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
         CommonBorderPaddingBackground padding = primaryGridUnit.getCell()
                 .getCommonBorderPaddingBackground();
-        int paddingRectBPD = totalHeight - borderBeforeWidth - borderAfterWidth; 
+        int paddingRectBPD = totalHeight - borderBeforeWidth - borderAfterWidth;
         int cellBPD = paddingRectBPD;
         cellBPD -= padding.getPaddingBefore(borderBeforeWhich == ConditionalBorder.REST, this);
         cellBPD -= padding.getPaddingAfter(borderAfterWhich == ConditionalBorder.REST, this);
@@ -488,7 +488,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         CommonBorderPaddingBackground padding = getTableCell().getCommonBorderPaddingBackground();
         int paddingStart = padding.getPaddingStart(false, this);
         int paddingEnd = padding.getPaddingEnd(false, this);
-        
+
         Block block = new Block();
         TraitSetter.setProducerID(block, getTable().getId());
         block.setPositioning(Block.ABSOLUTE);
@@ -567,7 +567,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
-    
+
     /** {@inheritDoc} */
     public int getKeepWithNextStrength() {
         return KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-next!)

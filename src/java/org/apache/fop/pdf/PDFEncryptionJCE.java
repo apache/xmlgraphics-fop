@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 // Java
@@ -40,18 +40,18 @@ import javax.crypto.spec.SecretKeySpec;
  *
  */
 public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
-    
+
     private class EncryptionFilter extends PDFFilter {
         private PDFEncryptionJCE encryption;
         private int number;
         private int generation;
 
-        /** 
+        /**
          * The constructor for the internal PDFEncryptionJCE filter
          * @param encryption The encryption object to use
          * @param number The number of the object to be encrypted
          * @param generation The generation of the object to be encrypted
-         */        
+         */
         public EncryptionFilter(PDFEncryptionJCE encryption,
                                 int number, int generation) {
             super();
@@ -62,7 +62,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                 + number + " and generation " + generation);
         }
 
-        /** 
+        /**
          * Return a PDF string representation of the filter. In this
          * case no filter name is passed.
          * @return The filter name, blank in this case
@@ -71,7 +71,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             return "";
         }
 
-        /** 
+        /**
          * Return a parameter dictionary for this filter, or null
          * @return The parameter dictionary. In this case, null.
          */
@@ -79,7 +79,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             return null;
         }
 
-        /** 
+        /**
          * Encode the given data with the filter
          * @param data The data to be encrypted
          * @return The encrypted data
@@ -87,43 +87,43 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         public byte[] encode(byte[] data) {
             return encryption.encryptData(data, number, generation);
         }
-        
+
         /**
-         * {@inheritDoc} 
+         * {@inheritDoc}
          */
-        public void encode(InputStream in, OutputStream out, int length) 
+        public void encode(InputStream in, OutputStream out, int length)
                                                         throws IOException {
             byte[] buffer = new byte[length];
             in.read(buffer);
             buffer = encode(buffer);
             out.write(buffer);
         }
-        
+
         /**
          * {@inheritDoc}
          */
         public OutputStream applyFilter(OutputStream out) throws IOException {
-            return new CipherOutputStream(out, 
+            return new CipherOutputStream(out,
                     encryption.initCipher(number, generation));
         }
 
     }
 
-    private static final char [] PAD 
+    private static final char [] PAD
                              = {0x28, 0xBF, 0x4E, 0x5E, 0x4E, 0x75, 0x8A, 0x41,
-                                0x64, 0x00, 0x4E, 0x56, 0xFF, 0xFA, 0x01, 0x08, 
-                                0x2E, 0x2E, 0x00, 0xB6, 0xD0, 0x68, 0x3E, 0x80, 
+                                0x64, 0x00, 0x4E, 0x56, 0xFF, 0xFA, 0x01, 0x08,
+                                0x2E, 0x2E, 0x00, 0xB6, 0xD0, 0x68, 0x3E, 0x80,
                                 0x2F, 0x0C, 0xA9, 0xFE, 0x64, 0x53, 0x69, 0x7A};
-                                  
-    /** Value of PRINT permission */                                  
+
+    /** Value of PRINT permission */
     public static final int PERMISSION_PRINT            =  4;
-    /** Value of content editting permission */    
+    /** Value of content editting permission */
     public static final int PERMISSION_EDIT_CONTENT     =  8;
-    /** Value of content extraction permission */    
+    /** Value of content extraction permission */
     public static final int PERMISSION_COPY_CONTENT     = 16;
-    /** Value of annotation editting permission */    
+    /** Value of annotation editting permission */
     public static final int PERMISSION_EDIT_ANNOTATIONS = 32;
-    
+
     // Encryption tools
     private MessageDigest digest = null;
     //private Cipher cipher = null;
@@ -185,14 +185,14 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
     }
 
     // Internal procedures
-    
+
     private byte[] prepPassword(String password) {
         byte[] obuffer = new byte[32];
         byte[] pbuffer = password.getBytes();
 
         int i = 0;
         int j = 0;
-        
+
         while (i < obuffer.length && i < pbuffer.length) {
             obuffer[i] = pbuffer[i];
             i++;
@@ -204,34 +204,34 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         return obuffer;
     }
 
-    /** 
+    /**
      * Returns the document file ID
      * @return The file ID
-     */    
+     */
     public byte[] getFileID() {
         if (fileID == null) {
             fileID = new byte[16];
             random.nextBytes(fileID);
         }
-        
+
         return fileID;
     }
-    
-    /** 
+
+    /**
      * This method returns the indexed file ID
      * @param index The index to access the file ID
      * @return The file ID
-     */    
+     */
     public String getFileID(int index) {
         if (index == 1) {
             return PDFText.toHex(getFileID());
         }
-        
+
         byte[] id = new byte[16];
         random.nextBytes(id);
         return PDFText.toHex(id);
     }
-        
+
     private byte[] encryptWithKey(byte[] data, byte[] key) {
         try {
             final Cipher c = initCipher(key);
@@ -242,7 +242,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             throw new IllegalStateException(e.getMessage());
         }
     }
-    
+
     private Cipher initCipher(byte[] key) {
         try {
             Cipher c = Cipher.getInstance("RC4");
@@ -257,7 +257,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             throw new UnsupportedOperationException(e.getMessage());
         }
     }
-    
+
     private Cipher initCipher(int number, int generation) {
         byte[] hash = calcHash(number, generation);
         int size = hash.length;
@@ -265,12 +265,12 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         byte[] key = calcKey(hash, size);
         return initCipher(key);
     }
-    
+
     private byte[] encryptWithHash(byte[] data, byte[] hash, int size) {
         hash = digest.digest(hash);
 
-        byte[] key = calcKey(hash, size);        
-        
+        byte[] key = calcKey(hash, size);
+
         return encryptWithKey(data, key);
     }
 
@@ -283,19 +283,19 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         return key;
     }
 
-    /** 
+    /**
      * This method initializes the encryption algorithms and values
-     */    
+     */
     public void init() {
         // Generate the owner value
         byte[] oValue;
         if (params.getOwnerPassword().length() > 0) {
             oValue = encryptWithHash(
-                    prepPassword(params.getUserPassword()), 
+                    prepPassword(params.getUserPassword()),
                     prepPassword(params.getOwnerPassword()), 5);
         } else {
             oValue = encryptWithHash(
-                    prepPassword(params.getUserPassword()), 
+                    prepPassword(params.getUserPassword()),
                     prepPassword(params.getUserPassword()), 5);
         }
 
@@ -330,12 +330,12 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         for (int i = 0; i < 5; i++) {
             this.encryptionKey[i] = hash[i];
         }
-        
+
         // Create the user value
         byte[] uValue = encryptWithKey(prepPassword(""), this.encryptionKey);
-        
+
         // Create the dictionary
-        this.dictionary = getObjectID() 
+        this.dictionary = getObjectID()
                         + "<< /Filter /Standard\n"
                         + "/V 1\n"
                         + "/R 2\n"
@@ -347,18 +347,18 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                         + "endobj\n";
     }
 
-    /** 
+    /**
      * This method encrypts the passed data using the generated keys.
      * @param data The data to be encrypted
      * @param number The block number
      * @param generation The block generation
      * @return The encrypted data
-     */    
+     */
     public byte[] encryptData(byte[] data, int number, int generation) {
         if (this.encryptionKey == null) {
             throw new IllegalStateException("PDF Encryption has not been initialized");
         }
-        byte[] hash = calcHash(number, generation);        
+        byte[] hash = calcHash(number, generation);
         return encryptWithHash(data, hash, hash.length);
     }
 
@@ -376,26 +376,26 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
     private byte[] calcHash(int number, int generation) {
         byte[] hash = new byte[this.encryptionKey.length + 5];
-            
+
         int i = 0;
         while (i < this.encryptionKey.length) {
             hash[i] = this.encryptionKey[i]; i++;
         }
-            
+
         hash[i++] = (byte) (number >>> 0);
         hash[i++] = (byte) (number >>> 8);
         hash[i++] = (byte) (number >>> 16);
         hash[i++] = (byte) (generation >>> 0);
         hash[i++] = (byte) (generation >>> 8);
-        return hash;        
+        return hash;
     }
 
-    /** 
+    /**
      * Creates PDFFilter for the encryption object
      * @param number The object number
      * @param generation The objects generation
      * @return The resulting filter
-     */    
+     */
     public PDFFilter makeFilter(int number, int generation) {
         return new EncryptionFilter(this, number, generation);
     }
@@ -403,12 +403,12 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
     /**
      * Adds a PDFFilter to the PDFStream object
      * @param stream the stream to add an encryption filter to
-     */    
+     */
     public void applyFilter(AbstractPDFStream stream) {
         stream.getFilterList().addFilter(
                 this.makeFilter(stream.getObjectNumber(), stream.getGeneration()));
     }
-    
+
     /**
      * Represent the object in PDF
      *
@@ -418,7 +418,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         if (this.dictionary == null) {
             throw new IllegalStateException("PDF Encryption has not been initialized");
         }
-        
+
         return encode(this.dictionary);
     }
 
@@ -426,7 +426,7 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
      * {@inheritDoc}
      */
     public String getTrailerEntry() {
-        return "/Encrypt " + getObjectNumber() + " " 
+        return "/Encrypt " + getObjectNumber() + " "
                     + getGeneration() + " R\n"
                     + "/ID[" + getFileID(1) + getFileID(2) + "]\n";
     }

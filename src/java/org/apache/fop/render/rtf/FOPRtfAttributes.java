@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 
 
 /**
- * A RtfAttributes subclass that adds some helper set methods. 
+ * A RtfAttributes subclass that adds some helper set methods.
  */
 public class FOPRtfAttributes extends RtfAttributes {
 
@@ -83,16 +83,16 @@ public class FOPRtfAttributes extends RtfAttributes {
     }
 
     private static class DummyPercentBaseContext implements PercentBaseContext {
-        
+
         static DummyPercentBaseContext singleton = new DummyPercentBaseContext();
-        
+
         private DummyPercentBaseContext() {
             // noop
         }
-        
+
         public int getBaseLength(int lengthBase, FObj fo) {
             return 0;
         }
     }
-        
+
 }

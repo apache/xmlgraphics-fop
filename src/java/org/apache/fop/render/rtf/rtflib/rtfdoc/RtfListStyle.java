@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
  */
 public class RtfListStyle {
     private RtfListItem rtfListItem;
-    
+
     /**
      * Sets the RtfListItem this style belongs to.
      * @param item RtfListItem this style belongs to
@@ -45,7 +45,7 @@ public class RtfListStyle {
     public void setRtfListItem(RtfListItem item) {
         rtfListItem = item;
     }
-    
+
     /**
      * Gets the RtfListItem this style belongs to.
      * @return RtfListItem this style belongs to
@@ -83,7 +83,7 @@ public class RtfListStyle {
      * Gets called when the list table has to be written.
      * @param element RtfElement in whose context is to be written
      * @throws IOException Thrown when an IO-problem occurs.
-     */        
+     */
     public void writeLevelGroup(RtfElement element)
     throws IOException {
     }

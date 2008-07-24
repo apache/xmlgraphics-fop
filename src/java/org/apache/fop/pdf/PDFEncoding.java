@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 // Java
@@ -48,7 +48,7 @@ public class PDFEncoding extends PDFDictionary {
 
     /** the set of predefined encodings that can be assumed present in a PDF viewer */
     private static final Set PREDEFINED_ENCODINGS;
-    
+
     static {
         Set encodings = new java.util.HashSet();
         encodings.add(STANDARD_ENCODING);
@@ -81,7 +81,7 @@ public class PDFEncoding extends PDFDictionary {
     public static boolean isPredefinedEncoding(String name) {
         return PREDEFINED_ENCODINGS.contains(name);
     }
-    
+
     /**
      * Creates and returns a new DifferencesBuilder instance for constructing the Differences
      * array.
@@ -98,15 +98,15 @@ public class PDFEncoding extends PDFDictionary {
     public void setDifferences(PDFArray differences) {
         put("Differences", differences);
     }
-    
+
     /**
      * Builder class for constructing the Differences array.
      */
     public class DifferencesBuilder {
-        
+
         private PDFArray differences = new PDFArray();
         private int currentCode = -1;
-        
+
         /**
          * Start a new difference.
          * @param code the starting code index inside the encoding
@@ -117,7 +117,7 @@ public class PDFEncoding extends PDFDictionary {
             this.differences.add(new Integer(code));
             return this;
         }
-        
+
         /**
          * Adds a character name to the current difference.
          * @param name the character name
@@ -130,7 +130,7 @@ public class PDFEncoding extends PDFDictionary {
             this.differences.add(new PDFName(name));
             return this;
         }
-        
+
         /**
          * Indicates whether any differences have been recorded.
          * @return true if there are differences.
@@ -138,7 +138,7 @@ public class PDFEncoding extends PDFDictionary {
         public boolean hasDifferences() {
             return (this.differences.length() > 0);
         }
-        
+
         /**
          * Creates and returns the PDFArray representing the Differences entry.
          * @return the Differences entry
@@ -147,7 +147,7 @@ public class PDFEncoding extends PDFDictionary {
             return this.differences;
         }
     }
-    
+
     /*
      * example (p. 214)
      * 25 0 obj

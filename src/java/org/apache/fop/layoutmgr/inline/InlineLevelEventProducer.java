@@ -33,7 +33,7 @@ public interface InlineLevelEventProducer extends EventProducer {
      * Provider class for the event producer.
      */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -52,7 +52,7 @@ public interface InlineLevelEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void leaderWithoutContent(Object source, Locator loc);
-    
+
     /**
      * A line overflows.
      * @param source the event source
@@ -62,5 +62,5 @@ public interface InlineLevelEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void lineOverflows(Object source, int line, int overflowLength, Locator loc);
-    
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.layoutmgr;
 
 import java.util.List;
@@ -45,11 +45,11 @@ public interface LayoutManager extends PercentBaseContext {
     LayoutManager getParent();
 
     /**
-     * initialize the layout manager. Allows each layout manager 
+     * initialize the layout manager. Allows each layout manager
      * to calculate often used values.
      */
     void initialize();
-    
+
     /**
      * Get the active PageSequenceLayoutManager instance for this
      * layout process.
@@ -130,9 +130,9 @@ public interface LayoutManager extends PercentBaseContext {
     void addChildLMs(List newLMs);
 
     /**
-     * Get a sequence of KnuthElements representing the content 
+     * Get a sequence of KnuthElements representing the content
      * of the node assigned to the LM
-     * 
+     *
      * @param context   the LayoutContext used to store layout information
      * @param alignment the desired text alignment
      * @return          the list of KnuthElements
@@ -140,54 +140,54 @@ public interface LayoutManager extends PercentBaseContext {
     List getNextKnuthElements(LayoutContext context, int alignment);
 
     /**
-     * Get a sequence of KnuthElements representing the content 
+     * Get a sequence of KnuthElements representing the content
      * of the node assigned to the LM, after changes have been applied
      *
      * In the context of line breaking, this method is called after hyphenation has
-     * been performed, in order to receive the sequence of elements representing the 
+     * been performed, in order to receive the sequence of elements representing the
      * text together with all possible hyphenation points.
      * For example, if the text "representation" originates a single box element
      * when getNextKnuthElements() is called, it will be now split in syllables
      * (rep-re-sen-ta-tion) each one originating a box and divided by additional
      * elements allowing a line break.
-     * 
+     *
      * In the context of page breaking, this method is called only if the pages need
      * to be "vertically justified" modifying (also) the quantity of lines created by
      * the paragraphs, and after a first page breaking has been performed.
      * According to the result of the first page breaking, each paragraph now knows
-     * how many lines it must create (among the existing layout possibilities) and 
+     * how many lines it must create (among the existing layout possibilities) and
      * has to create a sequence of elements representing this layout; in particular,
      * each box, representing a line, will contain a LineBreakPositions that will be
      * used in the addAreas() phase.
-     * 
+     *
      * LMs having children look at the old list of elements in order to know which
      * ones they must get the new elements from, as break conditions of preserved
-     * linefeeds can divide children into smaller groups (page sequences or 
+     * linefeeds can divide children into smaller groups (page sequences or
      * paragraphs).
      * LMs having no children can simply return the old elements if they have nothing
      * to change.
      *
      * Inline LMs need to know the text alignment because it affects the elements
      * representing feasible breaks between syllables.
-     * 
+     *
      * @param oldList        the elements to replace
      * @param alignment      the desired text alignment
      * @return               the updated list of KnuthElements
      */
     List getChangedKnuthElements(List oldList, int alignment);
-    
+
     /**
      * Returns the IPD of the content area
      * @return the IPD of the content area
      */
     int getContentAreaIPD();
-   
+
     /**
      * Returns the BPD of the content area
      * @return the BPD of the content area
      */
     int getContentAreaBPD();
-   
+
     /**
      * Returns an indication if the layout manager generates a reference area.
      * @return True if the layout manager generates a reference area
@@ -205,13 +205,13 @@ public interface LayoutManager extends PercentBaseContext {
      * @return True if the layout manager generates a line area
      */
     boolean getGeneratesLineArea();
-    
+
     /**
      * Returns the fo this layout manager is associated with.
      * @return The fo for this layout manager or null.
      */
     FObj getFObj();
-    
+
     /**
      * Adds a Position to the Position participating in the first|last determination by assigning
      * it a unique position index.

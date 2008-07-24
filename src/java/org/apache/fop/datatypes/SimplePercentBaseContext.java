@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,14 +25,14 @@ import org.apache.fop.fo.FObj;
  * Class to implement a simple lookup context for a single percent base value.
  */
 public class SimplePercentBaseContext implements PercentBaseContext {
-    
+
     private PercentBaseContext parentContext;
     private int lengthBase;
     private int lengthBaseValue;
 
     /**
      * @param parentContext the context to be used for all percentages other than lengthBase
-     * @param lengthBase the particular percentage length base for which this context provides 
+     * @param lengthBase the particular percentage length base for which this context provides
      *                   a value
      * @param lengthBaseValue the value to be returned for requests to the given lengthBase
      */
@@ -46,7 +46,7 @@ public class SimplePercentBaseContext implements PercentBaseContext {
 
     /**
      * Returns the value for the given lengthBase.
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         // if its for us return our value otherwise delegate to parent context

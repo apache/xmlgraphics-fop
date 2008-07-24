@@ -28,9 +28,9 @@ import java.util.List;
  * Please see the subclass within the test code.
  */
 public class ElementListObserver {
-    
+
     private static List activeObservers = null;
-    
+
     /**
      * Adds a new Observer to the list.
      * @param observer the observer implementation
@@ -41,7 +41,7 @@ public class ElementListObserver {
         }
         activeObservers.add(observer);
     }
-    
+
     /**
      * Removes an Observer from the list. This call simply returns if the observer was not on
      * the list and does nothing.
@@ -52,7 +52,7 @@ public class ElementListObserver {
             activeObservers.remove(observer);
         }
     }
-    
+
     /**
      * Notifies all registered observers about the element list.
      * @param elementList the Knuth element list
@@ -70,7 +70,7 @@ public class ElementListObserver {
             }
         }
     }
-    
+
     /** @return true if observation is active, i.e. Observers are registered. */
     public static boolean isObservationActive() {
         return activeObservers != null;
@@ -80,7 +80,7 @@ public class ElementListObserver {
      * Implement this interface to receive notifications on element lists.
      */
     public interface Observer {
-        
+
         /**
          * Notifies the observer about the element list.
          * @param elementList the Knuth element list
@@ -89,7 +89,7 @@ public class ElementListObserver {
          * @param id ID for the element list (may be null)
          */
         void observe(List elementList, String category, String id);
-        
+
     }
-    
+
 }

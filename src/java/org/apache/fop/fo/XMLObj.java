@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import org.xml.sax.Locator;
 public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     private static final String XMLNS_NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
-    
+
     // temp reference for attributes
     private Attributes attr = null;
 
@@ -66,7 +66,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
      * {@inheritDoc}
      * <br>Here, blocks XSL-FO's from having non-FO parents.
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -74,7 +74,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     }
 
     /** {@inheritDoc} */
-    public void processNode(String elementName, Locator locator, 
+    public void processNode(String elementName, Locator locator,
         Attributes attlist, PropertyList propertyList) throws FOPException {
             setLocator(locator);
             name = elementName;
@@ -90,17 +90,17 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     /**
      * Returns the dimensions of the generated area in pts.
-     * 
+     *
      * @param view Point2D instance to receive the dimensions
      * @return the requested dimensions in pts.
      */
     public Point2D getDimension(Point2D view) {
          return null;
     }
-    
+
     /**
      * Retrieve the intrinsic alignment-adjust of the child element.
-     * 
+     *
      * @return the intrinsic alignment-adjust.
      */
     public Length getIntrinsicAlignmentAdjust() {
@@ -149,10 +149,10 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
             }
         }
     }
-    
+
     /**
      * Add the top-level element to the DOM document
-     * 
+     *
      * @param doc DOM document
      * @param svgRoot non-XSL-FO element to be added as the root of this document
      */
@@ -163,7 +163,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     /**
      * Create an empty DOM document
-     * 
+     *
      * @return DOM document
      */
     public Document createBasicDocument() {
@@ -183,7 +183,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
                 element.setAttributeNS(XMLNS_NAMESPACE_URI, "xmlns",
                                 getNamespaceURI());
             }
-            
+
         } catch (Exception e) {
             //TODO this is ugly because there may be subsequent failures like NPEs
             log.error("Error while trying to instantiate a DOM Document", e);
@@ -205,7 +205,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     /**
      * Add parsed characters to this object
-     * 
+     *
      * @param data array of characters contaning the text to add
      * @param start starting array element to add
      * @param length number of characters from the array to add
@@ -223,6 +223,6 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     public void notifyObjectBuilt(Object obj) {
         this.doc = (Document)obj;
     }
-    
+
 }
 

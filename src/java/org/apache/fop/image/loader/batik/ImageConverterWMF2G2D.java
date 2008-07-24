@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.image.loader.batik;
 
 import java.awt.Dimension;
@@ -51,7 +51,7 @@ public class ImageConverterWMF2G2D extends AbstractImageConverter {
 
         Graphics2DImagePainter painter;
         painter = new Graphics2DImagePainterWMF(wmf);
-        
+
         ImageGraphics2D g2dImage = new ImageGraphics2D(src.getInfo(), painter);
         return g2dImage;
     }
@@ -69,11 +69,11 @@ public class ImageConverterWMF2G2D extends AbstractImageConverter {
     private static class Graphics2DImagePainterWMF implements Graphics2DImagePainter {
 
         private ImageWMF wmf;
-        
+
         public Graphics2DImagePainterWMF(ImageWMF wmf) {
             this.wmf = wmf;
         }
-        
+
         /** {@inheritDoc} */
         public Dimension getImageSize() {
             return wmf.getSize().getDimensionMpt();
@@ -84,7 +84,7 @@ public class ImageConverterWMF2G2D extends AbstractImageConverter {
             WMFRecordStore wmfStore = wmf.getRecordStore();
             double w = area.getWidth();
             double h = area.getHeight();
-            
+
             //Fit in paint area
             g2d.translate(area.getX(), area.getY());
             double sx = w / wmfStore.getWidthPixels();
@@ -101,7 +101,7 @@ public class ImageConverterWMF2G2D extends AbstractImageConverter {
                 log.debug("Painting WMF took " + duration + " ms.");
             }
         }
-        
+
     }
-    
+
 }

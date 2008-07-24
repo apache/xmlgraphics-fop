@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 // Java
@@ -59,26 +59,26 @@ public class MultipleFO2PDF {
 
     // JAXP TransformerFactory can be reused, too
     private TransformerFactory factory = TransformerFactory.newInstance();
-    
+
     /**
      * Converts an FO file to a PDF file using FOP
      * @param fo the FO file
      * @param pdf the target PDF file
-     * @throws TransformerException in case of a transformation problem 
+     * @throws TransformerException in case of a transformation problem
      * @throws IOException in case of an I/O problem
      * @throws FOPException in case of a FOP problem
      * @return the formatting results of the run
      */
-    public FormattingResults convertFO2PDF(File fo, File pdf) 
+    public FormattingResults convertFO2PDF(File fo, File pdf)
         throws TransformerException, IOException, FOPException {
-        
+
         OutputStream out = null;
         Fop fop;
-        
+
         try {
             FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
             // configure foUserAgent as desired
-    
+
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
@@ -89,13 +89,13 @@ public class MultipleFO2PDF {
 
             // Setup JAXP using identity transformer
             Transformer transformer = factory.newTransformer(); // identity transformer
-            
+
             // Setup input stream
             Source src = new StreamSource(fo);
 
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(fop.getDefaultHandler());
-            
+
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
         } finally {
@@ -105,7 +105,7 @@ public class MultipleFO2PDF {
         return fop.getResults();
     }
 
-    /** 
+    /**
      * Listens on standard in for names of fo files to be transformed to pdf.
      * 'quit' or the null string (for piped input) cause the listener to stop listening.
      */
@@ -116,10 +116,10 @@ public class MultipleFO2PDF {
         File outDir = new File(baseDir, "out");
         outDir.mkdirs();
         BufferedReader in = new BufferedReader(new java.io.InputStreamReader(System.in));
-        
+
         while (true) {
             try {
-                // Listen for the input file name            
+                // Listen for the input file name
                 System.out.print("Input XSL-FO file ('quit' to stop): ");
                 String foname = in.readLine();
                 if (foname == null) {
@@ -146,9 +146,9 @@ public class MultipleFO2PDF {
                 java.util.List pageSequences = foResults.getPageSequences();
                 for (java.util.Iterator it = pageSequences.iterator(); it.hasNext();) {
                     PageSequenceResults pageSequenceResults = (PageSequenceResults)it.next();
-                    System.out.println("PageSequence " 
-                            + (String.valueOf(pageSequenceResults.getID()).length() > 0 
-                                    ? pageSequenceResults.getID() : "<no id>") 
+                    System.out.println("PageSequence "
+                            + (String.valueOf(pageSequenceResults.getID()).length() > 0
+                                    ? pageSequenceResults.getID() : "<no id>")
                             + " generated " + pageSequenceResults.getPageCount() + " pages.");
                 }
                 System.out.println("Generated " + foResults.getPageCount() + " pages in total.");
@@ -161,7 +161,7 @@ public class MultipleFO2PDF {
             }
         }
     }
-    
+
     /**
      * Main method. Set up the listener.
      * @param args command-line arguments

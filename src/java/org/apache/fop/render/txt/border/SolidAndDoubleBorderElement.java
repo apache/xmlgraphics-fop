@@ -47,67 +47,67 @@ public class SolidAndDoubleBorderElement extends AbstractBorderElement {
     private static final char LIGHT_UP_AND_HORIZONTAL = '\u2534';
 
     private static final char LIGHT_VERTICAL_AND_HORIZONTAL = '\u253C';
-    
+
     private static final char DOUBLE_HORIZONTAL = '\u2550';
 
     private static final char DOUBLE_VERTICAL = '\u2551';
-    
-    private static final char DOUBLE_DOWN_AND_RIGHT = '\u2554';    
+
+    private static final char DOUBLE_DOWN_AND_RIGHT = '\u2554';
 
     private static final char DOUBLE_DOWN_AND_LEFT = '\u2557';
 
     private static final char DOUBLE_UP_AND_RIGHT = '\u255A';
 
     private static final char DOUBLE_UP_AND_LEFT = '\u255D';
-    
+
     private static final char DOUBLE_VERTICAL_AND_RIGHT = '\u2560';
-    
+
     private static final char DOUBLE_VERTICAL_AND_LEFT = '\u2563';
-    
+
     private static final char DOUBLE_DOWN_AND_HORIZONTAL = '\u2566';
-    
+
     private static final char DOUBLE_UP_AND_HORIZONTAL = '\u2569';
-    
+
     private static final char DOUBLE_VERTICAL_AND_HORIZONTAL = '\u256C';
-    
+
     private static final char DOWN_SINGLE_AND_RIGHT_DOUBLE = '\u2552';
-    
+
     private static final char DOWN_DOUBLE_AND_RIGHT_SINGLE = '\u2553';
 
     private static final char DOWN_SINGLE_AND_LEFT_DOUBLE = '\u2555';
 
     private static final char DOWN_DOUBLE_AND_LEFT_SINGLE = '\u2556';
-    
+
     private static final char UP_SINGLE_AND_RIGHT_DOUBLE = '\u2558';
-    
+
     private static final char UP_DOUBLE_AND_RIGHT_SINGLE = '\u2559';
-    
+
     private static final char UP_SINGLE_AND_LEFT_DOUBLE = '\u255B';
-    
+
     private static final char UP_DOUBLE_AND_LEFT_SINGLE = '\u255C';
-    
+
     private static final char VERTICAL_SINGLE_AND_RIGHT_DOUBLE = '\u255E';
-    
+
     private static final char VERTICAL_DOUBLE_AND_RIGHT_SINGLE = '\u255F';
-    
+
     private static final char VERTICAL_SINGLE_AND_LEFT_DOUBLE = '\u2561';
-    
+
     private static final char VERTICAL_DOUBLE_AND_LEFT_SINGLE = '\u2562';
-    
+
     private static final char DOWN_SINGLE_AND_HORIZONTAL_DOUBLE = '\u2564';
-    
+
     private static final char DOWN_DOUBLE_AND_HORIZONTAL_SINGLE = '\u2565';
-    
+
     private static final char UP_SINGLE_AND_HORIZONTAL_DOUBLE = '\u2567';
-    
+
     private static final char UP_DOUBLE_AND_HORIZONTAL_SINGLE = '\u2568';
-    
+
     private static final char VERTICAL_SINGLE_AND_HORIZONTAL_DOUBLE = '\u256A';
-    
+
     private static final char VERTICAL_DOUBLE_AND_HORIZONTAL_SINGLE = '\u256B';
-    
+
     private static final char UNDEFINED = '?';
-    
+
     private static final int UP3 = 1;
 
     private static final int DOWN3 = 3;
@@ -174,19 +174,19 @@ public class SolidAndDoubleBorderElement extends AbstractBorderElement {
     }
 
     /**
-     * Initializes a newly created <code>SolidAndDoubleBorderElement</code> 
+     * Initializes a newly created <code>SolidAndDoubleBorderElement</code>
      * object so that it represents an empty border element.
      */
     public SolidAndDoubleBorderElement() {
     }
 
     /**
-     * Constructs a newly allocated <code>SolidAndDoubleBorderElement</code> 
-     * object. Fills <code>data</code> using binary representation of 
-     * <code>type</code>. If border style is EN_DOUBLE, multiplies 
-     * <code>data[side]</code> by 2 for every side to distinguish EN_SOLID and 
+     * Constructs a newly allocated <code>SolidAndDoubleBorderElement</code>
+     * object. Fills <code>data</code> using binary representation of
+     * <code>type</code>. If border style is EN_DOUBLE, multiplies
+     * <code>data[side]</code> by 2 for every side to distinguish EN_SOLID and
      * EN_DOUBLE.
-     * 
+     *
      * @param style integer, representing border style.
      * @param type binary representation of type gives <code>data</code>
      */
@@ -198,7 +198,7 @@ public class SolidAndDoubleBorderElement extends AbstractBorderElement {
             }
         }
     }
-    
+
     /**
      * Merges with <code>sde</code>.
      * @param sde instance of SolidAndDoubleBorderElement
@@ -232,10 +232,10 @@ public class SolidAndDoubleBorderElement extends AbstractBorderElement {
         }
         return abe;
     }
-    
+
     /**
      * Maps to char.
-     * @return resulting mapping char 
+     * @return resulting mapping char
      */
     private char map2Char() {
         int key = 0;

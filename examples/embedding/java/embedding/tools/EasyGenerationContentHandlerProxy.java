@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding.tools;
 
 //SAX
@@ -28,10 +28,10 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * This class is an implementation of ContentHandler which acts as a proxy to
- * another ContentHandler and has the purpose to provide a few handy methods 
+ * another ContentHandler and has the purpose to provide a few handy methods
  * that make life easier when generating SAX events.
  * <br>
- * Note: This class is only useful for simple cases with no namespaces. 
+ * Note: This class is only useful for simple cases with no namespaces.
  */
 
 public class EasyGenerationContentHandlerProxy implements ContentHandler {
@@ -64,8 +64,8 @@ public class EasyGenerationContentHandlerProxy implements ContentHandler {
     /**
      * Sends the notification of the beginning of an element.
      * @param name Name for the element.
-     * @param atts The attributes attached to the element. If there are no 
-     * attributes, it shall be an empty Attributes object. 
+     * @param atts The attributes attached to the element. If there are no
+     * attributes, it shall be an empty Attributes object.
      * @throws SAXException Any SAX exception, possibly wrapping another exception.
      */
     public void startElement(String name, Attributes atts) throws SAXException {
@@ -108,8 +108,8 @@ public class EasyGenerationContentHandlerProxy implements ContentHandler {
      * Sends notifications for a whole element with some String content.
      * @param name Name for the element.
      * @param value Content of the element.
-     * @param atts The attributes attached to the element. If there are no 
-     * attributes, it shall be an empty Attributes object. 
+     * @param atts The attributes attached to the element. If there are no
+     * attributes, it shall be an empty Attributes object.
      * @throws SAXException Any SAX exception, possibly wrapping another exception.
      */
     public void element(String name, String value, Attributes atts) throws SAXException {
@@ -165,7 +165,7 @@ public class EasyGenerationContentHandlerProxy implements ContentHandler {
     /**
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
      */
-    public void startElement(String namespaceURI, String localName, 
+    public void startElement(String namespaceURI, String localName,
                         String qName, Attributes atts) throws SAXException {
         target.startElement(namespaceURI, localName, qName, atts);
     }
@@ -174,7 +174,7 @@ public class EasyGenerationContentHandlerProxy implements ContentHandler {
     /**
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
-    public void endElement(String namespaceURI, String localName, String qName) 
+    public void endElement(String namespaceURI, String localName, String qName)
                                                         throws SAXException {
         target.endElement(namespaceURI, localName, qName);
     }

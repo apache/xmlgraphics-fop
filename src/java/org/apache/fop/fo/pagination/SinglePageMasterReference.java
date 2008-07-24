@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,13 +34,13 @@ import org.apache.fop.fo.ValidationException;
  * This is a reference for a single page. It returns the
  * master name only once until reset.
  */
-public class SinglePageMasterReference extends FObj 
+public class SinglePageMasterReference extends FObj
     implements SubSequenceSpecifier {
 
     // The value of properties relevant for fo:single-page-master-reference.
     private String masterReference;
     // End of property values
-    
+
     private static final int FIRST = 0;
     private static final int DONE = 1;
 
@@ -62,7 +62,7 @@ public class SinglePageMasterReference extends FObj
 
         if (masterReference == null || masterReference.equals("")) {
             missingPropertyError("master-reference");
-        }        
+        }
     }
 
     /** {@inheritDoc} */
@@ -70,12 +70,12 @@ public class SinglePageMasterReference extends FObj
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
         pageSequenceMaster.addSubsequenceSpecifier(this);
     }
-    
+
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -100,8 +100,8 @@ public class SinglePageMasterReference extends FObj
     public void reset() {
         this.state = FIRST;
     }
-    
-    
+
+
 
     /** {@inheritDoc} */
     public boolean goToPrevious() {
@@ -112,7 +112,7 @@ public class SinglePageMasterReference extends FObj
             return true;
         }
     }
-    
+
     /** {@inheritDoc} */
     public boolean hasPagePositionLast() {
         return false;
@@ -122,7 +122,7 @@ public class SinglePageMasterReference extends FObj
     public boolean hasPagePositionOnly() {
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "single-page-master-reference";

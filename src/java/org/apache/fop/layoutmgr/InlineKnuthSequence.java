@@ -35,12 +35,12 @@ public class InlineKnuthSequence extends KnuthSequence  {
     private boolean isClosed = false;
 
     /**
-     * Creates a new and empty list. 
+     * Creates a new and empty list.
      */
     public InlineKnuthSequence() {
         super();
     }
-    
+
     /**
      * Creates a new list from an existing list.
      * @param list The list from which to create the new list.
@@ -84,14 +84,14 @@ public class InlineKnuthSequence extends KnuthSequence  {
     }
 
     /* (non-Javadoc)
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public boolean appendSequence(KnuthSequence sequence, boolean keepTogether,
                                   BreakElement breakElement) {
         return appendSequence(sequence);
     }
 
-        
+
     /* (non-Javadoc)
      * {@inheritDoc}
      */

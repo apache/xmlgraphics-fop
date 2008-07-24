@@ -78,7 +78,7 @@ public class GridUnit {
 
     /**
      * Creates a new grid unit.
-     * 
+     *
      * @param table the containing table
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
@@ -90,7 +90,7 @@ public class GridUnit {
 
     /**
      * Creates a new grid unit.
-     * 
+     *
      * @param cell table cell which occupies this grid unit
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
@@ -103,7 +103,7 @@ public class GridUnit {
 
     /**
      * Creates a new grid unit.
-     * 
+     *
      * @param primary the before-start grid unit of the cell containing this grid unit
      * @param colSpanIndex index of this grid unit in the span, in column direction
      * @param rowSpanIndex index of this grid unit in the span, in row direction
@@ -161,7 +161,7 @@ public class GridUnit {
 
     /**
      * Returns the fo:table-row element (if any) this grid unit belongs to.
-     * 
+     *
      * @return the row containing this grid unit, or null if there is no fo:table-row
      * element in the corresponding table-part
      */
@@ -175,7 +175,7 @@ public class GridUnit {
 
     /**
      * Returns the before-start grid unit of the cell containing this grid unit.
-     * 
+     *
      * @return the before-start grid unit of the cell containing this grid unit.
      */
     public PrimaryGridUnit getPrimary() {
@@ -184,7 +184,7 @@ public class GridUnit {
 
     /**
      * Is this grid unit the before-start grid unit of the cell?
-     * 
+     *
      * @return true if this grid unit is the before-start grid unit of the cell
      */
     public boolean isPrimary() {
@@ -193,7 +193,7 @@ public class GridUnit {
 
     /**
      * Does this grid unit belong to an empty cell?
-     * 
+     *
      * @return true if this grid unit belongs to an empty cell
      */
     public boolean isEmpty() {
@@ -227,7 +227,7 @@ public class GridUnit {
     /**
      * Returns the resolved border-before of this grid unit, in the collapsing-border
      * model.
-     * 
+     *
      * @param which one of {@link ConditionalBorder#NORMAL},
      * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
      * @return the corresponding border
@@ -249,7 +249,7 @@ public class GridUnit {
     /**
      * Returns the resolved border-after of this grid unit, in the collapsing-border
      * model.
-     * 
+     *
      * @param which one of {@link ConditionalBorder#NORMAL},
      * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
      * @return the corresponding border
@@ -271,7 +271,7 @@ public class GridUnit {
     /**
      * Returns the resolved border-start of this grid unit, in the collapsing-border
      * model.
-     * 
+     *
      * @return the corresponding border
      */
     public BorderInfo getBorderStart() {
@@ -281,7 +281,7 @@ public class GridUnit {
     /**
      * Returns the resolved border-end of this grid unit, in the collapsing-border
      * model.
-     * 
+     *
      * @return the corresponding border
      */
     public BorderInfo getBorderEnd() {
@@ -291,7 +291,7 @@ public class GridUnit {
     /**
      * Resolve collapsing borders for the given cell. Used in case of the collapsing
      * border model.
-     * 
+     *
      * @param other neighbouring grid unit
      * @param side the side to resolve (one of
      * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
@@ -327,7 +327,7 @@ public class GridUnit {
     /**
      * For the given side, integrates in the conflict resolution the border segment of the
      * given parent element.
-     * 
+     *
      * @param side the side to consider (either CommonBorderPaddingBackground.BEFORE or
      * AFTER)
      * @param parent a table element whose corresponding border coincides on the given
@@ -351,7 +351,7 @@ public class GridUnit {
     /**
      * For the given side, integrates in the conflict resolution the border segment of the
      * given parent element.
-     * 
+     *
      * @param side the side to consider (one of
      * CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
      * @param parent a table element whose corresponding border coincides on the given side
@@ -376,7 +376,7 @@ public class GridUnit {
 
     /**
      * For the given side, integrates in the conflict resolution the given border segment.
-     * 
+     *
      * @param side the side to consider (one of CommonBorderPaddingBackground.START|END)
      * @param segment a border specification to integrate at the given side
      */
@@ -409,7 +409,7 @@ public class GridUnit {
 
     /**
      * Returns a flag for this GridUnit.
-     * 
+     *
      * @param which the requested flag
      * @return the value of the flag
      */
@@ -419,7 +419,7 @@ public class GridUnit {
 
     /**
      * Sets a flag on a GridUnit.
-     * 
+     *
      * @param which the flag to set
      * @param value the new value for the flag
      */
@@ -433,7 +433,7 @@ public class GridUnit {
 
     /**
      * Sets the given flag on this grid unit.
-     * 
+     *
      * @param which the flag to set
      */
     public void setFlag(int which) {

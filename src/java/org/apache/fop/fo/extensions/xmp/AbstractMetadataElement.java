@@ -32,7 +32,7 @@ import org.apache.xmlgraphics.xmp.Metadata;
 public abstract class AbstractMetadataElement extends FONode implements ObjectBuiltListener {
 
     private XMPMetadata attachment;
-    
+
     /**
      * Main constructor.
      * @param parent the parent formatting object
@@ -40,14 +40,14 @@ public abstract class AbstractMetadataElement extends FONode implements ObjectBu
     public AbstractMetadataElement(FONode parent) {
         super(parent);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public ContentHandlerFactory getContentHandlerFactory() {
         return new XMPContentHandlerFactory();
     }
-    
+
     /** {@inheritDoc} */
     public ExtensionAttachment getExtensionAttachment() {
         if (parent instanceof FObj) {
@@ -65,5 +65,5 @@ public abstract class AbstractMetadataElement extends FONode implements ObjectBu
         attachment.setMetadata((Metadata)obj);
     }
 
-    
+
 }

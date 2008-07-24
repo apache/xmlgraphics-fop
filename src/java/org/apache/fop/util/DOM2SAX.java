@@ -35,7 +35,7 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * Helper class that produces a SAX stream from a DOM Document.
  * <p>
- * Part of the code here copied and adapted from Apache Xalan-J, 
+ * Part of the code here copied and adapted from Apache Xalan-J,
  * src/org/apache/xalan/xsltc/trax/DOM2SAX.java
  */
 public class DOM2SAX {
@@ -45,9 +45,9 @@ public class DOM2SAX {
 
     private ContentHandler contentHandler;
     private LexicalHandler lexicalHandler;
-    
+
     private Map prefixes = new java.util.HashMap();
-    
+
     /**
      * Main constructor
      * @param handler the ContentHandler to send SAX events to
@@ -58,7 +58,7 @@ public class DOM2SAX {
             this.lexicalHandler = (LexicalHandler)handler;
         }
     }
-    
+
     /**
      * Writes the given document using the given ContentHandler.
      * @param doc DOM document
@@ -143,7 +143,7 @@ public class DOM2SAX {
      * @param node node to serialize
      * @throws SAXException In case of a problem while writing XML
      */
-    private void writeNode(Node node) 
+    private void writeNode(Node node)
                 throws SAXException {
         if (node == null) {
             return;
@@ -284,5 +284,5 @@ public class DOM2SAX {
         }
     }
 
-    
+
 }

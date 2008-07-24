@@ -26,10 +26,10 @@ public interface RendererContextConstants {
 
     /** The output stream that the document is being sent to. */
     String OUTPUT_STREAM = "outputStream";
-    
+
     /** The current PageViewport being rendered. */
     String PAGE_VIEWPORT = "pageViewport";
-    
+
     /** The target width of the image being painted. */
     String WIDTH = "width";
 
@@ -44,11 +44,11 @@ public interface RendererContextConstants {
 
     /** The configuration for the XMLHandler. */
     String HANDLER_CONFIGURATION = "cfg";
-    
+
     /**
-     * An optional Map (keys: QName, values: String) with attributes containing additional hints 
+     * An optional Map (keys: QName, values: String) with attributes containing additional hints
      * for rendering.
      */
     String FOREIGN_ATTRIBUTES = "foreign-attributes";
-    
+
 }

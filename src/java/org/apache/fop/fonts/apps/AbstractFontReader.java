@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts.apps;
 
 import java.io.File;
@@ -81,10 +81,10 @@ public abstract class AbstractFontReader {
         }
         return (String[])arguments.toArray(new String[0]);
     }
-    
+
     /**
      * Sets the logging level.
-     * @param level the logging level ("debug", "info", "error" etc., see Jakarta Commons Logging) 
+     * @param level the logging level ("debug", "info", "error" etc., see Jakarta Commons Logging)
      */
     protected static void setLogLevel(String level) {
         // Set the evel for future loggers.
@@ -94,7 +94,7 @@ public abstract class AbstractFontReader {
             ((CommandLineLogger) log).setLogLevel(level);
         }
     }
-    
+
     /**
      * Determines the log level based of the options from the command-line.
      * @param options the command-line options
@@ -120,7 +120,7 @@ public abstract class AbstractFontReader {
     public void writeFontXML(org.w3c.dom.Document doc, String target) throws TransformerException {
         writeFontXML(doc, new File(target));
     }
-    
+
     /**
      * Writes the generated DOM Document to a file.
      *
@@ -130,7 +130,7 @@ public abstract class AbstractFontReader {
      */
     public void writeFontXML(org.w3c.dom.Document doc, File target) throws TransformerException {
         log.info("Writing xml font file " + target + "...");
-    
+
         try {
             OutputStream out = new java.io.FileOutputStream(target);
             out = new java.io.BufferedOutputStream(out);
@@ -147,5 +147,5 @@ public abstract class AbstractFontReader {
             throw new TransformerException("Error writing the output file", ioe);
         }
     }
-    
+
 }

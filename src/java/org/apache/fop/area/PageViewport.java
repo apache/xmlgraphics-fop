@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,18 +52,18 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     private Page page;
     private Rectangle2D viewArea;
     private String simplePageMasterName;
-    
+
     /**
-     * Unique key to identify the page. pageNumberString and pageIndex are both no option 
+     * Unique key to identify the page. pageNumberString and pageIndex are both no option
      * for this.
      */
     private String pageKey;
-    
+
     private int pageNumber = -1;
     private String pageNumberString = null;
     private int pageIndex = -1; //-1 = undetermined
     private boolean blank;
-    
+
     private transient PageSequence pageSequence;
 
     // list of id references and the rectangle on the page
@@ -86,7 +86,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     private Map markerFirstAny = null;
     private Map markerLastEnd = null;
     private Map markerLastAny = null;
-    
+
     //Arbitrary attachments to the page from extensions that need to pass information
     //down to the renderers.
     private List extensionAttachments = null;
@@ -117,7 +117,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     }
 
     /**
-     * Copy constructor. 
+     * Copy constructor.
      * @param original the original PageViewport to copy from
      */
     public PageViewport(PageViewport original) {
@@ -141,7 +141,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * @param simplePageMasterName name of the original simple-page-master that generated this page
      * @param blank true if this is a blank page
      */
-    public PageViewport(Rectangle2D viewArea, int pageNumber, String pageStr, 
+    public PageViewport(Rectangle2D viewArea, int pageNumber, String pageStr,
             String simplePageMasterName, boolean blank) {
         this.viewArea = viewArea;
         this.pageNumber = pageNumber;
@@ -149,7 +149,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         this.simplePageMasterName = simplePageMasterName;
         this.blank = blank;
     }
-    
+
     /**
      * Sets the page sequence this page belongs to
      * @param seq the page sequence
@@ -157,12 +157,12 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public void setPageSequence(PageSequence seq) {
         this.pageSequence = seq;
     }
-    
+
     /** @return the page sequence this page belongs to */
     public PageSequence getPageSequence() {
         return this.pageSequence;
     }
-    
+
     /**
      * Get the view area rectangle of this viewport.
      * @return the rectangle for this viewport
@@ -178,7 +178,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public Page getPage() {
         return page;
     }
-    
+
     /**
      * Sets the page object for this PageViewport.
      * @param page the page
@@ -211,15 +211,15 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public void setPageIndex(int index) {
         this.pageIndex = index;
     }
-    
+
     /**
-     * @return the overall page index of the page in this rendering run (zero-based, 
+     * @return the overall page index of the page in this rendering run (zero-based,
      *         -1 if it is undetermined).
      */
     public int getPageIndex() {
         return this.pageIndex;
     }
-    
+
     /**
      * Sets the unique key for this PageViewport that will be used to reference this page.
      * @param key the unique key.
@@ -227,7 +227,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public void setKey(String key) {
         this.pageKey = key;
     }
-    
+
     /**
      * Get the key for this page viewport.
      * This is used so that a serializable key can be used to
@@ -292,7 +292,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * @return true if the page is resolved and can be rendered
      */
     public boolean isResolved() {
-        return unresolvedIDRefs == null 
+        return unresolvedIDRefs == null
             || unresolvedIDRefs.size() == 0;
     }
 
@@ -306,7 +306,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void resolveIDRef(String id, List pages) {
         if (page == null) {
@@ -345,7 +345,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * are starting, replacing earlier markers.
      * For "last-ending-within-page" it adds all markers that
      * are ending, replacing earlier markers.
-     * 
+     *
      * Should this logic be placed in the Page layout manager.
      *
      * @param marks the map of markers to add
@@ -360,12 +360,12 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
             return;
         }
         if (log.isDebugEnabled()) {
-            log.debug("--" + marks.keySet() + ": " 
-                    + (starting ? "starting" : "ending") 
-                    + (isfirst ? ", first" : "") 
+            log.debug("--" + marks.keySet() + ": "
+                    + (starting ? "starting" : "ending")
+                    + (isfirst ? ", first" : "")
                     + (islast ? ", last" : ""));
         }
-        
+
         // at the start of the area, register is-first and any areas
         if (starting) {
             if (isfirst) {
@@ -381,14 +381,14 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                     if (!markerFirstStart.containsKey(key)) {
                         markerFirstStart.put(key, marks.get(key));
                         if (log.isTraceEnabled()) {
-                            log.trace("page " + pageNumberString + ": " 
+                            log.trace("page " + pageNumberString + ": "
                                     + "Adding marker " + key + " to FirstStart");
                         }
                     }
                     if (!markerFirstAny.containsKey(key)) {
                         markerFirstAny.put(key, marks.get(key));
                         if (log.isTraceEnabled()) {
-                            log.trace("page " + pageNumberString + ": " 
+                            log.trace("page " + pageNumberString + ": "
                                     + "Adding marker " + key + " to FirstAny");
                         }
                     }
@@ -399,7 +399,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                 // last on page: replace all
                 markerLastStart.putAll(marks);
                 if (log.isTraceEnabled()) {
-                    log.trace("page " + pageNumberString + ": " 
+                    log.trace("page " + pageNumberString + ": "
                             + "Adding all markers to LastStart");
                 }
             } else {
@@ -412,7 +412,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                     if (!markerFirstAny.containsKey(key)) {
                         markerFirstAny.put(key, marks.get(key));
                         if (log.isTraceEnabled()) {
-                            log.trace("page " + pageNumberString + ": " 
+                            log.trace("page " + pageNumberString + ": "
                                     + "Adding marker " + key + " to FirstAny");
                         }
                     }
@@ -427,7 +427,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                 // last on page: replace all
                 markerLastEnd.putAll(marks);
                 if (log.isTraceEnabled()) {
-                    log.trace("page " + pageNumberString + ": " 
+                    log.trace("page " + pageNumberString + ": "
                             + "Adding all markers to LastEnd");
                 }
             }
@@ -437,7 +437,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
             // last on page: replace all
             markerLastAny.putAll(marks);
             if (log.isTraceEnabled()) {
-                log.trace("page " + pageNumberString + ": " 
+                log.trace("page " + pageNumberString + ": "
                         + "Adding all markers to LastAny");
             }
         }
@@ -448,7 +448,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * This will retrieve a marker with the class name
      * and position.
      *
-     * @param name The class name of the marker to retrieve 
+     * @param name The class name of the marker to retrieve
      * @param pos the position to retrieve
      * @return Object the marker found or null
      */
@@ -496,10 +496,10 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                 throw new RuntimeException();
         }
         if (log.isTraceEnabled()) {
-            log.trace("page " + pageNumberString + ": " + "Retrieving marker " + name 
-                    + " at position " + posName); 
+            log.trace("page " + pageNumberString + ": " + "Retrieving marker " + name
+                    + " at position " + posName);
         }
-        return mark;    
+        return mark;
     }
 
     /** Dumps the current marker data to the logger. */
@@ -512,7 +512,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
             log.trace("LastStart: " + this.markerLastStart);
         }
     }
-    
+
     /**
      * Save the page contents to an object stream.
      * The map of unresolved references are set on the page so that
@@ -576,12 +576,12 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         sb.append(getPageNumberString());
         return sb.toString();
     }
-    
+
     /** @return the name of the simple-page-master that created this page */
     public String getSimplePageMasterName() {
         return this.simplePageMasterName;
     }
-    
+
     /**
      * Adds a new ExtensionAttachment instance to this page.
      * @param attachment the ExtensionAttachment
@@ -592,7 +592,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         }
         extensionAttachments.add(attachment);
     }
-    
+
     /** @return the list of extension attachments for this page */
     public List getExtensionAttachments() {
         if (this.extensionAttachments == null) {
@@ -601,12 +601,12 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
             return this.extensionAttachments;
         }
     }
-    
+
     /** @return True if this is a blank page. */
     public boolean isBlank() {
         return this.blank;
     }
-    
+
     /**
      * Convenience method to get BodyRegion of this PageViewport
      * @return BodyRegion object
@@ -614,62 +614,62 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public BodyRegion getBodyRegion() {
         return (BodyRegion) getPage().getRegionViewport(
                 Constants.FO_REGION_BODY).getRegionReference();
-    }    
+    }
 
     /**
      * Convenience method to create a new Span for this
      * this PageViewport.
-     * 
+     *
      * @param spanAll whether this is a single-column span
      * @return Span object created
      */
     public Span createSpan(boolean spanAll) {
         return getBodyRegion().getMainReference().createSpan(spanAll);
-    }    
+    }
 
     /**
      * Convenience method to get the span-reference-area currently
      * being processed
-     * 
+     *
      * @return span currently being processed.
      */
     public Span getCurrentSpan() {
         return getBodyRegion().getMainReference().getCurrentSpan();
     }
-    
+
     /**
-     * Convenience method to get the normal-flow-reference-area 
+     * Convenience method to get the normal-flow-reference-area
      * currently being processed
-     * 
+     *
      * @return span currently being processed.
      */
     public NormalFlow getCurrentFlow() {
         return getCurrentSpan().getCurrentFlow();
     }
-    
+
     /**
-     * Convenience method to increment the Span to the 
+     * Convenience method to increment the Span to the
      * next NormalFlow to be processed, and to return that flow.
-     * 
+     *
      * @return the next NormalFlow in the Span.
      */
     public NormalFlow moveToNextFlow() {
         return getCurrentSpan().moveToNextFlow();
     }
-    
+
     /**
-     * Convenience method to return a given region-reference-area, 
+     * Convenience method to return a given region-reference-area,
      * keyed by the Constants class identifier for the corresponding
-     * formatting object (ie. Constants.FO_REGION_BODY, FO_REGION_START, 
+     * formatting object (ie. Constants.FO_REGION_BODY, FO_REGION_START,
      * etc.)
-     * 
+     *
      * @param id the Constants class identifier for the region.
      * @return the corresponding region-reference-area for this page.
      */
     public RegionReference getRegionReference(int id) {
         return getPage().getRegionViewport(id).getRegionReference();
     }
-    
+
     /** @return whether this page viewport has any extension attachments */
     public boolean hasExtensionAttachments() {
         return this.extensionAttachments != null && !this.extensionAttachments.isEmpty();

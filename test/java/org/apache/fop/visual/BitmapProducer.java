@@ -35,5 +35,5 @@ public interface BitmapProducer {
      * @return the generated BufferedImage
      */
     BufferedImage produce(File src, ProducerContext context);
-    
+
 }

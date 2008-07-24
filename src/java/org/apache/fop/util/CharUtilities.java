@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -89,7 +89,7 @@ public class CharUtilities {
     /** Unicode value indicating the the character is "not a character". */
     public static final char NOT_A_CHARACTER = '\uFFFF';
 
-    
+
     /**
      * Utility class: Constructor prevents instantiating when subclassed.
      */
@@ -147,7 +147,7 @@ public class CharUtilities {
      * @return true if the character has a fixed-width
      */
     public static boolean isFixedWidthSpace(char c) {
-        return (c >= '\u2000' && c <= '\u200B') 
+        return (c >= '\u2000' && c <= '\u200B')
                 || c == '\u3000';
 //      c == '\u2000'                   // en quad
 //      c == '\u2001'                   // em quad
@@ -191,7 +191,7 @@ public class CharUtilities {
             (c == '\u0020'    // normal space
             || c == NBSPACE); // no-break space
     }
-    
+
     /**
      * Determines if the character represents any kind of space.
      * @param c character to check
@@ -200,7 +200,7 @@ public class CharUtilities {
     public static boolean isAnySpace(char c) {
         return (isBreakableSpace(c) || isNonBreakableSpace(c));
     }
-    
+
     /**
      * Indicates whether a character is classified as "Alphabetic" by the Unicode standard.
      * @param ch the character

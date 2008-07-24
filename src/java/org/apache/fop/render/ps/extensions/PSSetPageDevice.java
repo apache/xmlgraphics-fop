@@ -62,12 +62,12 @@ public class PSSetPageDevice extends PSExtensionAttachment {
      */
     public PSSetPageDevice() {
     }
-    
+
     /** @return the name */
     public String getName() {
         return name;
     }
-    
+
     /**
      * Sets the name of the setup code object.
      * @param name The name to set.
@@ -77,7 +77,7 @@ public class PSSetPageDevice extends PSExtensionAttachment {
     }
 
     /**
-     * @return a string representation of this object 
+     * @return a string representation of this object
      * @see java.lang.Object#toString()
      */
     public String toString() {

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render;
 
 import java.awt.Color;
@@ -52,7 +52,7 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
      * @return the generated BufferedImage
      */
     protected BufferedImage paintToBufferedImage(
-            org.apache.xmlgraphics.java2d.Graphics2DImagePainter painter, 
+            org.apache.xmlgraphics.java2d.Graphics2DImagePainter painter,
              RendererContextWrapper context, int resolution, boolean gray, boolean withAlpha) {
         int bmw = (int)Math.ceil(UnitConv.mpt2px(context.getWidth(), resolution));
         int bmh = (int)Math.ceil(UnitConv.mpt2px(context.getHeight(), resolution));
@@ -72,10 +72,10 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
         }
         Graphics2D g2d = bi.createGraphics();
         try {
-            g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
+            g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                     RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             setRenderingHintsForBufferedImage(g2d);
-            
+
             g2d.setBackground(Color.white);
             g2d.setColor(Color.black);
             if (!withAlpha) {
@@ -130,18 +130,18 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
      * @param g2d the Graphics2D instance
      */
     protected void setRenderingHintsForBufferedImage(Graphics2D g2d) {
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_OFF);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
             RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
 
     /** {@inheritDoc} */
-    public void paintImage(Graphics2DImagePainter painter, 
+    public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException {
         paintImage((org.apache.xmlgraphics.java2d.Graphics2DImagePainter)painter,
                 context, x, y, width, height);
     }
-    
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public class RtfListItem extends RtfContainer
     private RtfListStyle listStyle;
     private int number = 0;
 
-    /** 
+    /**
      * special RtfParagraph that writes list item setup code before its content
      */
     private class RtfListItemParagraph extends RtfParagraph {
@@ -61,21 +61,21 @@ public class RtfListItem extends RtfContainer
         }
     }
 
-    /** 
+    /**
      * special RtfTextrun that is used as list item label
      */
     public class RtfListItemLabel extends RtfTextrun implements IRtfTextrunContainer {
-        
+
         private RtfListItem rtfListItem;
-        
+
         /**
          * Constructs the RtfListItemLabel
          * @param item The RtfListItem the label belongs to
          * @throws IOException Thrown when an IO-problem occurs
          */
         public RtfListItemLabel(RtfListItem item) throws IOException {
-            super(null, item.writer, null); 
-            
+            super(null, item.writer, null);
+
             rtfListItem = item;
         }
 
@@ -88,14 +88,14 @@ public class RtfListItem extends RtfContainer
         public RtfTextrun getTextrun() throws IOException {
             return this;
         }
-        
+
         /**
          * Sets the content of the list item label.
          * @param s Content of the list item label.
          * @throws IOException Thrown when an IO-problem occurs
          */
         public void addString(String s) throws IOException {
-            
+
             final String label = s.trim();
             if (label.length() > 0 && Character.isDigit(label.charAt(0))) {
                 rtfListItem.setRtfListStyle(new RtfListStyleNumber());
@@ -151,7 +151,7 @@ public class RtfListItem extends RtfContainer
         textrun.setRtfListItem(this);
         return textrun;
     }
-    
+
     /**
      * Start a new list after closing current paragraph, list and table
      * @param attrs attributes of new RftList object
@@ -162,22 +162,22 @@ public class RtfListItem extends RtfContainer
         RtfList list = new RtfList(this, writer, attrs);
         return list;
     }
-    
+
     /**
      * Overridden to setup the list: start a group with appropriate attributes
      * @throws IOException for I/O problems
      */
     protected void writeRtfPrefix() throws IOException {
-       
+
         // pard causes word97 (and sometimes 2000 too) to crash if the list is nested in a table
         if (!parentList.getHasTableParent()) {
             writeControlWord("pard");
         }
 
-        writeOneAttribute(RtfText.LEFT_INDENT_FIRST, 
+        writeOneAttribute(RtfText.LEFT_INDENT_FIRST,
                 "360"); //attrib.getValue(RtfListTable.LIST_INDENT));
-            
-        writeOneAttribute(RtfText.LEFT_INDENT_BODY, 
+
+        writeOneAttribute(RtfText.LEFT_INDENT_BODY,
                 attrib.getValue(RtfText.LEFT_INDENT_BODY));
 
         // group for list setup info
@@ -191,7 +191,7 @@ public class RtfListItem extends RtfContainer
         writeGroupMark(false);
         writeOneAttribute(RtfListTable.LIST_NUMBER, new Integer(number));
     }
-    
+
     /**
      * End the list group
      * @throws IOException for I/O problems
@@ -202,20 +202,20 @@ public class RtfListItem extends RtfContainer
         /* reset paragraph defaults to make sure list ends
          * but pard causes word97 (and sometimes 2000 too) to crash if the list
          * is nested in a table
-         */ 
+         */
         if (!parentList.getHasTableParent()) {
             writeControlWord("pard");
         }
-        
+
     }
-       
+
     /**
      * Change list style
      * @param ls ListStyle to set
      */
     public void setRtfListStyle(RtfListStyle ls) {
         listStyle = ls;
-        
+
         listStyle.setRtfListItem(this);
         number = getRtfFile().getListTable().addRtfListStyle(ls);
     }
@@ -223,7 +223,7 @@ public class RtfListItem extends RtfContainer
     /**
      * Get list style
      * @return ListSytle of the List
-     */    
+     */
     public RtfListStyle getRtfListStyle() {
         if (listStyle == null) {
             return parentList.getRtfListStyle();
@@ -231,7 +231,7 @@ public class RtfListItem extends RtfContainer
             return listStyle;
         }
     }
-    
+
     /**
      * Get the parent list.
      * @return the parent list
@@ -239,7 +239,7 @@ public class RtfListItem extends RtfContainer
     public RtfList getParentList() {
         return parentList;
     }
-    
+
     /**
      * Returns the list number
      * @return list number

@@ -32,5 +32,5 @@ public interface PSRendererContextConstants extends RendererContextConstants {
     /** The font information for the PostScript renderer. */
     public static final String PS_FONT_INFO = "psFontInfo";
 
-    
+
 }

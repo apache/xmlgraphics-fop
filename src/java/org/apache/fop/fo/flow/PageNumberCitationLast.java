@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,13 +34,13 @@ public class PageNumberCitationLast extends AbstractPageNumberCitation {
 
     /**
      * Main constructor
-     * 
+     *
      * @param parent the parent {@link FONode}
      */
     public PageNumberCitationLast(FONode parent) {
         super(parent);
     }
-    
+
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -57,7 +57,7 @@ public class PageNumberCitationLast extends AbstractPageNumberCitation {
     public String getLocalName() {
         return "page-number-citation-last";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_PAGE_NUMBER_CITATION_LAST}

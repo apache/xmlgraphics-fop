@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,10 +28,10 @@ import org.apache.fop.fo.expr.PropertyException;
  * Class for properties that wrap Keep values
  */
 public final class KeepProperty extends Property implements CompoundDatatype {
-    
+
     /** class holding all canonical KeepProperty instances*/
     private static final PropertyCache cache = new PropertyCache(KeepProperty.class);
-    
+
     private boolean isCachedValue = false;
     private Property withinLine;
     private Property withinColumn;
@@ -51,7 +51,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
 
         /**
          * Create a new empty instance of KeepProperty.
-         * @return the new instance. 
+         * @return the new instance.
          */
         public Property makeNewProperty() {
             return new KeepProperty();
@@ -59,7 +59,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
 
         /**
          * {@inheritDoc}
-         */        
+         */
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
             throws PropertyException
         {
@@ -71,7 +71,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
@@ -154,9 +154,9 @@ public final class KeepProperty extends Property implements CompoundDatatype {
      * @return String representation
      */
     public String toString() {
-        return "Keep[" + 
-            "withinLine:" + getWithinLine().getObject() + 
-            ", withinColumn:" + getWithinColumn().getObject() + 
+        return "Keep[" +
+            "withinLine:" + getWithinLine().getObject() +
+            ", withinColumn:" + getWithinColumn().getObject() +
             ", withinPage:" + getWithinPage().getObject() + "]";
     }
 
@@ -183,7 +183,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
         if (this == o) {
             return true;
         }
-        
+
         if (o instanceof KeepProperty) {
             KeepProperty keep = (KeepProperty) o;
             return (keep.withinColumn == this.withinColumn)
@@ -192,7 +192,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
         }
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         int hash = 17;

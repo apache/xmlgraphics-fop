@@ -38,10 +38,10 @@ public class PropertyExceptionFactory implements ExceptionFactory {
         }
         return ex;
     }
-    
+
     /** {@inheritDoc} */
     public Class getExceptionClass() {
         return PropertyException.class;
     }
-    
+
 }

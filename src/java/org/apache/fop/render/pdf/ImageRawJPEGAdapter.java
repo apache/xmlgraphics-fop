@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +64,7 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
     public ImageRawJPEG getImage() {
         return ((ImageRawJPEG)this.image);
     }
-    
+
     /** {@inheritDoc} */
     public void setup(PDFDocument doc) {
         pdfFilter = new DCTFilter();
@@ -88,12 +88,12 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
     public boolean isInverted() {
         return getImage().isInverted();
     }
-    
+
     /** {@inheritDoc} */
     public PDFFilter getPDFFilter() {
         return pdfFilter;
     }
-    
+
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
         InputStream in = getImage().createInputStream();
@@ -101,7 +101,7 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
         try {
             JPEGFile jpeg = new JPEGFile(in);
             DataInput din = jpeg.getDataInput();
-            
+
             //Copy the whole JPEG file except:
             // - the ICC profile
             //TODO Thumbnails could safely be skipped, too.
@@ -149,7 +149,7 @@ public class ImageRawJPEGAdapter extends AbstractImageAdapter {
                 default:
                     out.write(0xFF);
                     out.write(segID);
-                    
+
                     reclen = jpeg.readSegmentLength();
                     //write short
                     out.write((reclen >>> 8) & 0xFF);

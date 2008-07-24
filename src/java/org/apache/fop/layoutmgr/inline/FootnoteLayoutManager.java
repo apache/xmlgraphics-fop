@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,7 +60,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
         super(node);
         footnote = node;
     }
-    
+
     /** {@inheritDoc} */
     public void initialize() {
         // create an InlineStackingLM handling the fo:inline child of fo:footnote
@@ -120,7 +120,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public List getChangedKnuthElements(List oldList,
                                               int alignment) {
@@ -131,7 +131,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
 
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         // "Unwrap" the NonLeafPositions stored in posIter and put
@@ -144,11 +144,11 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
                 positionList.add(pos.getPosition());
             }
         }
-        
-        // FootnoteLM does not create any area, 
+
+        // FootnoteLM does not create any area,
         // so the citationLM child will add directly to the FootnoteLM parent area
         citationLM.setParent(getParent());
-        
+
         // make the citationLM add its areas
         LayoutContext childContext = new LayoutContext(context);
         StackingIter childPosIter = new StackingIter(positionList.listIterator());

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,19 +49,19 @@ public class ColorSpaceCache {
     public ColorSpaceCache(URIResolver resolver) {
         this.resolver = resolver;
     }
-    
+
     /**
      * Create (if needed) and return an ICC ColorSpace instance.
-     * 
+     *
      * The ICC profile source is taken from the src attribute of the color-profile FO element.
      * If the ICC ColorSpace is not yet in the cache a new one is created and stored in the cache.
-     * 
-     * The FOP URI resolver is used to try and locate the ICC file. 
+     *
+     * The FOP URI resolver is used to try and locate the ICC file.
      * If that fails null is returned.
-     * 
+     *
      * @param base a base URI to resolve relative URIs
      * @param iccProfileSrc ICC Profile source to return a ColorSpace for
-     * @return ICC ColorSpace object or null if ColorSpace could not be created 
+     * @return ICC ColorSpace object or null if ColorSpace could not be created
      */
     public ColorSpace get(String base, String iccProfileSrc) {
         ColorSpace colorSpace = null;
@@ -80,7 +80,7 @@ public class ColorSpaceCache {
                     // TODO - Would it make sense to fall back on VM ICC
                     // resolution
                     // Problem is the cache might be more difficult to maintain
-                    // 
+                    //
                     // FOP URI resolver did not find ICC profile - perhaps the
                     // Java VM can find it?
                     // iccProfile = ICC_Profile.getInstance(iccProfileSrc);
@@ -106,5 +106,5 @@ public class ColorSpaceCache {
                     + iccProfileSrc);
         }
         return colorSpace;
-    }        
+    }
 }

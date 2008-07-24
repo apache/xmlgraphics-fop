@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ public class AFMCharMetrics {
     private double widthX;
     private double widthY;
     private RectangularShape bBox;
-    
+
     /**
      * Returns the character code.
      * @return the charCode (-1 if not part of the encoding)
@@ -42,7 +42,7 @@ public class AFMCharMetrics {
     public int getCharCode() {
         return charCode;
     }
-    
+
     /**
      * Indicates whether the character has a character code, i.e. is part of the default encoding.
      * @return true if there is a character code.
@@ -50,7 +50,7 @@ public class AFMCharMetrics {
     public boolean hasCharCode() {
         return charCode >= 0;
     }
-    
+
     /**
      * Sets the character code.
      * @param charCode the charCode to set
@@ -58,7 +58,7 @@ public class AFMCharMetrics {
     public void setCharCode(int charCode) {
         this.charCode = charCode;
     }
-    
+
     /**
      * Returns the named character represented by this instance.
      * @return the named character (or null if no named character is associated)
@@ -66,7 +66,7 @@ public class AFMCharMetrics {
     public NamedCharacter getCharacter() {
         return this.character;
     }
-    
+
     /**
      * Sets the named character represented by this instance.
      * @param ch the named character
@@ -74,7 +74,7 @@ public class AFMCharMetrics {
     public void setCharacter(NamedCharacter ch) {
         this.character = ch;
     }
-    
+
     /**
      * Sets the named character represented by this instance.
      * @param charName the character name (as defined in the Adobe glyph list)
@@ -83,7 +83,7 @@ public class AFMCharMetrics {
     public void setCharacter(String charName, String unicodeSequence) {
         setCharacter(new NamedCharacter(charName, unicodeSequence));
     }
-    
+
     /**
      * Returns the Unicode sequence for this character.
      * @return the Unicode characters
@@ -92,7 +92,7 @@ public class AFMCharMetrics {
     public String getUnicodeSequence() {
         return (getCharacter() != null ? getCharacter().getUnicodeSequence() : null);
     }
-    
+
     /**
      * Returns the PostScript character name.
      * @return the charName (or null if no character name is associated)
@@ -100,7 +100,7 @@ public class AFMCharMetrics {
     public String getCharName() {
         return (getCharacter() != null ? getCharacter().getName() : null);
     }
-    
+
     /**
      * Returns the progression dimension in x-direction.
      * @return the widthX
@@ -108,7 +108,7 @@ public class AFMCharMetrics {
     public double getWidthX() {
         return widthX;
     }
-    
+
     /**
      * Sets the progression dimension in x-direction
      * @param widthX the widthX to set
@@ -116,7 +116,7 @@ public class AFMCharMetrics {
     public void setWidthX(double widthX) {
         this.widthX = widthX;
     }
-    
+
     /**
      * Returns the progression dimension in y-direction.
      * @return the widthY
@@ -124,7 +124,7 @@ public class AFMCharMetrics {
     public double getWidthY() {
         return widthY;
     }
-    
+
     /**
      * Sets the progression dimension in y-direction
      * @param widthY the widthY to set
@@ -132,7 +132,7 @@ public class AFMCharMetrics {
     public void setWidthY(double widthY) {
         this.widthY = widthY;
     }
-    
+
     /**
      * Returns the character's bounding box.
      * @return the bounding box (or null if it isn't available)
@@ -163,5 +163,5 @@ public class AFMCharMetrics {
         sb.append(getCharName()).append(')');
         return sb.toString();
     }
-    
+
 }

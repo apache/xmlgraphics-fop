@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fo.pagination;
 
 
@@ -25,7 +25,7 @@ package org.apache.fop.fo.pagination;
  * and are capable of looking up an appropriate {@link SimplePageMaster}.
  */
 public interface SubSequenceSpecifier {
-    
+
     /**
      * Returns the name of the next page master.
      * @param isOddPage True if the next page number is odd
@@ -57,9 +57,9 @@ public interface SubSequenceSpecifier {
 
     /** @return true if the subsequence has a page master for page-position "last" */
     boolean hasPagePositionLast();
-    
+
     /** @return true if the subsequence has a page master for page-position "only" */
     boolean hasPagePositionOnly();
-    
+
 }
 

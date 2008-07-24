@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ public class FOTreeBuilderContext {
      * This is used so we know if the FO tree contains duplicates.
      */
     private Set idReferences = new HashSet();
-    
+
     /**
      * The property list maker.
      */
@@ -42,12 +42,12 @@ public class FOTreeBuilderContext {
      * The XMLWhitespaceHandler for this tree
      */
     protected XMLWhiteSpaceHandler whiteSpaceHandler = new XMLWhiteSpaceHandler();
-    
+
     /**
      * Indicates whether processing descendants of a marker
      */
     private boolean inMarker = false;
-    
+
     /**
      * Returns the set of ID references.
      * @return the ID references
@@ -58,22 +58,22 @@ public class FOTreeBuilderContext {
 
     /**
      * Return the propertyListMaker.
-     * 
+     *
      * @return the currently active {@link PropertyListMaker}
      */
     public PropertyListMaker getPropertyListMaker() {
         return propertyListMaker;
     }
-     
+
     /**
      * Set a new propertyListMaker.
-     * 
+     *
      * @param propertyListMaker the new {@link PropertyListMaker} to use
      */
     public void setPropertyListMaker(PropertyListMaker propertyListMaker) {
         this.propertyListMaker = propertyListMaker;
     }
-    
+
     /**
      * Return the XMLWhiteSpaceHandler
      * @return the whiteSpaceHandler
@@ -86,22 +86,22 @@ public class FOTreeBuilderContext {
      * Switch to or from marker context
      * (used by FOTreeBuilder when processing
      *  a marker)
-     * 
-     * @param inMarker  true if a marker is being processed; 
+     *
+     * @param inMarker  true if a marker is being processed;
      *                  false otherwise
      *
      */
     protected void switchMarkerContext(boolean inMarker) {
         this.inMarker = inMarker;
     }
-    
+
     /**
      * Check whether in marker context
-     * 
+     *
      * @return true if a marker is being processed
      */
     protected boolean inMarker() {
         return this.inMarker;
     }
-    
+
 }

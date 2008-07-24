@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.hyphenation;
 
 import java.io.BufferedReader;
@@ -41,7 +41,7 @@ import org.xml.sax.InputSource;
  *
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
-public class HyphenationTree extends TernaryTree 
+public class HyphenationTree extends TernaryTree
             implements PatternConsumer, Serializable {
 
     private static final long serialVersionUID = -7842107987915665573L;
@@ -128,7 +128,7 @@ public class HyphenationTree extends TernaryTree
             InputSource src = new InputSource(f.toURI().toURL().toExternalForm());
             loadPatterns(src);
         } catch (MalformedURLException e) {
-            throw new HyphenationException("Error converting the File '" + f + "' to a URL: " 
+            throw new HyphenationException("Error converting the File '" + f + "' to a URL: "
                     + e.getMessage());
         }
     }

@@ -4,9 +4,9 @@
 /* The ASF licenses this file to You under the Apache License, Version 2.0
 /* (the "License"); you may not use this file except in compliance with
 /* the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,17 +40,17 @@ public class CommandLineLogger implements Log {
 
     private int logLevel;
     private String logName;
-    
+
     /**
-     * Construct the logger with a default log level taken from the LogFactory 
-     * attribute "level". 
+     * Construct the logger with a default log level taken from the LogFactory
+     * attribute "level".
      * @param logName the logger name.
      */
     public CommandLineLogger(String logName) {
         this.logName = logName;
         setLogLevel((String) LogFactory.getFactory().getAttribute("level"));
     }
-    
+
     /**
      * Set a log level for the logger.
      * @param level the log level
@@ -72,7 +72,7 @@ public class CommandLineLogger implements Log {
             logLevel = LOG_LEVEL_INFO;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -93,7 +93,7 @@ public class CommandLineLogger implements Log {
     public final boolean isInfoEnabled() {
         return logLevel <= LOG_LEVEL_INFO;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -114,7 +114,7 @@ public class CommandLineLogger implements Log {
     public final boolean isFatalEnabled() {
         return logLevel <= LOG_LEVEL_FATAL;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -222,7 +222,7 @@ public class CommandLineLogger implements Log {
             log(LOG_LEVEL_FATAL, message, t);
         }
     }
-    
+
     /**
      * Do the actual logging.
      * This method assembles the message and prints it to

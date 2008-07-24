@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ public class PageSequenceMaster extends FObj {
     // The value of properties relevant for fo:page-sequence-master.
     private String masterName;
     // End of property values
-    
+
     private LayoutMasterSet layoutMasterSet;
     private List subSequenceSpecifiers;
     private SubSequenceSpecifier currentSubSequence;
@@ -68,7 +68,7 @@ public class PageSequenceMaster extends FObj {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         masterName = pList.get(PR_MASTER_NAME).getString();
-        
+
         if (masterName == null || masterName.equals("")) {
             missingPropertyError("master-name");
         }
@@ -80,7 +80,7 @@ public class PageSequenceMaster extends FObj {
         layoutMasterSet = parent.getRoot().getLayoutMasterSet();
         layoutMasterSet.addPageSequenceMaster(masterName, this);
     }
-    
+
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         if (firstChild == null) {
@@ -94,12 +94,12 @@ public class PageSequenceMaster extends FObj {
      * <br>XSL/FOP: (single-page-master-reference|repeatable-page-master-reference|
      *     repeatable-page-master-alternatives)+
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if (!"single-page-master-reference".equals(localName) 
+            if (!"single-page-master-reference".equals(localName)
                 && !"repeatable-page-master-reference".equals(localName)
-                && !"repeatable-page-master-alternatives".equals(localName)) {   
+                && !"repeatable-page-master-alternatives".equals(localName)) {
                     invalidChildError(loc, nsURI, localName);
             }
         }
@@ -159,19 +159,19 @@ public class PageSequenceMaster extends FObj {
         }
         return (currentSubSequence != null);
     }
-    
+
     /** @return true if the page-sequence-master has a page-master with page-position="last" */
     public boolean hasPagePositionLast() {
         return (currentSubSequence != null
                 && currentSubSequence.hasPagePositionLast());
     }
-    
+
     /** @return true if the page-sequence-master has a page-master with page-position="only" */
     public boolean hasPagePositionOnly() {
         return (currentSubSequence != null
                 && currentSubSequence.hasPagePositionOnly());
     }
-    
+
     /**
      * Returns the next simple-page-master.
      * @param isOddPage True if the next page number is odd
@@ -230,7 +230,7 @@ public class PageSequenceMaster extends FObj {
     public String getLocalName() {
         return "page-sequence-master";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_PAGE_SEQUENCE_MASTER}

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ public interface Renderer {
 
     /**
      * Get the MIME type of the renderer.
-     * 
+     *
      * @return The MIME type of the renderer, may return null if not applicable.
      */
     String getMimeType();
@@ -93,7 +93,7 @@ public interface Renderer {
      * @return the user agent
      */
     FOUserAgent getUserAgent();
-    
+
     /**
      * Set up the given FontInfo.
      *
@@ -115,7 +115,7 @@ public interface Renderer {
     boolean supportsOutOfOrder();
 
     /**
-     * Tells the renderer to process an item not explicitly placed on the 
+     * Tells the renderer to process an item not explicitly placed on the
      * document (e.g., PDF bookmarks).  Note - not all renderers will process
      * all off-document items.
      *
@@ -127,12 +127,12 @@ public interface Renderer {
      * @return the adapter for painting Java2D images (or null if not supported)
      */
     Graphics2DAdapter getGraphics2DAdapter();
-    
+
     /**
      * @return the adapter for painting RenderedImages (or null if not supported)
      */
     ImageAdapter getImageAdapter();
-    
+
     /**
      * This is called if the renderer supports out of order rendering. The
      * renderer should prepare the page so that a page further on in the set of

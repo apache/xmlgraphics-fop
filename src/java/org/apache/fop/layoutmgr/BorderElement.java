@@ -42,7 +42,7 @@ public class BorderElement extends BorderOrPaddingElement {
             boolean isFirst, boolean isLast, PercentBaseContext context) {
         super(position, condLength, side, isFirst, isLast, context);
     }
-    
+
     /** {@inheritDoc} */
     public void notifyLayoutManager(MinOptMax effectiveLength) {
         LayoutManager lm = getOriginatingLayoutManager();
@@ -54,7 +54,7 @@ public class BorderElement extends BorderOrPaddingElement {
                     + lm.getClass().getName());
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("Border[");
@@ -62,5 +62,5 @@ public class BorderElement extends BorderOrPaddingElement {
         sb.append("]");
         return sb.toString();
     }
-    
+
 }

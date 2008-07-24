@@ -34,39 +34,39 @@ public class Page {
 
     private SimplePageMaster spm;
     private PageViewport pageViewport;
-    
+
     /**
      * Main constructor
      * @param spm the simple-page-master used for this page
      * @param pageNumber the page number (as an int)
-     * @param pageNumberStr the page number (as a String) 
+     * @param pageNumberStr the page number (as a String)
      * @param blank true if this is a blank page
      */
     public Page(SimplePageMaster spm, int pageNumber, String pageNumberStr, boolean blank) {
         this.spm = spm;
         this.pageViewport = new PageViewport(spm, pageNumber, pageNumberStr, blank);
     }
-    
+
     /**
      * Auxiliary constructor used when there's no SimplePageMaster.
      * @param viewArea the view area of the page
      * @param pageNumber the page number (as an int)
-     * @param pageNumberStr the page number (as a String) 
+     * @param pageNumberStr the page number (as a String)
      * @param blank true if this is a blank page
      */
     public Page(Rectangle2D viewArea, int pageNumber, String pageNumberStr, boolean blank) {
         this.spm = null;
         this.pageViewport = new PageViewport(viewArea, pageNumber, pageNumberStr, null, blank);
     }
-    
+
     /** @return the simple-page-master that created this page */
     public SimplePageMaster getSimplePageMaster() {
         return this.spm;
     }
-    
+
     /** @return the page viewport representing this page in the area tree */
     public PageViewport getPageViewport() {
         return this.pageViewport;
     }
-    
+
 }

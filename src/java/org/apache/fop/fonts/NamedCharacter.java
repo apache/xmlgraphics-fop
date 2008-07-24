@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,10 +28,10 @@ import org.apache.fop.util.CharUtilities;
  * sequence that this character represents.
  */
 public class NamedCharacter {
-    
+
     private String charName;
     private String unicodeSequence;
-    
+
     /**
      * Main constructor.
      * @param charName the character name
@@ -48,7 +48,7 @@ public class NamedCharacter {
             this.unicodeSequence = Glyphs.getUnicodeSequenceForGlyphName(charName);
         }
     }
-    
+
     /**
      * Simple constructor.
      * @param charName the character name
@@ -56,7 +56,7 @@ public class NamedCharacter {
     public NamedCharacter(String charName) {
         this(charName, null);
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         final int prime = 31;
@@ -87,7 +87,7 @@ public class NamedCharacter {
     public String getName() {
         return this.charName;
     }
-    
+
     /**
      * Returns the Unicode sequence associated with this character.
      * @return the Unicode sequence (or null if no Unicode sequence is associated)
@@ -95,7 +95,7 @@ public class NamedCharacter {
     public String getUnicodeSequence() {
         return this.unicodeSequence;
     }
-    
+
     /**
      * Indicates whether a single Unicode value is associated with this character.
      * @return true if exactly one Unicode value is associated with this character, false otherwise
@@ -103,7 +103,7 @@ public class NamedCharacter {
     public boolean hasSingleUnicodeValue() {
         return (this.unicodeSequence != null && this.unicodeSequence.length() == 1);
     }
-    
+
     /**
      * Returns the single Unicode value associated with this named character. Check
      * {@link #hasSingleUnicodeValue()} before you call this method because an
@@ -125,7 +125,7 @@ public class NamedCharacter {
         }
         return this.unicodeSequence.charAt(0);
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(this.unicodeSequence);

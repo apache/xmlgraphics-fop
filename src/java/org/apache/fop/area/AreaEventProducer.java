@@ -31,7 +31,7 @@ public interface AreaEventProducer extends EventProducer {
      * Provider class for the event producer.
      */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -51,7 +51,7 @@ public interface AreaEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void unresolvedIDReference(Object source, String type, String id);
-    
+
     /**
      * An unresolved ID reference was encountered on a page.
      * @param source the event source
@@ -60,7 +60,7 @@ public interface AreaEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void unresolvedIDReferenceOnPage(Object source, String page, String id);
-    
+
     /**
      * A page could not be loaded/deserialized from a file.
      * @param source the event source
@@ -69,7 +69,7 @@ public interface AreaEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void pageLoadError(Object source, String page, Exception e);
-    
+
     /**
      * A page could not be saved/serialized to a file.
      * @param source the event source
@@ -78,7 +78,7 @@ public interface AreaEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void pageSaveError(Object source, String page, Exception e);
-    
+
     /**
      * A page could not be rendered.
      * @param source the event source
@@ -87,5 +87,5 @@ public interface AreaEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void pageRenderingError(Object source, String page, Exception e);
-    
+
 }

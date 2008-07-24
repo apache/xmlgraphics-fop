@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  */
 public class XMPContentHandlerFactory implements ContentHandlerFactory {
 
-    private static final String[] NAMESPACES = new String[] 
+    private static final String[] NAMESPACES = new String[]
                                          {XMPConstants.XMP_NAMESPACE, XMPConstants.RDF_NAMESPACE};
 
     /** {@inheritDoc} */
@@ -49,7 +49,7 @@ public class XMPContentHandlerFactory implements ContentHandlerFactory {
     private class FOPXMPHandler extends XMPHandler implements ObjectSource {
 
         private ObjectBuiltListener obListener;
-        
+
         public Object getObject() {
             return getMetadata();
         }
@@ -58,14 +58,14 @@ public class XMPContentHandlerFactory implements ContentHandlerFactory {
         public void setObjectBuiltListener(ObjectBuiltListener listener) {
             this.obListener = listener;
         }
-        
+
         /** {@inheritDoc} */
         public void endDocument() throws SAXException {
             if (obListener != null) {
                 obListener.notifyObjectBuilt(getObject());
             }
         }
-        
+
     }
-    
+
 }

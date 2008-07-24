@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,7 +65,7 @@ public class ConditionalBorder {
 
     /**
      * Creates a new conditional border.
-     * 
+     *
      * @param borderSpecification the border specification to take as a basis
      * @param collapsingBorderModel the model that will be used to resolved borders
      */
@@ -83,7 +83,7 @@ public class ConditionalBorder {
 
     /**
      * Resolves and updates the relevant parts of this border as well as the given one.
-     * 
+     *
      * @param competitor
      * @param withNormal
      * @param withLeadingTrailing
@@ -122,7 +122,7 @@ public class ConditionalBorder {
      * {@link #integrateSegment(ConditionalBorder, boolean, boolean, boolean)}, this
      * method nicely handles the case where the CollapsingBorderModel returns null, by
      * keeping the components to their old values.
-     * 
+     *
      * @param competitor
      * @param withNormal
      * @param withLeadingTrailing
@@ -156,7 +156,7 @@ public class ConditionalBorder {
     /**
      * Updates this border after taking into account the given segment. The
      * CollapsingBorderModel is not expected to return null.
-     * 
+     *
      * @param segment
      * @param withNormal
      * @param withLeadingTrailing
@@ -181,7 +181,7 @@ public class ConditionalBorder {
 
     /**
      * Returns a shallow copy of this border.
-     * 
+     *
      * @return a copy of this border
      */
     ConditionalBorder copy() {
@@ -195,7 +195,7 @@ public class ConditionalBorder {
 
     /**
      * Returns a default border specification.
-     * 
+     *
      * @param collapsingBorderModel the model that will be used to resolve borders
      * @return a border with style 'none' for all of the three components
      */

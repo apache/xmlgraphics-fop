@@ -28,7 +28,7 @@ import org.xml.sax.ContentHandler;
 public class AFPExtensionHandlerFactory implements ContentHandlerFactory {
 
     private static final String[] NAMESPACES = new String[] {AFPPageSetup.CATEGORY};
-    
+
     /** {@inheritDoc} */
     public String[] getSupportedNamespaces() {
         return NAMESPACES;

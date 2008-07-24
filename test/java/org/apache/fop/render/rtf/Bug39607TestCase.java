@@ -51,7 +51,7 @@ public class Bug39607TestCase extends TestCase {
         paragraph.newText("Testing fop - rtf module - class RtfTableRow");
         paragraph.close();
 
-        RtfTable table = section.newTable(null); 
+        RtfTable table = section.newTable(null);
         RtfTableRow row = table.newTableRow();
         row.newTableCell(2000).newParagraph().newText("blah");
         row.newTableCell(5000).newParagraph().newText("doubleBlah");
@@ -61,5 +61,5 @@ public class Bug39607TestCase extends TestCase {
         doc.close();
         f.flush();
     }
-    
+
 }

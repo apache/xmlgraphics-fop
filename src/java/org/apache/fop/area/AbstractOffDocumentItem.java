@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area;
 
 /**
@@ -51,10 +51,10 @@ public abstract class AbstractOffDocumentItem implements OffDocumentItem {
      */
     public static final int START_OF_DOC = 2;
 
-    
+
     /** Indicates in what phase the item should be processed. */
     protected int whenToProcess = IMMEDIATELY;
-    
+
     /**
      * Get an indicator of when this item should be processed
      * @return int constant (IMMEDIATELY, AFTER_PAGE, START_OF_DOC, END_OF_DOC)

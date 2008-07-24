@@ -33,7 +33,7 @@ public class BreakElement extends UnresolvedListElement {
     private int breakClass = -1;
     private List pendingBeforeMarks;
     private List pendingAfterMarks;
-    
+
     /**
      * Main constructor
      * @param position the Position instance needed by the addAreas stage of the LMs.
@@ -43,10 +43,10 @@ public class BreakElement extends UnresolvedListElement {
     public BreakElement(Position position, int penaltyValue, LayoutContext context) {
         this(position, 0, penaltyValue, -1, context);
     }
-    
+
     /**
      * Constructor for hard breaks.
-     * 
+     *
      * @param position the Position instance needed by the addAreas stage of the LMs.
      * @param penaltyWidth the penalty width
      * @param penaltyValue the penalty value for the penalty element to be constructed
@@ -55,7 +55,7 @@ public class BreakElement extends UnresolvedListElement {
      * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE})
      * @param context the layout context which contains the pending conditional elements
      */
-    public BreakElement(Position position, int penaltyWidth, int penaltyValue, 
+    public BreakElement(Position position, int penaltyWidth, int penaltyValue,
                 int breakClass, LayoutContext context) {
         super(position);
         this.penaltyWidth = penaltyWidth;
@@ -64,7 +64,7 @@ public class BreakElement extends UnresolvedListElement {
         this.pendingBeforeMarks = context.getPendingBeforeMarks();
         this.pendingAfterMarks = context.getPendingAfterMarks();
     }
-    
+
     /** {@inheritDoc} */
     public boolean isConditional() {
         return false; //Does not really apply here
@@ -80,12 +80,12 @@ public class BreakElement extends UnresolvedListElement {
     public int getPenaltyWidth() {
         return this.penaltyWidth;
     }
-    
+
     /** @return the penalty value */
     public int getPenaltyValue() {
         return this.penaltyValue;
     }
-    
+
     /**
      * Sets the penalty value.
      * @param p the new penalty value
@@ -93,15 +93,15 @@ public class BreakElement extends UnresolvedListElement {
     public void setPenaltyValue(int p) {
         this.penaltyValue = p;
     }
-    
+
     /** {@inheritDoc} */
     public boolean isForcedBreak() {
         return penaltyValue == -KnuthElement.INFINITE;
     }
-    
+
     /**
      * Returns the break class of this penalty.
-     * 
+     *
      * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
      * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
      * {@link Constants#EN_ODD_PAGE}
@@ -109,10 +109,10 @@ public class BreakElement extends UnresolvedListElement {
     public int getBreakClass() {
         return breakClass;
     }
-    
+
     /**
      * Sets the break class.
-     * 
+     *
      * @param breakClass one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
      * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
      * {@link Constants#EN_ODD_PAGE}
@@ -120,17 +120,17 @@ public class BreakElement extends UnresolvedListElement {
     public void setBreakClass(int breakClass) {
         this.breakClass = breakClass;
     }
-    
+
     /** @return the pending border and padding elements at the before edge */
     public List getPendingBeforeMarks() {
         return this.pendingBeforeMarks;
     }
-    
+
     /** @return the pending border and padding elements at the after edge */
     public List getPendingAfterMarks() {
         return this.pendingAfterMarks;
     }
-    
+
     /**
      * Clears all pending marks associated with this break element. This is used in break
      * cases where we only know very late if the break is actually after all the content
@@ -140,7 +140,7 @@ public class BreakElement extends UnresolvedListElement {
         this.pendingBeforeMarks = null;
         this.pendingAfterMarks = null;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();

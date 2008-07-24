@@ -41,11 +41,11 @@ public class ValidationExceptionFactory implements ExceptionFactory {
         }
         return ex;
     }
-    
+
     /** {@inheritDoc} */
     public Class getExceptionClass() {
         return ValidationException.class;
     }
-    
-    
+
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.txt;
 
 import java.awt.Color;
@@ -40,17 +40,17 @@ import org.apache.fop.render.txt.border.BorderManager;
 
 /**
  * Renderer that renders areas to plain text.
- * 
+ *
  * @author Art Welch
  * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a> (to use
  *         the new Renderer interface)
  */
 public class TXTRenderer extends AbstractPathOrientedRenderer {
-    
+
     private static final char LIGHT_SHADE = '\u2591';
-    
+
     private static final char MEDIUM_SHADE = '\u2592';
-    
+
     private static final char DARK_SHADE = '\u2593';
 
     private static final char FULL_BLOCK = '\u2588';
@@ -95,7 +95,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /** Manager for storing border's information. */
     private BorderManager bm;
-    
+
     /** Char for current filling. */
     private char fillChar;
 
@@ -103,7 +103,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     private TXTState currentState = new TXTState();
 
     private String encoding;
-    
+
     /**
      * Constructs a newly allocated <code>TXTRenderer</code> object.
      */
@@ -114,7 +114,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     public String getMimeType() {
         return "text/plain";
     }
-    
+
     /**
      * Sets the encoding of the target file.
      * @param encoding the encoding, null to select the default encoding (UTF-8)
@@ -125,7 +125,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Indicates if point (x, y) lay inside currentPage.
-     * 
+     *
      * @param x x coordinate
      * @param y y coordinate
      * @return <b>true</b> if point lay inside page
@@ -136,7 +136,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Add char to text buffer.
-     * 
+     *
      * @param x  x coordinate
      * @param y  y coordinate
      * @param ch  char to add
@@ -149,7 +149,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Add char to text or background buffer.
-     * 
+     *
      * @param x x coordinate
      * @param y x coordinate
      * @param ch char to add
@@ -168,7 +168,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     /**
      * Adds string to text buffer (<code>charData</code>). <p>
      * Chars of string map in turn.
-     * 
+     *
      * @param row x coordinate
      * @param col y coordinate
      * @param s string to add
@@ -181,7 +181,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Render TextArea to Text.
-     * 
+     *
      * @param area  inline area to render
      */
     protected void renderText(TextArea area) {
@@ -211,7 +211,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
         pageWidth = Helper.ceilPosition((int) width, CHAR_WIDTH);
         pageHeight = Helper.ceilPosition((int) height, CHAR_HEIGHT);
-        
+
         // init buffers
         charData = new StringBuffer[pageHeight];
         decoData = new StringBuffer[pageHeight];
@@ -229,8 +229,8 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Projects current page borders (i.e.<code>bm</code>) to buffer for 
-     * background and images (i.e.<code>decoData</code>). 
+     * Projects current page borders (i.e.<code>bm</code>) to buffer for
+     * background and images (i.e.<code>decoData</code>).
      */
     private void flushBorderToBuffer() {
         for (int x = 0; x < pageWidth; x++) {
@@ -363,14 +363,14 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Does nothing. 
+     * Does nothing.
      * {@inheritDoc}
      */
     protected void moveTo(float x, float y) {
     }
 
     /**
-     * Does nothing. 
+     * Does nothing.
      * {@inheritDoc}
      */
     protected void lineTo(float x, float y) {
@@ -384,16 +384,16 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Fills rectangle startX, startY, width, height with char 
+     * Fills rectangle startX, startY, width, height with char
      * <code>charToFill</code>.
-     * 
+     *
      * @param startX x-coordinate of upper left point
      * @param startY y-coordinate of upper left point
      * @param width width of rectangle
      * @param height height of rectangle
-     * @param charToFill filling char 
+     * @param charToFill filling char
      */
-    private void fillRect(int startX, int startY, int width, int height, 
+    private void fillRect(int startX, int startY, int width, int height,
             char charToFill) {
         for (int x = startX; x < startX + width; x++) {
             for (int y = startY; y < startY + height; y++) {
@@ -401,7 +401,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
             }
         }
     }
-    
+
     /**
      * Fills a rectangular area with the current filling char.
      * {@inheritDoc}
@@ -410,7 +410,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         fillRect(bm.getStartX(), bm.getStartY(), bm.getWidth(), bm.getHeight(),
                 fillChar);
     }
-    
+
     /**
      * Changes current filling char.
      * {@inheritDoc}
@@ -423,11 +423,11 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         // TODO: This fillShase is catually the luminance component of the color
         // transformed to the YUV (YPrBb) Colorspace. It should use standard
         // Java methods for its conversion instead of the formula given here.
-        double fillShade = 0.30f / 255f * col.getRed() 
-                         + 0.59f / 255f * col.getGreen() 
+        double fillShade = 0.30f / 255f * col.getRed()
+                         + 0.59f / 255f * col.getGreen()
                          + 0.11f / 255f * col.getBlue();
         fillShade = 1 - fillShade;
-        
+
         if (fillShade > 0.8f) {
             fillChar = FULL_BLOCK;
         } else if (fillShade > 0.6f) {
@@ -445,10 +445,10 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         //No images are painted here
     }
-    
+
     /**
      * Fills image rectangle with a <code>IMAGE_CHAR</code>.
-     * 
+     *
      * @param   image   the base image
      * @param   pos     the position of the image
      */
@@ -457,17 +457,17 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         int y1 = Helper.ceilPosition(currentBPPosition, CHAR_HEIGHT);
         int width = Helper.ceilPosition((int) pos.getWidth(), CHAR_WIDTH);
         int height = Helper.ceilPosition((int) pos.getHeight(), CHAR_HEIGHT);
-        
+
         fillRect(x1, y1, width, height, IMAGE_CHAR);
     }
 
-    
+
     /**
      * Returns the closest integer to the multiplication of a number and 1000.
-     * 
-     * @param x  the value of the argument, multiplied by 
+     *
+     * @param x  the value of the argument, multiplied by
      *            1000 and rounded
-     * @return the value of the argument multiplied by 
+     * @return the value of the argument multiplied by
      *         1000 and rounded to the nearest integer
      */
     protected int toMilli(float x) {
@@ -476,11 +476,11 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Adds one element of border.
-     * 
+     *
      * @param x  x coordinate
      * @param y  y coordinate
      * @param style  integer, representing border style
-     * @param type  integer, representing border element type 
+     * @param type  integer, representing border element type
      */
     private void addBitOfBorder(int x, int y, int style, int type) {
         Point point = currentState.transformPoint(x, y);
@@ -542,7 +542,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void drawBackAndBorders(Area area, float startx, float starty,
             float width, float height) {
@@ -567,10 +567,10 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     protected void endVParea() {
         currentState.pop();
     }
-    
+
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         currentState.push(new CTM(ptToMpt(at)));
     }
-    
+
 }

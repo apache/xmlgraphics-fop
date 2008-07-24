@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ public class ColumnNumberManager {
 
     /**
      * Returns the number of the column that shall receive the next parsed cell.
-     * 
+     *
      * @return a column number, 1-based
      */
     int getCurrentColumnNumber() {
@@ -50,7 +50,7 @@ public class ColumnNumberManager {
     /**
      * Flags columns <code>start</code> to <code>end</code> as occupied,
      * and updates the number of the next available column.
-     * 
+     *
      * @param start start number, inclusive, 1-based
      * @param end   end number, inclusive
      */
@@ -68,7 +68,7 @@ public class ColumnNumberManager {
     /**
      * Resets the record of occupied columns, taking into account columns already occupied
      * by previous spanning cells, and computes the number of the first free column.
-     * 
+     *
      * @param pendingSpans List&lt;PendingSpan&gt; of possible spans over the next row
      */
     void prepareForNextRow(List pendingSpans) {
@@ -95,7 +95,7 @@ public class ColumnNumberManager {
     /**
      * Checks whether a given column-number is already in use
      * for the current row.
-     * 
+     *
      * @param colNr the column-number to check
      * @return true if column-number is already occupied
      */

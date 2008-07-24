@@ -36,7 +36,7 @@ public class AdvancedMessageFormatTestCase extends TestCase {
     public void testFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
-        
+
         String pattern
             = "Element \"{elementName}\" is missing[ required property \"{propertyName}\"]!";
         format = new AdvancedMessageFormat(pattern);
@@ -45,14 +45,14 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         params.put("node", new Object());
         params.put("elementName", "fo:external-graphic");
         params.put("propertyName", "src");
-        
+
         msg = format.format(params);
         assertEquals("Element \"fo:external-graphic\" is missing required property \"src\"!", msg);
-        
+
         params.remove("propertyName");
         msg = format.format(params);
         assertEquals("Element \"fo:external-graphic\" is missing!", msg);
-        
+
         pattern
             = "Testing \\{escaped \\[characters\\], now a normal field {elementName}!";
         format = new AdvancedMessageFormat(pattern);
@@ -61,11 +61,11 @@ public class AdvancedMessageFormatTestCase extends TestCase {
 
         pattern = "Multi-conditional: [case1: {var1}|case2: {var2}|case3: {var3}]";
         format = new AdvancedMessageFormat(pattern);
-        
+
         params = new java.util.HashMap();
         msg = format.format(params);
         assertEquals("Multi-conditional: ", msg);
-        
+
         params.put("var3", "value3");
         msg = format.format(params);
         assertEquals("Multi-conditional: case3: value3", msg);
@@ -73,11 +73,11 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         msg = format.format(params);
         assertEquals("Multi-conditional: case1: value1", msg);
     }
-    
+
     public void testObjectFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
-        
+
         String pattern
             = "Here's a Locator: {locator}";
         format = new AdvancedMessageFormat(pattern);
@@ -87,15 +87,15 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         loc.setColumnNumber(7);
         loc.setLineNumber(12);
         params.put("locator", loc);
-        
+
         msg = format.format(params);
         assertEquals("Here\'s a Locator: 12:7", msg);
     }
-    
+
     public void testIfFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
-        
+
         format = new AdvancedMessageFormat("You are{isBad,if, not} nice!");
 
         Map params = new java.util.HashMap();
@@ -138,11 +138,11 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         msg = format.format(params);
         assertEquals("You are very, very nice!", msg);
     }
-    
+
     public void testEqualsFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
-        
+
         format = new AdvancedMessageFormat(
                 "Error{severity,equals,EventSeverity:FATAL,,\nSome explanation!}");
 
@@ -156,11 +156,11 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         msg = format.format(params);
         assertEquals("Error\nSome explanation!", msg);
     }
-    
+
     public void testChoiceFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
-        
+
         format = new AdvancedMessageFormat(
                 "You have {amount,choice,0#nothing|0<{amount} bucks|100<more than enough}.");
 
@@ -179,5 +179,5 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         assertEquals("You have more than enough.", msg);
 
     }
-    
+
 }

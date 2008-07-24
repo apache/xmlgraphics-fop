@@ -35,5 +35,5 @@ public interface ExtensionAttachment {
      * @return the category URI
      */
     String getCategory();
-    
+
 }

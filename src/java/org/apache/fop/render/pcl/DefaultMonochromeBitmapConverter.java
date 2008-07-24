@@ -36,10 +36,10 @@ public class DefaultMonochromeBitmapConverter implements
     public void setHint(String name, String value) {
         //ignore, not supported
     }
-    
+
     /** {@inheritDoc} */
     public RenderedImage convertToMonochrome(BufferedImage img) {
-        BufferedImage buf = new BufferedImage(img.getWidth(), img.getHeight(), 
+        BufferedImage buf = new BufferedImage(img.getWidth(), img.getHeight(),
                 BufferedImage.TYPE_BYTE_BINARY);
         RenderingHints hints = new RenderingHints(null);
         //This hint doesn't seem to make a difference :-(

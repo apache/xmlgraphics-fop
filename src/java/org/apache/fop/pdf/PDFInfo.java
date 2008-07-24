@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.util.Date;
@@ -50,7 +50,7 @@ public class PDFInfo extends PDFObject {
     public String getProducer() {
         return this.producer;
     }
-    
+
     /**
      * set the producer string
      *
@@ -64,7 +64,7 @@ public class PDFInfo extends PDFObject {
     public String getCreator() {
         return this.creator;
     }
-    
+
     /**
      * set the creator string
      *
@@ -92,7 +92,7 @@ public class PDFInfo extends PDFObject {
     public String getAuthor() {
         return this.author;
     }
-    
+
     /**
      * set the author string
      *
@@ -106,7 +106,7 @@ public class PDFInfo extends PDFObject {
     public String getSubject() {
         return this.subject;
     }
-    
+
     /**
      * set the subject string
      *
@@ -120,7 +120,7 @@ public class PDFInfo extends PDFObject {
     public String getKeywords() {
         return this.keywords;
     }
-    
+
     /**
      * set the keywords string
      *
@@ -162,7 +162,7 @@ public class PDFInfo extends PDFObject {
      * {@inheritDoc}
      */
     public byte[] toPDF() {
-        PDFProfile profile = getDocumentSafely().getProfile(); 
+        PDFProfile profile = getDocumentSafely().getProfile();
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
             bout.write(encode(getObjectID()));
@@ -189,17 +189,17 @@ public class PDFInfo extends PDFObject {
                 bout.write(encodeText(this.keywords));
                 bout.write(encode("\n"));
             }
-    
+
             if (creator != null) {
                 bout.write(encode("/Creator "));
                 bout.write(encodeText(this.creator));
                 bout.write(encode("\n"));
             }
-    
+
             bout.write(encode("/Producer "));
             bout.write(encodeText(this.producer));
             bout.write(encode("\n"));
-    
+
             // creation date in form (D:YYYYMMDDHHmmSSOHH'mm')
             if (creationDate == null) {
                 creationDate = new Date();
@@ -207,7 +207,7 @@ public class PDFInfo extends PDFObject {
             bout.write(encode("/CreationDate "));
             bout.write(encodeString(formatDateTime(creationDate)));
             bout.write(encode("\n"));
-            
+
             if (profile.isModDateRequired() && this.modDate == null) {
                 this.modDate = this.creationDate;
             }
@@ -224,7 +224,7 @@ public class PDFInfo extends PDFObject {
             if (profile.isTrappedEntryRequired()) {
                 bout.write(encode("/Trapped /False\n"));
             }
-            
+
             bout.write(encode(">>\nendobj\n"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);

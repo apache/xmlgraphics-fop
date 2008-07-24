@@ -22,14 +22,14 @@ package org.apache.fop.util;
 /**
  * Represents a qualified name of an XML element or an XML attribute.
  * <p>
- * Note: This class allows to carry a namespace prefix but it is not used in the equals() and 
+ * Note: This class allows to carry a namespace prefix but it is not used in the equals() and
  * hashCode() methods.
  * @deprecated Use the XML Graphics Commons variant instead!
  */
 public class QName extends org.apache.xmlgraphics.util.QName {
 
     private static final long serialVersionUID = -5225376740044770690L;
-    
+
     /**
      * Main constructor.
      * @param namespaceURI the namespace URI
@@ -39,7 +39,7 @@ public class QName extends org.apache.xmlgraphics.util.QName {
     public QName(String namespaceURI, String prefix, String localName) {
         super(namespaceURI, prefix, localName);
     }
-    
+
     /**
      * Main constructor.
      * @param namespaceURI the namespace URI
@@ -48,5 +48,5 @@ public class QName extends org.apache.xmlgraphics.util.QName {
     public QName(String namespaceURI, String qName) {
         super(namespaceURI, qName);
     }
-    
+
 }

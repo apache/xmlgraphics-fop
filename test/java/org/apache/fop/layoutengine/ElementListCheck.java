@@ -41,7 +41,7 @@ public class ElementListCheck implements LayoutEngineCheck {
     private String id;
     private int index = -1;
     private Element checkElement;
-    
+
     /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
@@ -68,7 +68,7 @@ public class ElementListCheck implements LayoutEngineCheck {
         NodeList children = checkElement.getChildNodes();
         int pos = -1;
         for (int i = 0; i < children.getLength(); i++) {
-            Node node = children.item(i); 
+            Node node = children.item(i);
             if (node instanceof Element) {
                 pos++;
                 Element domEl = (Element)node;
@@ -78,14 +78,14 @@ public class ElementListCheck implements LayoutEngineCheck {
                 } else if ("box".equals(domEl.getLocalName())) {
                     if (!(knuthEl instanceof KnuthBox)) {
                         fail("Expected KnuthBox"
-                                + " at position " + pos 
+                                + " at position " + pos
                                 + " but got: " + knuthEl.getClass().getName());
                     }
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
                         if (w != knuthEl.getW()) {
-                            fail("Expected w=" + w 
-                                    + " at position " + pos 
+                            fail("Expected w=" + w
+                                    + " at position " + pos
                                     + " but got: " + knuthEl.getW());
                         }
                     }
@@ -104,29 +104,29 @@ public class ElementListCheck implements LayoutEngineCheck {
                 } else if ("penalty".equals(domEl.getLocalName())) {
                     if (!(knuthEl instanceof KnuthPenalty)) {
                         fail("Expected KnuthPenalty "
-                                + " at position " + pos 
+                                + " at position " + pos
                                 + " but got: " + knuthEl.getClass().getName());
                     }
                     KnuthPenalty pen = (KnuthPenalty)knuthEl;
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
                         if (w != knuthEl.getW()) {
-                            fail("Expected w=" + w 
-                                    + " at position " + pos 
+                            fail("Expected w=" + w
+                                    + " at position " + pos
                                     + " but got: " + knuthEl.getW());
                         }
                     }
                     if (domEl.getAttribute("p").length() > 0) {
                         if ("<0".equals(domEl.getAttribute("p"))) {
                             if (knuthEl.getP() >= 0) {
-                                fail("Expected p<0" 
-                                        + " at position " + pos 
+                                fail("Expected p<0"
+                                        + " at position " + pos
                                         + " but got: " + knuthEl.getP());
                             }
                         } else if (">0".equals(domEl.getAttribute("p"))) {
                             if (knuthEl.getP() <= 0) {
-                                fail("Expected p>0" 
-                                        + " at position " + pos 
+                                fail("Expected p>0"
+                                        + " at position " + pos
                                         + " but got: " + knuthEl.getP());
                             }
                         } else {
@@ -143,8 +143,8 @@ public class ElementListCheck implements LayoutEngineCheck {
                                 p = Integer.parseInt(domEl.getAttribute("p"));
                             }
                             if (p != knuthEl.getP()) {
-                                fail("Expected p=" + p 
-                                        + " at position " + pos 
+                                fail("Expected p=" + p
+                                        + " at position " + pos
                                         + " but got: " + knuthEl.getP());
                             }
                         }
@@ -152,7 +152,7 @@ public class ElementListCheck implements LayoutEngineCheck {
                     if ("true".equals(domEl.getAttribute("flagged"))) {
                         if (!pen.isFlagged()) {
                             fail("Expected flagged penalty"
-                                    + " at position " + pos); 
+                                    + " at position " + pos);
                         }
                     } else if ("false".equals(domEl.getAttribute("flagged"))) {
                         if (pen.isFlagged()) {
@@ -163,57 +163,57 @@ public class ElementListCheck implements LayoutEngineCheck {
                     if ("true".equals(domEl.getAttribute("aux"))) {
                         if (!pen.isAuxiliary()) {
                             fail("Expected auxiliary penalty"
-                                    + " at position " + pos); 
+                                    + " at position " + pos);
                         }
                     } else if ("false".equals(domEl.getAttribute("aux"))) {
                         if (pen.isAuxiliary()) {
                             fail("Expected non-auxiliary penalty"
-                                    + " at position " + pos); 
+                                    + " at position " + pos);
                         }
                     }
                 } else if ("glue".equals(domEl.getLocalName())) {
                     if (!(knuthEl instanceof KnuthGlue)) {
-                        fail("Expected KnuthGlue" 
-                                + " at position " + pos 
+                        fail("Expected KnuthGlue"
+                                + " at position " + pos
                                 + " but got: " + knuthEl.getClass().getName());
                     }
                     KnuthGlue glue = (KnuthGlue)knuthEl;
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
                         if (w != knuthEl.getW()) {
-                            fail("Expected w=" + w 
-                                    + " at position " + pos 
+                            fail("Expected w=" + w
+                                    + " at position " + pos
                                     + " but got: " + knuthEl.getW());
                         }
                     }
                     if (domEl.getAttribute("y").length() > 0) {
                         int stretch = Integer.parseInt(domEl.getAttribute("y"));
                         if (stretch != knuthEl.getY()) {
-                            fail("Expected y=" + stretch 
-                                    + " (stretch) at position " + pos 
+                            fail("Expected y=" + stretch
+                                    + " (stretch) at position " + pos
                                     + " but got: " + knuthEl.getY());
                         }
                     }
                     if (domEl.getAttribute("z").length() > 0) {
                         int shrink = Integer.parseInt(domEl.getAttribute("z"));
                         if (shrink != knuthEl.getZ()) {
-                            fail("Expected z=" + shrink 
-                                    + " (shrink) at position " + pos 
+                            fail("Expected z=" + shrink
+                                    + " (shrink) at position " + pos
                                     + " but got: " + knuthEl.getZ());
                         }
                     }
                 } else {
-                    throw new IllegalArgumentException("Invalid child node for 'element-list': " 
+                    throw new IllegalArgumentException("Invalid child node for 'element-list': "
                             + domEl.getLocalName()
                             + " at position " + pos + " (" + this + ")");
                 }
-                
+
             }
         }
         pos++;
         if (elementList.getElementList().size() > pos) {
-            fail("There are " 
-                    + (elementList.getElementList().size() - pos) 
+            fail("There are "
+                    + (elementList.getElementList().size() - pos)
                     + " unchecked elements at the end of the list");
         }
     }
@@ -221,7 +221,7 @@ public class ElementListCheck implements LayoutEngineCheck {
     private void fail(String msg) {
         throw new RuntimeException(msg + " (" + this + ")");
     }
-    
+
     private boolean haveID() {
         return (this.id != null && this.id.length() > 0);
     }
@@ -262,7 +262,7 @@ public class ElementListCheck implements LayoutEngineCheck {
         }
         return sb.toString();
     }
-    
+
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer("element-list");

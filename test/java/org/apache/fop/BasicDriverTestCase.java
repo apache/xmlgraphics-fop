@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop;
 
 import java.io.File;
@@ -36,7 +36,7 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
 /**
- * Basic runtime test for the old Fop class. It is used to verify that 
+ * Basic runtime test for the old Fop class. It is used to verify that
  * nothing obvious is broken after compiling.
  */
 public class BasicDriverTestCase extends AbstractFOPTestCase {
@@ -59,13 +59,13 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, baout);
-        
+
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
         Source src = new StreamSource(foFile);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
-        
+
         assertTrue("Generated PDF has zero length", baout.size() > 0);
     }
 
@@ -78,13 +78,13 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop(MimeConstants.MIME_POSTSCRIPT, foUserAgent, baout);
-        
+
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
         Source src = new StreamSource(foFile);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
-        
+
         assertTrue("Generated PostScript has zero length", baout.size() > 0);
     }
 
@@ -97,13 +97,13 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop(MimeConstants.MIME_RTF, foUserAgent, baout);
-        
+
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
         Source src = new StreamSource(foFile);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
-        
+
         assertTrue("Generated RTF has zero length", baout.size() > 0);
     }
 
@@ -116,10 +116,10 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File xmlFile = new File(getBaseDir(), "test/xml/1.xml");
         File xsltFile = new File(getBaseDir(), "test/xsl/doc.xsl");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        
+
         InputHandler handler = new InputHandler(xmlFile, xsltFile, null);
         handler.renderTo(foUserAgent, MimeConstants.MIME_PDF, baout);
-        
+
         assertTrue("Generated PDF has zero length", baout.size() > 0);
     }
 

@@ -32,7 +32,7 @@ public abstract class AreaTreeObject {
 
     /** Foreign attributes */
     protected Map foreignAttributes = null;
-    
+
     /**
      * Sets a foreign attribute.
      * @param name the qualified name of the attribute
@@ -44,7 +44,7 @@ public abstract class AreaTreeObject {
         }
         this.foreignAttributes.put(name, value);
     }
-    
+
     /**
      * Set foreign attributes from a Map.
      * @param atts a Map with attributes (keys: QName, values: String)
@@ -57,11 +57,11 @@ public abstract class AreaTreeObject {
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
             String value = (String)entry.getValue();
-            //The casting is only to ensure type safety (too bad we can't use generics, yet) 
+            //The casting is only to ensure type safety (too bad we can't use generics, yet)
             setForeignAttribute((QName)entry.getKey(), value);
         }
     }
-    
+
     /**
      * Returns the value of a foreign attribute on the area.
      * @param name the qualified name of the attribute
@@ -74,7 +74,7 @@ public abstract class AreaTreeObject {
             return null;
         }
     }
-    
+
     /** @return the foreign attributes associated with this area */
     public Map getForeignAttributes() {
         if (this.foreignAttributes != null) {
@@ -83,6 +83,6 @@ public abstract class AreaTreeObject {
             return Collections.EMPTY_MAP;
         }
     }
-    
-    
+
+
 }

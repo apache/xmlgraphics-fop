@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ import org.apache.fop.traits.MinOptMax;
  * This class can be extended to handle the creation and adding of the
  * inline area.
  */
-public abstract class LeafNodeLayoutManager extends AbstractLayoutManager 
+public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                                    implements InlineLevelLayoutManager {
 
     /**
@@ -64,7 +64,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     protected CommonBorderPaddingBackground commonBorderPaddingBackground = null;
     /** The alignment context applying to this area */
     protected AlignmentContext alignmentContext = null;
-    
+
     /** Flag to indicate if something was changed as part of the getChangeKnuthElements sequence */
     protected boolean isSomethingChanged = false;
     /** Our area info for the Knuth elements */
@@ -86,7 +86,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
             bHyphenated = bHyph;
             this.alignmentContext = alignmentContext;
         }
-        
+
     }
 
 
@@ -201,7 +201,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     protected InlineArea getEffectiveArea() {
         return curArea;
     }
-    
+
     /**
      * Offset this area.
      * Offset the inline area in the bpd direction when adding the
@@ -247,18 +247,18 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         area.setIPD(width);
         area.setAdjustment(width - areaInfo.ipdArea.opt);
     }
-    
+
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         curArea = get(context);
-        
+
         if (curArea == null) {
             setFinished(true);
             return null;
         }
 
         alignmentContext = makeAlignmentContext(context);
-        
+
         MinOptMax ipd = getAllocationIPD(context.getRefIPD());
 
         // create the AreaInfo object to store the computed values
@@ -269,12 +269,12 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         KnuthSequence seq = new InlineKnuthSequence();
 
         addKnuthElementsForBorderPaddingStart(seq);
-        
+
         seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, alignmentContext,
                                     notifyPos(new LeafPosition(this, 0)), false));
 
         addKnuthElementsForBorderPaddingEnd(seq);
-        
+
         LinkedList returnList = new LinkedList();
 
         returnList.add(seq);
@@ -322,18 +322,18 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         LinkedList returnList = new LinkedList();
 
         addKnuthElementsForBorderPaddingStart(returnList);
-        
+
         // fobj is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
-        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.alignmentContext, 
+        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.alignmentContext,
                                           notifyPos(new LeafPosition(this, 0)), true));
 
         addKnuthElementsForBorderPaddingEnd(returnList);
-        
+
         setFinished(true);
         return returnList;
     }
-    
+
     /**
      * Creates Knuth elements for start border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
@@ -345,7 +345,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                          + commonBorderPaddingBackground.getPaddingStart(false, this);
             if (ipStart > 0) {
                 // Add a non breakable glue
-                returnList.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, 
+                returnList.add(new KnuthPenalty(0, KnuthPenalty.INFINITE,
                                                 false, new LeafPosition(this, -1), true));
                 returnList.add(new KnuthGlue(ipStart, 0, 0, new LeafPosition(this, -1), true));
             }

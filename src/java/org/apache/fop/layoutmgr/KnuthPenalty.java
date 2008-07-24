@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,15 +24,15 @@ import org.apache.fop.fo.Constants;
 /**
  * An instance of this class represents information about a feasible
  * breaking point; it does not represent any piece of content.
- * 
+ *
  * A KnuthPenalty is a feasible breaking point unless its value is infinity;
  * a KnuthPenalty whose value is -infinity represents a forced break.
- * 
+ *
  * A KnuthPenalty is suppressed, and its width is ignored, if it is not a
  * chosen breaking point; for example, a KnuthPenalty representing a
  * hyphenation point has a width (the "-" width), which must be ignored if
  * that point is not chosen as a breaking point.
- * 
+ *
  * Besides the inherited methods and attributes, this class has two more
  * attributes and the methods used to get them: the penalty value, which is
  * a kind of "aesthetic cost" (the higher the value, the more unsightly the
@@ -45,7 +45,7 @@ public class KnuthPenalty extends KnuthElement {
     public static final int FLAGGED_PENALTY = 50;
 
     private int penalty;
-    private boolean bFlagged; 
+    private boolean bFlagged;
     private int breakClass = -1;
 
     /**
@@ -65,7 +65,7 @@ public class KnuthPenalty extends KnuthElement {
 
     /**
      * Create a new KnuthPenalty.
-     * 
+     *
      * @param w the width of this penalty
      * @param p the penalty value of this penalty
      * @param f is this penalty flagged?
@@ -102,7 +102,7 @@ public class KnuthPenalty extends KnuthElement {
     public void setP(int p) {
         this.penalty = p;
     }
-    
+
     /** @return true is this penalty is a flagged one. */
     public boolean isFlagged() {
         return bFlagged;
@@ -112,7 +112,7 @@ public class KnuthPenalty extends KnuthElement {
     public boolean isForcedBreak() {
         return penalty == -KnuthElement.INFINITE;
     }
-    
+
     /**
      * @return the break class of this penalty (EN_AUTO, EN_COLUMN, EN_PAGE, EN_EVEN_PAGE,
      * EN_ODD_PAGE)
@@ -120,7 +120,7 @@ public class KnuthPenalty extends KnuthElement {
     public int getBreakClass() {
         return breakClass;
     }
-    
+
     /**
      * Sets the break class for this penalty.
      * @param cl the break class (EN_AUTO, EN_COLUMN, EN_PAGE, EN_EVEN_PAGE, EN_ODD_PAGE)
@@ -128,7 +128,7 @@ public class KnuthPenalty extends KnuthElement {
     public void setBreakClass(int cl) {
         this.breakClass = cl;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
@@ -171,5 +171,5 @@ public class KnuthPenalty extends KnuthElement {
         }
         return sb.toString();
     }
-    
+
 }

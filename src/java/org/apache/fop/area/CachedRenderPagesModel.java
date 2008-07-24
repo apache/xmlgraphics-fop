@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area;
 
 import java.io.BufferedInputStream;
@@ -52,7 +52,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
 
     /** Base directory to save temporary file in, typically points to the user's temp dir. */
     protected File baseDir;
-    
+
     /**
      * Main Constructor
      * @param userAgent FOUserAgent object for process
@@ -61,14 +61,14 @@ public class CachedRenderPagesModel extends RenderPagesModel {
      * @param stream OutputStream
      * @throws FOPException if the renderer cannot be properly initialized
      */
-    public CachedRenderPagesModel (FOUserAgent userAgent, String outputFormat, 
+    public CachedRenderPagesModel (FOUserAgent userAgent, String outputFormat,
             FontInfo fontInfo, OutputStream stream) throws FOPException {
         super(userAgent, outputFormat, fontInfo, stream);
         this.baseDir = new File(System.getProperty("java.io.tmpdir"));
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected boolean checkPreparedPages(PageViewport newpage, boolean renderUnresolved) {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {

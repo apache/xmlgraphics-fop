@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.lang.reflect.InvocationTargetException;
@@ -48,7 +48,7 @@ public class PDFEncryptionManager {
             return false;
         }
     }
-    
+
     /**
      * Checks whether the necessary algorithms are available.
      * @return boolean True if all necessary algorithms are present
@@ -71,7 +71,7 @@ public class PDFEncryptionManager {
             return true;
         }
     }
-    
+
 
     /**
      * Sets up PDF encryption if PDF encryption is requested by registering
@@ -80,7 +80,7 @@ public class PDFEncryptionManager {
      * @param params the PDF encryption params or null to disable encryption
      * @param pdf the PDF document to setup encryption for
      */
-    public static void setupPDFEncryption(PDFEncryptionParams params, 
+    public static void setupPDFEncryption(PDFEncryptionParams params,
                                           PDFDocument pdf) {
         if (pdf == null) {
             throw new NullPointerException("PDF document must not be null");
@@ -101,7 +101,7 @@ public class PDFEncryptionManager {
             pdf.setEncryption(params);
         }
     }
-    
+
     /**
      * Creates a new PDFEncryption instance if PDF encryption is available.
      * @param objnum PDF object number
@@ -112,9 +112,9 @@ public class PDFEncryptionManager {
     public static PDFEncryption newInstance(int objnum, PDFEncryptionParams params) {
         try {
             Class clazz = Class.forName("org.apache.fop.pdf.PDFEncryptionJCE");
-            Method makeMethod = clazz.getMethod("make", 
+            Method makeMethod = clazz.getMethod("make",
                         new Class[] {int.class, PDFEncryptionParams.class});
-            Object obj = makeMethod.invoke(null, 
+            Object obj = makeMethod.invoke(null,
                         new Object[] {new Integer(objnum), params});
             return (PDFEncryption)obj;
         } catch (ClassNotFoundException e) {
@@ -135,5 +135,5 @@ public class PDFEncryptionManager {
             return null;
         }
     }
-    
+
 }

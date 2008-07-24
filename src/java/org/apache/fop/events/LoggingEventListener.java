@@ -32,17 +32,17 @@ public class LoggingEventListener implements EventListener {
 
     /** Default logger instance */
     private static Log defaultLog = LogFactory.getLog(LoggingEventListener.class);
-    
+
     private Log log;
     private boolean skipFatal;
-    
+
     /**
      * Creates an instance logging to the default log category of this class.
      */
     public LoggingEventListener() {
         this(defaultLog);
     }
-    
+
     /**
      * Creates an instance logging to a given logger. Events with fatal severity level will be
      * skipped.
@@ -51,7 +51,7 @@ public class LoggingEventListener implements EventListener {
     public LoggingEventListener(Log log) {
         this(log, true);
     }
-    
+
     /**
      * Creates an instance logging to a given logger.
      * @param log the target logger
@@ -61,7 +61,7 @@ public class LoggingEventListener implements EventListener {
         this.log = log;
         this.skipFatal = skipFatal;
     }
-    
+
     /**
      * Returns the target logger for this instance.
      * @return the target logger
@@ -69,7 +69,7 @@ public class LoggingEventListener implements EventListener {
     public Log getLog() {
         return this.log;
     }
-    
+
     /** {@inheritDoc} */
     public void processEvent(Event event) {
         String msg = EventFormatter.format(event);

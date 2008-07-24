@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.layoutmgr.list;
 
 import java.util.Iterator;
@@ -85,7 +85,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     protected AbstractListItemPart getPartFO() {
         return (AbstractListItemPart)fobj;
     }
-    
+
     /**
      * Set the x offset of this list item.
      * This offset is used to set the absolute position
@@ -114,7 +114,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        
+
         addId();
 
         LayoutManager childLM;
@@ -125,7 +125,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         Position lastPos = null;
 
         // "unwrap" the NonLeafPositions stored in parentIter
-        // and put them in a new list; 
+        // and put them in a new list;
         LinkedList positionList = new LinkedList();
         Position pos;
         while (parentIter.hasNext()) {
@@ -154,7 +154,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         }
 
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
-        
+
         StackingIter childPosIter = new StackingIter(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // Add the block areas to Area
@@ -167,11 +167,11 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         }
 
         addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
-        
+
         flush();
 
         curBlockArea = null;
-        
+
         checkEndOfLayout(lastPos);
     }
 
@@ -198,7 +198,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             //curBlockArea.setHeight();
 
             TraitSetter.setProducerID(curBlockArea, getPartFO().getId());
-            
+
             // Set up dimensions
             Area parentArea = parentLM.getParentArea(curBlockArea);
             int referenceIPD = parentArea.getIPD();
@@ -226,7 +226,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
-    
+
     /** {@inheritDoc} */
     public int getKeepWithNextStrength() {
         return KEEP_AUTO;

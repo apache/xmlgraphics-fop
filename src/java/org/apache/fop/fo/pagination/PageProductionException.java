@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ public class PageProductionException extends RuntimeException {
 
     private String localizedMessage;
     private Locator locator;
-    
+
     /**
      * Creates a new PageProductionException.
      * @param message the message
@@ -47,7 +47,7 @@ public class PageProductionException extends RuntimeException {
         super(message);
         setLocator(locator);
     }
-    
+
     /**
      * Set a location associated with the exception.
      * @param locator the locator holding the location.
@@ -64,7 +64,7 @@ public class PageProductionException extends RuntimeException {
     public Locator getLocator() {
         return this.locator;
     }
-    
+
     /**
      * Sets the localized message for this exception.
      * @param msg the localized message
@@ -81,7 +81,7 @@ public class PageProductionException extends RuntimeException {
             return super.getLocalizedMessage();
         }
     }
-    
+
     /** Exception factory for {@link PageProductionException}. */
     public static class PageProductionExceptionFactory implements ExceptionFactory {
 
@@ -96,11 +96,11 @@ public class PageProductionException extends RuntimeException {
             }
             return ex;
         }
-        
+
         /** {@inheritDoc} */
         public Class getExceptionClass() {
             return PageProductionException.class;
         }
-        
-    }    
+
+    }
 }

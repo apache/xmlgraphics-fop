@@ -37,19 +37,19 @@ public class SpaceResolver {
 
     /** Logger instance */
     protected static Log log = LogFactory.getLog(SpaceResolver.class);
-    
+
     private UnresolvedListElementWithLength[] firstPart;
     private BreakElement breakPoss;
     private UnresolvedListElementWithLength[] secondPart;
     private UnresolvedListElementWithLength[] noBreak;
-    
+
     private MinOptMax[] firstPartLengths;
     private MinOptMax[] secondPartLengths;
     private MinOptMax[] noBreakLengths;
-    
+
     private boolean isFirst;
     private boolean isLast;
-    
+
     /**
      * Main constructor.
      * @param first Element list before a break (optional)
@@ -58,7 +58,7 @@ public class SpaceResolver {
      * @param isFirst Resolution at the beginning of a (full) element list
      * @param isLast Resolution at the end of a (full) element list
      */
-    private SpaceResolver(List first, BreakElement breakPoss, List second, 
+    private SpaceResolver(List first, BreakElement breakPoss, List second,
             boolean isFirst, boolean isLast) {
         this.isFirst = isFirst;
         this.isLast = isLast;
@@ -95,14 +95,14 @@ public class SpaceResolver {
         if (breakPoss != null) {
             if (breakPoss.getPendingAfterMarks() != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace("    adding pending before break: " 
+                    log.trace("    adding pending before break: "
                             + breakPoss.getPendingAfterMarks());
                 }
                 first.addAll(0, breakPoss.getPendingAfterMarks());
             }
             if (breakPoss.getPendingBeforeMarks() != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace("    adding pending after break: " 
+                    log.trace("    adding pending after break: "
                             + breakPoss.getPendingBeforeMarks());
                 }
                 second.addAll(0, breakPoss.getPendingBeforeMarks());
@@ -134,7 +134,7 @@ public class SpaceResolver {
         }
         resolve();
     }
-    
+
     private String toString(Object[] arr1, Object[] arr2) {
         if (arr1.length != arr2.length) {
             new IllegalArgumentException("The length of both arrays must be equal");
@@ -151,7 +151,7 @@ public class SpaceResolver {
         sb.append("]");
         return sb.toString();
     }
-    
+
     private void removeConditionalBorderAndPadding(
                 UnresolvedListElement[] elems, MinOptMax[] lengths, boolean reverse) {
         for (int i = 0; i < elems.length; i++) {
@@ -175,7 +175,7 @@ public class SpaceResolver {
             log.trace("-->Resulting list: " + toString(elems, lengths));
         }
     }
-    
+
     private void performSpaceResolutionRule1(UnresolvedListElement[] elems, MinOptMax[] lengths,
                     boolean reverse) {
         for (int i = 0; i < elems.length; i++) {
@@ -204,14 +204,14 @@ public class SpaceResolver {
         }
     }
 
-    private void performSpaceResolutionRules2to3(UnresolvedListElement[] elems, 
+    private void performSpaceResolutionRules2to3(UnresolvedListElement[] elems,
             MinOptMax[] lengths, int start, int end) {
         if (log.isTraceEnabled()) {
             log.trace("rule 2-3: " + start + "-" + end);
         }
         SpaceElement space;
         int remaining;
-        
+
         //Rule 2 (4.3.1, XSL 1.0)
         boolean hasForcing = false;
         remaining = 0;
@@ -237,7 +237,7 @@ public class SpaceResolver {
                 space = (SpaceElement)elems[i];
                 if (!space.isForcing()) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Nulling non-forcing space-specifier using 4.3.1, rule 2: " 
+                        log.debug("Nulling non-forcing space-specifier using 4.3.1, rule 2: "
                                 + elems[i]);
                     }
                     lengths[i] = null;
@@ -245,7 +245,7 @@ public class SpaceResolver {
             }
             return; //If rule is triggered skip rule 3
         }
-        
+
         //Rule 3 (4.3.1, XSL 1.0)
         //Determine highes precedence
         int highestPrecedence = Integer.MIN_VALUE;
@@ -269,8 +269,8 @@ public class SpaceResolver {
             space = (SpaceElement)elems[i];
             if (space.getPrecedence() != highestPrecedence) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Nulling space-specifier with precedence " 
-                            + space.getPrecedence() + " using 4.3.1, rule 3: " 
+                    log.debug("Nulling space-specifier with precedence "
+                            + space.getPrecedence() + " using 4.3.1, rule 3: "
                             + elems[i]);
                 }
                 lengths[i] = null;
@@ -295,7 +295,7 @@ public class SpaceResolver {
             if (space.getLength().opt < greatestOptimum) {
                 if (log.isDebugEnabled()) {
                     log.debug("Nulling space-specifier with smaller optimum length "
-                            + "using 4.3.1, rule 3: " 
+                            + "using 4.3.1, rule 3: "
                             + elems[i]);
                 }
                 lengths[i] = null;
@@ -318,7 +318,7 @@ public class SpaceResolver {
             max = Math.min(max, space.getLength().max);
             if (remaining > 1) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Nulling non-last space-specifier using 4.3.1, rule 3, second part: " 
+                    log.debug("Nulling non-last space-specifier using 4.3.1, rule 3, second part: "
                             + elems[i]);
                 }
                 lengths[i] = null;
@@ -334,7 +334,7 @@ public class SpaceResolver {
             log.trace("-->Resulting list: " + toString(elems, lengths));
         }
     }
-    
+
     private void performSpaceResolutionRules2to3(UnresolvedListElement[] elems,
             MinOptMax[] lengths) {
         int start = 0;
@@ -354,15 +354,15 @@ public class SpaceResolver {
             start = i;
         }
     }
-    
+
     private boolean hasFirstPart() {
         return firstPart != null && firstPart.length > 0;
     }
-    
+
     private boolean hasSecondPart() {
         return secondPart != null && secondPart.length > 0;
     }
-    
+
     private void resolve() {
         if (breakPoss != null) {
             if (hasFirstPart()) {
@@ -387,7 +387,7 @@ public class SpaceResolver {
                 removeConditionalBorderAndPadding(firstPart, firstPartLengths, true);
                 performSpaceResolutionRule1(firstPart, firstPartLengths, true);
             }
-            
+
             if (hasFirstPart()) {
                 //Now that we've handled isFirst/isLast conditions, we need to look at the
                 //active part in its normal order so swap it back.
@@ -408,7 +408,7 @@ public class SpaceResolver {
             performSpaceResolutionRules2to3(secondPart, secondPartLengths);
         }
     }
-    
+
     private MinOptMax sum(MinOptMax[] lengths) {
         MinOptMax sum = new MinOptMax();
         for (int i = 0; i < lengths.length; i++) {
@@ -418,7 +418,7 @@ public class SpaceResolver {
         }
         return sum;
     }
-    
+
     private void generate(ListIterator iter) {
         MinOptMax noBreakLength = new MinOptMax();
         MinOptMax glue1; //space before break possibility if break occurs
@@ -427,12 +427,12 @@ public class SpaceResolver {
         glue1 = sum(firstPartLengths);
         glue3 = sum(secondPartLengths);
         noBreakLength = sum(noBreakLengths);
-        
+
         //This doesn't produce the right glue2
         //glue2 = new MinOptMax(noBreakLength);
         //glue2.subtract(glue1);
         //glue2.subtract(glue3);
-        
+
         int glue2w = noBreakLength.opt - glue1.opt - glue3.opt;
         int glue2stretch = (noBreakLength.max - noBreakLength.opt);
         int glue2shrink = (noBreakLength.opt - noBreakLength.min);
@@ -440,34 +440,34 @@ public class SpaceResolver {
         glue2stretch -= glue3.max - glue3.opt;
         glue2shrink -= glue1.opt - glue1.min;
         glue2shrink -= glue3.opt - glue3.min;
-        
+
         boolean hasPrecedingNonBlock = false;
         if (log.isDebugEnabled()) {
-            log.debug("noBreakLength=" + noBreakLength 
-                    + ", glue1=" + glue1 
-                    + ", glue2=" + glue2w + "+" + glue2stretch + "-" + glue2shrink 
+            log.debug("noBreakLength=" + noBreakLength
+                    + ", glue1=" + glue1
+                    + ", glue2=" + glue2w + "+" + glue2stretch + "-" + glue2shrink
                     + ", glue3=" + glue3);
         }
         if (breakPoss != null) {
             boolean forcedBreak = breakPoss.isForcedBreak();
             if (glue1.isNonZero()) {
-                iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, 
+                iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE,
                         false, (Position)null, true));
-                iter.add(new KnuthGlue(glue1.opt, glue1.max - glue1.opt, glue1.opt - glue1.min, 
+                iter.add(new KnuthGlue(glue1.opt, glue1.max - glue1.opt, glue1.opt - glue1.min,
                         (Position)null, true));
                 if (forcedBreak) {
                     //Otherwise, the preceding penalty and glue will be cut off
                     iter.add(new KnuthBox(0, (Position)null, true));
                 }
             }
-            iter.add(new KnuthPenalty(breakPoss.getPenaltyWidth(), breakPoss.getPenaltyValue(), 
-                    false, breakPoss.getBreakClass(), 
+            iter.add(new KnuthPenalty(breakPoss.getPenaltyWidth(), breakPoss.getPenaltyValue(),
+                    false, breakPoss.getBreakClass(),
                     new SpaceHandlingBreakPosition(this, breakPoss), false));
             if (breakPoss.getPenaltyValue() <= -KnuthPenalty.INFINITE) {
                 return; //return early. Not necessary (even wrong) to add additional elements
             }
             if (glue2w != 0 || glue2stretch != 0 || glue2shrink != 0) {
-                iter.add(new KnuthGlue(glue2w, glue2stretch, glue2shrink, 
+                iter.add(new KnuthGlue(glue2w, glue2stretch, glue2shrink,
                         (Position)null, true));
             }
         } else {
@@ -483,9 +483,9 @@ public class SpaceResolver {
             iter.add(new KnuthBox(0, pos, true));
         }
         if (glue3.isNonZero()) {
-            iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, 
+            iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE,
                     false, (Position)null, true));
-            iter.add(new KnuthGlue(glue3.opt, glue3.max - glue3.opt, glue3.opt - glue3.min, 
+            iter.add(new KnuthGlue(glue3.opt, glue3.max - glue3.opt, glue3.opt - glue3.min,
                     (Position)null, true));
             hasPrecedingNonBlock = true;
         }
@@ -494,7 +494,7 @@ public class SpaceResolver {
             iter.add(new KnuthBox(0, (Position)null, true));
         }
     }
-    
+
     /**
      * Position class for break possibilities. It is used to notify layout manager about the
      * effective spaces and conditional lengths.
@@ -503,11 +503,11 @@ public class SpaceResolver {
 
         private SpaceResolver resolver;
         private Position originalPosition;
-        
+
         /**
          * Main constructor.
          * @param resolver the space resolver that provides the info about the actual situation
-         * @param breakPoss the original break possibility that creates this Position 
+         * @param breakPoss the original break possibility that creates this Position
          */
         public SpaceHandlingBreakPosition(SpaceResolver resolver, BreakElement breakPoss) {
             super(null);
@@ -518,18 +518,18 @@ public class SpaceResolver {
                 this.originalPosition = this.originalPosition.getPosition();
             }
         }
-        
+
         /** @return the space resolver */
         public SpaceResolver getSpaceResolver() {
             return this.resolver;
         }
-        
+
         /**
          * Notifies all affected layout managers about the current situation in the part to be
          * handled for area generation.
          * @param isBreakSituation true if this is a break situation.
          * @param side defines to notify about the situation whether before or after the break.
-         *             May be null if isBreakSituation is null. 
+         *             May be null if isBreakSituation is null.
          */
         public void notifyBreakSituation(boolean isBreakSituation, RelSide side) {
             if (isBreakSituation) {
@@ -548,7 +548,7 @@ public class SpaceResolver {
                 }
             }
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
@@ -558,7 +558,7 @@ public class SpaceResolver {
             return sb.toString();
         }
 
-        /** 
+        /**
          * @return the original Position instance set at the BreakElement that this Position was
          *         created for.
          */
@@ -566,7 +566,7 @@ public class SpaceResolver {
             return this.originalPosition;
         }
     }
-    
+
     /**
      * Position class for no-break situations. It is used to notify layout manager about the
      * effective spaces and conditional lengths.
@@ -574,7 +574,7 @@ public class SpaceResolver {
     public static class SpaceHandlingPosition extends Position {
 
         private SpaceResolver resolver;
-        
+
         /**
          * Main constructor.
          * @param resolver the space resolver that provides the info about the actual situation
@@ -583,12 +583,12 @@ public class SpaceResolver {
             super(null);
             this.resolver = resolver;
         }
-        
+
         /** @return the space resolver */
         public SpaceResolver getSpaceResolver() {
             return this.resolver;
         }
-        
+
         /**
          * Notifies all affected layout managers about the current situation in the part to be
          * handled for area generation.
@@ -601,7 +601,7 @@ public class SpaceResolver {
                 resolver.secondPart[i].notifyLayoutManager(resolver.secondPartLengths[i]);
             }
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer();
@@ -609,7 +609,7 @@ public class SpaceResolver {
             return sb.toString();
         }
     }
-    
+
     /**
      * Resolves unresolved elements applying the space resolution rules defined in 4.3.1.
      * @param elems the element list
@@ -673,7 +673,7 @@ public class SpaceResolver {
                     unresolvedSecond = unresolvedFirst;
                     unresolvedFirst = swapList;
                 }
-                
+
                 log.debug("----start space resolution (first=" + first + ", last=" + last + ")...");
                 SpaceResolver resolver = new SpaceResolver(
                         unresolvedFirst, breakPoss, unresolvedSecond, first, last);
@@ -689,7 +689,7 @@ public class SpaceResolver {
             first = false;
         }
     }
-    
+
     /**
      * Inspects an effective element list and notifies all layout managers about the state of
      * the spaces and conditional lengths.
@@ -699,7 +699,7 @@ public class SpaceResolver {
      * @param prevBreak index of the the break possibility just before this part (used to
      *                  identify a break condition, lastBreak <= 0 represents a no-break condition)
      */
-    public static void performConditionalsNotification(List effectiveList, 
+    public static void performConditionalsNotification(List effectiveList,
             int startElementIndex, int endElementIndex, int prevBreak) {
         KnuthElement el = null;
         if (prevBreak > 0) {
@@ -710,7 +710,7 @@ public class SpaceResolver {
         if (el != null && el.isPenalty()) {
             Position pos = el.getPosition();
             if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {
-                beforeBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos; 
+                beforeBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos;
                 beforeBreak.notifyBreakSituation(true, RelSide.BEFORE);
             }
         }
@@ -718,7 +718,7 @@ public class SpaceResolver {
         if (el != null && el.isPenalty()) {
             Position pos = el.getPosition();
             if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {
-                afterBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos; 
+                afterBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos;
                 afterBreak.notifyBreakSituation(true, RelSide.AFTER);
             }
         }
@@ -735,7 +735,7 @@ public class SpaceResolver {
             }
         }
     }
-    
-    
+
+
 
 }

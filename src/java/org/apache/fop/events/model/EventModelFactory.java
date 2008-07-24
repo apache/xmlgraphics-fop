@@ -29,5 +29,5 @@ public interface EventModelFactory {
      * @return the new EventModel instance
      */
     EventModel createEventModel();
-    
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 // Java
@@ -69,13 +69,13 @@ public class ExampleFO2PDFUsingSAXParser {
         // configure foUserAgent as desired
 
         OutputStream out = null;
-        
+
         try {
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
             out = new BufferedOutputStream(out);
-            
+
             // Construct fop and setup output format
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
 
@@ -85,7 +85,7 @@ public class ExampleFO2PDFUsingSAXParser {
             factory.setNamespaceAware(true);
             // throws ParserConfigurationException
             SAXParser parser = factory.newSAXParser();
-                
+
             // Obtain FOP's DefaultHandler
             // throws FOPException
             DefaultHandler dh = fop.getDefaultHandler();
@@ -108,13 +108,13 @@ public class ExampleFO2PDFUsingSAXParser {
         try {
             System.out.println("FOP ExampleFO2PDFUsingSAXParser\n");
             System.out.println("Preparing...");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
 
-            //Setup input and output files            
+            //Setup input and output files
             File fofile = new File(baseDir, "xml/fo/helloworld.fo");
             File pdffile = new File(outDir, "ResultFO2PDFUsingSAXParser.pdf");
 
@@ -122,10 +122,10 @@ public class ExampleFO2PDFUsingSAXParser {
             System.out.println("Output: PDF (" + pdffile + ")");
             System.out.println();
             System.out.println("Transforming...");
-            
+
             ExampleFO2PDFUsingSAXParser app = new ExampleFO2PDFUsingSAXParser();
             app.convertFO2PDF(fofile, pdffile);
-            
+
             System.out.println("Success!");
         } catch (Exception e) {
             e.printStackTrace(System.err);

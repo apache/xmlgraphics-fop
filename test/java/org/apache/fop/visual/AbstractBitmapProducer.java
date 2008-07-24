@@ -32,14 +32,14 @@ public abstract class AbstractBitmapProducer implements BitmapProducer {
 
     /** Logger */
     protected static Log log = LogFactory.getLog(AbstractBitmapProducer.class);
-    
+
     /**
      * Returns a new JAXP Transformer based on information in the ProducerContext.
      * @param context context information for the process
      * @return a new Transformer instance (identity or set up with a stylesheet)
      * @throws TransformerConfigurationException in case creating the Transformer fails.
      */
-    protected Transformer getTransformer(ProducerContext context) 
+    protected Transformer getTransformer(ProducerContext context)
                 throws TransformerConfigurationException {
         if (context.getTemplates() != null) {
             return context.getTemplates().newTransformer();
@@ -47,5 +47,5 @@ public abstract class AbstractBitmapProducer implements BitmapProducer {
             return context.getTransformerFactory().newTransformer();
         }
     }
-    
+
 }

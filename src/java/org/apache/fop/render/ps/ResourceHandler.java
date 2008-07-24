@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -94,18 +94,18 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
      * @throws DSCException If there's an error in the DSC structure of the PS file
      * @throws IOException In case of an I/O error
      */
-    public static void process(FOUserAgent userAgent, InputStream in, OutputStream out, 
+    public static void process(FOUserAgent userAgent, InputStream in, OutputStream out,
             FontInfo fontInfo, ResourceTracker resTracker, Map formResources,
             int pageCount, Rectangle2D documentBoundingBox)
                     throws DSCException, IOException {
         DSCParser parser = new DSCParser(in);
         PSGenerator gen = new PSGenerator(out);
         parser.setNestedDocumentHandler(new DefaultNestedDocumentHandler(gen));
-        
+
         //Skip DSC header
         DSCHeaderComment header = DSCTools.checkAndSkipDSC30Header(parser);
         header.generate(gen);
-        
+
         parser.setFilter(new DSCFilter() {
             private final Set filtered = new java.util.HashSet();
             {
@@ -141,15 +141,15 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
 
                 PSFontUtils.determineSuppliedFonts(resTracker, fontInfo, fontInfo.getUsedFonts());
                 registerSuppliedForms(resTracker, formResources);
-                
+
                 //Supplied Resources
-                DSCCommentDocumentSuppliedResources supplied 
+                DSCCommentDocumentSuppliedResources supplied
                     = new DSCCommentDocumentSuppliedResources(
                             resTracker.getDocumentSuppliedResources());
                 supplied.generate(gen);
-                
+
                 //Needed Resources
-                DSCCommentDocumentNeededResources needed 
+                DSCCommentDocumentNeededResources needed
                     = new DSCCommentDocumentNeededResources(
                             resTracker.getDocumentNeededResources());
                 needed.generate(gen);
@@ -167,7 +167,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
             }
             event.generate(gen);
         }
-        
+
         //Skip to the FOPFontSetup
         PostScriptComment fontSetupPlaceholder = parser.nextPSComment("FOPFontSetup", gen);
         if (fontSetupPlaceholder == null) {
@@ -181,7 +181,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         if (pageOrTrailer == null) {
             throw new DSCException("Page expected, but none found");
         }
-        
+
         //Process individual pages (and skip as necessary)
         while (true) {
             DSCCommentPage page = (DSCCommentPage)pageOrTrailer;
@@ -194,7 +194,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                 break;
             }
         }
-        
+
         //Write the rest
         while (parser.hasNext()) {
             DSCEvent event = parser.nextEvent();
@@ -218,7 +218,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         }
     }
 
-    private static void generateForms(ResourceTracker resTracker, FOUserAgent userAgent, 
+    private static void generateForms(ResourceTracker resTracker, FOUserAgent userAgent,
             Map formResources, PSGenerator gen) throws IOException {
         if (formResources == null) {
             return;
@@ -227,13 +227,13 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
         while (iter.hasNext()) {
             PSImageFormResource form = (PSImageFormResource)iter.next();
             final String uri = form.getImageURI();
-            
+
             ImageManager manager = userAgent.getFactory().getImageManager();
             ImageInfo info = null;
             try {
                 ImageSessionContext sessionContext = userAgent.getImageSessionContext();
                 info = manager.getImageInfo(uri, sessionContext);
-                
+
                 ImageFlavor[] flavors;
                 if (gen.getPSLevel() >= 3) {
                     flavors = LEVEL_3_FLAVORS_FORM;
@@ -243,7 +243,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
                 org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, flavors, hints, sessionContext);
-                
+
                 String imageDescription = info.getMimeType() + " " + info.getOriginalURI();
                 final Dimension2D dimensionsPt = info.getSize().getDimensionPt();
                 final Dimension2D dimensionsMpt = info.getSize().getDimensionMpt();
@@ -261,12 +261,12 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                             PSGraphics2DAdapter adapter = new PSGraphics2DAdapter(gen, false);
                             adapter.paintImage(imageG2D.getGraphics2DImagePainter(),
                                     null,
-                                    0, 0, 
+                                    0, 0,
                                     (int)Math.round(dimensionsMpt.getWidth()),
                                     (int)Math.round(dimensionsMpt.getHeight()));
                             gen.writeln("EndEPSF");
                         }
-                        
+
                     };
                     formGen.generate(gen);
                 } else if (img instanceof ImageRendered) {
@@ -349,9 +349,9 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
                 gen.writeln("1 0 lineto");
                 gen.writeln("stroke");
             }
-            
+
         };
         return formGen;
     }
-    
+
 }

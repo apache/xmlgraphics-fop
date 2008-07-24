@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.java2d;
 
 // Java
@@ -63,17 +63,17 @@ public class Java2DFontMetrics {
      * The typical height of a small cap latter (often derived from "x", value in mpt)
      */
     private int xHeight = 0;
-    
+
     /**
      * The highest point of the font above the baseline (usually derived from "d", value in mpt)
      */
     private int ascender = 0;
-    
+
     /**
      * The lowest point of the font under the baseline (usually derived from "p", value in mpt)
      */
     private int descender = 0;
-    
+
     /**
      * Buffered font.
      * f1 is bufferd for metric measurements during layout.
@@ -103,7 +103,7 @@ public class Java2DFontMetrics {
 
     /** A LineMetrics to access high-resolution metrics information. */
     private LineMetrics lineMetrics;
-    
+
     /**
      * Temp graphics object needed to get the font metrics
      */
@@ -130,7 +130,7 @@ public class Java2DFontMetrics {
         setFont(family, style, size);
         return Math.round(lineMetrics.getAscent() * FONT_FACTOR);
     }
-    
+
     /**
      * Determines the font ascent of the Font described by this
      * FontMetrics object
@@ -159,7 +159,7 @@ public class Java2DFontMetrics {
          * Rectangle FontMetrics.getStringBounds(..) method can be called.
          * The y value of the rectangle is the offset from the origin
          * (baseline) apparently needed by the sample test program
-         * 
+         *
          * xxxxx@xxxxx 2001-05-15
          */
         /* I don't think this is right.
@@ -231,7 +231,7 @@ public class Java2DFontMetrics {
         Rectangle2D rect = fmt.getStringBounds(ch, 0, 1, this.graphics);
         return (int)Math.round(rect.getWidth() * 1000);
     }
-    
+
     /**
      * Return widths (in 1/1000ths of point size) of all
      * characters
@@ -265,7 +265,7 @@ public class Java2DFontMetrics {
         atts.put(TextAttribute.SIZE, new Float(size)); //size in pt
         return new Font(atts);
     }
-    
+
     /**
      * Checks whether the font  for which values are
      * requested is the one used immediately before or
@@ -301,17 +301,17 @@ public class Java2DFontMetrics {
             TextLayout layout = new TextLayout("x", f1, graphics.getFontRenderContext());
             Rectangle2D rect = layout.getBounds();
             xHeight = (int)Math.round(-rect.getY() * 1000);
-            
+
             //PostScript-compatible ascent
             layout = new TextLayout("d", f1, graphics.getFontRenderContext());
             rect = layout.getBounds();
             ascender = (int)Math.round(-rect.getY() * 1000);
-            
+
             //PostScript-compatible descent
             layout = new TextLayout("p", f1, graphics.getFontRenderContext());
             rect = layout.getBounds();
             descender = (int)Math.round((rect.getY() + rect.getHeight()) * -1000);
-            
+
             //Alternative way to get metrics but the ascender is again wrong for our purposes
             lineMetrics = f1.getLineMetrics("", graphics.getFontRenderContext());
         }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
 
 /**
- * TIFF Renderer configurator 
+ * TIFF Renderer configurator
  */
 public class TIFFRendererConfigurator extends PrintRendererConfigurator {
 
@@ -47,7 +47,7 @@ public class TIFFRendererConfigurator extends PrintRendererConfigurator {
      * @throws FOPException fop exception
      * {@inheritDoc}
      */
-    public void configure(Renderer renderer) throws FOPException {        
+    public void configure(Renderer renderer) throws FOPException {
         Configuration cfg = super.getRendererConfig(renderer);
         if (cfg != null) {
             TIFFRenderer tiffRenderer = (TIFFRenderer)renderer;

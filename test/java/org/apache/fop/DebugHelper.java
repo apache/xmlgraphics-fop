@@ -28,9 +28,9 @@ import org.apache.fop.logging.LoggingElementListObserver;
 public class DebugHelper {
 
     private static boolean elObserversRegistered = false;
-    
+
     /**
-     * Registers the default element list observers used for debugging. 
+     * Registers the default element list observers used for debugging.
      */
     public static void registerStandardElementListObservers() {
         if (!elObserversRegistered) {
@@ -38,5 +38,5 @@ public class DebugHelper {
             elObserversRegistered = true;
         }
     }
-    
+
 }

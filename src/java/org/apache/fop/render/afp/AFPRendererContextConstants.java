@@ -27,7 +27,7 @@ import org.apache.fop.render.RendererContextConstants;
 public interface AFPRendererContextConstants extends RendererContextConstants {
 
     /**
-     * Key for a Boolean value that enables grayscale processing instead of color 
+     * Key for a Boolean value that enables grayscale processing instead of color
      * processing.
      */
     String AFP_GRAYSCALE = "afpGrayscale";

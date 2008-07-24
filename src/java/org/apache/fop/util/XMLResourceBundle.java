@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -61,12 +61,12 @@ import org.apache.xmlgraphics.util.QName;
 public class XMLResourceBundle extends ResourceBundle {
 
     //Note: Some code here has been copied and adapted from Apache Harmony!
-    
+
     private Properties resources = new Properties();
 
     private Locale locale;
-    
-    private static SAXTransformerFactory tFactory 
+
+    private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     /**
@@ -84,7 +84,7 @@ public class XMLResourceBundle extends ResourceBundle {
             throw new IOException("Error while parsing XML resource bundle: " + e.getMessage());
         }
     }
-    
+
     /**
      * Gets a resource bundle using the specified base name, default locale, and class loader.
      * @param baseName the base name of the resource bundle, a fully qualified class name
@@ -98,7 +98,7 @@ public class XMLResourceBundle extends ResourceBundle {
                 throws MissingResourceException {
         return getXMLBundle(baseName, Locale.getDefault(), loader);
     }
-    
+
     /**
      * Gets a resource bundle using the specified base name, locale, and class loader.
      * @param baseName the base name of the resource bundle, a fully qualified class name
@@ -117,7 +117,7 @@ public class XMLResourceBundle extends ResourceBundle {
         if (baseName == null) {
             throw new NullPointerException("baseName must not be null");
         }
-            
+
         ResourceBundle bundle;
         if (!locale.equals(Locale.getDefault())) {
             bundle = handleGetXMLBundle(baseName, "_" + locale, false, loader);
@@ -145,10 +145,10 @@ public class XMLResourceBundle extends ResourceBundle {
 
     private static final ResourceBundle MISSING = new MissingBundle();
     private static final ResourceBundle MISSINGBASE = new MissingBundle();
-    
+
     private static Map cache = new java.util.WeakHashMap();
     //<Object, Hashtable<String, ResourceBundle>>
-    
+
     private static ResourceBundle handleGetXMLBundle(String base, String locale,
             boolean loadBase, final ClassLoader loader) {
         XMLResourceBundle bundle = null;
@@ -224,8 +224,8 @@ public class XMLResourceBundle extends ResourceBundle {
         }
         loaderCache.put(bundleName, loadBase ? MISSINGBASE : MISSING);
         return null;
-    }    
-    
+    }
+
     private void setLocale(String name) {
         String language = "", country = "", variant = "";
         if (name.length() > 1) {
@@ -248,7 +248,7 @@ public class XMLResourceBundle extends ResourceBundle {
         }
         this.locale = new Locale(language, country, variant);
     }
-    
+
     private static String strip(String name) {
         int index = name.lastIndexOf('_');
         if (index != -1) {
@@ -256,16 +256,16 @@ public class XMLResourceBundle extends ResourceBundle {
         }
         return null;
     }
-    
+
     private Enumeration getLocalKeys() {
         return (Enumeration)resources.propertyNames();
     }
-    
+
     /** {@inheritDoc} */
     public Locale getLocale() {
         return this.locale;
     }
-    
+
     /** {@inheritDoc} */
     public Enumeration getKeys() {
         if (parent == null) {
@@ -327,10 +327,10 @@ public class XMLResourceBundle extends ResourceBundle {
     }
 
     private class CatalogueHandler extends DefaultHandler {
-        
+
         private static final String CATALOGUE = "catalogue";
         private static final String MESSAGE = "message";
-        
+
         private StringBuffer valueBuffer = new StringBuffer();
         private Stack elementStack = new Stack();
         private String currentKey = null;
@@ -338,13 +338,13 @@ public class XMLResourceBundle extends ResourceBundle {
         private boolean isOwnNamespace(String uri) {
             return ("".equals(uri));
         }
-        
+
         private QName getParentElementName() {
             return (QName)elementStack.peek();
         }
-        
+
         /** {@inheritDoc} */
-        public void startElement(String uri, String localName, String qName, 
+        public void startElement(String uri, String localName, String qName,
                 Attributes atts) throws SAXException {
             super.startElement(uri, localName, qName, atts);
             QName elementName = new QName(uri, qName);
@@ -386,13 +386,13 @@ public class XMLResourceBundle extends ResourceBundle {
             }
             this.valueBuffer.setLength(0);
         }
-        
+
         /** {@inheritDoc} */
         public void characters(char[] ch, int start, int length) throws SAXException {
             super.characters(ch, start, length);
             valueBuffer.append(ch, start, length);
         }
-        
+
     }
-    
+
 }

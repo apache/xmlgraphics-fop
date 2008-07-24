@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,15 +33,15 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     /**
-     * The corresponding padding-* propIds 
+     * The corresponding padding-* propIds
      */
-    private int[] paddingCorresponding = null;    
+    private int[] paddingCorresponding = null;
 
     /**
-     * The corresponding border-*-width propIds 
+     * The corresponding border-*-width propIds
      */
     private int[] borderWidthCorresponding = null;
-    
+
     /**
      * Create a start-indent or end-indent property maker.
      * @param baseMaker the property maker to use
@@ -57,7 +57,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     public void setPaddingCorresponding(int[] paddingCorresponding) {
         this.paddingCorresponding = paddingCorresponding;
     }
-    
+
     /**
      * Set the corresponding values for the border-*-width properties.
      * @param borderWidthCorresponding the corresping propids.
@@ -65,9 +65,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     public void setBorderWidthCorresponding(int[] borderWidthCorresponding) {
         this.borderWidthCorresponding = borderWidthCorresponding;
     }
-    
+
     /**
-     * Calculate the corresponding value for start-indent and end-indent.  
+     * Calculate the corresponding value for start-indent and end-indent.
      * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property compute(PropertyList propertyList) throws PropertyException {
@@ -78,9 +78,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
             return computeConforming(propertyList);
         }
     }
-    
+
     /**
-     * Calculate the corresponding value for start-indent and end-indent.  
+     * Calculate the corresponding value for start-indent and end-indent.
      * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property computeConforming(PropertyList propertyList) throws PropertyException {
@@ -92,7 +92,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
 
         Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
         Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
-        
+
         int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
         // Calculate the absolute margin.
         if (propertyList.getExplicitOrShorthand(marginProp) == null) {
@@ -107,7 +107,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         } else {
             //Margin is used
             Numeric margin = propertyList.get(marginProp).getNumeric();
-            
+
             Numeric v = FixedLength.ZERO_FIXED_LENGTH;
             if (!propertyList.getFObj().generatesReferenceAreas()) {
                 // The inherited_value_of([start|end]-indent)
@@ -119,23 +119,23 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
             v = NumericOp.addition(v, border);
             return (Property) v;
         }
-        
+
     }
-    
+
     private boolean isInherited(PropertyList pList) {
         if (pList.getFObj().getUserAgent().isBreakIndentInheritanceOnReferenceAreaBoundary()) {
-            FONode nd = pList.getFObj().getParent(); 
+            FONode nd = pList.getFObj().getParent();
             return !((nd instanceof FObj) && ((FObj)nd).generatesReferenceAreas());
         } else {
             return true;
         }
     }
-    
+
     /**
      * Calculate the corresponding value for start-indent and end-indent.
      * This method calculates indent following an alternative rule set that
      * tries to mimic many commercial solutions that chose to violate the
-     * XSL specification.  
+     * XSL specification.
      * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property computeAlternativeRuleset(PropertyList propertyList) throws PropertyException {
@@ -148,10 +148,10 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
 
         Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
         Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
-        
+
         int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
 
-        //Determine whether the nearest anscestor indent was specified through 
+        //Determine whether the nearest anscestor indent was specified through
         //start-indent|end-indent or through a margin property.
         boolean marginNearest = false;
         PropertyList pl = propertyList.getParentPropertyList();
@@ -164,7 +164,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
             }
             pl = pl.getParentPropertyList();
         }
-        
+
         // Calculate the absolute margin.
         if (propertyList.getExplicitOrShorthand(marginProp) == null) {
             Property indent = propertyList.getExplicit(baseMaker.propId);
@@ -181,7 +181,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         } else {
             //Margin is used
             Numeric margin = propertyList.get(marginProp).getNumeric();
-            
+
             Numeric v = FixedLength.ZERO_FIXED_LENGTH;
             if (isInherited(propertyList)) {
                 // The inherited_value_of([start|end]-indent)
@@ -194,7 +194,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
             return (Property) v;
         }
     }
-    
+
     private Property getCorresponding(int[] corresponding, PropertyList propertyList)
                 throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,13 +30,13 @@ import org.apache.fop.fo.FOTreeBuilder;
  * Primary class that activates the FOP process for embedded usage.
  * <P>
  * JAXP is the standard method of embedding FOP in Java programs.
- * Please check our 
+ * Please check our
  * <a href="http://xmlgraphics.apache.org/fop/trunk/embedding.html">embedding page</a>
- * for samples (these are also available within the distribution in 
+ * for samples (these are also available within the distribution in
  * FOP_DIR\examples\embedding)
  * <P>
  * Methods within FOUserAgent are available to customize portions of the
- * process.  For example, a specific Renderer object can be specified, 
+ * process.  For example, a specific Renderer object can be specified,
  * also ElementMappings which determine elements in the FO that can be
  * processed) can be added.
  * <P>
@@ -58,7 +58,7 @@ public class Fop {
     private FOTreeBuilder foTreeBuilder = null;
 
     /**
-     * Constructor for use with already-created FOUserAgents. It uses MIME types to select the 
+     * Constructor for use with already-created FOUserAgents. It uses MIME types to select the
      * output format (ex. "application/pdf" for PDF).
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param ua FOUserAgent object
@@ -72,9 +72,9 @@ public class Fop {
         if (foUserAgent == null) {
             foUserAgent = FopFactory.newInstance().newFOUserAgent();
         }
-        
+
         this.stream = stream;
-        
+
         createDefaultHandler();
     }
 
@@ -119,7 +119,7 @@ public class Fop {
      * page-sequence. Call this method only after the rendering process is
      * finished. Note that the results are only available for output formats
      * which make use of FOP's layout engine (PDF, PS, etc.).
-     * @return the results of the rendering process, or null for flow-oriented 
+     * @return the results of the rendering process, or null for flow-oriented
      * output formats like RTF and MIF.
      */
     public FormattingResults getResults() {

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 // Java
@@ -37,7 +37,7 @@ import java.io.OutputStream;
  * document in another place.
  */
 public class PDFImageXObject extends PDFXObject {
-    
+
     private PDFImage pdfimage;
 
     /**
@@ -63,7 +63,7 @@ public class PDFImageXObject extends PDFXObject {
      */
     protected int output(OutputStream stream) throws IOException {
         int length = super.output(stream);
-        
+
         // let it gc
         // this object is retained as a reference to inserting
         // the same image but the image data is no longer needed
@@ -80,7 +80,7 @@ public class PDFImageXObject extends PDFXObject {
             populateDictionaryFromImage();
         }
     }
-    
+
     private void populateDictionaryFromPS() {
         getDocumentSafely().getProfile().verifyPSXObjectsAllowed();
         put("Subtype", new PDFName("PS"));
@@ -139,7 +139,7 @@ public class PDFImageXObject extends PDFXObject {
         //Important: do this at the end so previous values can be overwritten.
         pdfimage.populateXObjectDictionary(this);
     }
-    
+
     /** {@inheritDoc} */
     protected void outputRawStreamData(OutputStream out) throws IOException {
         pdfimage.outputContents(out);
@@ -157,7 +157,7 @@ public class PDFImageXObject extends PDFXObject {
             getFilterList().ensureFilterInPlace(pdfFilter);
         }
     }
-    
+
     /**
      * This sets up the default filters for XObjects. It uses the PDFImage
      * instance to determine what default filters to apply.
@@ -166,11 +166,11 @@ public class PDFImageXObject extends PDFXObject {
     protected void setupFilterList() {
         if (!getFilterList().isInitialized()) {
             getFilterList().addDefaultFilters(
-                getDocumentSafely().getFilterMap(), 
+                getDocumentSafely().getFilterMap(),
                 pdfimage.getFilterHint());
         }
         super.setupFilterList();
     }
-    
+
 
 }

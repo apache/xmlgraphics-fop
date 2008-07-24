@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -121,7 +121,7 @@ import org.apache.fop.util.CharUtilities;
  * <br>
  * This renderer inserts FOP-specific comments into the PostScript stream which
  * may help certain users to do certain types of post-processing of the output.
- * These comments all start with "%FOP". 
+ * These comments all start with "%FOP".
  *
  * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
@@ -150,7 +150,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     private OutputStream outputStream;
     /** the temporary file in case of two-pass processing */
     private File tempFile;
-    
+
     /** The PostScript generator used to output the PostScript */
     protected PSGenerator gen;
     /** Determines whether the PS file is generated in two passes to minimize file size */
@@ -181,13 +181,13 @@ public class PSRenderer extends AbstractPathOrientedRenderer
 
     /** Is used to determine the document's bounding box */
     private Rectangle2D documentBoundingBox;
-    
+
     /** This is a collection holding all document header comments */
     private Collection headerComments;
 
     /** This is a collection holding all document footer comments */
     private Collection footerComments;
-    
+
     /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
@@ -215,7 +215,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             throw new IllegalArgumentException("Boolean or \"true\" or \"false\" expected.");
         }
     }
-    
+
     private int intValueOf(Object obj) {
         if (obj instanceof Integer) {
             return ((Integer)obj).intValue();
@@ -225,11 +225,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             throw new IllegalArgumentException("Integer or String with a number expected.");
         }
     }
-    
+
     /**
      * Sets the landscape mode for this renderer.
      * @param value false will normally generate a "pseudo-portrait" page, true will rotate
-     *              a "wider-than-long" page by 90 degrees. 
+     *              a "wider-than-long" page by 90 degrees.
      */
     public void setAutoRotateLandscape(boolean value) {
         this.autoRotateLandscape = value;
@@ -251,7 +251,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             throw new IllegalArgumentException("Only language levels 2 or 3 are allowed/supported");
         }
     }
-    
+
     /**
      * Return the PostScript language level that the renderer produces.
      * @return the language level
@@ -259,12 +259,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     public int getLanguageLevel() {
         return this.languageLevel;
     }
-    
+
     /**
      * Sets the resource optimization mode. If set to true, the renderer does two passes to
      * only embed the necessary resources in the PostScript file. This is slower, but produces
      * smaller files.
-     * @param value true to enable the resource optimization 
+     * @param value true to enable the resource optimization
      */
     public void setOptimizeResources(boolean value) {
         this.twoPassGeneration = value;
@@ -335,7 +335,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     protected void clip() {
         writeln("clip newpath");
     }
-    
+
     /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
         try {
@@ -350,27 +350,27 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     protected void moveTo(float x, float y) {
         writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " M");
     }
-    
+
     /**
-     * Moves the current point by (x, y) relative to the current position, 
-     * omitting any connecting line segment. 
+     * Moves the current point by (x, y) relative to the current position,
+     * omitting any connecting line segment.
      * @param x x coordinate
      * @param y y coordinate
      */
     protected void rmoveTo(float x, float y) {
         writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " RM");
     }
-    
+
     /** {@inheritDoc} */
     protected void lineTo(float x, float y) {
         writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " lineto");
     }
-    
+
     /** {@inheritDoc} */
     protected void closePath() {
         writeln("cp");
     }
-    
+
     /** {@inheritDoc} */
     protected void fillRect(float x, float y, float width, float height) {
         if (width != 0 && height != 0) {
@@ -400,7 +400,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     protected boolean isImageInlined(String uri) {
         return !isOptimizeResources() || uri == null || "".equals(uri);
     }
-    
+
     /**
      * Indicates whether an image should be inlined or added as a PostScript form.
      * @param info the ImageInfo object of the image
@@ -410,7 +410,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         if (isImageInlined(info.getOriginalURI())) {
             return true;
         }
-        
+
         if (!isOptimizeResources()) {
             throw new IllegalStateException("Must not get here if form support is enabled");
         }
@@ -423,7 +423,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                     info, inlineFlavors);
         ImageProviderPipeline inlineChoice = manager.choosePipeline(inlineCandidates);
         ImageFlavor inlineFlavor = (inlineChoice != null ? inlineChoice.getTargetFlavor() : null);
-        
+
         //Investigate choice for form mode
         ImageFlavor[] formFlavors = getFormFlavors();
         ImageProviderPipeline[] formCandidates
@@ -431,11 +431,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                     info, formFlavors);
         ImageProviderPipeline formChoice = manager.choosePipeline(formCandidates);
         ImageFlavor formFlavor = (formChoice != null ? formChoice.getTargetFlavor() : null);
-        
+
         //Inline if form is not supported or if a better choice is available with inline mode
         return formFlavor == null || !formFlavor.equals(inlineFlavor);
     }
-    
+
     /** {@inheritDoc} */
     protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
@@ -445,7 +445,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         if (log.isDebugEnabled()) {
             log.debug("Handling image: " + uri);
         }
-        
+
         ImageManager manager = getUserAgent().getFactory().getImageManager();
         ImageInfo info = null;
         try {
@@ -453,7 +453,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             info = manager.getImageInfo(uri, sessionContext);
             int width = (int)pos.getWidth();
             int height = (int)pos.getHeight();
-            
+
             //millipoints --> points for PostScript
             float ptx = x / 1000f;
             float pty = y / 1000f;
@@ -468,7 +468,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
                 org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, getInlineFlavors(), hints, sessionContext);
-                
+
                 //...and embed as inline image
                 if (img instanceof ImageGraphics2D) {
                     ImageGraphics2D imageG2D = (ImageGraphics2D)img;
@@ -488,7 +488,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                     final ImageRawStream raw = (ImageRawStream)img;
                     if (raw instanceof ImageRawEPS) {
                         ImageRawEPS eps = (ImageRawEPS)raw;
-                        Rectangle2D bbox = eps.getBoundingBox(); 
+                        Rectangle2D bbox = eps.getBoundingBox();
                         InputStream in = raw.createInputStream();
                         try {
                             PSImageUtils.renderEPS(in, uri,
@@ -525,9 +525,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                     log.debug("Image " + info + " is embedded as a form later");
                 }
                 //Don't load image at this time, just put a form placeholder in the stream
-                PSResource form = getFormForImage(uri);   
+                PSResource form = getFormForImage(uri);
                 Rectangle2D targetRect = new Rectangle2D.Double(ptx, pty, ptw, pth);
-                PSImageUtils.paintForm(form, info.getSize().getDimensionPt(), targetRect, gen);   
+                PSImageUtils.paintForm(form, info.getSize().getDimensionPt(), targetRect, gen);
             }
 
         } catch (ImageException ie) {
@@ -586,7 +586,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     }
 
     /** {@inheritDoc} */
-    public void paintImage(RenderedImage image, RendererContext context, 
+    public void paintImage(RenderedImage image, RendererContext context,
             int x, int y, int width, int height) throws IOException {
         float fx = (float)x / 1000f;
         x += currentIPPosition / 1000f;
@@ -606,12 +606,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      * @param endy the y end position
      */
     private void drawLine(float startx, float starty, float endx, float endy) {
-        writeln(gen.formatDouble(startx) + " " 
-                + gen.formatDouble(starty) + " M " 
-                + gen.formatDouble(endx) + " " 
+        writeln(gen.formatDouble(startx) + " "
+                + gen.formatDouble(starty) + " M "
+                + gen.formatDouble(endx) + " "
                 + gen.formatDouble(endy) + " lineto stroke newpath");
     }
-    
+
     /** Saves the graphics state of the rendering engine. */
     public void saveGraphicsState() {
         endTextObject();
@@ -673,7 +673,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             handleIOTrouble(ioe);
         }
     }
-    
+
     private String getPostScriptNameForFontKey(String key) {
         int pos = key.indexOf('_');
         String postFix = null;
@@ -695,7 +695,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             return tf.getFontName() + postFix;
         }
     }
-    
+
     /**
      * Returns the PSResource for the given font key.
      * @param key the font key ("F*")
@@ -706,7 +706,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         if (this.fontResources != null) {
             res = (PSResource)this.fontResources.get(key);
         } else {
-            this.fontResources = new java.util.HashMap(); 
+            this.fontResources = new java.util.HashMap();
         }
         if (res == null) {
             res = new PSResource(PSResource.TYPE_FONT, getPostScriptNameForFontKey(key));
@@ -714,7 +714,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         }
         return res;
     }
-    
+
     /**
      * Changes the currently used font.
      * @param key key of the font ("F*")
@@ -742,15 +742,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 || area.hasTrait(Trait.BORDER_AFTER)
                 || area.hasTrait(Trait.BORDER_START)
                 || area.hasTrait(Trait.BORDER_END)) {
-            comment("%FOPBeginBackgroundAndBorder: " 
+            comment("%FOPBeginBackgroundAndBorder: "
                     + startx + " " + starty + " " + width + " " + height);
             super.drawBackAndBorders(area, startx, starty, width, height);
-            comment("%FOPEndBackgroundAndBorder"); 
+            comment("%FOPEndBackgroundAndBorder");
         }
     }
-    
+
     /** {@inheritDoc} */
-    protected void drawBorderLine(float x1, float y1, float x2, float y2, 
+    protected void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         try {
             float w = x2 - x1;
@@ -760,7 +760,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 return;
             }
             switch (style) {
-                case Constants.EN_DASHED: 
+                case Constants.EN_DASHED:
                     useColor(col);
                     if (horz) {
                         float unit = Math.abs(2 * h);
@@ -902,14 +902,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             handleIOTrouble(ioe);
         }
     }
-    
+
     /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
         log.debug("Rendering areas to PostScript...");
 
         this.outputStream = outputStream;
-        OutputStream out; 
+        OutputStream out;
         if (isOptimizeResources()) {
             this.tempFile = File.createTempFile("fop", null);
             out = new java.io.FileOutputStream(this.tempFile);
@@ -917,7 +917,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         } else {
             out = this.outputStream;
         }
-        
+
         //Setup for PostScript generation
         this.gen = new PSGenerator(out) {
             /** Need to subclass PSGenerator to have better URI resolution */
@@ -944,7 +944,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         gen.writeDSCComment(DSCConstants.BBOX, DSCConstants.ATEND);
         gen.writeDSCComment(DSCConstants.HIRES_BBOX, DSCConstants.ATEND);
         this.documentBoundingBox = new Rectangle2D.Double();
-        gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES, 
+        gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES,
                 new Object[] {DSCConstants.ATEND});
         if (headerComments != null) {
             for (Iterator iter = headerComments.iterator(); iter.hasNext();) {
@@ -988,7 +988,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             PSResource res = (PSResource)this.fontResources.get(key);
             gen.notifyResourceUsage(res);
         }*/
-        
+
         //Write trailer
         gen.writeDSCComment(DSCConstants.TRAILER);
         if (footerComments != null) {
@@ -1016,7 +1016,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             pageDeviceDictionary.clear();
         }
     }
-    
+
     /**
      * Used for two-pass production. This will rewrite the PostScript file from the temporary
      * file while adding all needed resources.
@@ -1030,7 +1030,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         in = new java.io.BufferedInputStream(in);
         try {
             try {
-                ResourceHandler.process(this.userAgent, in, this.outputStream, 
+                ResourceHandler.process(this.userAgent, in, this.outputStream,
                         this.fontInfo, resTracker, this.formResources,
                         this.currentPageNumber, this.documentBoundingBox);
                 this.outputStream.flush();
@@ -1100,7 +1100,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         }
         super.processOffDocumentItem(oDI);
     }
-    
+
     /**
      * Formats and writes a List of PSSetupCode instances to the output stream.
      * @param setupCodeList a List of PSSetupCode instances
@@ -1111,8 +1111,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             Iterator i = setupCodeList.iterator();
             while (i.hasNext()) {
                 PSSetupCode setupCode = (PSSetupCode)i.next();
-                gen.commentln("%FOPBegin" + type + ": (" 
-                        + (setupCode.getName() != null ? setupCode.getName() : "") 
+                gen.commentln("%FOPBegin" + type + ": ("
+                        + (setupCode.getName() != null ? setupCode.getName() : "")
                         + ")");
                 LineNumberReader reader = new LineNumberReader(
                         new java.io.StringReader(setupCode.getContent()));
@@ -1137,9 +1137,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         if (this.currentPageNumber == 0) {
             writeHeader();
         }
-        
+
         this.currentPageNumber++;
-        
+
         gen.getResourceTracker().notifyStartNewPage();
         gen.getResourceTracker().notifyResourceUsageOnPage(PSProcSets.STD_PROCSET);
         gen.writeDSCComment(DSCConstants.PAGE, new Object[]
@@ -1159,7 +1159,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             pageSizes.add(new Long(Math.round(pageHeight)));
         }
         pageDeviceDictionary.put("/PageSize", pageSizes);
-        
+
         if (page.hasExtensionAttachments()) {
             for (Iterator iter = page.getExtensionAttachments().iterator();
                 iter.hasNext();) {
@@ -1245,7 +1245,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             if (safeSetPageDevice) {
                 content += " SSPD";
             } else {
-                content += " setpagedevice"; 
+                content += " setpagedevice";
             }
             writeEnclosedExtensionAttachment(new PSSetPageDevice(content));
         }
@@ -1256,8 +1256,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         }
         concatMatrix(1, 0, 0, -1, 0, pageHeight);
 
-        gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);            
-    
+        gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);
+
         //Process page
         super.renderPage(page);
 
@@ -1287,7 +1287,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             comment("%FOPEndRegionViewport");
         }
     }
-    
+
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
         if (!inTextMode) {
@@ -1327,16 +1327,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 handleIOTrouble(ioe);
             }
         }
-        
+
         beginTextObject();
-        writeln("1 0 0 -1 " + gen.formatDouble(rx / 1000f) 
+        writeln("1 0 0 -1 " + gen.formatDouble(rx / 1000f)
                 + " " + gen.formatDouble(bl / 1000f) + " Tm");
-        
+
         super.renderText(area); //Updates IPD
 
         renderTextDecoration(tf, fontsize, area, bl, rx);
     }
-    
+
     /** {@inheritDoc} */
     protected void renderWord(WordArea word) {
         renderText((TextArea)word.getParentArea(), word.getWord(), word.getLetterAdjustArray());
@@ -1349,9 +1349,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         String s = space.getSpace();
         char sp = s.charAt(0);
         Font font = getFontFromArea(textArea);
-        
-        int tws = (space.isAdjustable() 
-                ? ((TextArea) space.getParentArea()).getTextWordSpaceAdjust() 
+
+        int tws = (space.isAdjustable()
+                ? ((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
                         + 2 * textArea.getTextLetterSpaceAdjust()
                 : 0);
 
@@ -1366,7 +1366,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         }
         return tf;
     }
-    
+
     private void renderText(AbstractTextArea area, String text, int[] letterAdjust) {
         String fontkey = getInternalFontNameForArea(area);
         int fontSize = area.getTraitAsInteger(Trait.FONT_SIZE);
@@ -1411,8 +1411,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         int initialSize = text.length();
         initialSize += initialSize / 2;
         StringBuffer sb = new StringBuffer(initialSize);
-        if (letterAdjust == null 
-                && area.getTextLetterSpaceAdjust() == 0 
+        if (letterAdjust == null
+                && area.getTextLetterSpaceAdjust() == 0
                 && area.getTextWordSpaceAdjust() == 0) {
             sb.append("(");
             for (int i = start; i < end; i++) {
@@ -1437,7 +1437,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 }
                 int cw = tf.getWidth(mapped, fontsize) / 1000;
                 int ladj = (letterAdjust != null && i < end - 1 ? letterAdjust[i + 1] : 0);
-                int tls = (i < end - 1 ? area.getTextLetterSpaceAdjust() : 0); 
+                int tls = (i < end - 1 ? area.getTextLetterSpaceAdjust() : 0);
                 offsets[i - start] = cw + ladj + tls + wordSpace;
                 PSGenerator.escapeChar(codepoint, sb);
             }
@@ -1479,7 +1479,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             return null;
         }
     }
-    
+
     /** {@inheritDoc} */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         try {
@@ -1496,16 +1496,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             handleIOTrouble(ioe);
         }
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         saveGraphicsState();
         if (clippingRect != null) {
-            clipRect((float)clippingRect.getX() / 1000f, 
-                    (float)clippingRect.getY() / 1000f, 
-                    (float)clippingRect.getWidth() / 1000f, 
+            clipRect((float)clippingRect.getX() / 1000f,
+                    (float)clippingRect.getY() / 1000f,
+                    (float)clippingRect.getWidth() / 1000f,
                     (float)clippingRect.getHeight() / 1000f);
         }
         // multiply with current CTM
@@ -1528,12 +1528,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         super.renderBlockViewport(bv, children);
         comment("%FOPEndBlockViewport");
     }
-    
+
     /** {@inheritDoc} */
     protected void renderInlineParent(InlineParent ip) {
         super.renderInlineParent(ip);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1545,7 +1545,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         int style = area.getRuleStyle();
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
         float starty = (currentBPPosition + area.getOffset()) / 1000f;
-        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
+        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                         + area.getIPD()) / 1000f;
         float ruleThickness = area.getRuleThickness() / 1000f;
         Color col = (Color)area.getTrait(Trait.COLOR);
@@ -1555,7 +1555,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 case EN_SOLID:
                 case EN_DASHED:
                 case EN_DOUBLE:
-                    drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                    drawBorderLine(startx, starty, endx, starty + ruleThickness,
                             true, true, style, col);
                     break;
                 case EN_DOTTED:
@@ -1563,13 +1563,13 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                     //This displaces the dots to the right by half a dot's width
                     //TODO There's room for improvement here
                     gen.concatMatrix(1, 0, 0, 1, ruleThickness / 2, 0);
-                    drawBorderLine(startx, starty, endx, starty + ruleThickness, 
+                    drawBorderLine(startx, starty, endx, starty + ruleThickness,
                             true, true, style, col);
                     break;
                 case EN_GROOVE:
                 case EN_RIDGE:
                     float half = area.getRuleThickness() / 2000f;
-    
+
                     gen.useColor(lightenColor(col, 0.6f));
                     moveTo(startx, starty);
                     lineTo(endx, starty);
@@ -1606,7 +1606,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void renderImage(Image image, Rectangle2D pos) {
         drawImage(image.getURL(), pos);
@@ -1615,7 +1615,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     /**
      * {@inheritDoc}
      */
-    protected RendererContext createRendererContext(int x, int y, int width, int height, 
+    protected RendererContext createRendererContext(int x, int y, int width, int height,
             Map foreignAttributes) {
         RendererContext context = super.createRendererContext(
                 x, y, width, height, foreignAttributes);
@@ -1631,7 +1631,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
 
     /**
      * Formats and writes a PSExtensionAttachment to the output stream.
-     * 
+     *
      * @param attachment an PSExtensionAttachment instance
      */
     private void writeEnclosedExtensionAttachment(PSExtensionAttachment attachment)
@@ -1661,7 +1661,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     /**
      * Formats and writes a Collection of PSExtensionAttachment instances to
      * the output stream.
-     * 
+     *
      * @param attachmentCollection
      *            a Collection of PSExtensionAttachment instances
      */
@@ -1677,15 +1677,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             iter.remove();
         }
     }
-    
+
     /**
      * Sets whether or not the safe set page device macro should be used
      * (as opposed to directly invoking setpagedevice) when setting the
      * postscript page device.
-     * 
+     *
      * This option is a useful option when you want to guard against the possibility
-     * of invalid/unsupported postscript key/values being placed in the page device. 
-     * 
+     * of invalid/unsupported postscript key/values being placed in the page device.
+     *
      * @param safeSetPageDevice setting to false and the renderer will make a
      * standard "setpagedevice" call, setting to true will make a safe set page
      * device macro call (default is false).
@@ -1701,14 +1701,14 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      * It can cause problems (unwanted PostScript subsystem initgraphics/erasepage calls)
      * on some printers when the pagedevice is set.  If this causes problems on a
      * particular implementation then use this setting with a 'false' value to try and
-     * minimize the number of setpagedevice calls in the postscript document output. 
+     * minimize the number of setpagedevice calls in the postscript document output.
      * <p>
      * Set this value to false if you experience unwanted blank pages in your
      * postscript output.
      * @param dscCompliant boolean value (default is true)
      */
     public void setDSCCompliant(boolean dscCompliant) {
-        this.dscCompliant = dscCompliant;        
+        this.dscCompliant = dscCompliant;
     }
 
 }

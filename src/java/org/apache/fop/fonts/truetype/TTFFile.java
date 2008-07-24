@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -111,7 +111,7 @@ public class TTFFile {
 
     private int[] ansiWidth;
     private Map ansiIndex;
-    
+
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
     private Map glyphToUnicodeMap = new java.util.HashMap();
@@ -120,12 +120,12 @@ public class TTFFile {
     private TTFDirTabEntry currentDirTab;
 
     private boolean isCFF;
-    
+
     /**
      * logging instance
      */
     protected Log log = LogFactory.getLog(TTFFile.class);
-    
+
     /**
      * Key-value helper class
      */
@@ -186,7 +186,7 @@ public class TTFFile {
         if (n < 0) {
             long rest1 = n % upem;
             long storrest = 1000 * rest1;
-            long ledd2 = (storrest != 0 ? rest1 / storrest : 0);  
+            long ledd2 = (storrest != 0 ? rest1 / storrest : 0);
             ret = -((-1000 * n) / upem - (int)ledd2);
         } else {
             ret = (n / upem) * 1000 + ((n % upem) * 1000) / upem;
@@ -329,7 +329,7 @@ public class TTFFile {
                                 Iterator e = v.listIterator();
                                 while (e.hasNext()) {
                                     Integer aIdx = (Integer)e.next();
-                                    ansiWidth[aIdx.intValue()] 
+                                    ansiWidth[aIdx.intValue()]
                                         = mtxTab[glyphIdx].getWx();
 
                                     if (log.isTraceEnabled()) {
@@ -754,7 +754,7 @@ public class TTFFile {
     public boolean isCFF() {
        return this.isCFF;
     }
-    
+
     /**
      * Read Table Directory from the current position in the
      * FontFileReader and fill the global HashMap dirTabs
@@ -840,11 +840,11 @@ public class TTFFile {
     protected void readHorizontalHeader(FontFileReader in)
             throws IOException {
         seekTab(in, "hhea", 4);
-        hheaAscender = in.readTTFShort(); 
+        hheaAscender = in.readTTFShort();
         log.debug("hhea.Ascender: " + hheaAscender + " " + convertTTFUnit2PDFUnit(hheaAscender));
         hheaDescender = in.readTTFShort();
         log.debug("hhea.Descender: " + hheaDescender + " " + convertTTFUnit2PDFUnit(hheaDescender));
-        
+
         in.skip(2 + 2 + 3 * 2 + 8 * 2);
         nhmtx = in.readTTFUShort();
         log.debug("Number of horizontal metrics: " + nhmtx);
@@ -988,10 +988,10 @@ public class TTFFile {
         if (dirTabs.get("OS/2") != null) {
             seekTab(in, "OS/2", 2 * 2);
             this.usWeightClass = in.readTTFUShort();
-            
+
             // usWidthClass
             in.skip(2);
-            
+
             int fsType = in.readTTFUShort();
             if (fsType == 2) {
                 isEmbeddable = false;
@@ -1005,10 +1005,10 @@ public class TTFFile {
             in.skip(3 * 2);
             int v;
             os2Ascender = in.readTTFShort(); //sTypoAscender
-            log.debug("sTypoAscender: " + os2Ascender 
+            log.debug("sTypoAscender: " + os2Ascender
                         + " " + convertTTFUnit2PDFUnit(os2Ascender));
             os2Descender = in.readTTFShort(); //sTypoDescender
-            log.debug("sTypoDescender: " + os2Descender 
+            log.debug("sTypoDescender: " + os2Descender
                         + " " + convertTTFUnit2PDFUnit(os2Descender));
             v = in.readTTFShort(); //sTypoLineGap
             log.debug("sTypoLineGap: " + v);
@@ -1021,7 +1021,7 @@ public class TTFFile {
             log.debug("sxHeight: " + this.os2xHeight);
             this.os2CapHeight = in.readTTFShort(); //sCapHeight
             log.debug("sCapHeight: " + this.os2CapHeight);
-            
+
         } else {
             isEmbeddable = true;
         }
@@ -1123,7 +1123,7 @@ public class TTFFile {
             int k = in.readTTFUShort();
             int l = in.readTTFUShort();
 
-            if (((platformID == 1 || platformID == 3) 
+            if (((platformID == 1 || platformID == 3)
                     && (encodingID == 0 || encodingID == 1))) {
                 in.seekSet(j + in.readTTFUShort());
                 String txt;
@@ -1132,9 +1132,9 @@ public class TTFFile {
                 } else {
                     txt = in.readTTFString(l);
                 }
-                
+
                 if (log.isDebugEnabled()) {
-                    log.debug(platformID + " " 
+                    log.debug(platformID + " "
                             + encodingID + " "
                             + languageID + " "
                             + k + " " + txt);
@@ -1182,11 +1182,11 @@ public class TTFFile {
         if (dirTab != null) {
             in.seekSet(dirTab.getOffset() + 4 + 4 + 2);
             xHeight = in.readTTFUShort();
-            log.debug("xHeight from PCLT: " + xHeight 
+            log.debug("xHeight from PCLT: " + xHeight
                             + " " + convertTTFUnit2PDFUnit(xHeight));
             in.skip(2 * 2);
             capHeight = in.readTTFUShort();
-            log.debug("capHeight from PCLT: " + capHeight 
+            log.debug("capHeight from PCLT: " + capHeight
                             + " " + convertTTFUnit2PDFUnit(capHeight));
             in.skip(2 + 16 + 8 + 6 + 1 + 1);
 
@@ -1211,7 +1211,7 @@ public class TTFFile {
      * the hhea values are defined after the Apple interpretation, but not in every font. The
      * same problem is in the OS/2 table. FOP needs the ascender and descender to determine the
      * baseline so we need values which add up more or less to the "em box". However, due to
-     * accent modifiers a character can grow beyond the em box. 
+     * accent modifiers a character can grow beyond the em box.
      */
     private void determineAscDesc() {
         int hheaBoxHeight = hheaAscender - hheaDescender;
@@ -1279,7 +1279,7 @@ public class TTFFile {
                 }
             }
         }
-        log.debug("Ascender from glyph 'd': " + localAscender 
+        log.debug("Ascender from glyph 'd': " + localAscender
                 + " " + convertTTFUnit2PDFUnit(localAscender));
         log.debug("Descender from glyph 'p': " + localDescender
                 + " " + convertTTFUnit2PDFUnit(localDescender));
@@ -1351,7 +1351,7 @@ public class TTFFile {
                         final Integer u2 = glyphToUnicode(j);
                         if (iObj == null) {
                             // happens for many fonts (Ubuntu font set),
-                            // stray entries in the kerning table?? 
+                            // stray entries in the kerning table??
                             log.debug("Ignoring kerning pair because no Unicode index was"
                                     + " found for the first glyph " + i);
                         } else if (u2 == null) {
@@ -1370,7 +1370,7 @@ public class TTFFile {
             }
 
             // Create winAnsiEncoded kerning table from kerningTab
-            // (could probably be simplified, for now we remap back to CID indexes and 
+            // (could probably be simplified, for now we remap back to CID indexes and
             // then to winAnsi)
             Iterator ae = kerningTab.keySet().iterator();
             while (ae.hasNext()) {
@@ -1534,7 +1534,7 @@ public class TTFFile {
             return null;
         }
     }
-    
+
     /*
      * Helper classes, they are not very efficient, but that really
      * doesn't matter...
@@ -1580,7 +1580,7 @@ public class TTFFile {
 
     /**
      * Map a glyph index to the corresponding unicode code point
-     * 
+     *
      * @param glyphIndex
      * @return unicode code point
      * @throws IOException if glyphIndex not found
@@ -1588,10 +1588,10 @@ public class TTFFile {
     private Integer glyphToUnicode(int glyphIndex) throws IOException {
         return (Integer) glyphToUnicodeMap.get(new Integer(glyphIndex));
     }
-    
+
     /**
-     * Map a unicode code point to the corresponding glyph index 
-     * 
+     * Map a unicode code point to the corresponding glyph index
+     *
      * @param unicodeIndex unicode code point
      * @return glyph index
      * @throws IOException if unicodeIndex not found
@@ -1605,7 +1605,7 @@ public class TTFFile {
         }
         return result;
     }
-    
+
     /**
      * Static main method to get info about a TrueType font.
      * @param args The command line arguments

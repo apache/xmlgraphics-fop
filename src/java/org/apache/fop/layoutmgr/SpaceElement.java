@@ -30,7 +30,7 @@ import org.apache.fop.traits.MinOptMax;
 public class SpaceElement extends UnresolvedListElementWithLength {
 
     private int precedence;
-    
+
     /**
      * Main constructor
      * @param position the Position instance needed by the addAreas stage of the LMs.
@@ -40,21 +40,21 @@ public class SpaceElement extends UnresolvedListElementWithLength {
      * @param isLast true if this is a space-after of the last area generated.
      * @param context the property evaluation context
      */
-    public SpaceElement(Position position, SpaceProperty space, RelSide side, 
+    public SpaceElement(Position position, SpaceProperty space, RelSide side,
             boolean isFirst, boolean isLast,
             PercentBaseContext context) {
-        super(position, 
+        super(position,
                 MinOptMaxUtil.toMinOptMax(
-                        space.getSpace().getLengthRange(), 
+                        space.getSpace().getLengthRange(),
                 context), side, space.isDiscard(), isFirst, isLast);
         int en = space.getSpace().getPrecedence().getEnum();
         if (en == Constants.EN_FORCE) {
             this.precedence = Integer.MAX_VALUE;
         } else {
-            this.precedence = space.getSpace().getPrecedence().getNumber().intValue(); 
+            this.precedence = space.getSpace().getPrecedence().getNumber().intValue();
         }
     }
-    
+
     /** @return true if the space is forcing. */
     public boolean isForcing() {
         return this.precedence == Integer.MAX_VALUE;
@@ -64,7 +64,7 @@ public class SpaceElement extends UnresolvedListElementWithLength {
     public int getPrecedence() {
         return this.precedence;
     }
-    
+
     /** {@inheritDoc} */
     public void notifyLayoutManager(MinOptMax effectiveLength) {
         LayoutManager lm = getOriginatingLayoutManager();
@@ -72,11 +72,11 @@ public class SpaceElement extends UnresolvedListElementWithLength {
             ((ConditionalElementListener)lm).notifySpace(
                     getSide(), effectiveLength);
         } else {
-            log.warn("Cannot notify LM. It does not implement ConditionalElementListener:" 
+            log.warn("Cannot notify LM. It does not implement ConditionalElementListener:"
                     + lm.getClass().getName());
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("Space[");
