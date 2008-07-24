@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.render.afp.modca.AFPConstants;
+import org.apache.fop.render.afp.AFPConstants;
 import org.apache.fop.render.afp.tools.StringUtils;
 
 /**

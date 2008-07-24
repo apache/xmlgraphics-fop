@@ -21,7 +21,7 @@ package org.apache.fop.render.afp.modca.triplets;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.fop.render.afp.modca.AFPConstants;
+import org.apache.fop.render.afp.AFPConstants;
 import org.apache.fop.render.afp.modca.Registry;
 import org.apache.fop.render.afp.tools.StringUtils;
 

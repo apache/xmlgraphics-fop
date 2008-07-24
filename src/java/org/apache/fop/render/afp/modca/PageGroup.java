@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.fop.render.afp.modca.resource.ResourceManager;
+
 /**
  * A page group is used in the data stream to define a named, logical grouping
  * of sequential pages. Page groups are delimited by begin-end structured fields
@@ -34,24 +36,20 @@ import java.util.List;
  */
 public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
 
-    /**
-     * The tag logical elements contained within this group
-     */
+    /** The tag logical elements contained within this group */
     private List tagLogicalElements = null;
 
-    /**
-     * The page state
-     */
+    /** The page state */
     private boolean complete = false;
 
     /**
      * Constructor for the PageGroup.
-     *
-     * @param name
-     *            the name of the page group
+     * 
+     * @param manager the resource manager
+     * @param name the name of the page group
      */
-    public PageGroup(String name) {
-        super(name);
+    public PageGroup(ResourceManager manager, String name) {
+        super(manager, name);
     }
 
     private List getTagLogicalElements() {

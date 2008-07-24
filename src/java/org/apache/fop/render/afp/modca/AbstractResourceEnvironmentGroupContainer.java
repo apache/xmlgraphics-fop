@@ -22,6 +22,8 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.modca.resource.ResourceManager;
+
 /**
  * An abstract class which encapsulates the common features of 
  * Document and PageGroup resource containers 
@@ -37,10 +39,11 @@ public abstract class AbstractResourceEnvironmentGroupContainer
     /**
      * Main constructor
      * 
+     * @param resourceManager the resource manager 
      * @param name the name of this resource container
      */
-    public AbstractResourceEnvironmentGroupContainer(String name) {
-        super(name);
+    public AbstractResourceEnvironmentGroupContainer(ResourceManager resourceManager, String name) {
+        super(resourceManager, name);
     }
 
     /**

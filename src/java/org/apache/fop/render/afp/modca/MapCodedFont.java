@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.fop.render.afp.AFPConstants;
 import org.apache.fop.render.afp.exceptions.FontRuntimeException;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.fonts.CharacterSet;

@@ -17,12 +17,13 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.modca.resource;
 
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.fop.render.afp.GraphicsObjectInfo;
 import org.apache.fop.render.afp.GraphicsObjectPainter;
@@ -30,35 +31,98 @@ import org.apache.fop.render.afp.ImageObjectInfo;
 import org.apache.fop.render.afp.ObjectAreaInfo;
 import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.ResourceLevel;
+import org.apache.fop.render.afp.modca.AbstractDataObject;
+import org.apache.fop.render.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.render.afp.modca.Document;
+import org.apache.fop.render.afp.modca.GraphicsObject;
+import org.apache.fop.render.afp.modca.ImageContent;
+import org.apache.fop.render.afp.modca.ImageObject;
+import org.apache.fop.render.afp.modca.IncludeObject;
+import org.apache.fop.render.afp.modca.ObjectContainer;
+import org.apache.fop.render.afp.modca.Overlay;
+import org.apache.fop.render.afp.modca.PageGroup;
+import org.apache.fop.render.afp.modca.PageObject;
+import org.apache.fop.render.afp.modca.PageSegment;
+import org.apache.fop.render.afp.modca.Registry;
+import org.apache.fop.render.afp.modca.ResourceGroup;
+import org.apache.fop.render.afp.modca.ResourceObject;
 import org.apache.fop.render.afp.modca.Registry.ObjectType;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.tools.StringUtils;
+
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
 
 /**
  * Creator of MO:DCA data objects
  */
-public class DataObjectFactory {
+public class ResourceFactory {
+
+    /** Static logging instance */
+    private static final Log log = LogFactory.getLog(ResourceFactory.class);
+
     private static final String IMAGE_NAME_PREFIX = "IMG";
+
     private static final String GRAPHIC_NAME_PREFIX = "GRA";
-//    private static final String BARCODE_NAME_PREFIX = "BAR";
+
+    private static final String BARCODE_NAME_PREFIX = "BAR";
+    
 //    private static final String OTHER_NAME_PREFIX = "OTH";
+
     private static final String OBJECT_CONTAINER_NAME_PREFIX = "OC";
+
     private static final String RESOURCE_NAME_PREFIX = "RES";
 
-    private int imageCount = 0;
-    private int graphicCount = 0;
-    private int objectContainerCount = 0;
-    private int resourceCount = 0;
+    /** Default name for the resource group */
+    private static final String RESOURCE_GROUP_NAME_PREFIX = "RG";
+    
+    private static final String PAGE_GROUP_NAME_PREFIX = "PGP";
+
+    private static final String PAGE_NAME_PREFIX = "PGN";
+
+    private static final String OVERLAY_NAME_PREFIX = "OVL";
+
     
     private Map/*<ResourceInfo,IncludeObject>*/ includeMap
         = new java.util.HashMap/*<ResourceInfo,IncludeObject>*/();
     
-    /** Static logging instance */
-    private static final Log log = LogFactory.getLog(DataObjectFactory.class);
+    private ResourceManager manager;
+
     
+    /** The page group count */
+    private int pageGroupCount = 0;
+    
+    /** The page count */
+    private int pageCount = 0;
+
+    /** The image count */
+    private int imageCount = 0;
+
+    /** The graphic count */
+    private int graphicCount = 0;
+
+    /** The object container count */
+    private int objectContainerCount = 0;
+
+    /** The resource count */
+    private int resourceCount = 0;
+
+    /** The resource group count */
+    private int resourceGroupCount = 0;
+
+    /** The overlay count */
+    private int overlayCount = 0;
+        
+    /**
+     * Main constructor
+     * 
+     * @param resourceManager the resource manager
+     */
+    public ResourceFactory(ResourceManager resourceManager) {
+        this.manager = resourceManager;
+    }
+
     /**
      * Converts a byte array containing 24 bit RGB image data to a grayscale
      * image.
@@ -184,6 +248,38 @@ public class DataObjectFactory {
     }
 
     /**
+     * Creates and returns a new object container
+     * 
+     * @return a new object container
+     */
+    private ObjectContainer createObjectContainer() {
+        String name = OBJECT_CONTAINER_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++objectContainerCount), '0', 6);
+        return new ObjectContainer(name);
+    }
+
+    /**
+     * Creates and returns a new resource object
+     * 
+     * @param resourceName the resource name
+     * @return a new resource object
+     */
+    private ResourceObject createResource(String resourceName) {
+        return new ResourceObject(resourceName);
+    }
+
+    /**
+     * Creates and returns a new resource object
+     * 
+     * @return a new resource object
+     */
+    private ResourceObject createResource() {
+        String name = RESOURCE_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++resourceCount), '0', 5);
+        return createResource(name);
+    }
+
+    /**
      * Creates and returns a new include object.
      * 
      * @param name the name of this include object
@@ -231,42 +327,55 @@ public class DataObjectFactory {
     }
 
     /**
-     * Creates and returns a new object container
+     * Creates and returns a new page group
      * 
-     * @return a new object container
+     * @return a new page group object
      */
-    private ObjectContainer createObjectContainer() {
-        String name = OBJECT_CONTAINER_NAME_PREFIX
-        + StringUtils.lpad(String.valueOf(++objectContainerCount), '0', 6);
-        return new ObjectContainer(name);
-    }
-
-    /**
-     * Creates and returns a new resource object
-     * 
-     * @param resourceName the resource name
-     * @return a new resource object
-     */
-    private ResourceObject createResource(String resourceName) {
-        return new ResourceObject(resourceName);
-    }
+    public PageGroup createPageGroup() {
+        String name = PAGE_GROUP_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++pageGroupCount), '0', 5);
+        return new PageGroup(manager, name);
+    }    
 
     /**
      * Creates and returns a new resource object
      * 
      * @return a new resource object
      */
-    private ResourceObject createResource() {
-        String name = RESOURCE_NAME_PREFIX
-        + StringUtils.lpad(String.valueOf(++resourceCount ), '0', 5);
-        return createResource(name);
+    public ResourceGroup createResourceGroup() {
+        String name = RESOURCE_GROUP_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++resourceGroupCount), '0', 6);
+        return new ResourceGroup(manager, name);
     }
+    
+    /**
+     * Creates and returns a new page object
+     * 
+     * @param pageWidth
+     *            the width of the page
+     * @param pageHeight
+     *            the height of the page
+     * @param pageRotation
+     *            the rotation of the page
+     * @param pageWidthRes
+     *            the width resolution of the page
+     * @param pageHeightRes
+     *            the height resolution of the page
+     * 
+     * @return a new page object
+     */
+    public PageObject createPage(int pageWidth, int pageHeight, int pageRotation,
+            int pageWidthRes, int pageHeightRes) {
+        String pageName = PAGE_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++pageCount), '0', 5);
+        return new PageObject(manager, pageName, pageWidth, pageHeight,
+            pageRotation, pageWidthRes, pageHeightRes);
+    }
+
 
     /**
      * Creates and returns a new Overlay.
      *
-     * @param overlayName
-     *            the name of the overlay
      * @param width
      *            the width of the overlay
      * @param height
@@ -280,13 +389,24 @@ public class DataObjectFactory {
      * 
      * @return a new overlay object
      */
-    public Overlay createOverlay(String overlayName, int width, int height,
+    public Overlay createOverlay(int width, int height,
             int widthRes, int heightRes, int overlayRotation) {
-        Overlay overlay = new Overlay(overlayName, width, height,
+        String overlayName = OVERLAY_NAME_PREFIX
+        + StringUtils.lpad(String.valueOf(++overlayCount), '0', 5);
+        Overlay overlay = new Overlay(manager, overlayName, width, height,
                 overlayRotation, widthRes, heightRes);
         return overlay;        
     }
     
+    /**
+     * Creates a new MO:DCA document object
+     * 
+     * @return a new MO:DCA document object
+     */
+    public Document createDocument() {
+        return new Document(manager);
+    }
+
     /**
      * Creates and returns a new data object
      * 
@@ -294,7 +414,7 @@ public class DataObjectFactory {
      * 
      * @return a newly created data object
      */
-    public AbstractNamedAFPObject createObject(DataObjectInfo dataObjectInfo) {
+    public AbstractNamedAFPObject create(DataObjectInfo dataObjectInfo) {
         AbstractNamedAFPObject dataObj;
         
         if (dataObjectInfo instanceof ImageObjectInfo) {
@@ -334,17 +454,17 @@ public class DataObjectFactory {
                     }
                     
                     if (dataObj instanceof ObjectContainer) {
-                        resourceObj.setType(ResourceObject.OBJECT_CONTAINER);
+                        resourceObj.setType(ResourceObject.TYPE_OBJECT_CONTAINER);
                     } else if (dataObj instanceof ImageObject) {
-                        resourceObj.setType(ResourceObject.IMAGE_OBJECT);
+                        resourceObj.setType(ResourceObject.TYPE_IMAGE);
                     } else if (dataObj instanceof GraphicsObject) {
-                        resourceObj.setType(ResourceObject.GRAPHICS_OBJECT);
+                        resourceObj.setType(ResourceObject.TYPE_GRAPHIC);
                     } else if (dataObj instanceof Document) {
-                        resourceObj.setType(ResourceObject.DOCUMENT_OBJECT);
+                        resourceObj.setType(ResourceObject.TYPE_DOCUMENT);
                     } else if (dataObj instanceof PageSegment) {
-                        resourceObj.setType(ResourceObject.PAGE_SEGMENT_OBJECT);
+                        resourceObj.setType(ResourceObject.TYPE_PAGE_SEGMENT);
                     } else if (dataObj instanceof Overlay) {
-                        resourceObj.setType(ResourceObject.OVERLAY_OBJECT);
+                        resourceObj.setType(ResourceObject.TYPE_OVERLAY_OBJECT);
                     } else {
                         throw new UnsupportedOperationException(
                           "Unsupported resource object type " + dataObj);
@@ -361,5 +481,5 @@ public class DataObjectFactory {
         }
         
         return dataObj;
-    }    
+    }
 }

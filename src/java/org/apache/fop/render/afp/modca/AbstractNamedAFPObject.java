@@ -21,6 +21,8 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.fop.render.afp.AFPConstants;
+
 /**
  * This is the base class for all named data stream objects.
  * A named data stream object has an 8 byte EBCIDIC name.

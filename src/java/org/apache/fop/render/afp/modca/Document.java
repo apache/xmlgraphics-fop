@@ -22,6 +22,8 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.modca.resource.ResourceManager;
+
 /**
  * The document is the highest level of the MO:DCA data-stream document
  * component hierarchy. Documents can be made up of pages, and the pages,
@@ -61,17 +63,20 @@ public final class Document extends AbstractResourceEnvironmentGroupContainer {
 
     /**
      * Default constructor for the document object.
+     * @param resourceManager the resource manager
      */
-    public Document() {
-        this(DEFAULT_NAME);
+    public Document(ResourceManager resourceManager) {
+        this(resourceManager, DEFAULT_NAME);
     }
 
     /**
      * Constructor for the document object.
-     * @param name The name of the document
+     * 
+     * @param resourceManager the resource manager
+     * @param name the name of the document
      */
-    public Document(String name) {
-        super(name);
+    public Document(ResourceManager resourceManager, String name) {
+        super(resourceManager, name);
     }
 
     /**

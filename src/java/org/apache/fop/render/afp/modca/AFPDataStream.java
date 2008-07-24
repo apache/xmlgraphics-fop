@@ -32,14 +32,14 @@ import org.apache.fop.render.afp.AFPFontAttributes;
 import org.apache.fop.render.afp.LineDataInfo;
 import org.apache.fop.render.afp.TextDataInfo;
 import org.apache.fop.render.afp.DataObjectInfo;
-import org.apache.fop.render.afp.ExternalResourceGroupManager;
 import org.apache.fop.render.afp.ObjectAreaInfo;
 import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.ResourceLevel;
-import org.apache.fop.render.afp.DataObjectCache;
 import org.apache.fop.render.afp.fonts.AFPFont;
+import org.apache.fop.render.afp.modca.resource.ResourceFactory;
+import org.apache.fop.render.afp.modca.resource.ResourceManager;
+import org.apache.fop.render.afp.modca.resource.StoreInfo;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
-import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
  * A data stream is a continuous ordered stream of data elements and objects
@@ -83,15 +83,6 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     /** The current page */
     private AbstractPageObject currentPage = null;
 
-    /** The page count */
-    private int pageCount = 0;
-
-    /** The page group count */
-    private int pageGroupCount = 0;
-
-    /** The overlay count */
-    private int overlayCount = 0;
-
     /** The portrait rotation */
     private int portraitRotation = 0;
 
@@ -111,18 +102,15 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     private InterchangeSet interchangeSet
         = InterchangeSet.valueOf(InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
 
-    private DataObjectCache cache = DataObjectCache.getInstance();
-
-    /**
-     * The external resource group manager
-     */
-    private ExternalResourceGroupManager externalResourceGroupManager = null;
+    private ResourceFactory factory;
 
     /**
      * Default constructor for the AFPDataStream.
      */
     public AFPDataStream() {
-        this.document = new Document();
+        this.resourceManager = new ResourceManager();
+        this.factory = resourceManager.getFactory();
+        this.document = factory.createDocument();
     }
 
     /**
@@ -188,7 +176,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
         if (interchangeSet.supportsLevel2()) {
             // Write out any external resource groups
-            getExternalResourceGroupManager().write();
+            resourceManager.writeExternal();
 
             // Write out any print-file level resources
             if (hasResources()) {
@@ -210,7 +198,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
         this.outputStream = null;
 
-        cache.clear();
+        this.resourceManager.clearStore();
+        
+        this.resourceManager = null;
     }
 
     /**
@@ -230,11 +220,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void startPage(int pageWidth, int pageHeight, int pageRotation,
             int pageWidthRes, int pageHeightRes) {
-        String pageName = "PGN"
-                + StringUtils.lpad(String.valueOf(++pageCount), '0', 5);
-
-        currentPageObject = new PageObject(pageName, pageWidth, pageHeight,
-                pageRotation, pageWidthRes, pageHeightRes);
+        currentPageObject = factory.createPage(pageWidth, pageHeight,
+                pageRotation, pageWidthRes, pageHeightRes);        
         currentPage = currentPageObject;
         currentOverlay = null;
     }
@@ -261,13 +248,10 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void startOverlay(int x, int y, int width, int height, int widthRes,
             int heightRes, int overlayRotation) {
-        String overlayName = "OVL"
-                + StringUtils.lpad(String.valueOf(++overlayCount), '0', 5);
-
-        DataObjectFactory factory = cache.getFactory();
         this.currentOverlay = factory.createOverlay(
-                overlayName, width, height, widthRes, heightRes, overlayRotation);
+                width, height, widthRes, heightRes, overlayRotation);
 
+        String overlayName = currentOverlay.getName();
         currentPageObject.createIncludePageOverlay(overlayName, x, y, 0);
         currentPage = currentOverlay;
     }
@@ -400,10 +384,11 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      * Creates a data object in the datastream. The data object resides
      * according to its type, info and MO:DCA-L (resource) support.
      *
-     * @param dataObjectInfo
-     *            the data object info
+     * @param dataObjectInfo the data object info
+     *            
+     * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
-    public void createObject(DataObjectInfo dataObjectInfo) {
+    public void createObject(DataObjectInfo dataObjectInfo) throws IOException {
         ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         String uri = resourceInfo.getUri();
 
@@ -432,7 +417,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             log.info("Unknown object type for '" + dataObjectInfo + "'");
         }
         
-        DataObjectCache.Record record = cache.store(dataObjectInfo);
+        StoreInfo storeInfo = resourceManager.create(dataObjectInfo);
 
         if (objectType != null) {
             
@@ -446,14 +431,13 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
                 if (objectType.isIncludable()) {
                     
                     // Create and return include
-                    DataObjectFactory factory = cache.getFactory();
-                    String objectName = record.getObjectName();
+                    String objectName = storeInfo.getObjectName();
                     IncludeObject includeObj = factory.createInclude(objectName, dataObjectInfo);
                     getCurrentPage().addObject(includeObj);
                     
                     // Record the resource cache key (uri) in the ResourceGroup
                     ResourceGroup resourceGroup = getResourceGroup(resourceLevel);
-                    resourceGroup.addObject(record);
+                    resourceGroup.addObject(storeInfo);
                     return;   
                 } else {
                     log.warn("Data object located at '" + uri + "'"
@@ -469,7 +453,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             }
         }
         // Unrecognised/unsupported object type so add object reference directly in current page
-        currentPageObject.addObject(record);
+        currentPageObject.addObject(storeInfo);
     }
 
 //    /**
@@ -682,10 +666,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     private PageGroup getCurrentPageGroup() {
         if (currentPageGroup == null) {
-            String pageGroupName = "PGP"
-                    + StringUtils
-                            .lpad(String.valueOf(++pageGroupCount), '0', 5);
-            this.currentPageGroup = new PageGroup(pageGroupName);
+            this.currentPageGroup = factory.createPageGroup();
         }
         return currentPageGroup;
     }
@@ -748,20 +729,20 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      * @param filePath the default resource group file path
      */
     public void setDefaultResourceGroupFilePath(String filePath) {
-        getExternalResourceGroupManager().setDefaultResourceGroupFilePath(filePath);
+        resourceManager.getExternalManager().setDefaultFilePath(filePath);
     }
 
-    /**
-     * Returns the external resource group manager
-     * 
-     * @return the resource group manager
-     */
-    protected ExternalResourceGroupManager getExternalResourceGroupManager() {
-        if (externalResourceGroupManager == null) {
-            this.externalResourceGroupManager = new ExternalResourceGroupManager();
-        }
-        return this.externalResourceGroupManager;
-    }
+//    /**
+//     * Returns the external resource group manager
+//     * 
+//     * @return the resource group manager
+//     */
+//    protected ExternalResourceGroupManager getExternalResourceGroupManager() {
+//        if (externalResourceGroupManager == null) {
+//            this.externalResourceGroupManager = new ExternalResourceGroupManager();
+//        }
+//        return this.externalResourceGroupManager;
+//    }
 
     /**
      * Returns the resource group for a given resource info
@@ -772,7 +753,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     private ResourceGroup getResourceGroup(ResourceLevel level) {
         ResourceGroup resourceGroup = null;
         if (level.isExternal()) {
-            resourceGroup = getExternalResourceGroupManager().getResourceGroup(level);
+            resourceGroup = resourceManager.getExternalManager().getResourceGroup(level);
             // use print-file level resource group in the absence
             // of an external resource group file definition
             if (resourceGroup == null) {

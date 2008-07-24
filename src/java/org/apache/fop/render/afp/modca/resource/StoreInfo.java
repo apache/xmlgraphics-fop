@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,37 +17,35 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.modca.resource;
 
 /**
- * Constants used by the AFP renderer.
- *
+ * Store save information
  */
-public interface AFPConstants {
+public class StoreInfo {
+    /** data position */
+    protected long position; 
 
-    /**
-     * The encoding to use to convert to EBCIDIC
-     */
-    String EBCIDIC_ENCODING = "Cp1146";
-
-    /**
-     * The encoding to use to convert to ASCII
-     */
-    String ASCII_ENCODING = "Cp1252";
-
-    /**
-     * The encoding to use to convert to US ASCII (7 bit)
-     */
-    String US_ASCII_ENCODING = "US-ASCII";
+    /** data chunk size */
+    protected int size;
+    
+    /** name of data object */
+    protected String objectName;
     
     /**
-     * The scaling of the default transform is set to
-     * approximately 72 user space coordinates per square inch
+     * Returns the object name
+     * 
+     * @return the object name
      */
-    int DPI_72 = 72;
-    
-    /**
-     * 72dpi in millipoints
-     */
-    int DPI_72_MPTS = DPI_72 * 1000;
+    public String getObjectName() {
+        return this.objectName;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "StoreInfo{name=" + objectName
+            + ", pos=" + position
+            + ", size=" + size
+            + "}";
+    }    
 }

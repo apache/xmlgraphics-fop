@@ -98,21 +98,33 @@ public class ResourceObject extends AbstractPreparedAFPObject {
         getTriplets().add(new ResourceObjectTypeTriplet(type));
     }
 
-    /**
-     * Resource object types
-     */
-    protected static final byte GRAPHICS_OBJECT = 0x03;
-//    private static final byte BARCODE_OBJECT = 0x05;
-    protected static final byte IMAGE_OBJECT = 0x06;
-//    private static final byte FONT_CHARACTER_SET_OBJECT = 0x40;
-//    private static final byte CODE_PAGE_OBJECT = 0x41;
-//    private static final byte CODED_FONT_OBJECT = 0x42;
-    protected static final byte OBJECT_CONTAINER = (byte) 0x92;
-    protected static final byte DOCUMENT_OBJECT = (byte) 0xA8;
-    protected static final byte PAGE_SEGMENT_OBJECT = (byte) 0xFB;
-    protected static final byte OVERLAY_OBJECT = (byte) 0xFC;
-//    private static final byte PAGEDEF_OBJECT = (byte) 0xFD;
-//    private static final byte FORMDEF_OBJECT = (byte) 0xFE;
+    /** graphics object type */
+    public static final byte TYPE_GRAPHIC = 0x03;
+    
+    /** barcode object type */
+    public static final byte BARCODE = 0x05;
+
+    /** image object type */
+    public static final byte TYPE_IMAGE = 0x06;
+    
+//    private static final byte FONT_CHARACTER_SET = 0x40;
+//    private static final byte CODE_PAGE = 0x41;
+//    private static final byte CODED_FONT = 0x42;
+    
+    /** object container type */
+    public static final byte TYPE_OBJECT_CONTAINER = (byte) 0x92;
+
+    /** document object type */
+    public static final byte TYPE_DOCUMENT = (byte) 0xA8;
+
+    /** page segment object type */
+    public static final byte TYPE_PAGE_SEGMENT = (byte) 0xFB;
+
+    /** overlay object type */
+    public static final byte TYPE_OVERLAY_OBJECT = (byte) 0xFC;
+    
+//    private static final byte PAGEDEF = (byte) 0xFD;
+//    private static final byte FORMDEF = (byte) 0xFE;
 
     private class ResourceObjectTypeTriplet extends Triplet {
 
@@ -122,7 +134,7 @@ public class ResourceObject extends AbstractPreparedAFPObject {
          * Main constructor
          * 
          * @param type
-         *            the resource type
+         *            the resource objec type
          */
         public ResourceObjectTypeTriplet(byte type) {
             super(RESOURCE_OBJECT,

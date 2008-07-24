@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.geom.AffineTransform;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -272,6 +274,27 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         return ((AFPData)getData()).imageUri;
     }
 
+    /**
+     * Returns the current orientation
+     * 
+     * @return the current orientation
+     */
+    public int getOrientation() {
+        AffineTransform at = getData().getTransform();
+        int orientation = 0;
+        if (at.getScaleX() == 0 && at.getScaleY() == 0
+                && at.getShearX() == 1 && at.getShearY() == -1) {
+            orientation = 90;
+        } else if (at.getScaleX() == -1 && at.getScaleY() == -1
+                && at.getShearX() == 0 && at.getShearY() == 0) {
+            orientation = 180;
+        } else if (at.getScaleX() == 0 && at.getScaleY() == 0
+                && at.getShearX() == -1 && at.getShearY() == 1) {
+            orientation = 270;
+        }
+        return orientation;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "AFPState{portraitRotation=" + portraitRotation
@@ -399,14 +422,4 @@ public class AFPState extends org.apache.fop.render.AbstractState {
             + "}";
         }
     }
-
-    /**
-     * Returns the current text orientation
-     * TODO the current text orientation
-     * @return the current text orientation
-     */
-    public int getOrientation() {
-        return 0;
-    }
-
 }

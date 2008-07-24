@@ -24,8 +24,9 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.fop.render.afp.DataObjectCache;
-import org.apache.fop.render.afp.DataObjectCache.Record;
+import org.apache.fop.render.afp.modca.resource.ResourceManager;
+import org.apache.fop.render.afp.modca.resource.ResourceStore;
+import org.apache.fop.render.afp.modca.resource.StoreInfo;
 
 /**
  * A Resource Group contains a set of overlays.
@@ -38,13 +39,13 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     /** Set of resource uri */
     private Set/*<String>*/ resourceSet = new java.util.HashSet/*<String>*/();
 
-    private DataObjectCache cache = DataObjectCache.getInstance();
-
+    private ResourceManager resourceManager;
+    
     /**
      * Default constructor
      */
-    public ResourceGroup() {
-        this(DEFAULT_NAME);
+    public ResourceGroup(ResourceManager resourceManager) {
+        this(resourceManager, DEFAULT_NAME);
     }
 
     /**
@@ -52,9 +53,11 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * name parameter which must be 8 characters long.
      * 
      * @param name the resource group name
+     * @param resourceManager the resource group manager
      */
-    public ResourceGroup(String name) {
+    public ResourceGroup(ResourceManager resourceManager, String name) {
         super(name);
+        this.resourceManager = resourceManager;
     }
     
 //    /**
@@ -127,7 +130,7 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
      * 
      * @param record the cache record
      */
-    public void addObject(Record record) {
+    public void addObject(StoreInfo record) {
         resourceSet.add(record);
     }
     
@@ -154,14 +157,13 @@ public final class ResourceGroup extends AbstractNamedAFPObject {
     /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         Iterator it = resourceSet.iterator();
-        while (it.hasNext()) {
-            Record record = (Record)it.next();
-            byte[] data = cache.retrieve(record);
-            if (data != null) {
-                os.write(data);
-            } else {
-                log.error("data was null");
-            }
+
+        if (it.hasNext()) {            
+            ResourceStore store = resourceManager.getStore();
+            do {
+                StoreInfo saveInfo = (StoreInfo)it.next();
+                store.writeToStream(saveInfo, os);
+            } while (it.hasNext());
         }
     }
 

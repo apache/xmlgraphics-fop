@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.afp.modca;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -27,9 +26,10 @@ import java.util.List;
 
 import org.apache.fop.render.afp.LineDataInfo;
 import org.apache.fop.render.afp.TextDataInfo;
-import org.apache.fop.render.afp.DataObjectCache;
-import org.apache.fop.render.afp.ResourceInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
+import org.apache.fop.render.afp.modca.resource.ResourceManager;
+import org.apache.fop.render.afp.modca.resource.ResourceStore;
+import org.apache.fop.render.afp.modca.resource.StoreInfo;
 
 /**
  * Pages contain the data objects that comprise a presentation document. Each
@@ -53,79 +53,62 @@ import org.apache.fop.render.afp.fonts.AFPFont;
  */
 public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
-    /**
-     * The active environment group for the page
-     */
+    /** The resource manager */
+    protected ResourceManager resourceManager;
+
+    /** The active environment group for the page */
     protected ActiveEnvironmentGroup activeEnvironmentGroup = null;
 
-    /**
-     * The current presentation text object
-     */
+    /** The current presentation text object */
     private PresentationTextObject currentPresentationTextObject = null;
 
-    /**
-     * The list of tag logical elements
-     */
+    /** The list of tag logical elements */
     protected List/*<TagLogicalElement>*/ tagLogicalElements = null;
 
-    /**
-     * The list of the include page segments
-     */
+    /** The list of the include page segments */
     protected List/*<IncludePageSegment>*/ includePageSegments = null;
 
-    /**
-     * The list of objects within this resource container
-     */
+    /** The list of objects within this resource container */
     protected List/*<AbstractStructuredAFPObject>*/ objects = null;
 
-    /**
-     * The page width
-     */
+    /** The page width */
     private int width;
 
-    /**
-     * The page height
-     */
+    /** The page height */
     private int height;
 
-    /**
-     * The page rotation
-     */
+    /** The page rotation */
     protected int rotation = 0;
 
-    /**
-     * The page state
-     */
+    /** The page state */
     private boolean complete = false;
 
-    /**
-     * The width resolution
-     */
+    /** The width resolution */
     private int widthRes;
 
-    /**
-     * The height resolution
-     */
+    /** The height resolution */
     private int heightRes;
 
-    /**
-     * Default constructor
-     */
+    /** Default constructor */
     public AbstractPageObject() {
     }
 
     /**
-     * Named constructor
+     * Main constructor
      * 
+     * @param resourceManager the resource manager 
      * @param name the name of this page object
      */
-    public AbstractPageObject(String name) {
+    public AbstractPageObject(ResourceManager resourceManager, String name) {
         super(name);
+        this.resourceManager = resourceManager;
     }
 
     /**
      * Construct a new page object for the specified name argument, the page
      * name should be an 8 character identifier.
+     * 
+     * @param resourceManager the resource manager
      *
      * @param name
      *            the name of the page.
@@ -140,10 +123,10 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param heightRes
      *            the height resolution of the page.
      */
-    public AbstractPageObject(String name, int width, int height, int rotation,
+    public AbstractPageObject(ResourceManager resourceManager,
+            String name, int width, int height, int rotation,
             int widthRes, int heightRes) {
-        super(name);
-        
+        this(resourceManager, name);
         this.width = width;
         this.height = height;
         this.rotation = rotation;
@@ -340,20 +323,20 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
         writeObjects(this.includePageSegments, os);
         writeObjects(this.tagLogicalElements, os);
         
-        DataObjectCache cache = DataObjectCache.getInstance();
-        
         // Write objects from cache
         Iterator it = objects.iterator();
-        while (it.hasNext()) {
-            Object obj = it.next();
-            if (obj instanceof Writable) {
-                Writable writableObject = (Writable)obj;
-                writableObject.write(os);
-            } else if (obj instanceof DataObjectCache.Record) {
-                DataObjectCache.Record record = (DataObjectCache.Record)obj;
-                byte[] data = cache.retrieve(record);
-                os.write(data);
-            }
+        if (it.hasNext()) {
+            ResourceStore store = resourceManager.getStore();
+            do {
+                Object obj = it.next();
+                if (obj instanceof Writable) {
+                    Writable writableObject = (Writable)obj;
+                    writableObject.write(os);
+                } else if (obj instanceof StoreInfo) {
+                    StoreInfo storeInfo = (StoreInfo)obj;
+                    store.writeToStream(storeInfo, os);
+                }
+            } while (it.hasNext());
         }
     }
     

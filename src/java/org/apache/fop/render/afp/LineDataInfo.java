@@ -25,25 +25,25 @@ import java.awt.Color;
 public class LineDataInfo {
     
     /** the x1 coordinate */
-    protected int x1;
+    int x1;
     
     /** the y1 coordinate */
-    protected int y1;
+    int y1;
     
     /** the x2 coordinate */
-    protected int x2;
+    int x2;
     
     /** the y2 coordinate */
-    protected int y2;
+    int y2;
     
     /** the thickness */
-    protected int thickness;
+    int thickness;
     
     /** the painting color */
-    protected Color color;
+    Color color;
     
     /** the orientation */
-    protected int orientation;
+    int orientation;
     
     /**
      * Default constructor

@@ -22,6 +22,8 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.modca.resource.ResourceManager;
+
 /**
  * An abstract container of resource objects
  */
@@ -42,16 +44,19 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
     /**
      * Named constructor
      * 
+     * @param resourceManager the resource manager
      * @param name the name of this resource container
      */
-    public AbstractResourceGroupContainer(String name) {
-        super(name);
+    public AbstractResourceGroupContainer(ResourceManager resourceManager, String name) {
+        super(resourceManager, name);
     }
 
     /**
      * Construct a new page object for the specified name argument, the page
      * name should be an 8 character identifier.
-     *
+     * 
+     * @param resourceManager
+     *            the resource manager
      * @param name
      *            the name of the page.
      * @param width
@@ -65,9 +70,9 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
      * @param heightRes
      *            the height resolution of the page.
      */
-    public AbstractResourceGroupContainer(String name, int width, int height,
+    public AbstractResourceGroupContainer(ResourceManager resourceManager, String name, int width, int height,
             int rotation, int widthRes, int heightRes) {
-        super(name, width, height, rotation, widthRes, heightRes);
+        super(resourceManager, name, width, height, rotation, widthRes, heightRes);
     }
 
     /**
@@ -96,7 +101,7 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
      */
     protected ResourceGroup getResourceGroup() {
         if (resourceGroup == null) {
-            resourceGroup = new ResourceGroup();
+            resourceGroup = resourceManager.getFactory().createResourceGroup();
         }
         return resourceGroup;
     }

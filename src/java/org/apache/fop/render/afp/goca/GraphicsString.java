@@ -21,7 +21,7 @@ package org.apache.fop.render.afp.goca;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.fop.render.afp.modca.AFPConstants;
+import org.apache.fop.render.afp.AFPConstants;
 import org.apache.fop.render.afp.modca.AbstractPreparedAFPObject;
 import org.apache.fop.render.afp.modca.GraphicsObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;

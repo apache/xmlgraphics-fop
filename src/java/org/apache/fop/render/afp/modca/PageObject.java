@@ -22,6 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.modca.resource.ResourceManager;
 import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
@@ -46,19 +47,11 @@ import org.apache.fop.render.afp.tools.StringUtils;
  */
 public class PageObject extends AbstractResourceGroupContainer {
 
-//    /**
-//     * The page segment count
-//     */
-//    private int pageSegmentCount = 0;
-//
-//    /**
-//     * The current page segment
-//     */
-//    private PageSegment currentPageSegment = null;
-
     /**
      * Construct a new page object for the specified name argument, the page
      * name should be an 8 character identifier.
+     * 
+     * @param resourceManager the resource manager 
      *
      * @param name
      *            the name of the page.
@@ -73,9 +66,10 @@ public class PageObject extends AbstractResourceGroupContainer {
      * @param heightResolution
      *            the height resolution of the page.
      */
-    public PageObject(String name, int width, int height, int rotation,
+    public PageObject(ResourceManager resourceManager,
+            String name, int width, int height, int rotation,
             int widthResolution, int heightResolution) {
-        super(name, width, height, rotation, widthResolution, heightResolution);
+        super(resourceManager, name, width, height, rotation, widthResolution, heightResolution);
     }
 
     /**

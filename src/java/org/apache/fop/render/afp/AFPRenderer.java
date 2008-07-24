@@ -76,7 +76,6 @@ import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.fonts.AFPFontCollection;
-import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.PageObject;
 
@@ -213,7 +212,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public boolean supportsOutOfOrder() {
-        // return false;
         return true;
     }
 
@@ -326,7 +324,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     public void clipRect(float x, float y, float width, float height) {
         // TODO
-        log.debug("NYI clipRect(x=" + x + ",y=" + y + ",width=" + width + ", height=" + height + ")");
+        log.debug("NYI clipRect(x=" + x + ",y=" + y
+                    + ",width=" + width + ", height=" + height + ")");
     }
 
     /** {@inheritDoc} */
@@ -372,7 +371,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         float[] srcPts = new float[] {x * 1000, y * 1000};
         float[] dstPts = new float[srcPts.length];
         int[] coords = mpts2units(srcPts, dstPts);
-        int x2 = coords[X] + Math.round(mpt2units(width * 1000));
+        int x2 = Math.round(mpt2units(dstPts[X] + width * 1000));
         LineDataInfo lineDataInfo = new LineDataInfo();
         lineDataInfo.x1 = coords[X];
         lineDataInfo.y1 = coords[Y];
@@ -668,6 +667,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     imageObjectInfo.setBitsPerPixel(currentState.getBitsPerPixel());
                     imageObjectInfo.setCompression(ccitt.getCompression());
                     imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
+                    
                     getAFPDataStream().createObject(imageObjectInfo);
                 } else if (img instanceof ImageXMLDOM) {
                     ImageXMLDOM imgXML = (ImageXMLDOM) img;
@@ -737,9 +737,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            the height of the viewport (in mpt)
      * @param foreignAttributes
      *            a mapping of foreign attributes
+     * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
     public void drawBufferedImage(ImageInfo imageInfo, RenderedImage image,
-            int imageRes, int x, int y, int width, int height, Map foreignAttributes) {
+            int imageRes, int x, int y, int width, int height, Map foreignAttributes) throws IOException {
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         try {
             // Serialize image
@@ -783,6 +784,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         imageObjectInfo.setColor(currentState.isColorImages());
         imageObjectInfo.setBitsPerPixel(currentState.getBitsPerPixel());
         imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
+
         getAFPDataStream().createObject(imageObjectInfo);
     }
 

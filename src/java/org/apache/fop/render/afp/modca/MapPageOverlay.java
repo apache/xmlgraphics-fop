@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import org.apache.fop.render.afp.AFPConstants;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
