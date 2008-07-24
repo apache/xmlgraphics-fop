@@ -45,7 +45,7 @@ public class EventModelParser {
     /** Logger instance */
     protected static Log log = LogFactory.getLog(EventModelParser.class);
 
-    private static SAXTransformerFactory tFactory 
+    private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     /**
@@ -54,11 +54,11 @@ public class EventModelParser {
      * @return the created event model structure
      * @throws TransformerException if an error occurs while parsing the XML file
      */
-    public static EventModel parse(Source src) 
+    public static EventModel parse(Source src)
             throws TransformerException {
         Transformer transformer = tFactory.newTransformer();
         transformer.setErrorListener(new DefaultErrorListener(log));
-        
+
         EventModel model = new EventModel();
         SAXResult res = new SAXResult(getContentHandler(model));
 

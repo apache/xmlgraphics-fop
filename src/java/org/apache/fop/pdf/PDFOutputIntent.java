@@ -33,14 +33,14 @@ public class PDFOutputIntent extends PDFObject {
     public static final String GTS_PDFX = "GTS_PDFX";
     /** Subtype for PDF/A-1 output intents */
     public static final String GTS_PDFA1 = "GTS_PDFA1";
-    
+
     private String subtype; //S in the PDF spec
     private String outputCondition;
     private String outputConditionIdentifier;
     private String registryName;
     private String info;
     private PDFICCStream destOutputProfile;
-    
+
 
     /** @return the output intent subtype. */
     public String getSubtype() {
@@ -119,7 +119,7 @@ public class PDFOutputIntent extends PDFObject {
 
     /**
      * Sets the destination ICC profile.
-     * @param destOutputProfile An ICC profile stream defining the transformation from the PDF 
+     * @param destOutputProfile An ICC profile stream defining the transformation from the PDF
      *                          document's source colors to output device colorants.
      */
     public void setDestOutputProfile(PDFICCStream destOutputProfile) {
@@ -137,33 +137,33 @@ public class PDFOutputIntent extends PDFObject {
             bout.write(encode("/S /"));
             bout.write(encode(this.subtype));
             bout.write(encode("\n"));
-            
+
             if (outputCondition != null) {
                 bout.write(encode("/OutputCondition "));
                 bout.write(encodeText(this.outputCondition));
                 bout.write(encode("\n"));
             }
-            
+
             bout.write(encode("/OutputConditionIdentifier "));
             bout.write(encodeText(this.outputConditionIdentifier));
             bout.write(encode("\n"));
-            
+
             if (registryName != null) {
                 bout.write(encode("/RegistryName "));
                 bout.write(encodeText(this.registryName));
                 bout.write(encode("\n"));
             }
-    
+
             if (info != null) {
                 bout.write(encode("/Info "));
                 bout.write(encodeText(this.info));
                 bout.write(encode("\n"));
             }
-    
+
             if (destOutputProfile != null) {
                 bout.write(encode("/DestOutputProfile " + destOutputProfile.referencePDF() + "\n"));
             }
-    
+
             bout.write(encode(">>\nendobj\n"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
@@ -171,5 +171,5 @@ public class PDFOutputIntent extends PDFObject {
         return bout.toByteArray();
     }
 
-    
+
 }

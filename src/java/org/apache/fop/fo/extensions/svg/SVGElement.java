@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,14 +65,14 @@ public class SVGElement extends SVGObj {
      * {@inheritDoc}
      */
     public ContentHandlerFactory getContentHandlerFactory() {
-        return new DOMBuilderContentHandlerFactory(getNamespaceURI(), 
+        return new DOMBuilderContentHandlerFactory(getNamespaceURI(),
                 SVGDOMImplementation.getDOMImplementation());
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public void processNode(String elementName, Locator locator, 
+    public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList) throws FOPException {
         super.processNode(elementName, locator, attlist, propertyList);
         init();
@@ -91,11 +91,11 @@ public class SVGElement extends SVGObj {
         /* if width and height are zero, get the bounds of the content. */
 
         try {
-            URL baseURL = new URL(getUserAgent().getBaseURL() == null 
-                            ? new java.io.File("").toURI().toURL().toExternalForm() 
+            URL baseURL = new URL(getUserAgent().getBaseURL() == null
+                            ? new java.io.File("").toURI().toURL().toExternalForm()
                             : getUserAgent().getBaseURL());
             if (baseURL != null) {
-                SVGOMDocument svgdoc = (SVGOMDocument)doc; 
+                SVGOMDocument svgdoc = (SVGOMDocument)doc;
                 svgdoc.setURLObject(baseURL);
                 //The following line should not be called to leave FOP compatible to Batik 1.6.
                 //svgdoc.setDocumentURI(baseURL.toString());

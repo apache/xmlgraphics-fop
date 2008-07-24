@@ -46,20 +46,20 @@ public class JAIMonochromeBitmapConverter implements
         MonochromeBitmapConverter {
 
     private boolean isErrorDiffusion = false;
-    
+
     /** {@inheritDoc} */
     public void setHint(String name, String value) {
         if ("quality".equalsIgnoreCase(name)) {
             isErrorDiffusion = "true".equalsIgnoreCase(value);
         }
     }
-    
+
     /** {@inheritDoc} */
     public RenderedImage convertToMonochrome(BufferedImage img) {
         if (img.getColorModel().getColorSpace().getNumComponents() != 1) {
             throw new IllegalArgumentException("Source image must be a grayscale image!");
         }
-        
+
         // Load the ParameterBlock for the dithering operation
         // and set the operation name.
         ParameterBlock pb = new ParameterBlock();
@@ -78,7 +78,7 @@ public class JAIMonochromeBitmapConverter implements
             pb.add(colorMap);
             pb.add(KernelJAI.DITHER_MASK_441);
         }
-        
+
         //Create an image layout for a monochrome b/w image
         ImageLayout layout = new ImageLayout();
         byte[] map = new byte[] {(byte)0x00, (byte)0xff};
@@ -89,8 +89,8 @@ public class JAIMonochromeBitmapConverter implements
         RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
 
         // Dither the image.
-        PlanarImage dst = JAI.create(opName, pb, hints);        
-        
+        PlanarImage dst = JAI.create(opName, pb, hints);
+
         //Convert it to a BufferedImage
         return dst.getAsBufferedImage();
     }

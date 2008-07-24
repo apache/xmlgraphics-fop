@@ -34,19 +34,19 @@ import org.apache.fop.util.BreakUtil;
  * the row as well as some additional values.
  */
 public class EffRow {
-    
+
     /** Indicates that the row is the first in a table-body */
     public static final int FIRST_IN_PART = GridUnit.FIRST_IN_PART;
     /** Indicates that the row is the last in a table-body */
     public static final int LAST_IN_PART = GridUnit.LAST_IN_PART;
-    
+
     private List gridUnits = new java.util.ArrayList();
     private int index;
     /** One of HEADER, FOOTER, BODY */
     private int bodyType;
     private MinOptMax height;
     private MinOptMax explicitHeight;
-    
+
     /**
      * Creates a new effective row instance.
      * @param index index of the row
@@ -70,45 +70,45 @@ public class EffRow {
     public int getIndex() {
         return this.index;
     }
-    
+
     /**
-     * @return an indicator what type of body this EffRow is in (one of HEADER, FOOTER, BODY 
+     * @return an indicator what type of body this EffRow is in (one of HEADER, FOOTER, BODY
      * as found on TableRowIterator)
      */
     public int getBodyType() {
         return this.bodyType;
     }
-    
+
     /** @return the table-row FO for this EffRow, or null if there is no table-row. */
     public TableRow getTableRow() {
         return getGridUnit(0).getRow();
     }
-    
+
     /**
      * Returns the calculated height for this EffRow, including the cells'
      * bpds/paddings/borders, and the table's border-separation.
-     * 
+     *
      * @return the row's height
      */
     public MinOptMax getHeight() {
         return this.height;
     }
-    
+
     /**
      * Sets the calculated height for this EffRow, including everything (cells' bpds,
      * paddings, borders, and border-separation).
-     * 
+     *
      * @param mom the calculated height
      */
     public void setHeight(MinOptMax mom) {
         this.height = mom;
     }
-    
+
     /** @return the explicit height of the EffRow (as specified through properties) */
     public MinOptMax getExplicitHeight() {
         return this.explicitHeight;
     }
-    
+
     /**
      * Sets the height for this row that resulted from the explicit height properties specified
      * by the user.
@@ -117,12 +117,12 @@ public class EffRow {
     public void setExplicitHeight(MinOptMax mom) {
         this.explicitHeight = mom;
     }
-    
+
     /** @return the list of GridUnits for this EffRow */
     public List getGridUnits() {
         return gridUnits;
     }
-    
+
     /**
      * Returns the grid unit at a given position.
      * @param column index of the grid unit in the row (zero based)
@@ -131,9 +131,9 @@ public class EffRow {
     public GridUnit getGridUnit(int column) {
         return (GridUnit)gridUnits.get(column);
     }
-    
+
     /**
-     * Returns the grid unit at a given position. In contrast to getGridUnit() this 
+     * Returns the grid unit at a given position. In contrast to getGridUnit() this
      * method returns null if there's no grid unit at the given position. The number of
      * grid units for row x can be smaller than the number of grid units for row x-1.
      * @param column index of the grid unit in the row (zero based)
@@ -167,7 +167,7 @@ public class EffRow {
     /**
      * Returns the strength of the keep constraint if the enclosing (if any) fo:table-row element
      * of this row, or if any of the cells starting on this row, have keep-with-previous set.
-     * 
+     *
      * @return the strength of the keep-with-previous constraint
      */
     public int getKeepWithPreviousStrength() {
@@ -189,7 +189,7 @@ public class EffRow {
     /**
      * Returns the strength of the keep constraint if the enclosing (if any) fo:table-row element
      * of this row, or if any of the cells ending on this row, have keep-with-next set.
-     * 
+     *
      * @return the strength of the keep-with-next constraint
      */
     public int getKeepWithNextStrength() {
@@ -224,7 +224,7 @@ public class EffRow {
         }
         return strength;
     }
-    
+
     /**
      * Returns the break class for this row. This is a combination of break-before set on
      * the first children of any cells starting on this row.
@@ -233,7 +233,7 @@ public class EffRow {
      * belongs to a group of spanned rows (see XSL-FO 1.1, 7.20.2).
      * <p><strong>Note:</strong> this works only after getNextKuthElements on the
      * corresponding TableCellLM have been called!</p>
-     * 
+     *
      * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
      * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
      */
@@ -257,7 +257,7 @@ public class EffRow {
      * belongs to a group of spanned rows (see XSL-FO 1.1, 7.20.1).
      * <p><strong>Note:</strong> this works only after getNextKuthElements on the
      * corresponding TableCellLM have been called!</p>
-     * 
+     *
      * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
      * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
      */

@@ -165,9 +165,9 @@ public class Area extends AreaTreeObject implements Serializable {
     }
 
     /**
-     * Get the inline progression dimension of the content rectangle 
+     * Get the inline progression dimension of the content rectangle
      * for this area.
-     * 
+     *
      * @return the inline progression dimension
      * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">ipd</a>
      */
@@ -216,7 +216,7 @@ public class Area extends AreaTreeObject implements Serializable {
      * @return the total BPD allocation for this area
      */
     public int getAllocBPD() {
-        return getSpaceBefore() + getBorderAndPaddingWidthBefore() + getBPD() 
+        return getSpaceBefore() + getBorderAndPaddingWidthBefore() + getBPD()
                 + getBorderAndPaddingWidthAfter() + getSpaceAfter();
     }
 
@@ -231,7 +231,7 @@ public class Area extends AreaTreeObject implements Serializable {
         if (bps != null) {
             margin = bps.width;
         }
-        
+
         Integer padWidth = (Integer) getTrait(Trait.PADDING_BEFORE);
         if (padWidth != null) {
             margin += padWidth.intValue();
@@ -239,7 +239,7 @@ public class Area extends AreaTreeObject implements Serializable {
 
         return margin;
     }
-    
+
     /**
      * Return the sum of region border- and padding-after
      *
@@ -247,12 +247,12 @@ public class Area extends AreaTreeObject implements Serializable {
      */
     public int getBorderAndPaddingWidthAfter() {
         int margin = 0;
-        
+
         BorderProps bps = (BorderProps) getTrait(Trait.BORDER_AFTER);
         if (bps != null) {
             margin = bps.width;
         }
-        
+
         Integer padWidth = (Integer) getTrait(Trait.PADDING_AFTER);
         if (padWidth != null) {
             margin += padWidth.intValue();
@@ -272,7 +272,7 @@ public class Area extends AreaTreeObject implements Serializable {
         if (bps != null) {
             margin = bps.width;
         }
-        
+
         Integer padWidth = (Integer) getTrait(Trait.PADDING_START);
         if (padWidth != null) {
             margin += padWidth.intValue();
@@ -292,7 +292,7 @@ public class Area extends AreaTreeObject implements Serializable {
         if (bps != null) {
             margin = bps.width;
         }
-        
+
         Integer padWidth = (Integer) getTrait(Trait.PADDING_END);
         if (padWidth != null) {
             margin += padWidth.intValue();
@@ -314,7 +314,7 @@ public class Area extends AreaTreeObject implements Serializable {
         }
         return margin;
     }
-    
+
     /**
      * Returns the space after
      *
@@ -328,7 +328,7 @@ public class Area extends AreaTreeObject implements Serializable {
         }
         return margin;
     }
-    
+
     /**
      * Returns the space start
      *
@@ -342,7 +342,7 @@ public class Area extends AreaTreeObject implements Serializable {
         }
         return margin;
     }
-    
+
     /**
      * Returns the space end
      *
@@ -356,7 +356,7 @@ public class Area extends AreaTreeObject implements Serializable {
         }
         return margin;
     }
-    
+
     /**
      * Add a child to this area.
      * The default is to do nothing. Subclasses must override
@@ -393,7 +393,7 @@ public class Area extends AreaTreeObject implements Serializable {
     public boolean hasTraits() {
         return (this.props != null);
     }
-    
+
     /**
      * Get a trait from this area.
      *
@@ -403,7 +403,7 @@ public class Area extends AreaTreeObject implements Serializable {
     public Object getTrait(Object oTraitCode) {
         return (props != null ? props.get(oTraitCode) : null);
     }
-    
+
     /**
      * Checks whether a certain trait is set on this area.
      * @param oTraitCode the trait key
@@ -412,7 +412,7 @@ public class Area extends AreaTreeObject implements Serializable {
     public boolean hasTrait(Object oTraitCode) {
         return (getTrait(oTraitCode) != null);
     }
-    
+
     /**
      * Get a boolean trait from this area.
      * @param oTraitCode the trait key
@@ -438,10 +438,10 @@ public class Area extends AreaTreeObject implements Serializable {
                     + " could not be converted to an integer");
         }
     }
-    
+
     /**
      * {@inheritDoc}
-     * @return ipd and bpd of area 
+     * @return ipd and bpd of area
      * */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());

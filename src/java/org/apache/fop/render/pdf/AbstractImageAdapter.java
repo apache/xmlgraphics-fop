@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
     private String key;
     /** the image */
     protected Image image;
- 
+
     private PDFICCStream pdfICCStream = null;
 
     /**
@@ -77,7 +77,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
     protected ColorSpace getImageColorSpace() {
         return image.getColorSpace();
     }
-    
+
     /** {@inheritDoc} */
     public void setup(PDFDocument doc) {
 
@@ -88,7 +88,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         }
         if (doc.getProfile().getPDFAMode().isPDFA1LevelB()) {
             if (pdfCS != null
-                    && pdfCS.getColorSpace() != PDFDeviceColorSpace.DEVICE_RGB 
+                    && pdfCS.getColorSpace() != PDFDeviceColorSpace.DEVICE_RGB
                     && pdfCS.getColorSpace() != PDFDeviceColorSpace.DEVICE_GRAY
                     && prof == null) {
                 //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
@@ -107,7 +107,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
     protected ICC_Profile getEffectiveICCProfile() {
         return image.getICCProfile();
     }
-    
+
     private static PDFICCStream setupColorProfile(PDFDocument doc,
                 ICC_Profile prof, PDFDeviceColorSpace pdfCS) {
         boolean defaultsRGB = ColorProfileUtil.isDefaultsRGB(prof);
@@ -154,32 +154,32 @@ public abstract class AbstractImageAdapter implements PDFImage {
     public boolean isTransparent() {
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public PDFColor getTransparentColor() {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     public String getMask() {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     public String getSoftMask() {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     public PDFReference getSoftMaskReference() {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     public boolean isInverted() {
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public boolean isPS() {
         return false;
@@ -194,7 +194,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
     public void populateXObjectDictionary(PDFDictionary dict) {
         //nop
     }
-    
+
     /**
      * Converts a ColorSpace object to a PDFColorSpace object.
      * @param cs ColorSpace instance

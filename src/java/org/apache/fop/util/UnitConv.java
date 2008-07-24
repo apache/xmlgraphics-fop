@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,13 +26,13 @@ public final class UnitConv {
 
     /** conversion factory from millimeters to inches. */
     public static final float IN2MM = 25.4f;
-    
+
     /** conversion factory from centimeters to inches. */
     public static final float IN2CM = 2.54f;
-    
+
     /** conversion factory from inches to points. */
     public static final int IN2PT = 72;
-    
+
     /**
      * Converts millimeters (mm) to points (pt)
      * @param mm the value in mm
@@ -59,7 +59,7 @@ public final class UnitConv {
     public static double pt2mm(double pt) {
         return pt * IN2MM / IN2PT;
     }
-    
+
     /**
      * Converts millimeters (mm) to inches (in)
      * @param mm the value in mm
@@ -68,7 +68,7 @@ public final class UnitConv {
     public static double mm2in(double mm) {
         return mm / IN2MM;
     }
-    
+
     /**
      * Converts inches (in) to millimeters (mm)
      * @param in the value in inches
@@ -77,7 +77,7 @@ public final class UnitConv {
     public static double in2mm(double in) {
         return in * IN2MM;
     }
-    
+
     /**
      * Converts inches (in) to millipoints (mpt)
      * @param in the value in inches
@@ -86,7 +86,7 @@ public final class UnitConv {
     public static double in2mpt(double in) {
         return in * IN2PT * 1000;
     }
-    
+
     /**
      * Converts inches (in) to points (pt)
      * @param in the value in inches
@@ -95,16 +95,16 @@ public final class UnitConv {
     public static double in2pt(double in) {
         return in * IN2PT;
     }
-    
+
     /**
-     * Converts millipoints (mpt) to inches (in) 
+     * Converts millipoints (mpt) to inches (in)
      * @param mpt the value in mpt
      * @return the value in inches
      */
     public static double mpt2in(double mpt) {
         return mpt / IN2PT / 1000;
     }
-    
+
     /**
      * Converts millimeters (mm) to pixels (px)
      * @param mm the value in mm

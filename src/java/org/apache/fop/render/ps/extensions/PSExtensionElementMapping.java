@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.ps.extensions;
 
 import org.apache.fop.fo.FONode;
@@ -28,7 +28,7 @@ import org.apache.fop.fo.ElementMapping;
 public class PSExtensionElementMapping extends ElementMapping {
 
     /** Namespace for the extension */
-    public static final String NAMESPACE = "http://xmlgraphics.apache.org/fop/postscript"; 
+    public static final String NAMESPACE = "http://xmlgraphics.apache.org/fop/postscript";
 
     /** Main constructor */
     public PSExtensionElementMapping() {
@@ -64,7 +64,7 @@ public class PSExtensionElementMapping extends ElementMapping {
             return new PSSetPageDeviceElement(parent);
         }
     }
-    
+
     static class PSCommentBeforeMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new PSCommentBeforeElement(parent);

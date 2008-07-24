@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ public class ListItem extends FObj {
 
     /**
      * Base constructor
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public ListItem(FONode parent) {
@@ -93,7 +93,7 @@ public class ListItem extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: marker* (list-item-label,list-item-body)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("marker")) {
@@ -118,12 +118,12 @@ public class ListItem extends FObj {
 
     /**
      * {@inheritDoc}
-     * @todo see if can/should rely on base class for this 
+     * @todo see if can/should rely on base class for this
      *    (i.e., add to childNodes instead)
      */
     public void addChildNode(FONode child) {
         int nameId = child.getNameId();
-        
+
         if (nameId == FO_LIST_ITEM_LABEL) {
             label = (ListItemLabel) child;
         } else if (nameId == FO_LIST_ITEM_BODY) {
@@ -184,7 +184,7 @@ public class ListItem extends FObj {
     public String getLocalName() {
         return "list-item";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_LIST_ITEM}

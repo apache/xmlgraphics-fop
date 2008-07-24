@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,14 +31,14 @@ import org.apache.fop.fo.expr.PropertyException;
  * Superclass for properties that have conditional lengths
  */
 public class CondLengthProperty extends Property implements CompoundDatatype {
-    
+
     /** cache holding canonical instances (for absolute conditional lengths) */
     private static final PropertyCache cache = new PropertyCache(CondLengthProperty.class);
-    
+
     /** components */
     private Property length;
     private EnumProperty conditionality;
-    
+
     private boolean isCached = false;
     private int hash = -1;
 
@@ -56,7 +56,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
 
         /**
          * Create a new empty instance of CondLengthProperty.
-         * @return the new instance. 
+         * @return the new instance.
          */
         public Property makeNewProperty() {
             return new CondLengthProperty();
@@ -64,7 +64,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
 
         /**
          * {@inheritDoc}
-         */        
+         */
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
                     throws PropertyException {
             if (p instanceof KeepProperty) {
@@ -75,7 +75,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
@@ -83,7 +83,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
             throw new IllegalStateException(
                     "CondLengthProperty.setComponent() called on a cached value!");
         }
-        
+
         if (cmpId == CP_LENGTH) {
             length = cmpnValue;
         } else if (cmpId == CP_CONDITIONALITY) {
@@ -147,11 +147,11 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "CondLength[" + length.getObject().toString() 
-                + ", " + (isDiscard() 
-                        ? conditionality.toString().toLowerCase() 
+        return "CondLength[" + length.getObject().toString()
+                + ", " + (isDiscard()
+                        ? conditionality.toString().toLowerCase()
                         : conditionality.toString()) + "]";
-    }    
+    }
 
     /**
      * @return this.condLength
@@ -188,7 +188,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
         if (this == obj) {
             return true;
         }
-        
+
         if (obj instanceof CondLengthProperty) {
             CondLengthProperty clp = (CondLengthProperty)obj;
             return (this.length == clp.length
@@ -196,7 +196,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
         }
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         if (this.hash == -1) {

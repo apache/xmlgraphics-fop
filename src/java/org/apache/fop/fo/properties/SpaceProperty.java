@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ public class SpaceProperty extends LengthRangeProperty {
 
         /**
          * Create a new empty instance of SpaceProperty.
-         * @return the new instance. 
+         * @return the new instance.
          */
         public Property makeNewProperty() {
             return new SpaceProperty();
@@ -69,7 +69,7 @@ public class SpaceProperty extends LengthRangeProperty {
 
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
@@ -138,10 +138,10 @@ public class SpaceProperty extends LengthRangeProperty {
 
     public String toString() {
         return "Space[" +
-        "min:" + getMinimum(null).getObject() + 
-        ", max:" + getMaximum(null).getObject() + 
-        ", opt:" + getOptimum(null).getObject() + 
-        ", precedence:" + precedence.getObject() + 
+        "min:" + getMinimum(null).getObject() +
+        ", max:" + getMaximum(null).getObject() +
+        ", opt:" + getOptimum(null).getObject() +
+        ", precedence:" + precedence.getObject() +
         ", conditionality:" + conditionality.getObject() + "]";
     }
 

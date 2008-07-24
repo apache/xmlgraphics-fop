@@ -35,7 +35,7 @@ public class ImageInputHandler extends InputHandler {
      * Main constructor.
      * @param imagefile the image file
      * @param xsltfile XSLT file (may be null in which case the default stylesheet is used)
-     * @param params Vector of command-line parameters (name, value, 
+     * @param params Vector of command-line parameters (name, value,
      *      name, value, ...) for XSL stylesheet, null if none
      */
     public ImageInputHandler(File imagefile, File xsltfile, Vector params) {
@@ -47,7 +47,7 @@ public class ImageInputHandler extends InputHandler {
         return new StreamSource(new StringReader(
                 "<image>" + this.sourcefile.toURI().toASCIIString() + "</image>"));
     }
-    
+
     /** {@inheritDoc} */
     protected Source createXSLTSource() {
         Source src = super.createXSLTSource();

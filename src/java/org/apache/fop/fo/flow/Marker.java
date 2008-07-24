@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,7 +49,7 @@ public class Marker extends FObjMixed {
 
     /**
      * Create a marker fo.
-     * 
+     *
      * @param parent the parent {@link FONode}
      */
     public Marker(FONode parent) {
@@ -59,32 +59,32 @@ public class Marker extends FObjMixed {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_FLOW) < 0) {
-            invalidChildError(locator, getParent().getName(), FO_URI, getName(), 
+            invalidChildError(locator, getParent().getName(), FO_URI, getName(),
                 "rule.markerDescendantOfFlow");
         }
-        
+
         markerClassName = pList.get(PR_MARKER_CLASS_NAME).getString();
-        
+
         if (markerClassName == null || markerClassName.equals("")) {
             missingPropertyError("marker-class-name");
-        }        
+        }
     }
-    
+
     /**
-     * Retrieve the property list of the given {@link FONode} 
+     * Retrieve the property list of the given {@link FONode}
      * descendant
-     * 
+     *
      * @param foNode the {@link FONode} whose property list is requested
      * @return the {@link MarkerPropertyList} for the given node
      */
     protected MarkerPropertyList getPropertyListFor(FONode foNode) {
-        return (MarkerPropertyList) 
+        return (MarkerPropertyList)
             descendantPropertyLists.get(foNode);
     }
-    
+
     /** {@inheritDoc} */
     protected void startOfNode() {
-        FOTreeBuilderContext builderContext = getBuilderContext(); 
+        FOTreeBuilderContext builderContext = getBuilderContext();
         // Push a new property list maker which will make MarkerPropertyLists.
         savePropertyListMaker = builderContext.getPropertyListMaker();
         builderContext.setPropertyListMaker(new PropertyListMaker() {
@@ -95,7 +95,7 @@ public class Marker extends FObjMixed {
             }
         });
     }
-    
+
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
@@ -112,7 +112,7 @@ public class Marker extends FObjMixed {
      * the fo:marker's children."</i>
      * @todo implement "additional" constraint, possibly within fo:retrieve-marker
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
             throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (!isBlockOrInlineItem(nsURI, localName)) {
@@ -120,12 +120,12 @@ public class Marker extends FObjMixed {
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     protected boolean inMarker() {
         return true;
     }
-    
+
     /** @return the "marker-class-name" property */
     public String getMarkerClassName() {
         return markerClassName;
@@ -135,7 +135,7 @@ public class Marker extends FObjMixed {
     public String getLocalName() {
         return "marker";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_MARKER}
@@ -156,15 +156,15 @@ public class Marker extends FObjMixed {
      * specified properties/attributes as bundles of name-value-namespace
      * strings
      */
-    protected class MarkerPropertyList extends PropertyList 
+    protected class MarkerPropertyList extends PropertyList
             implements Attributes {
-                
+
         /** the array of attributes **/
         private MarkerAttribute[] attribs;
-        
+
         /**
          * Overriding default constructor
-         * 
+         *
          * @param fobj  the {@link FObj} to attach
          * @param parentPropertyList    ignored
          */
@@ -175,34 +175,34 @@ public class Marker extends FObjMixed {
              */
             super(fobj, null);
         }
-        
+
         /**
          * Override that doesn't convert the attributes to {@link Property}
          * instances, but simply stores the attributes for later processing.
-         * 
+         *
          * {@inheritDoc}
          */
-        public void addAttributesToList(Attributes attributes) 
+        public void addAttributesToList(Attributes attributes)
                     throws ValidationException {
-            
+
             this.attribs = new MarkerAttribute[attributes.getLength()];
 
             String name;
             String value;
             String namespace;
             String qname;
-            
+
             for (int i = attributes.getLength(); --i >= 0;) {
                 namespace = attributes.getURI(i);
                 qname = attributes.getQName(i);
                 name = attributes.getLocalName(i);
                 value = attributes.getValue(i);
-                
-                this.attribs[i] = 
+
+                this.attribs[i] =
                     MarkerAttribute.getInstance(namespace, qname, name, value);
             }
         }
-        
+
         /** Null implementation; not used by this type of {@link PropertyList} */
         public void putExplicit(int propId, Property value) {
             //nop
@@ -224,7 +224,7 @@ public class Marker extends FObjMixed {
 
         /** {@inheritDoc} */
         public String getURI(int index) {
-            if (attribs != null 
+            if (attribs != null
                     && index < attribs.length
                     && index >= 0
                     && attribs[index] != null) {
@@ -236,7 +236,7 @@ public class Marker extends FObjMixed {
 
         /** {@inheritDoc} */
         public String getLocalName(int index) {
-            if (attribs != null 
+            if (attribs != null
                     && index < attribs.length
                     && index >= 0
                     && attribs[index] != null) {
@@ -248,7 +248,7 @@ public class Marker extends FObjMixed {
 
         /** {@inheritDoc} */
         public String getQName(int index) {
-            if (attribs != null 
+            if (attribs != null
                     && index < attribs.length
                     && index >= 0
                     && attribs[index] != null) {
@@ -265,7 +265,7 @@ public class Marker extends FObjMixed {
 
         /** {@inheritDoc} */
         public String getValue(int index) {
-            if (attribs != null 
+            if (attribs != null
                     && index < attribs.length
                     && index >= 0
                     && attribs[index] != null) {
@@ -295,7 +295,7 @@ public class Marker extends FObjMixed {
             int index = -1;
             if (attribs != null && qname != null) {
                 for (int i = attribs.length; --i >= 0;) {
-                    if (attribs[i] != null 
+                    if (attribs[i] != null
                             && qname.equals(attribs[i].qname)) {
                         break;
                     }
@@ -332,18 +332,18 @@ public class Marker extends FObjMixed {
             return null;
         }
     }
-    
+
     /** Convenience inner class */
     private static final class MarkerAttribute {
-        
-        private static Map attributeCache = 
+
+        private static Map attributeCache =
             Collections.synchronizedMap(new java.util.WeakHashMap());
 
         protected String namespace;
         protected String qname;
         protected String name;
         protected String value;
-                    
+
         /**
          * Main constructor
          * @param namespace the namespace URI
@@ -351,14 +351,14 @@ public class Marker extends FObjMixed {
          * @param name  the name
          * @param value the value
          */
-        private MarkerAttribute(String namespace, String qname, 
+        private MarkerAttribute(String namespace, String qname,
                                     String name, String value) {
             this.namespace = namespace;
             this.qname = qname;
             this.name = (name == null ? qname : name);
             this.value = value;
         }
-        
+
         /**
          * Convenience method, reduces the number
          * of distinct MarkerAttribute instances
@@ -367,13 +367,13 @@ public class Marker extends FObjMixed {
          * @param qname the fully qualified name of the attribute
          * @param name  the attribute name
          * @param value the attribute value
-         * @return the single MarkerAttribute instance corresponding to 
+         * @return the single MarkerAttribute instance corresponding to
          *          the name/value-pair
          */
         private static MarkerAttribute getInstance(
                                             String namespace, String qname,
                                             String name, String value) {
-            MarkerAttribute newInstance = 
+            MarkerAttribute newInstance =
                 new MarkerAttribute(namespace, qname, name, value);
             if (attributeCache.containsKey(newInstance)) {
                 return (MarkerAttribute) attributeCache.get(newInstance);
@@ -382,7 +382,7 @@ public class Marker extends FObjMixed {
                 return newInstance;
             }
         }
-        
+
         /** {@inheritDoc} */
         public boolean equals(Object o) {
             if (o instanceof MarkerAttribute) {

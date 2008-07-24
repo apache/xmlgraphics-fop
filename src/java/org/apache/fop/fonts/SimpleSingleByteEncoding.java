@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
     //List<NamedCharacter>
     private Map charMap = new java.util.HashMap();
     //Map<Character(Unicode), Character(code point)>
-    
+
     /**
      * Main constructor.
      * @param name the encoding's name
@@ -44,7 +44,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
     public SimpleSingleByteEncoding(String name) {
         this.name = name;
     }
-    
+
     /** {@inheritDoc} */
     public String getName() {
         return this.name;
@@ -65,11 +65,11 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
         Arrays.fill(map, Glyphs.NOTDEF);
         for (int i = getFirstChar(); i <= getLastChar(); i++) {
             NamedCharacter ch = (NamedCharacter)this.mapping.get(i - 1);
-            map[i] = ch.getName(); 
+            map[i] = ch.getName();
         }
         return map;
     }
-    
+
     /**
      * Returns the index of the first defined character.
      * @return the index of the first defined character (always 1 for this class)
@@ -77,7 +77,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
     public int getFirstChar() {
         return 1;
     }
-    
+
     /**
      * Returns the index of the last defined character.
      * @return the index of the last defined character
@@ -85,7 +85,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
     public int getLastChar() {
         return this.mapping.size();
     }
-    
+
     /**
      * Returns the number of characters defined by this encoding.
      * @return the number of characters
@@ -93,7 +93,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
     public int getSize() {
         return this.mapping.size() + 1;
     }
-    
+
     /**
      * Indicates whether the encoding is full (with 256 code points).
      * @return true if the encoding is full
@@ -101,7 +101,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
     public boolean isFull() {
         return (getSize() == 256);
     }
-    
+
     /**
      * Adds a new character to the encoding.
      * @param ch the named character
@@ -136,10 +136,10 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
             return null;
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return getName() + " (" + getSize() + " chars)";
     }
-    
+
 }

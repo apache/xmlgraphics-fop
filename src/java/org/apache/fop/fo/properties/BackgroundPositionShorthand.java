@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,16 +43,16 @@ public class BackgroundPositionShorthand extends ListProperty {
 
         /**
          * Construct an instance of a Maker for the given property.
-         * 
+         *
          * @param propId The Constant ID of the property to be made.
          */
         public Maker(int propId) {
             super(propId);
         }
-        
-        
-        /** 
-         * {@inheritDoc} 
+
+
+        /**
+         * {@inheritDoc}
          * If only <code>background-position-horizontal</code> is
          * specified, <code>background-position-vertical</code> is set
          * to "50%".
@@ -60,7 +60,7 @@ public class BackgroundPositionShorthand extends ListProperty {
         public Property make(PropertyList propertyList, String value, FObj fo) throws PropertyException {
             Property p = super.make(propertyList, value, fo);
             if (p.getList().size() == 1) {
-                /* only background-position-horizontal specified 
+                /* only background-position-horizontal specified
                  * through the shorthand, as a length or percentage:
                  * background-position-vertical=50% (see: XSL-FO 1.1 -- 7.31.2)
                  */
@@ -71,8 +71,8 @@ public class BackgroundPositionShorthand extends ListProperty {
             return p;
         }
 
-        /** 
-         * {@inheritDoc} 
+        /**
+         * {@inheritDoc}
          * Returns a {@link org.apache.fop.datatypes.PercentBase} whose
          * <code>getDimension()</code> returns 1.
          */
@@ -92,11 +92,11 @@ public class BackgroundPositionShorthand extends ListProperty {
                 public int getDimension() {
                     return 1;
                 }
-                
+
             };
         }
     }
-    
+
     /**
      * Inner class to provide shorthand parsing capabilities
      *
@@ -109,7 +109,7 @@ public class BackgroundPositionShorthand extends ListProperty {
                                             PropertyMaker maker,
                                             PropertyList propertyList)
                         throws PropertyException {
-            
+
             int index = -1;
             List propList = property.getList();
             if (propId == Constants.PR_BACKGROUND_POSITION_HORIZONTAL) {
@@ -119,8 +119,8 @@ public class BackgroundPositionShorthand extends ListProperty {
             }
             if (index >= 0) {
                 return maker.convertProperty(
-                        (Property) propList.get(index), 
-                        propertyList, 
+                        (Property) propList.get(index),
+                        propertyList,
                         propertyList.getFObj());
             } // else: invalid index? shouldn't happen...
             return null;

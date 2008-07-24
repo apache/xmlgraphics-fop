@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.Numeric;
@@ -32,7 +32,7 @@ public final class EnumNumber extends Property implements Numeric {
     private static final PropertyCache cache = new PropertyCache(EnumNumber.class);
 
     private final EnumProperty enumProperty;
-    
+
     /**
      * Constructor
      * @param enumProperty  the base EnumProperty
@@ -44,7 +44,7 @@ public final class EnumNumber extends Property implements Numeric {
     /**
      * Returns the canonical EnumNumber instance corresponding
      * to the given Property
-     * 
+     *
      * @param enumProperty  the base EnumProperty
      * @return  the canonical instance
      */
@@ -87,16 +87,16 @@ public final class EnumNumber extends Property implements Numeric {
         return 0;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      * Always <code>true</code> for instances of this type
      */
     public boolean isAbsolute() {
         return true;
     }
-    
-    /** 
-     * {@inheritDoc} 
+
+    /**
+     * {@inheritDoc}
      * logs an error, because it's not supposed to be called
      */
     public double getNumericValue(PercentBaseContext context) throws PropertyException {
@@ -104,8 +104,8 @@ public final class EnumNumber extends Property implements Numeric {
         return 0;
     }
 
-    /** 
-     * {@inheritDoc} 
+    /**
+     * {@inheritDoc}
      * logs an error, because it's not supposed to be called
      */
     public int getValue(PercentBaseContext context) {
@@ -113,8 +113,8 @@ public final class EnumNumber extends Property implements Numeric {
         return 0;
     }
 
-    /** 
-     * {@inheritDoc} 
+    /**
+     * {@inheritDoc}
      * logs an error, because it's not supposed to be called
      */
     public int getValue() {
@@ -122,8 +122,8 @@ public final class EnumNumber extends Property implements Numeric {
         return 0;
     }
 
-    /** 
-     * {@inheritDoc} 
+    /**
+     * {@inheritDoc}
      * logs an error, because it's not supposed to be called
      */
     public double getNumericValue() {
@@ -131,7 +131,7 @@ public final class EnumNumber extends Property implements Numeric {
         return 0;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public Numeric getNumeric() {

@@ -61,7 +61,7 @@ public abstract class AbstractBreaker {
 
     public class BlockSequence extends BlockKnuthSequence {
 
-        /** Number of elements to ignore at the beginning of the list. */ 
+        /** Number of elements to ignore at the beginning of the list. */
         public int ignoreAtStart = 0;
         /** Number of elements to ignore at the end of the list. */
         public int ignoreAtEnd = 0;
@@ -69,17 +69,17 @@ public abstract class AbstractBreaker {
         /**
          * startOn represents where on the page/which page layout
          * should start for this BlockSequence.  Acceptable values:
-         * Constants.EN_ANY (can continue from finished location 
-         * of previous BlockSequence?), EN_COLUMN, EN_ODD_PAGE, 
-         * EN_EVEN_PAGE. 
+         * Constants.EN_ANY (can continue from finished location
+         * of previous BlockSequence?), EN_COLUMN, EN_ODD_PAGE,
+         * EN_EVEN_PAGE.
          */
         private int startOn;
 
         private int displayAlign;
-        
+
         /**
          * Creates a new BlockSequence.
-         * @param iStartOn the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN, 
+         * @param iStartOn the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN,
          *                 EN_ODD_PAGE, EN_EVEN_PAGE.
          * @param displayAlign the value for the display-align property
          */
@@ -88,9 +88,9 @@ public abstract class AbstractBreaker {
             startOn = iStartOn;
             this.displayAlign = displayAlign;
         }
-        
+
         /**
-         * @return the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN, 
+         * @return the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN,
          *         EN_ODD_PAGE, EN_EVEN_PAGE.
          */
         public int getStartOn() {
@@ -108,7 +108,7 @@ public abstract class AbstractBreaker {
         public KnuthSequence endSequence() {
             return endSequence(null);
         }
-        
+
         /**
          * Finalizes a Knuth sequence.
          * @param breakPosition a Position instance for the last penalty (may be null)
@@ -124,14 +124,14 @@ public abstract class AbstractBreaker {
                 // add the elements representing the space at the end of the last line
                 // and the forced break
                 if (getDisplayAlign() == Constants.EN_X_DISTRIBUTE && isSinglePartFavored()) {
-                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, 
+                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
                                 false, breakPosition, false));
                     ignoreAtEnd = 1;
                 } else {
-                    this.add(new KnuthPenalty(0, KnuthElement.INFINITE, 
+                    this.add(new KnuthPenalty(0, KnuthElement.INFINITE,
                                 false, null, false));
                     this.add(new KnuthGlue(0, 10000000, 0, null, false));
-                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, 
+                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
                                 false, breakPosition, false));
                     ignoreAtEnd = 3;
                 }
@@ -171,10 +171,10 @@ public abstract class AbstractBreaker {
     protected abstract void addAreas(PositionIterator posIter, LayoutContext context);
     protected abstract LayoutManager getTopLevelLM();
     protected abstract LayoutManager getCurrentChildLM();
-    
+
     /**
      * Controls the behaviour of the algorithm in cases where the first element of a part
-     * overflows a line/page. 
+     * overflows a line/page.
      * @return true if the algorithm should try to send the element to the next line/page.
      */
     protected boolean isPartOverflowRecoveryActivated() {
@@ -187,7 +187,7 @@ public abstract class AbstractBreaker {
     protected boolean isSinglePartFavored() {
         return false;
     }
-    
+
     /**
      * Returns the PageProvider if any. PageBreaker overrides this method because each
      * page may have a different available BPD which needs to be accessible to the breaking
@@ -197,7 +197,7 @@ public abstract class AbstractBreaker {
     protected PageProvider getPageProvider() {
         return null;
     }
-    
+
     /**
      * Creates and returns a PageBreakingLayoutListener for the PageBreakingAlgorithm to
      * notify about layout problems.
@@ -206,11 +206,11 @@ public abstract class AbstractBreaker {
     protected PageBreakingAlgorithm.PageBreakingLayoutListener createLayoutListener() {
         return null;
     }
-    
+
     /*
      * This method is to contain the logic to determine the LM's
-     * getNextKnuthElements() implementation(s) that are to be called. 
-     * @return LinkedList of Knuth elements.  
+     * getNextKnuthElements() implementation(s) that are to be called.
+     * @return LinkedList of Knuth elements.
      */
     protected abstract List getNextKnuthElements(LayoutContext context, int alignment);
 
@@ -218,18 +218,18 @@ public abstract class AbstractBreaker {
     public boolean isEmpty() {
         return (this.blockLists.isEmpty());
     }
-    
+
     protected void startPart(BlockSequence list, int breakClass) {
         //nop
     }
-    
+
     /**
      * This method is called when no content is available for a part. Used to force empty pages.
      */
     protected void handleEmptyContent() {
-        //nop    
+        //nop
     }
-    
+
     protected abstract void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp);
 
     /**
@@ -239,7 +239,7 @@ public abstract class AbstractBreaker {
     protected LayoutContext createLayoutContext() {
         return new LayoutContext(0);
     }
-    
+
     /**
      * Used to update the LayoutContext in subclasses prior to starting a new element list.
      * @param context the LayoutContext to update
@@ -247,7 +247,7 @@ public abstract class AbstractBreaker {
     protected void updateLayoutContext(LayoutContext context) {
         //nop
     }
-    
+
     /**
      * Used for debugging purposes. Notifies all registered observers about the element list.
      * Override to set different parameters.
@@ -256,7 +256,7 @@ public abstract class AbstractBreaker {
     protected void observeElementList(List elementList) {
         ElementListObserver.observe(elementList, "breaker", null);
     }
-    
+
     /**
      * Starts the page breaking process.
      * @param flowBPD the constant available block-progression-dimension (used for every part)
@@ -264,7 +264,7 @@ public abstract class AbstractBreaker {
     public void doLayout(int flowBPD) {
         doLayout(flowBPD, false);
     }
-    
+
     /**
      * Starts the page breaking process.
      * @param flowBPD the constant available block-progression-dimension (used for every part)
@@ -294,7 +294,7 @@ public abstract class AbstractBreaker {
         this.blockLists = new java.util.ArrayList();
 
         log.debug("PLM> flow BPD =" + flowBPD);
-        
+
         //*** Phase 1: Get Knuth elements ***
         int nextSequenceStartsOn = Constants.EN_ANY;
         while (hasMoreContent()) {
@@ -306,7 +306,7 @@ public abstract class AbstractBreaker {
             log.debug("PLM> blockLists.size() = " + blockLists.size());
             for (blockListIndex = 0; blockListIndex < blockLists.size(); blockListIndex++) {
                 blockList = (BlockSequence) blockLists.get(blockListIndex);
-                
+
                 //debug code start
                 if (log.isDebugEnabled()) {
                     log.debug("  blockListIndex = " + blockListIndex);
@@ -318,7 +318,7 @@ public abstract class AbstractBreaker {
                 observeElementList(blockList);
                 //debug code end
 
-                log.debug("PLM> start of algorithm (" + this.getClass().getName() 
+                log.debug("PLM> start of algorithm (" + this.getClass().getName()
                         + "), flow BPD =" + flowBPD);
                 PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
                         getPageProvider(), createLayoutListener(),
@@ -342,7 +342,7 @@ public abstract class AbstractBreaker {
                 log.debug("PLM> iOptPageCount= " + iOptPageCount
                         + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
-                
+
                 //*** Phase 3: Add areas ***
                 doPhase3(alg, iOptPageCount, blockList, effectiveList);
             }
@@ -351,36 +351,36 @@ public abstract class AbstractBreaker {
     }
 
     /**
-     * Phase 3 of Knuth algorithm: Adds the areas 
+     * Phase 3 of Knuth algorithm: Adds the areas
      * @param alg PageBreakingAlgorithm instance which determined the breaks
      * @param partCount number of parts (pages) to be rendered
      * @param originalList original Knuth element list
      * @param effectiveList effective Knuth element list (after adjustments)
      */
-    protected abstract void doPhase3(PageBreakingAlgorithm alg, int partCount, 
+    protected abstract void doPhase3(PageBreakingAlgorithm alg, int partCount,
             BlockSequence originalList, BlockSequence effectiveList);
-    
+
     /**
-     * Phase 3 of Knuth algorithm: Adds the areas 
+     * Phase 3 of Knuth algorithm: Adds the areas
      * @param alg PageBreakingAlgorithm instance which determined the breaks
      * @param partCount number of parts (pages) to be rendered
      * @param originalList original Knuth element list
      * @param effectiveList effective Knuth element list (after adjustments)
      */
-    protected void addAreas(PageBreakingAlgorithm alg, int partCount, 
+    protected void addAreas(PageBreakingAlgorithm alg, int partCount,
             BlockSequence originalList, BlockSequence effectiveList) {
         addAreas(alg, 0, partCount, originalList, effectiveList);
     }
-    
+
     /**
-     * Phase 3 of Knuth algorithm: Adds the areas 
+     * Phase 3 of Knuth algorithm: Adds the areas
      * @param alg PageBreakingAlgorithm instance which determined the breaks
      * @param startPart index of the first part (page) to be rendered
      * @param partCount number of parts (pages) to be rendered
      * @param originalList original Knuth element list
      * @param effectiveList effective Knuth element list (after adjustments)
      */
-    protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount, 
+    protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount,
             BlockSequence originalList, BlockSequence effectiveList) {
         LayoutContext childLC;
         // add areas
@@ -404,13 +404,13 @@ public abstract class AbstractBreaker {
                     lastBreakClass = Constants.EN_COLUMN;
                 }
             }
-            
+
             //the end of the new part
             endElementIndex = pbp.getLeafPos();
 
             // ignore the first elements added by the
             // PageSequenceLayoutManager
-            startElementIndex += (startElementIndex == 0) 
+            startElementIndex += (startElementIndex == 0)
                     ? effectiveList.ignoreAtStart
                     : 0;
 
@@ -420,16 +420,16 @@ public abstract class AbstractBreaker {
                     + ", break class = " + lastBreakClass);
 
             startPart(effectiveList, lastBreakClass);
-            
+
             int displayAlign = getCurrentDisplayAlign();
-            
+
             //The following is needed by SpaceResolver.performConditionalsNotification()
             //further down as there may be important Position elements in the element list trailer
             int notificationEndElementIndex = endElementIndex;
 
             // ignore the last elements added by the
             // PageSequenceLayoutManager
-            endElementIndex -= (endElementIndex == (originalList.size() - 1)) 
+            endElementIndex -= (endElementIndex == (originalList.size() - 1))
                     ? effectiveList.ignoreAtEnd
                     : 0;
 
@@ -493,7 +493,7 @@ public abstract class AbstractBreaker {
 
                 /* *** *** non-standard extension *** *** */
                 if (displayAlign == Constants.EN_X_FILL) {
-                    int averageLineLength = optimizeLineLength(effectiveList, 
+                    int averageLineLength = optimizeLineLength(effectiveList,
                             startElementIndex, endElementIndex);
                     if (averageLineLength != 0) {
                         childLC.setStackLimitBP(new MinOptMax(averageLineLength));
@@ -502,9 +502,9 @@ public abstract class AbstractBreaker {
                 /* *** *** non-standard extension *** *** */
 
                 // Handle SpaceHandling(Break)Positions, see SpaceResolver!
-                SpaceResolver.performConditionalsNotification(effectiveList, 
+                SpaceResolver.performConditionalsNotification(effectiveList,
                         startElementIndex, notificationEndElementIndex, lastBreak);
-                
+
                 // Add areas now!
                 addAreas(new KnuthPossPosIter(effectiveList,
                         startElementIndex, endElementIndex + 1), childLC);
@@ -528,7 +528,7 @@ public abstract class AbstractBreaker {
      * @param lastBreak index of the last break element
      */
     /**
-     * Handles span changes reported through the <code>LayoutContext</code>. 
+     * Handles span changes reported through the <code>LayoutContext</code>.
      * Only used by the PSLM and called by <code>getNextBlockList()</code>.
      * @param childLC the LayoutContext
      * @param nextSequenceStartsOn previous value for break handling
@@ -543,12 +543,12 @@ public abstract class AbstractBreaker {
      * @param nextSequenceStartsOn indicates on what page the next sequence should start
      * @return the page on which the next content should appear after a hard break
      */
-    protected int getNextBlockList(LayoutContext childLC, 
+    protected int getNextBlockList(LayoutContext childLC,
             int nextSequenceStartsOn) {
         updateLayoutContext(childLC);
         //Make sure the span change signal is reset
         childLC.signalSpanChange(Constants.NOT_SET);
-        
+
         BlockSequence blockList;
         List returnedList = getNextKnuthElements(childLC, alignment);
         if (returnedList != null) {
@@ -557,10 +557,10 @@ public abstract class AbstractBreaker {
                 return nextSequenceStartsOn;
             }
             blockList = new BlockSequence(nextSequenceStartsOn, getCurrentDisplayAlign());
-            
+
             //Only implemented by the PSLM
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
-            
+
             Position breakPosition = null;
             if (((KnuthElement) ListUtil.getLast(returnedList)).isForcedBreak()) {
                 KnuthPenalty breakPenalty = (KnuthPenalty) ListUtil
@@ -585,7 +585,7 @@ public abstract class AbstractBreaker {
                     nextSequenceStartsOn = Constants.EN_EVEN_PAGE;
                     break;
                 default:
-                    throw new IllegalStateException("Invalid break class: " 
+                    throw new IllegalStateException("Invalid break class: "
                             + breakPenalty.getBreakClass());
                 }
             }
@@ -649,7 +649,7 @@ public abstract class AbstractBreaker {
      * Justifies the boxes and returns them as a new KnuthSequence.
      * @param blockList block list to justify
      * @param alg reference to the algorithm instance
-     * @param availableBPD the available BPD 
+     * @param availableBPD the available BPD
      * @return the effective list
      */
     private BlockSequence justifyBoxes(BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
@@ -659,7 +659,7 @@ public abstract class AbstractBreaker {
                 1, true, BreakingAlgorithm.ALL_BREAKS);
         log.debug("PLM> iOptPageNumber= " + iOptPageNumber);
 
-        // 
+        //
         ListIterator sequenceIterator = blockList.listIterator();
         ListIterator breakIterator = alg.getPageBreaks().listIterator();
         KnuthElement thisElement = null;
@@ -687,7 +687,7 @@ public abstract class AbstractBreaker {
             KnuthElement firstElement;
             while (!(firstElement = (KnuthElement) sequenceIterator
                     .next()).isBox()) {
-                // 
+                //
                 log.debug("PLM> ignoring glue or penalty element "
                         + "at the beginning of the sequence");
                 if (firstElement.isGlue()) {
@@ -811,7 +811,7 @@ public abstract class AbstractBreaker {
         // create a new sequence: the new elements will contain the
         // Positions
         // which will be used in the addAreas() phase
-        BlockSequence effectiveList = new BlockSequence(blockList.getStartOn(), 
+        BlockSequence effectiveList = new BlockSequence(blockList.getStartOn(),
                                                 blockList.getDisplayAlign());
         effectiveList.addAll(getCurrentChildLM().getChangedKnuthElements(
                 blockList.subList(0, blockList.size() - blockList.ignoreAtEnd),
@@ -828,7 +828,7 @@ public abstract class AbstractBreaker {
 
     private int adjustBlockSpaces(LinkedList spaceList, int difference, int total) {
         if (log.isDebugEnabled()) {
-            log.debug("AdjustBlockSpaces: difference " + difference + " / " + total 
+            log.debug("AdjustBlockSpaces: difference " + difference + " / " + total
                     + " on " + spaceList.size() + " spaces in block");
         }
         ListIterator spaceListIterator = spaceList.listIterator();
@@ -839,8 +839,8 @@ public abstract class AbstractBreaker {
             partial += (difference > 0 ? blockSpace.getY() : blockSpace.getZ());
             if (log.isDebugEnabled()) {
                 log.debug("available = " + partial +  " / " + total);
-                log.debug("competenza  = " 
-                        + (((int)((float) partial * difference / total)) - adjustedDiff) 
+                log.debug("competenza  = "
+                        + (((int)((float) partial * difference / total)) - adjustedDiff)
                         + " / " + difference);
             }
             int newAdjust = ((BlockLevelLayoutManager) blockSpace.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
@@ -888,5 +888,5 @@ public abstract class AbstractBreaker {
         }
         return adjustedDiff;
     }
-    
+
 }

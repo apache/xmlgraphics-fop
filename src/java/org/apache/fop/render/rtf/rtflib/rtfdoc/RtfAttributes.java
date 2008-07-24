@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -215,17 +215,17 @@ implements java.lang.Cloneable {
             xslAttributes = new org.xml.sax.helpers.AttributesImpl(pAttribs);
         }
     }
-    
+
     /**
      * Add integer value <code>addValue</code> to attribute with name <code>name</code>.
-     * If there is no such setted attribute, then value of this attribure is equal to 
+     * If there is no such setted attribute, then value of this attribure is equal to
      * <code>addValue</code>.
      * @param addValue the increment of value
      * @param name the name of attribute
      */
     public void addIntegerValue(int addValue, String name) {
         Integer value = (Integer) getValue(name);
-        int v = (value != null) ? value.intValue() : 0; 
+        int v = (value != null) ? value.intValue() : 0;
         set(name, v + addValue);
     }
 }

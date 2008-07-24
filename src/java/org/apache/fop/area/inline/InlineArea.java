@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import org.apache.fop.area.Trait;
  * in a line area.
  */
 public class InlineArea extends Area {
-    
+
     /**
      * this class stores information about potential adjustments
      * that can be used in order to re-compute adjustments when a
@@ -42,7 +42,7 @@ public class InlineArea extends Area {
         protected int availableShrink;
         /** total adjustment (= ipd - width of fixed elements) */
         protected int adjustment;
-        
+
         /**
          * Constructor
          *
@@ -55,10 +55,10 @@ public class InlineArea extends Area {
             availableShrink = shrink;
             adjustment = adj;
         }
-        
+
         /**
          * Apply the variation factor
-         * 
+         *
          * @param variationFactor the factor by which the adjustment is to be changed
          * @return the IPD increase
          */
@@ -68,19 +68,19 @@ public class InlineArea extends Area {
             return adjustment - oldAdjustment;
         }
     }
-    
+
     /**
      * offset position from before edge of parent area
      */
     protected int offset = 0;
-    
+
     /**
      * parent area
      * it is needed in order to recompute adjust ratio and indents
      * when a page-number or a page-number-citation is resolved
      */
     private Area parentArea = null;
-    
+
     /**
      * ipd variation of child areas: if this area has not already
      * been added and cannot notify its parent area, store the variation
@@ -92,7 +92,7 @@ public class InlineArea extends Area {
      * The adjustment information object
      */
     protected InlineAdjustingInfo adjustingInfo = null;
-    
+
     /**
      * @return the adjustment information object
      */
@@ -109,7 +109,7 @@ public class InlineArea extends Area {
     public void setAdjustingInfo(int stretch, int shrink, int adjustment) {
         adjustingInfo = new InlineAdjustingInfo(stretch, shrink, adjustment);
     }
-    
+
     /**
      * Modify the adjustment value in the adjustment information object
      * @param adjustment the new adjustment value
@@ -119,7 +119,7 @@ public class InlineArea extends Area {
             adjustingInfo.adjustment = adjustment;
         }
     }
-    
+
     /**
      * Increase the inline progression dimensions of this area.
      * This is used for inline parent areas that contain mulitple child areas.
@@ -165,7 +165,7 @@ public class InlineArea extends Area {
     public Area getParentArea() {
         return parentArea;
     }
-    
+
     /**
      * Set the parent for the child area.
      *
@@ -177,7 +177,7 @@ public class InlineArea extends Area {
             ((InlineArea) childArea).setParentArea(this);
         }
     }
-    
+
     /**
      *@return true if the inline area is underlined.
      */
@@ -189,17 +189,17 @@ public class InlineArea extends Area {
     public boolean hasOverline() {
         return getTraitAsBoolean(Trait.OVERLINE);
     }
-    
+
     /** @return true if the inline area has a line through. */
     public boolean hasLineThrough() {
         return getTraitAsBoolean(Trait.LINETHROUGH);
     }
-    
+
     /** @return true if the inline area is blinking. */
     public boolean isBlinking() {
         return getTraitAsBoolean(Trait.BLINK);
     }
-    
+
     /**
      * recursively apply the variation factor to all descendant areas
      * @param variationFactor the variation factor that must be applied to adjustments
@@ -215,12 +215,12 @@ public class InlineArea extends Area {
         }
         return false;
     }
-    
+
     public void handleIPDVariation(int ipdVariation) {
         increaseIPD(ipdVariation);
         notifyIPDVariation(ipdVariation);
     }
-    
+
         /**
      * notify the parent area about the ipd variation of this area
      * or of a descendant area

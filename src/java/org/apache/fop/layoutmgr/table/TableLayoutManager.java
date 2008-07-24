@@ -59,15 +59,15 @@ import org.apache.fop.util.BreakUtil;
  * The table then creates areas for the columns, bodies and rows
  * the render background.
  */
-public class TableLayoutManager extends BlockStackingLayoutManager 
+public class TableLayoutManager extends BlockStackingLayoutManager
                 implements ConditionalElementListener {
 
     /**
      * logging instance
      */
     private static Log log = LogFactory.getLog(TableLayoutManager.class);
-    
-    private TableContentLayoutManager contentLM; 
+
+    private TableContentLayoutManager contentLM;
     private ColumnSetup columns = null;
 
     private Block curBlockArea;
@@ -81,7 +81,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     private boolean discardPaddingAfter;
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
-    
+
     private int halfBorderSeparationBPD;
     private int halfBorderSeparationIPD;
 
@@ -90,7 +90,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     /**
      * Temporary holder of column background informations for a table-cell's area.
-     * 
+     *
      * @see TableLayoutManager#registerColumnBackgroundArea(TableColumn, Block, int)
      */
     private static final class ColumnBackgroundInfo {
@@ -118,14 +118,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     public Table getTable() {
         return (Table)this.fobj;
     }
-    
+
     /**
      * @return the column setup for this table.
      */
     public ColumnSetup getColumns() {
         return this.columns;
     }
-    
+
     /** {@inheritDoc} */
     public void initialize() {
         foSpaceBefore = new SpaceVal(
@@ -133,8 +133,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         foSpaceAfter = new SpaceVal(
                 getTable().getCommonMarginBlock().spaceAfter, this).getSpace();
         startIndent = getTable().getCommonMarginBlock().startIndent.getValue(this);
-        endIndent = getTable().getCommonMarginBlock().endIndent.getValue(this); 
-        
+        endIndent = getTable().getCommonMarginBlock().endIndent.getValue(this);
+
         if (getTable().isSeparateBorderModel()) {
             this.halfBorderSeparationBPD = getTable().getBorderSeparation().getBPD().getLength()
                     .getValue(this) / 2;
@@ -144,23 +144,23 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             this.halfBorderSeparationBPD = 0;
             this.halfBorderSeparationIPD = 0;
         }
-        
-        if (!getTable().isAutoLayout() 
-                && getTable().getInlineProgressionDimension().getOptimum(this).getEnum() 
+
+        if (!getTable().isAutoLayout()
+                && getTable().getInlineProgressionDimension().getOptimum(this).getEnum()
                     != EN_AUTO) {
             autoLayout = false;
         }
     }
 
     private void resetSpaces() {
-        this.discardBorderBefore = false;        
-        this.discardBorderAfter = false;        
-        this.discardPaddingBefore = false;        
+        this.discardBorderBefore = false;
+        this.discardBorderAfter = false;
+        this.discardPaddingBefore = false;
         this.discardPaddingAfter = false;
         this.effSpaceBefore = null;
         this.effSpaceAfter = null;
     }
-    
+
     /**
      * @return half the value of border-separation.block-progression-dimension, or 0 if
      * border-collapse="collapse".
@@ -179,7 +179,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
-        
+
         List returnList = new LinkedList();
 
         /*
@@ -201,7 +201,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         int sumOfColumns = columns.getSumOfColumnWidths(this);
         if (!autoLayout && sumOfColumns > getContentAreaIPD()) {
             log.debug(FONode.decorateWithContextInfo(
-                    "The sum of all column widths is larger than the specified table width.", 
+                    "The sum of all column widths is larger than the specified table width.",
                     getTable()));
             updateContentAreaIPDwithOverconstrainedAdjust(sumOfColumns);
         }
@@ -213,7 +213,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                     getContentAreaIPD(), context.getRefIPD(),
                     getTable().getLocator());
         }
-        
+
         /* initialize unit to determine computed values
          * for proportional-column-width()
          */
@@ -224,7 +224,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         if (!firstVisibleMarkServed) {
             addKnuthElementsForSpaceBefore(returnList, alignment);
         }
-        
+
         if (getTable().isSeparateBorderModel()) {
             addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
             firstVisibleMarkServed = true;
@@ -279,7 +279,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         int breakAfter = BreakUtil.compareBreakClasses(getTable().getBreakAfter(),
                 childLC.getBreakAfter());
         if (breakAfter != Constants.EN_AUTO) {
-            returnList.add(new BreakElement(getAuxiliaryPosition(), 
+            returnList.add(new BreakElement(getAuxiliaryPosition(),
                     0, -KnuthElement.INFINITE, breakAfter, context));
         }
 
@@ -295,7 +295,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
      * be known. The traits can't then be set when the areas for the cell are created
      * since at that moment this bpd is yet unknown. So they will instead be set in
      * TableLM's {@link #addAreas(PositionIterator, LayoutContext)} method.
-     * 
+     *
      * @param column the table-column element from which the cell gets background
      * informations
      * @param backgroundArea the block of the cell's dimensions that will hold the column
@@ -329,7 +329,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
 
         int startXOffset = getTable().getCommonMarginBlock().startIndent.getValue(this);
-        
+
         // add column, body then row areas
 
         // BPD of the table, i.e., height of its content; table's borders and paddings not counted
@@ -357,30 +357,30 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
 
         if (getTable().isSeparateBorderModel()) {
-            TraitSetter.addBorders(curBlockArea, 
-                    getTable().getCommonBorderPaddingBackground(), 
+            TraitSetter.addBorders(curBlockArea,
+                    getTable().getCommonBorderPaddingBackground(),
                     discardBorderBefore, discardBorderAfter, false, false, this);
-            TraitSetter.addPadding(curBlockArea, 
-                    getTable().getCommonBorderPaddingBackground(), 
+            TraitSetter.addPadding(curBlockArea,
+                    getTable().getCommonBorderPaddingBackground(),
                     discardPaddingBefore, discardPaddingAfter, false, false, this);
         }
-        TraitSetter.addBackground(curBlockArea, 
+        TraitSetter.addBackground(curBlockArea,
                 getTable().getCommonBorderPaddingBackground(),
                 this);
         TraitSetter.addMargins(curBlockArea,
-                getTable().getCommonBorderPaddingBackground(), 
+                getTable().getCommonBorderPaddingBackground(),
                 startIndent, endIndent,
                 this);
-        TraitSetter.addBreaks(curBlockArea, 
+        TraitSetter.addBreaks(curBlockArea,
                 getTable().getBreakBefore(), getTable().getBreakAfter());
-        TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(), 
+        TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(),
                 effSpaceBefore, effSpaceAfter);
 
         flush();
 
         resetSpaces();
         curBlockArea = null;
-        
+
         notifyEndOfLayout();
     }
 
@@ -403,11 +403,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             // Set up dimensions
             // Must get dimensions from parent area
             /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
-            
+
             TraitSetter.setProducerID(curBlockArea, getTable().getId());
 
             curBlockArea.setIPD(getContentAreaIPD());
-            
+
             setCurrentArea(curBlockArea);
         }
         return curBlockArea;
@@ -426,7 +426,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     /**
      * Adds the given area to this layout manager's area, without updating the used bpd.
-     * 
+     *
      * @param background an area
      */
     void addBackgroundArea(Block background) {
@@ -442,7 +442,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     /** {@inheritDoc} */
     public void discardSpace(KnuthGlue spaceGlue) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /** {@inheritDoc} */
@@ -451,7 +451,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         strength = Math.max(strength, getParentKeepTogetherStrength());
         return strength;
     }
-    
+
     /** {@inheritDoc} */
     public int getKeepWithNextStrength() {
         return KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepWithNext());
@@ -465,7 +465,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     // --------- Property Resolution related functions --------- //
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         // Special handler for TableColumn width specifications
@@ -488,18 +488,18 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     public void notifySpace(RelSide side, MinOptMax effectiveLength) {
         if (RelSide.BEFORE == side) {
             if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", " 
+                log.debug(this + ": Space " + side + ", "
                         + this.effSpaceBefore + "-> " + effectiveLength);
             }
             this.effSpaceBefore = effectiveLength;
         } else {
             if (log.isDebugEnabled()) {
-                log.debug(this + ": Space " + side + ", " 
+                log.debug(this + ": Space " + side + ", "
                         + this.effSpaceAfter + "-> " + effectiveLength);
             }
             this.effSpaceAfter = effectiveLength;

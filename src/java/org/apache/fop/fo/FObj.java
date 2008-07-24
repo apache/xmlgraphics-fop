@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,22 +42,22 @@ import org.apache.fop.fo.properties.PropertyMaker;
  * All standard formatting object classes extend this class.
  */
 public abstract class FObj extends FONode implements Constants {
-    
+
     /** the list of property makers */
     private static final PropertyMaker[] propertyListTable
                             = FOPropertyMapping.getGenericMappings();
-    
-    /** 
+
+    /**
      * pointer to the descendant subtree
      */
     protected FONode firstChild;
-    
+
     /** The list of extension attachments, null if none */
     private List extensionAttachments = null;
-    
+
     /** The map of foreign attributes, null if none */
     private Map foreignAttributes = null;
-    
+
     /** Used to indicate if this FO is either an Out Of Line FO (see rec)
      *  or a descendant of one. Used during FO validation.
      */
@@ -65,7 +65,7 @@ public abstract class FObj extends FONode implements Constants {
 
     /** Markers added to this element. */
     private Map markers = null;
-    
+
     // The value of properties relevant for all fo objects
     private String id = null;
     // End of property values
@@ -77,7 +77,7 @@ public abstract class FObj extends FONode implements Constants {
      */
     public FObj(FONode parent) {
         super(parent);
-        
+
         // determine if isOutOfLineFODescendant should be set
         if (parent != null && parent instanceof FObj) {
             if (((FObj) parent).getIsOutOfLineFODescendant()) {
@@ -101,7 +101,7 @@ public abstract class FObj extends FONode implements Constants {
         }
         return fobj;
     }
-    
+
     /**
      * Returns the PropertyMaker for a given property ID.
      * @param propId the property ID
@@ -112,8 +112,8 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /** {@inheritDoc} */
-    public void processNode(String elementName, Locator locator, 
-                            Attributes attlist, PropertyList pList) 
+    public void processNode(String elementName, Locator locator,
+                            Attributes attlist, PropertyList pList)
                     throws FOPException {
         setLocator(locator);
         pList.addAttributesToList(attlist);
@@ -125,10 +125,10 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * Create a default property list for this element. 
+     * Create a default property list for this element.
      * {@inheritDoc}
      */
-    protected PropertyList createPropertyList(PropertyList parent, 
+    protected PropertyList createPropertyList(PropertyList parent,
                     FOEventHandler foEventHandler) throws FOPException {
         return getBuilderContext().getPropertyListMaker().make(this, parent);
     }
@@ -158,7 +158,7 @@ public abstract class FObj extends FONode implements Constants {
      * Setup the id for this formatting object.
      * Most formatting objects can have an id that can be referenced.
      * This methods checks that the id isn't already used by another FO
-     * 
+     *
      * @param id    the id to check
      * @throws ValidationException if the ID is already defined elsewhere
      *                              (strict validation only)
@@ -186,11 +186,11 @@ public abstract class FObj extends FONode implements Constants {
     protected void addChildNode(FONode child) throws FOPException {
         if (child.getNameId() == FO_MARKER) {
             addMarker((Marker) child);
-        } else { 
+        } else {
             ExtensionAttachment attachment = child.getExtensionAttachment();
             if (attachment != null) {
-                /* This removes the element from the normal children, 
-                 * so no layout manager is being created for them 
+                /* This removes the element from the normal children,
+                 * so no layout manager is being created for them
                  * as they are only additional information.
                  */
                 addExtensionAttachment(attachment);
@@ -215,11 +215,11 @@ public abstract class FObj extends FONode implements Constants {
      * @param parent    the (cloned) parent node
      * @throws FOPException when the child could not be added to the parent
      */
-    protected static void addChildTo(FONode child, FObj parent) 
+    protected static void addChildTo(FONode child, FObj parent)
                             throws FOPException {
         parent.addChildNode(child);
     }
-    
+
     /** {@inheritDoc} */
     public void removeChild(FONode child) {
         FONode nextChild = null;
@@ -239,7 +239,7 @@ public abstract class FObj extends FONode implements Constants {
             }
         }
     }
-    
+
     /**
      * Find the nearest parent, grandparent, etc. FONode that is also an FObj
      * @return FObj the nearest ancestor FONode that is an FObj
@@ -276,7 +276,7 @@ public abstract class FObj extends FONode implements Constants {
     public boolean hasChildren() {
         return this.firstChild != null;
     }
-    
+
     /**
      * Return an iterator over the object's childNodes starting
      * at the passed-in node (= first call to iterator.next() will
@@ -307,7 +307,7 @@ public abstract class FObj extends FONode implements Constants {
 
     /**
      * Notifies a FObj that one of it's children is removed.
-     * This method is subclassed by Block to clear the 
+     * This method is subclassed by Block to clear the
      * firstInlineChild variable in case it doesn't generate
      * any areas (see addMarker()).
      * @param node the node that was removed
@@ -315,7 +315,7 @@ public abstract class FObj extends FONode implements Constants {
     void notifyChildRemoval(FONode node) {
         //nop
     }
-    
+
     /**
      * Add the marker to this formatting object.
      * If this object can contain markers it checks that the marker
@@ -392,7 +392,7 @@ public abstract class FObj extends FONode implements Constants {
             return null;
         }
     }
-    
+
     /** {@inheritDoc} */
     protected String gatherContextInfo() {
         if (getLocator() != null) {
@@ -422,11 +422,11 @@ public abstract class FObj extends FONode implements Constants {
      * incoming node is a member of the "%block;" parameter entity
      * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
      * @param nsURI namespace URI of incoming node
-     * @param lName local name (i.e., no prefix) of incoming node 
+     * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
      */
     protected boolean isBlockItem(String nsURI, String lName) {
-        return (FO_URI.equals(nsURI) 
+        return (FO_URI.equals(nsURI)
                 && ("block".equals(lName)
                         || "table".equals(lName)
                         || "table-and-caption".equals(lName)
@@ -441,11 +441,11 @@ public abstract class FObj extends FONode implements Constants {
      * incoming node is a member of the "%inline;" parameter entity
      * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
      * @param nsURI namespace URI of incoming node
-     * @param lName local name (i.e., no prefix) of incoming node 
+     * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
      */
     protected boolean isInlineItem(String nsURI, String lName) {
-        return (FO_URI.equals(nsURI) 
+        return (FO_URI.equals(nsURI)
                 && ("bidi-override".equals(lName)
                         || "character".equals(lName)
                         || "external-graphic".equals(lName)
@@ -470,7 +470,7 @@ public abstract class FObj extends FONode implements Constants {
      * incoming node is a member of the "%block;" parameter entity
      * or "%inline;" parameter entity
      * @param nsURI namespace URI of incoming node
-     * @param lName local name (i.e., no prefix) of incoming node 
+     * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
      */
     protected boolean isBlockOrInlineItem(String nsURI, String lName) {
@@ -482,11 +482,11 @@ public abstract class FObj extends FONode implements Constants {
      * incoming node is a member of the neutral item list
      * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
      * @param nsURI namespace URI of incoming node
-     * @param lName local name (i.e., no prefix) of incoming node 
+     * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
      */
     boolean isNeutralItem(String nsURI, String lName) {
-        return (FO_URI.equals(nsURI) 
+        return (FO_URI.equals(nsURI)
                 && ("multi-switch".equals(lName)
                         || "multi-properties".equals(lName)
                         || "wrapper".equals(lName)
@@ -494,12 +494,12 @@ public abstract class FObj extends FONode implements Constants {
                         || "retrieve-marker".equals(lName)
                         || "retrieve-table-marker".equals(lName)));
     }
-    
+
     /**
      * Convenience method for validity checking.  Checks if the
      * current node has an ancestor of a given name.
      * @param ancestorID    ID of node name to check for (e.g., FO_ROOT)
-     * @return number of levels above FO where ancestor exists, 
+     * @return number of levels above FO where ancestor exists,
      *         -1 if not found
      */
     protected int findAncestor(int ancestorID) {
@@ -514,19 +514,19 @@ public abstract class FObj extends FONode implements Constants {
         }
         return -1;
     }
-    
+
     /**
      * Clears the list of child nodes.
      */
     public void clearChildNodes() {
         this.firstChild = null;
     }
-    
+
     /** @return the "id" property. */
     public String getId() {
         return id;
     }
-    
+
     /** @return whether this object has an id set */
     public boolean hasId() {
         return id != null && id.length() > 0;
@@ -543,9 +543,9 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /**
-     * Add a new extension attachment to this FObj. 
+     * Add a new extension attachment to this FObj.
      * (see org.apache.fop.fo.FONode for details)
-     * 
+     *
      * @param attachment the attachment to add.
      */
     void addExtensionAttachment(ExtensionAttachment attachment) {
@@ -557,13 +557,13 @@ public abstract class FObj extends FONode implements Constants {
             extensionAttachments = new java.util.ArrayList();
         }
         if (log.isDebugEnabled()) {
-            log.debug("ExtensionAttachment of category " 
-                    + attachment.getCategory() + " added to " 
+            log.debug("ExtensionAttachment of category "
+                    + attachment.getCategory() + " added to "
                     + getName() + ": " + attachment);
         }
         extensionAttachments.add(attachment);
     }
-    
+
     /** @return the extension attachments of this FObj. */
     public List getExtensionAttachments() {
         if (extensionAttachments == null) {
@@ -579,7 +579,7 @@ public abstract class FObj extends FONode implements Constants {
      * @param value the attribute value
      */
     public void addForeignAttribute(QName attributeName, String value) {
-        /* TODO: Handle this over FOP's property mechanism so we can use 
+        /* TODO: Handle this over FOP's property mechanism so we can use
          *       inheritance.
          */
         if (attributeName == null) {
@@ -590,7 +590,7 @@ public abstract class FObj extends FONode implements Constants {
         }
         foreignAttributes.put(attributeName, value);
     }
-    
+
     /** @return the map of foreign attributes */
     public Map getForeignAttributes() {
         if (foreignAttributes == null) {
@@ -599,7 +599,7 @@ public abstract class FObj extends FONode implements Constants {
             return foreignAttributes;
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + "[@id=" + this.id + "]");
@@ -607,28 +607,28 @@ public abstract class FObj extends FONode implements Constants {
 
     /** Basic {@link FONodeIterator} implementation */
     public class FObjIterator implements FONodeIterator {
-        
+
         private static final int F_NONE_ALLOWED = 0;
         private static final int F_SET_ALLOWED = 1;
         private static final int F_REMOVE_ALLOWED = 2;
-        
+
         private FONode currentNode;
         private final FObj parentNode;
         private int currentIndex;
         private int flags = F_NONE_ALLOWED;
-        
+
         FObjIterator(FObj parent) {
             this.parentNode = parent;
             this.currentNode = parent.firstChild;
             this.currentIndex = 0;
             this.flags = F_NONE_ALLOWED;
         }
-        
+
         /** {@inheritDoc} */
         public FObj parentNode() {
             return parentNode;
         }
-        
+
         /** {@inheritDoc} */
         public Object next() {
             if (currentNode != null) {
@@ -660,7 +660,7 @@ public abstract class FObj extends FONode implements Constants {
                 throw new NoSuchElementException();
             }
         }
-        
+
         /** {@inheritDoc} */
         public void set(Object o) {
             if ((flags & F_SET_ALLOWED) == F_SET_ALLOWED) {
@@ -678,7 +678,7 @@ public abstract class FObj extends FONode implements Constants {
                 throw new IllegalStateException();
             }
         }
-        
+
         /** {@inheritDoc} */
         public void add(Object o) {
             FONode newNode = (FONode) o;
@@ -713,7 +713,7 @@ public abstract class FObj extends FONode implements Constants {
                 || (currentNode.siblings != null
                     && currentNode.siblings[0] != null);
         }
-        
+
         /** {@inheritDoc} */
         public int nextIndex() {
             return currentIndex + 1;
@@ -754,19 +754,19 @@ public abstract class FObj extends FONode implements Constants {
             }
             return currentNode;
         }
-        
+
         /** {@inheritDoc} */
         public FONode firstNode() {
             currentNode = parentNode.firstChild;
             currentIndex = 0;
             return currentNode;
         }
-        
+
         /** {@inheritDoc} */
         public FONode nextNode() {
             return (FONode) next();
         }
-        
+
         /** {@inheritDoc} */
         public FONode previousNode() {
             return (FONode) previous();

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -88,10 +88,10 @@ public class PDFArray extends PDFObject {
     public PDFArray(PDFObject parent, Collection values) {
         /* generic creation of PDF object */
         super(parent);
-        
+
         this.values.addAll(values);
     }
-    
+
     /**
      * Create the array object
      * @param parent the array's parent if any
@@ -100,12 +100,12 @@ public class PDFArray extends PDFObject {
     public PDFArray(PDFObject parent, Object[] values) {
         /* generic creation of PDF object */
         super(parent);
-        
+
         for (int i = 0, c = values.length; i < c; i++) {
             this.values.add(values[i]);
         }
     }
-    
+
     /**
      * Returns the length of the array
      * @return the length of the array
@@ -113,7 +113,7 @@ public class PDFArray extends PDFObject {
     public int length() {
         return this.values.size();
     }
-    
+
     /**
      * Sets an entry at a given location.
      * @param index the index of the value to set
@@ -122,7 +122,7 @@ public class PDFArray extends PDFObject {
     public void set(int index, Object obj) {
         this.values.set(index, obj);
     }
-    
+
     /**
      * Sets an entry at a given location.
      * @param index the index of the value to set
@@ -131,7 +131,7 @@ public class PDFArray extends PDFObject {
     public void set(int index, double value) {
         this.values.set(index, new Double(value));
     }
-    
+
     /**
      * Gets an entry at a given location.
      * @param index the index of the value to set
@@ -140,7 +140,7 @@ public class PDFArray extends PDFObject {
     public Object get(int index) {
         return this.values.get(index);
     }
-    
+
     /**
      * Adds a new value to the array.
      * @param obj the value
@@ -154,7 +154,7 @@ public class PDFArray extends PDFObject {
         }
         this.values.add(obj);
     }
-    
+
     /**
      * Adds a new value to the array.
      * @param value the value
@@ -162,7 +162,7 @@ public class PDFArray extends PDFObject {
     public void add(double value) {
         this.values.add(new Double(value));
     }
-    
+
     /** {@inheritDoc} */
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
@@ -170,7 +170,7 @@ public class PDFArray extends PDFObject {
         if (hasObjectNumber()) {
             writer.write(getObjectID());
         }
-        
+
         writer.write('[');
         for (int i = 0; i < values.size(); i++) {
             if (i > 0) {
@@ -180,13 +180,13 @@ public class PDFArray extends PDFObject {
             formatObject(obj, cout, writer);
         }
         writer.write(']');
-        
+
         if (hasObjectNumber()) {
             writer.write("\nendobj\n");
         }
-        
+
         writer.flush();
         return cout.getCount();
     }
-    
+
 }

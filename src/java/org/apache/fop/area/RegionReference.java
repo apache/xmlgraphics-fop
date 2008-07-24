@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,17 +30,17 @@ import org.apache.fop.fo.pagination.Region;
  * so the page master can make copies from the original page and regions.
  */
 public class RegionReference extends Area implements Cloneable {
-    
+
     /** Reference to the region FO. */
     //protected Region regionFO;
     private int regionClass;
     private String regionName;
     private CTM ctm;
-    
+
 
     // the list of block areas from the static flow
     private ArrayList blocks = new ArrayList();
-    
+
     /** the parent RegionViewport for this object */
     protected RegionViewport regionViewport;
 
@@ -78,7 +78,7 @@ public class RegionReference extends Area implements Cloneable {
         // subtract bpd of borders and padding before / after
         return super.getBPD() - getBorderAndPaddingWidthBefore() - getBorderAndPaddingWidthAfter();
     }
-    
+
     /** {@inheritDoc} */
     public int getIPD() {
         // subtract ipd of borders and padding start / end
@@ -97,7 +97,7 @@ public class RegionReference extends Area implements Cloneable {
     public void setCTM(CTM ctm) {
         this.ctm = ctm;
     }
-    
+
     /**
      * @return Returns the parent RegionViewport.
      */
@@ -136,7 +136,7 @@ public class RegionReference extends Area implements Cloneable {
     public String getRegionName() {
         return this.regionName;
     }
-    
+
     /**
      * Add a block area to this region reference area.
      *
@@ -145,7 +145,7 @@ public class RegionReference extends Area implements Cloneable {
     public void addBlock(Block block) {
         addChildArea(block);
     }
-    
+
     /**
      * Clone this region.
      * This is used when cloning the page by the page master.

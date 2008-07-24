@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,10 +57,10 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     public CharacterLayoutManager(Character node) {
         super(node);
     }
-    
+
     /** {@inheritDoc} */
     public void initialize() {
-        Character fobj = (Character)this.fobj;        
+        Character fobj = (Character)this.fobj;
         font = FontSelector.selectFontForCharacter(fobj, this);
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
         letterSpaceIPD = ls.getSpace();
@@ -101,7 +101,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         }
 
         Character fobj = (Character)this.fobj;
-        
+
         ipd = new MinOptMax(font.getCharWidth(fobj.getCharacter()));
 
         curArea.setIPD(ipd.opt);
@@ -120,7 +120,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
                                     , context.getAlignmentContext());
 
         addKnuthElementsForBorderPaddingStart(seq);
-        
+
         // create the AreaInfo object to store the computed values
         areaInfo = new AreaInfo((short) 0, ipd, false, alignmentContext);
 

@@ -85,7 +85,7 @@ public class AreaTreeParser {
     /** Logger instance */
     protected static Log log = LogFactory.getLog(AreaTreeParser.class);
 
-    private static SAXTransformerFactory tFactory 
+    private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     /**
@@ -96,11 +96,11 @@ public class AreaTreeParser {
      * @param userAgent the user agent
      * @throws TransformerException if an error occurs while parsing the area tree XML
      */
-    public void parse(Source src, AreaTreeModel treeModel, FOUserAgent userAgent) 
+    public void parse(Source src, AreaTreeModel treeModel, FOUserAgent userAgent)
             throws TransformerException {
         Transformer transformer = tFactory.newTransformer();
         transformer.setErrorListener(new DefaultErrorListener(log));
-        
+
         SAXResult res = new SAXResult(getContentHandler(treeModel, userAgent));
 
         transformer.transform(src, res);
@@ -131,7 +131,7 @@ public class AreaTreeParser {
 
         private CharBuffer content = CharBuffer.allocate(64);
         private boolean ignoreCharacters = true;
-        
+
         private PageViewport currentPageViewport;
         private Map pageViewportsByKey = new java.util.HashMap();
         // set of "ID firsts" that have already been assigned to a PV:
@@ -328,7 +328,7 @@ public class AreaTreeParser {
             public void endElement() {
                 //nop
             }
-            
+
             public boolean ignoreCharacters() {
                 return true;
             }
@@ -409,7 +409,7 @@ public class AreaTreeParser {
                 currentPageViewport = null;
             }
         }
-        
+
         private class RegionViewportMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
@@ -427,10 +427,10 @@ public class AreaTreeParser {
                 setTraits(attributes, rv, SUBSET_COLOR);
                 areaStack.push(rv);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionViewport.class);
-            }            
+            }
         }
 
         private class RegionBeforeMaker extends AbstractMaker {
@@ -438,7 +438,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 pushNewRegionReference(attributes, Constants.FO_REGION_BEFORE);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
             }
@@ -465,7 +465,7 @@ public class AreaTreeParser {
                 assertObjectOfClass(areaStack.pop(), RegionReference.class);
             }
         }
-        
+
         private class RegionEndMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
@@ -488,7 +488,7 @@ public class AreaTreeParser {
                 int columnCount = getAttributeAsInteger(attributes, "columnCount", 1);
                 int columnGap = getAttributeAsInteger(attributes, "columnGap", 0);
                 RegionViewport rv = getCurrentRegionViewport();
-                body = new BodyRegion(Constants.FO_REGION_BODY, 
+                body = new BodyRegion(Constants.FO_REGION_BODY,
                         regionName, rv, columnCount, columnGap);
                 transferForeignObjects(attributes, body);
                 body.setCTM(getAttributeAsCTM(attributes, "ctm"));
@@ -498,10 +498,10 @@ public class AreaTreeParser {
                         Constants.FO_REGION_BODY, rv);
                 areaStack.push(body);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), BodyRegion.class);
-            }            
+            }
         }
 
         private class FlowMaker extends AbstractMaker {
@@ -518,12 +518,12 @@ public class AreaTreeParser {
                 setAreaAttributes(attributes, flow);
                 areaStack.push(flow);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), NormalFlow.class);
-            }            
+            }
         }
-        
+
         private class MainReferenceMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
@@ -540,7 +540,7 @@ public class AreaTreeParser {
                 int ipd = getAttributeAsInteger(attributes, "ipd", 0);
                 int columnCount = getAttributeAsInteger(attributes, "columnCount", 1);
                 BodyRegion body = getCurrentBodyRegion();
-                Span span = new Span(columnCount, 
+                Span span = new Span(columnCount,
                         body.getColumnGap(), ipd);
                 transferForeignObjects(attributes, span);
                 setAreaAttributes(attributes, span);
@@ -557,20 +557,20 @@ public class AreaTreeParser {
                 fn.setTop(getAttributeAsInteger(attributes, "top-offset", 0));
                 areaStack.push(fn);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), Footnote.class);
-            }            
+            }
         }
 
         private class BeforeFloatMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                BeforeFloat bf = getCurrentBodyRegion().getBeforeFloat(); 
+                BeforeFloat bf = getCurrentBodyRegion().getBeforeFloat();
                 transferForeignObjects(attributes, bf);
                 areaStack.push(bf);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), BeforeFloat.class);
             }
@@ -622,7 +622,7 @@ public class AreaTreeParser {
                 parent.addChildArea(block);
                 areaStack.push(block);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), Block.class);
             }
@@ -702,7 +702,7 @@ public class AreaTreeParser {
                 parent.addChildArea(ibp);
                 areaStack.push(ibp);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), InlineBlockParent.class);
             }
@@ -724,13 +724,13 @@ public class AreaTreeParser {
                 text.setOffset(getAttributeAsInteger(attributes, "offset", 0));
                 text.setTextLetterSpaceAdjust(getAttributeAsInteger(attributes,
                         "tlsadjust", 0));
-                text.setTextWordSpaceAdjust(getAttributeAsInteger(attributes, 
+                text.setTextWordSpaceAdjust(getAttributeAsInteger(attributes,
                         "twsadjust", 0));
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(text);
                 areaStack.push(text);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), TextArea.class);
             }
@@ -740,7 +740,7 @@ public class AreaTreeParser {
 
             public void endElement() {
                 int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
-                int[] letterAdjust 
+                int[] letterAdjust
                         = ConversionUtils.toIntArray(
                             lastAttributes.getValue("letter-adjust"), "\\s");
                 content.flip();
@@ -749,14 +749,14 @@ public class AreaTreeParser {
                 word.setParentArea(text);
                 text.addChildArea(word);
             }
-            
+
             public boolean ignoreCharacters() {
                 return false;
             }
         }
 
         private class SpaceMaker extends AbstractMaker {
-            
+
             public void endElement() {
                 int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
                 //TODO the isAdjustable parameter is currently not used/implemented
@@ -778,7 +778,7 @@ public class AreaTreeParser {
                     parent.addChildArea(space);
                 }
             }
-            
+
             public boolean ignoreCharacters() {
                 return false;
             }
@@ -822,12 +822,12 @@ public class AreaTreeParser {
                 parent.addChildArea(viewport);
                 areaStack.push(viewport);
             }
-            
+
             public void endElement() {
                 assertObjectOfClass(areaStack.pop(), Viewport.class);
             }
         }
-        
+
         private class ImageMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
@@ -839,12 +839,12 @@ public class AreaTreeParser {
                 getCurrentViewport().setContent(image);
             }
         }
-        
+
         private class ForeignObjectMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) throws SAXException {
                 String ns = attributes.getValue("ns");
-                domImplementation 
+                domImplementation
                     = elementMappingRegistry.getDOMImplementationForNamespace(ns);
                 if (domImplementation == null) {
                     throw new SAXException("No DOMImplementation could be"
@@ -941,11 +941,11 @@ public class AreaTreeParser {
 
         private void assertObjectOfClass(Object obj, Class clazz) {
             if (!clazz.isInstance(obj)) {
-                throw new IllegalStateException("Object is not an instance of " 
+                throw new IllegalStateException("Object is not an instance of "
                         + clazz.getName() + " but of " + obj.getClass().getName());
             }
         }
-        
+
         /**
          * Handles objects created by "sub-parsers" that implement the ObjectSource interface.
          * An example of object handled here are ExtensionAttachments.
@@ -969,7 +969,7 @@ public class AreaTreeParser {
             area.setIPD(Integer.parseInt(attributes.getValue("ipd")));
             area.setBPD(Integer.parseInt(attributes.getValue("bpd")));
         }
-        
+
         private static final Object[] SUBSET_COMMON = new Object[] {
             Trait.PROD_ID};
         private static final Object[] SUBSET_LINK = new Object[] {
@@ -1078,7 +1078,7 @@ public class AreaTreeParser {
             }
         }
 
-        private static int getAttributeAsInteger(Attributes attributes, String name, 
+        private static int getAttributeAsInteger(Attributes attributes, String name,
                 int defaultValue) {
             String s = attributes.getValue(name);
             if (s == null) {
@@ -1123,7 +1123,7 @@ public class AreaTreeParser {
                 }
             }
         }
-        
+
         /** {@inheritDoc} */
         public void characters(char[] ch, int start, int length) throws SAXException {
             if (delegate != null) {
@@ -1132,7 +1132,7 @@ public class AreaTreeParser {
                 int maxLength = this.content.capacity() - this.content.position();
                 if (maxLength < length) {
                     // allocate a larger buffer and transfer content
-                    CharBuffer newContent 
+                    CharBuffer newContent
                             = CharBuffer.allocate(this.content.position() + length);
                     this.content.flip();
                     newContent.put(this.content);

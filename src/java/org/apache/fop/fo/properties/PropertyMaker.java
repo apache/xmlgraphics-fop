@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -123,8 +123,8 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Add a enum constant.
-     * @param constant the enum constant 
-     * @param value the Property value to use when the constant is specified 
+     * @param constant the enum constant
+     * @param value the Property value to use when the constant is specified
      */
     public void addEnum(String constant, Property value) {
         if (enums == null) {
@@ -138,16 +138,16 @@ public class PropertyMaker implements Cloneable {
      * @param subproperty the PropertyMaker for the subproperty
      */
     public void addSubpropMaker(PropertyMaker subproperty) {
-        throw new RuntimeException("Unable to add subproperties " + getClass()); 
+        throw new RuntimeException("Unable to add subproperties " + getClass());
     }
 
     /**
-     * Return a subproperty maker for the subpropertyId. 
-     * @param subpropertyId The subpropertyId of the maker. 
+     * Return a subproperty maker for the subpropertyId.
+     * @param subpropertyId The subpropertyId of the maker.
      * @return The subproperty maker.
      */
     public PropertyMaker getSubpropMaker(int subpropertyId) {
-        throw new RuntimeException("Unable to add subproperties"); 
+        throw new RuntimeException("Unable to add subproperties");
     }
 
     /**
@@ -155,7 +155,7 @@ public class PropertyMaker implements Cloneable {
      * shorthands list. Later the Integers are replaced with references
      * to the actual shorthand property makers.
      * @param shorthand a property maker thar is that is checked for
-     *        shorthand values. 
+     *        shorthand values.
      */
     public void addShorthand(PropertyMaker shorthand) {
         if (shorthands == null) {
@@ -197,7 +197,7 @@ public class PropertyMaker implements Cloneable {
     }
 
     /**
-     * Set the percent base identifier for this maker. 
+     * Set the percent base identifier for this maker.
      * @param percentBase the percent base (ex. LengthBase.FONTSIZE)
      */
     public void setPercentBase(int percentBase) {
@@ -205,9 +205,9 @@ public class PropertyMaker implements Cloneable {
     }
 
     /**
-     * Set the setByShorthand flag which only is applicable for subproperty 
-     * makers. It should be true for the subproperties which must be 
-     * assigned a value when the base property is assigned a attribute 
+     * Set the setByShorthand flag which only is applicable for subproperty
+     * makers. It should be true for the subproperties which must be
+     * assigned a value when the base property is assigned a attribute
      * value directly.
      * @param setByShorthand true if this subproperty must be set when the base property is set
      */
@@ -217,7 +217,7 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Set the correspoding property information.
-     * @param corresponding a corresponding maker where the 
+     * @param corresponding a corresponding maker where the
      *        isForcedCorresponding and compute methods are delegated to.
      */
     public void setCorresponding(CorrespondingPropertyMaker corresponding) {
@@ -225,7 +225,7 @@ public class PropertyMaker implements Cloneable {
     }
 
     /**
-     * Create a new empty property. Must be overriden in compound 
+     * Create a new empty property. Must be overriden in compound
      * subclasses.
      * @return a new instance of the Property for which this is a maker.
      */
@@ -243,13 +243,13 @@ public class PropertyMaker implements Cloneable {
      * @param propertyList the applicable property list
      * @param tryInherit true if inherited properties should be examined.
      * @return the property value
-     * @throws PropertyException if there is a problem evaluating the property 
+     * @throws PropertyException if there is a problem evaluating the property
      */
-    public Property findProperty(PropertyList propertyList, 
+    public Property findProperty(PropertyList propertyList,
                                  boolean tryInherit)
                 throws PropertyException {
         Property p = null;
-        
+
         if (log.isTraceEnabled()) {
             log.trace("PropertyMaker.findProperty: "
                   + FOPropertyMapping.getPropertyName(propId)
@@ -267,9 +267,9 @@ public class PropertyMaker implements Cloneable {
                 p = this.compute(propertyList);
             }
         }
-        if (p == null && tryInherit) {    
+        if (p == null && tryInherit) {
             // else inherit (if has parent and is inheritable)
-            PropertyList parentPropertyList = propertyList.getParentPropertyList(); 
+            PropertyList parentPropertyList = propertyList.getParentPropertyList();
             if (parentPropertyList != null && isInherited()) {
                 p = parentPropertyList.get(propId, true, false);
             }
@@ -287,8 +287,8 @@ public class PropertyMaker implements Cloneable {
      * @param propertyList The PropertyList object being built for this FO.
      * @param tryInherit true if inherited properties should be examined.
      * @param tryDefault true if the default value should be returned.
-     * @return the property value 
-     * @throws PropertyException if there is a problem evaluating the property 
+     * @return the property value
+     * @throws PropertyException if there is a problem evaluating the property
      */
     public Property get(int subpropertyId, PropertyList propertyList,
                         boolean tryInherit, boolean tryDefault)
@@ -370,7 +370,7 @@ public class PropertyMaker implements Cloneable {
     }
 
     /**
-     * Return the default value.   
+     * Return the default value.
      * @param propertyList The PropertyList object being built for this FO.
      * @return the Property object corresponding to the parameters
      * @throws PropertyException for invalid or inconsisten FO input
@@ -422,7 +422,7 @@ public class PropertyMaker implements Cloneable {
                                                 .getExplicit(getPropId());
                     if (parentExplicit == null) {
                         log.warn(FOPropertyMapping.getPropertyName(getPropId())
-                                + "=\"inherit\" on " + propertyList.getFObj().getName() 
+                                + "=\"inherit\" on " + propertyList.getFObj().getName()
                                 + ", but no explicit value found on the parent FO.");
                     }
                 }
@@ -436,7 +436,7 @@ public class PropertyMaker implements Cloneable {
                 newProp = PropertyParser.parse(pvalue,
                                                   new PropertyInfo(this,
                                                   propertyList));
-            } 
+            }
             if (newProp != null) {
                 newProp = convertProperty(newProp, propertyList, fo);
             }
@@ -475,7 +475,7 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Converts a shorthand property
-     * 
+     *
      * @param propertyList  the propertyList for which to convert
      * @param prop          the shorthand property
      * @param fo            ...
@@ -538,7 +538,7 @@ public class PropertyMaker implements Cloneable {
      * file specifies a length value equivalent for these keywords,
      * such as "0.5pt" for "thin".
      * @param keyword the string value of property attribute.
-     * @return a String containing a parseable equivalent or null if 
+     * @return a String containing a parseable equivalent or null if
      * the passed value isn't a keyword initializer for this Property
      */
     protected String checkValueKeywords(String keyword) {
@@ -549,7 +549,7 @@ public class PropertyMaker implements Cloneable {
             }
         }
         // TODO: should return null here?
-        return keyword;            
+        return keyword;
     }
 
     /**
@@ -642,7 +642,7 @@ public class PropertyMaker implements Cloneable {
         }
         return null;
     }
-    
+
     /** @return the name of the property this maker is used for. */
     public String getName() {
         return FOPropertyMapping.getPropertyName(propId);
@@ -650,7 +650,7 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Return a clone of the makers. Used by useGeneric() to clone the
-     * subproperty makers of the generic compound makers. 
+     * subproperty makers of the generic compound makers.
      * {@inheritDoc}
      */
     public Object clone() {

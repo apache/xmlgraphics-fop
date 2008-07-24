@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.mathml;
 
 import java.awt.Dimension;
@@ -58,8 +58,8 @@ public class PreloaderMathML extends AbstractImagePreloader {
     private static Log log = LogFactory.getLog(PreloaderMathML.class);
 
     private boolean jeuclidAvailable = true;
-    
-    /** {@inheritDoc} */ 
+
+    /** {@inheritDoc} */
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         if (!ImageUtil.hasInputStream(src)) {
@@ -89,21 +89,21 @@ public class PreloaderMathML extends AbstractImagePreloader {
      * class.
      */
     class Loader {
-        
+
         private ImageInfo getImage(String uri, Source src, ImageContext context) {
 
             InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
             try {
                 int length = in.available();
                 in.mark(length + 1);
-                
+
                 TransformerFactory tFactory = TransformerFactory.newInstance();
                 Transformer transformer = tFactory.newTransformer();
                 Source source = new StreamSource(in);
                 SAXMathBuilder mathBuilder = new SAXMathBuilder();
                 SAXResult res = new SAXResult(mathBuilder);
                 transformer.transform(source, res);
-                
+
                 String fontname = "Helvetica";
                 int fontstyle = 0;
                 int displayfontsize = 12;
@@ -122,7 +122,7 @@ public class PreloaderMathML extends AbstractImagePreloader {
                                   mathBuilder.getMathRootElement(),
                                   fontname, fontstyle, inlinefontsize,
                                   displayfontsize);
-                
+
                 ImageInfo info = new ImageInfo(uri, "text/mathml");
                 final ImageSize size = new ImageSize();
                 size.setSizeInMillipoints(
@@ -142,13 +142,13 @@ public class PreloaderMathML extends AbstractImagePreloader {
                     public void paint(Graphics2D g2d, Rectangle2D area) {
                         base.paint(g2d);
                     }
-                    
+
                 };
-                
+
                 //The whole image had to be loaded for this, so keep it
                 Image image = new ImageGraphics2D(info, painter);
                 info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, image);
-                
+
                 return info;
             } catch (NoClassDefFoundError ncdfe) {
                 try {

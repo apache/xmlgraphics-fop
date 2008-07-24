@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,13 +50,13 @@ public class RegionBefore extends RegionBA {
 
     /** {@inheritDoc} */
     public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
-        /* Special rules apply to resolving extent as values are resolved relative 
+        /* Special rules apply to resolving extent as values are resolved relative
          * to the page size and reference orientation.
          */
         SimplePercentBaseContext pageWidthContext;
         SimplePercentBaseContext pageHeightContext;
         if (spm.getReferenceOrientation() % 180 == 0) {
-            pageWidthContext = new SimplePercentBaseContext(null, 
+            pageWidthContext = new SimplePercentBaseContext(null,
                                                             LengthBase.CUSTOM_BASE,
                                                             spm.getPageWidth().getValue());
             pageHeightContext = new SimplePercentBaseContext(null,
@@ -64,7 +64,7 @@ public class RegionBefore extends RegionBA {
                                                              spm.getPageHeight().getValue());
         } else {
             // invert width and height since top left are rotated by 90 (cl or ccl)
-            pageWidthContext = new SimplePercentBaseContext(null, 
+            pageWidthContext = new SimplePercentBaseContext(null,
                                                             LengthBase.CUSTOM_BASE,
                                                             spm.getPageHeight().getValue());
             pageHeightContext = new SimplePercentBaseContext(null,

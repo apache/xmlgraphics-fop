@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 // Java
@@ -60,12 +60,12 @@ public class ExampleFO2RTF {
      * @throws FOPException In case of a FOP problem
      */
     public void convertFO2RTF(File fo, File rtf) throws IOException, FOPException {
-        
+
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         // configure foUserAgent as desired
 
         OutputStream out = null;
-        
+
         try {
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
@@ -74,25 +74,25 @@ public class ExampleFO2RTF {
 
             // Construct fop with desired output format
             Fop fop = fopFactory.newFop(MimeConstants.MIME_RTF, foUserAgent, out);
-    
+
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(); // identity transformer
-            
+
             // Setup input stream
             Source src = new StreamSource(fo);
 
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(fop.getDefaultHandler());
-            
+
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
-            
+
             // Please note: getResults() won't work for RTF and other flow formats (like MIF)
             // as the layout engine is not involved in the conversion. The page-breaking
             // is done by the application opening the generated file (like MS Word).
             //FormattingResults foResults = fop.getResults();
-            
+
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);
@@ -110,13 +110,13 @@ public class ExampleFO2RTF {
         try {
             System.out.println("FOP ExampleFO2RTF\n");
             System.out.println("Preparing...");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
 
-            //Setup input and output files            
+            //Setup input and output files
             File fofile = new File(baseDir, "xml/fo/helloworld.fo");
             File rtffile = new File(outDir, "ResultFO2RTF.rtf");
 
@@ -124,10 +124,10 @@ public class ExampleFO2RTF {
             System.out.println("Output: PDF (" + rtffile + ")");
             System.out.println();
             System.out.println("Transforming...");
-            
+
             ExampleFO2RTF app = new ExampleFO2RTF();
             app.convertFO2RTF(fofile, rtffile);
-            
+
             System.out.println("Success!");
         } catch (Exception e) {
             e.printStackTrace(System.err);

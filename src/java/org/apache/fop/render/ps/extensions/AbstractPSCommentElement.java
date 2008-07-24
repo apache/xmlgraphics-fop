@@ -30,17 +30,17 @@ public abstract class AbstractPSCommentElement extends AbstractPSExtensionElemen
 
     /**
      * Default constructor
-     * 
+     *
      * @param parent parent of this node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public AbstractPSCommentElement(FONode parent) {
         super(parent);
-    }    
-    
+    }
+
     /**
      * @throws FOPException if there's a problem during processing
-     * @see org.apache.fop.fo.FONode#startOfNode() 
+     * @see org.apache.fop.fo.FONode#startOfNode()
      */
     protected void startOfNode() throws FOPException {
         if (parent.getNameId() != Constants.FO_DECLARATIONS

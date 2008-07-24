@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -176,7 +176,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         return holder;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      **/
     public void addChildArea(Area childArea) {
@@ -315,13 +315,13 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
                                               int alignment) {
         return null;
     }
-    
+
     public PageSequenceLayoutManager getPSLM() {
         return parentLM.getPSLM();
     }
 
     // --------- Property Resolution related functions --------- //
-    
+
     /**
      * Returns the IPD of the content area
      * @return the IPD of the content area
@@ -329,7 +329,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     public int getContentAreaIPD() {
         return holder.getIPD();
     }
-   
+
     /**
      * Returns the BPD of the content area
      * @return the BPD of the content area
@@ -337,7 +337,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     public int getContentAreaBPD() {
         return holder.getBPD();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -351,7 +351,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     public boolean getGeneratesBlockArea() {
         return getGeneratesLineArea() || holder instanceof Block;
     }
-   
+
     /**
      * {@inheritDoc}
      */
@@ -365,6 +365,6 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     public Position notifyPos(Position pos) {
         return pos;
     }
-   
+
 }
 

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,12 +54,12 @@ public class BidiOverride extends FObjMixed {
 
     /**
      * Base constructor
-     * 
+     *
      * @param parent FONode that is the parent of this object
      */
     public BidiOverride(FONode parent) {
         super(parent);
-        
+
        /* Check to see if this node can have block-level children.
         * See validateChildNode() below.
         */
@@ -94,15 +94,15 @@ public class BidiOverride extends FObjMixed {
      * <br>XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
      * <br><i>Additionally: "An fo:bidi-override that is a descendant of an fo:leader
      *  or of the fo:inline child of an fo:footnote may not have block-level
-     *  children, unless it has a nearer ancestor that is an 
+     *  children, unless it has a nearer ancestor that is an
      *  fo:inline-container."</i>
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("marker")) {
                 if (blockOrInlineItemFound) {
-                   nodesOutOfOrderError(loc, "fo:marker", 
+                   nodesOutOfOrderError(loc, "fo:marker",
                         "(#PCDATA|%inline;|%block;)");
                 }
             } else if (!isBlockOrInlineItem(nsURI, localName)) {

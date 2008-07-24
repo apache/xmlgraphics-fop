@@ -33,17 +33,17 @@ public class PCLPageDefinition {
 
     private static List pageDefinitions;
     private static PCLPageDefinition defaultPageDefinition;
-    
+
     private String name;
     private int selector;
     private Dimension physicalPageSize;
     private Rectangle logicalPageRect;
     private boolean landscape;
-    
+
     static {
         createPageDefinitions();
     }
-    
+
     /**
      * Main constructor
      * @param name the name of the page definition
@@ -52,7 +52,7 @@ public class PCLPageDefinition {
      * @param logicalPageRect the rectangle defining the logical page
      * @param landscape true if it is a landscape format
      */
-    public PCLPageDefinition(String name, int selector, Dimension physicalPageSize, 
+    public PCLPageDefinition(String name, int selector, Dimension physicalPageSize,
             Rectangle logicalPageRect, boolean landscape) {
         this.name = name;
         this.selector = selector;
@@ -60,17 +60,17 @@ public class PCLPageDefinition {
         this.logicalPageRect = logicalPageRect;
         this.landscape = landscape;
     }
-    
+
     /** @return the name of the page definition */
     public String getName() {
         return this.name;
     }
-    
+
     /** @return the selector used by the <ESC>&l#A command (page size) */
     public int getSelector() {
         return this.selector;
     }
-    
+
     /** @return true if it is a landscape format */
     public boolean isLandscapeFormat() {
         return this.landscape;
@@ -80,17 +80,17 @@ public class PCLPageDefinition {
     public Dimension getPhysicalPageSize() {
         return this.physicalPageSize;
     }
-    
+
     /** @return the rectangle defining the logical page */
     public Rectangle getLogicalPageRect() {
         return this.logicalPageRect;
     }
-    
+
     private boolean matches(long width, long height, int errorMargin) {
-        return (Math.abs(this.physicalPageSize.width - width) < errorMargin) 
+        return (Math.abs(this.physicalPageSize.width - width) < errorMargin)
             && (Math.abs(this.physicalPageSize.height - height) < errorMargin);
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return getName();
@@ -113,12 +113,12 @@ public class PCLPageDefinition {
         }
         return null;
     }
-    
+
     /** @return the default page definition (letter) */
     public static PCLPageDefinition getDefaultPageDefinition() {
         return defaultPageDefinition;
     }
-    
+
     /**
      * Converts an offset values for logical pages to millipoints. The values are given as pixels
      * in a 300dpi environment.
@@ -128,34 +128,34 @@ public class PCLPageDefinition {
     private static int convert300dpiDotsToMpt(int offset) {
         return (int)Math.round(((double)offset) * 72000 / 300);
     }
-    
+
     private static Dimension createPhysicalPageSizeInch(float width, float height) {
         return new Dimension(
-                (int)Math.round(UnitConv.in2mpt(width)), 
+                (int)Math.round(UnitConv.in2mpt(width)),
                 (int)Math.round(UnitConv.in2mpt(height)));
     }
-    
+
     private static Dimension createPhysicalPageSizeMm(float width, float height) {
         return new Dimension(
-                (int)Math.round(UnitConv.mm2mpt(width)), 
+                (int)Math.round(UnitConv.mm2mpt(width)),
                 (int)Math.round(UnitConv.mm2mpt(height)));
     }
-    
+
     private static Rectangle createLogicalPageRect(int x, int y, int width, int height) {
-        return new Rectangle(convert300dpiDotsToMpt(x), convert300dpiDotsToMpt(y), 
+        return new Rectangle(convert300dpiDotsToMpt(x), convert300dpiDotsToMpt(y),
                 convert300dpiDotsToMpt(width), convert300dpiDotsToMpt(height));
     }
-    
+
     private static void createPageDefinitions() {
         pageDefinitions = new java.util.ArrayList();
         pageDefinitions.add(new PCLPageDefinition("Letter", 2,
                 createPhysicalPageSizeInch(8.5f, 11),
                 createLogicalPageRect(75, 0, 2400, 3300), false));
-        defaultPageDefinition = new PCLPageDefinition("Legal", 3, 
+        defaultPageDefinition = new PCLPageDefinition("Legal", 3,
                 createPhysicalPageSizeInch(8.5f, 14),
                 createLogicalPageRect(75, 0, 2400, 4200), false);
         pageDefinitions.add(defaultPageDefinition);
-        pageDefinitions.add(new PCLPageDefinition("Executive", 1, 
+        pageDefinitions.add(new PCLPageDefinition("Executive", 1,
                 createPhysicalPageSizeInch(7.25f, 10.5f),
                 createLogicalPageRect(75, 0, 2025, 3150), false));
         pageDefinitions.add(new PCLPageDefinition("Ledger", 6,
@@ -164,19 +164,19 @@ public class PCLPageDefinition {
         pageDefinitions.add(new PCLPageDefinition("A4", 26,
                 createPhysicalPageSizeMm(210, 297),
                 createLogicalPageRect(71, 0, 2338, 3507), false));
-        pageDefinitions.add(new PCLPageDefinition("A3", 27, 
+        pageDefinitions.add(new PCLPageDefinition("A3", 27,
                 createPhysicalPageSizeMm(297, 420),
                 createLogicalPageRect(71, 0, 3365, 4960), false));
 
         //TODO Add envelope definitions
-        
+
         pageDefinitions.add(new PCLPageDefinition("LetterL", 2,
                 createPhysicalPageSizeInch(11, 8.5f),
                 createLogicalPageRect(60, 0, 3180, 2550), true));
         pageDefinitions.add(new PCLPageDefinition("LegalL", 3,
                 createPhysicalPageSizeInch(14, 8.5f),
                 createLogicalPageRect(60, 0, 4080, 2550), true));
-        pageDefinitions.add(new PCLPageDefinition("ExecutiveL", 1, 
+        pageDefinitions.add(new PCLPageDefinition("ExecutiveL", 1,
                 createPhysicalPageSizeInch(10.5f, 7.25f),
                 createLogicalPageRect(60, 0, 3030, 2175), true));
         pageDefinitions.add(new PCLPageDefinition("LedgerL", 6,
@@ -189,5 +189,5 @@ public class PCLPageDefinition {
                 createPhysicalPageSizeMm(420, 297),
                 createLogicalPageRect(59, 0, 4842, 3507), true));
     }
-    
+
 }

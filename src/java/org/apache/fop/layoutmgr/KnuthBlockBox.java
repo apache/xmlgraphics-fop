@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import org.apache.fop.traits.MinOptMax;
  * Knuth box used to represent a line in block-progression-dimension (i.e. the width is its height).
  */
 public class KnuthBlockBox extends KnuthBox {
-    
+
     private MinOptMax ipdRange;
     /**
      * Natural width of the line represented by this box. In addition to ipdRange because
@@ -58,7 +58,7 @@ public class KnuthBlockBox extends KnuthBox {
      * Creates a new box.
      * @param w block progression dimension of this box
      * @param list footnotes cited by elements in this box. The list contains the
-     * corresponding FootnoteBodyLayoutManagers 
+     * corresponding FootnoteBodyLayoutManagers
      * @param pos the Position stored in this box
      * @param bAux is this box auxiliary?
      */

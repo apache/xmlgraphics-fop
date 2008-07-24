@@ -57,9 +57,9 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     public PageProvider getPageProvider() {
         return this.pageProvider;
     }
-    
+
     /**
-     * @return the PageSequence being managed by this layout manager 
+     * @return the PageSequence being managed by this layout manager
      */
     protected PageSequence getPageSequence() {
         return (PageSequence)pageSeq;
@@ -72,7 +72,7 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     public PageSequenceLayoutManager getPSLM() {
         return this;
     }
-    
+
     /** {@inheritDoc} */
     public void activateLayout() {
         initialize();
@@ -100,7 +100,7 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         }
 
         curPage = makeNewPage(false, false);
-        
+
         PageBreaker breaker = new PageBreaker(this);
         int flowBPD = getCurrentPV().getBodyRegion().getRemainingBPD();
         breaker.doLayout(flowBPD);
@@ -118,7 +118,7 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         areaTreeHandler.notifyPageSequenceFinished(pageSeq,
                 (currentPageNum - startPageNum) + 1);
         getPageSequence().releasePageSequence();
-        
+
         // If this sequence has a page sequence master so we must reset
         // it in preparation for the next sequence
         String masterReference = getPageSequence().getMasterReference();
@@ -132,13 +132,13 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
             log.debug("Ending layout");
         }
     }
-    
+
     /** {@inheritDoc} */
     protected Page createPage(int pageNumber, boolean isBlank) {
         return pageProvider.getPage(isBlank,
                 pageNumber, PageProvider.RELTO_PAGE_SEQUENCE);
     }
-    
+
     private void layoutSideRegion(int regionID) {
         SideRegion reg = (SideRegion)curPage.getSimplePageMaster().getRegion(regionID);
         if (reg == null) {
@@ -158,12 +158,12 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     /** {@inheritDoc} */
     protected void finishPage() {
         // Layout side regions
-        layoutSideRegion(FO_REGION_BEFORE); 
+        layoutSideRegion(FO_REGION_BEFORE);
         layoutSideRegion(FO_REGION_AFTER);
         layoutSideRegion(FO_REGION_START);
         layoutSideRegion(FO_REGION_END);
-        
+
         super.finishPage();
     }
-    
+
 }

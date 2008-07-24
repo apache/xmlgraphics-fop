@@ -42,7 +42,7 @@ public class TraitSetter {
 
     /** logger */
     protected static Log log = LogFactory.getLog(TraitSetter.class);
-    
+
     /**
      * Sets border and padding traits on areas.
      * @param area area to set the traits on
@@ -73,18 +73,18 @@ public class TraitSetter {
         }
 
         addBorderTrait(area, bpProps, bNotFirst,
-                       CommonBorderPaddingBackground.START, 
+                       CommonBorderPaddingBackground.START,
                        BorderProps.SEPARATE, Trait.BORDER_START);
 
-        addBorderTrait(area, bpProps, bNotLast, 
+        addBorderTrait(area, bpProps, bNotLast,
                        CommonBorderPaddingBackground.END,
                        BorderProps.SEPARATE, Trait.BORDER_END);
 
-        addBorderTrait(area, bpProps, false, 
+        addBorderTrait(area, bpProps, false,
                        CommonBorderPaddingBackground.BEFORE,
                        BorderProps.SEPARATE, Trait.BORDER_BEFORE);
 
-        addBorderTrait(area, bpProps, false, 
+        addBorderTrait(area, bpProps, false,
                        CommonBorderPaddingBackground.AFTER,
                        BorderProps.SEPARATE, Trait.BORDER_AFTER);
     }
@@ -182,7 +182,7 @@ public class TraitSetter {
      * @param borderAfter the resolved after border
      * @param borderStart the resolved start border
      * @param borderEnd the resolved end border
-     * @param outer 4 boolean values indicating if the side represents the 
+     * @param outer 4 boolean values indicating if the side represents the
      *     table's outer border. Order: before, after, start, end
      */
     public static void addCollapsingBorders(Area area,
@@ -207,7 +207,7 @@ public class TraitSetter {
         }
     }
 
-    private static void addPadding(Area area, CommonBorderPaddingBackground bordProps, 
+    private static void addPadding(Area area, CommonBorderPaddingBackground bordProps,
                                 PercentBaseContext context) {
         addPadding(area, bordProps, false, false, false, false, context);
     }
@@ -228,32 +228,32 @@ public class TraitSetter {
                 boolean discardBefore, boolean discardAfter,
                 boolean discardStart, boolean discardEnd,
                 PercentBaseContext context) {
-        int padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE, 
+        int padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE,
                 discardBefore, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER, 
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER,
                 discardAfter, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.START, 
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.START,
                 discardStart, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.END, 
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.END,
                 discardEnd, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
         }
 
     }
-    
+
     private static BorderProps getBorderProps(CommonBorderPaddingBackground bordProps, int side) {
         int width = bordProps.getBorderWidth(side, false);
         if (width != 0) {
@@ -289,17 +289,17 @@ public class TraitSetter {
      * background-position-horizontal/vertical to ensure the background images are
      * correctly placed. Indeed the placement of images must be made WRT the
      * column/body/row and not the cell.
-     * 
+     *
      * <p>Note: The area's IPD and BPD must be set before calling this method.</p>
-     * 
+     *
      * <p>TODO the regular
      * {@link #addBackground(Area, CommonBorderPaddingBackground, PercentBaseContext)}
      * method should be used instead, and a means to retrieve the original area's
      * dimensions must be found.</p>
-     * 
+     *
      * <p>TODO the placement of images in the x- or y-direction will be incorrect if
      * background-repeat is set for that direction.</p>
-     * 
+     *
      * @param area the area to set the traits on
      * @param backProps the background properties
      * @param context Property evaluation context
@@ -310,7 +310,7 @@ public class TraitSetter {
      * @param referenceIPD value to use as a reference for percentage calculation
      * @param referenceBPD value to use as a reference for percentage calculation
      */
-    public static void addBackground(Area area, 
+    public static void addBackground(Area area,
             CommonBorderPaddingBackground backProps,
             PercentBaseContext context,
             int ipdShift, int bpdShift, int referenceIPD, int referenceBPD) {
@@ -325,7 +325,7 @@ public class TraitSetter {
             back.setImageInfo(backProps.getImageInfo());
             back.setRepeat(backProps.backgroundRepeat);
             if (backProps.backgroundPositionHorizontal != null) {
-                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                if (back.getRepeat() == Constants.EN_NOREPEAT
                         || back.getRepeat() == Constants.EN_REPEATY) {
                     if (area.getIPD() > 0) {
                         PercentBaseContext refContext = new SimplePercentBaseContext(context,
@@ -343,7 +343,7 @@ public class TraitSetter {
                 }
             }
             if (backProps.backgroundPositionVertical != null) {
-                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                if (back.getRepeat() == Constants.EN_NOREPEAT
                         || back.getRepeat() == Constants.EN_REPEATX) {
                     if (area.getBPD() > 0) {
                         PercentBaseContext refContext = new SimplePercentBaseContext(context,
@@ -373,7 +373,7 @@ public class TraitSetter {
      * @param backProps the background properties
      * @param context Property evaluation context
      */
-    public static void addBackground(Area area, 
+    public static void addBackground(Area area,
                                      CommonBorderPaddingBackground backProps,
                                      PercentBaseContext context) {
         if (!backProps.hasBackground()) {
@@ -387,14 +387,14 @@ public class TraitSetter {
             back.setImageInfo(backProps.getImageInfo());
             back.setRepeat(backProps.backgroundRepeat);
             if (backProps.backgroundPositionHorizontal != null) {
-                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                if (back.getRepeat() == Constants.EN_NOREPEAT
                         || back.getRepeat() == Constants.EN_REPEATY) {
                     if (area.getIPD() > 0) {
                         int width = area.getIPD();
                         width += backProps.getPaddingStart(false, context);
                         width += backProps.getPaddingEnd(false, context);
                         back.setHoriz(backProps.backgroundPositionHorizontal.getValue(
-                                new SimplePercentBaseContext(context, 
+                                new SimplePercentBaseContext(context,
                                     LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
                                     (width - back.getImageInfo().getSize().getWidthMpt())
                                 )
@@ -408,14 +408,14 @@ public class TraitSetter {
                 }
             }
             if (backProps.backgroundPositionVertical != null) {
-                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                if (back.getRepeat() == Constants.EN_NOREPEAT
                         || back.getRepeat() == Constants.EN_REPEATX) {
                     if (area.getBPD() > 0) {
                         int height = area.getBPD();
                         height += backProps.getPaddingBefore(false, context);
                         height += backProps.getPaddingAfter(false, context);
                         back.setVertical(backProps.backgroundPositionVertical.getValue(
-                                new SimplePercentBaseContext(context, 
+                                new SimplePercentBaseContext(context,
                                      LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
                                      (height - back.getImageInfo().getSize().getHeightMpt())
                                 )
@@ -450,7 +450,7 @@ public class TraitSetter {
         if (startIndent != 0) {
             area.addTrait(Trait.START_INDENT, new Integer(startIndent));
         }
-        
+
         int spaceStart = startIndent
                             - bpProps.getBorderStartWidth(false)
                             - bpProps.getPaddingStart(false, context);
@@ -488,7 +488,7 @@ public class TraitSetter {
     }
 
     /**
-     * Returns the effective space length of a resolved space specifier based on the adjustment 
+     * Returns the effective space length of a resolved space specifier based on the adjustment
      * value.
      * @param adjust the adjustment value
      * @param space the space specifier
@@ -506,7 +506,7 @@ public class TraitSetter {
         }
         return sp;
     }
-    
+
     /**
      * Adds traits for space-before and space-after to an area.
      * @param area the target area
@@ -514,7 +514,7 @@ public class TraitSetter {
      * @param spaceBefore the space-before space specifier
      * @param spaceAfter the space-after space specifier
      */
-    public static void addSpaceBeforeAfter(Area area, double adjust, 
+    public static void addSpaceBeforeAfter(Area area, double adjust,
             MinOptMax spaceBefore, MinOptMax spaceAfter) {
         int space;
         space = getEffectiveSpace(adjust, spaceBefore);
@@ -526,7 +526,7 @@ public class TraitSetter {
             area.addTrait(Trait.SPACE_AFTER, new Integer(space));
         }
     }
-    
+
     /**
      * Sets the traits for breaks on an area.
      * @param area the area to set the traits on.
@@ -539,7 +539,7 @@ public class TraitSetter {
         area.addTrait(Trait.BREAK_BEFORE, new Integer(breakBefore));
         */
     }
-    
+
     /**
      * Adds font traits to an area
      * @param area the target are
@@ -549,7 +549,7 @@ public class TraitSetter {
         area.addTrait(Trait.FONT, font.getFontTriplet());
         area.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
     }
-    
+
     /**
      * Adds the text-decoration traits to the area.
      * @param area the area to set the traits on
@@ -575,9 +575,9 @@ public class TraitSetter {
             }
         }
     }
-    
+
     /**
-     * Sets the producer's ID as a trait on the area. This can be used to track back the 
+     * Sets the producer's ID as a trait on the area. This can be used to track back the
      * generating FO node.
      * @param area the area to set the traits on
      * @param id the ID to set

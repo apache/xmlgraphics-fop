@@ -56,7 +56,7 @@ public abstract class FOTreeUnitTester extends TestCase {
          * This method is called by FOTreeUnitTester when creating a {@link Fop} instance.
          * That lets pass to the custom FOEventHandler the proper user agent that will be
          * used by this instance.
-         * 
+         *
          * @param foUserAgent the user agent needed by the Fop instance that will be used
          * to create the FO tree
          * @return the appropriate FOEventHandler for performing the tests
@@ -77,9 +77,9 @@ public abstract class FOTreeUnitTester extends TestCase {
 
     /**
      * Launches FOP on the given FO file.
-     * 
+     *
      * @param filename path to the test FO file
-     * @param factory to create the appropriate FOEventHandler for performing tests 
+     * @param factory to create the appropriate FOEventHandler for performing tests
      */
     public void setUp(String filename, FOEventHandlerFactory factory) throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();

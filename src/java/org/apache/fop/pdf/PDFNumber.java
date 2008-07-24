@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.text.DecimalFormat;
@@ -24,7 +24,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 /**
- * This class represents a simple number object. It also contains contains some 
+ * This class represents a simple number object. It also contains contains some
  * utility methods for outputing numbers to PDF.
  */
 public class PDFNumber extends PDFObject {
@@ -38,7 +38,7 @@ public class PDFNumber extends PDFObject {
     public Number getNumber() {
         return this.number;
     }
-    
+
     /**
      * Sets the number.
      * @param number the number
@@ -69,9 +69,9 @@ public class PDFNumber extends PDFObject {
 
     // Static cache. Possible concurrency implications. See comment in doubleOut(double, int).
     private static DecimalFormat[] decimalFormatCache = new DecimalFormat[17];
-    
+
     private static final String BASE_FORMAT = "0.################";
-    
+
     /**
      * Output a double value to a string suitable for PDF.
      * In this method it is possible to set the maximum
@@ -83,7 +83,7 @@ public class PDFNumber extends PDFObject {
      */
     public static String doubleOut(double doubleDown, int dec) {
         if (dec < 0 || dec >= decimalFormatCache.length) {
-            throw new IllegalArgumentException("Parameter dec must be between 1 and " 
+            throw new IllegalArgumentException("Parameter dec must be between 1 and "
                     + (decimalFormatCache.length + 1));
         }
         if (decimalFormatCache[dec] == null) {

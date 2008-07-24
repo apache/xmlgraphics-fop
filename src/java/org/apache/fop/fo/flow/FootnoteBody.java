@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ public class FootnoteBody extends FObj {
 
     /**
      * Base constructor
-     * 
+     *
      * @param parent FONode that is the parent of this object
      */
     public FootnoteBody(FONode parent) {
@@ -57,7 +57,7 @@ public class FootnoteBody extends FObj {
 
     /**
      * Make sure the content model is satisfied, if so then tell the
-     * {@link org.apache.fop.fo.FOEventHandler} that we are at the 
+     * {@link org.apache.fop.fo.FOEventHandler} that we are at the
      * end of the footnote-body.
      * {@inheritDoc}
      */
@@ -72,7 +72,7 @@ public class FootnoteBody extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: (%block;)+
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (!isBlockItem(nsURI, localName)) {
@@ -85,7 +85,7 @@ public class FootnoteBody extends FObj {
     public String getLocalName() {
         return "footnote-body";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_FOOTNOTE_BODY}

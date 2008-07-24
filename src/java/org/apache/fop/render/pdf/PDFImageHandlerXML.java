@@ -41,9 +41,9 @@ public class PDFImageHandlerXML implements PDFImageHandler {
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.XML_DOM,
     };
-    
+
     /** {@inheritDoc} */
-    public PDFXObject generateImage(RendererContext context, Image image, 
+    public PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos)
             throws IOException {
         PDFRenderer renderer = (PDFRenderer)context.getRenderer();

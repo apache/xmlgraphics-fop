@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ public abstract class Region extends FObj {
     private Numeric referenceOrientation;
     private int writingMode;
     // End of property values
-    
+
     private SimplePageMaster layoutMaster;
 
     /**
@@ -68,7 +68,7 @@ public abstract class Region extends FObj {
         regionName = pList.get(PR_REGION_NAME).getString();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         writingMode = pList.getWritingMode();
-        
+
         // regions may have name, or default
         if (regionName.equals("")) {
             regionName = getDefaultRegionName();
@@ -80,7 +80,7 @@ public abstract class Region extends FObj {
                         regionName, getLocator());
             }
         }
-        
+
         //TODO do we need context for getBPPaddingAndBorder() and getIPPaddingAndBorder()?
         if ((getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, null) != 0
                 || getCommonBorderPaddingBackground().getIPPaddingAndBorder(false, null) != 0)) {
@@ -93,7 +93,7 @@ public abstract class Region extends FObj {
      * {@inheritDoc} String, String)
      * <br>XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -149,7 +149,7 @@ public abstract class Region extends FObj {
      * @return the Background Properties (border and padding are not used here).
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
-        return commonBorderPaddingBackground; 
+        return commonBorderPaddingBackground;
     }
 
     /** @return the "region-name" property. */
@@ -166,12 +166,12 @@ public abstract class Region extends FObj {
     public int getOverflow() {
         return overflow;
     }
-    
+
     /** @return the display-align property. */
     public int getDisplayAlign() {
         return displayAlign;
     }
-       
+
     /** @return the "reference-orientation" property. */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();

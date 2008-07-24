@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,7 +66,7 @@ class RowGroupLayoutManager {
         int breakBefore = Constants.EN_AUTO;
         TableRow firstRow = rowGroup[0].getTableRow();
         if (firstRow != null) {
-            breakBefore = firstRow.getBreakBefore(); 
+            breakBefore = firstRow.getBreakBefore();
         }
         context.setBreakBefore(BreakUtil.compareBreakClasses(breakBefore,
                 rowGroup[0].getBreakBefore()));
@@ -74,7 +74,7 @@ class RowGroupLayoutManager {
         int breakAfter = Constants.EN_AUTO;
         TableRow lastRow = rowGroup[rowGroup.length - 1].getTableRow();
         if (lastRow != null) {
-            breakAfter = lastRow.getBreakAfter(); 
+            breakAfter = lastRow.getBreakAfter();
         }
         context.setBreakAfter(BreakUtil.compareBreakClasses(breakAfter,
                 rowGroup[rowGroup.length - 1].getBreakAfter()));
@@ -89,7 +89,7 @@ class RowGroupLayoutManager {
      * @param bodyType Indicates what kind of body is being processed (BODY, HEADER or FOOTER)
      * @param returnList List to received the generated elements
      */
-    private void createElementsForRowGroup(LayoutContext context, int alignment, 
+    private void createElementsForRowGroup(LayoutContext context, int alignment,
             int bodyType, LinkedList returnList) {
         log.debug("Handling row group with " + rowGroup.length + " rows...");
         EffRow row;
@@ -113,7 +113,7 @@ class RowGroupLayoutManager {
                     LayoutContext childLC = new LayoutContext(0);
                     childLC.setStackLimitBP(context.getStackLimitBP()); //necessary?
                     childLC.setRefIPD(spanWidth);
-                    
+
                     //Get the element list for the cell contents
                     List elems = primary.getCellLM().getNextKnuthElements(
                                             childLC, alignment);
@@ -131,7 +131,7 @@ class RowGroupLayoutManager {
     /**
      * Calculate the heights of the rows in the row group, see CSS21, 17.5.3 Table height
      * algorithms.
-     * 
+     *
      * TODO this method will need to be adapted once clarification has been made by the
      * W3C regarding whether borders or border-separation must be included or not
      */
@@ -174,7 +174,7 @@ class RowGroupLayoutManager {
                     int borderWidths = primary.getBeforeAfterBorderWidth();
                     int padding = 0;
                     CommonBorderPaddingBackground cbpb = primary.getCell()
-                            .getCommonBorderPaddingBackground(); 
+                            .getCommonBorderPaddingBackground();
                     padding += cbpb.getPaddingBefore(false, primary.getCellLM());
                     padding += cbpb.getPaddingAfter(false, primary.getCellLM());
                     int effRowHeight = effectiveCellBPD + padding + borderWidths;
@@ -195,13 +195,13 @@ class RowGroupLayoutManager {
 //            if (maxCellBPD > row.getExplicitHeight().max) {
 //old:
 //                log.warn(FONode.decorateWithContextInfo(
-//                        "The contents of row " + (row.getIndex() + 1) 
+//                        "The contents of row " + (row.getIndex() + 1)
 //                        + " are taller than they should be (there is a"
 //                        + " block-progression-dimension or height constraint
 //                        + " on the indicated row)."
 //                        + " Due to its contents the row grows"
 //                        + " to " + maxCellBPD + " millipoints, but the row shouldn't get"
-//                        + " any taller than " + row.getExplicitHeight() + " millipoints.", 
+//                        + " any taller than " + row.getExplicitHeight() + " millipoints.",
 //                        row.getTableRow()));
 //new (with events):
 //                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Factory.create(

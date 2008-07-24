@@ -33,7 +33,7 @@ public interface BitmapRendererEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -52,23 +52,23 @@ public interface BitmapRendererEventProducer extends EventProducer {
         public EventModel createEventModel() {
             return loadModel(getClass(), "event-model.xml");
         }
-        
+
     }
-    
+
     /**
      * No filename information available. Stopping early after the first page.
      * @param source the event source
      * @event.severity WARN
      */
     void stoppingAfterFirstPageNoFilename(Object source);
-    
+
     /**
      * Image writer does not support multiple images. Only the first page has been produced.
      * @param source the event source
      * @event.severity WARN
      */
     void stoppingAfterFirstPageNoMultiWriter(Object source);
-    
+
     /**
      * No ImageWriter found.
      * @param source the event source

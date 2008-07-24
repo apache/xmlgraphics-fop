@@ -113,7 +113,7 @@ public class BasePDFTestCase extends AbstractFOPTestCase {
         return e;
     }
 
-    /** 
+    /**
      * get FOP config File
      * @return user config file to be used for testing
      */

@@ -37,9 +37,9 @@ public abstract class AbstractAFPExtensionObject extends FONode {
      * AFP setup code
      */
     private AFPPageSetup setupCode;
-    
+
     private String name;
-            
+
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      * @param parent the parent formatting object
@@ -62,7 +62,7 @@ public abstract class AbstractAFPExtensionObject extends FONode {
     /** {@inheritDoc} */
     protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList, Locator locator) {
-        setupCode.setContent(new String(data, start, end - start));       
+        setupCode.setContent(new String(data, start, end - start));
     }
 
     /** {@inheritDoc} */

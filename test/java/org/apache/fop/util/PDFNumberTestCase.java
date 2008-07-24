@@ -39,14 +39,14 @@ public class PDFNumberTestCase extends TestCase {
         assertEquals("0.1", PDFNumber.doubleOut(0.1f));
         assertEquals("100", PDFNumber.doubleOut(100.0f));
         assertEquals("100", PDFNumber.doubleOut(99.99999999999999999999999f));
-        
-        //You'd expect 100.123456 here but DecimalFormat uses the BigDecimal.ROUND_HALF_EVEN 
+
+        //You'd expect 100.123456 here but DecimalFormat uses the BigDecimal.ROUND_HALF_EVEN
         //strategy. I don't know if that's a problem. The strange thing testDoubleOut2
         //seems to return the normally expected value. Weird.
         assertEquals("100.123459", PDFNumber.doubleOut(100.12345611111111f));
         assertEquals("-100.123459", PDFNumber.doubleOut(-100.12345611111111f));
     }
-    
+
     /**
      * Tests PDFNumber.doubleOut().
      * @throws Exception if the test fails
@@ -61,7 +61,7 @@ public class PDFNumberTestCase extends TestCase {
         assertEquals("100.1234", PDFNumber.doubleOut(100.12341111111111f, 4));
         assertEquals("-100.1234", PDFNumber.doubleOut(-100.12341111111111f, 4));
     }
-    
+
     /**
      * Tests PDFNumber.doubleOut().
      * @throws Exception if the test fails
@@ -74,7 +74,7 @@ public class PDFNumberTestCase extends TestCase {
         assertEquals("100", PDFNumber.doubleOut(100.1234f, 0));
         assertEquals("-100", PDFNumber.doubleOut(-100.1234f, 0));
     }
-    
+
     /**
      * Tests PDFNumber.doubleOut(). Special cases (former bugs).
      * @throws Exception if the test fails
@@ -85,7 +85,7 @@ public class PDFNumberTestCase extends TestCase {
         assertEquals("0", PDFNumber.doubleOut(d, 4));
         assertEquals("0.00000572", PDFNumber.doubleOut(d, 8));
     }
-    
+
     /**
      * Tests PDFNumber.doubleOut(). Tests for wrong parameters.
      * @throws Exception if the test fails
@@ -110,5 +110,5 @@ public class PDFNumberTestCase extends TestCase {
             //we want that
         }
     }
-    
+
 }

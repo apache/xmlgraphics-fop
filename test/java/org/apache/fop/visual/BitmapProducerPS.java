@@ -22,7 +22,7 @@ package org.apache.fop.visual;
 import org.apache.fop.apps.MimeConstants;
 
 /**
- * BitmapProducer implementation that uses the PSRenderer and an external converter 
+ * BitmapProducer implementation that uses the PSRenderer and an external converter
  * to create bitmaps.
  * <p>
  * See the superclass' javadoc for info on the configuration format.
@@ -33,11 +33,11 @@ public class BitmapProducerPS extends AbstractPSPDFBitmapProducer {
     protected String getTargetExtension() {
         return "ps";
     }
-    
+
     /** @see org.apache.fop.visual.AbstractPSPDFBitmapProducer#getTargetFormat() */
     protected String getTargetFormat() {
         return MimeConstants.MIME_POSTSCRIPT;
     }
-    
+
 
 }

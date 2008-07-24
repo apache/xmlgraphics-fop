@@ -31,7 +31,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  * This is the pass-through value object for the PostScript extension.
  */
 public abstract class PSExtensionAttachment implements ExtensionAttachment, XMLizable {
-    
+
     /** extension node content */
     protected String content;
 
@@ -59,12 +59,12 @@ public abstract class PSExtensionAttachment implements ExtensionAttachment, XMLi
     public String getCategory() {
         return CATEGORY;
     }
-    
+
     /** @return the content */
     public String getContent() {
         return content;
     }
-    
+
     /**
      * Sets the content for the setup code object.
      * @param content The content to set.
@@ -72,10 +72,10 @@ public abstract class PSExtensionAttachment implements ExtensionAttachment, XMLi
     public void setContent(String content) {
         this.content = content;
     }
-           
+
     /**
      * Generates SAX events representing the object's state.
-     * 
+     *
      * @param handler ContentHandler instance to send the SAX events to
      * @throws SAXException if there's a problem generating the SAX events
      * @see org.apache.xmlgraphics.util.XMLizable#toSAX(org.xml.sax.ContentHandler)
@@ -96,7 +96,7 @@ public abstract class PSExtensionAttachment implements ExtensionAttachment, XMLi
         String className = getClass().getName();
         return className.substring(className.lastIndexOf('.') + 3);
     }
-    
+
     /**
      * @return a string representation of this object
      * @see java.lang.Object#toString()

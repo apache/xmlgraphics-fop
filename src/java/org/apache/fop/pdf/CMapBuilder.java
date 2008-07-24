@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,22 +16,22 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.Writer;
 
 public class CMapBuilder {
-    
+
     protected String name;
     protected Writer writer;
-    
+
     public CMapBuilder(Writer writer, String name) {
         this.writer = writer;
         this.name = name;
     }
-    
+
     /**
      * Writes the CMap to a Writer.
      * @throws IOException if an I/O error occurs
@@ -51,7 +51,7 @@ public class CMapBuilder {
         writeStreamAfterComments();
         writeUseCMap();
     }
-    
+
     protected void writePreStream() throws IOException {
         // writer.write("/Type /CMap\n");
         // writer.write(sysInfo.toPDFString());
@@ -86,7 +86,7 @@ public class CMapBuilder {
         writer.write(" def\n");
         writer.write("end def\n");
     }
-    
+
     protected void writeCIDSystemInfo() throws IOException {
         writeCIDSystemInfo("Adobe", "Identity", 0);
     }

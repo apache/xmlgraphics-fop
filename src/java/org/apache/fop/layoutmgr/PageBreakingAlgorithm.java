@@ -73,13 +73,13 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     /** Index of the last element of the last footnote inserted on the current page. */
     private int footnoteElementIndex = -1;
 
-    // demerits for a page break that splits a footnote 
+    // demerits for a page break that splits a footnote
     private int splitFootnoteDemerits = 5000;
-    // demerits for a page break that defers a whole footnote to the following page 
+    // demerits for a page break that defers a whole footnote to the following page
     private int deferredFootnoteDemerits = 10000;
     private MinOptMax footnoteSeparatorLength = null;
 
-    // the method noBreakBetween(int, int) uses these variables 
+    // the method noBreakBetween(int, int) uses these variables
     // to store parameters and result of the last call, in order
     // to reuse them and take less time
     private int storedPrevBreakIndex = -1;
@@ -88,10 +88,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     //Controls whether overflows should be warned about or not
     private boolean autoHeight = false;
-    
+
     //Controls whether a single part should be forced if possible (ex. block-container)
     private boolean favorSinglePart = false;
-    
+
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageProvider pageProvider,
                                  PageBreakingLayoutListener layoutListener,
@@ -202,7 +202,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  totalWidth, totalStretch, totalShrink,
                                  ((BestPageRecords) best).getFootnotesLength(fitness),
                                  ((BestPageRecords) best).getFootnoteListIndex(fitness),
-                                 ((BestPageRecords) best).getFootnoteElementIndex(fitness), 
+                                 ((BestPageRecords) best).getFootnoteElementIndex(fitness),
                                  best.getAdjust(fitness), best.getAvailableShrink(fitness),
                                  best.getAvailableStretch(fitness), best.getDifference(fitness),
                                  best.getDemerits(fitness), best.getNode(fitness));
@@ -247,11 +247,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         ListIterator elementListsIterator = elementLists.listIterator();
         while (elementListsIterator.hasNext()) {
             LinkedList noteList = (LinkedList) elementListsIterator.next();
-            
-            //Space resolution (Note: this does not respect possible stacking constraints 
+
+            //Space resolution (Note: this does not respect possible stacking constraints
             //between footnotes!)
             SpaceResolver.resolveElementList(noteList);
-            
+
             int noteLength = 0;
             footnotesList.add(noteList);
             ListIterator noteListIterator = noteList.listIterator();
@@ -261,8 +261,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     noteLength += element.getW();
                 }
             }
-            int prevLength = (lengthList.size() == 0 
-                    ? 0 
+            int prevLength = (lengthList.size() == 0
+                    ? 0
                     : ((Integer) lengthList.get(lengthList.size() - 1)).intValue());
             lengthList.add(new Integer(prevLength + noteLength));
             totalFootnotesLength += noteLength;
@@ -423,7 +423,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                  index < breakIndex;
                  index++) {
                 if (par.getElement(index).isGlue() && par.getElement(index - 1).isBox()
-                    || par.getElement(index).isPenalty() 
+                    || par.getElement(index).isPenalty()
                        && ((KnuthElement) par.getElement(index)).getP() < KnuthElement.INFINITE) {
                     // break found
                     break;
@@ -520,7 +520,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 }
                 // as this method is called only if it is not possible to insert
                 // all footnotes, at this point listIndex and elementIndex points to
-                // an existing element, the next one we will try to insert 
+                // an existing element, the next one we will try to insert
             }
 
             // try adding a split of the next note
@@ -582,7 +582,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 // prevIndex is -1 if we have added only some whole footnotes
                 footnoteListIndex = (prevIndex != -1) ? listIndex : listIndex - 1;
                 footnoteElementIndex = (prevIndex != -1)
-                    ? prevIndex 
+                    ? prevIndex
                     : ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
             }
             return prevSplitLength;
@@ -618,7 +618,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
     }
 
-    protected double computeDemerits(KnuthNode activeNode, KnuthElement element, 
+    protected double computeDemerits(KnuthNode activeNode, KnuthElement element,
                                     int fitnessClass, double r) {
         double demerits = 0;
         // compute demerits
@@ -649,11 +649,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         if (footnotesPending) {
             if (footnoteListIndex < footnotesList.size() - 1) {
                 // add demerits for the deferred footnotes
-                demerits += (footnotesList.size() - 1 - footnoteListIndex) 
+                demerits += (footnotesList.size() - 1 - footnoteListIndex)
                                 * deferredFootnoteDemerits;
             }
             if (footnoteListIndex < footnotesList.size()) {
-                if (footnoteElementIndex 
+                if (footnoteElementIndex
                         < ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1) {
                     // add demerits for the footnote split between pages
                     demerits += splitFootnoteDemerits;
@@ -710,7 +710,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 // cannot add any content: create a new node and start again
                 KnuthPageNode node = (KnuthPageNode)
                                      createNode(lastNode.position, prevNode.line + 1, 1,
-                                                insertedFootnotesLength - prevNode.totalFootnotes, 
+                                                insertedFootnotesLength - prevNode.totalFootnotes,
                                                 0, 0,
                                                 0, 0, 0,
                                                 0, 0, prevNode);
@@ -744,7 +744,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
         pageBreaks.addFirst(pageBreak);
     }
-    
+
     /**
      * Removes all page breaks from the result list. This is used by block-containers and
      * static-content when it is only desired to know where there is an overflow but later the
@@ -758,14 +758,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             pageBreaks.removeFirst();
         }
     }
-    
+
     public void updateData1(int total, double demerits) {
     }
 
     public void updateData2(KnuthNode bestActiveNode,
                             KnuthSequence sequence,
                             int total) {
-        //int difference = (bestActiveNode.line < total) 
+        //int difference = (bestActiveNode.line < total)
         //      ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
         int difference = bestActiveNode.difference;
         if (difference + bestActiveNode.availableShrink < 0) {
@@ -818,10 +818,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         // add nodes at the beginning of the list, as they are found
         // backwards, from the last one to the first one
         if (log.isDebugEnabled()) {
-            log.debug("BBA> difference=" + difference + " ratio=" + ratio 
+            log.debug("BBA> difference=" + difference + " ratio=" + ratio
                     + " position=" + bestActiveNode.position);
         }
-        insertPageBreakAsFirst(new PageBreakPosition(this.topLevelLM, 
+        insertPageBreakAsFirst(new PageBreakPosition(this.topLevelLM,
                 bestActiveNode.position,
                 firstListIndex, firstElementIndex,
                 ((KnuthPageNode) bestActiveNode).footnoteListIndex,
@@ -834,8 +834,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         KnuthNode bestActiveNode = null;
         for (int i = startLine; i < endLine; i++) {
             for (KnuthNode node = getNode(i); node != null; node = node.next) {
-                if (favorSinglePart 
-                        && node.line > 1 
+                if (favorSinglePart
+                        && node.line > 1
                         && bestActiveNode != null
                         && Math.abs(bestActiveNode.difference) < bestActiveNode.availableShrink) {
                     //favor current best node, so just skip the current node because it would
@@ -854,12 +854,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     public LinkedList getFootnoteList(int index) {
         return (LinkedList) footnotesList.get(index);
     }
-    
+
     /** @return the associated top-level formatting object. */
     public FObj getFObj() {
         return topLevelLM.getFObj();
     }
-    
+
     /** {@inheritDoc} */
     protected int getLineWidth(int line) {
         int bpd;
@@ -873,7 +873,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
         return bpd;
     }
-    
+
     /**
      * Interface to notify about layout events during page breaking.
      */
@@ -886,7 +886,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
          * @param obj the root FO object where this happens
          */
         void notifyOverflow(int part, int amount, FObj obj);
-        
+
     }
-    
+
 }

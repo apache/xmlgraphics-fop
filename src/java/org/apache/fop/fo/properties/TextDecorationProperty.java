@@ -84,7 +84,7 @@ public class TextDecorationProperty extends ListProperty {
             }
             return lst;
         }
-        
+
     }
 
     /**
@@ -156,5 +156,5 @@ public class TextDecorationProperty extends ListProperty {
             addProperty(prop);
         }
     }
-    
+
 }

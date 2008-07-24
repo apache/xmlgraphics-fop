@@ -43,7 +43,7 @@ public class ElementMappingRegistry {
 
     /** logging instance */
     protected Log log = LogFactory.getLog(ElementMappingRegistry.class);
-    
+
     /**
      * Table mapping element names to the makers of objects
      * representing formatting objects.
@@ -64,7 +64,7 @@ public class ElementMappingRegistry {
         // Add standard element mappings
         setupDefaultMappings();
     }
-    
+
     /**
      * Sets all the element and property list mappings to their default values.
      */
@@ -127,7 +127,7 @@ public class ElementMappingRegistry {
      * @return the ElementMapping.Maker that can create an FO object for this element
      * @throws FOPException if a Maker could not be found for a bound namespace.
      */
-    public Maker findFOMaker(String namespaceURI, String localName, Locator locator) 
+    public Maker findFOMaker(String namespaceURI, String localName, Locator locator)
                 throws FOPException {
         Map table = (Map)fobjTable.get(namespaceURI);
         Maker fobjMaker = null;
@@ -141,7 +141,7 @@ public class ElementMappingRegistry {
 
         if (fobjMaker == null) {
             if (namespaces.containsKey(namespaceURI.intern())) {
-                  throw new FOPException(FONode.errorText(locator) 
+                  throw new FOPException(FONode.errorText(locator)
                       + "No element mapping definition found for "
                       + FONode.getNodeString(namespaceURI, localName), locator);
             } else {
@@ -154,7 +154,7 @@ public class ElementMappingRegistry {
     /**
      * Tries to determine the DOMImplementation that is used to handled a particular namespace.
      * The method may return null for namespaces that don't result in a DOM. It is mostly used
-     * in namespaces occurring in foreign objects. 
+     * in namespaces occurring in foreign objects.
      * @param namespaceURI the namespace URI
      * @return the handling DOMImplementation, or null if not applicable
      */
@@ -166,7 +166,7 @@ public class ElementMappingRegistry {
             return mapping.getDOMImplementation();
         }
     }
-    
+
     /**
      * Returns an ElementMapping class for a namespace URI if there is one.
      * @param namespaceURI the namespace URI
@@ -176,7 +176,7 @@ public class ElementMappingRegistry {
     public ElementMapping getElementMapping(String namespaceURI) {
         return (ElementMapping)this.namespaces.get(namespaceURI);
     }
-    
+
     /**
      * Indicates whether a namespace is known to FOP.
      * @param namespaceURI the namespace URI

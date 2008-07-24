@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -106,15 +106,15 @@ public class LayoutContext {
 
     /** Current pending space-before or space-start from ancestor areas */
     private SpaceSpecifier leadingSpace;
-    
+
     /**
-     * A list of pending marks (border and padding) on the after edge when a page break occurs. 
+     * A list of pending marks (border and padding) on the after edge when a page break occurs.
      * May be null.
      */
     private List pendingAfterMarks;
-    
+
     /**
-     * A list of pending marks (border and padding) on the before edge when a page break occurs. 
+     * A list of pending marks (border and padding) on the before edge when a page break occurs.
      * May be null.
      */
     private List pendingBeforeMarks;
@@ -124,7 +124,7 @@ public class LayoutContext {
 
     /** Alignment in BP direction */
     private int bpAlignment = Constants.EN_START;
-    
+
     /** Stretch or shrink value when making areas. */
     private double ipdAdjust = 0.0;
 
@@ -132,12 +132,12 @@ public class LayoutContext {
     private double dSpaceAdjust = 0.0;
 
     private AlignmentContext alignmentContext = null;
-    
+
     /** Amount of space before / start */
     private int spaceBefore = 0;
     /** Amount of space after / end */
     private int spaceAfter = 0;
-    
+
     /** Amount of space to reserve at the beginning of each line */
     private int lineStartBorderAndPaddingWidth = 0;
     /** Amount of space to reserve at the end of each line */
@@ -146,9 +146,9 @@ public class LayoutContext {
     private int breakBefore;
     private int breakAfter;
 
-    private int pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO; 
-    private int pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO; 
-    
+    private int pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
+    private int pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+
     /**
      * Copy constructor for creating child layout contexts.
      * @param parentLC the parent layout context to copy from
@@ -188,13 +188,13 @@ public class LayoutContext {
 
     public void copyPendingMarksFrom(LayoutContext source) {
         if (source.pendingAfterMarks != null) {
-            this.pendingAfterMarks = new java.util.ArrayList(source.pendingAfterMarks); 
+            this.pendingAfterMarks = new java.util.ArrayList(source.pendingAfterMarks);
         }
         if (source.pendingBeforeMarks != null) {
-            this.pendingBeforeMarks = new java.util.ArrayList(source.pendingBeforeMarks); 
+            this.pendingBeforeMarks = new java.util.ArrayList(source.pendingBeforeMarks);
         }
     }
-    
+
     public void setFlags(int flags) {
         setFlags(flags, true);
     }
@@ -238,7 +238,7 @@ public class LayoutContext {
     public int getKeepWithNextPending() {
         return this.pendingKeepWithNext;
     }
-    
+
     /**
      * Returns the strength of a keep-with-previous currently pending.
      * @return the keep-with-previous strength
@@ -246,7 +246,7 @@ public class LayoutContext {
     public int getKeepWithPreviousPending() {
         return this.pendingKeepWithPrevious;
     }
-    
+
     /**
      * Clears any pending keep-with-next strength.
      */
@@ -260,7 +260,7 @@ public class LayoutContext {
     public void clearKeepWithPreviousPending() {
         this.pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
     }
-    
+
     /**
      * Clears both keep-with-previous and keep-with-next strengths.
      */
@@ -292,7 +292,7 @@ public class LayoutContext {
     public boolean isKeepWithNextPending() {
         return getKeepWithNextPending() != BlockLevelLayoutManager.KEEP_AUTO;
     }
-    
+
     /**
      * Indicates whether a keep-with-previous constraint is pending.
      * @return true if a keep-with-previous constraint is pending
@@ -300,7 +300,7 @@ public class LayoutContext {
     public boolean isKeepWithPreviousPending() {
         return getKeepWithPreviousPending() != BlockLevelLayoutManager.KEEP_AUTO;
     }
-    
+
     public void setLeadingSpace(SpaceSpecifier space) {
         leadingSpace = space;
     }
@@ -333,7 +333,7 @@ public class LayoutContext {
         }
         this.pendingAfterMarks.add(element);
     }
-    
+
     /**
      * @return the pending border and padding elements at the after edge
      * @see #addPendingAfterMark(UnresolvedListElementWithLength)
@@ -345,7 +345,7 @@ public class LayoutContext {
             return null;
         }
     }
-    
+
     /**
      * Clears all pending marks on the LayoutContext.
      */
@@ -353,7 +353,7 @@ public class LayoutContext {
         this.pendingBeforeMarks = null;
         this.pendingAfterMarks = null;
     }
-    
+
     /**
      * Adds a border or padding element to the pending list which will be used to generate
      * the right element list for break possibilities. Conditionality resolution will be done
@@ -366,7 +366,7 @@ public class LayoutContext {
         }
         this.pendingBeforeMarks.add(element);
     }
-    
+
     /**
      * @return the pending border and padding elements at the before edge
      * @see #addPendingBeforeMark(UnresolvedListElementWithLength)
@@ -378,7 +378,7 @@ public class LayoutContext {
             return null;
         }
     }
-    
+
     /**
      * Sets the stack limit in block-progression-dimension.
      * @param limit the stack limit
@@ -419,7 +419,7 @@ public class LayoutContext {
         setStackLimitBP(context.getStackLimitBP());
         setStackLimitIP(context.getStackLimitIP());
     }
-    
+
     /**
      * Sets the inline-progression-dimension of the nearest ancestor reference area.
      */
@@ -429,7 +429,7 @@ public class LayoutContext {
 
     /**
      * Returns the inline-progression-dimension of the nearest ancestor reference area.
-     * 
+     *
      * @return the inline-progression-dimension of the nearest ancestor reference area
      */
     public int getRefIPD() {
@@ -455,12 +455,12 @@ public class LayoutContext {
     public void setBPAlignment(int alignment) {
         this.bpAlignment = alignment;
     }
-    
+
     /** @return the currently applicable alignment in BP direction (EN_START, EN_JUSTIFY...) */
     public int getBPAlignment() {
         return this.bpAlignment;
     }
-    
+
     public void setSpaceAdjust(double adjust) {
         dSpaceAdjust = adjust;
     }
@@ -480,7 +480,7 @@ public class LayoutContext {
     public void setAlignmentContext(AlignmentContext alignmentContext) {
         this.alignmentContext = alignmentContext;
     }
-    
+
     public AlignmentContext getAlignmentContext() {
         return this.alignmentContext;
     }
@@ -490,7 +490,7 @@ public class LayoutContext {
             this.alignmentContext = this.alignmentContext.getParentAlignmentContext();
         }
     }
-    
+
     /**
      * Get the width to be reserved for border and padding at the start of the line.
      * @return the width to be reserved
@@ -498,7 +498,7 @@ public class LayoutContext {
     public int getLineStartBorderAndPaddingWidth() {
         return lineStartBorderAndPaddingWidth;
     }
-    
+
     /**
      * Set the width to be reserved for border and padding at the start of the line.
      * @param lineStartBorderAndPaddingWidth the width to be reserved
@@ -506,7 +506,7 @@ public class LayoutContext {
     public void setLineStartBorderAndPaddingWidth(int lineStartBorderAndPaddingWidth) {
         this.lineStartBorderAndPaddingWidth = lineStartBorderAndPaddingWidth;
     }
-    
+
     /**
      * Get the width to be reserved for border and padding at the end of the line.
      * @return the width to be reserved
@@ -514,7 +514,7 @@ public class LayoutContext {
     public int getLineEndBorderAndPaddingWidth() {
         return lineEndBorderAndPaddingWidth;
     }
-    
+
     /**
      * Set the width to be reserved for border and padding at the end of the line.
      * @param lineEndBorderAndPaddingWidth the width to be reserved
@@ -522,7 +522,7 @@ public class LayoutContext {
     public void setLineEndBorderAndPaddingWidth(int lineEndBorderAndPaddingWidth) {
         this.lineEndBorderAndPaddingWidth = lineEndBorderAndPaddingWidth;
     }
-    
+
     /**
      * @return true if the current element list ends early because of a span change
      * in multi-column layout.
@@ -530,7 +530,7 @@ public class LayoutContext {
     public int getNextSpan() {
         return nextSpan;
     }
-    
+
     /**
      * Used to signal the PSLM that the element list ends early because of a span change in
      * multi-column layout.
@@ -544,8 +544,8 @@ public class LayoutContext {
                     + span);
         }
     }
-    
-    /** 
+
+    /**
      * Get the writing mode of the relevant reference area.
      * @return the applicable writing mode
      */
@@ -553,7 +553,7 @@ public class LayoutContext {
         return writingMode;
     }
 
-    /** 
+    /**
      * Set the writing mode.
      * @param writingMode the writing mode
      */
@@ -597,7 +597,7 @@ public class LayoutContext {
      * Returns the value of the break before the element whose
      * {@link LayoutManager#getNextKnuthElements(LayoutContext, int)} method has just been
      * called.
-     * 
+     *
      * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
      * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
      * {@link Constants#EN_ODD_PAGE}
@@ -608,7 +608,7 @@ public class LayoutContext {
 
     /**
      * Sets the value of the break before the current element.
-     * 
+     *
      * @param breakBefore the value of the break-before
      * @see #getBreakBefore()
      */
@@ -620,7 +620,7 @@ public class LayoutContext {
      * Returns the value of the break after the element whose
      * {@link LayoutManager#getNextKnuthElements(LayoutContext, int)} method has just been
      * called.
-     * 
+     *
      * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
      * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, or
      * {@link Constants#EN_ODD_PAGE}
@@ -632,7 +632,7 @@ public class LayoutContext {
 
     /**
      * Sets the value of the break after the current element.
-     * 
+     *
      * @param breakAfter the value of the break-after
      * @see #getBreakAfter()
      */
@@ -650,7 +650,7 @@ public class LayoutContext {
         + "\nTrailing Space: \t"
             + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString())
         + "\nLeading Space: \t"
-            + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString()) 
+            + (getLeadingSpace() == null ? "null" : getLeadingSpace().toString())
         + "\nReference IPD: \t" + getRefIPD()
         + "\nSpace Adjust: \t" + getSpaceAdjust()
         + "\nIPD Adjust: \t" + getIPDAdjust()
@@ -663,7 +663,7 @@ public class LayoutContext {
         + "\nKeeps: \t[keep-with-next=" + KeepUtil.keepStrengthToString(getKeepWithNextPending())
                 + "][keep-with-previous="
                 + KeepUtil.keepStrengthToString(getKeepWithPreviousPending()) + "] pending"
-        + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "][" 
+        + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "]["
         + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }
 

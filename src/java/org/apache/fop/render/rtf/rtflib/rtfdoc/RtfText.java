@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -79,7 +79,7 @@ public class RtfText extends RtfElement {
     /** RtfText attributes: paragraph shading attributes */
     /** Constant for the shading of the paragraph */
     public static final String SHADING = "shading";
-    /** Constant for the document's color tableshading of the paragraph */    
+    /** Constant for the document's color tableshading of the paragraph */
     public static final String SHADING_FRONT_COLOR = "cfpat";
     /** Constant for the 100% shading of the paragraph */
     public static final int FULL_SHADING = 10000;

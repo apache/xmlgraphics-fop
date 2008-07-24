@@ -31,7 +31,7 @@ public interface SVGEventProducer extends EventProducer {
      * Provider class for the event producer.
      */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -51,7 +51,7 @@ public interface SVGEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void error(Object source, String message, Exception e);
-    
+
     /**
      * Alert during SVG processing.
      * @param source the event source
@@ -59,7 +59,7 @@ public interface SVGEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void alert(Object source, String message);
-    
+
     /**
      * Info during SVG processing.
      * @param source the event source
@@ -67,7 +67,7 @@ public interface SVGEventProducer extends EventProducer {
      * @event.severity INFO
      */
     void info(Object source, String message);
-    
+
     /**
      * SVG graphic could not be built due to an exception.
      * @param source the event source
@@ -76,7 +76,7 @@ public interface SVGEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void svgNotBuilt(Object source, Exception e, String uri);
-    
+
     /**
      * SVG graphic could not be rendered due to an exception.
      * @param source the event source
@@ -85,5 +85,5 @@ public interface SVGEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void svgRenderingError(Object source, Exception e, String uri);
-    
+
 }

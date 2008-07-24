@@ -28,7 +28,7 @@ import org.xml.sax.ContentHandler;
 public class PSExtensionHandlerFactory implements ContentHandlerFactory {
 
     private static final String[] NAMESPACES = new String[] {PSSetupCode.CATEGORY};
-    
+
     /** {@inheritDoc} */
     public String[] getSupportedNamespaces() {
         return NAMESPACES;

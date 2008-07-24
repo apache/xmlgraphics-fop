@@ -35,7 +35,7 @@ public class XMLResourceBundleTestCase extends TestCase {
                 getClass().getName(), Locale.ENGLISH, getClass().getClassLoader());
         ResourceBundle bundleDE = XMLResourceBundle.getXMLBundle(
                 getClass().getName(), Locale.GERMAN, getClass().getClassLoader());
-        
+
         assertEquals("", bundle.getLocale().getLanguage());
         assertEquals("de", bundleDE.getLocale().getLanguage());
 
@@ -46,7 +46,7 @@ public class XMLResourceBundleTestCase extends TestCase {
         assertEquals("Untranslatable", bundle.getString("untranslatable"));
         assertEquals("Untranslatable", bundleDE.getString("untranslatable"));
     }
-    
+
     public void testWithInvalidFile() throws Exception {
         try {
             ResourceBundle bundle = XMLResourceBundle.getXMLBundle(
@@ -56,5 +56,5 @@ public class XMLResourceBundleTestCase extends TestCase {
             //expected
         }
     }
-    
+
 }

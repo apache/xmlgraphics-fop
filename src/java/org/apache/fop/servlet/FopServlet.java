@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,7 +85,7 @@ public class FopServlet extends HttpServlet {
     /** The FopFactory used to create Fop instances */
     protected FopFactory fopFactory = null;
     /** URIResolver for use by this servlet */
-    protected URIResolver uriResolver; 
+    protected URIResolver uriResolver;
 
     /**
      * {@inheritDoc}
@@ -101,7 +101,7 @@ public class FopServlet extends HttpServlet {
         this.fopFactory.setURIResolver(this.uriResolver);
         configureFopFactory();
     }
-    
+
     /**
      * This method is called right after the FopFactory is instantiated and can be overridden
      * by subclasses to perform additional configuration.
@@ -111,7 +111,7 @@ public class FopServlet extends HttpServlet {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response) throws ServletException {
@@ -163,7 +163,7 @@ public class FopServlet extends HttpServlet {
         response.getOutputStream().write(content);
         response.getOutputStream().flush();
     }
-    
+
     /**
      * Renders an XSL-FO file into a PDF file. The PDF is written to a byte
      * array that is returned as the method's result.
@@ -252,7 +252,7 @@ public class FopServlet extends HttpServlet {
         //Return the result
         sendPDF(out.toByteArray(), response);
     }
-    
+
     /** @return a new FOUserAgent for FOP */
     protected FOUserAgent getFOUserAgent() {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();

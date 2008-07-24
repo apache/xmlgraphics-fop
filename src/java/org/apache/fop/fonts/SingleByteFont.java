@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,17 +40,17 @@ public class SingleByteFont extends CustomFont {
     private Map unencodedCharacters;
     //Map<Character, UnencodedCharacter>
     private List additionalEncodings;
-    
+
     /**
      * Main constructor.
      */
     public SingleByteFont() {
         setEncoding(CodePointMapping.WIN_ANSI_ENCODING);
     }
-    
+
     /** {@inheritDoc} */
     public boolean isEmbeddable() {
-        return (!(getEmbedFileName() == null 
+        return (!(getEmbedFileName() == null
                 && getEmbedResourceName() == null));
     }
 
@@ -66,7 +66,7 @@ public class SingleByteFont extends CustomFont {
     public SingleByteEncoding getEncoding() {
         return this.mapping;
     }
-    
+
     /** {@inheritDoc} */
     public int getWidth(int i, int size) {
         if (i < 256) {
@@ -101,7 +101,7 @@ public class SingleByteFont extends CustomFont {
         if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
             return d;
         }
-        
+
         //Check unencoded characters which are available in the font by character name
         d = mapUnencodedChar(c);
         if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
@@ -121,7 +121,7 @@ public class SingleByteFont extends CustomFont {
                 }
                 SimpleSingleByteEncoding encoding = null;
                 char mappedStart = 0;
-                int additionalsCount = this.additionalEncodings.size(); 
+                int additionalsCount = this.additionalEncodings.size();
                 for (int i = 0; i < additionalsCount; i++) {
                     mappedStart += 256;
                     encoding = getAdditionalEncoding(i);
@@ -172,7 +172,7 @@ public class SingleByteFont extends CustomFont {
             log.error("Font '" + super.getFontName() + "': " + e.getMessage());
         }
     }
-    
+
     /**
      * Sets the encoding of the font.
      * @param encoding the encoding (ex. "WinAnsiEncoding" or "SymbolEncoding")
@@ -180,7 +180,7 @@ public class SingleByteFont extends CustomFont {
     public void setEncoding(String encoding) {
         updateMapping(encoding);
     }
-    
+
     /**
      * Sets the encoding of the font.
      * @param encoding the encoding information
@@ -225,7 +225,7 @@ public class SingleByteFont extends CustomFont {
     public boolean hasAdditionalEncodings() {
         return (this.additionalEncodings != null) && (this.additionalEncodings.size() > 0);
     }
-    
+
     /**
      * Returns the number of additional encodings this single-byte font maintains.
      * @return the number of additional encodings
@@ -237,7 +237,7 @@ public class SingleByteFont extends CustomFont {
             return 0;
         }
     }
-    
+
     /**
      * Returns an additional encoding.
      * @param index the index of the additional encoding
@@ -252,7 +252,7 @@ public class SingleByteFont extends CustomFont {
             throw new IndexOutOfBoundsException("No additional encodings available");
         }
     }
-    
+
     /**
      * Returns an array with the widths for an additional encoding.
      * @param index the index of the additional encoding
@@ -269,25 +269,25 @@ public class SingleByteFont extends CustomFont {
         }
         return arr;
     }
-    
+
     private static final class UnencodedCharacter {
-        
+
         private NamedCharacter character;
         private int width;
-        
+
         public UnencodedCharacter(NamedCharacter character, int width) {
             this.character = character;
             this.width = width;
         }
-        
+
         public NamedCharacter getCharacter() {
             return this.character;
         }
-        
+
         public int getWidth() {
             return this.width;
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             return getCharacter().toString();

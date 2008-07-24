@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,12 +68,12 @@ public class PageNumber extends FObj {
     //     private int wrapOption;
     //  End of property values
 
-    // Properties which are not explicitely listed but are still applicable 
+    // Properties which are not explicitely listed but are still applicable
     private Color color;
-    
+
     /**
      * Base constructor
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public PageNumber(FONode parent) {
@@ -113,7 +113,7 @@ public class PageNumber extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -137,34 +137,34 @@ public class PageNumber extends FObj {
 
     /** @return the "text-decoration" property. */
     public CommonTextDecoration getTextDecoration() {
-        return textDecoration; 
+        return textDecoration;
     }
 
     /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
-    
+
     /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
-    
+
     /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
-    
+
     /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
-    
+
     /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "page-number";

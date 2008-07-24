@@ -34,7 +34,7 @@ public interface RedirectorLineHandler {
      * @param line a line of application output
      */
     void handleLine(String line);
-    
+
     /**
      * Called after the last handleLine() call.
      */

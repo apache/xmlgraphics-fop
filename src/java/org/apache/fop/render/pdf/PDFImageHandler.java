@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,19 +41,19 @@ public interface PDFImageHandler {
      * @return a positive integer (>0) indicating the priority
      */
     int getPriority();
-    
+
     /**
      * Returns the {@link ImageFlavor}s supported by this instance
      * @return the supported image flavors
      */
     ImageFlavor[] getSupportedImageFlavors();
-    
+
     /**
      * Returns the {@link Image} subclass supported by this instance.
      * @return the Image type
      */
     Class getSupportedImageClass();
-    
+
     /**
      * Generates the PDF objects for the given {@link Image} instance. If the handler generates
      * an XObject, it shall return it or otherwise return null. A generated XObject shall be
@@ -66,7 +66,7 @@ public interface PDFImageHandler {
      * @return the generated XObject or null if no XObject was generated
      * @throws IOException if an I/O error occurs
      */
-    PDFXObject generateImage(RendererContext context, Image image, 
+    PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos) throws IOException;
-    
+
 }

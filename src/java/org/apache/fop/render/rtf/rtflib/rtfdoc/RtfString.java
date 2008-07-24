@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,21 +36,21 @@ import java.io.Writer;
 
 public class RtfString extends RtfElement {
     private String text = "";
-        
+
     RtfString(RtfContainer parent, Writer w, String s)
     throws IOException {
         super(parent, w);
-            
+
         text = s;
     }
-        
+
     /**
     * @return true if this element would generate no "useful" RTF content
     */
     public boolean isEmpty() {
         return text.trim().equals("");
     }
-        
+
     /**
     * write RTF code of all our children
     * @throws IOException for I/O problems
@@ -58,11 +58,11 @@ public class RtfString extends RtfElement {
     protected void writeRtfContent() throws IOException {
         RtfStringConverter.getInstance().writeRtfString(writer, text);
     }
-        
+
     public String getText() {
         return text;
     }
-        
+
     public void setText(String s) {
         text = s;
     }

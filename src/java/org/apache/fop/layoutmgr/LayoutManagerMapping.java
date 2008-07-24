@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -145,7 +145,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void makeLayoutManagers(FONode node, List lms) {
         Maker maker = (Maker) makers.get(node.getClass());
@@ -175,7 +175,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         } else if (lms.size() > 1) {
             throw new IllegalStateException("Duplicate LayoutManagers for class "
                                    + node.getClass()
-                                   + " found, only one may be declared."); 
+                                   + " found, only one may be declared.");
         }
         return (LayoutManager) lms.get(0);
     }
@@ -186,7 +186,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /*
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public FlowLayoutManager makeFlowLayoutManager(
             PageSequenceLayoutManager pslm, Flow flow) {
@@ -194,21 +194,21 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /*
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public ContentLayoutManager makeContentLayoutManager(PageSequenceLayoutManager pslm,
                                                          Title title) {
         return new ContentLayoutManager(pslm, title);
     }
-    
+
     /*
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public StaticContentLayoutManager makeStaticContentLayoutManager(
             PageSequenceLayoutManager pslm, StaticContent sc, SideRegion reg) {
         return new StaticContentLayoutManager(pslm, sc, reg);
     }
-    
+
     /** {@inheritDoc} */
     public StaticContentLayoutManager makeStaticContentLayoutManager(
         PageSequenceLayoutManager pslm, StaticContent sc, org.apache.fop.area.Block block) {
@@ -321,7 +321,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public static class ListItemLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
              lms.add(new ListItemLayoutManager((ListItem) node));
-         }      
+         }
     }
 
     public static class ListBlockLayoutManagerMaker extends Maker {
@@ -353,7 +353,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
            lms.add(new PageNumberCitationLastLayoutManager((PageNumberCitationLast) node));
         }
     }
-    
+
     public static class TableLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
             Table table = (Table) node;
@@ -361,7 +361,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
             lms.add(tlm);
         }
     }
-     
+
     public class RetrieveMarkerLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
             Iterator baseIter;
@@ -373,7 +373,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 FONode child = (FONode) baseIter.next();
                 makeLayoutManagers(child, lms);
             }
-        }       
+        }
     }
 
     public class WrapperLayoutManagerMaker extends Maker {
@@ -390,7 +390,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 FONode child = (FONode) baseIter.next();
                 makeLayoutManagers(child, lms);
             }
-        }       
+        }
     }
 
     public ExternalDocumentLayoutManager makeExternalDocumentLayoutManager(

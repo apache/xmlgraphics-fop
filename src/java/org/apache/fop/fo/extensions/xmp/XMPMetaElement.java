@@ -34,7 +34,7 @@ public class XMPMetaElement extends AbstractMetadataElement {
     public XMPMetaElement(FONode parent) {
         super(parent);
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "xmpmeta";

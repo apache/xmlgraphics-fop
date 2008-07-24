@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,7 +92,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     protected SpaceProperty lineHeight;
     /** The keep-together property */
     //private KeepProperty keepTogether;
-    
+
     private AlignmentContext alignmentContext = null;
 
     /**
@@ -106,26 +106,26 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     public InlineLayoutManager(InlineLevel node) {
         super(node);
     }
-    
+
     private Inline getInlineFO() {
         return (Inline) fobj;
     }
-    
+
     /** {@inheritDoc} */
     public void initialize() {
         InlineLevel fobj = (InlineLevel) this.fobj;
 
         int padding = 0;
-        
+
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
         CommonFont commonFont = fobj.getCommonFont();
         FontTriplet[] fontkeys = commonFont.getFontState(fi);
         font = fi.getFontInstance(fontkeys[0], commonFont.fontSize.getValue(this));
-        
+
         lineHeight = fobj.getLineHeight();
         borderProps = fobj.getCommonBorderPaddingBackground();
         inlineProps = fobj.getCommonMarginInline();
-        
+
         if (fobj instanceof Inline) {
             alignmentAdjust = ((Inline)fobj).getAlignmentAdjust();
             alignmentBaseline = ((Inline)fobj).getAlignmentBaseline();
@@ -152,13 +152,13 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     protected MinOptMax getExtraIPD(boolean isNotFirst, boolean isNotLast) {
         int borderAndPadding = 0;
         if (borderProps != null) {
-            borderAndPadding 
+            borderAndPadding
                 = borderProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, this);
-            borderAndPadding 
+            borderAndPadding
                 += borderProps.getBorderWidth(CommonBorderPaddingBackground.START, isNotFirst);
-            borderAndPadding 
+            borderAndPadding
                 += borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this);
-            borderAndPadding 
+            borderAndPadding
                 += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, isNotLast);
         }
         return new MinOptMax(borderAndPadding);
@@ -189,11 +189,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     protected SpaceProperty getSpaceEnd() {
         return inlineProps != null ? inlineProps.spaceEnd : null;
     }
-    
-    /** 
-     * Create and initialize an <code>InlineArea</code> 
-     * 
-     * @param hasInlineParent   true if the parent is an inline 
+
+    /**
+     * Create and initialize an <code>InlineArea</code>
+     *
+     * @param hasInlineParent   true if the parent is an inline
      * @return the area
      */
     protected InlineArea createArea(boolean hasInlineParent) {
@@ -209,7 +209,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         }
         return area;
     }
-    
+
     /** {@inheritDoc} */
     protected void setTraits(boolean isNotFirst, boolean isNotLast) {
         if (borderProps != null) {
@@ -232,7 +232,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             return ((BlockLevelLayoutManager) lm).mustKeepTogether();
         } else if (lm instanceof InlineLayoutManager) {
             return ((InlineLayoutManager) lm).mustKeepTogether();
-        } else { 
+        } else {
             return mustKeepTogether(lm.getParent());
         }
     }
@@ -249,12 +249,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         KnuthSequence lastSequence = null;
 
         SpaceSpecifier leadingSpace = context.getLeadingSpace();
-        
+
         if (fobj instanceof Title) {
             alignmentContext = new AlignmentContext(font,
                                     lineHeight.getOptimum(this).getLength().getValue(this),
                                     context.getWritingMode());
-                                                    
+
         } else {
             alignmentContext = new AlignmentContext(font
                                     , lineHeight.getOptimum(this).getLength().getValue(this)
@@ -264,7 +264,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                                     , dominantBaseline
                                     , context.getAlignmentContext());
         }
-        
+
         childLC = new LayoutContext(context);
         childLC.setAlignmentContext(alignmentContext);
 
@@ -300,9 +300,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 + borderProps.getBorderEndWidth(true)
              );
         }
-        
+
         while ((curLM = getChildLM()) != null) {
-            
+
             if (!(curLM instanceof InlineLevelLayoutManager)) {
                 // A block LM
                 // Leave room for start/end border and padding
@@ -314,7 +314,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                             - borderProps.getBorderEndWidth(hasNextChildLM()));
                 }
             }
-            
+
             // get KnuthElements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             if (returnList.isEmpty() && childLC.isKeepWithPreviousPending()) {
@@ -326,7 +326,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 // just iterate once more to see if there is another child
                 continue;
             }
-            
+
             if (curLM instanceof InlineLevelLayoutManager) {
                 context.clearKeepWithNextPending();
                 // "wrap" the Position stored in each element of returnedList
@@ -375,31 +375,31 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             lastSequence = (KnuthSequence) ListUtil.getLast(returnList);
             lastChildLM = curLM;
         }
-        
+
         if (lastSequence != null) {
             addKnuthElementsForBorderPaddingEnd(lastSequence);
         }
 
         setFinished(true);
         log.trace(trace);
-        
+
         if (returnList.isEmpty()) {
             /*
-             * if the FO itself is empty, but has an id specified 
+             * if the FO itself is empty, but has an id specified
              * or associated fo:markers, then we still need a dummy
              * sequence to register its position in the area tree
              */
             if (fobj.hasId() || fobj.hasMarkers()) {
                 InlineKnuthSequence emptySeq = new InlineKnuthSequence();
                 emptySeq.add(new KnuthInlineBox(
-                                0, 
-                                alignmentContext, 
-                                notifyPos(getAuxiliaryPosition()), 
+                                0,
+                                alignmentContext,
+                                notifyPos(getAuxiliaryPosition()),
                                 true));
                 returnList.add(emptySeq);
             }
         }
-        
+
         return returnList.isEmpty() ? null : returnList;
     }
 
@@ -414,7 +414,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
-        
+
         addId();
 
         setChildContext(new LayoutContext(context)); // Store current value
@@ -454,11 +454,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         }*/
 
         addMarkersToPage(
-                true, 
-                !areaCreated, 
+                true,
+                !areaCreated,
                 lastPos == null || isLast(lastPos));
-        
-        InlineArea parent = createArea(lastLM == null 
+
+        InlineArea parent = createArea(lastLM == null
                                         || lastLM instanceof InlineLevelLayoutManager);
         parent.setBPD(alignmentContext.getHeight());
         if (parent instanceof InlineParent) {
@@ -472,7 +472,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             }
         }
         setCurrentArea(parent);
-        
+
         StackingIter childPosIter
             = new StackingIter(positionList.listIterator());
 
@@ -487,7 +487,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             prevLM = childLM;
         }
 
-        
+
         /* If this LM has a trailing fence, resolve trailing space
          * specs from descendants.  Otherwise, propagate any trailing
          * space specs to the parent LM via the layout context.  If
@@ -496,7 +496,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
          * must be the last area for the current LM too.
          */
         boolean isLast = (getContext().isLastArea() && prevLM == lastChildLM);
-        
+
         if (hasTrailingFence(isLast)) {
             addSpace(getCurrentArea(),
                      getContext().getTrailingSpace().resolve(false),
@@ -510,17 +510,17 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         if (context.getTrailingSpace() != null  && getSpaceEnd() != null) {
             context.getTrailingSpace().addSpace(new SpaceVal(getSpaceEnd(), this));
         }
-        
+
         // Not sure if lastPos can legally be null or if that masks a different problem.
         // But it seems to fix bug 38053.
         setTraits(areaCreated, lastPos == null || !isLast(lastPos));
         parentLM.addChildArea(getCurrentArea());
 
         addMarkersToPage(
-                false, 
-                !areaCreated, 
+                false,
+                !areaCreated,
                 lastPos == null || isLast(lastPos));
-        
+
         context.setFlags(LayoutContext.LAST_AREA, isLast);
         areaCreated = true;
         checkEndOfLayout(lastPos);
@@ -545,7 +545,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         addKnuthElementsForBorderPaddingEnd(returnedList);
         return returnedList;
     }
-    
+
     /**
      * Creates Knuth elements for start border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
@@ -604,5 +604,5 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         //}
         return this.auxiliaryPosition;
     }
-    
+
 }

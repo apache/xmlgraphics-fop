@@ -24,7 +24,7 @@ import java.io.OutputStream;
 
 /**
  * An overlay is a MO:DCA-P resource object.
- * 
+ *
  * It may be stored in an external resource library or it may be
  * carried in a resource group. An overlay is similar to a page in
  * that it defines its own environment and carries the same data objects.

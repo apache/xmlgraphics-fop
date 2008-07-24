@@ -31,7 +31,7 @@ public interface PCLEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -50,9 +50,9 @@ public interface PCLEventProducer extends EventProducer {
         public EventModel createEventModel() {
             return loadModel(getClass(), "event-model.xml");
         }
-        
+
     }
-    
+
     /**
      * Paper type could not be determined. Falling back to another.
      * @param source the event source
@@ -62,5 +62,5 @@ public interface PCLEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void paperTypeUnavailable(Object source, long pageWidth, long pageHeight, String fallbackPaper);
-    
+
 }

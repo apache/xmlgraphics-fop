@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
  * <code>fo:inline-container</code></a> object.
  */
 public class InlineContainer extends FObj {
-    
+
     // The value of properties relevant for fo:inline-container.
     private Length alignmentAdjust;
     private int alignmentBaseline;
@@ -69,7 +69,7 @@ public class InlineContainer extends FObj {
 
     /**
      * Base constructor
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public InlineContainer(FONode parent) {
@@ -99,7 +99,7 @@ public class InlineContainer extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: marker* (%block;)+
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("marker")) {
@@ -125,27 +125,27 @@ public class InlineContainer extends FObj {
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
-    
+
     /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
-    
+
     /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
-    
+
     /** @return the "block-progression-dimension" property */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
     }
-    
+
     /** @return the "clip" property */
     public int getClip() {
         return clip;
     }
-    
+
     /**@return Returns the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return this.commonBorderPaddingBackground;
@@ -160,17 +160,17 @@ public class InlineContainer extends FObj {
     public int getDominantBaseline() {
         return dominantBaseline;
     }
-    
+
     /** @return the "keep-together" property */
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
-    
+
     /** @return the "inline-progression-dimension" property */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
-    
+
     /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
@@ -180,22 +180,22 @@ public class InlineContainer extends FObj {
     public int getOverflow() {
         return overflow;
     }
-    
+
     /** @return the "reference-orientation" property */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();
     }
-    
+
     /** @return the "writing-mode" property */
     public int getWritingMode() {
         return writingMode;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "inline-container";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_INLINE_CONTAINER}
@@ -203,5 +203,5 @@ public class InlineContainer extends FObj {
     public int getNameId() {
         return FO_INLINE_CONTAINER;
     }
-    
+
 }

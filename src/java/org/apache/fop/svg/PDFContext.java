@@ -31,7 +31,7 @@ public class PDFContext {
 
     /** number of pages generated */
     private int pagecount;
-    
+
     /** @return true if a page is set up for painting. */
     public boolean isPagePending() {
         return this.currentPage != null;

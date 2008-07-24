@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.util.LogUtil;
 
 /**
- * PDF renderer configurator 
+ * PDF renderer configurator
  */
 public class PDFRendererConfigurator extends PrintRendererConfigurator {
 
@@ -68,9 +68,9 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e, false);
             }
-    
+
             super.configure(renderer);
-    
+
             String s = cfg.getChild(PDFRenderer.PDF_A_MODE, true).getValue(null);
             if (s != null) {
                 pdfRenderer.setAMode(PDFAMode.valueOf(s));
@@ -137,7 +137,7 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
      * @return Map the newly built filter map
      * @throws ConfigurationException if a filter list is defined twice
      */
-    public static Map buildFilterMapFromConfiguration(Configuration cfg) 
+    public static Map buildFilterMapFromConfiguration(Configuration cfg)
                 throws ConfigurationException {
         Map filterMap = new java.util.HashMap();
         Configuration[] filterLists = cfg.getChildren("filterList");
@@ -150,11 +150,11 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
                 String name = filt[j].getValue();
                 filterList.add(name);
             }
-            
+
             if (type == null) {
                 type = PDFFilterList.DEFAULT_FILTER;
             }
-    
+
             if (!filterList.isEmpty() && log.isDebugEnabled()) {
                 StringBuffer debug = new StringBuffer("Adding PDF filter");
                 if (filterList.size() != 1) {
@@ -169,13 +169,13 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
                 }
                 log.debug(debug.toString());
             }
-            
+
             if (filterMap.get(type) != null) {
-                throw new ConfigurationException("A filterList of type '" 
+                throw new ConfigurationException("A filterList of type '"
                     + type + "' has already been defined");
             }
             filterMap.put(type, filterList);
         }
-        return filterMap;                
+        return filterMap;
     }
 }

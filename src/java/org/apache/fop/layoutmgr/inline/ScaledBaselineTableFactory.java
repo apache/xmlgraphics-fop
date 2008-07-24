@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ public class ScaledBaselineTableFactory implements Constants {
         return new BasicScaledBaselineTable(font.getAscender(), font.getDescender()
                                     , font.getXHeight(), dominantBaselineIdentifier, writingMode);
     }
-    
+
     /**
      * Creates a new instance of BasicScaledBaselineTable for the given
      * font and writingmode. It assumes an alphabetic baseline.
@@ -55,7 +55,7 @@ public class ScaledBaselineTableFactory implements Constants {
     public static ScaledBaselineTable makeFontScaledBaselineTable(Font font, int writingMode) {
         return makeFontScaledBaselineTable(font, EN_ALPHABETIC, writingMode);
     }
-    
+
     /**
      * Creates a new instance of BasicScaledBaselineTable for the given
      * height, baseline and writingmode. This is used for non font based areas like
@@ -71,5 +71,5 @@ public class ScaledBaselineTableFactory implements Constants {
         return new BasicScaledBaselineTable(height, 0, height
                                             , dominantBaselineIdentifier, writingMode);
     }
-    
+
 }

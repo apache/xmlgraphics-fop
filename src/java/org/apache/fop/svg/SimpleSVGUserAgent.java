@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.svg;
 
 import java.awt.Dimension;
@@ -33,7 +33,7 @@ import org.apache.batik.bridge.UserAgentAdapter;
  * by Batik.
  */
 public class SimpleSVGUserAgent extends UserAgentAdapter {
-    
+
     private AffineTransform currentTransform = null;
     private float pixelUnitToMillimeter = 0.0f;
 
@@ -46,7 +46,7 @@ public class SimpleSVGUserAgent extends UserAgentAdapter {
         pixelUnitToMillimeter = pixelUnitToMM;
         currentTransform = at;
     }
-    
+
     /**
      * Returns a customized the pixel to mm factor.
      * @return the pixel unit to millimeter conversion factor

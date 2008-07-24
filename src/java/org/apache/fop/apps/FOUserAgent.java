@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -468,7 +468,7 @@ public class FOUserAgent {
     /**
      * Gets the default page-height to use as fallback,
      * in case page-height="auto"
-     * 
+     *
      * @return the page-height, as a String
      * @see FopFactory#getPageHeight()
      */
@@ -479,7 +479,7 @@ public class FOUserAgent {
     /**
      * Gets the default page-width to use as fallback,
      * in case page-width="auto"
-     * 
+     *
      * @return the page-width, as a String
      * @see FopFactory#getPageWidth()
      */
@@ -522,7 +522,7 @@ public class FOUserAgent {
     /**
      * Controls the use of SAXLocators to provide location information in error
      * messages.
-     * 
+     *
      * @param enableLocator <code>false</code> if SAX Locators should be disabled
      */
     public void setLocatorEnabled(boolean enableLocator) {

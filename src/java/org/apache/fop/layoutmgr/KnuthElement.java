@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@ package org.apache.fop.layoutmgr;
 
 /**
  * This is the super class for KnuthBox, KnuthGlue and KnuthPenalty.
- * 
+ *
  * It stores information common to all sub classes, and the methods to get it:
  * the width, a Position and a boolean marking KnuthElements used for some
  * special feature (for example, the additional elements used to represent
@@ -59,21 +59,21 @@ public abstract class KnuthElement extends ListElement {
         return width;
     }
 
-    /** @return the penalty value of this element, if applicable. */ 
+    /** @return the penalty value of this element, if applicable. */
     public int getP() {
         throw new RuntimeException("Element is not a penalty");
     }
 
-    /** @return the stretch value of this element, if applicable. */ 
+    /** @return the stretch value of this element, if applicable. */
     public int getY() {
         throw new RuntimeException("Element is not a glue");
     }
 
-    /** @return the shrink value of this element, if applicable. */ 
+    /** @return the shrink value of this element, if applicable. */
     public int getZ() {
         throw new RuntimeException("Element is not a glue");
     }
-    
+
     /** {@inheritDoc} */
     public boolean isUnresolvedElement() {
         return false;

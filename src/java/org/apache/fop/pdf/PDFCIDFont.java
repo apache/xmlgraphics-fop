@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import org.apache.fop.fonts.CIDFontType;
@@ -60,8 +60,8 @@ public class PDFCIDFont extends PDFObject {
                       int[] w, String registry, String ordering,
                       int supplement, PDFCIDFontDescriptor descriptor) {
 
-        this(basefont, cidtype, dw, 
-                new PDFWArray(w), 
+        this(basefont, cidtype, dw,
+                new PDFWArray(w),
                 new PDFCIDSystemInfo(registry, ordering, supplement),
                 descriptor);
     }
@@ -79,8 +79,8 @@ public class PDFCIDFont extends PDFObject {
                       int[] w, PDFCIDSystemInfo systemInfo,
                       PDFCIDFontDescriptor descriptor) {
 
-        this(basefont, cidtype, dw, 
-                new PDFWArray(w), 
+        this(basefont, cidtype, dw,
+                new PDFWArray(w),
                 systemInfo,
                 descriptor);
     }
@@ -189,7 +189,7 @@ public class PDFCIDFont extends PDFObject {
         } else if (cidFontType == CIDFontType.CIDTYPE2) {
             return cidFontType.getName();
         } else {
-            throw new IllegalArgumentException("Unsupported CID font type: " 
+            throw new IllegalArgumentException("Unsupported CID font type: "
                         + cidFontType.getName());
         }
     }

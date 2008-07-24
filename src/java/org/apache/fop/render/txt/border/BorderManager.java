@@ -32,7 +32,7 @@ public class BorderManager {
 
     /** Width of current processed border. */
     private int width;
-    
+
     /** Height of current processed border. */
     private int height;
 
@@ -46,9 +46,9 @@ public class BorderManager {
     private TXTState state;
 
     /**
-     * Constructs BorderManger, using <code>pageWidth</code> and 
+     * Constructs BorderManger, using <code>pageWidth</code> and
      * <code>pageHeight</code> for creating <code>borderInfo</code>.
-     *  
+     *
      * @param pageWidth page width
      * @param pageHeight page height
      * @param state TXTState
@@ -60,12 +60,12 @@ public class BorderManager {
 
     /**
      * Adds border element to <code>borderInfo</code>.
-     * 
+     *
      * @param x x-coordinate
      * @param y y-coordinate
      * @param style border-style
-     * @param type border element type, binary representation of wich gives 
-     *         information about availability or absence of corresponding side. 
+     * @param type border element type, binary representation of wich gives
+     *         information about availability or absence of corresponding side.
      */
     public void addBorderElement(int x, int y, int style, int type) {
         AbstractBorderElement be = null;
@@ -91,9 +91,9 @@ public class BorderManager {
     /**
      * @param x x-coordinate
      * @param y y-coordinate
-     * @return if border element at point (x,y) is available, returns instance 
-     * of Character, created on char, given by corresponding border element, 
-     * otherwise returns null. 
+     * @return if border element at point (x,y) is available, returns instance
+     * of Character, created on char, given by corresponding border element,
+     * otherwise returns null.
      */
     public Character getCharacter(int x, int y) {
         Character c = null;
@@ -109,7 +109,7 @@ public class BorderManager {
     public int getWidth() {
         return width;
     }
-    
+
     /**
      * Sets width of current processed border.
      * @param width width of border
@@ -117,7 +117,7 @@ public class BorderManager {
     public void setWidth(int width) {
         this.width = width;
     }
-    
+
     /**
      * @return height of current processed border.
      */

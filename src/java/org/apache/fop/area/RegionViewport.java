@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 /**
  * Region Viewport area.
- * This object represents the region-viewport-area.  It has a 
+ * This object represents the region-viewport-area.  It has a
  * region-reference-area as its child.  These areas are described
  * in the fo:region-body description in the XSL Recommendation.
  */
@@ -76,7 +76,7 @@ public class RegionViewport extends Area implements Cloneable {
     public boolean isClip() {
         return this.clip;
     }
-    
+
     /**
      * Get the view area of this viewport.
      *

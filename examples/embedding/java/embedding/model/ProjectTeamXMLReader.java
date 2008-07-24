@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding.model;
 
 //Java
@@ -60,18 +60,18 @@ public class ProjectTeamXMLReader extends AbstractObjectReader {
         if (handler == null) {
             throw new IllegalStateException("ContentHandler not set");
         }
-        
+
         //Start the document
         handler.startDocument();
-        
+
         //Generate SAX events for the ProjectTeam
         generateFor(projectTeam);
-        
+
         //End the document
-        handler.endDocument();        
+        handler.endDocument();
     }
 
-    
+
     /**
      * Generates SAX events for a ProjectTeam object.
      * @param projectTeam ProjectTeam object to use
@@ -84,7 +84,7 @@ public class ProjectTeamXMLReader extends AbstractObjectReader {
         if (handler == null) {
             throw new IllegalStateException("ContentHandler not set");
         }
-        
+
         handler.startElement("projectteam");
         handler.element("projectname", projectTeam.getProjectName());
         Iterator i = projectTeam.getMembers().iterator();
@@ -107,7 +107,7 @@ public class ProjectTeamXMLReader extends AbstractObjectReader {
         if (handler == null) {
             throw new IllegalStateException("ContentHandler not set");
         }
-        
+
         handler.startElement("member");
         handler.element("name", projectMember.getName());
         handler.element("function", projectMember.getFunction());

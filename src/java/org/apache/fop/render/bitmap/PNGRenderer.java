@@ -48,7 +48,7 @@ public class PNGRenderer extends Java2DRenderer {
 
     /** The OutputStream for the first Image */
     private OutputStream firstOutputStream;
-    
+
     /** Helper class for generating multiple files */
     private MultiFileRenderingUtil multiFileUtil;
 
@@ -60,7 +60,7 @@ public class PNGRenderer extends Java2DRenderer {
     /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
         log.info("rendering areas to PNG");
-        multiFileUtil = new MultiFileRenderingUtil(PNG_FILE_EXTENSION, 
+        multiFileUtil = new MultiFileRenderingUtil(PNG_FILE_EXTENSION,
                     getUserAgent().getOutputFile());
         this.firstOutputStream = outputStream;
     }
@@ -84,7 +84,7 @@ public class PNGRenderer extends Java2DRenderer {
                 // Do the rendering: get the image for this page
                 PageViewport pv = (PageViewport)pageViewportList.get(i);
                 RenderedImage image = (RenderedImage)getPageImage(pv);
-    
+
                 // Encode this image
                 if (log.isDebugEnabled()) {
                     log.debug("Encoding page " + (i + 1));
@@ -102,7 +102,7 @@ public class PNGRenderer extends Java2DRenderer {
     private void writeImage(OutputStream os, RenderedImage image) throws IOException {
         ImageWriterParams params = new ImageWriterParams();
         params.setResolution(Math.round(userAgent.getTargetResolution()));
-        
+
         // Encode PNG image
         ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor(getMimeType());
         if (writer == null) {

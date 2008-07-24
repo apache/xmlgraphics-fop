@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,16 +20,16 @@
 package org.apache.fop.layoutmgr;
 
 /**
- * An instance of this class represents a piece of content with adjustable 
+ * An instance of this class represents a piece of content with adjustable
  * width: for example a space between words of justified text.
- * 
+ *
  * A KnuthGlue is a feasible breaking point only if it immediately follows
  * a KnuthBox.
- * 
+ *
  * The represented piece of content is suppressed if either the KnuthGlue
  * is a chosen breaking point or there isn't any KnuthBox between the
  * previous breaking point and the KnuthGlue itself.
- * 
+ *
  * So, an unsuppressible piece of content with adjustable width, for example
  * a leader or a word with adjustable letter space, cannot be represented
  * by a single KnuthGlue; it can be represented using the sequence:
@@ -39,14 +39,14 @@ package org.apache.fop.layoutmgr;
  *   KnuthBox(width = 0)
  * where the infinity penalty avoids choosing the KnuthGlue as a breaking point
  * and the 0-width KnuthBoxes prevent suppression.
- * 
+ *
  * Besides the inherited methods and attributes, this class has two attributes
  * used to store the stretchability (difference between max and opt width) and
  * the shrinkability (difference between opt and min width), and the methods
  * to get these values.
  */
 public class KnuthGlue extends KnuthElement {
-    
+
     private int stretchability;
     private int shrinkability;
     private int adjustmentClass = -1;
@@ -88,12 +88,12 @@ public class KnuthGlue extends KnuthElement {
     public int getZ() {
         return shrinkability;
     }
-    
+
     /** @return the adjustment class (or role) of this glue. */
     public int getAdjustmentClass() {
         return adjustmentClass;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
@@ -109,5 +109,5 @@ public class KnuthGlue extends KnuthElement {
         }
         return sb.toString();
     }
-    
+
 }

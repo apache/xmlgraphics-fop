@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.hyphenation;
 
 import java.io.BufferedInputStream;
@@ -40,12 +40,12 @@ import org.xml.sax.InputSource;
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
 public class Hyphenator {
-    
+
     /** logging instance */
     protected static Log log = LogFactory.getLog(Hyphenator.class);
 
     private static HyphenationTreeCache hTreeCache = null;
-    
+
     private HyphenationTree hyphenTree = null;
     private int remainCharCount = 2;
     private int pushCharCount = 2;
@@ -73,7 +73,7 @@ public class Hyphenator {
         }
         return hTreeCache;
     }
-    
+
     /**
      * Returns a hyphenation tree for a given language and country. The hyphenation trees are
      * cached.
@@ -83,9 +83,9 @@ public class Hyphenator {
      */
     public static HyphenationTree getHyphenationTree(String lang,
             String country) {
-        return getHyphenationTree(lang, country, null); 
+        return getHyphenationTree(lang, country, null);
     }
-    
+
     /**
      * Returns a hyphenation tree for a given language and country. The hyphenation trees are
      * cached.
@@ -98,12 +98,12 @@ public class Hyphenator {
             String country, HyphenationTreeResolver resolver) {
         String key = HyphenationTreeCache.constructKey(lang, country);
         HyphenationTreeCache cache = getHyphenationTreeCache();
-        
+
         // See if there was an error finding this hyphenation tree before
         if (cache.isMissing(key)) {
             return null;
         }
-        
+
         HyphenationTree hTree;
         // first try to find it in the cache
         hTree = getHyphenationTreeCache().getHyphenationTree(lang, country);
@@ -117,7 +117,7 @@ public class Hyphenator {
         if (hTree == null) {
             hTree = getFopHyphenationTree(key);
         }
-        
+
         // put it into the pattern cache
         if (hTree != null) {
             cache.cache(key, hTree);
@@ -165,7 +165,7 @@ public class Hyphenator {
         }
         return hTree;
     }
-    
+
     /**
      * Returns a hyphenation tree. This method looks in the resources (getResourceStream) for
      * the hyphenation patterns.
@@ -230,7 +230,7 @@ public class Hyphenator {
         };
         return getUserHyphenationTree(key, resolver);
     }
-    
+
     /**
      * Load tree from serialized file or xml file
      * using configuration settings
@@ -301,7 +301,7 @@ public class Hyphenator {
                 }
                 try {
                     InputSource src = new InputSource(in);
-                    src.setSystemId(source.getSystemId()); 
+                    src.setSystemId(source.getSystemId());
                     hTree.loadPatterns(src);
                 } finally {
                     IOUtils.closeQuietly(in);
@@ -341,7 +341,7 @@ public class Hyphenator {
      */
     public static Hyphenation hyphenate(String lang, String country,
                                         HyphenationTreeResolver resolver,
-                                        String word, 
+                                        String word,
                                         int leftMin, int rightMin) {
         HyphenationTree hTree = getHyphenationTree(lang, country, resolver);
         if (hTree == null) {
@@ -360,7 +360,7 @@ public class Hyphenator {
      * @return the hyphenation result
      */
     public static Hyphenation hyphenate(String lang, String country,
-                                        String word, 
+                                        String word,
                                         int leftMin, int rightMin) {
         return hyphenate(lang, country, null, word, leftMin, rightMin);
     }

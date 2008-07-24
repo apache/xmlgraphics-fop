@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.awt.Color;
@@ -44,11 +44,11 @@ public class PDFColor extends PDFPathPaint {
     private double magenta = -1.0;
     private double yellow = -1.0;
     private double black = -1.0;
-    
+
     // TODO - It would probably be better to reorganize PDFPathPaint/PDFColor/PDFColorSpace
-    //        class hierarchy. However, at this early stages of my FOP understanding, I can 
-    //        not really oversee the consequences of such a switch (nor whether it would be 
-    //        appropriate). 
+    //        class hierarchy. However, at this early stages of my FOP understanding, I can
+    //        not really oversee the consequences of such a switch (nor whether it would be
+    //        appropriate).
     private ColorExt colorExt = null;
 
     /**
@@ -66,24 +66,24 @@ public class PDFColor extends PDFPathPaint {
         this.green = theGreen;
         this.blue = theBlue;
     }
-    
+
     /**
      * Create PDFColor for the given document and based on the java.awt.Color object
-     * 
-     * In case the java.awt.Color is an instance of the ColorExt class a PDFICCStream is added to 
+     *
+     * In case the java.awt.Color is an instance of the ColorExt class a PDFICCStream is added to
      * the PDFDocument that is being created
-     * 
+     *
      * @param pdfDoc PDFDocument that is being created
      * @param col Color object from which to create this PDFColor
      */
     public PDFColor(PDFDocument pdfDoc, Color col) {
         this(col);
         // TODO - 1) There is a potential conflict when FOP and Batik elements use the same color
-        //           profile name for different profiles.  
-        //        2) In case the same color profile is used with different names it will be 
+        //           profile name for different profiles.
+        //        2) In case the same color profile is used with different names it will be
         //           included multiple times in the PDF
         //
-        if (colorExt != null 
+        if (colorExt != null
                 && pdfDoc.getResources().getColorSpace(colorExt.getIccProfileName()) == null) {
             PDFICCStream pdfIccStream = new PDFICCStream();
             ColorSpace ceCs = colorExt.getOrigColorSpace();
@@ -98,17 +98,17 @@ public class PDFColor extends PDFPathPaint {
             pdfDoc.getFactory().makeICCBasedColorSpace(
                     null, colorExt.getIccProfileName(), pdfIccStream);
             if (log.isInfoEnabled()) {
-                log.info("Adding PDFICCStream " + colorExt.getIccProfileName() 
+                log.info("Adding PDFICCStream " + colorExt.getIccProfileName()
                         + " for " + colorExt.getIccProfileSrc());
             }
         }
     }
-    
+
     /**
      * Create a PDF color from a java.awt.Color object.
-     * 
+     *
      * Different Color objects are handled differently. Cases recognized are.
-     * 
+     *
      * 1. CMYK color
      * 2. ColorExt color
      * 3. 'Normal' java.awt.Color (RGB case assumed)
@@ -120,12 +120,12 @@ public class PDFColor extends PDFPathPaint {
         ColorExt ce = null;
         if (col instanceof ColorExt) {
             ce = (ColorExt)col;
-            cs = ce.getOrigColorSpace();  
+            cs = ce.getOrigColorSpace();
         }
         if (cs != null && cs instanceof CMYKColorSpace) {
             // CMYK case
             this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_CMYK);
-            float[] cmyk = (ce == null 
+            float[] cmyk = (ce == null
                     ? col.getColorComponents(null)
                     : ce.getOriginalColorComponents());
             this.cyan = cmyk[0];
@@ -151,7 +151,7 @@ public class PDFColor extends PDFPathPaint {
             this.blue = comps[2];
         }
     }
-    
+
     /**
      * Create a PDF color with int values ranging from 0 to 255
      *
@@ -239,11 +239,11 @@ public class PDFColor extends PDFPathPaint {
         return (this.blue);
     }
 
-    /**     
+    /**
      * Get the red integer component.
-     *  
-     * @return the red integer value    
-     */     
+     *
+     * @return the red integer value
+     */
     public int red255() {
         return (int)(this.red * 255d);
     }
@@ -251,7 +251,7 @@ public class PDFColor extends PDFPathPaint {
     /**
      * Get the green integer component.
      *
-     * @return the green integer value           
+     * @return the green integer value
      */
     public int green255() {
         return (int)(this.green * 255d);
@@ -260,7 +260,7 @@ public class PDFColor extends PDFPathPaint {
     /**
      * Get the blue integer component.
      *
-     * @return the blue integer value           
+     * @return the blue integer value
      */
     public int blue255() {
         return (int)(this.blue * 255d);
@@ -269,7 +269,7 @@ public class PDFColor extends PDFPathPaint {
     /**
      * Get the cyan component.
      *
-     * @return the cyan double value 
+     * @return the cyan double value
      */
     public double cyan() {
         return (this.cyan);
@@ -278,7 +278,7 @@ public class PDFColor extends PDFPathPaint {
     /**
      * Get the magenta component.
      *
-     * @return the magenta double value 
+     * @return the magenta double value
      */
     public double magenta() {
         return (this.magenta);
@@ -287,7 +287,7 @@ public class PDFColor extends PDFPathPaint {
     /**
      * Get the yellow component.
      *
-     * @return the yellow double value 
+     * @return the yellow double value
      */
     public double yellow() {
         return (this.yellow);
@@ -296,7 +296,7 @@ public class PDFColor extends PDFPathPaint {
     /**
      * Get the black component.
      *
-     * @return the black double value 
+     * @return the black double value
      */
     public double black() {
         return (this.black);
@@ -553,7 +553,7 @@ public class PDFColor extends PDFPathPaint {
         }
         PDFColor color = (PDFColor)obj;
 
-        if (color.red == this.red 
+        if (color.red == this.red
                 && color.green == this.green
                 && color.blue == this.blue) {
             return true;

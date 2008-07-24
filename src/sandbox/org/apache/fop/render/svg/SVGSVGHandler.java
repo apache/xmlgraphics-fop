@@ -35,7 +35,7 @@ import org.w3c.dom.svg.SVGSVGElement;
 public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {
 
     /** @see org.apache.fop.render.XMLHandler */
-    public void handleXML(RendererContext context, 
+    public void handleXML(RendererContext context,
                 org.w3c.dom.Document doc, String ns) throws Exception {
         if (getNamespace().equals(ns)) {
             if (!(doc instanceof SVGDocument)) {

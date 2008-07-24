@@ -27,7 +27,7 @@ import java.util.List;
 public class CompositeEventListener implements EventListener {
 
     private List listeners = new java.util.ArrayList();
-    
+
     /**
      * Adds an event listener to the broadcaster. It is appended to the list of previously
      * registered listeners (the order of registration defines the calling order).
@@ -49,7 +49,7 @@ public class CompositeEventListener implements EventListener {
     private synchronized int getListenerCount() {
         return this.listeners.size();
     }
-    
+
     /**
      * Indicates whether any listeners have been registered with the broadcaster.
      * @return true if listeners are present, false otherwise
@@ -57,7 +57,7 @@ public class CompositeEventListener implements EventListener {
     public boolean hasEventListeners() {
         return (getListenerCount() > 0);
     }
-    
+
     /** {@inheritDoc} */
     public synchronized void processEvent(Event event) {
         for (int i = 0, c = getListenerCount(); i < c; i++) {

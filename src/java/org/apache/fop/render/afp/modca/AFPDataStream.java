@@ -34,7 +34,7 @@ import org.apache.fop.render.afp.tools.StringUtils;
  * destined for a presentation service, archive library, presentation device or
  * another application program. The strategic presentation data stream
  * architectures used is Mixed Object Document Content Architecture (MO:DCA�).
- * 
+ *
  * The MO:DCA architecture defines the data stream used by applications to
  * describe documents and object envelopes for interchange with other
  * applications and application services. Documents defined in the MO:DCA format
@@ -42,7 +42,7 @@ import org.apache.fop.render.afp.tools.StringUtils;
  * printed in local or distributed systems environments. Presentation fidelity
  * is accommodated by including resource objects in the documents that reference
  * them.
- * 
+ *
  */
 public class AFPDataStream {
 
@@ -142,7 +142,7 @@ public class AFPDataStream {
     /**
      * The document is started by invoking this method which creates an instance
      * of the AFP Document object.
-     * 
+     *
      * @param docOutputStream
      *            the outputStream which the document is written to.
      */
@@ -163,7 +163,7 @@ public class AFPDataStream {
      * The document is ended by invoking this method which creates an instance
      * of the AFP Document object and registers the start with a validation map
      * which ensures that methods are not invoked out of the correct sequence.
-     * 
+     *
      * @throws java.io.IOException
      *             throws an I/O exception of some sort has occurred
      */
@@ -199,7 +199,7 @@ public class AFPDataStream {
     /**
      * Start a new page. When processing has finished on the current page, the
      * {@link #endPage()}method must be invoked to mark the page ending.
-     * 
+     *
      * @param pageWidth
      *            the width of the page
      * @param pageHeight
@@ -228,7 +228,7 @@ public class AFPDataStream {
      * Start a new overlay. When processing has finished on the current overlay,
      * the {@link #endOverlay()}method must be invoked to mark the overlay
      * ending.
-     * 
+     *
      * @param overlayX
      *            the x position of the overlay on the page
      * @param overlayY
@@ -274,7 +274,7 @@ public class AFPDataStream {
 
     /**
      * Helper method to save the current page.
-     * 
+     *
      * @return current page object that was saved
      */
     public PageObject savePage() {
@@ -293,7 +293,7 @@ public class AFPDataStream {
 
     /**
      * Helper method to restore the current page.
-     * 
+     *
      * @param pageObject
      *            page object
      */
@@ -306,7 +306,7 @@ public class AFPDataStream {
 
     /**
      * Helper method to mark the end of the current page.
-     * 
+     *
      * @throws java.io.IOException
      *             thrown when an I/O exception of some sort has occurred
      */
@@ -327,7 +327,7 @@ public class AFPDataStream {
 
     /**
      * Sets the offsets to be used for element positioning
-     * 
+     *
      * @param xOff
      *            the offset in the x direction
      * @param yOff
@@ -345,7 +345,7 @@ public class AFPDataStream {
      * Helper method to create a map coded font object on the current page, this
      * method delegates the construction of the map coded font object to the
      * active environment group on the current page.
-     * 
+     *
      * @param fontReference
      *            the font number used as the resource identifier
      * @param font
@@ -362,7 +362,7 @@ public class AFPDataStream {
     /**
      * Helper method to create text on the current page, this method delegates
      * to the current presentation text object in order to construct the text.
-     * 
+     *
      * @param fontNumber
      *            the font number used as the resource identifier
      * @param x
@@ -388,7 +388,7 @@ public class AFPDataStream {
 
     /**
      * Returns an ImageObject used to create an image in the datastream.
-     * 
+     *
      * @param x
      *            the x position of the image
      * @param y
@@ -455,7 +455,7 @@ public class AFPDataStream {
 
     /**
      * Method to create a line on the current page.
-     * 
+     *
      * @param x1
      *            the first x coordinate of the line
      * @param y1
@@ -481,7 +481,7 @@ public class AFPDataStream {
      * This method will create shading on the page using the specified
      * coordinates (the shading contrast is controlled via the red, green, blue
      * parameters, by converting this to grey scale).
-     * 
+     *
      * @param x
      *            the x coordinate of the shading
      * @param y
@@ -508,7 +508,7 @@ public class AFPDataStream {
     /**
      * Helper method which allows creation of the MPO object, via the AEG. And
      * the IPO via the Page. (See actual object for descriptions.)
-     * 
+     *
      * @param name
      *            the name of the static overlay
      */
@@ -523,7 +523,7 @@ public class AFPDataStream {
 
     /**
      * Helper method which allows creation of the IMM object.
-     * 
+     *
      * @param name
      *            the name of the medium map
      */
@@ -538,7 +538,7 @@ public class AFPDataStream {
 
     /**
      * Creates an IncludePageSegment on the current page.
-     * 
+     *
      * @param name
      *            the name of the include page segment
      * @param x
@@ -574,7 +574,7 @@ public class AFPDataStream {
 
     /**
      * Creates a TagLogicalElement on the current page.
-     * 
+     *
      * @param attributes
      *            the array of key value pairs.
      */
@@ -590,7 +590,7 @@ public class AFPDataStream {
 
     /**
      * Creates a TagLogicalElement on the current page group.
-     * 
+     *
      * @param attributes
      *            the array of key value pairs.
      */
@@ -607,7 +607,7 @@ public class AFPDataStream {
 
     /**
      * Creates a TagLogicalElement on the current page or page group
-     * 
+     *
      * @param name
      *            The tag name
      * @param value
@@ -625,7 +625,7 @@ public class AFPDataStream {
 
     /**
      * Creates a NoOperation item
-     * 
+     *
      * @param content
      *            byte data
      */
@@ -663,7 +663,7 @@ public class AFPDataStream {
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
      * (default), 90, 180, 270.
-     * 
+     *
      * @param pageRotation
      *            The rotation in degrees.
      */
@@ -682,7 +682,7 @@ public class AFPDataStream {
     /**
      * Sets the rotation to be used for landscape pages, valid values are 0, 90,
      * 180, 270 (default).
-     * 
+     *
      * @param pageRotation
      *            The rotation in degrees.
      */

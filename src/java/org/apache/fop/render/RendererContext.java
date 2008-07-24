@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render;
 
 //Java
@@ -54,7 +54,7 @@ public class RendererContext {
     public AbstractRenderer getRenderer() {
         return renderer;
     }
-    
+
     /**
      * Returns the MIME type associated with this RendererContext.
      *
@@ -121,7 +121,7 @@ public class RendererContext {
 
         /** The wrapped RendererContext */
         protected RendererContext context;
-        
+
         /**
          * Main constructor
          * @param context the RendererContent instance
@@ -129,7 +129,7 @@ public class RendererContext {
         public RendererContextWrapper(RendererContext context) {
             this.context = context;
         }
-        
+
         /** @return the user agent */
         public FOUserAgent getUserAgent() {
             return context.getUserAgent();
@@ -158,7 +158,7 @@ public class RendererContext {
         /** @return the foreign attributes */
         public Map getForeignAttributes() {
             return (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-        }        
-    }    
+        }
+    }
 }
 

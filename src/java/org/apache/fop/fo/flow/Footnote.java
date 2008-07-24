@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ public class Footnote extends FObj {
     /**
      * Create a Footnote instance that is a child of the
      * given {@link FONode}
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public Footnote(FONode parent) {
@@ -53,7 +53,7 @@ public class Footnote extends FObj {
     public void bind(PropertyList pList) throws FOPException {
         // No active properties -> do nothing.
     }
-    
+
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         getFOEventHandler().startFootnote(this);
@@ -62,7 +62,7 @@ public class Footnote extends FObj {
     /**
      * Make sure content model satisfied, if so then tell the
      * {@link org.apache.fop.fo.FOEventHandler} that we are at the end of the footnote.
-     * 
+     *
      * {@inheritDoc}
      */
     protected void endOfNode() throws FOPException {
@@ -78,11 +78,11 @@ public class Footnote extends FObj {
      * <br>XSL Content Model: (inline,footnote-body)
      * @todo implement additional constraint: A fo:footnote is not permitted
      *      to have a fo:float, fo:footnote, or fo:marker as a descendant.
-     * @todo implement additional constraint: A fo:footnote is not 
-     *      permitted to have as a descendant a fo:block-container that 
+     * @todo implement additional constraint: A fo:footnote is not
+     *      permitted to have as a descendant a fo:block-container that
      *      generates an absolutely positioned area.
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("inline")) {
@@ -94,7 +94,7 @@ public class Footnote extends FObj {
                     nodesOutOfOrderError(loc, "fo:inline", "fo:footnote-body");
                 } else if (footnoteBody != null) {
                     tooManyNodesError(loc, "fo:footnote-body");
-                }                
+                }
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
@@ -112,7 +112,7 @@ public class Footnote extends FObj {
 
     /**
      * Public accessor for inline FO
-     * 
+     *
      * @return the {@link Inline} child
      */
     public Inline getFootnoteCitation() {
@@ -121,7 +121,7 @@ public class Footnote extends FObj {
 
     /**
      * Public accessor for footnote-body FO
-     * 
+     *
      * @return the {@link FootnoteBody} child
      */
     public FootnoteBody getFootnoteBody() {
@@ -132,7 +132,7 @@ public class Footnote extends FObj {
     public String getLocalName() {
         return "footnote";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_FOOTNOTE}

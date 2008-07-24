@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.tools;
 
 import java.io.File;
@@ -48,10 +48,10 @@ import org.apache.commons.logging.impl.SimpleLog;
  * pdf rendering.
  */
 public class TestConverter {
-    
+
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
-    
+
     private boolean failOnly = false;
     private String outputFormat = MimeConstants.MIME_FOP_AREA_TREE;
     private File destdir;
@@ -126,7 +126,7 @@ public class TestConverter {
     }
 
     /**
-     * Controls whether to process only the tests which are specified as fail 
+     * Controls whether to process only the tests which are specified as fail
      * in the test results.
      * @param fail True if only fail tests should be processed
      */
@@ -262,7 +262,7 @@ public class TestConverter {
         if (xslNode != null) {
             xsl = xslNode.getNodeValue();
         }
-        logger.debug("converting xml:" + xml + " and xsl:" 
+        logger.debug("converting xml:" + xml + " and xsl:"
                   + xsl + " to area tree");
 
         String res = xml;
@@ -299,7 +299,7 @@ public class TestConverter {
             if (outname.endsWith(".xml") || outname.endsWith(".pdf")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            File outputFile = new File(destdir, 
+            File outputFile = new File(destdir,
                                        outname + makeResultExtension());
 
             outputFile.getParentFile().mkdirs();

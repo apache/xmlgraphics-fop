@@ -32,7 +32,7 @@ import junit.framework.TestCase;
 public class PDFObjectTestCase extends TestCase {
 
     /**
-     * Tests date/time formatting in PDFObject. 
+     * Tests date/time formatting in PDFObject.
      * @throws Exception if an error occurs
      */
     public void testDateFormatting() throws Exception {
@@ -40,7 +40,7 @@ public class PDFObjectTestCase extends TestCase {
         cal.set(2008, Calendar.FEBRUARY, 07, 15, 11, 07);
         cal.set(Calendar.MILLISECOND, 0);
         Date dt = cal.getTime();
-        
+
         MyPDFObject obj = new MyPDFObject();
         String s = obj.formatDateTime(dt, TimeZone.getTimeZone("GMT"));
         assertEquals("D:20080207151107Z", s);
@@ -51,9 +51,9 @@ public class PDFObjectTestCase extends TestCase {
         s = obj.formatDateTime(dt, TimeZone.getTimeZone("GMT-08:00"));
         assertEquals("D:20080207071107-08'00'", s);
     }
-    
+
     private class MyPDFObject extends PDFObject {
-        
+
     }
-    
+
 }

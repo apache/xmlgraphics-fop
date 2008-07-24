@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,7 @@ public final class NumberProperty extends Property implements Numeric {
          * {@inheritDoc}
          */
         public Property convertProperty(Property p,
-                                        PropertyList propertyList, FObj fo) 
+                                        PropertyList propertyList, FObj fo)
                     throws PropertyException {
             if (p instanceof NumberProperty) {
                 return p;
@@ -79,12 +79,12 @@ public final class NumberProperty extends Property implements Numeric {
         }
 
         /**
-         * If the value is not positive, return a property with value 1 
-         * 
+         * If the value is not positive, return a property with value 1
+         *
          * {@inheritDoc}
          */
-        public Property convertProperty(Property p, 
-                                        PropertyList propertyList, FObj fo) 
+        public Property convertProperty(Property p,
+                                        PropertyList propertyList, FObj fo)
                     throws PropertyException {
             if (p instanceof EnumProperty) {
                 return EnumNumber.getInstance(p);
@@ -101,10 +101,10 @@ public final class NumberProperty extends Property implements Numeric {
         }
 
     }
-    
+
     /** cache holding all canonical NumberProperty instances */
     private static final PropertyCache cache = new PropertyCache(NumberProperty.class);
-    
+
     private final Number number;
 
     /**
@@ -132,7 +132,7 @@ public final class NumberProperty extends Property implements Numeric {
     private NumberProperty(int num) {
         this.number = new Integer(num);
     }
-    
+
     /**
      * Returns the canonical NumberProperty instance
      * corresponding to the given Number
@@ -143,7 +143,7 @@ public final class NumberProperty extends Property implements Numeric {
         return (NumberProperty)cache.fetch(
                     new NumberProperty(num.doubleValue()));
     }
-    
+
     /**
      * Returns the canonical NumberProperty instance
      * corresponding to the given Integer
@@ -176,7 +176,7 @@ public final class NumberProperty extends Property implements Numeric {
         return (NumberProperty)cache.fetch(
                     new NumberProperty(num));
     }
-    
+
     /**
      * Plain number always has a dimension of 0.
      * @return a dimension of 0.
@@ -254,7 +254,7 @@ public final class NumberProperty extends Property implements Numeric {
 
     /**
      * Convert NumberProperty to a Color. Not sure why this is needed.
-     * @param foUserAgent FOUserAgent 
+     * @param foUserAgent FOUserAgent
      * @return Color that corresponds to black
      */
     public Color getColor(FOUserAgent foUserAgent) {
@@ -268,7 +268,7 @@ public final class NumberProperty extends Property implements Numeric {
     public int hashCode() {
         return number.hashCode();
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object o) {
         if (o == this) {

@@ -69,9 +69,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
     private int startXOffset;
     private int usedBPD;
-    
+
     private TableStepper stepper;
-        
+
     /**
      * Main constructor
      * @param parent Parent layout manager
@@ -88,19 +88,19 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
         stepper = new TableStepper(this);
     }
-    
+
     /**
      * @return the table layout manager
      */
     TableLayoutManager getTableLM() {
         return this.tableLM;
     }
-    
+
     /** @return true if the table uses the separate border model. */
     boolean isSeparateBorderModel() {
         return getTableLM().getTable().isSeparateBorderModel();
     }
-    
+
     /**
      * @return the column setup of this table
      */
@@ -142,14 +142,14 @@ public class TableContentLayoutManager implements PercentBaseContext {
             this.headerNetHeight
                     = ElementListUtils.calcContentLength(this.headerList);
             if (log.isDebugEnabled()) {
-                log.debug("==> Header: " 
+                log.debug("==> Header: "
                         + headerNetHeight + " - " + this.headerList);
             }
             TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
                     getTableLM(), true, this.headerList);
             KnuthBox box = new KnuthBox(headerNetHeight, pos, false);
             if (getTableLM().getTable().omitHeaderAtBreak()) {
-                //We can simply add the table header at the start 
+                //We can simply add the table header at the start
                 //of the whole list
                 headerAsFirst = box;
             } else {
@@ -162,7 +162,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             this.footerNetHeight
                     = ElementListUtils.calcContentLength(this.footerList);
             if (log.isDebugEnabled()) {
-                log.debug("==> Footer: " 
+                log.debug("==> Footer: "
                         + footerNetHeight + " - " + this.footerList);
             }
             //We can simply add the table footer at the end of the whole list
@@ -195,17 +195,17 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
         return returnList;
     }
-    
+
     /**
      * Creates Knuth elements by iterating over a TableRowIterator.
      * @param iter TableRowIterator instance to fetch rows from
      * @param context Active LayoutContext
      * @param alignment alignment indicator
-     * @param bodyType Indicates what kind of body is being processed 
+     * @param bodyType Indicates what kind of body is being processed
      *                  (BODY, HEADER or FOOTER)
      * @return An element list
      */
-    private LinkedList getKnuthElementsForRowIterator(TableRowIterator iter, 
+    private LinkedList getKnuthElementsForRowIterator(TableRowIterator iter,
             LayoutContext context, int alignment, int bodyType) {
         LinkedList returnList = new LinkedList();
         EffRow[] rowGroup = iter.getNextRowGroup();
@@ -225,12 +225,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
             returnList.addAll(nextRowGroupElems);
             while ((rowGroup = iter.getNextRowGroup()) != null) {
                 rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup, stepper);
-                
+
                 //Note previous pending keep-with-next and clear the strength
                 //(as the layout context is reused)
                 int keepWithNextPending = context.getKeepWithNextPending();
                 context.clearKeepWithNextPending();
-                
+
                 //Get elements for next row group
                 nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
                 /*
@@ -238,13 +238,13 @@ public class TableContentLayoutManager implements PercentBaseContext {
                  * group) may be used to represent the break between the two row groups.
                  * Its penalty value and break class must just be overridden by the
                  * characteristics of the keep or break between the two.
-                 * 
+                 *
                  * However, we mustn't forget that if the after border of the last row of
                  * the row group is thicker in the normal case than in the trailing case,
                  * an additional glue will be appended to the element list. So we may have
                  * to go two steps backwards in the list.
                  */
-                
+
                 //Determine keep constraints
                 int penaltyStrength = BlockLevelLayoutManager.KEEP_AUTO;
                 penaltyStrength = Math.max(penaltyStrength, keepWithNextPending);
@@ -252,7 +252,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 context.clearKeepWithPreviousPending();
                 penaltyStrength = Math.max(penaltyStrength, getTableLM().getKeepTogetherStrength());
                 int penaltyValue = KeepUtil.getPenaltyForKeep(penaltyStrength);
-                
+
                 breakBetween = BreakUtil.compareBreakClasses(breakBetween,
                         context.getBreakBefore());
                 if (breakBetween != Constants.EN_AUTO) {
@@ -291,16 +291,16 @@ public class TableContentLayoutManager implements PercentBaseContext {
         context.setBreakBefore(breakBefore);
 
         //fox:widow-content-limit
-        int widowContentLimit = getTableLM().getTable().getWidowContentLimit().getValue(); 
+        int widowContentLimit = getTableLM().getTable().getWidowContentLimit().getValue();
         if (widowContentLimit != 0 && bodyType == TableRowIterator.BODY) {
             ElementListUtils.removeLegalBreaks(returnList, widowContentLimit);
         }
         //fox:orphan-content-limit
-        int orphanContentLimit = getTableLM().getTable().getOrphanContentLimit().getValue(); 
+        int orphanContentLimit = getTableLM().getTable().getOrphanContentLimit().getValue();
         if (orphanContentLimit != 0 && bodyType == TableRowIterator.BODY) {
             ElementListUtils.removeLegalBreaksFromEnd(returnList, orphanContentLimit);
         }
-        
+
         return returnList;
     }
 
@@ -313,7 +313,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         int col = gu.getColIndex();
         return startXOffset + getTableLM().getColumns().getXOffset(col + 1, getTableLM());
     }
-    
+
     /**
      * Adds the areas generated by this layout manager to the area tree.
      * @param parentIter the position iterator
@@ -358,7 +358,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 }
             } else if (pos instanceof TableHFPenaltyPosition) {
                 //ignore for now, see special handling below if break is at a penalty
-                //Only if the last position in this part/page us such a position it will be used 
+                //Only if the last position in this part/page us such a position it will be used
             } else if (pos instanceof TableContentPosition) {
                 tablePositions.add(pos);
             } else {
@@ -376,23 +376,23 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 headerElements = penaltyPos.headerElements;
             }
             if (penaltyPos.footerElements != null) {
-                footerElements = penaltyPos.footerElements; 
+                footerElements = penaltyPos.footerElements;
             }
         }
 
         Map markers = getTableLM().getTable().getMarkers();
         if (markers != null) {
-            getTableLM().getCurrentPV().addMarkers(markers, 
+            getTableLM().getCurrentPV().addMarkers(markers,
                     true, getTableLM().isFirst(firstPos), getTableLM().isLast(lastCheckPos));
         }
-        
+
         if (headerElements != null) {
             //header positions for the last part are the second-to-last element and need to
             //be handled first before all other TableContentPositions
             addHeaderFooterAreas(headerElements, tableLM.getTable().getTableHeader(), painter,
                     false);
         }
-        
+
         if (tablePositions.isEmpty()) {
             // TODO make sure this actually never happens
             log.error("tablePositions empty."
@@ -407,11 +407,11 @@ public class TableContentLayoutManager implements PercentBaseContext {
             addHeaderFooterAreas(footerElements, tableLM.getTable().getTableFooter(), painter,
                     true);
         }
-        
+
         this.usedBPD += painter.getAccumulatedBPD();
 
         if (markers != null) {
-            getTableLM().getCurrentPV().addMarkers(markers, 
+            getTableLM().getCurrentPV().addMarkers(markers,
                     false, getTableLM().isFirst(firstPos), getTableLM().isLast(lastCheckPos));
         }
     }
@@ -435,7 +435,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     /**
      * Iterates over the positions corresponding to the table's body (which may contain
      * several table-body elements!) and adds the corresponding areas.
-     * 
+     *
      * @param iterator iterator over TableContentPosition elements. Those positions
      * correspond to the elements of the body present on the current page
      * @param painter
@@ -472,13 +472,13 @@ public class TableContentLayoutManager implements PercentBaseContext {
      */
     private void addTablePartAreas(List positions, RowPainter painter, TablePart body,
             boolean isFirstPos, boolean isLastPos, boolean lastInBody, boolean lastOnPage) {
-        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+        getTableLM().getCurrentPV().addMarkers(body.getMarkers(),
                 true, isFirstPos, isLastPos);
         painter.startTablePart(body);
         for (Iterator iter = positions.iterator(); iter.hasNext();) {
             painter.handleTableContentPosition((TableContentPosition) iter.next());
         }
-        getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+        getTableLM().getCurrentPV().addMarkers(body.getMarkers(),
                 false, isFirstPos, isLastPos);
         painter.endTablePart(lastInBody, lastOnPage);
     }
@@ -501,7 +501,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     // --------- Property Resolution related functions --------- //
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         return tableLM.getBaseLength(lengthBase, fobj);

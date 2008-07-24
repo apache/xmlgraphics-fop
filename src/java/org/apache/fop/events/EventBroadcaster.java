@@ -31,31 +31,31 @@ public interface EventBroadcaster {
      * @param listener the listener to be added
      */
     void addEventListener(EventListener listener);
-    
+
     /**
      * Removes an event listener from the broadcaster. If the event listener is not registered,
      * nothing happens.
      * @param listener the listener to be removed
      */
     void removeEventListener(EventListener listener);
- 
+
     /**
      * Indicates whether any listeners have been registered with the broadcaster.
      * @return true if listeners are present, false otherwise
      */
     boolean hasEventListeners();
-    
+
     /**
      * Broadcasts an event. This method is usually called from within the observed component.
      * @param event the event to be broadcast
      */
     void broadcastEvent(Event event);
-    
+
     /**
      * Returns an event producer instance for the given interface class.
      * @param clazz the Class object identifying an {@link EventProducer} interface
      * @return the event producer instance
      */
     EventProducer getEventProducerFor(Class clazz);
-    
+
 }

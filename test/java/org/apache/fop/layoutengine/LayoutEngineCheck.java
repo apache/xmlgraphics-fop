@@ -29,5 +29,5 @@ public interface LayoutEngineCheck {
      * @param result the results from the processing run
      */
     void check(LayoutResult result);
-    
+
 }

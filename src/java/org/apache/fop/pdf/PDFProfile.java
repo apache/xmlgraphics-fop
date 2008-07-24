@@ -26,25 +26,25 @@ import java.text.MessageFormat;
  * the libarary and its users to enable the generation of PDFs conforming to the enabled PDF
  * profiles.
  * <p>
- * Some profile from PDF/X and PDF/A can be active simultaneously (example: PDF/A-1 and 
+ * Some profile from PDF/X and PDF/A can be active simultaneously (example: PDF/A-1 and
  * PDF/X-3:2003).
  */
 public class PDFProfile {
 
     /**
-     * Indicates the PDF/A mode currently active. Defaults to "no restrictions", i.e. 
+     * Indicates the PDF/A mode currently active. Defaults to "no restrictions", i.e.
      * PDF/A not active.
      */
     protected PDFAMode pdfAMode = PDFAMode.DISABLED;
-    
+
     /**
-     * Indicates the PDF/X mode currently active. Defaults to "no restrictions", i.e. 
+     * Indicates the PDF/X mode currently active. Defaults to "no restrictions", i.e.
      * PDF/X not active.
      */
     protected PDFXMode pdfXMode = PDFXMode.DISABLED;
-    
+
     private PDFDocument doc;
-    
+
     /**
      * Main constructor
      * @param doc the PDF document
@@ -52,7 +52,7 @@ public class PDFProfile {
     public PDFProfile(PDFDocument doc) {
         this.doc = doc;
     }
-    
+
     /**
      * Validates if the requested profile combination is compatible.
      */
@@ -69,22 +69,22 @@ public class PDFProfile {
             }
         }
     }
-    
+
     /** @return the PDFDocument this profile is attached to */
     public PDFDocument getDocument() {
         return this.doc;
     }
-    
+
     /** @return the PDF/A mode */
     public PDFAMode getPDFAMode() {
         return this.pdfAMode;
     }
-    
+
     /** @return true if any PDF/A mode is active */
     public boolean isPDFAActive() {
         return getPDFAMode() != PDFAMode.DISABLED;
     }
-    
+
     /**
      * Sets the PDF/A mode
      * @param mode the PDF/A mode
@@ -96,17 +96,17 @@ public class PDFProfile {
         this.pdfAMode = mode;
         validateProfileCombination();
     }
-    
+
     /** @return the PDF/X mode */
     public PDFXMode getPDFXMode() {
         return this.pdfXMode;
     }
-    
+
     /** @return true if any PDF/X mode is active */
     public boolean isPDFXActive() {
         return getPDFXMode() != PDFXMode.DISABLED;
     }
-    
+
     /**
      * Sets the PDF/X mode
      * @param mode the PDF/X mode
@@ -133,13 +133,13 @@ public class PDFProfile {
         }
         return sb.toString();
     }
-    
+
     //---------=== Info and validation methods ===---------
-    
+
     private String format(String pattern, Object arg) {
         return MessageFormat.format(pattern, new Object[] {arg});
     }
-    
+
     /** Checks if encryption is allowed. */
     public void verifyEncryptionAllowed() {
         final String err = "{0} doesn't allow encrypted PDFs";
@@ -170,11 +170,11 @@ public class PDFProfile {
     public void verifyTransparencyAllowed(String context) {
         final String err = "{0} does not allow the use of transparency. ({1})";
         if (isPDFAActive()) {
-            throw new PDFConformanceException(MessageFormat.format(err, 
+            throw new PDFConformanceException(MessageFormat.format(err,
                     new Object[] {getPDFAMode(), context}));
         }
         if (isPDFXActive()) {
-            throw new PDFConformanceException(MessageFormat.format(err, 
+            throw new PDFConformanceException(MessageFormat.format(err,
                     new Object[] {getPDFXMode(), context}));
         }
     }
@@ -182,16 +182,16 @@ public class PDFProfile {
     /** Checks if the right PDF version is set. */
     public void verifyPDFVersion() {
         final String err = "PDF version must be 1.4 for {0}";
-        if (getPDFAMode().isPDFA1LevelB() 
+        if (getPDFAMode().isPDFA1LevelB()
                 && getDocument().getPDFVersion() != PDFDocument.PDF_VERSION_1_4) {
             throw new PDFConformanceException(format(err, getPDFAMode()));
         }
-        if (getPDFXMode() == PDFXMode.PDFX_3_2003 
+        if (getPDFXMode() == PDFXMode.PDFX_3_2003
                 && getDocument().getPDFVersion() != PDFDocument.PDF_VERSION_1_4) {
             throw new PDFConformanceException(format(err, getPDFXMode()));
         }
     }
-    
+
     /** @return true if the ID entry must be present in the trailer. */
     public boolean isIDEntryRequired() {
         return isPDFAActive() || isPDFXActive();
@@ -224,7 +224,7 @@ public class PDFProfile {
     public boolean isAnnotationAllowed() {
         return !isPDFXActive();
     }
-    
+
     /** Checks if annotations are allowed. */
     public void verifyAnnotAllowed() {
         if (!isAnnotationAllowed()) {

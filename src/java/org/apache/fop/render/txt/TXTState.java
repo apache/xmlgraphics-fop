@@ -27,7 +27,7 @@ import java.util.LinkedList;
 import org.apache.fop.area.CTM;
 
 /**
- * This keeps information about the current state when writing to txt, i.e. 
+ * This keeps information about the current state when writing to txt, i.e.
  * manages coordinate transformation matrices for getting absolute coordinates.
  */
 public class TXTState {
@@ -36,7 +36,7 @@ public class TXTState {
     private LinkedList stackCTM = new LinkedList();
 
     /**
-     * Current result coordinate transformation matrix. It's product of 
+     * Current result coordinate transformation matrix. It's product of
      * all matrices in order, saved in <code>stackCTM</code>.
      */
     private CTM resultCTM = new CTM();
@@ -48,9 +48,9 @@ public class TXTState {
     }
 
     /**
-     * Updates result coordinate transformation matrix 
+     * Updates result coordinate transformation matrix
      * (i.e. <code>resultCTM</code>), multipliing it by given matrix.
-     * 
+     *
      * @param ctm CTM
      */
     private void updateResultCTM(CTM ctm) {
@@ -68,9 +68,9 @@ public class TXTState {
     }
 
     /**
-     * Push the current coordinate transformation matrix onto the stack and 
+     * Push the current coordinate transformation matrix onto the stack and
      * reevaluate <code>resultCTM</code>.
-     * 
+     *
      * @param ctm  instance of CTM
      */
     public void push(CTM ctm) {
@@ -86,11 +86,11 @@ public class TXTState {
         stackCTM.removeLast();
         calcResultCTM();
     }
-    
+
     /**
-     * Modifies coordinate transformation matrix in such a way, so 
+     * Modifies coordinate transformation matrix in such a way, so
      * x-shift and y-shift will be transformed in text positions.
-     * 
+     *
      * @param ctm CTM to modify
      * @return instance of CTM
      */
@@ -100,13 +100,13 @@ public class TXTState {
         da[4] = Helper.roundPosition((int) da[4], TXTRenderer.CHAR_WIDTH);
         // refine y-shift
         da[5] = Helper.roundPosition((int) da[5], TXTRenderer.CHAR_HEIGHT);
-        
+
         return new CTM(da[0], da[1], da[2], da[3], da[4], da[5]);
     }
 
     /**
      * Transforms <code>point</code> using <code>ctm</code>.
-     * 
+     *
      * @param p Point
      * @param ctm CTM
      * @return transformed Point
@@ -120,7 +120,7 @@ public class TXTState {
 
     /**
      * Transforms point (x, y) using <code>resultCTM</code>.
-     * 
+     *
      * @param x x-coordinate
      * @param y y-coordinate
      * @return transformed Point

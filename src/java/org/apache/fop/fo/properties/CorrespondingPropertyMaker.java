@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,19 +33,19 @@ public class CorrespondingPropertyMaker {
     protected int tb_rl;
     protected boolean useParent;
     private boolean relative;
-    
+
     public CorrespondingPropertyMaker(PropertyMaker baseMaker) {
         this.baseMaker = baseMaker;
         baseMaker.setCorresponding(this);
     }
-    
-    
+
+
     public void setCorresponding(int lr_tb, int rl_tb, int tb_rl) {
         this.lr_tb = lr_tb;
         this.rl_tb = rl_tb;
         this.tb_rl = tb_rl;
     }
-    
+
     /**
      * Controls whether the PropertyMaker accesses the parent property list or the current
      * property list for determining the writing mode.
@@ -58,7 +58,7 @@ public class CorrespondingPropertyMaker {
     public void setRelative(boolean relative) {
         this.relative = relative;
     }
-    
+
     /**
      * For properties that operate on a relative direction (before, after,
      * start, end) instead of an absolute direction (top, bottom, left,
@@ -80,18 +80,18 @@ public class CorrespondingPropertyMaker {
         if (!relative) {
             return false;
         }
-        
+
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList != null) {
             int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
-        
+
             if (pList.getExplicit(correspondingId) != null) {
                 return true;
             }
-        } 
+        }
         return false;
     }
-    
+
     /**
      * Return a Property object representing the value of this property,
      * based on other property values for this FO.
@@ -108,7 +108,7 @@ public class CorrespondingPropertyMaker {
             return null;
         }
         int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
-            
+
         Property p = propertyList.getExplicitOrShorthand(correspondingId);
         if (p != null) {
             FObj parentFO = propertyList.getParentFObj();
@@ -116,7 +116,7 @@ public class CorrespondingPropertyMaker {
         }
         return p;
     }
-    
+
     /**
      * Return the property list to use for fetching writing mode depending property
      * ids.

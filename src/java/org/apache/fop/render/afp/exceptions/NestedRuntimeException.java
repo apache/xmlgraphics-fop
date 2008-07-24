@@ -30,10 +30,10 @@ import java.io.PrintWriter;
  *
  */
 public abstract class NestedRuntimeException extends RuntimeException {
-    
+
     /** Root cause of this nested exception */
     private Throwable underlyingException;
-    
+
     /**
      * Construct a <code>NestedRuntimeException</code> with the specified detail message.
      * @param msg The detail message.
@@ -41,7 +41,7 @@ public abstract class NestedRuntimeException extends RuntimeException {
     public NestedRuntimeException(String msg) {
         super(msg);
     }
-    
+
     /**
      * Construct a <code>NestedRuntimeException</code> with the specified
      * detail message and nested exception.
@@ -51,26 +51,26 @@ public abstract class NestedRuntimeException extends RuntimeException {
     public NestedRuntimeException(String msg, Throwable t) {
         super(msg);
         underlyingException = t;
-        
+
     }
-    
+
     /**
      * Gets the original triggering exception
      * @return The original exception as a throwable.
      */
     public Throwable getUnderlyingException() {
-        
+
         return underlyingException;
-        
+
     }
-    
+
     /**
      * Return the detail message, including the message from the nested
      * exception if there is one.
      * @return The detail message.
      */
     public String getMessage() {
-        
+
         if (underlyingException == null) {
             return super.getMessage();
         } else {
@@ -78,9 +78,9 @@ public abstract class NestedRuntimeException extends RuntimeException {
             + "; nested exception is "
                 + underlyingException.getClass().getName();
         }
-        
+
     }
-    
+
     /**
      * Print the composite message and the embedded stack trace to the specified stream.
      * @param ps the print stream
@@ -93,7 +93,7 @@ public abstract class NestedRuntimeException extends RuntimeException {
             underlyingException.printStackTrace(ps);
         }
     }
-    
+
     /**
      * Print the composite message and the embedded stack trace to the specified writer.
      * @param pw the print writer
@@ -106,5 +106,5 @@ public abstract class NestedRuntimeException extends RuntimeException {
             underlyingException.printStackTrace(pw);
         }
     }
-    
+
 }

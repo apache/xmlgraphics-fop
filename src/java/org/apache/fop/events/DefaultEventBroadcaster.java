@@ -42,7 +42,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
 
     /** Holds all registered event listeners */
     protected CompositeEventListener listeners = new CompositeEventListener();
-    
+
     /** {@inheritDoc} */
     public void addEventListener(EventListener listener) {
         this.listeners.addEventListener(listener);
@@ -57,7 +57,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
     public boolean hasEventListeners() {
         return this.listeners.hasEventListeners();
     }
-    
+
     /** {@inheritDoc} */
     public void broadcastEvent(Event event) {
         this.listeners.processEvent(event);
@@ -65,7 +65,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
 
     private static List/*<EventModel>*/ eventModels = new java.util.ArrayList();
     private Map proxies = new java.util.HashMap();
-    
+
     static {
         Iterator iter = Service.providers(EventModelFactory.class, true);
         while (iter.hasNext()) {
@@ -81,7 +81,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
     public static void addEventModel(EventModel eventModel) {
         eventModels.add(eventModel);
     }
-    
+
     /** {@inheritDoc} */
     public EventProducer getEventProducerFor(Class clazz) {
         if (!EventProducer.class.isAssignableFrom(clazz)) {
@@ -97,7 +97,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
         }
         return producer;
     }
-    
+
     private EventProducerModel getEventProducerModel(Class clazz) {
         for (int i = 0, c = eventModels.size(); i < c; i++) {
             EventModel eventModel = (EventModel)eventModels.get(i);
@@ -108,7 +108,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
         }
         return null;
     }
-    
+
     /**
      * Creates a dynamic proxy for the given EventProducer interface that will handle the
      * conversion of the method call into the broadcasting of an event instance.
@@ -147,7 +147,7 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
                         }
                         Event ev = new Event(args[0], eventID, methodModel.getSeverity(), params);
                         broadcastEvent(ev);
-                        
+
                         if (ev.getSeverity() == EventSeverity.FATAL) {
                             EventExceptionManager.throwException(ev,
                                     methodModel.getExceptionClass());
@@ -156,5 +156,5 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
                     }
                 });
     }
-    
+
 }

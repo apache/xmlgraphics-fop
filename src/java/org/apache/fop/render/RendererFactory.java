@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render;
 
 import java.io.OutputStream;
@@ -39,14 +39,14 @@ import org.apache.fop.fo.FOEventHandler;
  * Factory for FOEventHandlers and Renderers.
  */
 public class RendererFactory {
-    
+
     /** the logger */
     private static Log log = LogFactory.getLog(RendererFactory.class);
 
     private Map rendererMakerMapping = new java.util.HashMap();
     private Map eventHandlerMakerMapping = new java.util.HashMap();
-    
-    
+
+
     /**
      * Main constructor.
      */
@@ -54,7 +54,7 @@ public class RendererFactory {
         discoverRenderers();
         discoverFOEventHandlers();
     }
-    
+
     /**
      * Add a new RendererMaker. If another maker has already been registered for a
      * particular MIME type, this call overwrites the existing one.
@@ -65,13 +65,13 @@ public class RendererFactory {
         for (int i = 0; i < mimes.length; i++) {
             //This overrides any renderer previously set for a MIME type
             if (rendererMakerMapping.get(mimes[i]) != null) {
-                log.trace("Overriding renderer for " + mimes[i] 
+                log.trace("Overriding renderer for " + mimes[i]
                         + " with " + maker.getClass().getName());
             }
             rendererMakerMapping.put(mimes[i], maker);
         }
     }
-    
+
     /**
      * Add a new FOEventHandlerMaker. If another maker has already been registered for a
      * particular MIME type, this call overwrites the existing one.
@@ -82,13 +82,13 @@ public class RendererFactory {
         for (int i = 0; i < mimes.length; i++) {
             //This overrides any event handler previously set for a MIME type
             if (eventHandlerMakerMapping.get(mimes[i]) != null) {
-                log.trace("Overriding FOEventHandler for " + mimes[i] 
+                log.trace("Overriding FOEventHandler for " + mimes[i]
                         + " with " + maker.getClass().getName());
             }
             eventHandlerMakerMapping.put(mimes[i], maker);
         }
     }
-    
+
     /**
      * Add a new RendererMaker. If another maker has already been registered for a
      * particular MIME type, this call overwrites the existing one.
@@ -114,7 +114,7 @@ public class RendererFactory {
                                                + AbstractRendererMaker.class.getName());
         }
     }
-    
+
     /**
      * Add a new FOEventHandlerMaker. If another maker has already been registered for a
      * particular MIME type, this call overwrites the existing one.
@@ -140,7 +140,7 @@ public class RendererFactory {
                                                + AbstractFOEventHandlerMaker.class.getName());
         }
     }
-    
+
     /**
      * Returns a RendererMaker which handles the given MIME type.
      * @param mime the requested output format
@@ -151,7 +151,7 @@ public class RendererFactory {
             = (AbstractRendererMaker)rendererMakerMapping.get(mime);
         return maker;
     }
-    
+
     /**
      * Returns a FOEventHandlerMaker which handles the given MIME type.
      * @param mime the requested output format
@@ -162,7 +162,7 @@ public class RendererFactory {
             = (AbstractFOEventHandlerMaker)eventHandlerMakerMapping.get(mime);
         return maker;
     }
-    
+
     /**
      * Creates a Renderer object based on render-type desired
      * @param userAgent the user agent for access to configuration
@@ -170,7 +170,7 @@ public class RendererFactory {
      * @return the new Renderer instance
      * @throws FOPException if the renderer cannot be properly constructed
      */
-    public Renderer createRenderer(FOUserAgent userAgent, String outputFormat) 
+    public Renderer createRenderer(FOUserAgent userAgent, String outputFormat)
                     throws FOPException {
         if (userAgent.getRendererOverride() != null) {
             return userAgent.getRendererOverride();
@@ -189,8 +189,8 @@ public class RendererFactory {
             return rend;
         }
     }
-    
-    
+
+
     /**
      * Creates FOEventHandler instances based on the desired output.
      * @param userAgent the user agent for access to configuration
@@ -199,7 +199,7 @@ public class RendererFactory {
      * @return the newly constructed FOEventHandler
      * @throws FOPException if the FOEventHandler cannot be properly constructed
      */
-    public FOEventHandler createFOEventHandler(FOUserAgent userAgent, 
+    public FOEventHandler createFOEventHandler(FOUserAgent userAgent,
                 String outputFormat, OutputStream out) throws FOPException {
 
         if (userAgent.getFOEventHandlerOverride() != null) {
@@ -214,8 +214,8 @@ public class RendererFactory {
                             + " Neither an FOEventHandler, nor a Renderer could be found"
                             + " for this output format.");
                 } else {
-                    if (out == null 
-                            && userAgent.getRendererOverride() == null 
+                    if (out == null
+                            && userAgent.getRendererOverride() == null
                             && rendMaker.needsOutputStream()) {
                         throw new FOPException(
                             "OutputStream has not been set");
@@ -228,7 +228,7 @@ public class RendererFactory {
             }
         }
     }
-    
+
     /**
      * @return an array of all supported MIME types
      */
@@ -245,7 +245,7 @@ public class RendererFactory {
         Collections.sort(lst);
         return (String[])lst.toArray(new String[lst.size()]);
     }
-    
+
     /**
      * Discovers Renderer implementations through the classpath and dynamically
      * registers them.
@@ -259,7 +259,7 @@ public class RendererFactory {
                 AbstractRendererMaker maker = (AbstractRendererMaker)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dynamically adding maker for Renderer: " 
+                        log.debug("Dynamically adding maker for Renderer: "
                                 + maker.getClass().getName());
                     }
                     addRendererMaker(maker);
@@ -270,7 +270,7 @@ public class RendererFactory {
             }
         }
     }
-    
+
     /**
      * Discovers FOEventHandler implementations through the classpath and dynamically
      * registers them.
@@ -284,7 +284,7 @@ public class RendererFactory {
                 AbstractFOEventHandlerMaker maker = (AbstractFOEventHandlerMaker)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dynamically adding maker for FOEventHandler: " 
+                        log.debug("Dynamically adding maker for FOEventHandler: "
                                 + maker.getClass().getName());
                     }
                     addFOEventHandlerMaker(maker);
@@ -295,5 +295,5 @@ public class RendererFactory {
             }
         }
     }
-    
+
 }

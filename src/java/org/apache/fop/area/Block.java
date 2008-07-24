@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area;
 
 
@@ -59,7 +59,7 @@ public class Block extends BlockParent {
     private int positioning = STACK;
 
     protected transient boolean allowBPDUpdate = true;
-    
+
     // a block with may contain the dominant styling info in
     // terms of most lines or blocks with info
 
@@ -120,7 +120,7 @@ public class Block extends BlockParent {
     public boolean isStacked() {
         return (getPositioning() == Block.STACK || getPositioning() == Block.RELATIVE);
     }
-    
+
     /**
      * @return the start-indent trait
      */

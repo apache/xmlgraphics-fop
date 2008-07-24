@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.svg;
 
 import org.apache.batik.bridge.UserAgent;
@@ -40,7 +40,7 @@ import org.xml.sax.EntityResolver;
 public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
 
     /**
-     * The key to specify whether to stroke text instead of using text 
+     * The key to specify whether to stroke text instead of using text
      * operations.
      */
     public static final TranscodingHints.Key KEY_STROKE_TEXT = new BooleanKey();
@@ -69,7 +69,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
         hints.put(KEY_DOM_IMPLEMENTATION,
                   SVGDOMImplementation.getDOMImplementation());
     }
-    
+
     /**
      * Creates and returns the default user agent for this transcoder. Override
      * this method if you need non-default behaviour.
@@ -78,7 +78,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
     protected UserAgent createUserAgent() {
         return new FOPTranscoderUserAgent();
     }
-    
+
     /**
      * @param logger
      */
@@ -93,9 +93,9 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
     public void setEntityResolver(EntityResolver resolver) {
         this.resolver = resolver;
     }
-    
+
     /**
-     * Returns the logger associated with this transcoder. It returns a 
+     * Returns the logger associated with this transcoder. It returns a
      * SimpleLog if no logger has been explicitly set.
      * @return Logger the logger for the transcoder.
      */
@@ -106,7 +106,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
         }
         return this.logger;
     }
-    
+
     /**
      * Creates a <tt>DocumentFactory</tt> that is used to create an SVG DOM
      * tree. The specified DOM Implementation is ignored and the Batik
@@ -118,7 +118,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
      */
     protected DocumentFactory createDocumentFactory(DOMImplementation domImpl,
             String parserClassname) {
-        final FOPSAXSVGDocumentFactory factory 
+        final FOPSAXSVGDocumentFactory factory
                 = new FOPSAXSVGDocumentFactory(parserClassname);
         if (this.resolver != null) {
             factory.setAdditionalEntityResolver(this.resolver);
@@ -141,18 +141,18 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
         }
         return stroke;
     }
-    
+
     // --------------------------------------------------------------------
     // FOP's default error handler (for transcoders)
     // --------------------------------------------------------------------
 
     /**
      * This is the default transcoder error handler for FOP. It logs error
-     * to an Commons Logger instead of to System.out. The remaining behaviour 
+     * to an Commons Logger instead of to System.out. The remaining behaviour
      * is the same as Batik's DefaultErrorHandler.
-     */    
+     */
     protected class FOPErrorHandler implements ErrorHandler {
-        
+
         /**
          * {@inheritDoc}
          */
@@ -244,5 +244,5 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
         }
 
     }
-    
+
 }

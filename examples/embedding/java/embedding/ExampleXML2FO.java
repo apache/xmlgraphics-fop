@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 //Java
@@ -47,19 +47,19 @@ public class ExampleXML2FO {
      * @throws IOException In case of an I/O problem
      * @throws TransformerException In case of a XSL transformation problem
      */
-    public void convertXML2FO(File xml, File xslt, File fo) 
+    public void convertXML2FO(File xml, File xslt, File fo)
                 throws IOException, TransformerException {
-       
+
         //Setup output
         OutputStream out = new java.io.FileOutputStream(fo);
         try {
             //Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(new StreamSource(xslt));
-        
+
             //Setup input for XSLT transformation
             Source src = new StreamSource(xml);
-        
+
             //Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new StreamResult(out);
 
@@ -85,7 +85,7 @@ public class ExampleXML2FO {
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
 
-            //Setup input and output files            
+            //Setup input and output files
             File xmlfile = new File(baseDir, "xml/xml/projectteam.xml");
             File xsltfile = new File(baseDir, "xml/xslt/projectteam2fo.xsl");
             File fofile = new File(outDir, "ResultXML2FO.fo");
@@ -95,10 +95,10 @@ public class ExampleXML2FO {
             System.out.println("Output: XSL-FO (" + fofile + ")");
             System.out.println();
             System.out.println("Transforming...");
-            
+
             ExampleXML2FO app = new ExampleXML2FO();
             app.convertXML2FO(xmlfile, xsltfile, fofile);
-            
+
             System.out.println("Success!");
         } catch (Exception e) {
             e.printStackTrace(System.err);

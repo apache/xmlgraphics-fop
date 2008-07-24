@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -78,7 +78,7 @@ import org.apache.fop.fonts.FontInfo;
  * <tt>KEY_USER_STYLESHEET_URI</tt> to fix the URI of a user
  * stylesheet, and <tt>KEY_PIXEL_TO_MM</tt> to specify the pixel to
  * millimeter conversion factor.
- * 
+ *
  * <p><tt>KEY_AUTO_FONTS</tt> to disable the auto-detection of fonts installed in the system.
  * The PDF Transcoder cannot use AWT's font subsystem and that's why the fonts have to be
  * configured differently. By default, font auto-detection is enabled to match the behaviour
@@ -93,25 +93,25 @@ public class PDFTranscoder extends AbstractFOPTranscoder
 
     /**
      * The key is used to specify the resolution for on-the-fly images generated
-     * due to complex effects like gradients and filters. 
+     * due to complex effects like gradients and filters.
      */
     public static final TranscodingHints.Key KEY_DEVICE_RESOLUTION = new FloatKey();
 
     /**
      * The key is used to specify whether the available fonts should be automatically
      * detected. The alternative is to configure the transcoder manually using a configuration
-     * file. 
+     * file.
      */
     public static final TranscodingHints.Key KEY_AUTO_FONTS = new BooleanKey();
 
     private Configuration cfg = null;
-    
+
     /** Graphics2D instance that is used to paint to */
     protected PDFDocumentGraphics2D graphics = null;
 
     private ImageManager imageManager;
     private ImageSessionContext imageSessionContext;
-    
+
     /**
      * Constructs a new <tt>PDFTranscoder</tt>.
      */
@@ -132,7 +132,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
             }
         };
     }
-    
+
     /** {@inheritDoc} */
     public void configure(Configuration cfg) throws ConfigurationException {
         this.cfg = cfg;
@@ -147,21 +147,21 @@ public class PDFTranscoder extends AbstractFOPTranscoder
      * @exception TranscoderException if an error occured while transcoding
      */
     protected void transcode(Document document, String uri,
-                             TranscoderOutput output) 
+                             TranscoderOutput output)
         throws TranscoderException {
 
         graphics = new PDFDocumentGraphics2D(isTextStroked());
-        graphics.getPDFDocument().getInfo().setProducer("Apache FOP Version " 
-                + Version.getVersion() 
+        graphics.getPDFDocument().getInfo().setProducer("Apache FOP Version "
+                + Version.getVersion()
                 + ": PDF Transcoder for Batik");
         if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
             graphics.setDeviceDPI(((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue());
         }
-        
+
         setupImageInfrastructure(uri);
-        
+
         try {
-            Configuration effCfg = this.cfg; 
+            Configuration effCfg = this.cfg;
             if (effCfg == null) {
                 //By default, enable font auto-detection if no cfg is given
                 boolean autoFonts = true;
@@ -177,7 +177,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
                     effCfg = c;
                 }
             }
-            
+
             if (effCfg != null) {
                 PDFDocumentGraphics2DConfigurator configurator
                         = new PDFDocumentGraphics2DConfigurator();
@@ -195,14 +195,14 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         if (getLogger().isTraceEnabled()) {
             getLogger().trace("document size: " + width + " x " + height);
         }
-        
+
         // prepare the image to be painted
-        UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, 
+        UnitProcessor.Context uctx = UnitProcessor.createContext(ctx,
                     document.getDocumentElement());
-        float widthInPt = UnitProcessor.userSpaceToSVG(width, SVGLength.SVG_LENGTHTYPE_PT, 
+        float widthInPt = UnitProcessor.userSpaceToSVG(width, SVGLength.SVG_LENGTHTYPE_PT,
                     UnitProcessor.HORIZONTAL_LENGTH, uctx);
         int w = (int)(widthInPt + 0.5);
-        float heightInPt = UnitProcessor.userSpaceToSVG(height, SVGLength.SVG_LENGTHTYPE_PT, 
+        float heightInPt = UnitProcessor.userSpaceToSVG(height, SVGLength.SVG_LENGTHTYPE_PT,
                 UnitProcessor.HORIZONTAL_LENGTH, uctx);
         int h = (int)(heightInPt + 0.5);
         if (getLogger().isTraceEnabled()) {
@@ -271,7 +271,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
                     return null;
                 }
             }
-            
+
         };
     }
 
@@ -291,5 +291,5 @@ public class PDFTranscoder extends AbstractFOPTranscoder
                 this.imageManager, this.imageSessionContext);
         return ctx;
     }
-    
+
 }

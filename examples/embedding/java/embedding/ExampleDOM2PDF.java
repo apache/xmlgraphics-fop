@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 // Java
@@ -55,7 +55,7 @@ public class ExampleDOM2PDF {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
-    
+
     /** xsl-fo namespace URI */
     protected static String foNS = "http://www.w3.org/1999/XSL/Format";
 
@@ -68,31 +68,31 @@ public class ExampleDOM2PDF {
         try {
             FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
             // configure foUserAgent as desired
-    
+
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdf);
             out = new java.io.BufferedOutputStream(out);
-    
+
             try {
                 // Construct fop with desired output format and output stream
                 Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
-                
+
                 // Setup Identity Transformer
                 TransformerFactory factory = TransformerFactory.newInstance();
                 Transformer transformer = factory.newTransformer(); // identity transformer
-                
+
                 // Setup input for XSLT transformation
                 Source src = new DOMSource(xslfoDoc);
-                
+
                 // Resulting SAX events (the generated FO) must be piped through to FOP
                 Result res = new SAXResult(fop.getDefaultHandler());
-                
+
                 // Start XSLT transformation and FOP processing
                 transformer.transform(src, res);
             } finally {
                 out.close();
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);
@@ -107,24 +107,24 @@ public class ExampleDOM2PDF {
     public static void main(String[] args) {
         try {
             System.out.println("FOP ExampleDOM2PDF\n");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
-            
+
             //Setup output file
             File pdffile = new File(outDir, "ResultDOM2PDF.pdf");
             System.out.println("PDF Output File: " + pdffile);
             System.out.println();
-            
+
             Document foDoc = buildDOMDocument();
-            
+
             ExampleDOM2PDF app = new ExampleDOM2PDF();
             app.convertDOM2PDF(foDoc, pdffile);
-            
+
             System.out.println("Success!");
-            
+
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);
@@ -140,15 +140,15 @@ public class ExampleDOM2PDF {
         // Create a sample XSL-FO DOM document
         Document foDoc = null;
         Element root = null, ele1 = null, ele2 = null, ele3 = null;
-        
+
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
         foDoc = db.newDocument();
-        
+
         root = foDoc.createElementNS(foNS, "fo:root");
         foDoc.appendChild(root);
-        
+
         ele1 = foDoc.createElementNS(foNS, "fo:layout-master-set");
         root.appendChild(ele1);
         ele2 = foDoc.createElementNS(foNS, "fo:simple-page-master");
@@ -178,7 +178,7 @@ public class ExampleDOM2PDF {
      * @param newNodeName name of the new node
      * @param textVal content of the element
      */
-    protected static void addElement(Node parent, String newNodeName, 
+    protected static void addElement(Node parent, String newNodeName,
                                 String textVal) {
         if (textVal == null) {
             return;

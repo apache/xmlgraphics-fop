@@ -49,7 +49,7 @@ public class AreaAdditionUtil {
      * @param parentIter the position iterator
      * @param layoutContext the layout context
      */
-    public static void addAreas(BlockStackingLayoutManager bslm, 
+    public static void addAreas(BlockStackingLayoutManager bslm,
             PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM = null;
         LayoutContext lc = new LayoutContext(0);
@@ -57,9 +57,9 @@ public class AreaAdditionUtil {
         LayoutManager lastLM = null;
         Position firstPos = null;
         Position lastPos = null;
-        
+
         // "unwrap" the NonLeafPositions stored in parentIter
-        // and put them in a new list; 
+        // and put them in a new list;
         LinkedList positionList = new LinkedList();
         Position pos;
         while (parentIter.hasNext()) {
@@ -93,11 +93,11 @@ public class AreaAdditionUtil {
             //correctly determine first and last conditions. The Iterator
             //doesn't give us that info.
         }
-        
+
         if (bslm != null) {
             bslm.addMarkersToPage(
-                    true, 
-                    bslm.isFirst(firstPos), 
+                    true,
+                    bslm.isFirst(firstPos),
                     bslm.isLast(lastPos));
         }
 
@@ -120,15 +120,15 @@ public class AreaAdditionUtil {
             lc.setStackLimitsFrom(layoutContext);
             childLM.addAreas(childPosIter, lc);
         }
-        
+
         if (bslm != null) {
             bslm.addMarkersToPage(
-                    false, 
-                    bslm.isFirst(firstPos), 
+                    false,
+                    bslm.isFirst(firstPos),
                     bslm.isLast(lastPos));
         }
 
-        
+
     }
-    
+
 }

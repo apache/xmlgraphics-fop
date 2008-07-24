@@ -29,7 +29,7 @@ public class ResultCheck implements LayoutEngineCheck {
 
     private String expected;
     private String property;
-    
+
     /**
      * Creates a new instance
      * @param expected expected value
@@ -39,7 +39,7 @@ public class ResultCheck implements LayoutEngineCheck {
         this.expected = expected;
         this.property = property;
     }
-    
+
     /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
@@ -48,7 +48,7 @@ public class ResultCheck implements LayoutEngineCheck {
         this.expected = node.getAttributes().getNamedItem("expected").getNodeValue();
         this.property = node.getAttributes().getNamedItem("property").getNodeValue();
     }
-    
+
     /* (non-Javadoc)
      * @see LayoutEngineCheck#check(LayoutResult)
      */
@@ -62,7 +62,7 @@ public class ResultCheck implements LayoutEngineCheck {
         }
         if (!expected.equals(actual)) {
             throw new RuntimeException(
-                    "Expected property to evaluate to '" + expected + "', but got '" 
+                    "Expected property to evaluate to '" + expected + "', but got '"
                     + actual + "' (" + this + ")");
         }
 

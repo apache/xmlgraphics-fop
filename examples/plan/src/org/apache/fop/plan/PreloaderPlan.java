@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.plan;
 
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class PreloaderPlan extends AbstractImagePreloader {
     /** Logger instance */
     private static Log log = LogFactory.getLog(PreloaderPlan.class);
 
-    /** {@inheritDoc} */ 
+    /** {@inheritDoc} */
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         if (!ImageUtil.hasInputStream(src)) {
@@ -75,13 +75,13 @@ public class PreloaderPlan extends AbstractImagePreloader {
             Source source = new StreamSource(in);
             DOMResult res = new DOMResult();
             transformer.transform(source, res);
-            
+
             //Have to render the plan to know its size
             PlanRenderer pr = new PlanRenderer();
             Document svgDoc = pr.createSVGDocument((Document)res.getNode());
             float width = pr.getWidth();
             float height = pr.getHeight();
-            
+
             //Return converted SVG image
             ImageInfo info = new ImageInfo(uri, "image/svg+xml");
             final ImageSize size = new ImageSize();
@@ -97,7 +97,7 @@ public class PreloaderPlan extends AbstractImagePreloader {
             Image image = new ImageXMLDOM(info, svgDoc,
                     svgDoc.getDocumentElement().getNamespaceURI());
             info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, image);
-            
+
             return info;
         } catch (TransformerException e) {
             try {

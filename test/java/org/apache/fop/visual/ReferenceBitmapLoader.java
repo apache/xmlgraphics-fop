@@ -41,7 +41,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 public class ReferenceBitmapLoader extends AbstractBitmapProducer implements Configurable {
 
     private File bitmapDirectory;
-    
+
     /** @see org.apache.avalon.framework.configuration.Configurable */
     public void configure(Configuration cfg) throws ConfigurationException {
         this.bitmapDirectory = new File(cfg.getChild("directory").getValue(null));

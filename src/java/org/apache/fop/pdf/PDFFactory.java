@@ -913,8 +913,8 @@ public class PDFFactory {
         PDFNameTreeNode node = new PDFNameTreeNode();
         getDocument().registerObject(node);
         return node;
-    }    
-    
+    }
+
     /* ========================= links ===================================== */
     // Some of the "yoffset-only" functions in this part are obsolete and can
     // possibly be removed or deprecated. Some are still called by PDFGraphics2D
@@ -1250,7 +1250,7 @@ public class PDFFactory {
                 nonBase14.setWidthMetrics(firstChar,
                                      lastChar,
                                      new PDFArray(null, metrics.getWidths()));
-                
+
                 //Handle encoding
                 SingleByteEncoding mapping = singleByteFont.getEncoding();
                 if (singleByteFont.isSymbolicFont()) {
@@ -1265,10 +1265,10 @@ public class PDFFactory {
                     } else {
                         font.setEncoding((String)pdfEncoding);
                     }
-                    
+
                     /* JM: What I thought would be a necessity with custom encodings turned out to
                      * be a bug in Adobe Acrobat 8. The following section just demonstrates how
-                     * to generate a ToUnicode CMap for a Type 1 font. 
+                     * to generate a ToUnicode CMap for a Type 1 font.
                     PDFCMap cmap = new PDFToUnicodeCMap(mapping.getUnicodeCharMap(),
                             "fop-ucs-H",
                             new PDFCIDSystemInfo("Adobe", "Identity", 0));
@@ -1276,7 +1276,7 @@ public class PDFFactory {
                     nonBase14.setToUnicode(cmap);
                     */
                 }
-                
+
                 //Handle additional encodings (characters outside the primary encoding)
                 if (singleByteFont.hasAdditionalEncodings()) {
                     for (int i = 0, c = singleByteFont.getAdditionalEncodingCount(); i < c; i++) {
@@ -1573,7 +1573,7 @@ public class PDFFactory {
     /**
      * Create a PDFICCStream
      * @see PDFImageXObject
-     * @see org.apache.fop.pdf.PDFDeviceColorSpace     
+     * @see org.apache.fop.pdf.PDFDeviceColorSpace
      * @return the new PDF ICC stream object
      */
     public PDFICCStream makePDFICCStream() {

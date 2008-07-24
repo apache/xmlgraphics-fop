@@ -24,13 +24,13 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 
 /**
- * Extension element for fox:ps-page-setup-code. 
+ * Extension element for fox:ps-page-setup-code.
  */
 public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
 
     /** The element name */
     protected static final String ELEMENT = "ps-page-setup-code";
-    
+
     /**
      * Main constructor
      * @param parent parent FO node
@@ -47,7 +47,7 @@ public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
                 "rule.childOfSPM");
         }
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return ELEMENT;

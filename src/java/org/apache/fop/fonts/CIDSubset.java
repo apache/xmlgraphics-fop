@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,10 +54,10 @@ public class CIDSubset {
      * usedCharsIndex contains new glyph, original char (char selector -> Unicode)
      */
     private Map/*<Integer, Character>*/ usedCharsIndex = new java.util.HashMap();
-    
+
     public CIDSubset() {
     }
-    
+
     /**
      * Adds the initial 3 glyphs which are the same for all CID subsets.
      */
@@ -73,7 +73,7 @@ public class CIDSubset {
         usedGlyphsIndex.put(new Integer(2), new Integer(2));
         usedGlyphsCount++;
     }
-    
+
     /**
      * Returns the original index of the glyph inside the (non-subset) font's glyph list. This
      * index can be used to access the character width information, for example.
@@ -88,7 +88,7 @@ public class CIDSubset {
             return -1;
         }
     }
-    
+
     /**
      * Returns the Unicode value for a subset index (character selector). If there's no such
      * Unicode value, the "NOT A CHARACTER" (0xFFFF) is returned.
@@ -103,7 +103,7 @@ public class CIDSubset {
             return CharUtilities.NOT_A_CHARACTER;
         }
     }
-    
+
     /**
      * Maps a character to a character selector for a font subset. If the character isn't in the
      * subset, yet, it is added and a new character selector returned. Otherwise, the already
@@ -139,7 +139,7 @@ public class CIDSubset {
     public Map/*<Integer, Integer>*/ getSubsetGlyphs() {
         return Collections.unmodifiableMap(this.usedGlyphs);
     }
-    
+
     /**
      * Returns a char array containing all Unicode characters that are in the subset.
      * @return a char array with all used Unicode characters
@@ -159,7 +159,7 @@ public class CIDSubset {
     public int getSubsetSize() {
         return this.usedGlyphsCount;
     }
-    
+
     /**
      * Returns a BitSet with bits set for each available glyph index.
      * @return a BitSet indicating available glyph indices
@@ -173,5 +173,5 @@ public class CIDSubset {
         }
         return bitset;
     }
-    
+
 }

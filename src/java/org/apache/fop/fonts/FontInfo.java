@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ public class FontInfo {
     /** look up a font-name to get a font (that implements FontMetrics at least) */
     private Map/*<String,FontMetrics>*/ fonts = null; //(String = font key)
 
-    /** 
+    /**
      *  a collection of missing fonts; used to make sure the user gets
      *  a warning for a missing font only once (not every time the font is used)
      */
@@ -141,7 +141,7 @@ public class FontInfo {
 
     /**
      * Log warning about duplicate font triplets.
-     * 
+     *
      * @param triplet the duplicate font triplet
      * @param replacing true iff the new font will replace the old one
      * @param oldKey the old internal font name
@@ -231,7 +231,7 @@ public class FontInfo {
         if (key != null) {
             internalFontKey = getInternalFontKey(key);
         }
-        
+
         if (!substFont && internalFontKey == null) {
             return null;
         }
@@ -374,10 +374,10 @@ public class FontInfo {
         if (families.length == 0) {
             throw new IllegalArgumentException("Specify at least one font family");
         }
-        
+
         // try matching without substitutions
         List/*<FontTriplet>*/ matchedTriplets = fontLookup(families, style, weight, false);
-        
+
         // if there are no matching font triplets found try with substitutions
         if (matchedTriplets.size() == 0) {
             matchedTriplets = fontLookup(families, style, weight, true);
@@ -395,13 +395,13 @@ public class FontInfo {
             throw new IllegalStateException(
                         "fontLookup must return an array with at least one "
                         + "FontTriplet on the last call. Lookup: " + sb.toString());
-            
+
         }
         FontTriplet[] fontTriplets = new FontTriplet[matchedTriplets.size()];
         matchedTriplets.toArray(fontTriplets);
-        
+
         // found some matching fonts so return them
-        return fontTriplets; 
+        return fontTriplets;
     }
 
     private Set/*<FontTriplet>*/ getLoggedFontKeys() {

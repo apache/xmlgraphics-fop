@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,14 +39,14 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public class CommonBorderPaddingBackground {
 
-    /** 
-     *  cache holding all canonical instances 
+    /**
+     *  cache holding all canonical instances
      *  (w/ absolute background-position-* and padding-*)
      */
     private static final PropertyCache cache = new PropertyCache(CommonBorderPaddingBackground.class);
-    
+
     private int hash = -1;
-    
+
     /**
      * The "background-attachment" property.
      */
@@ -91,17 +91,17 @@ public class CommonBorderPaddingBackground {
     public static final int END = 3;
 
     /**
-     * 
+     *
      */
     public static class BorderInfo {
-        
+
         /** cache holding all canonical instances */
         private static final PropertyCache cache = new PropertyCache(BorderInfo.class);
-        
+
         private int mStyle; // Enum for border style
         private Color mColor; // Border color
         private CondLengthProperty mWidth;
-        
+
         private int hash = -1;
 
         /**
@@ -115,7 +115,7 @@ public class CommonBorderPaddingBackground {
 
         /**
          * Returns a BorderInfo instance corresponding to the given values
-         * 
+         *
          * @param style the border-style
          * @param width the border-width
          * @param color the border-color
@@ -149,7 +149,7 @@ public class CommonBorderPaddingBackground {
         /**
          * Convenience method returning the border-width,
          * taking into account values of "none" and "hidden"
-         * 
+         *
          * @return  the retained border-width
          */
         public int getRetainedWidth() {
@@ -173,23 +173,23 @@ public class CommonBorderPaddingBackground {
             sb.append("}");
             return sb.toString();
         }
-        
+
         /** {@inheritDoc} */
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            
+
             if (obj instanceof BorderInfo) {
                 BorderInfo bi = (BorderInfo)obj;
                 return (this.mColor == bi.mColor
                     && this.mStyle == bi.mStyle
                     && this.mWidth == bi.mWidth);
             }
-            
+
             return false;
         }
-        
+
         /** {@inheritDoc} */
         public int hashCode() {
             if (this.hash == -1) {
@@ -207,9 +207,9 @@ public class CommonBorderPaddingBackground {
      * A border info with style "none". Used as a singleton, in the collapsing-border model,
      * for elements which don't specify any border on some of their sides.
      */
-    private static final BorderInfo defaultBorderInfo 
+    private static final BorderInfo defaultBorderInfo
             = BorderInfo.getInstance(Constants.EN_NONE, new ConditionalNullLength(), null);
-    
+
     /**
      * A conditional length of value 0. Returned by the
      * {@link CommonBorderPaddingBackground#getBorderInfo(int)} method when the
@@ -265,7 +265,7 @@ public class CommonBorderPaddingBackground {
 
     /**
      * Returns a default BorderInfo of style none.
-     * 
+     *
      * @return a BorderInfo instance with style set to {@link Constants#EN_NONE}
      */
     public static BorderInfo getDefaultBorderInfo() {
@@ -277,14 +277,14 @@ public class CommonBorderPaddingBackground {
 
     /**
      * Construct a CommonBorderPaddingBackground object.
-     * 
+     *
      * @param pList The PropertyList to get properties from.
      * @throws PropertyException if there's an error while binding the properties
      */
     private CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
 
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
-        
+
         Color bc = pList.get(Constants.PR_BACKGROUND_COLOR).getColor(
                                         pList.getFObj().getUserAgent());
         if (bc.getAlpha() == 0) {
@@ -332,16 +332,16 @@ public class CommonBorderPaddingBackground {
     }
 
     /**
-     * Obtain a CommonBorderPaddingBackground instance based on the 
+     * Obtain a CommonBorderPaddingBackground instance based on the
      * related property valus in the given {@link PropertyList}
-     * 
+     *
      * @param pList the {@link PropertyList} to use
      * @return a CommonBorderPaddingBackground instance (cached if possible)
      * @throws PropertyException in case of an error
      */
-    public static CommonBorderPaddingBackground getInstance(PropertyList pList) 
+    public static CommonBorderPaddingBackground getInstance(PropertyList pList)
         throws PropertyException {
-        
+
         CommonBorderPaddingBackground newInstance
                 = new CommonBorderPaddingBackground(pList);
         CommonBorderPaddingBackground cachedInstance = null;
@@ -355,9 +355,9 @@ public class CommonBorderPaddingBackground {
                 && (newInstance.backgroundPositionVertical == null || newInstance.backgroundPositionVertical.isAbsolute())) {
             cachedInstance = cache.fetch(newInstance);
         }
-        
+
         /* for non-cached, or not-yet-cached instances, preload the image */
-        if ((cachedInstance == null 
+        if ((cachedInstance == null
                 || cachedInstance == newInstance)
                 && !("".equals(newInstance.backgroundImage))) {
             //Additional processing: preload image
@@ -374,14 +374,14 @@ public class CommonBorderPaddingBackground {
             }
             //TODO Report to caller so he can decide to throw an exception
         }
-        
+
         return (cachedInstance != null ? cachedInstance : newInstance);
     }
 
     private void initBorderInfo(PropertyList pList, int side,
                     int colorProp, int styleProp, int widthProp, int paddingProp)
                 throws PropertyException {
-        
+
         padding[side] = pList.get(paddingProp).getCondLength();
         // If style = none, force width to 0, don't get Color (spec 7.7.20)
         int style = pList.get(styleProp).getEnum();
@@ -391,7 +391,7 @@ public class CommonBorderPaddingBackground {
                 pList.get(widthProp).getCondLength(),
                 pList.get(colorProp).getColor(ua)), side);
         }
-        
+
     }
 
     /**
@@ -517,7 +517,7 @@ public class CommonBorderPaddingBackground {
 
     /**
      * The border-color for the given side
-     * 
+     *
      * @param side one of {@link #BEFORE}, {@link #AFTER}, {@link #START}, {@link #END}
      * @return  the border-color for the given side
      */
@@ -531,7 +531,7 @@ public class CommonBorderPaddingBackground {
 
     /**
      * The border-style for the given side
-     * 
+     *
      * @param side one of {@link #BEFORE}, {@link #AFTER}, {@link #START}, {@link #END}
      * @return  the border-style for the given side
      */
@@ -547,7 +547,7 @@ public class CommonBorderPaddingBackground {
      * Return the padding for the given side, taking into account
      * the conditionality and evaluating any percentages in the given
      * context.
-     * 
+     *
      * @param side  one of {@link #BEFORE}, {@link #AFTER}, {@link #START}, {@link #END}
      * @param discard   true if the conditionality component should be considered
      * @param context   the context for percentage-resolution
@@ -620,7 +620,7 @@ public class CommonBorderPaddingBackground {
                 + getBorderStartWidth(false) + getBorderEndWidth(false)) > 0);
     }
 
-    /** 
+    /**
      * @param context for percentage based evaluation.
      * @return true if padding is non-zero.
      */
@@ -634,7 +634,7 @@ public class CommonBorderPaddingBackground {
         return (borderInfo[BEFORE] != null || borderInfo[AFTER] != null
                 || borderInfo[START] != null || borderInfo[END] != null);
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -657,10 +657,10 @@ public class CommonBorderPaddingBackground {
                 && this.padding[START] == cbpb.padding[START]
                 && this.padding[END] == cbpb.padding[END]);
         }
-        
+
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         if (this.hash == -1) {
@@ -681,7 +681,7 @@ public class CommonBorderPaddingBackground {
             hash = 37 * hash + (padding[END] == null ? 0 : padding[END].hashCode());
             this.hash = hash;
         }
-        
+
         return this.hash;
     }
 }

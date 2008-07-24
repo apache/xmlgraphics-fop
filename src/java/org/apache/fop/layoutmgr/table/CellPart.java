@@ -44,7 +44,7 @@ class CellPart {
 
     /**
      * Creates a new CellPart.
-     * 
+     *
      * @param pgu Primary grid unit
      * @param start starting element
      * @param end ending element

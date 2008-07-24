@@ -46,11 +46,11 @@ public class PDFAMetadataTestCase extends TestCase {
         dc.setTitle("MyTitle");
         dc.setDescription(null, "MySubject");
         dc.addCreator("That's me");
-        
+
         AdobePDFAdapter pdf = AdobePDFSchema.getAdapter(meta);
         pdf.setKeywords("XSL-FO XML");
         pdf.setProducer("SuperFOP");
-        
+
         XMPBasicAdapter xmp = XMPBasicSchema.getAdapter(meta);
         xmp.setCreatorTool("WonderFOP");
         Calendar cal1 = Calendar.getInstance(TimeZone.getTimeZone("Europe/Zurich"));
@@ -61,11 +61,11 @@ public class PDFAMetadataTestCase extends TestCase {
         cal2.set(2007, Calendar.JUNE, 6, 8, 15, 59);
         cal2.set(Calendar.MILLISECOND, 0);
         xmp.setModifyDate(cal2.getTime());
-        
+
         PDFInfo info = new PDFInfo();
         assertNull(info.getTitle());
         PDFMetadata.updateInfoFromMetadata(meta, info);
-        
+
         assertEquals("MyTitle", info.getTitle());
         assertEquals("MySubject", info.getSubject());
         assertEquals("That's me", info.getAuthor());
@@ -75,7 +75,7 @@ public class PDFAMetadataTestCase extends TestCase {
         assertEquals(cal1.getTime(), info.getCreationDate());
         assertEquals(cal2.getTime(), info.getModDate());
     }
-    
+
     public void testXMPUpdate() throws Exception {
         PDFDocument doc = new PDFDocument("SuperFOP");
         PDFInfo info = doc.getInfo();
@@ -93,9 +93,9 @@ public class PDFAMetadataTestCase extends TestCase {
         cal2.set(2007, Calendar.JUNE, 6, 8, 15, 59);
         cal2.set(Calendar.MILLISECOND, 0);
         info.setModDate(cal2.getTime());
-        
+
         Metadata meta = PDFMetadata.createXMPFromPDFDocument(doc);
-        
+
         DublinCoreAdapter dc = DublinCoreSchema.getAdapter(meta);
         assertEquals("MyTitle", dc.getTitle());
         assertEquals("MySubject", dc.getDescription());

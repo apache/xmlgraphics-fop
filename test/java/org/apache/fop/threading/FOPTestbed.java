@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ import org.apache.commons.io.IOUtils;
  * Testbed for multi-threading tests. The class can run a configurable set of task a number of
  * times in a configurable number of threads to easily reproduce multi-threading issues.
  */
-public class FOPTestbed extends AbstractLogEnabled 
+public class FOPTestbed extends AbstractLogEnabled
             implements Configurable, Initializable {
 
     private int repeat;
@@ -57,7 +57,7 @@ public class FOPTestbed extends AbstractLogEnabled
     private FOProcessor foprocessor;
 
     private int counter = 0;
-    
+
     /** {@inheritDoc} */
     public void configure(Configuration configuration) throws ConfigurationException {
         this.threads = configuration.getChild("threads").getValueAsInteger(10);
@@ -83,7 +83,7 @@ public class FOPTestbed extends AbstractLogEnabled
         getLogger().info("Starting stress test...");
         long start = System.currentTimeMillis();
         this.counter = 0;
-        
+
         //Initialize threads
         List threadList = new java.util.LinkedList();
         for (int ti = 0; ti < this.threads; ti++) {
@@ -92,13 +92,13 @@ public class FOPTestbed extends AbstractLogEnabled
             Thread thread = new Thread(runner);
             threadList.add(thread);
         }
-        
+
         //Start threads
         Iterator i = threadList.iterator();
         while (i.hasNext()) {
             ((Thread)i.next()).start();
         }
-        
+
         //Wait for threads to end
         while (threadList.size() > 0) {
             Thread t = (Thread)threadList.get(0);
@@ -116,7 +116,7 @@ public class FOPTestbed extends AbstractLogEnabled
     }
 
     private class TaskRunner extends AbstractLogEnabled implements Runnable {
-        
+
         public void run() {
             try {
                 for (int r = 0; r < repeat; r++) {
@@ -134,14 +134,14 @@ public class FOPTestbed extends AbstractLogEnabled
         }
 
     }
-    
+
     /**
      * Creates a new FOProcessor.
      * @return the newly created instance
      */
     public FOProcessor createFOProcessor() {
         try {
-            Class clazz = Class.forName(this.fopCfg.getAttribute("class", 
+            Class clazz = Class.forName(this.fopCfg.getAttribute("class",
                     "org.apache.fop.threading.FOProcessorImpl"));
             FOProcessor fop = (FOProcessor)clazz.newInstance();
             ContainerUtil.enableLogging(fop, getLogger());
@@ -152,7 +152,7 @@ public class FOPTestbed extends AbstractLogEnabled
             throw new CascadingRuntimeException("Error creating FO Processor", e);
         }
     }
-    
+
 
     private class TaskDef {
         private String fo;
@@ -228,7 +228,7 @@ public class FOPTestbed extends AbstractLogEnabled
             try {
                 InputStream in;
                 Templates templates;
-                
+
                 if (def.getFO() != null) {
                     in = new java.io.FileInputStream(new File(def.getFO()));
                     templates = null;

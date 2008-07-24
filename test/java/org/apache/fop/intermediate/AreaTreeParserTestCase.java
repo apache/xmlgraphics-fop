@@ -63,25 +63,25 @@ public class AreaTreeParserTestCase extends XMLTestCase {
 
     // configure fopFactory as desired
     private static FopFactory fopFactory = FopFactory.newInstance();
-    
-    private static SAXTransformerFactory tFactory 
+
+    private static SAXTransformerFactory tFactory
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
     private static Templates stylesheet = null;
-    
+
     private File mainDir = new File("test/layoutengine");
     private File testDir = new File(mainDir, "standard-testcases");
-    
+
     private String name;
     private File testFile;
 
     private File outputDir;
     private Document intermediate;
-    
+
     /** @see junit.framework.TestCase#TestCase(String) */
     public AreaTreeParserTestCase(String name) {
         super(name);
     }
-    
+
     /**
      * Constructor for the test suite that is used for each test file.
      * @param testFile the test file to run
@@ -90,7 +90,7 @@ public class AreaTreeParserTestCase extends XMLTestCase {
         super(testFile.getName());
         this.testFile = testFile;
     }
- 
+
     private Templates getStylesheet() throws TransformerConfigurationException {
         if (stylesheet == null) {
             File xsltFile = new File(mainDir, "testcase2fo.xsl");
@@ -98,7 +98,7 @@ public class AreaTreeParserTestCase extends XMLTestCase {
         }
         return stylesheet;
     }
-    
+
     /** @see junit.framework.TestCase#setUp() */
     protected void setUp() throws Exception {
         super.setUp();
@@ -127,17 +127,17 @@ public class AreaTreeParserTestCase extends XMLTestCase {
      * @throws Exception if the test fails
      */
     public void testParserToAT() throws Exception {
-                
+
         Source src = new DOMSource(intermediate);
         Document doc = parseAndRenderToAreaTree(src);
         if (outputDir != null) {
             File tgtFile = new File(outputDir, name + ".at2.xml");
             saveDOM(doc, tgtFile);
         }
-        
+
         assertXMLEqual(intermediate, doc);
     }
-    
+
     private void saveDOM(Document doc, File tgtFile) throws Exception {
         Transformer transformer = tFactory.newTransformer();
         Source src = new DOMSource(doc);
@@ -166,7 +166,7 @@ public class AreaTreeParserTestCase extends XMLTestCase {
             IOUtils.closeQuietly(out);
         }
     }
-    
+
     private FOUserAgent createUserAgent() {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         try {
@@ -191,41 +191,41 @@ public class AreaTreeParserTestCase extends XMLTestCase {
         TransformerHandler handler = tFactory.newTransformerHandler();
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
-        
+
         FOUserAgent userAgent = createUserAgent();
 
         //Create an instance of the target renderer so the XMLRenderer can use its font setup
         Renderer targetRenderer = userAgent.getRendererFactory().createRenderer(
-                userAgent, MimeConstants.MIME_PDF); 
-        
+                userAgent, MimeConstants.MIME_PDF);
+
         XMLRenderer renderer = new XMLRenderer();
         renderer.mimicRenderer(targetRenderer);
         renderer.setContentHandler(handler);
         renderer.setUserAgent(userAgent);
 
         userAgent.setRendererOverride(renderer);
-        
+
         Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_AREA_TREE, userAgent);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
-        
+
         return (Document)domResult.getNode();
     }
-    
+
     private void parseAndRender(Source src, OutputStream out, String mime) throws Exception {
         AreaTreeParser parser = new AreaTreeParser();
-                
+
         FOUserAgent userAgent = createUserAgent();
         FontInfo fontInfo = new FontInfo();
-        AreaTreeModel treeModel = new RenderPagesModel(userAgent, 
-                mime, fontInfo, out); 
+        AreaTreeModel treeModel = new RenderPagesModel(userAgent,
+                mime, fontInfo, out);
         parser.parse(src, treeModel, userAgent);
         treeModel.endDocument();
     }
-    
+
     private Document parseAndRenderToAreaTree(Source src) throws Exception {
         AreaTreeParser parser = new AreaTreeParser();
-                
+
         //Set up XMLRenderer to render to a DOM
         TransformerHandler handler = tFactory.newTransformerHandler();
         DOMResult domResult = new DOMResult();
@@ -238,12 +238,12 @@ public class AreaTreeParserTestCase extends XMLTestCase {
         renderer.setUserAgent(userAgent);
 
         FontInfo fontInfo = new FontInfo();
-        AreaTreeModel treeModel = new RenderPagesModel(userAgent, 
-                MimeConstants.MIME_FOP_AREA_TREE, fontInfo, null); 
+        AreaTreeModel treeModel = new RenderPagesModel(userAgent,
+                MimeConstants.MIME_FOP_AREA_TREE, fontInfo, null);
         parser.parse(src, treeModel, userAgent);
         treeModel.endDocument();
 
         return (Document)domResult.getNode();
     }
-    
+
 }

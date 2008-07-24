@@ -30,7 +30,7 @@ import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
 public class HexFieldPart implements Part {
 
     private String fieldName;
-    
+
     /**
      * Creates a new hex field part
      * @param fieldName the field name
@@ -38,7 +38,7 @@ public class HexFieldPart implements Part {
     public HexFieldPart(String fieldName) {
         this.fieldName = fieldName;
     }
-    
+
     /** {@inheritDoc} */
     public boolean isGenerated(Map params) {
         Object obj = params.get(fieldName);
@@ -66,7 +66,7 @@ public class HexFieldPart implements Part {
     public String toString() {
         return "{" + this.fieldName + ",hex}";
     }
-    
+
     /** Factory for {@link HexFieldPart}. */
     public static class Factory implements PartFactory {
 
@@ -74,11 +74,11 @@ public class HexFieldPart implements Part {
         public Part newPart(String fieldName, String values) {
             return new HexFieldPart(fieldName);
         }
-        
+
         /** {@inheritDoc} */
         public String getFormat() {
             return "hex";
         }
-        
+
     }
 }

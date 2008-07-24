@@ -35,7 +35,7 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
 
     /** The category URI for this extension attachment. */
     public static final String CATEGORY = XMPConstants.XMP_NAMESPACE;
-    
+
     private Metadata meta;
     private boolean readOnly = true;
 
@@ -45,7 +45,7 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
     public XMPMetadata() {
         //nop
     }
-    
+
     /**
      * Default constructor.
      * @param metadata the XMP metadata
@@ -53,12 +53,12 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
     public XMPMetadata(Metadata metadata) {
         this.meta = metadata;
     }
-    
+
     /** @return the XMP metadata */
     public Metadata getMetadata() {
         return this.meta;
     }
-    
+
     /**
      * Sets the XMP metadata.
      * @param metadata the XMP metadata
@@ -66,7 +66,7 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
     public void setMetadata(Metadata metadata) {
         this.meta = metadata;
     }
-    
+
     /** @return true if the XMP metadata is marked read-only. */
     public boolean isReadOnly() {
         return readOnly;
@@ -84,10 +84,10 @@ public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable
     public String getCategory() {
         return CATEGORY;
     }
-    
+
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         getMetadata().toSAX(handler);
     }
-    
+
 }
