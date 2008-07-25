@@ -31,7 +31,7 @@ public interface AFPEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -50,14 +50,14 @@ public interface AFPEventProducer extends EventProducer {
         public EventModel createEventModel() {
             return loadModel(getClass(), "event-model.xml");
         }
-        
+
     }
-    
+
     /**
      * Warn about using default font setup.
      * @param source the event source
      * @event.severity WARN
      */
     void warnDefaultFontSetup(Object source);
-    
+
 }

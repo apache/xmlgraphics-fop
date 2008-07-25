@@ -51,7 +51,7 @@ import org.apache.fop.render.awt.AWTRenderer;
  * <p>Use PreviewPanel when you want to embed a preview in your own application
  * with your own controls. Use PreviewDialog when you want to use the standard
  * Fop controls.
- * </p>   
+ * </p>
  * <p>In order to embed a PreviewPanel in your own app, create your own renderer,
  * and your own agent. In order to support reloads, you may also implement your
  * own Renderable extension or the default InputHandler. Setting the Renderable
@@ -109,7 +109,7 @@ public class PreviewPanel extends JPanel {
     /** The FOUserAgent associated with this panel - often shared with PreviewDialog */
     protected FOUserAgent foUserAgent;
     /**
-     * Renderable instance that can be used to reload and re-render a document after 
+     * Renderable instance that can be used to reload and re-render a document after
      * modifications.
      */
     protected Renderable renderable;
@@ -142,7 +142,7 @@ public class PreviewPanel extends JPanel {
      */
     private ViewportScroller scroller;
 
-        
+
     /**
      * Creates a new PreviewPanel instance.
      * @param foUserAgent the user agent
@@ -170,7 +170,7 @@ public class PreviewPanel extends JPanel {
         previewArea.setMinimumSize(new Dimension(50, 50));
         add(previewArea);
     }
-        
+
     /**
      * @return the currently visible page
      */
@@ -242,12 +242,12 @@ public class PreviewPanel extends JPanel {
         private int startPosX = 0;
         /** Starting position of a mouse drag - Y co-ordinate */
         private int startPosY = 0;
-        
+
         ViewportScroller(JViewport vp) {
             viewport = vp;
         }
 
-        // ***** MouseMotionListener *****              
+        // ***** MouseMotionListener *****
 
         public synchronized void mouseDragged(MouseEvent e) {
             if (viewport == null) {
@@ -261,7 +261,7 @@ public class PreviewPanel extends JPanel {
             int viewHeight = viewport.getExtentSize().height;
             int imageWidth = viewport.getViewSize().width;
             int imageHeight = viewport.getViewSize().height;
-            
+
             Point viewPoint = viewport.getViewPosition();
             int viewX = Math.max(0, Math.min(imageWidth - viewWidth, viewPoint.x - xmove));
             int viewY = Math.max(0, Math.min(imageHeight - viewHeight, viewPoint.y - ymove));

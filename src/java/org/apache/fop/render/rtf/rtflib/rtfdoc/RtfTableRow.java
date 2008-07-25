@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -145,15 +145,15 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         // now children can write themselves, we have the correct RTF prefix code
         super.writeRtfContent();
     }
-    
+
     /**
-     * 
+     *
      * @throws IOException In case of a IO-problem
      */
     public void writeRowAndCellsDefintions() throws IOException {
         // render the row and cells definitions
         writeControlWord("trowd");
-        
+
         if (!getTable().isNestedTable()) {
             writeControlWord("itap0");
         }
@@ -181,24 +181,24 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
 
         // write X positions of our cells
         int xPos = 0;
-        
+
         final Object leftIndent = attrib.getValue(ITableAttributes.ATTR_ROW_LEFT_INDENT);
         if (leftIndent != null) {
             xPos = ((Integer)leftIndent).intValue();
         }
-        
+
         RtfAttributes tableBorderAttributes = getTable().getBorderAttributes();
-        
+
         int index = 0;
         for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
             if (e instanceof RtfTableCell) {
-                
+
                 RtfTableCell rtfcell = (RtfTableCell)e;
-                
+
                 // Adjust the cell's display attributes so the table's/row's borders
                 // are drawn properly.
-                
+
                 if (tableBorderAttributes != null) {
                     // get border attributes from table
                     if (index == 0) {
@@ -233,7 +233,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                         }
                     }
                 }
-                
+
                 // get border attributes from row
                 if (index == 0) {
                     if (!rtfcell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_LEFT)) {
@@ -268,7 +268,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
             }
           index++; // Added by Boris POUDEROUS on 2002/07/02
         }
-        
+
         newLine();
     }
 
@@ -366,9 +366,9 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
     public boolean isHighestCell(int cellId) {
         return (highestCell == cellId) ? true : false;
     }
-    
+
     /**
-     * 
+     *
      * @return Parent table of the row.
      */
     public RtfTable getTable() {
@@ -381,6 +381,6 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
             e = e.parent;
         }
 
-        return null;  
+        return null;
     }
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,8 +40,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FontInfo {
 
-    private static final FontTriplet[] TRIPLETS_TYPE = new FontTriplet[1];
-
     /** logging instance */
     protected static Log log = LogFactory.getLog(FontInfo.class);
 
@@ -58,7 +56,7 @@ public class FontInfo {
     /** look up a font-name to get a font (that implements FontMetrics at least) */
     private Map/*<String,FontMetrics>*/ fonts = null; //(String = font key)
 
-    /** 
+    /**
      *  a collection of missing fonts; used to make sure the user gets
      *  a warning for a missing font only once (not every time the font is used)
      */
@@ -143,7 +141,7 @@ public class FontInfo {
 
     /**
      * Log warning about duplicate font triplets.
-     * 
+     *
      * @param triplet the duplicate font triplet
      * @param replacing true iff the new font will replace the old one
      * @param oldKey the old internal font name
@@ -188,12 +186,12 @@ public class FontInfo {
      * @param family font family
      * @param style font style
      * @param weight font weight
-     * @param substFont true if the font may be substituted with the
+     * @param substitutable true if the font may be substituted with the
      *                  default font if not found
      * @return internal font triplet key
      */
     private FontTriplet fontLookup(String family, String style,
-                             int weight, boolean substFont) {
+                             int weight, boolean substitutable) {
         if (log.isTraceEnabled()) {
             log.trace("Font lookup: " + family + " " + style + " " + weight);
         }
@@ -203,7 +201,7 @@ public class FontInfo {
         // first try given parameters
         String internalFontKey = getInternalFontKey(fontTriplet);
         if (internalFontKey == null) {
-            fontTriplet = fuzzyFontLookup(family, style, weight, startKey, substFont);
+            fontTriplet = fuzzyFontLookup(family, style, weight, startKey, substitutable);
         }
 
         if (fontTriplet != null) {
@@ -219,7 +217,7 @@ public class FontInfo {
     private FontTriplet fuzzyFontLookup(String family, String style,
             int weight, FontTriplet startKey, boolean substFont) {
         FontTriplet key;
-        String internalFontKey;
+        String internalFontKey = null;
         if (!family.equals(startKey.getName())) {
             key = createFontKey(family, style, weight);
             internalFontKey = getInternalFontKey(key);
@@ -230,7 +228,9 @@ public class FontInfo {
 
         // adjust weight, favouring normal or bold
         key = findAdjustWeight(family, style, weight);
-        internalFontKey = getInternalFontKey(key);
+        if (key != null) {
+            internalFontKey = getInternalFontKey(key);
+        }
 
         if (!substFont && internalFontKey == null) {
             return null;
@@ -317,10 +317,10 @@ public class FontInfo {
         Integer size = new Integer(fontSize);
         Font font = (Font)sizes.get(size);
         if (font == null) {
-            String fname = getInternalFontKey(triplet);
-            useFont(fname);
-            FontMetrics metrics = getMetricsFor(fname);
-            font = new Font(fname, triplet, metrics, fontSize);
+            String fontKey = getInternalFontKey(triplet);
+            useFont(fontKey);
+            FontMetrics metrics = getMetricsFor(fontKey);
+            font = new Font(fontKey, triplet, metrics, fontSize);
             sizes.put(size, font);
         }
         return font;
@@ -343,6 +343,19 @@ public class FontInfo {
         return fontLookup(family, style, weight, true);
     }
 
+    private List/*<FontTriplet>*/ fontLookup(String[] families, String style,
+            int weight, boolean substitutable) {
+        List matchingTriplets = new java.util.ArrayList();
+        FontTriplet triplet = null;
+        for (int i = 0; i < families.length; i++) {
+            triplet = fontLookup(families[i], style, weight, substitutable);
+            if (triplet != null) {
+                matchingTriplets.add(triplet);
+            }
+        }
+        return matchingTriplets;
+    }
+
     /**
      * Looks up a set of fonts.
      * <br>
@@ -361,27 +374,34 @@ public class FontInfo {
         if (families.length == 0) {
             throw new IllegalArgumentException("Specify at least one font family");
         }
-        FontTriplet triplet;
-        List tmpTriplets = new java.util.ArrayList();
-        for (int i = 0, c = families.length; i < c; i++) {
-            triplet = fontLookup(families[i], style, weight, (i >= families.length - 1));
-            if (triplet != null) {
-                tmpTriplets.add(triplet);
+
+        // try matching without substitutions
+        List/*<FontTriplet>*/ matchedTriplets = fontLookup(families, style, weight, false);
+
+        // if there are no matching font triplets found try with substitutions
+        if (matchedTriplets.size() == 0) {
+            matchedTriplets = fontLookup(families, style, weight, true);
+        }
+
+        // no matching font triplets found!
+        if (matchedTriplets.size() == 0) {
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0, c = families.length; i < c; i++) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(families[i]);
             }
+            throw new IllegalStateException(
+                        "fontLookup must return an array with at least one "
+                        + "FontTriplet on the last call. Lookup: " + sb.toString());
+
         }
-        if (tmpTriplets.size() != 0) {
-            return (FontTriplet[]) tmpTriplets.toArray(TRIPLETS_TYPE);
-        }
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0, c = families.length; i < c; i++) {
-            if (i > 0) {
-                sb.append(", ");
-            }
-            sb.append(families[i]);
-        }
-        throw new IllegalStateException(
-                    "fontLookup must return an array with at least one "
-                    + "FontTriplet on the last call. Lookup: " + sb.toString());
+        FontTriplet[] fontTriplets = new FontTriplet[matchedTriplets.size()];
+        matchedTriplets.toArray(fontTriplets);
+
+        // found some matching fonts so return them
+        return fontTriplets;
     }
 
     private Set/*<FontTriplet>*/ getLoggedFontKeys() {

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,13 +65,13 @@ import org.apache.commons.logging.LogFactory;
 public class PDFDocument {
 
     private static final Integer LOCATION_PLACEHOLDER = new Integer(0);
-    
+
     /** Integer constant to represent PDF 1.3 */
     public static final int PDF_VERSION_1_3 = 3;
 
     /** Integer constant to represent PDF 1.4 */
     public static final int PDF_VERSION_1_4 = 4;
-    
+
     /**
      * the encoding to use when converting strings to PDF commandos.
      */
@@ -109,12 +109,12 @@ public class PDFDocument {
 
     /** Indicates what PDF version is active */
     protected int pdfVersion = PDF_VERSION_1_4;
-    
+
     /**
      * Indicates which PDF profiles are active (PDF/A, PDF/X etc.)
      */
     protected PDFProfile pdfProfile = new PDFProfile(this);
-    
+
     /**
      * the /Root object
      */
@@ -268,7 +268,7 @@ public class PDFDocument {
     public int getPDFVersion() {
         return this.pdfVersion;
     }
-    
+
     /** @return the String representing the active PDF version */
     public String getPDFVersionString() {
         switch (getPDFVersion()) {
@@ -285,7 +285,7 @@ public class PDFDocument {
     public PDFProfile getProfile() {
         return this.pdfProfile;
     }
-    
+
     /**
      * Returns the factory for PDF objects.
      * @return PDFFactory the factory
@@ -332,7 +332,7 @@ public class PDFDocument {
             throw new Error("JVM doesn't support " + ENCODING + " encoding!");
         }
     }
-    
+
     /**
      * set the producer of the document
      *
@@ -344,7 +344,7 @@ public class PDFDocument {
 
     /**
       * Set the creation date of the document.
-      * 
+      *
       * @param date Date to be stored as creation date in the PDF.
       */
     public void setCreationDate(Date date) {
@@ -775,7 +775,7 @@ public class PDFDocument {
         }
         this.destinations.add(destination);
     }
-    
+
     /**
      * Gets the list of named destinations.
      *
@@ -849,7 +849,7 @@ public class PDFDocument {
         PDFStream cont,
         PDFReference formres,
         String key) {
-        
+
         // check if already created
         PDFFormXObject xObject = (PDFFormXObject)xObjectsMap.get(key);
         if (xObject != null) {
@@ -858,7 +858,7 @@ public class PDFDocument {
             }
             return xObject;
         }
-        
+
         xObject = new PDFFormXObject(
                 ++this.xObjectCount,
                 cont,
@@ -954,7 +954,7 @@ public class PDFDocument {
         this.position = 0;
 
         getProfile().verifyPDFVersion();
-        
+
         byte[] pdf = encode("%PDF-" + getPDFVersionString() + "\n");
         stream.write(pdf);
         this.position += pdf.length;
@@ -991,7 +991,7 @@ public class PDFDocument {
             }
         }
     }
-    
+
     /**
      * write the trailer
      *

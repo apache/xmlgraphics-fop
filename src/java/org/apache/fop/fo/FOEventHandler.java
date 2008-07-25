@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,13 +63,13 @@ import org.apache.fop.fonts.FontInfo;
  * as our MIF and RTF output targets.
  */
 public abstract class FOEventHandler {
-    
-    /** 
+
+    /**
      * The FOUserAgent for this process
      */
     protected FOUserAgent foUserAgent;
 
-    /** 
+    /**
      * The Font information relevant for this document
      */
     protected FontInfo fontInfo;
@@ -142,37 +142,37 @@ public abstract class FOEventHandler {
     }
 
     /**
-     * 
+     *
      * @param pageCite PageNumberCitation that is starting.
      */
     public void startPageNumberCitation(PageNumberCitation pageCite) {
     }
 
     /**
-     * 
+     *
      * @param pageCite PageNumberCitation that is ending.
      */
     public void endPageNumberCitation(PageNumberCitation pageCite) {
     }
 
     /**
-     * 
+     *
      * @param pageLast PageNumberCitationLast that is starting.
      */
     public void startPageNumberCitationLast(PageNumberCitationLast pageLast) {
     }
 
     /**
-     * 
+     *
      * @param pageLast PageNumberCitationLast that is ending.
      */
     public void endPageNumberCitationLast(PageNumberCitationLast pageLast) {
     }
 
     /**
-     * This method is called to indicate the start of a new fo:flow 
+     * This method is called to indicate the start of a new fo:flow
      * or fo:static-content.
-     * This method also handles fo:static-content tags, because the 
+     * This method also handles fo:static-content tags, because the
      * StaticContent class is derived from the Flow class.
      *
      * @param fl Flow that is starting.
@@ -447,7 +447,7 @@ public abstract class FOEventHandler {
      */
     public void startFootnote(Footnote footnote) {
     }
-    
+
     /**
      * Process the ending of a footnote.
      * @param footnote Footnote that is ending
@@ -461,7 +461,7 @@ public abstract class FOEventHandler {
      */
     public void startFootnoteBody(FootnoteBody body) {
     }
-    
+
     /**
      * Process the ending of a footnote body.
      * @param body FootnoteBody that is ending

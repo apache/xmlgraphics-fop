@@ -23,13 +23,13 @@ package org.apache.fop.render.txt.border;
  * This class is responsible for managing of dotted border elements.
  */
 public class DottedBorderElement extends AbstractBorderElement {
-    
+
     private static final char MIDDLE_DOT = '\u00B7';
 
     /**
      * Merges dotted border element with another border element. Here merging
      * is quite simple: returning <code>this</code> without any comparing.
-     * 
+     *
      * @param e instance of AbstractBorderElement
      * @return instance of DottedBorderElement
      */

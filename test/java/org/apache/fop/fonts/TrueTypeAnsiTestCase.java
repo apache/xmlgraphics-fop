@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts;
 
 import java.io.File;
@@ -46,7 +46,7 @@ import org.apache.fop.render.pdf.PDFRenderer;
  * Tests XML font metrics file generation and usage for WinAnsi mode.
  */
 public class TrueTypeAnsiTestCase extends TestCase {
-    
+
     /**
      * Tests a TrueType font in WinAnsi mode.
      * @throws Exception if an error occurs
@@ -62,12 +62,12 @@ public class TrueTypeAnsiTestCase extends TestCase {
         if (metricsFile.isFile()) {
             assertTrue(metricsFile.delete());
         }
-        
+
         String[] args = new String[] {"-enc", "ansi",
                 ttfFile.getCanonicalPath(), metricsFile.getCanonicalPath()};
         TTFReader.main(args);
         assertTrue(metricsFile.isFile());
-        
+
         FopFactory fopFactory = FopFactory.newInstance();
         FOUserAgent ua = fopFactory.newFOUserAgent();
         PDFRenderer renderer = new PDFRenderer();
@@ -81,12 +81,12 @@ public class TrueTypeAnsiTestCase extends TestCase {
                 ttfFile.toURI().toASCIIString(), null);
         fontList.add(font);
         renderer.addFontList(fontList);
-        
+
         ua.setRendererOverride(renderer);
         OutputStream out = new NullOutputStream();
-        
+
         Fop fop = fopFactory.newFop(null, ua, out);
-        
+
         TransformerFactory tFactory = TransformerFactory.newInstance();
         Source src = new StreamSource(new StringReader(
                 "<root font-family='" + fontFamily + "'>Test!</root>"));
@@ -103,5 +103,5 @@ public class TrueTypeAnsiTestCase extends TestCase {
         }
         return new StreamSource(url.toExternalForm());
     }
-    
+
 }

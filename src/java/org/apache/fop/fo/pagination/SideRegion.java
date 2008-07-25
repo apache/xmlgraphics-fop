@@ -30,7 +30,7 @@ import org.apache.fop.fo.PropertyList;
 public abstract class SideRegion extends Region {
 
     private Length extent;
-    
+
     /**
      * Creates a new side region.
      * @param parent the parent node
@@ -45,10 +45,10 @@ public abstract class SideRegion extends Region {
         super.bind(pList);
         extent = pList.get(PR_EXTENT).getLength();
     }
-    
+
     /** @return the "extent" property. */
     public Length getExtent() {
         return extent;
     }
-    
+
 }

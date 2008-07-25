@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import org.apache.fop.fonts.FontType;
@@ -40,7 +40,7 @@ public class PDFFontType1 extends PDFFontNonBase14 {
      * @param basefont the base font name
      * @param encoding the character encoding schema used by the font
      */
-    public PDFFontType1(String fontname, 
+    public PDFFontType1(String fontname,
                         String basefont,
                         Object encoding) {
 

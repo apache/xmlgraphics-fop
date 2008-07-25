@@ -38,7 +38,7 @@ public interface ResourceEventProducer extends EventProducer {
      * Provider class for the event producer.
      */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -59,7 +59,7 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void imageNotFound(Object source, String uri, FileNotFoundException fnfe, Locator loc);
-    
+
     /**
      * Error while processing image.
      * @param source the event source
@@ -69,7 +69,7 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void imageError(Object source, String uri, ImageException e, Locator loc);
-    
+
     /**
      * I/O error while loading an image.
      * @param source the event source
@@ -105,7 +105,7 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void ifoNoIntrinsicSize(Object source, Locator loc);
-    
+
     /**
      * Error processing foreign XML content.
      * @param source the event source
@@ -124,7 +124,7 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void foreignXMLNoHandler(Object source, Document doc, String namespaceURI);
-    
+
     /**
      * Cannot delete a temporary file.
      * @param source the event source
@@ -132,5 +132,5 @@ public interface ResourceEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void cannotDeleteTempFile(Object source, File tempFile);
-    
+
 }

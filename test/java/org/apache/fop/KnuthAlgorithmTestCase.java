@@ -54,14 +54,14 @@ public class KnuthAlgorithmTestCase extends TestCase {
                 seq.add(new KnuthGlue(-5000, 0, 0, null, true));
             }
         }
-        
+
         seq.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, null, false));
         seq.add(new KnuthGlue(0, Integer.MAX_VALUE, 0, null, false));
         seq.add(new KnuthPenalty(0, -KnuthPenalty.INFINITE, false, null, false));
         ElementListObserver.observe(seq, "test", null);
         return seq;
     }
-    
+
     /**
      * Tests a special condition where a negative-length glue occurs directly after a break
      * possibility.
@@ -77,18 +77,18 @@ public class KnuthAlgorithmTestCase extends TestCase {
         assertEquals(5000, parts[0].difference);
         assertEquals(5000, parts[1].difference);
     }
-    
+
     private class Part {
         private int difference;
         private double ratio;
         private int position;
     }
-    
+
     private class MyBreakingAlgorithm extends BreakingAlgorithm {
 
         private List parts = new java.util.ArrayList();
-        
-        public MyBreakingAlgorithm(int align, int alignLast, boolean first, 
+
+        public MyBreakingAlgorithm(int align, int alignLast, boolean first,
                     boolean partOverflowRecovery, int maxFlagCount) {
             super(align, alignLast, first, partOverflowRecovery, maxFlagCount);
         }
@@ -96,7 +96,7 @@ public class KnuthAlgorithmTestCase extends TestCase {
         public Part[] getParts() {
             return (Part[])parts.toArray(new Part[parts.size()]);
         }
-        
+
         public void updateData1(int total, double demerits) {
             //nop
         }
@@ -111,7 +111,7 @@ public class KnuthAlgorithmTestCase extends TestCase {
                 // spaces always have enough shrink
                 difference = 0;
             } else if (ratio <= 1 && bestActiveNode.line < total) {
-                // not-last page break with a positive difference smaller than the available 
+                // not-last page break with a positive difference smaller than the available
                 // stretch: spaces can stretch to fill the whole difference
                 difference = 0;
             } else if (ratio > 1) {
@@ -138,7 +138,7 @@ public class KnuthAlgorithmTestCase extends TestCase {
             //nop
             return 0;
         }
-        
+
     }
-    
+
 }

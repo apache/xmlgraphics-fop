@@ -29,7 +29,7 @@ public interface TestEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void complain(Object source, String reason, int blah);
-    
+
     /**
      * Express joy about something.
      * @param source the event source
@@ -37,12 +37,12 @@ public interface TestEventProducer extends EventProducer {
      * @event.severity INFO
      */
     void enjoy(Object source, String what);
- 
+
     public class Provider {
-        
+
         public static TestEventProducer get(EventBroadcaster broadcaster) {
             return (TestEventProducer)broadcaster.getEventProducerFor(TestEventProducer.class);
         }
     }
-    
+
 }

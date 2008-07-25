@@ -25,14 +25,14 @@ import org.apache.fop.fo.expr.PropertyException;
 public class XMLLangShorthandParser extends GenericShorthandParser {
 
     private static final char HYPHEN_MINUS = '-';
-    
+
     /** {@inheritDoc} */
     public Property getValueForProperty(int propId,
                                         Property property,
                                         PropertyMaker maker,
                                         PropertyList propertyList)
                     throws PropertyException {
-        
+
         String shorthandValue = property.getString();
         int hyphenIndex = shorthandValue.indexOf(HYPHEN_MINUS);
         if (propId == Constants.PR_LANGUAGE) {

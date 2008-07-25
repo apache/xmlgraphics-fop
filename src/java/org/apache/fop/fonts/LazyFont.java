@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import org.apache.fop.apps.FOPException;
 public class LazyFont extends Typeface implements FontDescriptor {
 
     private static Log log = LogFactory.getLog(LazyFont.class);
-    
+
     private String metricsFileName = null;
     private String fontEmbedPath = null;
     private boolean useKerning = false;
@@ -52,14 +52,14 @@ public class LazyFont extends Typeface implements FontDescriptor {
     private FontDescriptor realFontDescriptor = null;
 
     private FontResolver resolver = null;
-    
+
     /**
      * Main constructor
      * @param fontInfo  the font info to embed
      * @param resolver the font resolver to handle font URIs
      */
     public LazyFont(EmbedFontInfo fontInfo, FontResolver resolver) {
-        
+
         this.metricsFileName = fontInfo.getMetricsFile();
         this.fontEmbedPath = fontInfo.getEmbedFile();
         this.useKerning = fontInfo.getKerning();
@@ -73,7 +73,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
         return ( "metrics-url=" + metricsFileName + ", embed-url=" + fontEmbedPath
                 + ", kerning=" + useKerning );
     }
-        
+
     private void load(boolean fail) {
         if (!isMetricsLoaded) {
             try {
@@ -84,8 +84,8 @@ public class LazyFont extends Typeface implements FontDescriptor {
                         Source source = resolver.resolve(metricsFileName);
                         if (source == null) {
                             String err
-                                = "Cannot load font: failed to create Source from metrics file " 
-                                    + metricsFileName; 
+                                = "Cannot load font: failed to create Source from metrics file "
+                                    + metricsFileName;
                             if (fail) {
                                 throw new RuntimeException(err);
                             } else {
@@ -104,7 +104,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
                             String err = "Cannot load font: After URI resolution, the returned"
                                 + " Source object does not contain an InputStream"
                                 + " or a valid URL (system identifier) for metrics file: "
-                                + metricsFileName; 
+                                + metricsFileName;
                             if (fail) {
                                 throw new RuntimeException(err);
                             } else {
@@ -113,7 +113,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
                             return;
                         }
                         InputSource src = new InputSource(in);
-                        src.setSystemId(source.getSystemId()); 
+                        src.setSystemId(source.getSystemId());
                         reader = new FontReader(src);
                     } else {
                         reader = new FontReader(new InputSource(
@@ -182,7 +182,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
         load(true);
         return realFont.hadMappingOperations();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -265,7 +265,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public int getWidth(int i, int size) {
         load(true);

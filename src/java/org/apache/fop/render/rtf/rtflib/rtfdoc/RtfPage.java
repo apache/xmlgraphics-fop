@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ extends RtfContainer {
     public static final String MARGIN_LEFT = "margl";
     /** constant for right margin */
     public static final String MARGIN_RIGHT = "margr";
-    
+
     /** constant for header position */
     public static final String HEADERY = "headery";
     /** constant for footer position */

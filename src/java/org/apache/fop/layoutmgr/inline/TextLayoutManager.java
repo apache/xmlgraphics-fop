@@ -203,7 +203,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     public void initialize() {
 
         this.foText.resetBuffer();
-        
+
         this.spaceFont = FontSelector.selectFontForCharacterInText(' ', this.foText, this);
 
         // With CID fonts, space isn't neccesary currentFontState.width(32)

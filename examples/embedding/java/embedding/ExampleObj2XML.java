@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 //Hava
@@ -36,7 +36,7 @@ import embedding.model.ProjectTeam;
 
 
 /**
- * This class demonstrates the conversion of an arbitrary object file to an 
+ * This class demonstrates the conversion of an arbitrary object file to an
  * XML file.
  */
 public class ExampleObj2XML {
@@ -48,20 +48,20 @@ public class ExampleObj2XML {
      * @throws IOException In case of an I/O problem
      * @throws TransformerException In case of a XSL transformation problem
      */
-    public void convertProjectTeam2XML(ProjectTeam team, File xml) 
+    public void convertProjectTeam2XML(ProjectTeam team, File xml)
                 throws IOException, TransformerException {
-                    
+
         //Setup XSLT
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer();
         /* Note:
            We use the identity transformer, no XSL transformation is done.
-           The transformer is basically just used to serialize the 
+           The transformer is basically just used to serialize the
            generated document to XML. */
-    
+
         //Setup input
         Source src = team.getSourceForProjectTeam();
-    
+
         //Setup output
         Result res = new StreamResult(xml);
 
@@ -97,7 +97,7 @@ public class ExampleObj2XML {
         try {
             System.out.println("FOP ExampleObj2XML\n");
             System.out.println("Preparing...");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
@@ -113,7 +113,7 @@ public class ExampleObj2XML {
 
             ExampleObj2XML app = new ExampleObj2XML();
             app.convertProjectTeam2XML(createSampleProjectTeam(), xmlfile);
-            
+
             System.out.println("Success!");
         } catch (Exception e) {
             e.printStackTrace(System.err);

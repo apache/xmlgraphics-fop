@@ -61,7 +61,7 @@ public class LayoutEngineTestSuite {
     static {
         DebugHelper.registerStandardElementListObservers();
     }
-    
+
     public static String[] readDisabledTestcases(File f) throws IOException {
         List lines = new java.util.ArrayList();
         Source stylesheet = new StreamSource(
@@ -78,7 +78,7 @@ public class LayoutEngineTestSuite {
         }
         return (String[])lines.toArray(new String[lines.size()]);
     }
-    
+
     private static class FilenameHandler extends DefaultHandler {
         private StringBuffer buffer = new StringBuffer(128);
         private boolean readingFilename = false;
@@ -88,7 +88,7 @@ public class LayoutEngineTestSuite {
             this.filenames = filenames;
         }
 
-        public void startElement(String namespaceURI, String localName, String qName, 
+        public void startElement(String namespaceURI, String localName, String qName,
                 Attributes atts) throws SAXException {
             if (qName != null && qName.equals("file")) {
                 buffer.setLength(0);
@@ -99,7 +99,7 @@ public class LayoutEngineTestSuite {
             }
         }
 
-        public void endElement(String namespaceURI, String localName, String qName) 
+        public void endElement(String namespaceURI, String localName, String qName)
                     throws SAXException {
             if (qName != null && qName.equals("file")) {
                 readingFilename = false;
@@ -116,7 +116,7 @@ public class LayoutEngineTestSuite {
             }
         }
     }
-    
+
     public static IOFileFilter decorateWithDisabledList(IOFileFilter filter) throws IOException {
         String disabled = System.getProperty("fop.layoutengine.disabled");
         if (disabled != null && disabled.length() > 0) {
@@ -126,7 +126,7 @@ public class LayoutEngineTestSuite {
         }
         return filter;
     }
-    
+
     /**
      * @return a Collection of File instances containing all the test cases set up for processing.
      * @throws IOException if there's a problem gathering the list of test files
@@ -150,18 +150,18 @@ public class LayoutEngineTestSuite {
         if (testset == null) {
             testset = "standard";
         }
-        Collection files = FileUtils.listFiles(new File(mainDir, testset + "-testcases"), 
+        Collection files = FileUtils.listFiles(new File(mainDir, testset + "-testcases"),
                 filter, TrueFileFilter.INSTANCE);
         String privateTests = System.getProperty("fop.layoutengine.private");
         if ("true".equalsIgnoreCase(privateTests)) {
             Collection privateFiles = FileUtils.listFiles(
-                    new File(mainDir, "private-testcases"), 
+                    new File(mainDir, "private-testcases"),
                     filter, TrueFileFilter.INSTANCE);
             files.addAll(privateFiles);
         }
         return files;
     }
-    
+
     /**
      * @return the test suite with all the tests (one for each XML file)
      * @throws IOException in case of an I/O problem
@@ -180,11 +180,11 @@ public class LayoutEngineTestSuite {
             File f = (File)i.next();
             addTestCase(suite, tester, f);
         }
-        
+
         return suite;
     }
-    
-    private static void addTestCase(TestSuite suite, 
+
+    private static void addTestCase(TestSuite suite,
                 final LayoutEngineTester tester, final File f) {
         suite.addTest(new LayoutEngineTestCase(f.getName()) {
             public void runTest() throws Exception {
@@ -199,24 +199,24 @@ public class LayoutEngineTestSuite {
             }
         });
     }
-    
+
     private static class LayoutEngineTestCase extends TestCase {
-        
+
         private LayoutEngineTester tester;
         private File testFile;
-        
+
         public LayoutEngineTestCase(String name) {
             super(name);
         }
-        
+
         public void prepare(LayoutEngineTester tester, File testFile) {
             //super(testFile.getName());
             this.tester = tester;
             this.testFile = testFile;
         }
-        
+
         public void testMain() throws Exception {
             tester.runTest(testFile);
         }
-    }    
+    }
 }

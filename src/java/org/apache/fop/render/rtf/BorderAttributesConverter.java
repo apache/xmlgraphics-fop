@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,12 +42,12 @@ public final class BorderAttributesConverter {
      */
     private BorderAttributesConverter() {
     }
-    
+
     /**
-     * Create a border control word in attributes, with border properties 
+     * Create a border control word in attributes, with border properties
      * as specified in color, style and width.
      * @param border The CommonBorderPaddingBackground object.
-     * @param side The START, END, BEFORE, AFTER enum from CommonBorderPaddingBackground. 
+     * @param side The START, END, BEFORE, AFTER enum from CommonBorderPaddingBackground.
      * @param attributes The attributes list to set the border control word.
      * @param controlWord The border control word.
      */
@@ -61,18 +61,18 @@ public final class BorderAttributesConverter {
             //division by 50 to convert millipoints to twips
             attrs.set(IBorderAttributes.BORDER_WIDTH, border.getBorderWidth(side, false) / 50);
             attributes.set(controlWord, attrs);
-            //Don't set BORDER_SPACE, because it makes the table look quite broken: 
+            //Don't set BORDER_SPACE, because it makes the table look quite broken:
             //vertical and horizontal borders don't meet at corners.
             //attrs.setTwips(IBorderAttributes.BORDER_SPACE, border.getPadding(side, false, null));
             //attributes.set(controlWord, attrs);
         } else {
             // Here padding specified, but corresponding border is not available
-            
+
             // Padding in millipoints
             double paddingPt = border.getPadding(side, false, null) / 1000.0;
             // Padding in twips
             int padding = (int) Math.round(paddingPt * FoUnitsConverter.POINT_TO_TWIPS);
-            
+
             // Add padding to corresponding space (space-before or space-after)
             // if side == START or END, do nothing
             if (side == CommonBorderPaddingBackground.BEFORE) {

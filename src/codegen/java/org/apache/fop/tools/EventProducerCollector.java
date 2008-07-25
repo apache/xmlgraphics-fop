@@ -46,7 +46,7 @@ public class EventProducerCollector {
 
     private static final String CLASSNAME_EVENT_PRODUCER = EventProducer.class.getName();
     private static final Map PRIMITIVE_MAP;
-    
+
     static {
         Map m = new java.util.HashMap();
         m.put("boolean", Boolean.class);
@@ -59,7 +59,7 @@ public class EventProducerCollector {
         m.put("double", Double.class);
         PRIMITIVE_MAP = Collections.unmodifiableMap(m);
     }
-    
+
     private DocletTagFactory tagFactory;
     private EventModel model = new EventModel();
 
@@ -81,21 +81,25 @@ public class EventProducerCollector {
     /**
      * Scans a file and processes it if it extends the {@link EventProducer} interface.
      * @param src the source file (a Java source file)
+     * @return true if the file contained an EventProducer interface
      * @throws IOException if an I/O error occurs
      * @throws EventConventionException if the EventProducer conventions are violated
      * @throws ClassNotFoundException if a required class cannot be found
      */
-    public void scanFile(File src)
+    public boolean scanFile(File src)
             throws IOException, EventConventionException, ClassNotFoundException {
         JavaDocBuilder builder = new JavaDocBuilder(this.tagFactory);
         builder.addSource(src);
         JavaClass[] classes = builder.getClasses();
+        boolean eventProducerFound = false;
         for (int i = 0, c = classes.length; i < c; i++) {
             JavaClass clazz = classes[i];
             if (clazz.isInterface() && implementsInterface(clazz, CLASSNAME_EVENT_PRODUCER)) {
                 processEventProducerInterface(clazz);
+                eventProducerFound = true;
             }
         }
+        return eventProducerFound;
     }
 
     private boolean implementsInterface(JavaClass clazz, String intf) {
@@ -146,13 +150,13 @@ public class EventProducerCollector {
             throw new EventConventionException("The first parameter of the method " + methodSig
                     + " must be: 'Object source'!");
         }
-        
+
         //build method model
         DocletTag tag = method.getTagByName("event.severity");
         EventSeverity severity;
         if (tag != null) {
             severity = EventSeverity.valueOf(tag.getValue());
-        } else { 
+        } else {
             severity = EventSeverity.INFO;
         }
         EventMethodModel methodMeta = new EventMethodModel(
@@ -192,7 +196,7 @@ public class EventProducerCollector {
     public EventModel getModel() {
         return this.model;
     }
-    
+
     /**
      * Saves the accumulated event model to an XML file.
      * @param modelFile the target model file
@@ -201,5 +205,5 @@ public class EventProducerCollector {
     public void saveModelToXML(File modelFile) throws IOException {
         getModel().saveToXML(modelFile);
     }
-    
+
 }

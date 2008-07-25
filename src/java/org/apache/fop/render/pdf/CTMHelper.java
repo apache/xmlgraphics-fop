@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.pdf;
 
 import java.awt.geom.AffineTransform;
@@ -37,7 +37,7 @@ public final class CTMHelper {
      * <p>Converts the sourceMatrix to a string for use in the PDFRenderer cm operations.</p>
      * <p>For example:
      * <pre>
-     *    org.apache.fop.area.CTM ctm = 
+     *    org.apache.fop.area.CTM ctm =
      *          new org.apache.fop.area.CTM(1.0, 0.0, 0.0, 1.0, 1000.0, 1000.0);
      *    String pdfMatrix =  org.apache.fop.render.pdf.CTMHelper.toPDFString(ctm);
      * </pre>
@@ -58,7 +58,7 @@ public final class CTMHelper {
     }
 
     /**
-     * <p>Converts the AffineTransform instance to a string for use in the PDFRenderer 
+     * <p>Converts the AffineTransform instance to a string for use in the PDFRenderer
      * cm operations.</p>
      *
      * @param transform The matrix to convert.
@@ -83,21 +83,21 @@ public final class CTMHelper {
     }
 
     private static String constructPDFArray(double[] matrix) {
-        return PDFNumber.doubleOut(matrix[0], 8) + " " 
-                + PDFNumber.doubleOut(matrix[1], 8) + " " 
-                + PDFNumber.doubleOut(matrix[2], 8) + " " 
-                + PDFNumber.doubleOut(matrix[3], 8) + " " 
-                + PDFNumber.doubleOut(matrix[4], 8) + " " 
+        return PDFNumber.doubleOut(matrix[0], 8) + " "
+                + PDFNumber.doubleOut(matrix[1], 8) + " "
+                + PDFNumber.doubleOut(matrix[2], 8) + " "
+                + PDFNumber.doubleOut(matrix[3], 8) + " "
+                + PDFNumber.doubleOut(matrix[4], 8) + " "
                 + PDFNumber.doubleOut(matrix[5], 8);
     }
-    
+
     /**
      * <p>Creates a new CTM based in the sourceMatrix.</p>
      * <p>For example:
      * <pre>
-     *    org.apache.fop.area.CTM inCTM = 
+     *    org.apache.fop.area.CTM inCTM =
      *          new org.apache.fop.area.CTM(1.0, 0.0, 0.0, 1.0, 1000.0, 1000.0);
-     *    org.apache.fop.area.CTM outCTM = 
+     *    org.apache.fop.area.CTM outCTM =
      *          org.apache.fop.render.pdf.CTMHelper.toPDFCTM(ctm);
      * </pre>
      * will return a new CTM where a == 1.0, b == 0.0, c == 0.0, d == 1.0, e == 1.0 and f == 1.0.
@@ -121,7 +121,7 @@ public final class CTMHelper {
      * <p>Creates an array of six doubles from the source CTM.</p>
      * <p>For example:
      * <pre>
-     *    org.apache.fop.area.CTM inCTM = 
+     *    org.apache.fop.area.CTM inCTM =
      *          new org.apache.fop.area.CTM(1.0, 0.0, 0.0, 1.0, 1000.0, 1000.0);
      *    double matrix[] = org.apache.fop.render.pdf.CTMHelper.toPDFArray(ctm);
      * </pre>

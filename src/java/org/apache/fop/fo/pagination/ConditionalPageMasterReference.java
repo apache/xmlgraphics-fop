@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.apache.fop.fo.ValidationException;
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_conditional-page-master-reference">
  * <code>fo:conditional-page-master-reference</code></a> object.
- * 
+ *
  * This is a reference to a page master with a set of conditions.
  * The conditions must be satisfied for the referenced master to
  * be used.
@@ -45,7 +45,7 @@ public class ConditionalPageMasterReference extends FObj {
     private int oddOrEven;
     private int blankOrNotBlank;
     // End of property values
-    
+
     /**
      * Create a ConditionalPageMasterReference instance that is a
      * child of the given {@link FONode}.
@@ -65,7 +65,7 @@ public class ConditionalPageMasterReference extends FObj {
 
         if (masterReference == null || masterReference.equals("")) {
             missingPropertyError("master-reference");
-        }        
+        }
     }
 
     /** {@inheritDoc} */
@@ -76,12 +76,12 @@ public class ConditionalPageMasterReference extends FObj {
     private RepeatablePageMasterAlternatives getConcreteParent() {
         return (RepeatablePageMasterAlternatives) parent;
     }
-    
+
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
            throws ValidationException {
        invalidChildError(loc, nsURI, localName);
     }
@@ -158,7 +158,7 @@ public class ConditionalPageMasterReference extends FObj {
     public String getMasterReference() {
         return masterReference;
     }
-    
+
     /**
      * Get the value for the <code>page-position</code> property.
      * @return the page-position property value
@@ -166,12 +166,12 @@ public class ConditionalPageMasterReference extends FObj {
     public int getPagePosition() {
         return this.pagePosition;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "conditional-page-master-reference";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_CONDITIONAL_PAGE_MASTER_REFERENCE}

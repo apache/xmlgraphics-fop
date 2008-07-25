@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -86,17 +86,17 @@ public class CommonMarginBlock {
         startIndent = pList.get(Constants.PR_START_INDENT).getLength();
         endIndent = pList.get(Constants.PR_END_INDENT).getLength();
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
-        return "CommonMarginBlock:\n" 
-            + "Margins (top, bottom, left, right): (" 
-            + marginTop + ", " + marginBottom + ", " 
+        return "CommonMarginBlock:\n"
+            + "Margins (top, bottom, left, right): ("
+            + marginTop + ", " + marginBottom + ", "
             + marginLeft + ", " + marginRight + ")\n"
-            + "Space (before, after): (" 
-            + spaceBefore + ", " + spaceAfter + ")\n" 
+            + "Space (before, after): ("
+            + spaceBefore + ", " + spaceAfter + ")\n"
             + "Indents (start, end): ("
             + startIndent + ", " + endIndent + ")\n";
     }
-    
+
 }

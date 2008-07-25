@@ -96,7 +96,7 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
         fileSyntax = s.substring(0, i);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void renderPage(PageViewport pageViewport) throws IOException {

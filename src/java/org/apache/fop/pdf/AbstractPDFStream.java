@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -43,13 +43,13 @@ public abstract class AbstractPDFStream extends PDFDictionary {
     }
 
     /**
-     * Sets up the default filters for this stream if they haven't been set 
+     * Sets up the default filters for this stream if they haven't been set
      * from outside.
      */
     protected void setupFilterList() {
         if (!getFilterList().isInitialized()) {
             getFilterList().addDefaultFilters(
-                getDocumentSafely().getFilterMap(), 
+                getDocumentSafely().getFilterMap(),
                 PDFFilterList.DEFAULT_FILTER);
         }
         prepareImplicitFilters();
@@ -78,18 +78,18 @@ public abstract class AbstractPDFStream extends PDFDictionary {
     /**
      * Returns a value that hints at the size of the encoded stream. This is
      * used to optimize buffer allocation so fewer buffer reallocations are
-     * necessary. 
+     * necessary.
      * @return an estimated size (0 if no hint can be given)
      * @throws IOException in case of an I/O problem
      */
     protected abstract int getSizeHint() throws IOException;
-    
+
     /**
      * Sends the raw stream data to the target OutputStream.
      * @param out OutputStream to write to
      * @throws IOException In case of an I/O problem
      */
-    protected abstract void outputRawStreamData(OutputStream out) 
+    protected abstract void outputRawStreamData(OutputStream out)
             throws IOException;
 
     /**
@@ -104,10 +104,10 @@ public abstract class AbstractPDFStream extends PDFDictionary {
         byte[] p = encode("stream\n");
         out.write(p);
         length += p.length;
-        
+
         encodedStream.outputContents(out);
         length += encodedStream.getSize();
-        
+
         p = encode("\nendstream");
         out.write(p);
         length += p.length;
@@ -147,7 +147,7 @@ public abstract class AbstractPDFStream extends PDFDictionary {
         byte[] buf = encode("stream\n");
         out.write(buf);
         bytesWritten += buf.length;
-        
+
         //Stream contents
         CloseBlockerOutputStream cbout = new CloseBlockerOutputStream(out);
         CountingOutputStream cout = new CountingOutputStream(cbout);
@@ -156,12 +156,12 @@ public abstract class AbstractPDFStream extends PDFDictionary {
         filteredOutput.close();
         refLength.setNumber(new Integer(cout.getCount()));
         bytesWritten += cout.getCount();
-            
+
         //Stream trailer
         buf = encode("\nendstream");
         out.write(buf);
         bytesWritten += buf.length;
-        
+
         return bytesWritten;
     }
 
@@ -177,7 +177,7 @@ public abstract class AbstractPDFStream extends PDFDictionary {
         Writer writer = PDFDocument.getWriterFor(cout);
         writer.write(getObjectID());
         //int length = 0;
-        
+
         StreamCache encodedStream = null;
         PDFNumber refLength = null;
         final Object lengthEntry;
@@ -189,10 +189,10 @@ public abstract class AbstractPDFStream extends PDFDictionary {
             encodedStream = encodeStream();
             lengthEntry = new Integer(encodedStream.getSize() + 1);
         }
-        
+
         populateStreamDict(lengthEntry);
         writeDictionary(cout, writer);
-        
+
         //Send encoded stream to target OutputStream
         writer.flush();
         if (encodedStream == null) {
@@ -201,7 +201,7 @@ public abstract class AbstractPDFStream extends PDFDictionary {
             outputStreamData(encodedStream, cout);
             encodedStream.clear(); //Encoded stream can now be discarded
         }
-        
+
         writer.write("\nendobj\n");
         writer.flush();
         return cout.getCount();

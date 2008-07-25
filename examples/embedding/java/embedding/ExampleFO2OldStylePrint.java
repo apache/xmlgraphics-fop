@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 // Java
@@ -44,7 +44,7 @@ public class ExampleFO2OldStylePrint {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
-    
+
     /**
      * Prints an FO file using an old-style PrinterJob.
      * @param fo the FO file
@@ -52,7 +52,7 @@ public class ExampleFO2OldStylePrint {
      * @throws FOPException In case of a FOP problem
      */
     public void printFO(File fo) throws IOException, FOPException {
-        
+
         //Set up PrinterJob instance
         PrinterJob printerJob = PrinterJob.getPrinterJob();
         printerJob.setJobName("FOP Printing Example");
@@ -68,13 +68,13 @@ public class ExampleFO2OldStylePrint {
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(); // identity transformer
-            
+
             // Setup input stream
             Source src = new StreamSource(fo);
 
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(fop.getDefaultHandler());
-            
+
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
 
@@ -93,23 +93,23 @@ public class ExampleFO2OldStylePrint {
         try {
             System.out.println("FOP ExampleFO2OldStylePrint\n");
             System.out.println("Preparing...");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
 
-            //Setup input and output files            
+            //Setup input and output files
             File fofile = new File(baseDir, "xml/fo/helloworld.fo");
 
             System.out.println("Input: XSL-FO (" + fofile + ")");
             System.out.println("Output: old-style printing using PrinterJob");
             System.out.println();
             System.out.println("Transforming...");
-            
+
             ExampleFO2OldStylePrint app = new ExampleFO2OldStylePrint();
             app.printFO(fofile);
-            
+
             System.out.println("Success!");
         } catch (Exception e) {
             e.printStackTrace(System.err);

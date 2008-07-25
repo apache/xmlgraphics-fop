@@ -30,7 +30,7 @@ public class PageSequence {
     private LineArea title;
     private String language;
     private String country;
-    
+
     /**
      * Main constructor
      * @param title the title for the page-sequence, may be null
@@ -38,14 +38,14 @@ public class PageSequence {
     public PageSequence(LineArea title) {
         setTitle(title);
     }
-    
+
     /**
      * @return the title of the page sequence in form of a line area, or null if there's no title
      */
     public LineArea getTitle() {
         return this.title;
     }
-    
+
     /**
      * Sets the page sequence's title.
      * @param title the title
@@ -53,7 +53,7 @@ public class PageSequence {
     public void setTitle(LineArea title) {
         this.title = title;
     }
-    
+
     /**
      * Adds a new page to the page sequence
      * @param page the page to be added
@@ -61,7 +61,7 @@ public class PageSequence {
     public void addPage(PageViewport page) {
         this.pages.add(page);
     }
-    
+
     /**
      * @return the number of pages currently in this page sequence
      */
@@ -77,7 +77,7 @@ public class PageSequence {
     public PageViewport getPage(int idx) {
         return (PageViewport)this.pages.get(idx);
     }
-    
+
     /**
      * Indicates whether a page is the first in this page sequence.
      * @param page the page to be inspected
@@ -106,7 +106,7 @@ public class PageSequence {
             this.language = language;
         }
     }
-    
+
     /**
      * Returns the country of the page-sequence.
      * @return the country (the value of the country property, "none" is mapped to null)
@@ -126,5 +126,5 @@ public class PageSequence {
             this.country = country;
         }
     }
-    
+
 }

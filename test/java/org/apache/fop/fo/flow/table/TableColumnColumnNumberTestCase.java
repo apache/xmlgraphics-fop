@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,7 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
 
     private void checkColumn(Table t, int number, boolean isImplicit, int spans, int repeated, int width) {
         TableColumn c = t.getColumn(number - 1);
-        // TODO a repeated column has a correct number only for its first occurrence 
+        // TODO a repeated column has a correct number only for its first occurrence
 //        assertEquals(number, c.getColumnNumber());
         assertEquals(isImplicit, c.isImplicitColumn());
         assertEquals(spans, c.getNumberColumnsSpanned());

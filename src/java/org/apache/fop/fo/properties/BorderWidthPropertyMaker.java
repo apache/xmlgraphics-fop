@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,21 +24,21 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * This subclass of LengthProperty.Maker handles the special treatment of 
+ * This subclass of LengthProperty.Maker handles the special treatment of
  * border width described in 7.7.20.
  */
 public class BorderWidthPropertyMaker extends LengthProperty.Maker {
-    int borderStyleId = 0;    
-    
+    int borderStyleId = 0;
+
     /**
      * Create a length property which check the value of the border-*-style
-     * property and return a length of 0 when the style is "none". 
+     * property and return a length of 0 when the style is "none".
      * @param propId the border-*-width of the property.
      */
     public BorderWidthPropertyMaker(int propId) {
         super(propId);
     }
-    
+
     /**
      * Set the propId of the style property for the same side.
      * @param borderStyleId
@@ -50,9 +50,9 @@ public class BorderWidthPropertyMaker extends LengthProperty.Maker {
     /**
      * Check the value of the style property and return a length of 0 when
      * the style is NONE.
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
-   
+
     public Property get(int subpropId, PropertyList propertyList,
                         boolean bTryInherit, boolean bTryDefault)
         throws PropertyException

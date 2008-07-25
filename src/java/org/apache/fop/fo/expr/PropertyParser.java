@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public final class PropertyParser extends PropertyTokenizer {
 
     private static final String RELUNIT = "em";
     private static final HashMap FUNCTION_TABLE = new HashMap();
-    
+
     static {
         // Initialize the HashMap of XSL-defined functions
         FUNCTION_TABLE.put("ceiling", new CeilingFunction());
@@ -310,10 +310,10 @@ public final class PropertyParser extends PropertyTokenizer {
                                     propInfo.currentFontSize());
             } else {
                 if ("px".equals(unitPart)) {
-                    //pass the ratio between source-resolution and 
+                    //pass the ratio between source-resolution and
                     //the default resolution of 72dpi
                     prop = FixedLength.getInstance(
-                            numPart, unitPart, 
+                            numPart, unitPart,
                             propInfo.getPropertyList().getFObj()
                                     .getUserAgent().getSourceResolution() / 72.0f);
                 } else {
@@ -344,7 +344,7 @@ public final class PropertyParser extends PropertyTokenizer {
             }
             propInfo.popFunction();
             return prop;
-        
+
         default:
             // TODO: add the token or the expr to the error message.
             throw new PropertyException("syntax error");
@@ -357,7 +357,7 @@ public final class PropertyParser extends PropertyTokenizer {
      * Parse a comma separated list of function arguments. Each argument
      * may itself be an expression. This method consumes the closing right
      * parenthesis of the argument list.
-     * @param function The function object for which the arguments are 
+     * @param function The function object for which the arguments are
      * collected.
      * @return An array of Property objects representing the arguments
      * found.
@@ -397,27 +397,27 @@ public final class PropertyParser extends PropertyTokenizer {
         }
         return args;
     }
-    
+
     /**
-     * 
+     *
      * Parse a comma separated list of function arguments. Each argument
      * may itself be an expression. This method consumes the closing right
      * parenthesis of the argument list.
-     * 
-     * The method differs from parseArgs in that it accepts a variable 
+     *
+     * The method differs from parseArgs in that it accepts a variable
      * number of arguments.
-     * 
-     * @param function The function object for which the arguments are 
+     *
+     * @param function The function object for which the arguments are
      * collected.
      * @return An array of Property objects representing the arguments
      * found.
      * @throws PropertyException If the number of arguments found isn't equal
      * to the number expected.
-     * 
-     * TODO Merge this with parseArgs? 
+     *
+     * TODO Merge this with parseArgs?
      */
     Property[] parseVarArgs(Function function) throws PropertyException {
-        // For variable argument functions the minimum number of arguments is returned as a 
+        // For variable argument functions the minimum number of arguments is returned as a
         // negative integer from the nbArgs method
         int nbArgs = -function.nbArgs();
         List args = new LinkedList();

@@ -59,15 +59,15 @@ public class PDFEncodingTestCase extends BasePDFTestCase {
      */
     public void testPDFEncodingWithStandardFont() throws Exception {
 
-        /*  If the PDF encoding is correct, a text dump of the generated PDF file contains this (excerpts) 
+        /*  If the PDF encoding is correct, a text dump of the generated PDF file contains this (excerpts)
          *     ...Tm [(PDFE_TEST_MARK_2:) ( ) (This) ( ) (is) ...(acute:) ( ) (XX_\351_XX) ] TJ
          *     ...Tm [(PDFE_TEST_MARK_3:) ( ) (This) ( ) (is) ...(letter:) ( ) (XX_\342\352\356\364\373_XX) ] TJ
          *  The following array is used to look for these patterns
-         */ 
-        final String[] testPatterns = { 
+         */
+        final String[] testPatterns = {
                 TEST_MARKER + "1", "Standard",
-                TEST_MARKER + "2", "XX_\\351_XX", 
-                TEST_MARKER + "3", "XX_\\342\\352\\356\\364\\373_XX" 
+                TEST_MARKER + "2", "XX_\\351_XX",
+                TEST_MARKER + "3", "XX_\\342\\352\\356\\364\\373_XX"
               };
 
         runTest("test-standard-font.fo", testPatterns);
@@ -78,21 +78,21 @@ public class PDFEncodingTestCase extends BasePDFTestCase {
      * encoding when custom font is used.
      * TODO This should be tested using PDFBox. If PDFBox can extract the text correctly,
      * everything is fine. The tests here are too unstable.
-     * 
+     *
      * @throws Exception
      *             checkstyle wants a comment here, even a silly one
      */
     public void DISABLEDtestPDFEncodingWithCustomFont() throws Exception {
 
-        /*  If the PDF encoding is correct, a text dump of the generated PDF file contains this (excerpts) 
+        /*  If the PDF encoding is correct, a text dump of the generated PDF file contains this (excerpts)
          *     ...Tm [(PDFE_TEST_MARK_2:) ( ) (This) ( ) (is) ...(acute:) ( ) (XX_\351_XX) ] TJ
          *     ...Tm [(PDFE_TEST_MARK_3:) ( ) (This) ( ) (is) ...(letter:) ( ) (XX_\342\352\356\364\373_XX) ] TJ
          *  The following array is used to look for these patterns
-         */ 
-        final String[] testPatterns = { 
+         */
+        final String[] testPatterns = {
           TEST_MARKER + "1", "(Gladiator)",
-          TEST_MARKER + "2", "XX_\\351_XX", 
-          TEST_MARKER + "3", "XX_\\342\\352\\356\\364\\373_XX" 
+          TEST_MARKER + "2", "XX_\\351_XX",
+          TEST_MARKER + "3", "XX_\\342\\352\\356\\364\\373_XX"
         };
 
         runTest("test-custom-font.fo", testPatterns);
@@ -109,7 +109,7 @@ public class PDFEncodingTestCase extends BasePDFTestCase {
     /**
      * Check character encodings in the generated PDF data, by reading text
      * lines identified by markers and checking their content
-     * 
+     *
      * @throws IOException
      */
     private void checkEncoding(byte[] pdf, String[] testPattern)

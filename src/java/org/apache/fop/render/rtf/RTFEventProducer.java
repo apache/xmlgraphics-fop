@@ -34,7 +34,7 @@ public interface RTFEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -53,9 +53,9 @@ public interface RTFEventProducer extends EventProducer {
         public EventModel createEventModel() {
             return loadModel(getClass(), "event-model.xml");
         }
-        
+
     }
-    
+
     /**
      * The RTF handler only supports simple-page-masters.
      * @param source the event source
@@ -64,7 +64,7 @@ public interface RTFEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void onlySPMSupported(Object source, String masterReference, Locator loc);
-    
+
     /**
      * No simple-page-master could be determined-
      * @param source the event source
@@ -72,7 +72,7 @@ public interface RTFEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void noSPMFound(Object source, Locator loc);
-    
+
     /**
      * The RTF handler requires explicit table-columns for now.
      * @param source the event source
@@ -80,7 +80,7 @@ public interface RTFEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void explicitTableColumnsRequired(Object source, Locator loc);
-    
+
     /**
      * The RTF handler ignored some deferred event (i.e. an unsupported element).
      * @param source the event source
@@ -90,5 +90,5 @@ public interface RTFEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void ignoredDeferredEvent(Object source, FONode node, boolean start, Locator loc);
-    
+
 }

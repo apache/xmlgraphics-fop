@@ -49,7 +49,7 @@ public class ColorProfileUtil {
             }
         }
     }
-    
+
     /**
      * Indicates whether a given color profile is identical to the default sRGB profile
      * provided by the Java class library.
@@ -64,5 +64,5 @@ public class ColorProfileUtil {
         }
         return profile == sRGBProfile;
     }
-    
+
 }

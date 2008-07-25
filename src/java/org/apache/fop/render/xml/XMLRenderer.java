@@ -92,7 +92,7 @@ import org.apache.fop.util.ColorUtil;
  * Renderer that renders areas to XML for debugging purposes.
  * This creates an xml that contains the information of the area
  * tree. It does not output any state or derived information.
- * The output can be used to build a new area tree which can be 
+ * The output can be used to build a new area tree which can be
  * rendered to any renderer.
  */
 public class XMLRenderer extends AbstractXMLRenderer {
@@ -148,7 +148,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
     public void setCompactFormat(boolean compact) {
         this.compactFormat = compact;
     }
-    
+
     private boolean isDetailedFormat() {
         return !this.compactFormat;
     }
@@ -243,7 +243,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
                 }
             }
         }
-        
+
         transferForeignObjects(area);
     }
 
@@ -261,7 +261,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry)iter.next();
             String qn = "xmlns:" + (String)entry.getKey();
-            atts.addAttribute("", (String)entry.getKey(), qn, 
+            atts.addAttribute("", (String)entry.getKey(), qn,
                     CDATA, (String)entry.getValue());
         }
     }
@@ -606,7 +606,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
             renderBlocks(block, children);
         }
     }
-    
+
     /** {@inheritDoc} */
     protected void renderBlock(Block block) {
         atts.clear();
@@ -779,7 +779,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
     protected void renderWord(WordArea word) {
         atts.clear();
         addAttribute("offset", word.getOffset());
-        int[] letterAdjust = word.getLetterAdjustArray(); 
+        int[] letterAdjust = word.getLetterAdjustArray();
         if (letterAdjust != null) {
             StringBuffer sb = new StringBuffer(64);
             boolean nonZeroFound = false;

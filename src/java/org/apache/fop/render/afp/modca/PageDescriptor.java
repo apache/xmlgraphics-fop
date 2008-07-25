@@ -59,14 +59,14 @@ public class PageDescriptor extends AbstractDescriptor {
         data[3] = (byte) 0xD3;
         data[4] = (byte) 0xA6;
         data[5] = (byte) 0xAF;
-        
-        data[6] = 0x00; // Flags 
-        data[7] = 0x00; // Reserved 
+
+        data[6] = 0x00; // Flags
+        data[7] = 0x00; // Reserved
         data[8] = 0x00;  // Reserved
-        
-        data[9] = 0x00; // XpgBase = 10 inches 
-        data[10] = 0x00; // YpgBase = 10 inches 
-        
+
+        data[9] = 0x00; // XpgBase = 10 inches
+        data[10] = 0x00; // YpgBase = 10 inches
+
         // XpgUnits
         byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
         data[11] = xdpi[0];
@@ -76,7 +76,7 @@ public class PageDescriptor extends AbstractDescriptor {
         byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
         data[13] = ydpi[0];
         data[14] = ydpi[1];
-            
+
         // XpgSize
         byte[] x = BinaryUtils.convert(width, 3);
         data[15] = x[0];

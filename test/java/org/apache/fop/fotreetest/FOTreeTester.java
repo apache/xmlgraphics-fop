@@ -39,7 +39,7 @@ import org.apache.fop.util.ConsoleEventListenerForTests;
  * Test driver class for FO tree tests.
  */
 public class FOTreeTester {
-    
+
     private FopFactory fopFactory = FopFactory.newInstance();
 
     /**
@@ -48,7 +48,7 @@ public class FOTreeTester {
     public FOTreeTester() {
         fopFactory.addElementMapping(new TestElementMapping());
     }
-    
+
     /**
      * Runs a test.
      * @param testFile the test file.
@@ -57,13 +57,13 @@ public class FOTreeTester {
     public void runTest(File testFile) throws Exception {
         ResultCollector collector = ResultCollector.getInstance();
         collector.reset();
-        
+
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setNamespaceAware(true);
         spf.setValidating(false);
         SAXParser parser = spf.newSAXParser();
         XMLReader reader = parser.getXMLReader();
-                
+
         FOUserAgent ua = fopFactory.newFOUserAgent();
         ua.setBaseURL(testFile.getParentFile().toURL().toString());
         ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
@@ -72,15 +72,15 @@ public class FOTreeTester {
 
         //Used to set values in the user agent through processing instructions
         reader = new PIListener(reader, ua);
-        
+
         Fop fop = fopFactory.newFop(ua);
-        
+
         reader.setContentHandler(fop.getDefaultHandler());
         reader.setDTDHandler(fop.getDefaultHandler());
         reader.setErrorHandler(fop.getDefaultHandler());
         reader.setEntityResolver(fop.getDefaultHandler());
         reader.parse(testFile.toURL().toExternalForm());
-        
+
         List results = collector.getResults();
         if (results.size() > 0) {
             for (int i = 0; i < results.size(); i++) {
@@ -91,9 +91,9 @@ public class FOTreeTester {
     }
 
     private class PIListener extends XMLFilterImpl {
-        
+
         private FOUserAgent userAgent;
-        
+
         public PIListener(XMLReader parent, FOUserAgent userAgent) {
             super(parent);
             this.userAgent = userAgent;
@@ -107,7 +107,7 @@ public class FOTreeTester {
             }
             super.processingInstruction(target, data);
         }
-        
+
     }
-    
+
 }

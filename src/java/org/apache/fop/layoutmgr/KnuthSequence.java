@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import java.util.ListIterator;
  * Represents a list of Knuth elements.
  */
 /**
- * 
+ *
  */
 public abstract class KnuthSequence extends ArrayList {
     /**
@@ -68,19 +68,19 @@ public abstract class KnuthSequence extends ArrayList {
      * Append sequence to this sequence if it can be appended.
      * @param sequence The sequence that is to be appended.
      * @param keepTogether Whether the two sequences must be kept together.
-     * @param breakElement The BreakElement that may be inserted between the two sequences. 
+     * @param breakElement The BreakElement that may be inserted between the two sequences.
      * @return whether the sequence was succesfully appended to this sequence.
      */
     public abstract boolean appendSequence(KnuthSequence sequence, boolean keepTogether,
                                            BreakElement breakElement);
-    
+
     /**
      * Append sequence to this sequence if it can be appended.
      * @param sequence The sequence that is to be appended.
      * @return whether the sequence was succesfully appended to this sequence.
      */
     public abstract boolean appendSequence(KnuthSequence sequence);
-    
+
     /**
      * Append sequence to this sequence if it can be appended.
      * If that is not possible, close this sequence.
@@ -95,13 +95,13 @@ public abstract class KnuthSequence extends ArrayList {
             return true;
         }
     }
-    
+
     /**
      * Append sequence to this sequence if it can be appended.
      * If that is not possible, close this sequence.
      * @param sequence The sequence that is to be appended.
      * @param keepTogether Whether the two sequences must be kept together.
-     * @param breakElement The BreakElement that may be inserted between the two sequences. 
+     * @param breakElement The BreakElement that may be inserted between the two sequences.
      * @return whether the sequence was succesfully appended to this sequence.
      */
     public boolean appendSequenceOrClose(KnuthSequence sequence, boolean keepTogether,
@@ -113,7 +113,7 @@ public abstract class KnuthSequence extends ArrayList {
             return true;
         }
     }
-    
+
     /**
      * Wrap the Positions of the elements of this sequence in a Position for LayoutManager lm.
      * @param lm The LayoutManager for the Positions that will be created.
@@ -127,14 +127,14 @@ public abstract class KnuthSequence extends ArrayList {
             (lm.notifyPos(new NonLeafPosition(lm, element.getPosition())));
         }
     }
-    
+
     /**
      * @return the last element of this sequence.
      */
     public ListElement getLast() {
         int idx = size();
         if (idx == 0) {
-            return null; 
+            return null;
         }
         return (ListElement) get(idx - 1);
     }
@@ -146,7 +146,7 @@ public abstract class KnuthSequence extends ArrayList {
     public ListElement removeLast() {
         int idx = size();
         if (idx == 0) {
-            return null; 
+            return null;
         }
         return (ListElement) remove(idx - 1);
     }

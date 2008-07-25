@@ -31,7 +31,7 @@ public interface PDFEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -50,9 +50,9 @@ public interface PDFEventProducer extends EventProducer {
         public EventModel createEventModel() {
             return loadModel(getClass(), "event-model.xml");
         }
-        
+
     }
-    
+
     /**
      * Some link targets haven't been fully resolved.
      * @param source the event source
@@ -60,5 +60,5 @@ public interface PDFEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void nonFullyResolvedLinkTargets(Object source, int count);
-    
+
 }

@@ -25,10 +25,10 @@ public class WordArea extends InlineArea {
 
     /** The text for this word area */
     protected String word;
-    
+
     /** The correction offset for the next area */
     protected int offset = 0;
-    
+
     /** An array of width for adjusting the individual letters (optional) */
     protected int[] letterAdjust;
 
@@ -63,10 +63,10 @@ public class WordArea extends InlineArea {
     public void setOffset(int o) {
         offset = o;
     }
-    
+
     /** @return the array of letter adjust widths */
     public int[] getLetterAdjustArray() {
         return this.letterAdjust;
     }
-    
+
 }

@@ -80,13 +80,13 @@ public class TIFFRenderer extends Java2DRenderer {
     //private static final String COMPRESSION_ZLIB = "ZLib";
     public static final String COMPRESSION_CCITT_T6 = "CCITT T.6"; //CCITT Group 4
     public static final String COMPRESSION_CCITT_T4 = "CCITT T.4"; //CCITT Group 3
-    
+
     /** ImageWriter parameters */
     private ImageWriterParams writerParams;
-    
+
     /** Image Type as parameter for the BufferedImage constructor (see BufferedImage.TYPE_*) */
     private int bufferedImageType = BufferedImage.TYPE_INT_ARGB;
-    
+
     private OutputStream outputStream;
 
     /** {@inheritDoc} */
@@ -160,7 +160,7 @@ public class TIFFRenderer extends Java2DRenderer {
         clearViewportList();
         log.debug("TIFF encoding done.");
     }
-    
+
     /** {@inheritDoc} */
     protected BufferedImage getBufferedImage(int bitmapWidth, int bitmapHeight) {
         return new BufferedImage(bitmapWidth, bitmapHeight, bufferedImageType);
@@ -210,7 +210,7 @@ public class TIFFRenderer extends Java2DRenderer {
                 //Decorate the image with a packed sample model for encoding by the codec
                 SinglePixelPackedSampleModel sppsm;
                 sppsm = (SinglePixelPackedSampleModel)pageImage.getSampleModel();
-                
+
                 int bands = sppsm.getNumBands();
                 int[] off = new int[bands];
                 int w = pageImage.getWidth();
@@ -220,7 +220,7 @@ public class TIFFRenderer extends Java2DRenderer {
                 }
                 SampleModel sm = new PixelInterleavedSampleModel(
                         DataBuffer.TYPE_BYTE, w, h, bands, w * bands, off);
-                
+
                 RenderedImage rimg = new FormatRed(GraphicsUtil.wrap(pageImage), sm);
                 return rimg;
             }

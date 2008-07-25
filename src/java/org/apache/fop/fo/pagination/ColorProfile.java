@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,7 +60,7 @@ public class ColorProfile extends FObj {
      * {@inheritDoc}
      * <br>XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -78,7 +78,7 @@ public class ColorProfile extends FObj {
     public String getLocalName() {
         return "color-profile";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_COLOR_PROFILE}
@@ -86,26 +86,26 @@ public class ColorProfile extends FObj {
     public int getNameId() {
         return FO_COLOR_PROFILE;
     }
-    
-    /** 
+
+    /**
      * Get src attribute
-     * 
+     *
      * @return value of color-profile src attribute
      */
     public String getSrc() {
         return this.src;
     }
-    
+
     /**
      * Get rendering-intent attribute
-     * 
+     *
      * Returned value is one of
      *   Constants.EN_AUTO
      *   Constants.EN_PERCEPTUAL
      *   Constants.EN_RELATIVE_COLOMETRIC
      *   Constants.EN_SATURATION
      *   Constants.EN_ABSOLUTE_COLORMETRIC
-     *    
+     *
      * @return Rendering intent attribute
      */
     public int getRenderingIntent() {

@@ -50,7 +50,7 @@ public final class BinaryUtils {
                 size++;
             }
         }
-        return convert(buf.toString()); 
+        return convert(buf.toString());
     }
 
     /**
@@ -92,7 +92,7 @@ public final class BinaryUtils {
             } else {
                 throw new IllegalArgumentException("Bad hexadecimal digit");
             }
-            
+
             if ((c2 >= '0') && (c2 <= '9')) {
                 b += (c2 - '0');
             } else if ((c2 >= 'a') && (c2 <= 'f')) {

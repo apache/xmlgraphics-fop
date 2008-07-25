@@ -26,16 +26,16 @@ import java.util.List;
  * Represents a list of block level Knuth elements.
  */
 public class BlockKnuthSequence extends KnuthSequence {
-    
+
     private boolean isClosed = false;
-    
+
     /**
      * Creates a new and empty list.
      */
     public BlockKnuthSequence() {
         super();
     }
-    
+
     /**
      * Creates a new list from an existing list.
      * @param list The list from which to create the new list.
@@ -59,7 +59,7 @@ public class BlockKnuthSequence extends KnuthSequence {
         // log.debug("Cannot append a sequence without a BreakElement");
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public boolean appendSequence(KnuthSequence sequence, boolean keepTogether,
                                   BreakElement breakElement) {

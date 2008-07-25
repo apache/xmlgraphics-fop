@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ import org.apache.fop.fonts.NamedCharacter;
  * Parses the contents of a Type 1 AFM font metrics file into an object structure ({@link AFMFile}).
  */
 public class AFMParser {
-    
+
     private static final String START_FONT_METRICS = "StartFontMetrics";
     //private static final String END_FONT_METRICS = "EndFontMetrics";
     private static final String FONT_NAME = "FontName";
@@ -89,10 +89,10 @@ public class AFMParser {
 
     private static final int PARSE_NORMAL = 0;
     private static final int PARSE_CHAR_METRICS = 1;
-    
+
     private static final Map VALUE_PARSERS;
     private static final Map PARSE_MODE_CHANGES;
-    
+
     static {
         VALUE_PARSERS = new java.util.HashMap();
         VALUE_PARSERS.put(START_FONT_METRICS, new StartFontMetrics());
@@ -142,7 +142,7 @@ public class AFMParser {
         PARSE_MODE_CHANGES.put(START_CHAR_METRICS, new Integer(PARSE_CHAR_METRICS));
         PARSE_MODE_CHANGES.put(END_CHAR_METRICS, new Integer(PARSE_NORMAL));
     }
-    
+
     /**
      * Main constructor.
      */
@@ -164,7 +164,7 @@ public class AFMParser {
             IOUtils.closeQuietly(in);
         }
     }
-    
+
     /**
      * Parses an AFM file from a stream.
      * @param in the stream to read from
@@ -212,14 +212,14 @@ public class AFMParser {
         }
         return (AFMFile)stack.pop();
     }
-    
+
     private String parseLine(String line, Stack stack) throws IOException {
         int startpos = 0;
         //Find key
         startpos = skipToNonWhiteSpace(line, startpos);
         int endpos = skipToWhiteSpace(line, startpos);
         String key = line.substring(startpos, endpos);
-        
+
         //Parse value
         startpos = skipToNonWhiteSpace(line, endpos);
         ValueHandler vp = (ValueHandler)VALUE_PARSERS.get(key);
@@ -228,7 +228,7 @@ public class AFMParser {
         }
         return key;
     }
-    
+
     private String parseCharMetrics(String line, Stack stack) throws IOException {
         int startpos = 0;
         AFMCharMetrics chm = new AFMCharMetrics();
@@ -245,13 +245,13 @@ public class AFMParser {
                 //EOL: No more key so break
                 break;
             }
-            
+
             //Extract value
             startpos = skipToNonWhiteSpace(line, endpos);
             endpos = skipToSemicolon(line, startpos);
             String value = line.substring(startpos, endpos).trim();
             startpos = endpos + 1;
-            
+
             //Parse value
             ValueHandler vp = (ValueHandler)VALUE_PARSERS.get(key);
             if (vp != null) {
@@ -266,7 +266,7 @@ public class AFMParser {
         afm.addCharMetrics(chm);
         return null;
     }
-    
+
     private static int skipToNonWhiteSpace(String line, int startpos) {
         int pos = startpos;
         while (pos < line.length() && isWhitespace(line.charAt(pos))) {
@@ -297,21 +297,21 @@ public class AFMParser {
     }
 
     // ---------------- Value Handlers ---------------------------
-    
+
     private interface ValueHandler {
         void parse(String line, int startpos, Stack stack) throws IOException;
     }
-    
+
     private abstract static class AbstractValueHandler implements ValueHandler {
-        
+
         protected int findValue(String line, int startpos) {
             return skipToWhiteSpace(line, startpos);
         }
-        
+
         protected String getStringValue(String line, int startpos) {
             return line.substring(startpos);
         }
-        
+
         protected Number getNumberValue(String line, int startpos) {
             try {
                 return new Integer(getIntegerValue(line, startpos));
@@ -319,23 +319,23 @@ public class AFMParser {
                 return new Double(getDoubleValue(line, startpos));
             }
         }
-        
+
         protected int getIntegerValue(String line, int startpos) {
             int endpos = findValue(line, startpos);
             return Integer.parseInt(line.substring(startpos, endpos));
         }
-        
+
         protected double getDoubleValue(String line, int startpos) {
             int endpos = findValue(line, startpos);
             return Double.parseDouble(line.substring(startpos, endpos));
         }
-        
+
         protected Boolean getBooleanValue(String line, int startpos) {
             return Boolean.valueOf(getStringValue(line, startpos));
         }
-        
+
     }
-    
+
     private static class StartFontMetrics extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack stack) throws IOException {
             int endpos = findValue(line, startpos);
@@ -348,14 +348,14 @@ public class AFMParser {
             stack.push(afm);
         }
     }
-    
+
     private abstract static class BeanSetter extends AbstractValueHandler {
         private String method;
-        
+
         public BeanSetter(String variable) {
             this.method = "set" + variable;
         }
-        
+
         protected void setValue(Object target, Object value) {
             //Uses Java Beans API
             Statement statement = new Statement(target, method, new Object[] {value});
@@ -367,76 +367,76 @@ public class AFMParser {
             }
         }
     }
-    
+
     private static class StringSetter extends BeanSetter {
-        
+
         public StringSetter(String variable) {
             super(variable);
         }
-        
+
         public void parse(String line, int startpos, Stack stack) throws IOException {
             String s = getStringValue(line, startpos);
             Object obj = stack.peek();
             setValue(obj, s);
         }
     }
-    
+
     private static class NamedCharacterSetter extends BeanSetter {
-        
+
         public NamedCharacterSetter(String variable) {
             super(variable);
         }
-        
+
         public void parse(String line, int startpos, Stack stack) throws IOException {
             NamedCharacter ch = new NamedCharacter(getStringValue(line, startpos));
             Object obj = stack.peek();
             setValue(obj, ch);
         }
     }
-    
+
     private static class NumberSetter extends BeanSetter {
         public NumberSetter(String variable) {
             super(variable);
         }
-        
+
         protected Object getContextObject(Stack stack) {
             return stack.peek();
         }
-        
+
         public void parse(String line, int startpos, Stack stack) throws IOException {
             Number num = getNumberValue(line, startpos);
             setValue(getContextObject(stack), num);
         }
     }
-    
+
     private static class IntegerSetter extends NumberSetter {
         public IntegerSetter(String variable) {
             super(variable);
         }
-        
+
         public void parse(String line, int startpos, Stack stack) throws IOException {
             int value = getIntegerValue(line, startpos);
             setValue(getContextObject(stack), new Integer(value));
         }
     }
-    
+
     private static class DoubleSetter extends NumberSetter {
         public DoubleSetter(String variable) {
             super(variable);
         }
-        
+
         public void parse(String line, int startpos, Stack stack) throws IOException {
             double value = getDoubleValue(line, startpos);
             setValue(getContextObject(stack), new Double(value));
         }
     }
-    
+
     private static class WritingDirNumberSetter extends NumberSetter {
 
         public WritingDirNumberSetter(String variable) {
             super(variable);
         }
-        
+
         protected Object getContextObject(Stack stack) {
             if (stack.peek() instanceof AFMWritingDirectionMetrics) {
                 return (AFMWritingDirectionMetrics)stack.peek();
@@ -450,32 +450,32 @@ public class AFMParser {
                 return wdm;
             }
         }
-        
+
     }
-    
+
     private static class WritingDirDoubleSetter extends WritingDirNumberSetter {
 
         public WritingDirDoubleSetter(String variable) {
             super(variable);
         }
-        
+
         public void parse(String line, int startpos, Stack stack) throws IOException {
             double value = getDoubleValue(line, startpos);
             setValue(getContextObject(stack), new Double(value));
         }
     }
-    
+
     private static class BooleanSetter extends AbstractValueHandler {
         private String method;
-        
+
         public BooleanSetter(String variable) {
             this.method = "set" + variable.substring(2); //Cut "Is" in front
         }
-        
+
         protected Object getContextObject(Stack stack) {
             return (AFMFile)stack.peek();
         }
-        
+
         public void parse(String line, int startpos, Stack stack) throws IOException {
             Boolean b = getBooleanValue(line, startpos);
             //Uses Java Beans API
@@ -489,13 +489,13 @@ public class AFMParser {
             }
         }
     }
-    
+
     private static class WritingDirBooleanSetter extends BooleanSetter {
 
         public WritingDirBooleanSetter(String variable) {
             super(variable);
         }
-        
+
         protected Object getContextObject(Stack stack) {
             if (stack.peek() instanceof AFMWritingDirectionMetrics) {
                 return (AFMWritingDirectionMetrics)stack.peek();
@@ -509,13 +509,13 @@ public class AFMParser {
                 return wdm;
             }
         }
-        
+
     }
-    
+
     private static class FontBBox extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack stack) throws IOException {
             Rectangle rect = parseBBox(line, startpos);
-            
+
             AFMFile afm = (AFMFile)stack.peek();
             afm.setFontBBox(rect);
         }
@@ -523,20 +523,20 @@ public class AFMParser {
         protected Rectangle parseBBox(String line, int startpos) {
             Rectangle rect = new Rectangle();
             int endpos;
-            
+
             endpos = findValue(line, startpos);
             rect.x = Integer.parseInt(line.substring(startpos, endpos));
             startpos = skipToNonWhiteSpace(line, endpos);
-            
+
             endpos = findValue(line, startpos);
             rect.y = Integer.parseInt(line.substring(startpos, endpos));
             startpos = skipToNonWhiteSpace(line, endpos);
-            
+
             endpos = findValue(line, startpos);
             int v = Integer.parseInt(line.substring(startpos, endpos));
             rect.width = v - rect.x;
             startpos = skipToNonWhiteSpace(line, endpos);
-            
+
             endpos = findValue(line, startpos);
             v = Integer.parseInt(line.substring(startpos, endpos));
             rect.height = v - rect.y;
@@ -544,11 +544,11 @@ public class AFMParser {
             return rect;
         }
     }
-    
+
     private static class CharBBox extends FontBBox {
         public void parse(String line, int startpos, Stack stack) throws IOException {
             Rectangle rect = parseBBox(line, startpos);
-            
+
             AFMCharMetrics metrics = (AFMCharMetrics)stack.peek();
             metrics.setBBox(rect);
         }
@@ -561,7 +561,7 @@ public class AFMParser {
             }
         }
     }
-    
+
     private static class IsCIDFont extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack stack) throws IOException {
             if (getBooleanValue(line, startpos).booleanValue()) {
@@ -569,20 +569,20 @@ public class AFMParser {
             }
         }
     }
-    
+
     private static class NotImplementedYet extends AbstractValueHandler {
         private String key;
-        
+
         public NotImplementedYet(String key) {
             this.key = key;
         }
-        
+
         public void parse(String line, int startpos, Stack stack) throws IOException {
             throw new IOException("Support for '" + key
                     + "' has not been implemented, yet! Font is not supported.");
         }
     }
-    
+
     private static class StartDirection extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack stack) throws IOException {
             int index = getIntegerValue(line, startpos);
@@ -592,7 +592,7 @@ public class AFMParser {
             stack.push(wdm);
         }
     }
-    
+
     private static class EndDirection extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack stack) throws IOException {
             if (!(stack.pop() instanceof AFMWritingDirectionMetrics)) {
@@ -600,26 +600,26 @@ public class AFMParser {
             }
         }
     }
-    
+
     private static class KPXHandler extends AbstractValueHandler {
         public void parse(String line, int startpos, Stack stack) throws IOException {
             AFMFile afm = (AFMFile)stack.peek();
             int endpos;
-            
+
             endpos = findValue(line, startpos);
             String name1 = line.substring(startpos, endpos);
             startpos = skipToNonWhiteSpace(line, endpos);
-            
+
             endpos = findValue(line, startpos);
             String name2 = line.substring(startpos, endpos);
             startpos = skipToNonWhiteSpace(line, endpos);
-            
+
             endpos = findValue(line, startpos);
             double kx = Double.parseDouble(line.substring(startpos, endpos));
             startpos = skipToNonWhiteSpace(line, endpos);
-            
+
             afm.addXKerning(name1, name2, kx);
         }
     }
-    
+
 }

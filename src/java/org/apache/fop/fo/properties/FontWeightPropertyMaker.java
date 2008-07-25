@@ -26,7 +26,7 @@ import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.fo.expr.PropertyParser;
 
 public class FontWeightPropertyMaker extends EnumProperty.Maker {
-    
+
     /**
      * Main constructor
      * @param propId    the property id
@@ -34,11 +34,11 @@ public class FontWeightPropertyMaker extends EnumProperty.Maker {
     public FontWeightPropertyMaker(int propId) {
         super(propId);
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
-    public Property make(PropertyList pList, String value, FObj fo) 
+    public Property make(PropertyList pList, String value, FObj fo)
                         throws PropertyException {
         if ("inherit".equals(value)) {
             return super.make(pList, value, fo);

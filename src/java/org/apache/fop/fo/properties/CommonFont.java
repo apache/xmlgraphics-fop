@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,10 +38,10 @@ public final class CommonFont {
     /** cache holding canonical CommonFont instances (only those with
      *  absolute font-size and font-size-adjust) */
     private static final PropertyCache cache = new PropertyCache(CommonFont.class);
-    
+
     /** hashcode of this instance */
     private int hash = 0;
-    
+
     /** The "font-family" property. */
     private final FontFamilyProperty fontFamily;
 
@@ -59,17 +59,17 @@ public final class CommonFont {
 
     /** The "font-weight" property. */
     private final EnumProperty fontWeight;
-    
+
     /** The "font-size" property. */
     public final Length fontSize;
 
     /** The "font-size-adjust" property. */
     public final Numeric fontSizeAdjust;
 
-    
+
     /**
      * Construct a CommonFont instance
-     * 
+     *
      * @param fontFamily    the font-family property
      * @param fontSelectionStrategy the font-selection-strategy property
      * @param fontStretch   the font-stretch property
@@ -84,8 +84,8 @@ public final class CommonFont {
                        EnumProperty fontStretch,
                        EnumProperty fontStyle,
                        EnumProperty fontVariant,
-                       EnumProperty fontWeight, 
-                       Length fontSize, 
+                       EnumProperty fontWeight,
+                       Length fontSize,
                        Numeric fontSizeAdjust) {
         this.fontFamily = fontFamily;
         this.fontSelectionStrategy = fontSelectionStrategy;
@@ -103,7 +103,7 @@ public final class CommonFont {
      * the entire instance will be cached.
      * If not, then a distinct instance will be returned, with
      * as much cached information as possible.
-     * 
+     *
      * @param pList the PropertyList to get the properties from
      * @return  a CommonFont instance corresponding to the properties
      * @throws PropertyException    if there was a problem getting the properties
@@ -117,19 +117,19 @@ public final class CommonFont {
         EnumProperty fontWeight = (EnumProperty) pList.get(Constants.PR_FONT_WEIGHT);
         Numeric fontSizeAdjust = pList.get(Constants.PR_FONT_SIZE_ADJUST).getNumeric();
         Length fontSize = pList.get(Constants.PR_FONT_SIZE).getLength();
-        
-        CommonFont commonFont = new CommonFont(fontFamily, 
-                                               fontSelectionStrategy, 
-                                               fontStretch, 
-                                               fontStyle, 
-                                               fontVariant, 
+
+        CommonFont commonFont = new CommonFont(fontFamily,
+                                               fontSelectionStrategy,
+                                               fontStretch,
+                                               fontStyle,
+                                               fontVariant,
                                                fontWeight,
                                                fontSize,
                                                fontSizeAdjust);
-        
+
         return cache.fetch(commonFont);
     }
-    
+
     /** @return an array with the font-family names */
     private String[] getFontFamily() {
         List lst = fontFamily.getList();
@@ -139,12 +139,12 @@ public final class CommonFont {
         }
         return fontFamily;
     }
-        
+
     /** @return the first font-family name in the list */
     public String getFirstFontFamily() {
         return ((Property) fontFamily.list.get(0)).getString();
     }
-    
+
     /** @return the "font-selection-strategy" property */
     public int getFontSelectionStrategy() {
         return fontSelectionStrategy.getEnum();
@@ -154,12 +154,12 @@ public final class CommonFont {
     public int getFontStretch() {
         return fontStretch.getEnum();
     }
-    
+
     /** @return the "font-style" property */
     public int getFontStyle() {
         return fontStyle.getEnum();
     }
-    
+
     /** @return the "font-variant" property */
     public int getFontVariant() {
         return fontVariant.getEnum();
@@ -169,11 +169,11 @@ public final class CommonFont {
     public int getFontWeight() {
         return fontWeight.getEnum();
     }
-    
+
     /**
-     * Create and return an array of <code>FontTriplets</code> based on 
+     * Create and return an array of <code>FontTriplets</code> based on
      * the properties stored in the instance variables.
-     * 
+     *
      * @param fontInfo
      * @return a Font object.
      */
@@ -194,13 +194,13 @@ public final class CommonFont {
 
         String style;
         switch (fontStyle.getEnum()) {
-        case Constants.EN_ITALIC: 
+        case Constants.EN_ITALIC:
             style = "italic";
             break;
-        case Constants.EN_OBLIQUE: 
+        case Constants.EN_OBLIQUE:
             style = "oblique";
             break;
-        case Constants.EN_BACKSLANT: 
+        case Constants.EN_BACKSLANT:
             style = "backslant";
             break;
         default:
@@ -210,22 +210,22 @@ public final class CommonFont {
         // various kinds of keywords too
         //int fontVariant = propertyList.get("font-variant").getEnum();
         FontTriplet[] triplets = fontInfo.fontLookup(
-                                    getFontFamily(), 
+                                    getFontFamily(),
                                     style, font_weight);
         return triplets;
     }
 
     /** {@inheritDoc} */
     public boolean equals(Object o) {
-        
+
         if (o == null) {
             return false;
         }
-        
+
         if (this == o) {
             return true;
         }
-        
+
         if (o instanceof CommonFont) {
             CommonFont cf = (CommonFont) o;
             return (cf.fontFamily == this.fontFamily)
@@ -238,12 +238,12 @@ public final class CommonFont {
                     && (cf.fontSizeAdjust == this.fontSizeAdjust);
         }
         return false;
-        
+
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
-        
+
         if (this.hash == -1) {
             int hash = 17;
             hash = 37 * hash + (fontSize == null ? 0 : fontSize.hashCode());
@@ -257,6 +257,6 @@ public final class CommonFont {
             this.hash = hash;
         }
         return hash;
-        
+
     }
 }

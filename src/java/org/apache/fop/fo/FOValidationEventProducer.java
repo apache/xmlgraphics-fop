@@ -37,7 +37,7 @@ public interface FOValidationEventProducer extends EventProducer {
      * Provider class for the event producer.
      */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -55,12 +55,12 @@ public interface FOValidationEventProducer extends EventProducer {
      * @param elementName the name of the context node
      * @param offendingNode the offending node
      * @param loc the location of the error or null
-     * @throws ValidationException the validation error provoked by the method call 
+     * @throws ValidationException the validation error provoked by the method call
      * @event.severity FATAL
      */
     void tooManyNodes(Object source, String elementName, QName offendingNode,
             Locator loc) throws ValidationException;
-    
+
     /**
      * The node order is wrong.
      * @param source the event source
@@ -74,7 +74,7 @@ public interface FOValidationEventProducer extends EventProducer {
     void nodeOutOfOrder(Object source, String elementName,
             String tooLateNode, String tooEarlyNode, boolean canRecover,
             Locator loc) throws ValidationException;
-    
+
     /**
      * An invalid child was encountered.
      * @param source the event source
@@ -112,7 +112,7 @@ public interface FOValidationEventProducer extends EventProducer {
      */
     void missingProperty(Object source, String elementName, String propertyName,
             Locator loc) throws ValidationException;
-    
+
     /**
      * An id was used twice in a document.
      * @param source the event source
@@ -334,7 +334,7 @@ public interface FOValidationEventProducer extends EventProducer {
      */
     void invalidFORoot(Object source, String elementName,
             Locator loc) throws ValidationException;
-    
+
     /**
      * No FO document was found.
      * @param source the event source
@@ -342,7 +342,7 @@ public interface FOValidationEventProducer extends EventProducer {
      * @event.severity FATAL
      */
     void emptyDocument(Object source) throws ValidationException;
- 
+
     /**
      * An unknown/unsupported formatting object has been encountered.
      * @param source the event source
@@ -353,5 +353,5 @@ public interface FOValidationEventProducer extends EventProducer {
      */
     void unknownFormattingObject(Object source, String elementName,
             QName offendingNode, Locator loc);
-    
+
 }

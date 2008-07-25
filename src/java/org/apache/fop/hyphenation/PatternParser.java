@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.hyphenation;
 
 // SAX
@@ -84,7 +84,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     public void parse(String filename) throws HyphenationException {
         parse(new File(filename));
     }
-    
+
     /**
      * Parses a hyphenation pattern file.
      * @param file the pattern file
@@ -95,7 +95,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             InputSource src = new InputSource(file.toURI().toURL().toExternalForm());
             parse(src);
         } catch (MalformedURLException e) {
-            throw new HyphenationException("Error converting the File '" + file + "' to a URL: " 
+            throw new HyphenationException("Error converting the File '" + file + "' to a URL: "
                     + e.getMessage());
         }
     }
@@ -116,7 +116,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             throw new HyphenationException(errMsg);
         }
     }
-    
+
     /**
      * Creates a SAX parser using JAXP
      * @return the created SAX parser
@@ -254,7 +254,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     //
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void startElement(String uri, String local, String raw,
                              Attributes attrs) {
@@ -283,7 +283,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void endElement(String uri, String local, String raw) {
 
@@ -320,7 +320,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void characters(char ch[], int start, int length) {
         StringBuffer chars = new StringBuffer(length);

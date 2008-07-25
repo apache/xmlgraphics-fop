@@ -33,5 +33,5 @@ public interface EventListener extends java.util.EventListener {
      * @param event the event
      */
     void processEvent(Event event);
-    
+
 }

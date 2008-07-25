@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,7 +49,7 @@ import org.apache.fop.layoutmgr.TopLevelLayoutManager;
 
 /**
  * Area tree handler for formatting objects.
- * 
+ *
  * Concepts: The area tree is to be as small as possible. With minimal classes
  * and data to fully represent an area tree for formatting objects. The area
  * tree needs to be simple to render and follow the spec closely. This area tree
@@ -61,7 +61,7 @@ import org.apache.fop.layoutmgr.TopLevelLayoutManager;
  * type of renderer.
  */
 public class AreaTreeHandler extends FOEventHandler {
-    
+
     private static Log log = LogFactory.getLog(AreaTreeHandler.class);
 
     // Recorder of debug statistics
@@ -78,7 +78,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     // The fo:root node of the document
     private Root rootFObj;
-    
+
     // The formatting results to be handed back to the caller.
     private FormattingResults results = new FormattingResults();
 
@@ -88,7 +88,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Constructor.
-     * 
+     *
      * @param userAgent FOUserAgent object for process
      * @param outputFormat the MIME type of the output format to use (ex.
      * "application/pdf").
@@ -107,7 +107,7 @@ public class AreaTreeHandler extends FOEventHandler {
         }
 
         idTracker = new IDTracker();
-        
+
         if (log.isDebugEnabled()) {
             statistics = new Statistics();
         }
@@ -115,7 +115,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Sets up the AreaTreeModel instance for use by the AreaTreeHandler.
-     * 
+     *
      * @param userAgent FOUserAgent object for process
      * @param outputFormat the MIME type of the output format to use (ex.
      * "application/pdf").
@@ -129,7 +129,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Get the area tree model for this area tree.
-     * 
+     *
      * @return AreaTreeModel the model being used for this area tree
      */
     public AreaTreeModel getAreaTreeModel() {
@@ -138,7 +138,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Get the LayoutManager maker for this area tree.
-     * 
+     *
      * @return LayoutManagerMaker the LayoutManager maker being used for this
      *         area tree
      */
@@ -148,7 +148,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Get the IDTracker for this area tree.
-     * 
+     *
      * @return IDTracker used to track reference ids for items in this area tree
      */
     public IDTracker getIDTracker() {
@@ -157,7 +157,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Get information about the rendered output, like number of pages created.
-     * 
+     *
      * @return the results structure
      */
     public FormattingResults getResults() {
@@ -167,7 +167,7 @@ public class AreaTreeHandler extends FOEventHandler {
     /**
      * Prepare AreaTreeHandler for document processing This is called from
      * FOTreeBuilder.startDocument()
-     * 
+     *
      * @throws SAXException
      *             if there is an error
      */
@@ -193,7 +193,7 @@ public class AreaTreeHandler extends FOEventHandler {
     public void startPageSequence(PageSequence pageSequence) {
         startAbstractPageSequence(pageSequence);
     }
-    
+
     private void startAbstractPageSequence(AbstractPageSequence pageSequence) {
         rootFObj = pageSequence.getRoot();
         finishPrevPageSequence(pageSequence.getInitialPageNumber());
@@ -217,7 +217,7 @@ public class AreaTreeHandler extends FOEventHandler {
     /**
      * End the PageSequence. The PageSequence formats Pages and adds them to the
      * AreaTree. The area tree then handles what happens with the pages.
-     * 
+     *
      * @param pageSequence the page sequence ending
      */
     public void endPageSequence(PageSequence pageSequence) {
@@ -248,20 +248,20 @@ public class AreaTreeHandler extends FOEventHandler {
         if (statistics != null) {
             statistics.end();
         }
-        
+
         ExternalDocumentLayoutManager edLM;
         edLM = getLayoutManagerMaker().makeExternalDocumentLayoutManager(this, document);
         edLM.activateLayout();
         // preserve the current PageSequenceLayoutManger for the
         // force-page-count check at the beginning of the next PageSequence
         prevPageSeqLM = edLM;
-        
+
     }
 
     /**
      * Called by the PageSequenceLayoutManager when it is finished with a
      * page-sequence.
-     * 
+     *
      * @param pageSequence the page-sequence just finished
      * @param pageCount The number of pages generated for the page-sequence
      */
@@ -275,7 +275,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * End the document.
-     * 
+     *
      * @throws SAXException if there is some error
      */
     public void endDocument() throws SAXException {
@@ -313,7 +313,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * Add a OffDocumentItem to the area tree model. This checks if the
      * OffDocumentItem is resolvable and attempts to resolve or add the
      * resolvable ids for later resolution.
-     * 
+     *
      * @param odi the OffDocumentItem to add.
      */
     private void addOffDocumentItem(OffDocumentItem odi) {
@@ -342,7 +342,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Generates and returns a unique key for a page viewport.
-     * 
+     *
      * @return the generated key.
      */
     public String generatePageViewportKey() {
@@ -354,7 +354,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * Tie a PageViewport with an ID found on a child area of the PV. Note that
      * an area with a given ID may be on more than one PV, hence an ID may have
      * more than one PV associated with it.
-     * 
+     *
      * @param id the property ID of the area
      * @param pv a page viewport that contains the area with this ID
      * @deprecated use getIdTracker().associateIDWithPageViewport(id, pv) instead
@@ -367,7 +367,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * This method tie an ID to the areaTreeHandler until this one is ready to
      * be processed. This is used in page-number-citation-last processing so we
      * know when an id can be resolved.
-     * 
+     *
      * @param id the id of the object being processed
      * @deprecated use getIdTracker().signalPendingID(id) instead
      */
@@ -379,7 +379,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * Signals that all areas for the formatting object with the given ID have
      * been generated. This is used to determine when page-number-citation-last
      * ref-ids can be resolved.
-     * 
+     *
      * @param id the id of the formatting object which was just finished
      * @deprecated use getIdTracker().signalIDProcessed(id) instead
      */
@@ -389,7 +389,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Check if an ID has already been resolved
-     * 
+     *
      * @param id the id to check
      * @return true if the ID has been resolved
      * @deprecated use getIdTracker().alreadyResolvedID(id) instead
@@ -400,7 +400,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Tries to resolve all unresolved ID references on the given page.
-     * 
+     *
      * @param pv page viewport whose ID refs to resolve
      * @deprecated use getIdTracker().tryIDResolution(pv) instead
      */
@@ -410,7 +410,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Get the list of page viewports that have an area with a given id.
-     * 
+     *
      * @param id the id to lookup
      * @return the list of PageViewports
      * @deprecated use getIdTracker().getPageViewportsContainingID(id) instead
@@ -421,7 +421,7 @@ public class AreaTreeHandler extends FOEventHandler {
 
     /**
      * Add an Resolvable object with an unresolved idref
-     * 
+     *
      * @param idref the idref whose target id has not yet been located
      * @param res the Resolvable object needing the idref to be resolved
      * @deprecated use getIdTracker().addUnresolvedIDRef(idref, res) instead
@@ -429,7 +429,7 @@ public class AreaTreeHandler extends FOEventHandler {
     public void addUnresolvedIDRef(String idref, Resolvable res) {
         idTracker.addUnresolvedIDRef(idref, res);
     }
-    
+
     private class Statistics {
         // for statistics gathering
         private Runtime runtime;

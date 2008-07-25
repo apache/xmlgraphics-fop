@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,12 +33,12 @@ import org.apache.fop.fo.extensions.destination.Destination;
  * Element mapping for FOP's proprietary extension to XSL-FO.
  */
 public class ExtensionElementMapping extends ElementMapping {
-    
+
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/extensions";
 
     private static final Set propertyAttributes = new java.util.HashSet();
-    
+
     static {
         //These are FOP's standard extension properties (fox:*)
         propertyAttributes.add("block-progression-unit");
@@ -46,7 +46,7 @@ public class ExtensionElementMapping extends ElementMapping {
         propertyAttributes.add("orphan-content-limit");
         propertyAttributes.add("internal-destination");
     }
-    
+
     /**
      * Constructor.
      */
@@ -66,7 +66,7 @@ public class ExtensionElementMapping extends ElementMapping {
             foObjs.put("external-document", new ExternalDocumentMaker());
         }
     }
-    
+
     static class DestinationMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new Destination(parent);
@@ -83,7 +83,7 @@ public class ExtensionElementMapping extends ElementMapping {
     public String getStandardPrefix() {
         return "fox";
     }
-    
+
     /** {@inheritDoc} */
     public boolean isAttributeProperty(QName attributeName) {
         if (!URI.equals(attributeName.getNamespaceURI())) {
@@ -91,5 +91,5 @@ public class ExtensionElementMapping extends ElementMapping {
         }
         return propertyAttributes.contains(attributeName.getLocalName());
     }
-    
+
 }

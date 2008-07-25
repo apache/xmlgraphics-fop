@@ -31,10 +31,10 @@ public abstract class UnresolvedListElement extends ListElement {
     public UnresolvedListElement(Position position) {
         super(position);
     }
-    
+
     /** @return true if the element is conditional (conditionality="discard") */
     public abstract boolean isConditional();
-    
+
     /** @return the layout manager that created this ListElement */
     protected LayoutManager getOriginatingLayoutManager() {
         Position pos = getPosition();
@@ -43,5 +43,5 @@ public abstract class UnresolvedListElement extends ListElement {
         }
         return pos.getLM();
     }
-    
+
 }

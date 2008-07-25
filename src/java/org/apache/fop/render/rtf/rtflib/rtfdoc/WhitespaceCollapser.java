@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,7 +63,7 @@ class WhitespaceCollapser {
             txt.setText(newString);
         }
     }
-    
+
     /** process one RtfString from our container */
     private void processString(RtfString txt) {
         final String newString = processString(txt.getText());
@@ -71,7 +71,7 @@ class WhitespaceCollapser {
             txt.setText(newString);
         }
     }
-    
+
     /** process one String */
     private String processString(String txt) {
         final String orig = txt;
@@ -80,7 +80,7 @@ class WhitespaceCollapser {
         // to collapse multiple spaces into one
         if (orig == null) {
             return null;
-        } else if (orig.length() > 0) { 
+        } else if (orig.length() > 0) {
             final boolean allSpaces = orig.trim().length() == 0;
             final boolean endSpace = allSpaces
                                      || Character.isWhitespace(orig.charAt(orig.length() - 1));

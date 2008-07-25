@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.image.loader.batik;
 
 import java.io.DataInputStream;
@@ -49,8 +49,8 @@ public class PreloaderWMF extends AbstractImagePreloader {
     private static Log log = LogFactory.getLog(PreloaderWMF.class);
 
     private boolean batikAvailable = true;
-    
-    /** {@inheritDoc} */ 
+
+    /** {@inheritDoc} */
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         if (!ImageUtil.hasInputStream(src)) {
@@ -86,7 +86,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
             InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
             try {
                 in.mark(4 + 1);
-                
+
                 DataInputStream din = new DataInputStream(in);
                 int magic = EndianUtils.swapInteger(din.readInt());
                 din.reset();
@@ -97,11 +97,11 @@ public class PreloaderWMF extends AbstractImagePreloader {
                 WMFRecordStore wmfStore = new WMFRecordStore();
                 wmfStore.read(din);
                 IOUtils.closeQuietly(din);
-                
+
                 int width = wmfStore.getWidthUnits();
                 int height = wmfStore.getHeightUnits();
                 int dpi = wmfStore.getMetaFileUnitsPerInch();
-                
+
                 ImageInfo info = new ImageInfo(uri, "image/x-wmf");
                 ImageSize size = new ImageSize();
                 size.setSizeInPixels(width, height);
@@ -110,7 +110,7 @@ public class PreloaderWMF extends AbstractImagePreloader {
                 info.setSize(size);
                 ImageWMF img = new ImageWMF(info, wmfStore);
                 info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, img);
-                
+
                 return info;
             } catch (NoClassDefFoundError ncdfe) {
                 try {

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * must be resolved against base value before the value can be used.
  * <p>
  * To support relative numerics internally in the expresion parser and
- * during evaulation one additional methods exists: isAbsolute() which 
+ * during evaulation one additional methods exists: isAbsolute() which
  * return true for absolute numerics and false for relative numerics.
  */
 public interface Numeric {
@@ -40,7 +40,7 @@ public interface Numeric {
      * @throws PropertyException
      */
     double getNumericValue() throws PropertyException;
-    
+
     /**
      * Return the value of this Numeric
      * @param context The context for the length calculation (for percentage based lengths)
@@ -78,10 +78,10 @@ public interface Numeric {
     public int getValue(PercentBaseContext context);
 
     /**
-     * Return the resolved value. This method will becalled during evaluation 
-     * of the expression tree and relative numerics can then return a 
+     * Return the resolved value. This method will becalled during evaluation
+     * of the expression tree and relative numerics can then return a
      * resolved absolute Numeric. Absolute numerics can just return themself.
-     * 
+     *
      * @return A resolved value.
      * @throws PropertyException
      */

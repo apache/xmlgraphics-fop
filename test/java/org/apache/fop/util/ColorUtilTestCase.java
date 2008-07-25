@@ -39,16 +39,16 @@ public class ColorUtilTestCase extends TestCase {
     public void testSerialization() throws Exception {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         String s = ColorUtil.colorToString(col);
-        
-        //This is what the old color spit out. Now it is 80 due to rounding 
+
+        //This is what the old color spit out. Now it is 80 due to rounding
         //assertEquals("#ffff7f", s);
         assertEquals("#ffff80", s);
-        
+
         col = new Color(1.0f, 0.0f, 0.0f, 0.8f);
         s = ColorUtil.colorToString(col);
         assertEquals("#ff0000cc", s);
     }
-    
+
     /**
      * Test deserialization from String.
      * @throws Exception if an error occurs
@@ -66,7 +66,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(0, col.getBlue());
         assertEquals(204, col.getAlpha());
     }
-    
+
     /**
      * Test equals().
      * @throws Exception if an error occurs
@@ -76,7 +76,7 @@ public class ColorUtilTestCase extends TestCase {
         Color col2 = ColorUtil.parseColorString(null, "#ff0000cc");
         assertEquals(col1, col2);
     }
-    
+
     /**
      * Tests the rgb() function.
      * @throws Exception if an error occurs
@@ -85,7 +85,7 @@ public class ColorUtilTestCase extends TestCase {
         FopFactory fopFactory = FopFactory.newInstance();
         FOUserAgent ua = fopFactory.newFOUserAgent();
         Color colActual;
-        
+
         colActual = ColorUtil.parseColorString(ua, "rgb(255, 40, 0)");
         assertEquals(255, colActual.getRed());
         assertEquals(40, colActual.getGreen());
@@ -93,7 +93,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(255, colActual.getAlpha());
         assertEquals(ColorSpace.getInstance(ColorSpace.CS_sRGB), colActual.getColorSpace());
     }
-    
+
     /**
      * Tests the fop-rgb-icc() function.
      * @throws Exception if an error occurs
@@ -103,11 +103,11 @@ public class ColorUtilTestCase extends TestCase {
         ColorSpace cs = fopFactory.getColorSpace(null,
                 "src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm");
         assertNotNull(cs);
-        
-        
+
+
         FOUserAgent ua = fopFactory.newFOUserAgent();
         ColorExt colActual;
-        
+
         //fop-rgb-icc() is used instead of rgb-icc() inside FOP!
         String colSpec = "fop-rgb-icc(1.0,0.0,0.0,sRGBAlt,"
             + "\"src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm\",1.0,0.0,0.0)";
@@ -125,7 +125,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(1f, comps[0], 0);
         assertEquals(0f, comps[1], 0);
         assertEquals(0f, comps[2], 0);
-        
+
         assertEquals(colSpec, ColorUtil.colorToString(colActual));
 
         colSpec = "fop-rgb-icc(1.0,0.5,0.0,blah,"
@@ -133,7 +133,7 @@ public class ColorUtilTestCase extends TestCase {
         Color colFallback = ColorUtil.parseColorString(ua, colSpec);
         assertEquals(new Color(1.0f, 0.5f, 0.0f), colFallback);
     }
-    
+
     /**
      * Tests the cmyk() function.
      * @throws Exception if an error occurs
@@ -141,7 +141,7 @@ public class ColorUtilTestCase extends TestCase {
     public void testCMYK() throws Exception {
         ColorExt colActual;
         String colSpec;
-        
+
         colSpec = "cmyk(0.0, 0.0, 1.0, 0.0)";
         colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
         assertEquals(255, colActual.getRed());
@@ -155,7 +155,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(1f, comps[2], 0);
         assertEquals(0f, comps[3], 0);
         assertEquals("cmyk(0.0,0.0,1.0,0.0)", ColorUtil.colorToString(colActual));
-        
+
         colSpec = "cmyk(0.0274, 0.2196, 0.3216, 0.0)";
         colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
         assertEquals(248, colActual.getRed());
@@ -169,5 +169,5 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(0f, comps[3], 0);
         assertEquals("cmyk(0.0274,0.2196,0.3216,0.0)", ColorUtil.colorToString(colActual));
     }
-    
+
 }

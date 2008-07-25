@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -120,7 +120,7 @@ public class Character extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -161,25 +161,25 @@ public class Character extends FObj {
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
-    
+
     /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
-    
+
     /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
-    
+
     /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
-    
+
     /** @return the "letter-spacing" property */
     public Property getLetterSpacing() {
-        return letterSpacing; 
+        return letterSpacing;
     }
 
     /** @return the "line-height" property */
@@ -189,29 +189,29 @@ public class Character extends FObj {
 
     /** @return the "text-decoration" property. */
     public CommonTextDecoration getTextDecoration() {
-        return textDecoration; 
+        return textDecoration;
     }
-    
+
     /** @return the "word-spacing" property */
     public Property getWordSpacing() {
-        return wordSpacing; 
+        return wordSpacing;
     }
 
     /** @return the "keep-with-next" property */
     public KeepProperty getKeepWithNext() {
         return keepWithNext;
     }
-    
+
     /** @return the "keep-with-previous" property */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "character";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_CHARACTER}
@@ -219,16 +219,16 @@ public class Character extends FObj {
     public int getNameId() {
         return FO_CHARACTER;
     }
-    
+
     private class FOCharIterator extends CharIterator {
 
         private boolean bFirst = true;
         private Character foChar;
-        
+
         FOCharIterator(Character foChar) {
             this.foChar = foChar;
         }
-        
+
         public boolean hasNext() {
             return bFirst;
         }

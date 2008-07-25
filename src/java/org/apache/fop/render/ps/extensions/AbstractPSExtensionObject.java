@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.ps.extensions;
 
 // FOP
@@ -35,7 +35,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 public abstract class AbstractPSExtensionObject extends FONode {
 
     private PSSetupCode setupCode = new PSSetupCode();
-    
+
     /**
      * Main constructor.
      * @param parent the parent node
@@ -46,7 +46,7 @@ public abstract class AbstractPSExtensionObject extends FONode {
     }
 
     /** {@inheritDoc} */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -69,14 +69,14 @@ public abstract class AbstractPSExtensionObject extends FONode {
     public String getNamespaceURI() {
         return PSExtensionElementMapping.NAMESPACE;
     }
-    
+
     /**{@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "ps";
     }
 
     /** {@inheritDoc} */
-    public void processNode(String elementName, Locator locator, 
+    public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
         String name = attlist.getValue("name");
@@ -88,12 +88,12 @@ public abstract class AbstractPSExtensionObject extends FONode {
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
-        String s = setupCode.getContent(); 
+        String s = setupCode.getContent();
         if (s == null || s.length() == 0) {
             missingChildElementError("#PCDATA");
         }
     }
-    
+
     /** {@inheritDoc} */
     public ExtensionAttachment getExtensionAttachment() {
         return this.setupCode;

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,7 +100,7 @@ public class RtfTableCell
         if (attrs == null) {
             attrs = new RtfAttributes();
         }
-        
+
         attrs.set("intbl");
 
         paragraph = new RtfParagraph(this, writer, attrs);
@@ -192,13 +192,13 @@ public class RtfTableCell
          * table (Word2000 seems to do the same).
          * Cause of this, dont't write horizontally merged cells.
          * They just exist as placeholders in TableContext class,
-         * and are never written to RTF file.    
+         * and are never written to RTF file.
          */
         // horizontal cell merge codes
         if (hMerge == MERGE_WITH_PREVIOUS) {
             return offset;
         }
-        
+
         newLine();
         this.widthOffset = offset;
 
@@ -225,13 +225,13 @@ public class RtfTableCell
         if (attrib.getValue("number-columns-spanned") != null) {
             // Get the number of columns spanned
             int nbMergedCells = ((Integer)attrib.getValue("number-columns-spanned")).intValue();
-            
+
             RtfTable tab = getRow().getTable();
-            
+
             // Get the context of the current table in order to get the width of each column
             ITableColumnsInfo tableColumnsInfo
                 = tab.getITableColumnsInfo();
-            
+
             tableColumnsInfo.selectFirstColumn();
 
             // Reach the column index in table context corresponding to the current column cell
@@ -273,7 +273,7 @@ public class RtfTableCell
         return xPos;
 
     }
-    
+
     /**
      * Overriden to avoid writing any it's a merged cell.
      * @throws IOException for I/O problems
@@ -283,7 +283,7 @@ public class RtfTableCell
        if (hMerge == MERGE_WITH_PREVIOUS) {
            return;
        }
-       
+
        super.writeRtfContent();
     }
 
@@ -297,7 +297,7 @@ public class RtfTableCell
         if (hMerge == MERGE_WITH_PREVIOUS) {
             return;
         }
-        
+
         super.writeRtfPrefix();
     }
 
@@ -310,7 +310,7 @@ public class RtfTableCell
         if (hMerge == MERGE_WITH_PREVIOUS) {
             return;
         }
-        
+
         if (getRow().getTable().isNestedTable()) {
             //nested table
             writeControlWordNS("nestcell");
@@ -330,19 +330,19 @@ public class RtfTableCell
                 writeControlWord("qr");
             } else {
                 RtfElement lastChild = null;
-                
+
                 if (getChildren().size() > 0) {
                     lastChild = (RtfElement) getChildren().get(getChildren().size() - 1);
                 }
-                    
-                
+
+
                 if (lastChild != null
                         && lastChild instanceof RtfTextrun) {
-                    //Don't write \ql in order to allow for example a right aligned paragraph 
+                    //Don't write \ql in order to allow for example a right aligned paragraph
                     //in a not right aligned table-cell to write its \qr.
                 } else {
                     writeControlWord("ql");
-                }                
+                }
             }
 
             if (!containsText()) {
@@ -497,7 +497,7 @@ public class RtfTableCell
         }
         return result;
     }
-    
+
     /**
      * Returns the current RtfTextrun object.
      * Opens a new one if necessary.
@@ -506,20 +506,20 @@ public class RtfTableCell
      */
     public RtfTextrun getTextrun() throws IOException {
         RtfAttributes attrs = new RtfAttributes();
-        
+
         if (!getRow().getTable().isNestedTable()) {
             attrs.set("intbl");
         }
-        
+
         RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, attrs);
 
         //Suppress the very last \par, because the closing \cell applies the
-        //paragraph attributes. 
-        textrun.setSuppressLastPar(true);  
-        
+        //paragraph attributes.
+        textrun.setSuppressLastPar(true);
+
         return textrun;
     }
-    
+
     /**
      * Get the parent row.
      * @return The parent row.
@@ -534,6 +534,6 @@ public class RtfTableCell
             e = e.parent;
         }
 
-        return null;  
+        return null;
     }
 }

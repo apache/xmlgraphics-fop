@@ -33,15 +33,15 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 
 /**
- * This class provides some useful methods to print the structure of a HyphenationTree object 
+ * This class provides some useful methods to print the structure of a HyphenationTree object
  */
 public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
 
     /**
-     * The HyphenationTree object to analyse 
+     * The HyphenationTree object to analyse
      */
     protected HyphenationTree ht;
-    
+
     /**
      * @param ht the HyphenationTree object
      */
@@ -49,7 +49,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
         super(ht);
         this.ht = ht;
     }
-    
+
     /**
      * Class representing a node of the HyphenationTree object
      */
@@ -65,7 +65,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
                 value = readValue().toString();
             }
         }
-        
+
         private StringBuffer readValue() {
             StringBuffer s = new StringBuffer();
             int i = (int) ht.eq[index];
@@ -100,7 +100,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
                 return super.toNodeString();
             }
         }
-        
+
         /* (non-Javadoc)
          * @see org.apache.fop.hyphenation.TernaryTreeAnalysis.Node#toCompactString()
          */
@@ -118,7 +118,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
                 return super.toCompactString();
             }
         }
-        
+
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
@@ -130,7 +130,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
             }
             return s.toString();
         }
-        
+
     }
 
     private void addNode(int nodeIndex, List strings, NodeString ns) {
@@ -182,7 +182,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
             }
             tree.append(indentString);
             tree.append(ns.string + "\n");
-            
+
             if (i + 1 == strings.size()) {
                 continue;
             }
@@ -199,10 +199,10 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
             }
             tree.append(indentString + "\n");
         }
-        
+
         return tree.toString();
     }
-    
+
     /**
      * Construct the tree representation of the HyphenationTree object
      * @return the string representing the tree
@@ -214,7 +214,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
         addNode(1, strings, ns);
         return toTree(strings);
     }
-    
+
     /**
      * Construct the compact node representation of the HyphenationTree object
      * @return the string representing the tree
@@ -229,7 +229,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
         }
         return s.toString();
     }
-    
+
     /**
      * Construct the node representation of the HyphenationTree object
      * @return the string representing the tree
@@ -244,17 +244,17 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
         }
         return s.toString();
     }
-    
+
     /**
      * Construct the printed representation of the HyphenationTree object
      * @return the string representing the tree
      */
     public String toString() {
         StringBuffer s = new StringBuffer();
-        
+
         s.append("classes: \n");
         s.append((new TernaryTreeAnalysis(ht.classmap)).toString());
-        
+
         s.append("\npatterns: \n");
         s.append(super.toString());
         s.append("vspace: ");
@@ -275,12 +275,12 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
             }
         }
         s.append("\n");
-        
+
         return s.toString();
     }
 
     /**
-     * Provide interactive access to a HyphenationTree object and its representation methods 
+     * Provide interactive access to a HyphenationTree object and its representation methods
      * @param args the arguments
      */
     public static void main(String[] args) {
@@ -327,7 +327,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
                     System.out.print("Object file name: ");
                     token = in.readLine().trim();
                     try {
-                        String[] parts = token.split(":"); 
+                        String[] parts = token.split(":");
                         InputStream is = null;
                         if (parts.length == 1) {
                             is = new FileInputStream(token);
@@ -399,7 +399,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader(token));
                         String line;
-                        
+
                         starttime = System.currentTimeMillis();
                         while ((line = reader.readLine()) != null) {
                             // System.out.print("\nline: ");
@@ -422,7 +422,7 @@ public class HyphenationTreeAnalysis extends TernaryTreeAnalysis {
                     long result = endtime - starttime;
                     System.out.println(counter + " words in " + result
                                        + " Milliseconds hyphenated");
-                    
+
                 } else if (token.equals("q")) {
                     break;
                 }

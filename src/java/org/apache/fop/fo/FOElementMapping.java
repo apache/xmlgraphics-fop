@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import org.apache.xmlgraphics.util.QName;
  * Element mapping class for all XSL-FO elements.
  */
 public class FOElementMapping extends ElementMapping {
-    
+
     /** The XSL-FO namespace URI */
     public static final String URI = "http://www.w3.org/1999/XSL/Format";
 
@@ -143,12 +143,12 @@ public class FOElementMapping extends ElementMapping {
     public String getStandardPrefix() {
         return "fo";
     }
-    
+
     /** {@inheritDoc} */
     public boolean isAttributeProperty(QName attributeName) {
         return true; //All XSL-FO attributes are to be converted to properties.
     }
-    
+
     static class RootMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.Root(parent);
@@ -364,7 +364,7 @@ public class FOElementMapping extends ElementMapping {
             return new org.apache.fop.fo.flow.PageNumberCitationLast(parent);
         }
     }
-    
+
     static class TableAndCaptionMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.table.TableAndCaption(parent);

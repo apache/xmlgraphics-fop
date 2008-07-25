@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area;
 
 import java.util.Collection;
@@ -33,7 +33,7 @@ import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
  * child bookmark-items under it.
  */
 public class BookmarkData extends AbstractOffDocumentItem implements Resolvable {
-    
+
     private List subData = new java.util.ArrayList();
 
     // bookmark-title for this fo:bookmark
@@ -92,7 +92,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
         }
         refs.add(bd);
     }
-    
+
     /**
      * Create a new bookmark data root object.
      * This constructor is called by the AreaTreeParser when the

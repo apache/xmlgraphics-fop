@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ public class TTFFontLoader extends FontLoader {
     private MultiByteFont multiFont;
     private SingleByteFont singleFont;
     private String subFontName;
-    
+
     /**
      * Default constructor
      * @param fontFileURI the URI representing the font file
@@ -55,7 +55,7 @@ public class TTFFontLoader extends FontLoader {
     public TTFFontLoader(String fontFileURI, FontResolver resolver) {
         this(fontFileURI, null, true, resolver);
     }
-    
+
     /**
      * Additional constructor for TrueType Collections.
      * @param fontFileURI the URI representing the font file
@@ -69,14 +69,14 @@ public class TTFFontLoader extends FontLoader {
         super(fontFileURI, embedded, resolver);
         this.subFontName = subFontName;
     }
-    
+
     /** {@inheritDoc} */
     protected void read() throws IOException {
         read(this.subFontName);
     }
 
     /**
-     * Reads a TrueType font. 
+     * Reads a TrueType font.
      * @param ttcFontName the TrueType sub-font name of TrueType Collection (may be null for
      *    normal TrueType fonts)
      * @throws IOException if an I/O error occurs
@@ -96,16 +96,16 @@ public class TTFFontLoader extends FontLoader {
             IOUtils.closeQuietly(in);
         }
     }
-    
-    
+
+
     private void buildFont(TTFFile ttf, String ttcFontName) {
         if (ttf.isCFF()) {
             throw new UnsupportedOperationException(
                     "OpenType fonts with CFF data are not supported, yet");
         }
-        
+
         boolean isCid = this.embedded;
-        
+
         if (isCid) {
             multiFont = new MultiByteFont();
             returnFont = multiFont;
@@ -153,7 +153,7 @@ public class TTFFontLoader extends FontLoader {
             returnFont.setLastChar(ttf.getLastChar());
             copyWidthsSingleByte(ttf);
         }
-        
+
         copyKerning(ttf, isCid);
         if (this.embedded && ttf.isEmbeddable()) {
             multiFont.setEmbedFileName(this.fontFileURI);
@@ -184,12 +184,12 @@ public class TTFFontLoader extends FontLoader {
             }
         }
     }
-    
+
     /**
      * Copy kerning information.
      */
     private void copyKerning(TTFFile ttf, boolean isCid) {
-        
+
         // Get kerning
         Iterator iter;
         if (isCid) {
@@ -209,5 +209,5 @@ public class TTFFontLoader extends FontLoader {
             }
             returnFont.putKerningEntry(kpx1, h2);
         }
-    }    
+    }
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 // Java
@@ -43,7 +43,7 @@ import org.apache.fop.apps.MimeConstants;
 import embedding.model.ProjectTeam;
 
 /**
- * This class demonstrates the conversion of an arbitrary object file to a 
+ * This class demonstrates the conversion of an arbitrary object file to a
  * PDF using JAXP (XSLT) and FOP (XSL:FO).
  */
 public class ExampleObj2PDF {
@@ -60,9 +60,9 @@ public class ExampleObj2PDF {
      * @throws FOPException In case of a FOP problem
      * @throws TransformerException In case of a XSL transformation problem
      */
-    public void convertProjectTeam2PDF(ProjectTeam team, File xslt, File pdf) 
+    public void convertProjectTeam2PDF(ProjectTeam team, File xslt, File pdf)
                 throws IOException, FOPException, TransformerException {
-                    
+
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         // configure foUserAgent as desired
 
@@ -76,10 +76,10 @@ public class ExampleObj2PDF {
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(new StreamSource(xslt));
-        
+
             // Setup input for XSLT transformation
             Source src = team.getSourceForProjectTeam();
-        
+
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(fop.getDefaultHandler());
 
@@ -99,7 +99,7 @@ public class ExampleObj2PDF {
         try {
             System.out.println("FOP ExampleObj2PDF\n");
             System.out.println("Preparing...");
-            
+
             // Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
@@ -117,7 +117,7 @@ public class ExampleObj2PDF {
 
             ExampleObj2PDF app = new ExampleObj2PDF();
             app.convertProjectTeam2PDF(ExampleObj2XML.createSampleProjectTeam(), xsltfile, pdffile);
-            
+
             System.out.println("Success!");
         } catch (Exception e) {
             e.printStackTrace(System.err);

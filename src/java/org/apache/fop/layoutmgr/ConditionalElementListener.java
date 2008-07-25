@@ -49,5 +49,5 @@ public interface ConditionalElementListener {
      *                        (null means zero length)
      */
     void notifyPadding(RelSide side, MinOptMax effectiveLength);
-    
+
 }

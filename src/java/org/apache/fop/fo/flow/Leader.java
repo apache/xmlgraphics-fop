@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public class Leader extends InlineLevel {
 
     /**
      * Base constructor
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public Leader(FONode parent) {
@@ -130,22 +130,22 @@ public class Leader extends InlineLevel {
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
-    
+
     /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
-    
+
     /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
-    
+
     /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "leader";

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.OutputStream;
@@ -29,7 +29,7 @@ import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
  * This filter converts a pdf stream to ASCII hex data.
  */
 public class ASCIIHexFilter extends PDFFilter {
-    
+
     /**
      * Get the name of this filter.
      *
@@ -45,7 +45,7 @@ public class ASCIIHexFilter extends PDFFilter {
     public boolean isASCIIFilter() {
         return true;
     }
-    
+
     /**
      * Get the decode params.
      *

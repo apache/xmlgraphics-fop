@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,7 +80,7 @@ public class SimplePageMaster extends FObj {
         pageWidth = pList.get(PR_PAGE_WIDTH).getLength();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         writingMode = pList.getWritingMode();
-        
+
         if (masterName == null || masterName.equals("")) {
             missingPropertyError("master-name");
         }
@@ -112,7 +112,7 @@ public class SimplePageMaster extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: (region-body,region-before?,region-after?,region-start?,region-end?)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
             throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("region-body")) {
@@ -247,12 +247,12 @@ public class SimplePageMaster extends FObj {
     public Length getPageHeight() {
         return pageHeight;
     }
-    
+
     /** @return the "writing-mode" property. */
     public int getWritingMode() {
         return writingMode;
     }
-    
+
     /** @return the "reference-orientation" property. */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();

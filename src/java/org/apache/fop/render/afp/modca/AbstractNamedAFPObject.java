@@ -25,24 +25,24 @@ import java.io.UnsupportedEncodingException;
  * A named data stream object has an 8 byte EBCIDIC name.
  */
 public abstract class AbstractNamedAFPObject extends AbstractAFPObject {
-    
+
     /**
      * The actual name of the object
      */
     protected String name = null;
-    
+
     /**
      * The name of the object in EBCIDIC bytes
      */
     protected byte[] nameBytes;
-    
+
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
      * name parameter which should be 8 characters long.
      * @param name the object name
      */
     public AbstractNamedAFPObject(String name) {
-        
+
         this.name = name;
         if (name.length() < 8) {
             name = (name + "       ").substring(0, 8);
@@ -50,20 +50,20 @@ public abstract class AbstractNamedAFPObject extends AbstractAFPObject {
             log.warn("Constructor:: name truncated to 8 chars" + name);
             name = name.substring(0, 8);
         }
-        
+
         try {
-            
+
             nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
-            
+
         } catch (UnsupportedEncodingException usee) {
-            
+
             nameBytes = name.getBytes();
             log.warn(
                 "Constructor:: UnsupportedEncodingException translating the name "
                 + name);
-            
+
         }
-        
+
     }
-    
+
 }

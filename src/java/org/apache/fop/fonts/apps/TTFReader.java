@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts.apps;
 
 import java.io.IOException;
@@ -48,14 +48,14 @@ public class TTFReader extends AbstractFontReader {
     public static final String METRICS_VERSION_ATTR = "metrics-version";
     /** Current version number for the metrics file */
     public static final int METRICS_VERSION = 2;
-    
+
     /**
      * Main constructor.
      */
     public TTFReader() {
         super();
     }
-    
+
     private static void displayUsage() {
         System.out.println(
                 "java " + TTFReader.class.getName() + " [options] fontfile.ttf xmlfile.xml");
@@ -118,7 +118,7 @@ public class TTFReader extends AbstractFontReader {
         // defined.
         LogFactory logFactory = LogFactory.getFactory();
         if (System.getProperty("org.apache.commons.logging.Log") == null) {
-            logFactory.setAttribute("org.apache.commons.logging.Log", 
+            logFactory.setAttribute("org.apache.commons.logging.Log",
                                             CommandLineLogger.class.getName());
         }
 
@@ -166,17 +166,17 @@ public class TTFReader extends AbstractFontReader {
                     org.w3c.dom.Document doc = app.constructFontXML(ttf,
                             fontName, className, embResource, embFile, isCid,
                             ttcName);
-    
+
                     if (isCid) {
                         log.info("Creating CID encoded metrics...");
                     } else {
                         log.info("Creating WinAnsi encoded metrics...");
                     }
-    
+
                     if (doc != null) {
                         app.writeFontXML(doc, arguments[1]);
                     }
-    
+
                     if (ttf.isEmbeddable()) {
                         log.info("This font contains no embedding license restrictions.");
                     } else {
@@ -274,7 +274,7 @@ public class TTFReader extends AbstractFontReader {
         }
         Set familyNames = ttf.getFamilyNames();
         if (familyNames.size() > 0) {
-            String familyName = (String)familyNames.iterator().next(); 
+            String familyName = (String)familyNames.iterator().next();
             el = doc.createElement("family-name");
             root.appendChild(el);
             el.appendChild(doc.createTextNode(familyName));
@@ -356,7 +356,7 @@ public class TTFReader extends AbstractFontReader {
     private void generateDOM4MultiByteExtras(Element parent, TTFFile ttf, boolean isCid) {
         Element el;
         Document doc = parent.getOwnerDocument();
-        
+
         Element mel = doc.createElement("multibyte-extras");
         parent.appendChild(mel);
 
@@ -421,11 +421,11 @@ public class TTFReader extends AbstractFontReader {
             el.setAttribute("wdt", String.valueOf(ttf.getCharWidth(i)));
         }
     }
-    
+
     private void generateDOM4Kerning(Element parent, TTFFile ttf, boolean isCid) {
         Element el;
         Document doc = parent.getOwnerDocument();
-        
+
         // Get kerning
         Iterator iter;
         if (isCid) {
@@ -464,8 +464,8 @@ public class TTFReader extends AbstractFontReader {
     }
 
 
-    /** 
-     * Bugzilla 40739, check that attr has a metrics-version attribute 
+    /**
+     * Bugzilla 40739, check that attr has a metrics-version attribute
      * compatible with ours.
      * @param attr attributes read from the root element of a metrics XML file
      * @throws SAXException if incompatible
@@ -480,20 +480,20 @@ public class TTFReader extends AbstractFontReader {
             try {
                 version = Integer.parseInt(str);
                 if (version < METRICS_VERSION) {
-                    err = "Incompatible " + METRICS_VERSION_ATTR 
+                    err = "Incompatible " + METRICS_VERSION_ATTR
                         + " value (" + version + ", should be " + METRICS_VERSION
                         + ")"
-                     ; 
+                     ;
                 }
             } catch (NumberFormatException e) {
-                err = "Invalid " + METRICS_VERSION_ATTR 
+                err = "Invalid " + METRICS_VERSION_ATTR
                     + " attribute value (" + str + ")";
             }
         }
-        
+
         if (err != null) {
             throw new SAXException(
-                err 
+                err
                 + " - please regenerate the font metrics file with "
                 + "a more recent version of FOP."
             );

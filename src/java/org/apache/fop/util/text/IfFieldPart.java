@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,14 +30,14 @@ import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
  * <code>{field,if,Yes,No}</code>
  */
 public class IfFieldPart implements Part {
-    
+
     /** the field name for the part */
     protected String fieldName;
     /** the value being returned if the field is true */
     protected String ifValue;
     /** the value being returned if the field is false */
     protected String elseValue;
-    
+
     /**
      * Creates a new "if" field part.
      * @param fieldName the field name
@@ -61,7 +61,7 @@ public class IfFieldPart implements Part {
             ifValue = AdvancedMessageFormat.unescapeComma(values);
         }
     }
-    
+
     /** {@inheritDoc} */
     public void write(StringBuffer sb, Map params) {
         boolean isTrue = isTrue(params);
@@ -91,12 +91,12 @@ public class IfFieldPart implements Part {
     public boolean isGenerated(Map params) {
         return isTrue(params) || (elseValue != null);
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "{" + this.fieldName + ", if...}";
     }
-    
+
     /**
      * Part factory for "if".
      */
@@ -106,11 +106,11 @@ public class IfFieldPart implements Part {
         public Part newPart(String fieldName, String values) {
             return new IfFieldPart(fieldName, values);
         }
-        
+
         /** {@inheritDoc} */
         public String getFormat() {
             return "if";
         }
-        
+
     }
 }

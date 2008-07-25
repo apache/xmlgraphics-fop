@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
@@ -24,15 +24,15 @@ import java.io.ByteArrayOutputStream;
 import org.apache.avalon.framework.CascadingRuntimeException;
 
 /**
- * This class represents a simple number object. It also contains contains some 
+ * This class represents a simple number object. It also contains contains some
  * utility methods for outputting numbers to PDF.
  */
 public class PDFText extends PDFObject {
 
-    private static final char[] DIGITS 
+    private static final char[] DIGITS
                                = {'0', '1', '2', '3', '4', '5', '6', '7',
                                   '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-                                  
+
     private String text;
 
     /**
@@ -42,7 +42,7 @@ public class PDFText extends PDFObject {
     public String getText() {
         return this.text;
     }
-    
+
     /**
      * Sets the text.
      * @param text the text
@@ -97,7 +97,7 @@ public class PDFText extends PDFObject {
                     }
                 }
             }
-            
+
             if (hexMode) {
                 final byte[] uniBytes;
                 try {
@@ -114,7 +114,7 @@ public class PDFText extends PDFObject {
                 if (unicode) {
                     // byte order marker (0xfeff)
                     result.append("\\376\\377");
-                    
+
                     for (int i = 0; i < l; i++) {
                         final char ch = text.charAt(i);
                         final int high = (ch & 0xff00) >>> 8;
@@ -162,7 +162,7 @@ public class PDFText extends PDFObject {
         }
         return sb.toString();
     }
-    
+
     /**
      * Converts a byte array to a Hexadecimal String (3.2.3 in PDF 1.4 specs)
      * @param data the data to encode
@@ -171,7 +171,7 @@ public class PDFText extends PDFObject {
     public static final String toHex(byte[] data) {
         return toHex(data, true);
     }
-    
+
     /**
      * Converts a String to UTF-16 (big endian).
      * @param text text to convert
@@ -206,7 +206,7 @@ public class PDFText extends PDFObject {
         }
         return buf.toString();
     }
-    
+
     /**
      * Escaped a String as described in section 4.4 in the PDF 1.3 specs.
      * @param s String to escape

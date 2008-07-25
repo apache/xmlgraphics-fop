@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,11 +36,11 @@ public final class ColorExt extends Color {
     private float rgbReplacementRed;
     private float rgbReplacementGreen;
     private float rgbReplacementBlue;
-    
+
     private String iccProfileName;
     private String iccProfileSrc;
     private ColorSpace colorSpace;
-    
+
     private float[] colorValues;
 
     /*
@@ -59,7 +59,7 @@ public final class ColorExt extends Color {
 
     /**
      * Create ColorExt object backup up FO's rgb-icc color function
-     * 
+     *
      * @param redReplacement
      *            Red part of RGB replacement color that will be used when ICC
      *            profile can not be loaded
@@ -95,7 +95,7 @@ public final class ColorExt extends Color {
 
     /**
      * Create ColorExt object backing up SVG's icc-color function.
-     * 
+     *
      * @param red
      *            Red value resulting from the conversion from the user provided
      *            (icc) color values to the batik (rgb) color space
@@ -134,7 +134,7 @@ public final class ColorExt extends Color {
 
     /**
      * Get ICC profile name
-     * 
+     *
      * @return ICC profile name
      */
     public String getIccProfileName() {
@@ -143,7 +143,7 @@ public final class ColorExt extends Color {
 
     /**
      * Get ICC profile source
-     * 
+     *
      * @return ICC profile source
      */
     public String getIccProfileSrc() {

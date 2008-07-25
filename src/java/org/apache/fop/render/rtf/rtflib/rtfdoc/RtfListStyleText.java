@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,15 +37,15 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
  */
 public class RtfListStyleText extends RtfListStyle {
     private String text;
-    
+
     /**
      * Constructs a RtfListStyleText object.
      * @param s Text to be displayed
      */
     public RtfListStyleText(String s) {
-        text = s;    
+        text = s;
     }
-    
+
     /**
      * Gets called before a RtfListItem has to be written.
      * @param item RtfListItem whose prefix has to be written
@@ -68,10 +68,10 @@ public class RtfListStyleText extends RtfListStyle {
         RtfStringConverter.getInstance().writeRtfString(item.writer, text);
         item.writeGroupMark(false);
     }
-    
+
     /**
      * Gets called before a paragraph, which is contained by a RtfListItem has to be written.
-     * 
+     *
      * @param element RtfElement in whose context is to be written
      * {@inheritDoc}
      * @throws IOException Thrown when an IO-problem occurs
@@ -82,10 +82,10 @@ public class RtfListStyleText extends RtfListStyle {
         element.writeControlWord("pntext");
         element.writeGroupMark(false);
     }
-    
+
     /**
      * Gets called when the list table has to be written.
-     * 
+     *
      * @param element RtfElement in whose context is to be written
      * {@inheritDoc}
      * @throws IOException Thrown when an IO-problem occurs
@@ -94,7 +94,7 @@ public class RtfListStyleText extends RtfListStyle {
     throws IOException {
         element.attrib.set(RtfListTable.LIST_NUMBER_TYPE, 23);
         element.writeGroupMark(true);
-        
+
         String sCount;
         if (text.length() < 10) {
             sCount = "0" + String.valueOf(text.length());
@@ -105,14 +105,14 @@ public class RtfListStyleText extends RtfListStyle {
             }
         }
         element.writeOneAttributeNS(
-                RtfListTable.LIST_TEXT_FORM, "\\'" + sCount 
+                RtfListTable.LIST_TEXT_FORM, "\\'" + sCount
                     + RtfStringConverter.getInstance().escape(text));
         element.writeGroupMark(false);
-            
+
         element.writeGroupMark(true);
         element.writeOneAttributeNS(RtfListTable.LIST_NUM_POSITION, null);
         element.writeGroupMark(false);
-            
+
         element.attrib.set(RtfListTable.LIST_FONT_TYPE, 2);
     }
 }

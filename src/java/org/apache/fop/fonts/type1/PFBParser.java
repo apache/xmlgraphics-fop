@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts.type1;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * This class represents a parser for Adobe Type 1 PFB files.
- * 
+ *
  * @see PFBData
  */
 public class PFBParser {
@@ -104,7 +104,7 @@ public class PFBParser {
 
 
     private static int swapInteger(final int value) {
-        return (((value >> 0) & 0xff) << 24) 
+        return (((value >> 0) & 0xff) << 24)
              + (((value >> 8) & 0xff) << 16)
              + (((value >> 16) & 0xff) << 8)
              + (((value >> 24) & 0xff) << 0);

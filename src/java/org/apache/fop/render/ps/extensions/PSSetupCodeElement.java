@@ -24,13 +24,13 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 
 /**
- * Extension element for fox:ps-setup-code. 
+ * Extension element for fox:ps-setup-code.
  */
 public class PSSetupCodeElement extends AbstractPSExtensionObject {
 
     /** The element name */
     protected static final String ELEMENT = "ps-setup-code";
-    
+
     /**
      * Main constructor
      * @param parent parent FO node
@@ -38,7 +38,7 @@ public class PSSetupCodeElement extends AbstractPSExtensionObject {
     public PSSetupCodeElement(FONode parent) {
         super(parent);
     }
-    
+
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
@@ -47,10 +47,10 @@ public class PSSetupCodeElement extends AbstractPSExtensionObject {
                     "rule.childOfDeclarations");
         }
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return ELEMENT;
     }
-    
+
 }

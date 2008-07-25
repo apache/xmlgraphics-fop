@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,12 +38,12 @@ import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation">
- * <code>fo:page-number-citation</code></a> and 
+ * <code>fo:page-number-citation</code></a> and
  * <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation-last">
  * <code>fo:page-number-citation-last</code></a> objects.
  */
 public abstract class AbstractPageNumberCitation extends FObj {
-    
+
     // The value of properties relevant for fo:page-number-citation(-last).
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
@@ -73,12 +73,12 @@ public abstract class AbstractPageNumberCitation extends FObj {
     //     private int wrapOption;
     // End of property values
 
-    // Properties which are not explicitely listed but are still applicable 
+    // Properties which are not explicitely listed but are still applicable
     private Color color;
 
     /**
      * Base constructor
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public AbstractPageNumberCitation(FONode parent) {
@@ -99,7 +99,7 @@ public abstract class AbstractPageNumberCitation extends FObj {
         refId = pList.get(PR_REF_ID).getString();
         textDecoration = pList.getTextDecorationProps();
         // textShadow = pList.get(PR_TEXT_SHADOW);
-        
+
         // implicit properties
         color = pList.get(Constants.PR_COLOR).getColor(getUserAgent());
     }
@@ -116,7 +116,7 @@ public abstract class AbstractPageNumberCitation extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -135,29 +135,29 @@ public abstract class AbstractPageNumberCitation extends FObj {
 
     /** @return the "text-decoration" property. */
     public CommonTextDecoration getTextDecoration() {
-        return textDecoration; 
+        return textDecoration;
     }
-    
+
     /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
-    
+
     /** @return the "alignment-baseline" property */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
-    
+
     /** @return the "baseline-shift" property */
     public Length getBaselineShift() {
         return baselineShift;
     }
-    
+
     /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
-    
+
     /** @return the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
@@ -167,10 +167,10 @@ public abstract class AbstractPageNumberCitation extends FObj {
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
-    
+
     /** @return the "ref-id" property. */
     public String getRefId() {
         return refId;
     }
-     
+
 }

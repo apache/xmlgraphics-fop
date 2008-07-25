@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
@@ -30,9 +30,9 @@ import org.w3c.dom.Document;
  * This holds an xml document and the associated namespace.
  */
 public class ForeignObject extends Area {
-    
+
     private static final long serialVersionUID = -214947698798577885L;
-    
+
     private Document doc;
     private String namespace;
 
@@ -63,7 +63,7 @@ public class ForeignObject extends Area {
     public void setDocument(Document document) {
         this.doc = document;
     }
-    
+
     /**
      * Get the document for this foreign object.
      *

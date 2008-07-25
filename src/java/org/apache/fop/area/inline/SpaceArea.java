@@ -22,7 +22,7 @@ package org.apache.fop.area.inline;
  * A space
  */
 public class SpaceArea extends InlineArea {
-    
+
     /**
      * The space for this space area
      */
@@ -44,7 +44,7 @@ public class SpaceArea extends InlineArea {
         offset = o;
         isAdjustable = a;
     }
-    
+
     /**
      * @return Returns the space.
      */

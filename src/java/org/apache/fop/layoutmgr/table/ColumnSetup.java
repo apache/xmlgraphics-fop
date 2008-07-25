@@ -45,9 +45,9 @@ public class ColumnSetup {
     private Table table;
     private List columns = new java.util.ArrayList();
     private List colWidths = new java.util.ArrayList();
-    
+
     private int maxColIndexReferenced = 0;
-    
+
     /**
      * Main Constructor.
      * @param table the table to construct this column setup for
@@ -57,7 +57,7 @@ public class ColumnSetup {
         prepareColumns();
         initializeColumnWidths();
     }
-    
+
     private void prepareColumns() {
         List rawCols = table.getColumns();
         if (rawCols != null) {
@@ -124,7 +124,7 @@ public class ColumnSetup {
             return (TableColumn) columns.get(index - 1);
         }
     }
- 
+
     /** {@inheritDoc} */
     public String toString() {
         return columns.toString();
@@ -138,15 +138,15 @@ public class ColumnSetup {
             return columns.size();
         }
    }
-    
+
     /** @return an Iterator over all columns */
     public Iterator iterator() {
         return this.columns.iterator();
     }
-    
+
     /*
     private void createColumnsFromFirstRow() {
-        //TODO Create oldColumns from first row here 
+        //TODO Create oldColumns from first row here
         //--> rule 2 in "fixed table layout", see CSS2, 17.5.2
         //Alternative: extend oldColumns on-the-fly, but in this case we need the
         //new property evaluation context so proportional-column-width() works
@@ -159,13 +159,13 @@ public class ColumnSetup {
 
     /**
      * Initializes the column's widths
-     * 
+     *
      */
     private void initializeColumnWidths() {
-        
+
         TableColumn col;
         Length colWidth;
-        
+
         for (int i = columns.size(); --i >= 0;) {
             if (columns.get(i) != null) {
                 col = (TableColumn) columns.get(i);
@@ -175,21 +175,21 @@ public class ColumnSetup {
         }
         colWidths.add(0, null);
     }
-    
+
     /**
      * Works out the base unit for resolving proportional-column-width()
      * [p-c-w(x) = x * base_unit_ipd]
-     * 
+     *
      * @param tlm   the TableLayoutManager
      * @return the computed base unit (in millipoint)
      */
     protected double computeTableUnit(TableLayoutManager tlm) {
-        
+
         int sumCols = 0;
         float factors = 0;
         double unit = 0;
-        
-        /* calculate the total width (specified absolute/percentages), 
+
+        /* calculate the total width (specified absolute/percentages),
          * and work out the total number of factors to use to distribute
          * the remaining space (if any)
          */
@@ -204,9 +204,9 @@ public class ColumnSetup {
                 }
             }
         }
-        
-        /* distribute the remaining space over the accumulated 
-         * factors (if any) 
+
+        /* distribute the remaining space over the accumulated
+         * factors (if any)
          */
         if (factors > 0) {
             if (sumCols < tlm.getContentAreaIPD()) {
@@ -215,10 +215,10 @@ public class ColumnSetup {
                 log.warn("No space remaining to distribute over columns.");
             }
         }
-        
+
         return unit;
     }
-    
+
     /**
      * @param col column index (1 is first column)
      * @param context the context for percentage based calculations
@@ -258,5 +258,5 @@ public class ColumnSetup {
         }
         return sum;
     }
-    
+
 }

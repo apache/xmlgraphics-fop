@@ -32,7 +32,7 @@ import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
 public class GlyphNameFieldPart implements Part {
 
     private String fieldName;
-    
+
     /**
      * Creates a new glyph name field part
      * @param fieldName the field name
@@ -40,13 +40,13 @@ public class GlyphNameFieldPart implements Part {
     public GlyphNameFieldPart(String fieldName) {
         this.fieldName = fieldName;
     }
-    
+
     /** {@inheritDoc} */
     public boolean isGenerated(Map params) {
         Object obj = params.get(fieldName);
         return obj != null && getGlyphName(obj).length() > 0;
     }
-    
+
     private String getGlyphName(Object obj) {
         if (obj instanceof Character) {
             return Glyphs.charToGlyphName(((Character)obj).charValue());
@@ -71,7 +71,7 @@ public class GlyphNameFieldPart implements Part {
     public String toString() {
         return "{" + this.fieldName + ",glyph-name}";
     }
-    
+
     /** Factory for {@link GlyphNameFieldPart}. */
     public static class Factory implements PartFactory {
 
@@ -79,11 +79,11 @@ public class GlyphNameFieldPart implements Part {
         public Part newPart(String fieldName, String values) {
             return new GlyphNameFieldPart(fieldName);
         }
-        
+
         /** {@inheritDoc} */
         public String getFormat() {
             return "glyph-name";
         }
-        
+
     }
 }

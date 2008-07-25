@@ -43,7 +43,7 @@ public class MainReference extends Area {
         this.parent = parent;
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
     }
-      
+
     /**
      * Add a span area to this area.
      *
@@ -58,11 +58,11 @@ public class MainReference extends Area {
         RegionViewport rv = parent.getRegionViewport();
         int ipdWidth = (int) parent.getIPD()
             - rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
-        
-        Span newSpan = new Span(((spanAll) ? 1 : getColumnCount()), 
+
+        Span newSpan = new Span(((spanAll) ? 1 : getColumnCount()),
                 getColumnGap(), ipdWidth);
         spanAreas.add(newSpan);
-        return getCurrentSpan(); 
+        return getCurrentSpan();
     }
 
     /**

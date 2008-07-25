@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,11 +26,11 @@ import org.apache.fop.fo.FObj;
  * but should still already be checked. The actual value returned is not so important in this
  * case. But it's important that zero and non-zero values can be distinguished.
  * <p>
- * Example: A table with collapsing border model has no padding. The Table FO should be able 
+ * Example: A table with collapsing border model has no padding. The Table FO should be able
  * to check if non-zero values (even percentages) have been specified.
  */
 public final class ValidationPercentBaseContext implements PercentBaseContext {
-    
+
     /**
      * Main constructor.
      */
@@ -39,7 +39,7 @@ public final class ValidationPercentBaseContext implements PercentBaseContext {
 
     /**
      * Returns the value for the given lengthBase.
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         //Simply return a dummy value which produces a non-zero value when a non-zero percentage
@@ -48,7 +48,7 @@ public final class ValidationPercentBaseContext implements PercentBaseContext {
     }
 
     private static PercentBaseContext pseudoContextForValidation = null;
-    
+
     /** @return a base context for validation purposes. See class description. */
     public static PercentBaseContext getPseudoContext() {
         if (pseudoContextForValidation == null) {
@@ -56,5 +56,5 @@ public final class ValidationPercentBaseContext implements PercentBaseContext {
         }
         return pseudoContextForValidation;
     }
-    
+
 }

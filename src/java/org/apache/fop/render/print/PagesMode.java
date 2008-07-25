@@ -28,7 +28,7 @@ public final class PagesMode {
     public static final PagesMode EVEN = new PagesMode("even");
     /** the odd pages mode */
     public static final PagesMode ODD = new PagesMode("odd");
-    
+
     private String name;
 
     /**
@@ -43,7 +43,7 @@ public final class PagesMode {
     public String getName() {
         return this.name;
     }
-    
+
     /**
      * Returns a PagesMode instance by name.
      * @param name the name of the pages mode
@@ -60,10 +60,10 @@ public final class PagesMode {
             throw new IllegalArgumentException("Invalid value for PagesMode: " + name);
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "PagesMode:" + name;
     }
-    
+
 }

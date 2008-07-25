@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,7 +43,7 @@ import org.apache.fop.traits.MinOptMax;
  * which stack children in the inline direction, such as Inline or
  * Line. It should not be instantiated directly.
  */
-public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
+public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                                          implements InlineLevelLayoutManager {
 
 
@@ -103,7 +103,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Returns the extra IPD needed for any leading or trailing fences for the 
+     * Returns the extra IPD needed for any leading or trailing fences for the
      * current area.
      * @param bNotFirst true if not the first area for this layout manager
      * @param bNotLast true if not the last area for this layout manager
@@ -139,7 +139,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
     protected SpaceProperty getSpaceStart() {
         return null;
     }
-    
+
     /**
      * Get the space at the end of the inline area.
      * @return the space property describing the space
@@ -246,7 +246,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
         // The last element may not have a layout manager (its position == null);
         // this may happen if it is a padding box; see bug 39571.
-        InlineLevelLayoutManager LM = 
+        InlineLevelLayoutManager LM =
             (InlineLevelLayoutManager) element.getLayoutManager();
         if (LM != null) {
             oldList = LM.addALetterSpaceTo(oldList);
@@ -362,7 +362,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public List getChangedKnuthElements(List oldList, int alignment) {
         // "unwrap" the Positions stored in the elements

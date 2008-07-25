@@ -30,7 +30,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * ContentHandler (parser) for restoring AFPExtension objects from XML.
  */
-public class AFPExtensionHandler extends DefaultHandler 
+public class AFPExtensionHandler extends DefaultHandler
             implements ContentHandlerFactory.ObjectSource {
 
     /** Logger instance */
@@ -38,12 +38,12 @@ public class AFPExtensionHandler extends DefaultHandler
 
     private StringBuffer content = new StringBuffer();
     private Attributes lastAttributes;
-    
+
     private AFPPageSetup returnedObject;
     private ObjectBuiltListener listener;
-    
+
     /** {@inheritDoc} */
-    public void startElement(String uri, String localName, String qName, Attributes attributes) 
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
         boolean handled = false;
         if (AFPPageSetup.CATEGORY.equals(uri)) {
@@ -62,10 +62,10 @@ public class AFPExtensionHandler extends DefaultHandler
         }
         if (!handled) {
             if (AFPPageSetup.CATEGORY.equals(uri)) {
-                throw new SAXException("Unhandled element " + localName 
+                throw new SAXException("Unhandled element " + localName
                         + " in namespace: " + uri);
             } else {
-                log.warn("Unhandled element " + localName 
+                log.warn("Unhandled element " + localName
                         + " in namespace: " + uri);
             }
         }
@@ -87,7 +87,7 @@ public class AFPExtensionHandler extends DefaultHandler
                 returnedObject.setContent(content.toString());
                 content.setLength(0); //Reset text buffer (see characters())
             }
-        }    
+        }
     }
 
     /** {@inheritDoc} */

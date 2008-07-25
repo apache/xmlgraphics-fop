@@ -29,7 +29,7 @@ public class LineLayoutPossibilities {
 
     /** logger instance */
     protected static Log log = LogFactory.getLog(LineLayoutPossibilities.class);
-    
+
     private class Possibility {
         private int lineCount;
         private double demerits;
@@ -50,8 +50,8 @@ public class LineLayoutPossibilities {
         }
 
         private void addBreakPosition(Position pos) {
-            // Positions are always added with index 0 because 
-            // they are created backward, from the last one to 
+            // Positions are always added with index 0 because
+            // they are created backward, from the last one to
             // the first one
             breakPositions.add(0, pos);
         }
@@ -74,7 +74,7 @@ public class LineLayoutPossibilities {
         savedPossibilities = new java.util.ArrayList();
         optimumIndex = -1;
     }
- 
+
     public void addPossibility(int ln, double dem) {
         possibilitiesList.add(new Possibility(ln, dem));
         if (possibilitiesList.size() == 1) {
@@ -145,8 +145,8 @@ public class LineLayoutPossibilities {
                 } else {
                     // this should not happen
                     log.error("LineLayoutPossibilities restorePossibilities(),"
-                        + " min= " + getMinLineCount() 
-                        + " max= " + getMaxLineCount() 
+                        + " min= " + getMinLineCount()
+                        + " max= " + getMaxLineCount()
                         + " restored= " + restoredPossibility.getLineCount());
                     return;
                 }
@@ -158,7 +158,7 @@ public class LineLayoutPossibilities {
                 chosenIndex = optimumIndex;
             }
         }
-        //log.debug(">> minLineCount = " + getMinLineCount() 
+        //log.debug(">> minLineCount = " + getMinLineCount()
         //  + " optLineCount = " + getOptLineCount() + " maxLineCount() = " + getMaxLineCount());
     }
 

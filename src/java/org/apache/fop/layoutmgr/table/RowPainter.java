@@ -107,7 +107,7 @@ class RowPainter {
 
     /**
      * Signals that the end of the current table part is reached.
-     * 
+     *
      * @param lastInBody true if the part is the last table-body element to be displayed
      * on the current page. In which case all the cells must be flushed even if they
      * aren't finished, plus the proper collapsed borders must be selected (trailing
@@ -118,7 +118,7 @@ class RowPainter {
      */
     void endTablePart(boolean lastInBody, boolean lastOnPage) {
         addAreasAndFlushRow(lastInBody, lastOnPage);
-    
+
         if (tablePartBackground != null) {
             TableLayoutManager tableLM = tclm.getTableLM();
             for (Iterator iter = tablePartBackgroundAreas.iterator(); iter.hasNext();) {
@@ -139,7 +139,7 @@ class RowPainter {
     /**
      * Records the fragment of row represented by the given position. If it belongs to
      * another (grid) row than the current one, that latter is painted and flushed first.
-     * 
+     *
      * @param tcpos a position representing the row fragment
      */
     void handleTableContentPosition(TableContentPosition tcpos) {
@@ -173,7 +173,7 @@ class RowPainter {
                 firstCellParts[colIndex] = cellPart;
                 cellHeights[colIndex] = cellPart.getBorderPaddingBefore(firstCellOnPage[colIndex]);
             } else {
-                assert firstCellParts[colIndex].pgu == cellPart.pgu; 
+                assert firstCellParts[colIndex].pgu == cellPart.pgu;
                 cellHeights[colIndex] += cellPart.getConditionalBeforeContentLength();
             }
             cellHeights[colIndex] += cellPart.getLength();
@@ -185,7 +185,7 @@ class RowPainter {
      * Creates the areas corresponding to the last row. That is, an area with background
      * for the row, plus areas for all the cells that finish on the row (not spanning over
      * further rows).
-     * 
+     *
      * @param lastInPart true if the row is the last from its table part to be displayed
      * on the current page. In which case all the cells must be flushed even if they
      * aren't finished, plus the proper collapsed borders must be selected (trailing
@@ -204,7 +204,7 @@ class RowPainter {
         // Need to compute the actual row height first
         int actualRowHeight = 0;
         for (int i = 0; i < colCount; i++) {
-            GridUnit currentGU = currentRow.getGridUnit(i);            
+            GridUnit currentGU = currentRow.getGridUnit(i);
             if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
                     && (lastInPart || currentGU.isLastGridUnitRowSpan())
                     && firstCellParts[i] != null) {
@@ -396,7 +396,7 @@ class RowPainter {
      * set when the areas for the cell are created since at that moment this bpd is yet
      * unknown. So they will instead be set in
      * {@link #addAreasAndFlushRow(boolean, boolean)}.
-     * 
+     *
      * @param backgroundArea the block of the cell's dimensions that will hold the part
      * background
      */
@@ -407,7 +407,7 @@ class RowPainter {
 
     /**
      * Records the y-offset of the row with the given index.
-     * 
+     *
      * @param rowIndex index of the row
      * @param offset y-offset of the row on the page
      */
@@ -419,7 +419,7 @@ class RowPainter {
          * considered as finished, since it contains no cell ending on this row. Thus no
          * TableContentPosition will be created for this row. Thus its index will never be
          * recorded by the #handleTableContentPosition method.
-         * 
+         *
          * The offset of such a row is the same as the next non-empty row. It's needed
          * to correctly offset blocks for cells starting on this row. Hence the loop
          * below.
@@ -431,7 +431,7 @@ class RowPainter {
 
     /**
      * Returns the offset of the row with the given index.
-     * 
+     *
      * @param rowIndex index of the row
      * @return its y-offset on the page
      */

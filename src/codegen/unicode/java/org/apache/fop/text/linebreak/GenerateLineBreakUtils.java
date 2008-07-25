@@ -1,13 +1,13 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ public class GenerateLineBreakUtils {
      * table for the table driven line breaking algorithm described in
      * <a href="http://unicode.org/reports/tr14/#PairBasedImplementation">UTR #14</a>.
      * TODO: Code points above the base plane are simply ignored.
-     * 
+     *
      * @param lineBreakFileName Name of line break property file (part of Unicode files).
      * @param propertyValueFileName Name of property values alias file (part of Unicode files).
      * @param breakPairFileName Name of pair table file (<i>not</i> part of the unicode files).
@@ -109,7 +109,7 @@ public class GenerateLineBreakUtils {
         if (line != null) {
             lineTokens = line.split("\\s+");
             byte columnNumber = 0;
-            
+
             for (int i = 0; i < lineTokens.length; ++i) {
                 name = lineTokens[i];
                 if (name.length() > 0) {
@@ -481,7 +481,7 @@ public class GenerateLineBreakUtils {
      * Read line break property value names and the actual properties for the Unicode
      * characters from the respective Unicode files.
      * TODO: Code points above the base plane are simply ignored.
-     * 
+     *
      * @param lineBreakFileName Name of line break property file.
      * @param propertyValueFileName Name of property values alias file.
      * @throws Exception in case anything goes wrong.
@@ -600,7 +600,7 @@ public class GenerateLineBreakUtils {
      * Determine a good block size for the two stage optimized storage of the
      * line breaking properties. Note: the memory utilization calculation is a rule of thumb,
      * don't take it too serious.
-     * 
+     *
      * @param lineBreakFileName Name of line break property file.
      * @param propertyValueFileName Name of property values alias file.
      * @throws Exception in case anything goes wrong.

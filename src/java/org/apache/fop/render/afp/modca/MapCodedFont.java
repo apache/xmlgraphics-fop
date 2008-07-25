@@ -75,7 +75,7 @@ public class MapCodedFont extends AbstractAFPObject {
         // Reserved
         baos.write(new byte[] {0x00, 0x00, 0x00});
 
-        
+
         Iterator iter = fontList.iterator();
         while (iter.hasNext()) {
 
@@ -260,7 +260,7 @@ public class MapCodedFont extends AbstractAFPObject {
             throw new FontRuntimeException("Failed to create font "
                 + " due to a UnsupportedEncodingException", ex);
 
-        }   
+        }
     }
 
     /**

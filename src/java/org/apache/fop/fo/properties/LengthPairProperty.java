@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
 
         /**
          * Create a new empty instance of LengthPairProperty.
-         * @return the new instance. 
+         * @return the new instance.
          */
         public Property makeNewProperty() {
             return new LengthPairProperty();
@@ -53,7 +53,7 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
 
         /**
          * {@inheritDoc}
-         */        
+         */
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
             throws PropertyException {
             if (p instanceof LengthPairProperty) {
@@ -69,7 +69,7 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
     public LengthPairProperty() {
         super();
     }
-    
+
     /**
      * Creates a new LengthPairProperty.
      * @param ipd inline-progression-dimension
@@ -80,7 +80,7 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
         this.ipd = ipd;
         this.bpd = bpd;
     }
-    
+
     /**
      * Creates a new LengthPairProperty which sets both bpd and ipd to the
      * same value.
@@ -89,9 +89,9 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
     public LengthPairProperty(Property len) {
         this(len, len);
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
@@ -131,8 +131,8 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "LengthPair[" 
-            + "ipd:" + getIPD().getObject() 
+        return "LengthPair["
+            + "ipd:" + getIPD().getObject()
             + ", bpd:" + getBPD().getObject() + "]";
     }
 

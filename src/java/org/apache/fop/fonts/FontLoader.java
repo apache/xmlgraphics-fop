@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -97,7 +97,7 @@ public abstract class FontLoader {
             boolean embedded, FontResolver resolver) throws IOException {
         return loadFont(fontUrl.toExternalForm(), subFontName, embedded, resolver);
     }
-    
+
     /**
      * Loads a custom font from a URI. In the case of Type 1 fonts, the PFB file must be specified.
      * @param fontFileURI the URI to the font
@@ -128,14 +128,14 @@ public abstract class FontLoader {
      * @throws IOException In case of an I/O error
      * @throws MalformedURLException If an invalid URL is built
      */
-    public static InputStream openFontUri(FontResolver resolver, String uri) 
+    public static InputStream openFontUri(FontResolver resolver, String uri)
                     throws IOException, MalformedURLException {
         InputStream in = null;
         if (resolver != null) {
             Source source = resolver.resolve(uri);
             if (source == null) {
-                String err = "Cannot load font: failed to create Source for font file " 
-                    + uri; 
+                String err = "Cannot load font: failed to create Source for font file "
+                    + uri;
                 throw new IOException(err);
             }
             if (source instanceof StreamSource) {
@@ -146,7 +146,7 @@ public abstract class FontLoader {
             }
             if (in == null) {
                 String err = "Cannot load font: failed to create InputStream from"
-                    + " Source for font file " + uri; 
+                    + " Source for font file " + uri;
                 throw new IOException(err);
             }
         } else {
@@ -154,7 +154,7 @@ public abstract class FontLoader {
         }
         return in;
     }
-        
+
     /**
      * Reads/parses the font data.
      * @throws IOException In case of an I/O error

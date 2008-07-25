@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area;
 
 // Java
@@ -46,7 +46,7 @@ public class RenderPagesModel extends AreaTreeModel {
      * The renderer that will render the pages.
      */
     protected Renderer renderer;
-    
+
     /**
      * Pages that have been prepared but not rendered yet.
      */
@@ -62,7 +62,7 @@ public class RenderPagesModel extends AreaTreeModel {
      * @param stream OutputStream
      * @throws FOPException if the renderer cannot be properly initialized
      */
-    public RenderPagesModel (FOUserAgent userAgent, String outputFormat, 
+    public RenderPagesModel (FOUserAgent userAgent, String outputFormat,
         FontInfo fontInfo, OutputStream stream) throws FOPException {
 
         super();
@@ -113,7 +113,7 @@ public class RenderPagesModel extends AreaTreeModel {
             try {
                 renderer.renderPage(page);
             } catch (RuntimeException re) {
-                String err = "Error while rendering page " + page.getPageNumberString(); 
+                String err = "Error while rendering page " + page.getPageNumberString();
                 log.error(err, re);
                 throw re;
             } catch (IOException ioe) {
@@ -122,9 +122,9 @@ public class RenderPagesModel extends AreaTreeModel {
                 eventProducer.ioError(this, ioe);
             } catch (FOPException e) {
                 //TODO use error handler to handle this FOPException or propagate exception
-                String err = "Error while rendering page " + page.getPageNumberString(); 
+                String err = "Error while rendering page " + page.getPageNumberString();
                 log.error(err, e);
-                throw new IllegalStateException("Fatal error occurred. Cannot continue. " 
+                throw new IllegalStateException("Fatal error occurred. Cannot continue. "
                         + e.getClass().getName() + ": " + err);
             }
             page.clear();

@@ -28,7 +28,7 @@ public final class PDFAMode {
     public static final PDFAMode PDFA_1A = new PDFAMode("PDF/A-1a");
     /** PDF/A-1b enabled */
     public static final PDFAMode PDFA_1B = new PDFAMode("PDF/A-1b");
-    
+
     private String name;
 
     /**
@@ -43,13 +43,13 @@ public final class PDFAMode {
     public String getName() {
         return this.name;
     }
-    
+
     /** @return true if this mode obey the restrictions established by PDF/A-1b. */
     public boolean isPDFA1LevelB() {
         return (this != DISABLED);
         //PDF/A-1a is a superset of PDF/A-1b!
     }
-    
+
     /**
      * Returns the mode enum object given a String.
      * @param s the string
@@ -64,10 +64,10 @@ public final class PDFAMode {
             return DISABLED;
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return name;
     }
-    
+
 }

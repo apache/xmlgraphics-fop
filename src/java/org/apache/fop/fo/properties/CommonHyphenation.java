@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,11 +37,11 @@ public final class CommonHyphenation {
 
     /** Logger */
     protected static Log log = LogFactory.getLog(CommonHyphenation.class);
-    
+
     private static final PropertyCache cache = new PropertyCache(CommonHyphenation.class);
-    
+
     private int hash = 0;
-    
+
     /** The "language" property */
     public final StringProperty language;
 
@@ -65,7 +65,7 @@ public final class CommonHyphenation {
 
     /**
      * Construct a CommonHyphenation object holding the given properties
-     * 
+     *
      */
     private CommonHyphenation(StringProperty language,
                               StringProperty country,
@@ -82,46 +82,46 @@ public final class CommonHyphenation {
         this.hyphenationPushCharacterCount = hyphenationPushCharacterCount;
         this.hyphenationRemainCharacterCount = hyphenationRemainCharacterCount;
     }
-    
+
     /**
      * Gets the canonical <code>CommonHyphenation</code> instance corresponding
-     * to the values of the related properties present on the given 
+     * to the values of the related properties present on the given
      * <code>PropertyList</code>
-     * 
+     *
      * @param propertyList  the <code>PropertyList</code>
      */
     public static CommonHyphenation getInstance(PropertyList propertyList) throws PropertyException {
-        StringProperty language = 
+        StringProperty language =
             (StringProperty) propertyList.get(Constants.PR_LANGUAGE);
-        StringProperty country = 
+        StringProperty country =
             (StringProperty) propertyList.get(Constants.PR_COUNTRY);
-        StringProperty script = 
+        StringProperty script =
             (StringProperty) propertyList.get(Constants.PR_SCRIPT);
-        EnumProperty hyphenate = 
+        EnumProperty hyphenate =
             (EnumProperty) propertyList.get(Constants.PR_HYPHENATE);
-        CharacterProperty hyphenationCharacter = 
+        CharacterProperty hyphenationCharacter =
             (CharacterProperty) propertyList.get(Constants.PR_HYPHENATION_CHARACTER);
-        NumberProperty hyphenationPushCharacterCount = 
+        NumberProperty hyphenationPushCharacterCount =
             (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_PUSH_CHARACTER_COUNT);
-        NumberProperty hyphenationRemainCharacterCount = 
+        NumberProperty hyphenationRemainCharacterCount =
             (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
-        
+
         CommonHyphenation instance = new CommonHyphenation(
-                                language, 
-                                country, 
-                                script, 
-                                hyphenate, 
-                                hyphenationCharacter, 
-                                hyphenationPushCharacterCount, 
+                                language,
+                                country,
+                                script,
+                                hyphenate,
+                                hyphenationCharacter,
+                                hyphenationPushCharacterCount,
                                 hyphenationRemainCharacterCount);
-        
+
         return cache.fetch(instance);
-        
+
     }
-    
+
     private static final char HYPHEN_MINUS = '-';
     private static final char MINUS_SIGN = '\u2212';
-    
+
     /**
      * Returns the effective hyphenation character for a font. The hyphenation character specified
      * in XSL-FO may be substituted if it's not available in the font.
@@ -166,13 +166,13 @@ public final class CommonHyphenation {
         if (warn) {
             log.warn("Substituted specified hyphenation character (0x"
                     + Integer.toHexString(hyphChar)
-                    + ") with 0x" + Integer.toHexString(effHyphChar) 
-                    + " because the font doesn't have the specified hyphenation character: " 
+                    + ") with 0x" + Integer.toHexString(effHyphChar)
+                    + " because the font doesn't have the specified hyphenation character: "
                     + font.getFontTriplet());
         }
         return effHyphChar;
     }
-    
+
     /**
      * Returns the IPD for the hyphenation character for a font.
      * @param font the font
@@ -182,7 +182,7 @@ public final class CommonHyphenation {
         char hyphChar = getHyphChar(font);
         return font.getCharWidth(hyphChar);
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -200,7 +200,7 @@ public final class CommonHyphenation {
         }
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         if (this.hash == 0) {
@@ -209,15 +209,15 @@ public final class CommonHyphenation {
             hash = 37 * hash + (script == null ? 0 : script.hashCode());
             hash = 37 * hash + (country == null ? 0 : country.hashCode());
             hash = 37 * hash + (hyphenate == null ? 0 : hyphenate.hashCode());
-            hash = 37 * hash + 
+            hash = 37 * hash +
                 (hyphenationCharacter == null ? 0 : hyphenationCharacter.hashCode());
-            hash = 37 * hash + 
+            hash = 37 * hash +
                 (hyphenationPushCharacterCount == null ? 0 : hyphenationPushCharacterCount.hashCode());
-            hash = 37 * hash + 
+            hash = 37 * hash +
                 (hyphenationRemainCharacterCount == null ? 0 : hyphenationRemainCharacterCount.hashCode());
             this.hash = hash;
         }
         return this.hash;
     }
-    
+
 }

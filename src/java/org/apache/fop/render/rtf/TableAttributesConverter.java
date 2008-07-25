@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +64,7 @@ public final class TableAttributesConverter {
     //////////////////////////////////////////////////
     /**
      * Converts table-only attributes to rtf attributes.
-     * 
+     *
      * @param attrs Given attributes
      * @param defaultAttributes Default rtf attributes
      *
@@ -75,14 +75,14 @@ public final class TableAttributesConverter {
     static RtfAttributes convertTableAttributes(Table fobj)
             throws FOPException {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
-        attrib.setTwips(ITableAttributes.ATTR_ROW_LEFT_INDENT, 
+        attrib.setTwips(ITableAttributes.ATTR_ROW_LEFT_INDENT,
                 fobj.getCommonMarginBlock().marginLeft);
         return attrib;
     }
 
     /**
      * Converts table-only attributes to rtf attributes.
-     * 
+     *
      * @param attrs Given attributes
      * @param defaultAttributes Default rtf attributes
      *
@@ -109,7 +109,7 @@ public final class TableAttributesConverter {
 
         //Property p;
         //RtfColorTable colorTable = RtfColorTable.getInstance();
-        
+
         FOPRtfAttributes attrib = new FOPRtfAttributes();
 
         //boolean isBorderPresent = false;
@@ -121,7 +121,7 @@ public final class TableAttributesConverter {
             //If there is no background-color specified for the cell,
             //then try to read it from table-row or table-header.
             CommonBorderPaddingBackground brd = null;
-            
+
             if (fobj.getParent() instanceof TableRow) {
                 TableRow parentRow = (TableRow)fobj.getParent();
                 brd = parentRow.getCommonBorderPaddingBackground();
@@ -131,20 +131,20 @@ public final class TableAttributesConverter {
                 brd = parentHeader.getCommonBorderPaddingBackground();
                 color = brd.backgroundColor;
             }
-            
+
             if (color == null
-                    && fobj.getParent() != null 
-                    && fobj.getParent().getParent() != null 
+                    && fobj.getParent() != null
+                    && fobj.getParent().getParent() != null
                     && fobj.getParent().getParent().getParent() instanceof Table) {
 
                 Table table = (Table)fobj.getParent().getParent().getParent();
                 brd = table.getCommonBorderPaddingBackground();
                 color = brd.backgroundColor;
             }
-            
-            
+
+
         }
-        if ((color != null) 
+        if ((color != null)
                 && (color.getAlpha() != 0
                         || color.getRed() != 0
                         || color.getGreen() != 0
@@ -198,13 +198,13 @@ public final class TableAttributesConverter {
             attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_BOTTOM, padding);
             attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_BOTTOM, 3 /*=twips*/);
         }
-        
+
         int n = fobj.getNumberColumnsSpanned();
         // Column spanning :
         if (n > 1) {
             attrib.set(ITableAttributes.COLUMN_SPAN, n);
         }
-        
+
         switch (fobj.getDisplayAlign()) {
         case Constants.EN_BEFORE:
             attrib.set(ITableAttributes.ATTR_CELL_VERT_ALIGN_TOP);
@@ -328,7 +328,7 @@ public final class TableAttributesConverter {
             isBorderPresent = true;
         }
 
-        //Currently there is only one border width supported in each cell.  
+        //Currently there is only one border width supported in each cell.
         p = fobj.getProperty(Constants.PR_BORDER_LEFT_WIDTH);
         if(p == null) {
             p = fobj.getProperty(Constants.PR_BORDER_RIGHT_WIDTH);

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,7 @@ import org.apache.fop.apps.FOUserAgent;
  * about them.
  */
 public abstract class AbstractRendererMaker {
-    
+
     /**
      * Instantiates a new renderer.
      * @param userAgent the user agent
@@ -38,7 +38,7 @@ public abstract class AbstractRendererMaker {
      * @return Indicates whether this renderer requires an OutputStream to work with.
      */
     public abstract boolean needsOutputStream();
-    
+
     /**
      * @return an array of MIME types the renderer supports.
      */

@@ -34,7 +34,7 @@ public interface BlockLevelEventProducer extends EventProducer {
      * Provider class for the event producer.
      */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -56,7 +56,7 @@ public interface BlockLevelEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void rowTooTall(Object source, int row, int effCellBPD, int maxCellBPD, Locator loc);
-    
+
     /**
      * Auto-table layout is not supported, yet.
      * @param source the event source
@@ -64,28 +64,28 @@ public interface BlockLevelEventProducer extends EventProducer {
      * @event.severity INFO
      */
     void tableFixedAutoWidthNotSupported(Object source, Locator loc);
-    
+
     /**
      * An formatting object is too wide.
      * @param source the event source
-     * @param elementName the formatting object 
+     * @param elementName the formatting object
      * @param effIPD the effective extent in inline-progression direction of the table contents
      * @param maxIPD the maximum extent in inline-progression direction available
      * @param loc the location of the error or null
      * @event.severity WARN
      */
     void objectTooWide(Object source, String elementName, int effIPD, int maxIPD, Locator loc);
-        
+
     /**
      * An overconstrained geometry adjustment rule was triggered (5.3.4, XSL 1.0).
      * @param source the event source
-     * @param elementName the formatting object 
+     * @param elementName the formatting object
      * @param amount the amount of the adjustment (in mpt)
      * @param loc the location of the error or null
      * @event.severity INFO
      */
     void overconstrainedAdjustEndIndent(Object source, String elementName, int amount, Locator loc);
-    
+
     /**
      * Contents overflow a viewport.
      * @param source the event source
@@ -97,10 +97,10 @@ public interface BlockLevelEventProducer extends EventProducer {
      * @throws LayoutException the layout error provoked by the method call
      * @event.severity FATAL
      */
-    void viewportOverflow(Object source, String elementName, 
+    void viewportOverflow(Object source, String elementName,
             int amount, boolean clip, boolean canRecover,
             Locator loc) throws LayoutException;
-    
+
     /**
      * Contents overflow a region viewport.
      * @param source the event source
@@ -117,7 +117,7 @@ public interface BlockLevelEventProducer extends EventProducer {
             String page,
             int amount, boolean clip, boolean canRecover,
             Locator loc) throws LayoutException;
-    
+
     /**
      * Indicates that FOP doesn't support flows that are not mapped to region-body, yet.
      * @param source the event source
@@ -129,7 +129,7 @@ public interface BlockLevelEventProducer extends EventProducer {
      */
     void flowNotMappingToRegionBody(Object source, String flowName, String masterName,
             Locator loc) throws UnsupportedOperationException;
-    
+
     /**
      * A page sequence master is exhausted.
      * @param source the event source
@@ -152,7 +152,7 @@ public interface BlockLevelEventProducer extends EventProducer {
      */
     void missingSubsequencesInPageSequenceMaster(Object source, String pageSequenceMasterName,
             Locator loc) throws PageProductionException;
-    
+
     /**
      * No single-page-master matching in page sequence master.
      * @param source the event source
@@ -164,5 +164,5 @@ public interface BlockLevelEventProducer extends EventProducer {
      */
     void noMatchingPageMaster(Object source, String pageSequenceMasterName,
             String pageMasterName, Locator loc) throws PageProductionException;
-    
+
 }

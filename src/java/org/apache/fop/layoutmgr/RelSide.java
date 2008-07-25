@@ -30,7 +30,7 @@ public final class RelSide {
     public static final RelSide START = new RelSide("start");
     /** the end side */
     public static final RelSide END = new RelSide("end");
-    
+
     private String name;
 
     /**
@@ -45,10 +45,10 @@ public final class RelSide {
     public String getName() {
         return this.name;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "RelSide:" + name;
     }
-    
+
 }

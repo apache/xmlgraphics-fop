@@ -37,7 +37,7 @@ public class RowGroupBuilderTestCase extends AbstractTableTestCase {
      * More precisely, checks that the number of row groups corresponds to the size of the
      * given array, and that the number of rows inside each row group is equal to the
      * corresponding integer in the array.
-     * 
+     *
      * @param part a table part whose row groups are to be checked
      * @param expectedRowLengths expected lengths of all the row groups of this part of
      * the table
@@ -123,17 +123,17 @@ public class RowGroupBuilderTestCase extends AbstractTableTestCase {
         // Table 2: no header, no footer, one body (1 row-group of 2 rows)
         checkNextTableRowGroups(tableIter, null, null, new int[][] {{2}});
 
-        // Table 3: no header, no footer, one body (1 row-group of 2 rows, 1 row) 
+        // Table 3: no header, no footer, one body (1 row-group of 2 rows, 1 row)
         checkNextTableRowGroups(tableIter, null, null, new int[][] {{2, 1}});
 
         // Table 4: no header, no footer, one body (1 row, 1 row-group of 2 rows)
         checkNextTableRowGroups(tableIter, null, null, new int[][] {{1, 2}});
 
-        // Table 5: no header, no footer, one body (1 row, 1 row-group of 3 rows, 1 row) 
+        // Table 5: no header, no footer, one body (1 row, 1 row-group of 3 rows, 1 row)
         checkNextTableRowGroups(tableIter, null, null, new int[][] {{1, 3, 1}});
 
         // Table 6: one header (1 row-group of 2 rows), one footer (1 row, 1 row-group of 3 rows),
-        // one body (1 row-group of 2 rows, 1 row, 1 row-group of 3 rows) 
+        // one body (1 row-group of 2 rows, 1 row, 1 row-group of 3 rows)
         checkNextTableRowGroups(tableIter, new int[] {2}, new int[] {1, 3}, new int[][] {{2, 1, 3}});
     }
 

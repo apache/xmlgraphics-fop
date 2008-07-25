@@ -31,13 +31,13 @@ public abstract class UnresolvedListElementWithLength extends UnresolvedListElem
 
     /** Logger instance */
     protected static Log log = LogFactory.getLog(UnresolvedListElementWithLength.class);
-    
+
     private MinOptMax length;
     private boolean conditional;
     private RelSide side;
     private boolean isFirst;
     private boolean isLast;
-    
+
     /**
      * Main constructor
      * @param position the Position instance needed by the addAreas stage of the LMs.
@@ -47,7 +47,7 @@ public abstract class UnresolvedListElementWithLength extends UnresolvedListElem
      * @param isFirst true if this is a space-before of the first area generated.
      * @param isLast true if this is a space-after of the last area generated.
      */
-    public UnresolvedListElementWithLength(Position position, MinOptMax length, 
+    public UnresolvedListElementWithLength(Position position, MinOptMax length,
             RelSide side,
             boolean conditional, boolean isFirst, boolean isLast) {
         super(position);
@@ -57,32 +57,32 @@ public abstract class UnresolvedListElementWithLength extends UnresolvedListElem
         this.isFirst = isFirst;
         this.isLast = isLast;
     }
-    
+
     /** {@inheritDoc} */
     public boolean isConditional() {
         return this.conditional;
     }
-    
+
     /** @return the space as resolved MinOptMax instance */
     public MinOptMax getLength() {
         return this.length;
     }
-    
+
     /** @return the side this element was generated for */
     public RelSide getSide() {
         return this.side;
     }
-    
+
     /** @return true if this is a space-before of the first area generated. */
     public boolean isFirst() {
         return this.isFirst;
     }
-    
+
     /** @return true if this is a space-after of the last area generated. */
     public boolean isLast() {
         return this.isLast;
     }
-    
+
     /**
      * Called to notify the affected layout manager about the effective length after resolution.
      * This method is called once before each call to the layout manager's addAreas() method.
@@ -90,7 +90,7 @@ public abstract class UnresolvedListElementWithLength extends UnresolvedListElem
      *                        zero effective length)
      */
     public abstract void notifyLayoutManager(MinOptMax effectiveLength);
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -109,5 +109,5 @@ public abstract class UnresolvedListElementWithLength extends UnresolvedListElem
         }
         return sb.toString();
     }
-    
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ import org.apache.commons.io.output.CountingOutputStream;
  * Class representing an "Nums" array object (for Number Trees).
  */
 public class PDFNumsArray extends PDFObject {
-    
+
     /** Sorted Map holding the values of this array. */
     protected SortedMap map = new java.util.TreeMap();
 
@@ -51,7 +51,7 @@ public class PDFNumsArray extends PDFObject {
     public int length() {
         return this.map.size();
     }
-    
+
     /**
      * Sets an entry.
      * @param key the key of the value to set
@@ -60,7 +60,7 @@ public class PDFNumsArray extends PDFObject {
     public void put(int key, Object obj) {
         this.map.put(new Integer(key), obj);
     }
-    
+
     /**
      * Gets an entry.
      * @param key the key of requested value
@@ -69,7 +69,7 @@ public class PDFNumsArray extends PDFObject {
     public Object get(int key) {
         return this.map.get(new Integer(key));
     }
-    
+
     /** {@inheritDoc} */
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
@@ -77,7 +77,7 @@ public class PDFNumsArray extends PDFObject {
         if (hasObjectNumber()) {
             writer.write(getObjectID());
         }
-        
+
         writer.write('[');
         boolean first = true;
         Iterator iter = this.map.entrySet().iterator();
@@ -92,13 +92,13 @@ public class PDFNumsArray extends PDFObject {
             formatObject(entry.getValue(), cout, writer);
         }
         writer.write(']');
-        
+
         if (hasObjectNumber()) {
             writer.write("\nendobj\n");
         }
-        
+
         writer.flush();
         return cout.getCount();
     }
-    
+
 }

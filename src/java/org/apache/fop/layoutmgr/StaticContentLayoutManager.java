@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.layoutmgr;
 
 import java.util.LinkedList;
@@ -66,7 +66,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * @param node static-content FO
      * @param reg side region to layout into
      */
-    public StaticContentLayoutManager(PageSequenceLayoutManager pslm, 
+    public StaticContentLayoutManager(PageSequenceLayoutManager pslm,
             StaticContent node, SideRegion reg) {
         super(node);
         setParent(pslm);
@@ -80,11 +80,11 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * @param node static-content FO
      * @param block the block to layout into
      */
-    public StaticContentLayoutManager(PageSequenceLayoutManager pslm, 
+    public StaticContentLayoutManager(PageSequenceLayoutManager pslm,
             StaticContent node, Block block) {
         super(node);
         setParent(pslm);
-        targetBlock = block; 
+        targetBlock = block;
     }
 
     /** {@inheritDoc} */
@@ -98,7 +98,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         setContentAreaIPD(context.getRefIPD());
         setContentAreaBPD(context.getStackLimitBP().opt);
 
-        //TODO Copied from elsewhere. May be worthwhile to factor out the common parts. 
+        //TODO Copied from elsewhere. May be worthwhile to factor out the common parts.
         // currently active LM
         BlockLevelLayoutManager curLM;
         BlockLevelLayoutManager prevLM = null;
@@ -122,7 +122,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
-            //log.debug("FLM.getNextKnuthElements> returnedList.size() = " 
+            //log.debug("FLM.getNextKnuthElements> returnedList.size() = "
             //    + returnedList.size());
 
             // "wrap" the Position inside each element
@@ -148,8 +148,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                     if (prevLM.mustKeepWithNext()
                         || curLM.mustKeepWithPrevious()) {
                         // add an infinite penalty to forbid a break between blocks
-                        returnList.add(new KnuthPenalty(0, 
-                                KnuthElement.INFINITE, false, 
+                        returnList.add(new KnuthPenalty(0,
+                                KnuthElement.INFINITE, false,
                                 new Position(this), false));
                     } else if (!((KnuthElement) ListUtil.getLast(returnList))
                             .isGlue()) {
@@ -180,9 +180,9 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             return returnList;
         }
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
@@ -246,10 +246,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         if (breaker.isOverflow()) {
             if (!autoHeight) {
                 String page = getPSLM().getCurrentPage().getPageViewport().getPageNumberString();
-                
+
                 BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getStaticContentFO().getUserAgent().getEventBroadcaster());
-                boolean canRecover = (regionFO.getOverflow() != EN_ERROR_IF_OVERFLOW); 
+                boolean canRecover = (regionFO.getOverflow() != EN_ERROR_IF_OVERFLOW);
                 boolean needClip = (regionFO.getOverflow() == Constants.EN_HIDDEN
                         || regionFO.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW);
                 eventProducer.regionOverflow(this, regionFO.getName(),
@@ -259,7 +259,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             }
         }
     }
-    
+
     /**
      * Convenience method that returns the Static Content node.
      * @return the static content node
@@ -268,13 +268,13 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return (StaticContent) fobj;
     }
 
-    private class StaticContentBreaker extends AbstractBreaker {       
+    private class StaticContentBreaker extends AbstractBreaker {
         private StaticContentLayoutManager lm;
         private int displayAlign;
         private int ipd;
         private int overflow = 0;
-        
-        public StaticContentBreaker(StaticContentLayoutManager lm, int ipd, 
+
+        public StaticContentBreaker(StaticContentLayoutManager lm, int ipd,
                 int displayAlign) {
             this.lm = lm;
             this.ipd = ipd;
@@ -290,7 +290,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             }
             ElementListObserver.observe(elementList, "static-content", elementListID);
         }
-        
+
         /** {@inheritDoc} */
         protected boolean isPartOverflowRecoveryActivated() {
             //For side regions, this must be disabled because of wanted overflow.
@@ -300,11 +300,11 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         public boolean isOverflow() {
             return (this.overflow != 0);
         }
-        
+
         public int getOverflowAmount() {
             return this.overflow;
         }
-        
+
         /** {@inheritDoc} */
         protected PageBreakingLayoutListener createLayoutListener() {
             return new PageBreakingLayoutListener() {
@@ -314,7 +314,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                         StaticContentBreaker.this.overflow = amount;
                     }
                 }
-                
+
             };
         }
 
@@ -327,7 +327,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             lc.setRefIPD(ipd);
             return lc;
         }
-        
+
         protected List getNextKnuthElements(LayoutContext context, int alignment) {
             LayoutManager curLM; // currently active LM
             List returnList = new LinkedList();
@@ -339,7 +339,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 childLC.setWritingMode(context.getWritingMode());
 
                 List returnedList = null;
-                //The following is a HACK! Ignore leading and trailing white space 
+                //The following is a HACK! Ignore leading and trailing white space
                 boolean ignore = curLM instanceof TextLayoutManager;
                 if (!curLM.isFinished()) {
                     returnedList = curLM.getNextKnuthElements(childLC, alignment);
@@ -356,39 +356,39 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         protected int getCurrentDisplayAlign() {
             return displayAlign;
         }
-        
+
         protected boolean hasMoreContent() {
             return !lm.isFinished();
         }
-        
+
         protected void addAreas(PositionIterator posIter, LayoutContext context) {
-            AreaAdditionUtil.addAreas(lm, posIter, context);    
+            AreaAdditionUtil.addAreas(lm, posIter, context);
         }
-        
-        protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
+
+        protected void doPhase3(PageBreakingAlgorithm alg, int partCount,
                 BlockSequence originalList, BlockSequence effectiveList) {
             if (partCount > 1) {
                 PageBreakPosition pos = (PageBreakPosition)alg.getPageBreaks().getFirst();
                 int firstPartLength = ElementListUtils.calcContentLength(effectiveList,
                         effectiveList.ignoreAtStart, pos.getLeafPos());
-                overflow += alg.totalWidth - firstPartLength;        
-            }         
-            //Rendering all parts (not just the first) at once for the case where the parts that 
+                overflow += alg.totalWidth - firstPartLength;
+            }
+            //Rendering all parts (not just the first) at once for the case where the parts that
             //overflow should be visible.
             alg.removeAllPageBreaks();
             //Directly add areas after finding the breaks
             this.addAreas(alg, 1, originalList, effectiveList);
         }
-        
+
         protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
             //nop for static content
         }
-        
+
         protected LayoutManager getCurrentChildLM() {
             return null; //TODO NYI
         }
-    } 
-    
+    }
+
     /**
      * Returns the IPD of the content area
      * @return the IPD of the content area
@@ -396,12 +396,12 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     public int getContentAreaIPD() {
         return contentAreaIPD;
     }
-   
+
     /** {@inheritDoc} */
     protected void setContentAreaIPD(int contentAreaIPD) {
         this.contentAreaIPD = contentAreaIPD;
     }
-    
+
     /**
      * Returns the BPD of the content area
      * @return the BPD of the content area
@@ -409,16 +409,16 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     public int getContentAreaBPD() {
         return contentAreaBPD;
     }
-    
+
     private void setContentAreaBPD(int contentAreaBPD) {
         this.contentAreaBPD = contentAreaBPD;
     }
-    
+
     /** {@inheritDoc} */
     public int getKeepTogetherStrength() {
         return KEEP_AUTO;
     }
-    
+
     /** {@inheritDoc} */
     public int getKeepWithNextStrength() {
         return KEEP_AUTO;
@@ -428,6 +428,6 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     public int getKeepWithPreviousStrength() {
         return KEEP_AUTO;
     }
-    
+
 }
 

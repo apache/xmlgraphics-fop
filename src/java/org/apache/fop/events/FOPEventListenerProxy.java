@@ -29,29 +29,29 @@ import org.apache.fop.layoutmgr.BlockLevelEventProducer;
  * For validation events, it reacts on each event based on the strict validation setting in
  * the user agent.
  * For layout events, it reduces the default severity level if FOP signals that it can recover
- * from the event. 
+ * from the event.
  */
 public class FOPEventListenerProxy implements EventListener {
 
     private static final String FOVALIDATION_EVENT_ID_PREFIX
                 = FOValidationEventProducer.class.getName();
-    
+
     private static final String BLOCK_LEVEL_EVENT_ID_PREFIX
                 = BlockLevelEventProducer.class.getName();
 
     private EventListener delegate;
     private FOUserAgent userAgent;
-    
+
     /**
      * Main constructor.
-     * @param delegate the event listener to delegate events to 
+     * @param delegate the event listener to delegate events to
      * @param userAgent the FO user agent
      */
     public FOPEventListenerProxy(EventListener delegate, FOUserAgent userAgent) {
         this.delegate = delegate;
         this.userAgent = userAgent;
     }
-    
+
     /** {@inheritDoc} */
     public synchronized void processEvent(Event event) {
         if (event.getEventID().startsWith(FOVALIDATION_EVENT_ID_PREFIX)) {

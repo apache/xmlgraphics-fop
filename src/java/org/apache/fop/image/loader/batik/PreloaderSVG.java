@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.image.loader.batik;
 
 import java.awt.geom.AffineTransform;
@@ -59,8 +59,8 @@ public class PreloaderSVG extends AbstractImagePreloader {
     private static Log log = LogFactory.getLog(PreloaderSVG.class);
 
     private boolean batikAvailable = true;
-    
-    /** {@inheritDoc} */ 
+
+    /** {@inheritDoc} */
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
         ImageInfo info = null;
@@ -122,7 +122,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                     doc = (SVGDocument) factory.createSVGDocument(src.getSystemId(), in);
                 }
                 ImageInfo info = createImageInfo(uri, context, doc);
-                
+
                 return info;
             } catch (NoClassDefFoundError ncdfe) {
                 if (in != null) {
@@ -154,7 +154,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
 
         private ImageInfo createImageInfo(String uri, ImageContext context, SVGDocument doc) {
             Element e = doc.getRootElement();
-            float pxUnitToMillimeter = 25.4f / context.getSourceResolution(); 
+            float pxUnitToMillimeter = 25.4f / context.getSourceResolution();
             UserAgent userAg = new SimpleSVGUserAgent(pxUnitToMillimeter,
                         new AffineTransform()) {
 
@@ -162,7 +162,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                 public void displayMessage(String message) {
                     log.debug(message);
                 }
-                
+
             };
             BridgeContext ctx = new BridgeContext(userAg);
             UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
@@ -198,7 +198,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
             info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, xmlImage);
             return info;
         }
-        
+
         private boolean isSupportedSource(Source src) {
             if (src instanceof DOMSource) {
                 DOMSource domSrc = (DOMSource)src;

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,10 +27,10 @@ import org.apache.fop.pdf.CMapBuilder;
 
 /** Simple sanity test of the PDFCmap class */
 public class PDFCMapTestCase extends TestCase {
-    
+
     public void testPDFCMapFillInPDF() throws Exception {
         final String EOL = "\n";
-        final String expected = 
+        final String expected =
             "%!PS-Adobe-3.0 Resource-CMap" + EOL
             +"%%DocumentNeededResources: ProcSet (CIDInit)" + EOL
             +"%%IncludeResource: ProcSet (CIDInit)" + EOL
@@ -60,7 +60,7 @@ public class PDFCMapTestCase extends TestCase {
             +"%%EndResource" + EOL
             +"%%EOF" + EOL
         ;
-        
+
         final StringWriter w = new StringWriter();
         final CMapBuilder builder = new CMapBuilder(w, "test");
         builder.writeCMap();

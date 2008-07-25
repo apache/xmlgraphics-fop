@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,24 +39,24 @@ public class FontShorthandProperty extends ListProperty {
             Constants.PR_LINE_HEIGHT, Constants.PR_FONT_STYLE,
             Constants.PR_FONT_VARIANT, Constants.PR_FONT_WEIGHT
         };
-        
+
         /**
          * @param propId ID of the property for which Maker should be created
          */
         public Maker(int propId) {
             super(propId);
         }
-        
+
         /**
-         * {@inheritDoc} 
+         * {@inheritDoc}
          */
-        public Property make(PropertyList propertyList, 
+        public Property make(PropertyList propertyList,
                 String value, FObj fo) throws PropertyException {
-            
+
             try {
                 FontShorthandProperty newProp = new FontShorthandProperty();
                 newProp.setSpecifiedValue(value);
-                
+
                 String specVal = value;
                 Property prop = null;
                 if ("inherit".equals(specVal)) {
@@ -80,14 +80,14 @@ public class FontShorthandProperty extends ListProperty {
                         int spaceIndex = value.indexOf(' ');
                         int quoteIndex = (value.indexOf('\'') == -1)
                             ? value.indexOf('\"') : value.indexOf('\'');
-                        if (spaceIndex == -1 
+                        if (spaceIndex == -1
                                 || (quoteIndex != -1 && spaceIndex > quoteIndex)) {
                             /* no spaces or first space appears after the first
                              * single/double quote, so malformed value string
                              */
                             throw new PropertyException("Invalid property value: "
-                                    + "font=\"" + value + "\"");                        
-                        } 
+                                    + "font=\"" + value + "\"");
+                        }
                         PropertyMaker m = null;
                         int fromIndex = spaceIndex + 1;
                         int toIndex = specVal.length();
@@ -97,11 +97,11 @@ public class FontShorthandProperty extends ListProperty {
                         boolean fontFamilyParsed = false;
                         int commaIndex = value.indexOf(',');
                         while (!fontFamilyParsed) {
-                            /* value contains a (list of) possibly quoted 
-                             * font-family name(s) 
+                            /* value contains a (list of) possibly quoted
+                             * font-family name(s)
                              */
                             if (commaIndex == -1) {
-                                /* no list, just a single name 
+                                /* no list, just a single name
                                  * (or first name in the list)
                                  */
                                 if (quoteIndex != -1) {
@@ -112,7 +112,7 @@ public class FontShorthandProperty extends ListProperty {
                                 m = FObj.getPropertyMakerFor(PROP_IDS[1]);
                                 prop = m.make(propertyList, specVal.substring(fromIndex), fo);
                                 newProp.addProperty(prop, 1);
-                                fontFamilyParsed = true;                            
+                                fontFamilyParsed = true;
                             } else {
                                 if (quoteIndex != -1 && quoteIndex < commaIndex) {
                                     /* a quoted font-family name as first name
@@ -131,7 +131,7 @@ public class FontShorthandProperty extends ListProperty {
                         fromIndex = value.lastIndexOf(' ', toIndex - 1) + 1;
                         value = specVal.substring(fromIndex, toIndex);
                         int slashIndex = value.indexOf('/');
-                        String fontSize = value.substring(0, 
+                        String fontSize = value.substring(0,
                                 (slashIndex == -1) ? value.length() : slashIndex);
                         m = FObj.getPropertyMakerFor(PROP_IDS[0]);
                         prop = m.make(propertyList, fontSize, fo);
@@ -190,7 +190,7 @@ public class FontShorthandProperty extends ListProperty {
            }
         }
     }
-    
+
     private void addProperty(Property prop, int pos) {
         while (list.size() < (pos + 1)) {
             list.add(null);

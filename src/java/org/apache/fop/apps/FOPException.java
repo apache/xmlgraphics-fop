@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ public class FOPException extends SAXException {
     private String systemId;
     private int line;
     private int column;
-    
+
     private String localizedMessage;
 
     /**
@@ -80,7 +80,7 @@ public class FOPException extends SAXException {
     /**
      * Constructs a new exception with the specified detail message and cause.
      * @param message  the detail message
-     * @param cause the cause 
+     * @param cause the cause
      */
     public FOPException(String message, Exception cause) {
         super(message, cause);
@@ -212,7 +212,7 @@ public class FOPException extends SAXException {
             }
         }
     }
-    
+
     /**
      * Sets the localized message for this exception.
      * @param msg the localized message
@@ -230,6 +230,6 @@ public class FOPException extends SAXException {
         }
     }
 
-    
-    
+
+
 }

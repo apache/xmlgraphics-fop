@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -149,7 +149,7 @@ public abstract class PropertyList {
      * the default value.
      * @param propId The Constants ID of the property whose value is desired.
      * @return the Property corresponding to that name
-     * @throws PropertyException if there is a problem evaluating the property 
+     * @throws PropertyException if there is a problem evaluating the property
      */
     public Property get(int propId) throws PropertyException {
         return get(propId, true, true);
@@ -161,11 +161,11 @@ public abstract class PropertyList {
      * inheritable, to return the inherited value. If all else fails, it returns
      * the default value.
      * @param propId    the property's id
-     * @param bTryInherit   true for inherited properties, or when the inherited 
+     * @param bTryInherit   true for inherited properties, or when the inherited
      *                      value is needed
      * @param bTryDefault   true when the default value may be used as a last resort
      * @return the property
-     * @throws PropertyException if there is a problem evaluating the property 
+     * @throws PropertyException if there is a problem evaluating the property
      */
     public Property get(int propId, boolean bTryInherit,
                          boolean bTryDefault) throws PropertyException {
@@ -189,7 +189,7 @@ public abstract class PropertyList {
     public Property getNearestSpecified(int propId) throws PropertyException {
         Property p = null;
         PropertyList pList = parentPropertyList;
-        
+
         while (pList != null) {
             p = pList.getExplicit(propId);
             if (p != null) {
@@ -198,8 +198,8 @@ public abstract class PropertyList {
                 pList = pList.parentPropertyList;
             }
         }
-        
-        // If no explicit value found on any of the ancestor-nodes, 
+
+        // If no explicit value found on any of the ancestor-nodes,
         // return initial (default) value.
         return makeProperty(propId);
     }
@@ -238,7 +238,7 @@ public abstract class PropertyList {
     }
 
     /**
-     * Return the "writing-mode" property value. 
+     * Return the "writing-mode" property value.
      * @return the "writing-mode" property value.
      */
     public int getWritingMode() {
@@ -266,34 +266,34 @@ public abstract class PropertyList {
 
     /**
      * Adds the attributes, passed in by the parser to the PropertyList
-     * 
+     *
      * @param attributes Collection of attributes passed to us from the parser.
      * @throws ValidationException if there is an attribute that does not
      *          map to a property id (strict validation only)
      */
-    public void addAttributesToList(Attributes attributes) 
+    public void addAttributesToList(Attributes attributes)
                     throws ValidationException {
         /*
-         * If column-number/number-columns-spanned are specified, then we 
-         * need them before all others (possible from-table-column() on any 
+         * If column-number/number-columns-spanned are specified, then we
+         * need them before all others (possible from-table-column() on any
          * other property further in the list...
          */
         String attributeName = "column-number";
         String attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName, 
+        convertAttributeToProperty(attributes, attributeName,
             attributeValue);
         attributeName = "number-columns-spanned";
         attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName, 
+        convertAttributeToProperty(attributes, attributeName,
             attributeValue);
-    
+
         /*
          * If font-size is set on this FO, must set it first, since
          * other attributes specified in terms of "ems" depend on it.
          */
         attributeName = "font";
         attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName, 
+        convertAttributeToProperty(attributes, attributeName,
                 attributeValue);
         if (attributeValue == null) {
             /*
@@ -302,19 +302,19 @@ public abstract class PropertyList {
              */
             attributeName = "font-size";
             attributeValue = attributes.getValue(attributeName);
-            convertAttributeToProperty(attributes, attributeName, 
+            convertAttributeToProperty(attributes, attributeName,
                     attributeValue);
         }
-        
+
         String attributeNS;
-        FopFactory factory = getFObj().getUserAgent().getFactory(); 
+        FopFactory factory = getFObj().getUserAgent().getFactory();
         for (int i = 0; i < attributes.getLength(); i++) {
             /* convert all attributes with the same namespace as the fo element
              * the "xml:lang" property is a special case */
             attributeNS = attributes.getURI(i);
             attributeName = attributes.getQName(i);
             attributeValue = attributes.getValue(i);
-            if (attributeNS == null || attributeNS.length() == 0 
+            if (attributeNS == null || attributeNS.length() == 0
                     || "xml:lang".equals(attributeName)) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
             } else if (!factory.isNamespaceIgnored(attributeNS)) {
@@ -322,10 +322,10 @@ public abstract class PropertyList {
                         attributeNS);
                 QName attr = new QName(attributeNS, attributeName);
                 if (mapping != null) {
-                    if (mapping.isAttributeProperty(attr) 
+                    if (mapping.isAttributeProperty(attr)
                             && mapping.getStandardPrefix() != null) {
-                        convertAttributeToProperty(attributes, 
-                                mapping.getStandardPrefix() + ":" + attr.getLocalName(), 
+                        convertAttributeToProperty(attributes,
+                                mapping.getStandardPrefix() + ":" + attr.getLocalName(),
                                 attributeValue);
                     } else {
                         getFObj().addForeignAttribute(attr, attributeValue);
@@ -336,7 +336,7 @@ public abstract class PropertyList {
             }
         }
     }
-    
+
     /**
      * Validates a property name.
      * @param propertyName  the property name to check
@@ -360,34 +360,34 @@ public abstract class PropertyList {
      * @param attributes Collection of attributes
      * @param attributeName Attribute name to convert
      * @param attributeValue Attribute value to assign to property
-     * @throws ValidationException in case the property name is invalid 
+     * @throws ValidationException in case the property name is invalid
      *          for the FO namespace
      */
     private void convertAttributeToProperty(Attributes attributes,
                                             String attributeName,
-                                            String attributeValue) 
+                                            String attributeValue)
                     throws ValidationException {
-        
+
         if (attributeValue != null) {
 
             if (attributeName.startsWith("xmlns:")) {
                 //Ignore namespace declarations
                 return;
             }
-            
+
             /* Handle "compound" properties, ex. space-before.minimum */
             String basePropertyName = findBasePropertyName(attributeName);
             String subPropertyName = findSubPropertyName(attributeName);
 
             int propId = FOPropertyMapping.getPropertyId(basePropertyName);
             int subpropId = FOPropertyMapping.getSubPropertyId(subPropertyName);
-            
-            if (propId == -1 
+
+            if (propId == -1
                     || (subpropId == -1 && subPropertyName != null)) {
                 handleInvalidProperty(new QName(null, attributeName));
             }
             FObj parentFO = fobj.findNearestAncestorFObj();
-    
+
             PropertyMaker propertyMaker = findMaker(propId);
             if (propertyMaker == null) {
                 log.warn("No PropertyMaker registered for " + attributeName
@@ -401,7 +401,7 @@ public abstract class PropertyList {
                     /* Do nothing if the base property has already been created.
                      * This is e.g. the case when a compound attribute was
                      * specified before the base attribute; in these cases
-                     * the base attribute was already created in 
+                     * the base attribute was already created in
                      * findBaseProperty()
                      */
                     if (getExplicit(propId) != null) {
@@ -410,7 +410,7 @@ public abstract class PropertyList {
                     prop = propertyMaker.make(this, attributeValue, parentFO);
                 } else { // e.g. "leader-length.maximum"
                     Property baseProperty
-                        = findBaseProperty(attributes, parentFO, propId, 
+                        = findBaseProperty(attributes, parentFO, propId,
                                 basePropertyName, propertyMaker);
                     prop = propertyMaker.make(baseProperty, subpropId,
                             this, attributeValue, parentFO);
@@ -446,13 +446,13 @@ public abstract class PropertyList {
          * e.g. <fo:leader xxxx.maximum="200pt" xxxx="200pt"... />
          */
         String basePropertyValue = attributes.getValue(basePropertyName);
-        
+
         if (basePropertyValue != null && propertyMaker != null) {
             baseProperty = propertyMaker.make(this, basePropertyValue,
                                               parentFO);
             return baseProperty;
         }
-        
+
         return null;  // could not find base property
     }
 
@@ -462,7 +462,7 @@ public abstract class PropertyList {
      * @throws ValidationException if an exception needs to be thrown depending on the
      *                  validation settings
      */
-    protected void handleInvalidProperty(QName attr) 
+    protected void handleInvalidProperty(QName attr)
                     throws ValidationException {
         if (!attr.getQName().startsWith("xmlns")) {
             fobj.getFOValidationEventProducer().invalidProperty(this, fobj.getName(),
@@ -509,7 +509,7 @@ public abstract class PropertyList {
      */
     private Property getShorthand(int propId) throws PropertyException {
         PropertyMaker propertyMaker = findMaker(propId);
-        
+
         if (propertyMaker != null) {
             return propertyMaker.getShorthand(this);
         } else {
@@ -545,11 +545,11 @@ public abstract class PropertyList {
             for (int prop = 1; prop <= Constants.PROPERTY_COUNT; prop++) {
                 maker = findMaker(prop);
                 inheritableProperty[prop] = (maker != null && maker.isInherited());
-            }    
+            }
         }
 
         return inheritableProperty[propId];
-    }    
+    }
 
     /**
      * @param propId Id of property
@@ -569,11 +569,11 @@ public abstract class PropertyList {
      * @return a BorderAndPadding object
      * @throws PropertyException if there's a problem while processing the properties
      */
-    public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() 
+    public CommonBorderPaddingBackground getBorderPaddingBackgroundProps()
                 throws PropertyException {
         return CommonBorderPaddingBackground.getInstance(this);
     }
-    
+
     /**
      * Constructs a CommonHyphenation object.
      * @return the CommonHyphenation object
@@ -582,7 +582,7 @@ public abstract class PropertyList {
     public CommonHyphenation getHyphenationProps() throws PropertyException {
         return CommonHyphenation.getInstance(this);
     }
-    
+
     /**
      * Constructs a CommonMarginBlock object.
      * @return the CommonMarginBlock object
@@ -591,7 +591,7 @@ public abstract class PropertyList {
     public CommonMarginBlock getMarginBlockProps() throws PropertyException {
         return new CommonMarginBlock(this);
     }
-    
+
     /**
      * Constructs a CommonMarginInline object.
      * @return the CommonMarginInline object
@@ -600,9 +600,9 @@ public abstract class PropertyList {
     public CommonMarginInline getMarginInlineProps() throws PropertyException {
         return new CommonMarginInline(this);
     }
-    
+
     /**
-     * Constructs a CommonAccessibility object. 
+     * Constructs a CommonAccessibility object.
      * @return the CommonAccessibility object
      * @throws PropertyException if there's a problem while processing the properties
      */
@@ -628,7 +628,7 @@ public abstract class PropertyList {
     public CommonRelativePosition getRelativePositionProps() throws PropertyException {
         return new CommonRelativePosition(this);
     }
-    
+
     /**
      * Constructs a CommonAbsolutePosition object.
      * @return the CommonAbsolutePosition object
@@ -636,19 +636,19 @@ public abstract class PropertyList {
      */
     public CommonAbsolutePosition getAbsolutePositionProps() throws PropertyException {
         return new CommonAbsolutePosition(this);
-    }    
-    
+    }
+
 
     /**
      * Constructs a CommonFont object.
-     *  
+     *
      * @return A CommonFont object
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonFont getFontProps() throws PropertyException {
         return CommonFont.getInstance(this);
     }
-    
+
     /**
      * Constructs a CommonTextDecoration object.
      * @return a CommonTextDecoration object

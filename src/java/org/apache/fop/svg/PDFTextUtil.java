@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     private FontInfo fontInfo;
     private Font[] fonts;
     private Font font;
-    
+
     /**
      * Main constructor.
      * @param fontInfo the font catalog
@@ -41,13 +41,13 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
         super();
         this.fontInfo = fontInfo;
     }
-    
+
     /** {@inheritDoc} */
     protected void initValues() {
         super.initValues();
         this.font = null;
     }
-    
+
     /**
      * Sets the current fonts for the text object. For every character, the suitable font will
      * be selected.
@@ -56,7 +56,7 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     public void setFonts(Font[] fonts) {
         this.fonts = fonts;
     }
-    
+
     /**
      * Sets the current font for the text object.
      * @param font the new font
@@ -64,7 +64,7 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     public void setFont(Font font) {
         setFonts(new Font[] {font});
     }
-    
+
     /**
      * Returns the current font in use.
      * @return the current font or null if no font is currently active.
@@ -72,7 +72,7 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     public Font getCurrentFont() {
         return this.font;
     }
-    
+
     /**
      * Sets the current font.
      * @param f the new font to use
@@ -80,7 +80,7 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     public void setCurrentFont(Font f) {
         this.font = f;
     }
-    
+
     /**
      * Determines whether the font with the given name is a multi-byte font.
      * @param name the name of the font
@@ -114,7 +114,7 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
         }
         return fonts[0]; //TODO Maybe fall back to painting with shapes
     }
-    
+
     /**
      * Writes a char to the "TJ-Buffer".
      * @param ch the unmapped character

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
     private char[] unicodeMap; //code point to Unicode char
     private String[] charNameMap; //all character names in the encoding
     private Map fallbackMap; //Here we accumulate all mappings we have found through substitution
-    
+
     /**
      * Main constructor.
      * @param name the name of the encoding
@@ -140,7 +140,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
                 bot = mid + 1;
             }
         }
-        
+
         //Fallback: using cache
         synchronized (this) {
             if (fallbackMap != null) {
@@ -164,7 +164,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
                 }
             }
         }
-        
+
         putFallbackCharacter(c, NOT_FOUND_CODE_POINT);
         return NOT_FOUND_CODE_POINT;
     }
@@ -177,7 +177,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
             this.fallbackMap.put(new Character(c), new Character(mapTo));
         }
     }
-    
+
     /**
      * Returns the main Unicode value that is associated with the given code point in the encoding.
      * Note that multiple Unicode values can theoretically be mapped to one code point in the
@@ -200,10 +200,10 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
         System.arraycopy(this.unicodeMap, 0, copy, 0, this.unicodeMap.length);
         return copy;
     }
-    
+
     /**
      * Returns the index of a character/glyph with the given name. Note that this
-     * method is relatively slow and should only be used for fallback operations.  
+     * method is relatively slow and should only be used for fallback operations.
      * @param charName the character name
      * @return the index of the character in the encoding or -1 if it doesn't exist
      */
@@ -219,7 +219,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
         }
         return -1;
     }
-    
+
     /** {@inheritDoc} */
     public String[] getCharNameMap() {
         if (this.charNameMap != null) {
@@ -235,7 +235,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
                 if (c != CharUtilities.NOT_A_CHARACTER) {
                     String charName = Glyphs.charToGlyphName(c);
                     if (charName.length() > 0) {
-                        derived[i] = charName; 
+                        derived[i] = charName;
                     }
                 }
             }

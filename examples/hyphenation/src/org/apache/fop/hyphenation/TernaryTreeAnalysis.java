@@ -23,15 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class provides some useful methods to print the structure of a TernaryTree object 
+ * This class provides some useful methods to print the structure of a TernaryTree object
  */
 public class TernaryTreeAnalysis {
 
     /**
-     * The TernaryTree object to analyse 
+     * The TernaryTree object to analyse
      */
     protected TernaryTree tt;
-    
+
     /**
      * @param tt the TernaryTree object
      */
@@ -43,27 +43,27 @@ public class TernaryTreeAnalysis {
      * Class representing a string of nodes in the tree representation of a TernaryTree
      */
     public static class NodeString {
-        
+
         /**
-         * The node string being constructed 
+         * The node string being constructed
          */
         public StringBuffer string = new StringBuffer();
-        
+
         /**
-         * The indent of the node string 
+         * The indent of the node string
          */
         public int indent;
-        
+
         /**
-         * The list of branchpoints into the high direction 
+         * The list of branchpoints into the high direction
          */
         public List high = new ArrayList();
-        
+
         /**
-         * The list of branchpoints into the low direction 
+         * The list of branchpoints into the low direction
          */
         public List low = new ArrayList();
-        
+
         /**
          * @param indent the indent of the nodestring
          */
@@ -78,34 +78,34 @@ public class TernaryTreeAnalysis {
      * Class representing a node of the TernaryTree object
      */
     protected class Node {
-        
+
         /**
-         * The index of the node 
+         * The index of the node
          */
         protected int index = 0;
-        
+
         /**
-         * The index of the high node 
+         * The index of the high node
          */
         protected int high = 0;
-        
+
         /**
-         * The index of the high node 
+         * The index of the high node
          */
         protected int low = 0;
-        
+
         /**
-         * The index of the equal node 
+         * The index of the equal node
          */
         protected int equal = 0;
-        
+
         /**
-         * The key following the node 
+         * The key following the node
          */
         protected String key = null;
-        
+
         /**
-         * True if this is a leaf node  
+         * True if this is a leaf node
          */
         protected boolean isLeafNode = false;
 
@@ -132,7 +132,7 @@ public class TernaryTreeAnalysis {
                 equal = tt.eq[index];
             }
         }
-        
+
         private StringBuffer readKey() {
             StringBuffer s = new StringBuffer();
             int i = (int) tt.lo[index];
@@ -160,7 +160,7 @@ public class TernaryTreeAnalysis {
             }
             return s.toString();
         }
-        
+
         /**
          * Construct the compact string representation of the node
          * @return the string representing the node
@@ -184,7 +184,7 @@ public class TernaryTreeAnalysis {
             }
             return s.toString();
         }
-        
+
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
@@ -204,9 +204,9 @@ public class TernaryTreeAnalysis {
             }
             return s.toString();
         }
-        
+
     }
-    
+
     /**
      * Construct the compact node representation of the TernaryTree object
      * @return the string representing the tree
@@ -221,7 +221,7 @@ public class TernaryTreeAnalysis {
         }
         return s.toString();
     }
-    
+
     /**
      * Construct the node representation of the TernaryTree object
      * @return the string representing the tree
@@ -236,7 +236,7 @@ public class TernaryTreeAnalysis {
         }
         return s.toString();
     }
-    
+
     private static StringBuffer toString(char[] c) {
         StringBuffer s = new StringBuffer();
         for (int i = 0; i < c.length; ++i) {
@@ -244,8 +244,8 @@ public class TernaryTreeAnalysis {
             s.append(",");
         }
         return s;
-    } 
-    
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -255,15 +255,15 @@ public class TernaryTreeAnalysis {
         s.append("hi: ");
         s.append(toString(tt.hi));
         s.append("\n");
-        
+
         s.append("eq: ");
         s.append(toString(tt.eq));
         s.append("\n");
-        
+
         s.append("lo: ");
         s.append(toString(tt.lo));
         s.append("\n");
-        
+
         s.append("sc: ");
         for (int i = 0; i < tt.sc.length; ++i) {
             if (tt.sc[i] == 0) {
@@ -275,7 +275,7 @@ public class TernaryTreeAnalysis {
             }
         }
         s.append("\n");
-        
+
         s.append("kv: ");
         for (int i = 0; i < tt.kv.length(); ++i) {
             if (tt.kv.get(i) == 0) {
@@ -285,17 +285,17 @@ public class TernaryTreeAnalysis {
             }
         }
         s.append("\n");
-        
+
         s.append("freenode: ");
         s.append((int) tt.freenode);
         s.append("\n");
-        
+
         s.append("root: ");
         s.append((int) tt.root);
         s.append("\n");
-        
+
         return s.toString();
     }
-    
+
 
 }

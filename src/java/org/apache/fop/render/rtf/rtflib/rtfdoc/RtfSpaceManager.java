@@ -23,8 +23,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * This class is responsible for saving space-before/space-after attributes 
- * history and adding spacing to established candidates (i.e. attributes) or 
+ * This class is responsible for saving space-before/space-after attributes
+ * history and adding spacing to established candidates (i.e. attributes) or
  * accumulation spacing in case of candidate absence.
  */
 public class RtfSpaceManager {
@@ -41,7 +41,7 @@ public class RtfSpaceManager {
      * property.
      */
     private int accumulatedSpace = 0;
-    
+
     /**
      * Construct a newly allocated <code>RtfSpaceManager</code> object.
      */
@@ -49,8 +49,8 @@ public class RtfSpaceManager {
     }
 
     /**
-     * Iterates block-level stack (i.e. all open blocks) and stops updating 
-     * candidate for adding space-before/space-after attribute in case of 
+     * Iterates block-level stack (i.e. all open blocks) and stops updating
+     * candidate for adding space-before/space-after attribute in case of
      * candidate presence.
      */
     public void stopUpdatingSpaceBefore() {
@@ -61,10 +61,10 @@ public class RtfSpaceManager {
             }
         }
     }
-    
+
     /**
      * Set attributes as candidate for space attributes inheritance.
-     * 
+     *
      * @param attrs  attributes to set
      */
     public void setCandidate(RtfAttributes attrs) {
@@ -74,24 +74,24 @@ public class RtfSpaceManager {
             splitter.setSpaceAfterCandidate(attrs);
         }
     }
-    
+
     /**
-     * Builds RtfSpaceSplitter on <code>attrs</code> and adds it to the 
+     * Builds RtfSpaceSplitter on <code>attrs</code> and adds it to the
      * block-level stack.
-     * 
+     *
      * @param attrs  RtfAttribute to add
      * @return instance of RtfSpaceSplitter
      */
     public RtfSpaceSplitter pushRtfSpaceSplitter(RtfAttributes attrs) {
         RtfSpaceSplitter splitter;
         splitter = new RtfSpaceSplitter(attrs, accumulatedSpace);
-        // set accumulatedSpace to 0, because now accumulatedSpace used 
+        // set accumulatedSpace to 0, because now accumulatedSpace used
         // in splitter
         accumulatedSpace = 0;
         blockAttributes.addLast(splitter);
         return splitter;
     }
-    
+
     /**
      * Removes RtfSpaceSplitter from top of block-level stack.
      */
@@ -105,7 +105,7 @@ public class RtfSpaceManager {
 
     /**
      * Pushes inline attributes to inline-level stack.
-     * 
+     *
      * @param attrs attributes to add
      */
     public void pushInlineAttributes(RtfAttributes attrs) {
@@ -123,7 +123,7 @@ public class RtfSpaceManager {
 
     /**
      * Peeks at inline-level attribute stack.
-     * 
+     *
      * @return RtfAttributes from top of inline-level stack
      */
     public RtfAttributes getLastInlineAttribute() {

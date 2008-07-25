@@ -75,7 +75,7 @@ public class PrimaryGridUnit extends GridUnit {
 
     /**
      * Returns the fo:table-header/footer/body element containing this cell.
-     * 
+     *
      * @return the enclosing table part
      */
     public TablePart getTablePart() {
@@ -119,7 +119,7 @@ public class PrimaryGridUnit extends GridUnit {
      * border model the border-separation is included. In the collapsing model only half
      * of them is counted, since the other halves belong to the neighbouring cells; also,
      * the returned value is the maximum of the segments of each applicable grid unit.
-     * 
+     *
      * @return the sum of the before and after border widths
      */
     public int getBeforeAfterBorderWidth() {
@@ -133,7 +133,7 @@ public class PrimaryGridUnit extends GridUnit {
      * model only half of the border is counted, since the other half belongs to the
      * preceding cell; also, the returned value is the maximum of the segments of each
      * applicable grid unit.
-     * 
+     *
      * @param rowIndex index of the span for which the border must be computed, 0-based
      * @param which one of {@link ConditionalBorder#NORMAL},
      * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
@@ -179,7 +179,7 @@ public class PrimaryGridUnit extends GridUnit {
      * model only half of the border is counted, since the other half belongs to the
      * following cell; also, the returned value is the maximum of the segments of each
      * applicable grid unit.
-     * 
+     *
      * @param rowIndex index of the span for which the border must be computed, 0-based
      * @param which one of {@link ConditionalBorder#NORMAL},
      * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
@@ -222,7 +222,7 @@ public class PrimaryGridUnit extends GridUnit {
     /**
      * Returns the width of the before-after for the last row-span of this cell. See
      * {@link #getAfterBorderWidth(int, int)}.
-     * 
+     *
      * @param which one of {@link ConditionalBorder#NORMAL},
      * {@link ConditionalBorder#LEADING_TRAILING} or {@link ConditionalBorder#REST}
      * @return the after border width
@@ -264,7 +264,7 @@ public class PrimaryGridUnit extends GridUnit {
      * enclosing table part, of the first row spanned by the cell. Note that if the table
      * has several table-body children, then the index grows continuously across them;
      * they are considered to form one single part, the "body of the table".
-     * 
+     *
      * @return the index of the row this grid unit belongs to, 0-based.
      */
     public int getRowIndex() {
@@ -273,7 +273,7 @@ public class PrimaryGridUnit extends GridUnit {
 
     /**
      * Returns the index of the column this grid unit belongs to.
-     * 
+     *
      * @return the column index, 0-based
      */
     public int getColIndex() {
@@ -331,7 +331,7 @@ public class PrimaryGridUnit extends GridUnit {
     /**
      * Returns the strength of the keep constraint if the first child block (or its descendants)
      * of this cell has keep-with-previous.
-     * 
+     *
      * @return the keep-with-previous strength
      */
     public int getKeepWithPreviousStrength() {
@@ -349,7 +349,7 @@ public class PrimaryGridUnit extends GridUnit {
     /**
      * Returns the strength of the keep constraint if the last child block (or its descendants) of
      * this cell has keep-with-next.
-     * 
+     *
      * @return the keep-with-next strength
      */
     public int getKeepWithNextStrength() {
@@ -366,7 +366,7 @@ public class PrimaryGridUnit extends GridUnit {
 
     /**
      * Returns the class of the before break for the first child element of this cell.
-     * 
+     *
      * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
      * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
      */
@@ -376,7 +376,7 @@ public class PrimaryGridUnit extends GridUnit {
 
     /**
      * Don't use, reserved for TableCellLM. TODO
-     * 
+     *
      * @param breakBefore the breakBefore to set
      */
     public void setBreakBefore(int breakBefore) {
@@ -385,7 +385,7 @@ public class PrimaryGridUnit extends GridUnit {
 
     /**
      * Returns the class of the before after for the last child element of this cell.
-     * 
+     *
      * @return one of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link
      * Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}
      */
@@ -395,7 +395,7 @@ public class PrimaryGridUnit extends GridUnit {
 
     /**
      * Don't use, reserved for TableCellLM. TODO
-     * 
+     *
      * @param breakAfter the breakAfter to set
      */
     public void setBreakAfter(int breakAfter) {

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.traits;
 
 import java.awt.Color;
@@ -33,14 +33,14 @@ import org.apache.fop.util.ColorUtil;
  * Class to store border trait propties for the area tree.
  */
 public class BorderProps implements Serializable {
-    
+
     /** Separate border model */
     public static final int SEPARATE = 0;
     /** Collapsing border model, for borders inside a table */
     public static final int COLLAPSE_INNER = 1;
     /** Collapsing border model, for borders at the table's outer border */
     public static final int COLLAPSE_OUTER = 2;
-    
+
     /** Border style (one of EN_*) */
     public int style; // Enum for border style
     /** Border color */
@@ -86,7 +86,7 @@ public class BorderProps implements Serializable {
             return 0;
         }
     }
-    
+
     private String getStyleString() {
         switch (style) {
         case Constants.EN_NONE: return "none";
@@ -102,7 +102,7 @@ public class BorderProps implements Serializable {
         default: throw new IllegalStateException("Illegal border style: " + style);
         }
     }
-    
+
     private static int getConstantForStyle(String style) {
         if ("none".equalsIgnoreCase(style)) {
             return Constants.EN_NONE;
@@ -128,7 +128,7 @@ public class BorderProps implements Serializable {
             throw new IllegalStateException("Illegal border style: " + style);
         }
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         return toString().hashCode();
@@ -144,7 +144,7 @@ public class BorderProps implements Serializable {
             if (obj instanceof BorderProps) {
                 BorderProps other = (BorderProps)obj;
                 return (style == other.style)
-                        && color.equals(other.color) 
+                        && color.equals(other.color)
                         && width == other.width
                         && mode == other.mode;
             }
@@ -153,7 +153,7 @@ public class BorderProps implements Serializable {
     }
 
     /**
-     * Returns a BorderProps represtation of a string of the format as written by 
+     * Returns a BorderProps represtation of a string of the format as written by
      * BorderProps.toString().
      * @param foUserAgent FOP user agent caching ICC profiles
      * @param s the string
@@ -180,8 +180,8 @@ public class BorderProps implements Serializable {
                 c = ColorUtil.parseColorString(foUserAgent, color);
             } catch (PropertyException e) {
                 throw new IllegalArgumentException(e.getMessage());
-            } 
-            
+            }
+
             return new BorderProps(style, width, c, mode);
         } else {
             throw new IllegalArgumentException("BorderProps must be surrounded by parentheses");

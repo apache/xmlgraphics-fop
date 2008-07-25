@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ public/*TODO*/ class BorderSpecification {
 
     /**
      * Creates a new border specification.
-     * 
+     *
      * @param borderInfo the border's informations
      * @param holder the FO element declaring this border
      */
@@ -56,7 +56,7 @@ public/*TODO*/ class BorderSpecification {
 
     /**
      * Returns this border's informations.
-     * 
+     *
      * @return this border's informations
      */
     public/*TODO*/ BorderInfo getBorderInfo() {
@@ -65,7 +65,7 @@ public/*TODO*/ class BorderSpecification {
 
     /**
      * Returns the FO element declaring this border.
-     * 
+     *
      * @return one of {@link Constants#FO_TABLE}, {@link Constants#FO_TABLE_COLUMN},
      * {@link Constants#FO_TABLE_HEADER}, {@link Constants#FO_TABLE_FOOTER},
      * {@link Constants#FO_TABLE_BODY}, {@link Constants#FO_TABLE_ROW},
