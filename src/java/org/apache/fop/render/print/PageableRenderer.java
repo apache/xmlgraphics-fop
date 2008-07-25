@@ -57,8 +57,8 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
      * datatype: a positive Integer
      */
     public static final String END_PAGE = "end-page";
-    
-    
+
+
     /** first valid page number (1-based) */
     protected int startNumber = 0;
     /** last valid page number (1-based) */
@@ -68,17 +68,17 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
     protected PagesMode mode = PagesMode.ALL;
 
     private PageFilter pageFilter;
-    
+
     /**
      * Creates a new PageableRenderer.
      */
     public PageableRenderer() {
     }
-    
+
     /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
-        
+
         Map rendererOptions = agent.getRendererOptions();
         processOptions(rendererOptions);
         this.pageFilter = new DefaultPageFilter();
@@ -97,7 +97,7 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
                         + " must be an 'all', 'even', 'odd' or a PagesMode instance.");
             }
         }
-        
+
         o = rendererOptions.get(PageableRenderer.START_PAGE);
         if (o != null) {
             this.startNumber = getPositiveInteger(o);
@@ -132,7 +132,7 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
                     "Value must be a positive integer");
         }
     }
-    
+
     /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         super.stopRenderer();
@@ -149,13 +149,13 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
             super.rememberPage(pageViewport);
         }
     }
-    
+
     private interface PageFilter {
         boolean isValid(PageViewport page);
     }
 
     private class DefaultPageFilter implements PageFilter {
-        
+
         public boolean isValid(PageViewport page) {
             int pageNum = page.getPageIndex() + 1;
             assert pageNum >= 0;
@@ -171,7 +171,7 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
             return true;
         }
     }
-    
+
     /** {@inheritDoc} */
     public PageFormat getPageFormat(int pageIndex)
             throws IndexOutOfBoundsException {
@@ -179,15 +179,15 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
             if (pageIndex >= getNumberOfPages()) {
                 return null;
             }
-    
+
             PageFormat pageFormat = new PageFormat();
-    
+
             Paper paper = new Paper();
-    
+
             Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
             double width = dim.getWidth();
             double height = dim.getHeight();
-    
+
             // if the width is greater than the height assume landscape mode
             // and swap the width and height values in the paper format
             if (width > height) {

@@ -35,13 +35,13 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
      * The actual name of the object
      */
     protected String name = null;
-    
+
     /**
      * Default constructor
      */
     protected AbstractNamedAFPObject() {
     }
-    
+
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
      * name parameter which should be 8 characters long.
@@ -75,7 +75,7 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
         }
         return nameBytes;
     }
-    
+
     /** {@inheritDoc} */
     protected void copySF(byte[] data, byte type, byte category) {
         super.copySF(data, type, category);

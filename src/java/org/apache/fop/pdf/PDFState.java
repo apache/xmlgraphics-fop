@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.util.Iterator;
@@ -150,9 +150,9 @@ public class PDFState extends org.apache.fop.render.AbstractState {
         }
         return newState;
     }
-    
+
     private class PDFData extends org.apache.fop.render.AbstractState.AbstractData {
-        
+
         private static final long serialVersionUID = 3527950647293177764L;
 
         private Paint paint = null;
@@ -179,7 +179,7 @@ public class PDFState extends org.apache.fop.render.AbstractState {
             obj.gstate = this.gstate;
             return obj;
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             return super.toString()

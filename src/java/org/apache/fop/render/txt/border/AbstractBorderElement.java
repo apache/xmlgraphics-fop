@@ -33,25 +33,25 @@ import org.apache.fop.render.txt.TXTState;
 public abstract class AbstractBorderElement implements Constants {
 
     /**
-     * Constant for a line segment, directing from a center of symbol up 
+     * Constant for a line segment, directing from a center of symbol up
      * the the symbol boundary.
      */
     public static final int UP = 0;
 
     /**
-     * Constant for a line segment, directing from a center of symbol right 
+     * Constant for a line segment, directing from a center of symbol right
      * the the symbol boundary.
      */
     public static final int RIGHT = 1;
 
     /**
-     * Constant for a line segment, directing from a center of symbol down 
+     * Constant for a line segment, directing from a center of symbol down
      * the the symbol boundary.
      */
     public static final int DOWN = 2;
 
     /**
-     * Constant for a line segment, directing from a center of symbol left 
+     * Constant for a line segment, directing from a center of symbol left
      * the the symbol boundary.
      */
     public static final int LEFT = 3;
@@ -63,7 +63,7 @@ public abstract class AbstractBorderElement implements Constants {
     protected int[] data = {0, 0, 0, 0};
 
     /**
-     * Initializes a newly created <code>AbstractBorderElement</code> object 
+     * Initializes a newly created <code>AbstractBorderElement</code> object
      * so that it represents an empty border element.
      */
     public AbstractBorderElement() {
@@ -71,9 +71,9 @@ public abstract class AbstractBorderElement implements Constants {
 
     /**
      * Constructs a newly allocated <code>AbstractBorderElement</code> object.
-     * Fills array <code>data</code> using binary representation of 
+     * Fills array <code>data</code> using binary representation of
      * <code>type</code>.
-     * 
+     *
      * @param type binary representation of type gives <code>data</code>
      */
     public AbstractBorderElement(int type) {
@@ -84,7 +84,7 @@ public abstract class AbstractBorderElement implements Constants {
 
     /**
      * Returns value of side's element of <code>data</code>.
-     * 
+     *
      * @param side integer, representing side
      * @return value of side's element
      */
@@ -94,7 +94,7 @@ public abstract class AbstractBorderElement implements Constants {
 
     /**
      * Sets a value for <code>data[side]</code>.
-     * 
+     *
      * @param side integer, representing side
      * @param value a new value for <code>data[side]</code>
      */

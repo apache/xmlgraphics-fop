@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
     public DimensionPropertyMaker(PropertyMaker baseMaker) {
         super(baseMaker);
     }
-    
+
     public void setExtraCorresponding(int[][] extraCorresponding) {
         this.extraCorresponding = extraCorresponding;
     }
@@ -47,7 +47,7 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
             int wmcorr = extraCorresponding[i][0]; //propertyList.getWritingMode()];
             if (propertyList.getExplicit(wmcorr) != null)
                 return true;
-        }            
+        }
         return false;
     }
 
@@ -59,8 +59,8 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         }
 
         // Based on min-[width|height]
-        int wmcorr = propertyList.getWritingMode(extraCorresponding[0][0], 
-                                        extraCorresponding[0][1], 
+        int wmcorr = propertyList.getWritingMode(extraCorresponding[0][0],
+                                        extraCorresponding[0][1],
                                         extraCorresponding[0][2]);
         Property subprop = propertyList.getExplicitOrShorthand(wmcorr);
         if (subprop != null) {
@@ -68,8 +68,8 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         }
 
         // Based on max-[width|height]
-        wmcorr = propertyList.getWritingMode(extraCorresponding[1][0], 
-                                    extraCorresponding[1][1], 
+        wmcorr = propertyList.getWritingMode(extraCorresponding[1][0],
+                                    extraCorresponding[1][1],
                                     extraCorresponding[1][2]);
         subprop = propertyList.getExplicitOrShorthand(wmcorr);
         // TODO: Don't set when NONE.
@@ -78,5 +78,5 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         }
 
         return p;
-    }   
+    }
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,12 +44,12 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
     private int dominantBaselineOffset;
     private int beforeEdgeOffset;
     private int afterEdgeOffset;
-    
+
     private static final float HANGING_BASELINE_FACTOR = 0.8f;
     private static final float MATHEMATICAL_BASELINE_FACTOR = 0.5f;
 
     /**
-     * 
+     *
      * Creates a new instance of BasicScaledBaselineTable for the given
      * altitude, depth, xHeight, baseline and writingmode.
      * @param altitude the height of the box or the font ascender
@@ -72,7 +72,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
         this.beforeEdgeOffset = altitude - dominantBaselineOffset;
         this.afterEdgeOffset = depth - dominantBaselineOffset;
     }
-    
+
     /**
      * Return the dominant baseline for this baseline table.
      * @return the dominant baseline
@@ -80,7 +80,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
     public int getDominantBaselineIdentifier() {
         return this.dominantBaselineIdentifier;
     }
-    
+
     /**
      * Return the writing mode for this baseline table.
      * @return the writing mode
@@ -132,11 +132,11 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
         }
         return offset;
     }
-    
+
     private boolean isHorizontalWritingMode() {
         return writingMode == EN_LR_TB || writingMode == EN_RL_TB;
     }
-    
+
     /**
      * Return the baseline offset measured from the font's default
      * baseline for the given baseline.
@@ -171,9 +171,9 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
         }
         return offset;
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setBeforeAndAfterBaselines(int beforeBaseline, int afterBaseline) {
         beforeEdgeOffset = beforeBaseline;
@@ -184,7 +184,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
      * {@inheritDoc}
      */
     public ScaledBaselineTable deriveScaledBaselineTable(int baselineIdentifier) {
-        BasicScaledBaselineTable bac 
+        BasicScaledBaselineTable bac
             = new BasicScaledBaselineTable(altitude, depth, xHeight
                                             , baselineIdentifier, this.writingMode);
         return bac;

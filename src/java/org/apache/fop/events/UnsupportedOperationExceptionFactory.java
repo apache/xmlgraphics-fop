@@ -34,10 +34,10 @@ public class UnsupportedOperationExceptionFactory implements ExceptionFactory {
         UnsupportedOperationException ex = new UnsupportedOperationException(msg);
         return ex;
     }
-    
+
     /** {@inheritDoc} */
     public Class getExceptionClass() {
         return UnsupportedOperationException.class;
     }
-    
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ import org.apache.fop.fo.XMLObj;
  * This is an atomic inline object that contains XML data.
  */
 public class InstreamForeignObject extends AbstractGraphics {
-    
+
     // The value of properties relevant for fo:instream-foreign-object.
     // All property values contained in AbstractGraphics
     // End of property values
@@ -48,9 +48,9 @@ public class InstreamForeignObject extends AbstractGraphics {
     private boolean instrisicSizeDetermined;
 
     private Length intrinsicAlignmentAdjust;
-    
+
     /**
-     * Constructs an instream-foreign-object object 
+     * Constructs an instream-foreign-object object
      * (called by {@link org.apache.fop.fo.ElementMapping.Maker}).
      *
      * @param parent the parent {@link FONode}
@@ -61,7 +61,7 @@ public class InstreamForeignObject extends AbstractGraphics {
 
     /**
      * Make sure content model satisfied, if so then tell the
-     * {@link org.apache.fop.fo.FOEventHandler} that we are at 
+     * {@link org.apache.fop.fo.FOEventHandler} that we are at
      * the end of the instream-foreign-object.
      * {@inheritDoc}
      */
@@ -76,7 +76,7 @@ public class InstreamForeignObject extends AbstractGraphics {
      * {@inheritDoc}
      * <br>XSL Content Model: one (1) non-XSL namespace child
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -89,7 +89,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     public String getLocalName() {
         return "instream-foreign-object";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_INSTREAM_FOREIGN_OBJECT}
@@ -139,7 +139,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         prepareIntrinsicSize();
         return intrinsicAlignmentAdjust;
     }
-    
+
     /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
         super.addChildNode(child);
@@ -149,5 +149,5 @@ public class InstreamForeignObject extends AbstractGraphics {
     public XMLObj getChildXMLObj() {
         return (XMLObj) firstChild;
     }
-    
+
 }

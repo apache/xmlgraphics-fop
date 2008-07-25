@@ -45,17 +45,17 @@ public abstract class AbstractEventModelFactory implements EventModelFactory {
         if (in == null) {
             throw new MissingResourceException(
                     "File " + resourceName + " not found",
-                    DefaultEventBroadcaster.class.getName(), ""); 
+                    DefaultEventBroadcaster.class.getName(), "");
         }
         try {
             return EventModelParser.parse(new StreamSource(in));
         } catch (TransformerException e) {
             throw new MissingResourceException(
                     "Error reading " + resourceName + ": " + e.getMessage(),
-                    DefaultEventBroadcaster.class.getName(), ""); 
+                    DefaultEventBroadcaster.class.getName(), "");
         } finally {
             IOUtils.closeQuietly(in);
         }
     }
-    
+
 }

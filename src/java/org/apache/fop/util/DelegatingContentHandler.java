@@ -38,9 +38,9 @@ import org.xml.sax.ext.LexicalHandler;
  * <p>
  * The ContentHandler is the only instance that is required. All others (DTDHandler,
  * EntityResolver, LexicalHandler and ErrorHandler) may be ignored.
- * 
+ *
  */
-public class DelegatingContentHandler 
+public class DelegatingContentHandler
         implements EntityResolver, DTDHandler, ContentHandler, LexicalHandler, ErrorHandler {
 
     private ContentHandler delegate;
@@ -48,7 +48,7 @@ public class DelegatingContentHandler
     private DTDHandler dtdHandler;
     private LexicalHandler lexicalHandler;
     private ErrorHandler errorHandler;
-    
+
     /**
      * Main constructor.
      */
@@ -62,7 +62,7 @@ public class DelegatingContentHandler
     public ContentHandler getDelegateContentHandler() {
         return this.delegate;
     }
-    
+
     /**
      * Sets the delegate ContentHandler that all events are forwarded to.
      * @param handler the delegate instance
@@ -70,7 +70,7 @@ public class DelegatingContentHandler
     public void setDelegateContentHandler(ContentHandler handler) {
         this.delegate = handler;
     }
-    
+
     /**
      * Sets the delegate EntityResolver.
      * @param resolver the delegate instance
@@ -78,7 +78,7 @@ public class DelegatingContentHandler
     public void setDelegateEntityResolver(EntityResolver resolver) {
         this.entityResolver = resolver;
     }
-    
+
     /**
      * Sets the delegate DTDHandler.
      * @param handler the delegate instance
@@ -86,7 +86,7 @@ public class DelegatingContentHandler
     public void setDelegateDTDHandler(DTDHandler handler) {
         this.dtdHandler = handler;
     }
-    
+
     /**
      * Sets the delegate LexicalHandler.
      * @param handler the delegate instance
@@ -94,7 +94,7 @@ public class DelegatingContentHandler
     public void setDelegateLexicalHandler(LexicalHandler handler) {
         this.lexicalHandler = handler;
     }
-    
+
     /**
      * Sets the delegate ErrorHandler.
      * @param handler the delegate instance
@@ -102,9 +102,9 @@ public class DelegatingContentHandler
     public void setDelegateErrorHandler(ErrorHandler handler) {
         this.errorHandler = handler;
     }
-    
+
     // ==== EntityResolver
-    
+
     /**
      * {@inheritDoc}
      */
@@ -130,7 +130,7 @@ public class DelegatingContentHandler
     /**
      * {@inheritDoc}
      */
-    public void unparsedEntityDecl(String name, String publicId, String systemId, 
+    public void unparsedEntityDecl(String name, String publicId, String systemId,
             String notationName) throws SAXException {
         if (dtdHandler != null) {
             dtdHandler.unparsedEntityDecl(name, publicId, systemId, notationName);
@@ -138,7 +138,7 @@ public class DelegatingContentHandler
     }
 
     // ==== ContentHandler
-    
+
     /**
      * {@inheritDoc}
      */
@@ -177,7 +177,7 @@ public class DelegatingContentHandler
     /**
      * {@inheritDoc}
      */
-    public void startElement(String uri, String localName, String qName, 
+    public void startElement(String uri, String localName, String qName,
                 Attributes atts) throws SAXException {
         delegate.startElement(uri, localName, qName, atts);
     }
@@ -218,7 +218,7 @@ public class DelegatingContentHandler
     }
 
     // ==== LexicalHandler
-    
+
     /**
      * {@inheritDoc}
      */
@@ -226,7 +226,7 @@ public class DelegatingContentHandler
         if (lexicalHandler != null) {
             lexicalHandler.startDTD(name, publicId, systemId);
         }
-        
+
     }
 
     /**
@@ -275,14 +275,14 @@ public class DelegatingContentHandler
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void comment(char[] ch, int start, int length) throws SAXException {
         if (lexicalHandler != null) {
             lexicalHandler.comment(ch, start, length);
         }
     }
-    
+
     // ==== ErrorHandler
 
     /**

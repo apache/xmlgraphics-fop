@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -32,14 +32,14 @@ import java.io.Writer;
  * length.
  */
 public class PDFStream extends AbstractPDFStream {
-    
+
     /**
      * The stream of PDF commands
      */
     protected StreamCache data;
 
     private transient Writer streamWriter;
-    
+
     /**
      * Create an empty stream object
      */
@@ -70,11 +70,11 @@ public class PDFStream extends AbstractPDFStream {
             ex.printStackTrace();
         }
     }
-    
+
     private void flush() throws IOException {
         this.streamWriter.flush();
     }
-    
+
     /**
      * Returns a Writer that writes to the OutputStream of the buffer.
      * @return the Writer
@@ -95,7 +95,7 @@ public class PDFStream extends AbstractPDFStream {
         }
         return this.data.getOutputStream();
     }
-    
+
     /**
      * Used to set the contents of the PDF stream.
      * @param data the contents as a byte array
@@ -138,7 +138,7 @@ public class PDFStream extends AbstractPDFStream {
      */
     protected int output(OutputStream stream) throws IOException {
         final int len = super.output(stream);
-        
+
         //Now that the data has been written, it can be discarded.
         this.data = null;
         return len;

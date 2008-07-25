@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,10 +43,10 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     protected AbstractPageNumberCitation fobj;
     /** Font for the page-number-citation */
     protected Font font;
-    
+
     /** Indicates whether the page referred to by the citation has been resolved yet */
     protected boolean resolved = false;
-    
+
     /**
      * Constructor
      *
@@ -57,7 +57,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
         super(node);
         fobj = node;
     }
-    
+
     /** {@inheritDoc} */
     public void initialize() {
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
@@ -86,10 +86,10 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
         curArea = getPageNumberCitationInlineArea();
         return curArea;
     }
-    
+
     /**
      * {@inheritDoc}
-     *                                                                      , LayoutContext) 
+     *                                                                      , LayoutContext)
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         super.addAreas(posIter, context);
@@ -97,7 +97,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
             getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
         }
     }
-    
+
     /**
      * If id can be resolved then simply return a word, otherwise
      * return a resolvable area
@@ -124,12 +124,12 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
             text.setIPD(width);
         }
         updateTextAreaTraits(text);
-        
+
         return text;
     }
-    
+
     /**
-     * Updates the traits for the generated text area. 
+     * Updates the traits for the generated text area.
      * @param text the text area
      */
     protected void updateTextAreaTraits(TextArea text) {
@@ -140,7 +140,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
         text.addTrait(Trait.COLOR, fobj.getColor());
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
     }
-    
+
     /**
      * @param str string to be measured
      * @return width (in millipoints ??) of the string

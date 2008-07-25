@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.awt.geom.Rectangle2D;
@@ -33,7 +33,7 @@ public class PDFPage extends PDFResourceContext {
 
     /** the page index (zero-based) */
     protected int pageIndex;
-    
+
     /**
      * Create a /Page object
      *
@@ -75,12 +75,12 @@ public class PDFPage extends PDFResourceContext {
         setBleedBox(box); //Recommended by PDF/X
         setTrimBox(box); //Needed for PDF/X
     }
-    
+
     private PDFArray toPDFArray(Rectangle2D box) {
         return new PDFArray(this, new double[] {
                 box.getX(), box.getY(), box.getMaxX(), box.getMaxY()});
     }
-    
+
     /**
      * Sets the "MediaBox" entry
      * @param box the media rectangle
@@ -88,7 +88,7 @@ public class PDFPage extends PDFResourceContext {
     public void setMediaBox(Rectangle2D box) {
         put("MediaBox", toPDFArray(box));
     }
-    
+
     /**
      * Sets the "TrimBox" entry
      * @param box the trim rectangle
@@ -96,7 +96,7 @@ public class PDFPage extends PDFResourceContext {
     public void setTrimBox(Rectangle2D box) {
         put("TrimBox", toPDFArray(box));
     }
-    
+
     /**
      * Sets the "BleedBox" entry
      * @param box the bleed rectangle
@@ -104,7 +104,7 @@ public class PDFPage extends PDFResourceContext {
     public void setBleedBox(Rectangle2D box) {
         put("BleedBox", toPDFArray(box));
     }
-    
+
     /**
      * set this page contents
      *

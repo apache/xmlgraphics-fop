@@ -64,7 +64,7 @@ class TableContentPosition extends Position {
      * Sets the row corresponding to this position if it starts a new page. In which case,
      * if the delay mechanism is on, this is the delayed row that starts the page, and not
      * the current row being extended.
-     * 
+     *
      * @param newPageRow the row that will start the page if this position is the first
      * one on that page
      */

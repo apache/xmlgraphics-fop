@@ -26,9 +26,9 @@ public interface StatusListener {
 
     /** Called when a page has been renderered. */
     void notifyPageRendered();
-    
+
     /** Called when the renderer has stopped. */
     void notifyRendererStopped();
-    
+
 }
 

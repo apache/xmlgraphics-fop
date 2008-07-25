@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,24 +24,24 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * This subclass of EnumProperty.Maker handles the special treatment of 
+ * This subclass of EnumProperty.Maker handles the special treatment of
  * relative font stretch values described in 7.8.5.
  */
-public class FontStretchPropertyMaker 
+public class FontStretchPropertyMaker
     extends EnumProperty.Maker implements Constants {
-    
+
     /* Ordered list of absolute font stretch properties so we can easily find the next /
      * previous one */
     private Property[] orderedFontStretchValues = null;
-        
+
     /**
-     * Create an enum property which can handle relative font stretches 
+     * Create an enum property which can handle relative font stretches
      * @param propId the font size property id.
      */
     public FontStretchPropertyMaker(int propId) {
         super(propId);
     }
-    
+
     /**
      * {@inheritDoc}
      * Implements the parts of 7.8.5 relevant to relative font stretches

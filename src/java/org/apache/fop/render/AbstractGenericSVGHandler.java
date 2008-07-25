@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
     protected static Log log = LogFactory.getLog(AbstractGenericSVGHandler.class);
 
     /** {@inheritDoc} */
-    public void handleXML(RendererContext context, 
+    public void handleXML(RendererContext context,
                 Document doc, String ns) throws Exception {
 
         if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
@@ -118,8 +118,8 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
 
         //Let the painter paint the SVG on the Graphics2D instance
         Graphics2DAdapter adapter = context.getRenderer().getGraphics2DAdapter();
-        adapter.paintImage(painter, context, 
-                x, y, wrappedContext.getWidth(), wrappedContext.getHeight()); 
+        adapter.paintImage(painter, context,
+                x, y, wrappedContext.getWidth(), wrappedContext.getHeight());
     }
 
     /**
@@ -136,7 +136,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
         }
         return docURI;
     }
-    
+
     /**
      * Override this method to update the renderer context if it needs special settings for
      * certain conditions.

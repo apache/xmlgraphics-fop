@@ -52,11 +52,11 @@ public final class FOTreeTestSuite {
     static {
         DebugHelper.registerStandardElementListObservers();
     }
-    
+
     private FOTreeTestSuite() {
         //don't instantiate!
     }
-    
+
     /**
      * @return the test suite with all the tests (one for each XML file)
      * @throws IOException in case of an I/O problem
@@ -72,7 +72,7 @@ public final class FOTreeTestSuite {
         File mainDir = new File("test/fotree");
 
         final FOTreeTester tester = new FOTreeTester();
-        
+
         IOFileFilter filter;
         String single = System.getProperty("fop.fotree.single");
         String startsWith = System.getProperty("fop.fotree.starts-with");
@@ -85,12 +85,12 @@ public final class FOTreeTestSuite {
             filter = new SuffixFileFilter(".fo");
             filter = LayoutEngineTestSuite.decorateWithDisabledList(filter);
         }
-        Collection files = FileUtils.listFiles(new File(mainDir, "testcases"), 
+        Collection files = FileUtils.listFiles(new File(mainDir, "testcases"),
                 filter, TrueFileFilter.INSTANCE);
         String privateTests = System.getProperty("fop.fotree.private");
         if ("true".equalsIgnoreCase(privateTests)) {
             Collection privateFiles = FileUtils.listFiles(
-                    new File(mainDir, "private-testcases"), 
+                    new File(mainDir, "private-testcases"),
                     filter, TrueFileFilter.INSTANCE);
             files.addAll(privateFiles);
         }
@@ -100,8 +100,8 @@ public final class FOTreeTestSuite {
             addTestCase(suite, tester, f);
         }
     }
-    
-    private static void addTestCase(TestSuite suite, 
+
+    private static void addTestCase(TestSuite suite,
                 final FOTreeTester tester, final File f) {
         suite.addTest(new FOTreeTestCase(f.getName()) {
             public void runTest() throws Exception {
@@ -126,22 +126,22 @@ public final class FOTreeTestSuite {
     }
 
     private static class FOTreeTestCase extends TestCase {
-        
+
         private FOTreeTester tester;
         private File testFile;
-        
+
         public FOTreeTestCase(String name) {
             super(name);
         }
-        
+
         public void prepare(FOTreeTester tester, File testFile) {
             //super(testFile.getName());
             this.tester = tester;
             this.testFile = testFile;
         }
-        
+
         public void testMain() throws Exception {
             tester.runTest(testFile);
         }
-    }    
+    }
 }

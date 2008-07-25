@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding.intermediate;
 
 import java.io.File;
@@ -50,7 +50,7 @@ public class ExampleStamp {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
-    
+
     /**
      * Stamps an intermediate file and renders it to a PDF file.
      * @param atfile the intermediate file (area tree XML)
@@ -60,7 +60,7 @@ public class ExampleStamp {
      * @throws TransformerException In case of a XSL transformation problem
      * @throws SAXException In case of an XML-related problem
      */
-    public void stampToPDF(File atfile, File stampSheet, File pdffile) 
+    public void stampToPDF(File atfile, File stampSheet, File pdffile)
             throws IOException, TransformerException, SAXException {
         // Setup output
         OutputStream out = new java.io.FileOutputStream(pdffile);
@@ -71,31 +71,31 @@ public class ExampleStamp {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
             //Construct the AreaTreeModel that will received the individual pages
-            AreaTreeModel treeModel = new RenderPagesModel(userAgent, 
+            AreaTreeModel treeModel = new RenderPagesModel(userAgent,
                     MimeConstants.MIME_PDF, fontInfo, out);
-            
+
             //Iterate over all intermediate files
             AreaTreeParser parser = new AreaTreeParser();
             Source src = new StreamSource(atfile);
             Source xslt = new StreamSource(stampSheet);
-            
+
             //Setup Transformer for XSLT processing
             TransformerFactory tFactory = TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer(xslt);
-            
+
             //Send XSLT result to AreaTreeParser
             SAXResult res = new SAXResult(parser.getContentHandler(treeModel, userAgent));
-            
+
             //Start XSLT transformation and area tree parsing
             transformer.transform(src, res);
-            
+
             //Signal the end of the processing. The renderer can finalize the target document.
             treeModel.endDocument();
         } finally {
             out.close();
         }
     }
-    
+
     /**
      * Main method.
      * @param args command-line arguments
@@ -103,12 +103,12 @@ public class ExampleStamp {
     public static void main(String[] args) {
         try {
             System.out.println("FOP ExampleConcat\n");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
-            
+
             //Setup output file
             File xsltfile = new File(baseDir, "xml/xslt/projectteam2fo.xsl");
             File atfile = new File(outDir, "team.at.xml");
@@ -120,19 +120,19 @@ public class ExampleStamp {
             System.out.println();
 
             ProjectTeam team1 = ExampleObj2XML.createSampleProjectTeam();
-            
+
             //Create intermediate file
             ExampleConcat concatapp = new ExampleConcat();
             concatapp.convertToIntermediate(
-                    team1.getSourceForProjectTeam(), 
+                    team1.getSourceForProjectTeam(),
                     new StreamSource(xsltfile), atfile);
-            
+
             //Stamp document and produce a PDF from the intermediate format
             ExampleStamp app = new ExampleStamp();
             app.stampToPDF(atfile, stampxsltfile, pdffile);
-            
+
             System.out.println("Success!");
-            
+
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);

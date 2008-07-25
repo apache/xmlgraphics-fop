@@ -29,7 +29,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
- * Extension element for ps:ps-setpagedevice. 
+ * Extension element for ps:ps-setpagedevice.
  */
 public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
 
@@ -69,7 +69,7 @@ public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
      * @throws FOPException if there's a problem during processing
      * @see org.apache.fop.fo.FONode#processNode
      */
-    public void processNode(String elementName, Locator locator, 
+    public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
         String name = attlist.getValue("name");
@@ -79,7 +79,7 @@ public class PSSetPageDeviceElement extends AbstractPSExtensionElement {
     }
 
     /**
-     * @return local name 
+     * @return local name
      * @see org.apache.fop.fo.FONode#getLocalName() */
     public String getLocalName() {
         return ELEMENT;

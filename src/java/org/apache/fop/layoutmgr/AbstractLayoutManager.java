@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -294,7 +294,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         if (pos.getIndex() >= 0) {
             throw new IllegalStateException("Position already got its index");
         }
-        
+
         lastGeneratedPosition++;
         pos.setIndex(lastGeneratedPosition);
         return pos;
@@ -383,27 +383,27 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * Checks to see if the incoming {@link Position}
      * is the last one for this LM, and if so, calls
      * {@link #notifyEndOfLayout()} and cleans up.
-     * 
+     *
      * @param pos   the {@link Position} to check
      */
     protected void checkEndOfLayout(Position pos) {
         if (pos != null
             && pos.getLM() == this
             && this.isLast(pos)) {
-            
+
             notifyEndOfLayout();
-            
+
             /* References to the child LMs are no longer needed
              */
             childLMs = null;
             curChildLM = null;
             childLMiter = null;
-            
+
             /* markers that qualify have been transferred to the page
              */
             markers = null;
-            
-            /* References to the FO's children can be released if the 
+
+            /* References to the FO's children can be released if the
              * LM is a descendant of the FlowLM. For static-content
              * the FO may still be needed on following pages.
              */
@@ -418,7 +418,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));

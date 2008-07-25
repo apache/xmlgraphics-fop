@@ -29,7 +29,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 public class OffDocumentExtensionAttachment implements OffDocumentItem {
 
     private ExtensionAttachment attachment;
-    
+
     /**
      * Main constructor
      * @param attachment the extension attachment to wrap.
@@ -37,7 +37,7 @@ public class OffDocumentExtensionAttachment implements OffDocumentItem {
     public OffDocumentExtensionAttachment(ExtensionAttachment attachment) {
         this.attachment = attachment;
     }
-    
+
     /** @return the extension attachment. */
     public ExtensionAttachment getAttachment() {
         return this.attachment;
@@ -52,5 +52,5 @@ public class OffDocumentExtensionAttachment implements OffDocumentItem {
     public String getName() {
         return attachment.getCategory();
     }
-    
+
 }

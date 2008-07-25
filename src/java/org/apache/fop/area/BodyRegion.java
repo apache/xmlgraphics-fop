@@ -55,7 +55,7 @@ public class BodyRegion extends RegionReference {
      * @param columnCount the number of columns
      * @param columnGap the gap between columns
      */
-    public BodyRegion(int regionClass, String regionName, RegionViewport parent, 
+    public BodyRegion(int regionClass, String regionName, RegionViewport parent,
             int columnCount, int columnGap) {
         super(regionClass, regionName, parent);
         this.columnCount = columnCount;
@@ -76,7 +76,7 @@ public class BodyRegion extends RegionReference {
     public int getColumnGap() {
         return this.columnGap;
     }
-   
+
     /**
      * Get the main reference area.
      *
@@ -135,14 +135,14 @@ public class BodyRegion extends RegionReference {
         }
         return getBPD() - usedBPD;
     }
-    
+
     /**
      * Clone this object.
      *
      * @return a shallow copy of this object
      */
     public Object clone() {
-        BodyRegion br = new BodyRegion(getRegionClass(), getRegionName(), regionViewport, 
+        BodyRegion br = new BodyRegion(getRegionClass(), getRegionName(), regionViewport,
                 getColumnCount(), getColumnGap());
         br.setCTM(getCTM());
         br.setIPD(getIPD());

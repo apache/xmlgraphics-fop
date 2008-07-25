@@ -33,7 +33,7 @@ public class ProducerContext {
     private Templates templates;
     private int targetResolution;
     private File targetDir;
-    
+
     /**
      * @return the TransformerFactory to be used.
      */
@@ -43,7 +43,7 @@ public class ProducerContext {
         }
         return tFactory;
     }
-    
+
     /**
      * @return the requested bitmap resolution in dpi for all bitmaps.
      */
@@ -73,14 +73,14 @@ public class ProducerContext {
     public void setTemplates(Templates templates) {
         this.templates = templates;
     }
-    
+
     /**
      * @return the target directory for all produced bitmaps
      */
     public File getTargetDir() {
         return targetDir;
     }
-    
+
     /**
      * Sets the target directory for all produced bitmaps.
      * @param targetDir the target directory

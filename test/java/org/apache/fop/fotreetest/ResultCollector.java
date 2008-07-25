@@ -23,14 +23,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This class collects the results from assertions injected into the FO stream. 
+ * This class collects the results from assertions injected into the FO stream.
  */
 public class ResultCollector {
 
     private static ResultCollector instance = null;
-    
+
     private List results = new java.util.ArrayList();
-    
+
     /** @return the ResultColletor singleton */
     public static ResultCollector getInstance() {
         if (instance == null) {
@@ -38,12 +38,12 @@ public class ResultCollector {
         }
         return instance;
     }
-    
+
     /** Main constructor. */
     public ResultCollector() {
         //nop
     }
-    
+
     /**
      * This notifies the ResultCollector about an Exception.
      * @param e the exception
@@ -52,12 +52,12 @@ public class ResultCollector {
         System.out.println(e.getMessage());
         results.add(e);
     }
-    
+
     /** Resets the result list. */
     public void reset() {
         results.clear();
     }
-    
+
     /** @return the list of results */
     public List getResults() {
         return Collections.unmodifiableList(results);

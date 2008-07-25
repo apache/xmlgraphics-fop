@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,11 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.layoutmgr;
 
 public class Position {
-    
+
     private LayoutManager layoutManager;
     private int index = -1;
 
@@ -39,14 +39,14 @@ public class Position {
     public Position getPosition() {
         return null;
     }
-    
+
     public boolean generatesAreas() {
         return false;
     }
 
     /**
      * Sets the index of this position in the sequence of Position elements.
-     * 
+     *
      * @param value this position's index
      */
     public void setIndex(int value) {
@@ -55,13 +55,13 @@ public class Position {
 
     /**
      * Returns the index of this position in the sequence of Position elements.
-     * 
+     *
      * @return the index of this position in the sequence of Position elements
      */
     public int getIndex() {
         return this.index;
     }
-    
+
     public String getShortLMName() {
         if (getLM() != null) {
             String lm = getLM().toString();
@@ -75,7 +75,7 @@ public class Position {
             return "null";
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer();

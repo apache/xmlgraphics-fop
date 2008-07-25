@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,9 +31,9 @@ import org.apache.fop.fo.FObj;
  * and the {@link org.apache.fop.datatypes.PercentBaseContext} interfaces
  * into a common base class for all higher LayoutManagers.
  */
-public abstract class AbstractBaseLayoutManager 
+public abstract class AbstractBaseLayoutManager
     implements LayoutManager, PercentBaseContext {
-    
+
     /** Indicator if this LM generates reference areas. */
     protected boolean generatesReferenceArea = false;
     /** Indicator if this LM generates block areas. */
@@ -67,7 +67,7 @@ public abstract class AbstractBaseLayoutManager
     }
 
     // --------- Property Resolution related functions --------- //
-    
+
     /** {@inheritDoc} */
     public int getBaseLength(int lengthBase, FObj fobjx) {
         if (fobjx == this.fobj) {
@@ -201,7 +201,7 @@ public abstract class AbstractBaseLayoutManager
         throw new UnsupportedOperationException(
                 "getContentAreaIPD() called when it should have been overridden");
     }
-   
+
     /**
      * {@inheritDoc}
      * <i>NOTE: Should be overridden by subclasses.
@@ -211,27 +211,27 @@ public abstract class AbstractBaseLayoutManager
         throw new UnsupportedOperationException(
                 "getContentAreaBPD() called when it should have been overridden");
     }
-    
+
     /** {@inheritDoc} */
     public boolean getGeneratesReferenceArea() {
         return generatesReferenceArea;
     }
-   
+
     /**
      * Lets implementing LM set the flag indicating if they
      * generate reference areas.
-     * @param generatesReferenceArea if true the areas generates by this LM are 
+     * @param generatesReferenceArea if true the areas generates by this LM are
      * reference areas.
      */
     protected void setGeneratesReferenceArea(boolean generatesReferenceArea) {
         this.generatesReferenceArea = generatesReferenceArea;
     }
-   
+
     /** {@inheritDoc} */
     public boolean getGeneratesBlockArea() {
         return generatesBlockArea;
     }
-   
+
     /**
      * Lets implementing LM set the flag indicating if they
      * generate block areas.
@@ -240,17 +240,17 @@ public abstract class AbstractBaseLayoutManager
     protected void setGeneratesBlockArea(boolean generatesBlockArea) {
         this.generatesBlockArea = generatesBlockArea;
     }
-   
+
     /** {@inheritDoc} */
     public boolean getGeneratesLineArea() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public FObj getFObj() {
         return fobj;
     }
-   
+
 }

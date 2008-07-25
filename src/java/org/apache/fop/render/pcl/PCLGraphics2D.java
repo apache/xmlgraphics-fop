@@ -54,10 +54,10 @@ public class PCLGraphics2D extends AbstractGraphics2D {
 
     /** The PCL generator */
     protected PCLGenerator gen;
-    
+
     private boolean failOnUnsupportedFeature = true;
     private boolean clippingDisabled = false;
-    
+
     /**
      * Create a new PCLGraphics2D.
      * @param gen the PCL Generator to paint with
@@ -103,7 +103,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
     public void setClippingDisabled(boolean value) {
         this.clippingDisabled = value;
     }
-    
+
     /**
      * Central handler for IOExceptions for this class.
      * @param ioe IOException to handle
@@ -124,7 +124,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             throw new UnsupportedOperationException(msg);
         }
     }
-    
+
     /** {@inheritDoc} */
     public GraphicsConfiguration getDeviceConfiguration() {
         return GraphicsEnvironment.getLocalGraphicsEnvironment().
@@ -142,7 +142,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
 
             float[] da = bs.getDashArray();
             if (da != null) {
-                
+
                 gen.writeText("UL1,");
                 int len = Math.min(20, da.length);
                 float patternLen = 0.0f;
@@ -161,7 +161,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
                 }
                 if (len == 1) {
                     gen.writeText("," + gen.formatDouble2(da[0] * 100 / patternLen ));
-                    
+
                 }
                 gen.writeText(";");
                 /* TODO Dash phase NYI
@@ -209,7 +209,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
 
             float ml = bs.getMiterLimit();
             gen.writeText(",3"  + gen.formatDouble4(ml));
-            
+
             float lw = bs.getLineWidth();
             Point2D ptSrc = new Point2D.Double(lw, 0);
             //Pen widths are set as absolute metric values (WU0;)
@@ -217,7 +217,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             double transDist = UnitConv.pt2mm(ptDest.distance(0, 0));
             //System.out.println("--" + ptDest.distance(0, 0) + " " + transDist);
             gen.writeText(";PW" + gen.formatDouble4(transDist) + ";");
-            
+
         } else {
             handleUnsupportedFeature("Unsupported Stroke: " + stroke.getClass().getName());
         }
@@ -246,7 +246,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             //gen.writeText("IW;");
         } else {
             handleUnsupportedFeature("Clipping is not supported. Shape: " + imclip);
-            /* This is an attempt to clip using the "InputWindow" (IW) but this only allows to 
+            /* This is an attempt to clip using the "InputWindow" (IW) but this only allows to
              * clip a rectangular area. Force falling back to bitmap mode for now.
             Rectangle2D bounds = imclip.getBounds2D();
             Point2D p1 = new Point2D.Double(bounds.getX(), bounds.getY());
@@ -266,16 +266,16 @@ public class PCLGraphics2D extends AbstractGraphics2D {
     public void draw(Shape s) {
         try {
             AffineTransform trans = getTransform();
-    
+
             Shape imclip = getClip();
             writeClip(imclip);
-    
+
             if (!Color.black.equals(getColor())) {
                 //TODO PCL 5 doesn't support colored pens, PCL5c has a pen color (PC) command
                 handleUnsupportedFeature("Only black is supported as stroke color: " + getColor());
             }
             applyStroke(getStroke());
-    
+
             PathIterator iter = s.getPathIterator(trans);
             processPathIteratorStroke(iter);
             writeClip(null);
@@ -290,7 +290,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             AffineTransform trans = getTransform();
             Shape imclip = getClip();
             writeClip(imclip);
-            
+
             applyPaint(getPaint());
 
             PathIterator iter = s.getPathIterator(trans);
@@ -371,7 +371,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         sb.append("\n");
         gen.writeText(sb.toString());
     }
-    
+
     /**
      * Processes a path iterator generating the nexessary painting operations.
      * @param iter PathIterator to process
@@ -440,7 +440,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         sb.append("\n");
         gen.writeText(sb.toString());
     }
-    
+
     private void fillPolygon(int windingRule, StringBuffer sb) {
         int fillMethod = (windingRule == PathIterator.WIND_EVEN_ODD ? 0 : 1);
         sb.append("FP").append(fillMethod).append(";");
@@ -461,16 +461,16 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         sb.append(",").append(gen.formatDouble4(y3)).append(";");
     }
 
-    private void quadraticBezierAbsolute(double originX, double originY, 
+    private void quadraticBezierAbsolute(double originX, double originY,
             double x1, double y1, double x2, double y2, StringBuffer sb) {
         //Quadratic Bezier curve can be mapped to a normal bezier curve
         //See http://pfaedit.sourceforge.net/bezier.html
         double nx1 = originX + (2.0 / 3.0) * (x1 - originX);
         double ny1 = originY + (2.0 / 3.0) * (y1 - originY);
-        
+
         double nx2 = nx1 + (1.0 / 3.0) * (x2 - originX);
         double ny2 = ny1 + (1.0 / 3.0) * (y2 - originY);
-        
+
         bezierAbsolute(nx1, ny1, nx2, ny2, x2, y2, sb);
     }
 
@@ -554,7 +554,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
             at.transform(p1, p1);
             pclContext.getTransform().transform(p1, p1);
             gen.setCursorPos(p1.getX(), p1.getY());
-            gen.paintBitmap(buf, 72); 
+            gen.paintBitmap(buf, 72);
             gen.enterHPGL2Mode(false);
         } catch (IOException ioe) {
             handleIOException(ioe);
@@ -596,7 +596,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
         return new BufferedImage(size.width, size.height,
                                  BufferedImage.TYPE_BYTE_GRAY);
     }
-    
+
     /** {@inheritDoc} */
     public java.awt.FontMetrics getFontMetrics(java.awt.Font f) {
         return fmg.getFontMetrics(f);

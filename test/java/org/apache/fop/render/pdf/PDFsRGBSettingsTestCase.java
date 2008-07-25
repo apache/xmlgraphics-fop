@@ -46,7 +46,7 @@ public class PDFsRGBSettingsTestCase extends BasePDFTestCase {
         a.getRendererOptions().put("disable-srgb-colorspace", Boolean.TRUE);
         return a;
     }
-    
+
     /**
      * Verify that the PDFRenderer complains if PDF/A or PDF/X is used when sRGB is disabled.
      * @throws Exception if the test fails
@@ -60,5 +60,5 @@ public class PDFsRGBSettingsTestCase extends BasePDFTestCase {
             //exception expected!
         }
     }
-    
+
 }

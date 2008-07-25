@@ -34,5 +34,5 @@ public interface HyphenationTreeResolver {
      * @return A Source object, or null if the href could not resolved.
      */
     Source resolve(String href);
-    
+
 }

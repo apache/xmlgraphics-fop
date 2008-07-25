@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,17 +37,17 @@ public class XMLHandlerRegistry {
 
     /** the logger */
     private static Log log = LogFactory.getLog(XMLHandlerRegistry.class);
-    
+
     /** Map containing XML handlers for various document types */
     private Map handlers = new java.util.HashMap();
-    
+
     /**
      * Default constructor.
      */
     public XMLHandlerRegistry() {
         discoverXMLHandlers();
     }
-    
+
     /**
      * Add a default XML handler which is able to handle any namespace.
      * @param handler XMLHandler to use
@@ -55,7 +55,7 @@ public class XMLHandlerRegistry {
     private void setDefaultXMLHandler(XMLHandler handler) {
         addXMLHandler(XMLHandler.HANDLE_ALL, handler);
     }
-    
+
     /**
      * Add an XML handler. The handler itself is inspected to find out what it supports.
      * @param classname the fully qualified class name
@@ -75,11 +75,11 @@ public class XMLHandlerRegistry {
                                                + classname);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(classname
-                                               + " is not an " 
+                                               + " is not an "
                                                + XMLHandler.class.getName());
         }
     }
-    
+
     /**
      * Add an XML handler. The handler itself is inspected to find out what it supports.
      * @param handler the XMLHandler instance
@@ -92,7 +92,7 @@ public class XMLHandlerRegistry {
             addXMLHandler(ns, handler);
         }
     }
-    
+
     /**
      * Add an XML handler for the given MIME type and XML namespace.
      * @param ns Namespace URI
@@ -107,7 +107,7 @@ public class XMLHandlerRegistry {
         }
         lst.add(handler);
     }
-    
+
     /**
      * Returns an XMLHandler which handles an XML dialect of the given namespace and for
      * a specified output format defined by its MIME type.
@@ -140,7 +140,7 @@ public class XMLHandlerRegistry {
         }
         return null; //No handler found
     }
-    
+
     /**
      * Discovers XMLHandler implementations through the classpath and dynamically
      * registers them.

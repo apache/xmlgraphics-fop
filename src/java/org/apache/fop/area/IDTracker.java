@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * on a PageViewport level.
  */
 public class IDTracker {
-    
+
     private static final Log log = LogFactory.getLog(IDTracker.class);
 
     // HashMap of ID's whose area is located on one or more consecutive
@@ -48,12 +48,12 @@ public class IDTracker {
     private Set unfinishedIDs = new java.util.HashSet();
 
     private Set alreadyResolvedIDs = new java.util.HashSet();
-    
+
     /**
      * Tie a PageViewport with an ID found on a child area of the PV. Note that
      * an area with a given ID may be on more than one PV, hence an ID may have
      * more than one PV associated with it.
-     * 
+     *
      * @param id the property ID of the area
      * @param pv a page viewport that contains the area with this ID
      */
@@ -76,7 +76,7 @@ public class IDTracker {
                 tryIDResolution(id, pv, pvList);
             }
         } else {
-            /* TODO: The check is a quick-fix to avoid a waste 
+            /* TODO: The check is a quick-fix to avoid a waste
              * when adding inline-ids to the page */
             if (!pvList.contains(pv)) {
                 pvList.add(pv);
@@ -88,7 +88,7 @@ public class IDTracker {
      * This method tie an ID to the areaTreeHandler until this one is ready to
      * be processed. This is used in page-number-citation-last processing so we
      * know when an id can be resolved.
-     * 
+     *
      * @param id the id of the object being processed
      */
     public void signalPendingID(String id) {
@@ -102,7 +102,7 @@ public class IDTracker {
      * Signals that all areas for the formatting object with the given ID have
      * been generated. This is used to determine when page-number-citation-last
      * ref-ids can be resolved.
-     * 
+     *
      * @param id the id of the formatting object which was just finished
      */
     public void signalIDProcessed(String id) {
@@ -126,20 +126,20 @@ public class IDTracker {
             unresolvedIDRefs.remove(id);
         }
     }
-    
+
     /**
      * Check if an ID has already been resolved
-     * 
+     *
      * @param id the id to check
      * @return true if the ID has been resolved
      */
     public boolean alreadyResolvedID(String id) {
         return (alreadyResolvedIDs.contains(id));
     }
-    
+
     /**
      * Tries to resolve all unresolved ID references on the given page.
-     * 
+     *
      * @param id ID to resolve
      * @param pv page viewport whose ID refs to resolve
      * @param pvList of PageViewports
@@ -162,7 +162,7 @@ public class IDTracker {
 
     /**
      * Tries to resolve all unresolved ID references on the given page.
-     * 
+     *
      * @param pv page viewport whose ID refs to resolve
      */
     public void tryIDResolution(PageViewport pv) {
@@ -176,20 +176,20 @@ public class IDTracker {
             }
         }
     }
-    
+
     /**
      * Get the list of page viewports that have an area with a given id.
-     * 
+     *
      * @param id the id to lookup
      * @return the list of PageViewports
      */
     public List getPageViewportsContainingID(String id) {
         return (List) idLocations.get(id);
     }
-    
+
     /**
      * Add an Resolvable object with an unresolved idref
-     * 
+     *
      * @param idref the idref whose target id has not yet been located
      * @param res the Resolvable object needing the idref to be resolved
      */
@@ -201,5 +201,5 @@ public class IDTracker {
         }
         // add Resolvable object to this HashSet
         todo.add(res);
-    }        
+    }
 }

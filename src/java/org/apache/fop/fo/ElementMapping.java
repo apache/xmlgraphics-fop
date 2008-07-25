@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,7 +63,7 @@ public abstract class ElementMapping {
     public String getNamespaceURI() {
         return namespaceURI;
     }
-    
+
     /**
      * Returns the DOMImplementation used by this ElementMapping. The value returned may be null
      * for cases where no DOM is used to represent the element tree (XSL-FO, for example). This
@@ -95,7 +95,7 @@ public abstract class ElementMapping {
     public String getStandardPrefix() {
         return null;
     }
-    
+
     /**
      * Indicates whether a particular attribute of the namespace is a property, i.e. the attribute
      * value should be converted to a property value.
@@ -105,7 +105,7 @@ public abstract class ElementMapping {
     public boolean isAttributeProperty(QName attributeName) {
         return false;
     }
-    
+
     /**
      * Initializes the set of maker objects associated with this ElementMapping
      */

@@ -55,15 +55,15 @@ public class PDFDestination extends PDFObject {
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
         Writer writer = PDFDocument.getWriterFor(cout);
-        
+
         formatObject(getIDRef(), cout, writer);
         writer.write(' ');
         formatObject(goToReference, cout, writer);
-        
+
         writer.flush();
         return cout.getCount();
     }
-    
+
     /**
      * Sets the GoToReference in the associated DestinationData object.
      *
@@ -120,7 +120,7 @@ public class PDFDestination extends PDFObject {
         if (dest.getIDRef().equals(this.getIDRef())) {
             return true;
         }
-        
+
         return false;
     }
 

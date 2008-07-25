@@ -213,7 +213,7 @@ public class RTFHandler extends FOEventHandler {
                     RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
                             getUserAgent().getEventBroadcaster());
                     eventProducer.onlySPMSupported(this, reference, pageSeq.getLocator());
-                    PageSequenceMaster master 
+                    PageSequenceMaster master
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
                     this.pagemaster = master.getNextSimplePageMaster(
                             false, false, false, false, false);
@@ -306,7 +306,7 @@ public class RTFHandler extends FOEventHandler {
                     contAfter.newAfter(attr);
                 }
                 handled = true;
-            } else if (regionBefore != null 
+            } else if (regionBefore != null
                     && fl.getFlowName().equals(regionBefore.getRegionName())) {
                 bHeaderSpecified = true;
                 bPrevHeaderSpecified = true;
@@ -325,7 +325,7 @@ public class RTFHandler extends FOEventHandler {
                 RtfBefore before = c.newBefore(beforeAttributes);
                 builderContext.pushContainer(before);
                 handled = true;
-            } else if (regionAfter != null 
+            } else if (regionAfter != null
                     && fl.getFlowName().equals(regionAfter.getRegionName())) {
                 bFooterSpecified = true;
                 bPrevFooterSpecified = true;
@@ -371,10 +371,10 @@ public class RTFHandler extends FOEventHandler {
             Region regionAfter = pagemaster.getRegion(Constants.FO_REGION_AFTER);
             if (fl.getFlowName().equals(regionBody.getRegionName())) {
                 //just do nothing
-            } else if (regionBefore != null 
+            } else if (regionBefore != null
                     && fl.getFlowName().equals(regionBefore.getRegionName())) {
                 builderContext.popContainer();
-            } else if (regionAfter != null 
+            } else if (regionAfter != null
                     && fl.getFlowName().equals(regionAfter.getRegionName())) {
                 builderContext.popContainer();
             }
@@ -514,15 +514,15 @@ public class RTFHandler extends FOEventHandler {
             final IRtfTableContainer tc
                 = (IRtfTableContainer)builderContext.getContainer(
                         IRtfTableContainer.class, true, null);
-            
+
             RtfAttributes atts
                 = TableAttributesConverter.convertTableAttributes(tbl);
-            
+
             RtfTable table = tc.newTable(atts, tableContext);
-            
+
             CommonBorderPaddingBackground border = tbl.getCommonBorderPaddingBackground();
             RtfAttributes borderAttributes = new RtfAttributes();
-                    
+
             BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.BEFORE,
                     borderAttributes, ITableAttributes.CELL_BORDER_TOP);
             BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.AFTER,
@@ -531,9 +531,9 @@ public class RTFHandler extends FOEventHandler {
                     borderAttributes, ITableAttributes.CELL_BORDER_LEFT);
             BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.END,
                     borderAttributes,  ITableAttributes.CELL_BORDER_RIGHT);
-            
+
             table.setBorderAttributes(borderAttributes);
-            
+
             builderContext.pushContainer(table);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -576,16 +576,16 @@ public class RTFHandler extends FOEventHandler {
              * rest of the document will be rendered. Usage of the
              * TableLayoutManager is not welcome due to design reasons and
              * it also does not provide the correct values.
-             * TODO: Make proportional-column-width working for rtf output 
+             * TODO: Make proportional-column-width working for rtf output
              */
              SimplePercentBaseContext context
                 = new SimplePercentBaseContext(null,
                                                LengthBase.TABLE_UNITS,
                                                100000);
-            
+
             Integer iWidth
                 = new Integer(tc.getColumnWidth().getValue(context) / 1000);
-            
+
             String strWidth = iWidth.toString() + FixedLength.POINT;
             Float width = new Float(
                     FoUnitsConverter.getInstance().convertToTwips(strWidth));
@@ -708,7 +708,7 @@ public class RTFHandler extends FOEventHandler {
         } catch (Exception e) {
             log.error("startPart: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
-        }        
+        }
     }
 
     private void endPart(TablePart tb) {
@@ -724,10 +724,10 @@ public class RTFHandler extends FOEventHandler {
         } catch (Exception e) {
             log.error("endPart: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
-        }        
+        }
     }
 
-    
+
      /**
      * {@inheritDoc}
      */
@@ -735,7 +735,7 @@ public class RTFHandler extends FOEventHandler {
         startPart(body);
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -782,7 +782,7 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-        
+
         try {
             TableContext tctx = builderContext.getTableContext();
             final RtfTableRow row = (RtfTableRow)builderContext.getContainer(RtfTableRow.class,
@@ -795,11 +795,11 @@ public class RTFHandler extends FOEventHandler {
                 RtfTableCell vCell = row.newTableCellMergedVertically(
                         (int)tctx.getColumnWidth(),
                         tctx.getColumnRowSpanningAttrs());
-                
+
                 if (!tctx.getFirstSpanningCol()) {
                     vCell.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
                 }
-                
+
                 tctx.selectNextColumn();
             }
         } catch (IOException ioe) {
@@ -837,11 +837,11 @@ public class RTFHandler extends FOEventHandler {
                 RtfTableCell vCell = row.newTableCellMergedVertically(
                         (int)tctx.getColumnWidth(),
                         tctx.getColumnRowSpanningAttrs());
-                
+
                 if (!tctx.getFirstSpanningCol()) {
                     vCell.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
                 }
-                
+
                 tctx.selectNextColumn();
             }
 
@@ -851,14 +851,14 @@ public class RTFHandler extends FOEventHandler {
             // create an RtfTableCell in the current RtfTableRow
             RtfAttributes atts = TableAttributesConverter.convertCellAttributes(tc);
             RtfTableCell cell = row.newTableCell((int)width, atts);
-            
+
             //process number-rows-spanned attribute
             if (numberRowsSpanned > 1) {
                 // Start vertical merge
                 cell.setVMerge(RtfTableCell.MERGE_START);
 
                 // set the number of rows spanned
-                tctx.setCurrentColumnRowSpanning(new Integer(numberRowsSpanned), 
+                tctx.setCurrentColumnRowSpanning(new Integer(numberRowsSpanned),
                         cell.getRtfAttributes());
             } else {
                 tctx.setCurrentColumnRowSpanning(
@@ -870,23 +870,23 @@ public class RTFHandler extends FOEventHandler {
                 // Get the number of columns spanned
                 RtfTable table = row.getTable();
                 tctx.setCurrentFirstSpanningCol(true);
-                
+
                 // We widthdraw one cell because the first cell is already created
                 // (it's the current cell) !
                  for (int i = 0; i < numberColumnsSpanned - 1; ++i) {
                     tctx.selectNextColumn();
-                    
+
                     tctx.setCurrentFirstSpanningCol(false);
                     RtfTableCell hCell = row.newTableCellMergedHorizontally(
                             0, null);
-                    
+
                     if (numberRowsSpanned > 1) {
                         // Start vertical merge
                         hCell.setVMerge(RtfTableCell.MERGE_START);
 
                         // set the number of rows spanned
                         tctx.setCurrentColumnRowSpanning(
-                                new Integer(numberRowsSpanned), 
+                                new Integer(numberRowsSpanned),
                                 cell.getRtfAttributes());
                     } else {
                         tctx.setCurrentColumnRowSpanning(
@@ -894,7 +894,7 @@ public class RTFHandler extends FOEventHandler {
                     }
                 }
             }
-            
+
             builderContext.pushContainer(cell);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -962,12 +962,12 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-        
+
         // create an RtfListItem in the current RtfList
         try {
             RtfList list = (RtfList)builderContext.getContainer(
                     RtfList.class, true, this);
-            
+
             /**
              * If the current list already contains a list item, then close the
              * list and open a new one, so every single list item gets its own
@@ -981,11 +981,11 @@ public class RTFHandler extends FOEventHandler {
                 this.endList((ListBlock) li.getParent());
                 this.startList((ListBlock) li.getParent());
                 this.startListBody();
-                
+
                 list = (RtfList)builderContext.getContainer(
                         RtfList.class, true, this);
-            }            
-            
+            }
+
             builderContext.pushContainer(list.newListItem());
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -1136,7 +1136,7 @@ public class RTFHandler extends FOEventHandler {
             FOUserAgent userAgent = eg.getUserAgent();
             ImageManager manager = userAgent.getFactory().getImageManager();
             info = manager.getImageInfo(uri, userAgent.getImageSessionContext());
-            
+
             putGraphic(eg, info);
         } catch (ImageException ie) {
             ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
@@ -1160,18 +1160,18 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-        
+
         try {
             XMLObj child = (XMLObj) ifo.getChildXMLObj();
             Document doc = child.getDOMDocument();
             String ns = child.getNamespaceURI();
-            
+
             ImageInfo info = new ImageInfo(null, null);
             // Set the resolution to that of the FOUserAgent
             FOUserAgent ua = ifo.getUserAgent();
             ImageSize size = new ImageSize();
             size.setResolution(ua.getSourceResolution());
-            
+
             // Set the image size to the size of the svg.
             Point2D csize = new Point2D.Float(-1, -1);
             Point2D intrinsicDimensions = child.getDimension(csize);
@@ -1188,12 +1188,12 @@ public class RTFHandler extends FOEventHandler {
             info.setSize(size);
 
             ImageXMLDOM image = new ImageXMLDOM(info, doc, ns);
-            
+
             FOUserAgent userAgent = ifo.getUserAgent();
             ImageManager manager = userAgent.getFactory().getImageManager();
             Image converted = manager.convertImage(image, FLAVORS);
             putGraphic(ifo, converted);
-            
+
         } catch (ImageException ie) {
             ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
@@ -1208,14 +1208,14 @@ public class RTFHandler extends FOEventHandler {
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RAW_EMF, ImageFlavor.RAW_PNG, ImageFlavor.RAW_JPEG
     };
-    
+
     /**
      * Puts a graphic/image into the generated RTF file.
      * @param abstractGraphic the graphic (external-graphic or instream-foreign-object)
      * @param info the image info object
      * @throws IOException In case of an I/O error
      */
-    private void putGraphic(AbstractGraphics abstractGraphic, ImageInfo info) 
+    private void putGraphic(AbstractGraphics abstractGraphic, ImageInfo info)
             throws IOException {
         try {
             FOUserAgent userAgent = abstractGraphic.getUserAgent();
@@ -1231,17 +1231,17 @@ public class RTFHandler extends FOEventHandler {
             eventProducer.imageError(this, null, ie, null);
         }
     }
-    
+
     /**
      * Puts a graphic/image into the generated RTF file.
      * @param abstractGraphic the graphic (external-graphic or instream-foreign-object)
      * @param image the image
      * @throws IOException In case of an I/O error
      */
-    private void putGraphic(AbstractGraphics abstractGraphic, Image image) 
+    private void putGraphic(AbstractGraphics abstractGraphic, Image image)
             throws IOException {
         byte[] rawData = null;
-        
+
         ImageInfo info = image.getInfo();
 
         if (image instanceof ImageRawStream) {
@@ -1266,7 +1266,7 @@ public class RTFHandler extends FOEventHandler {
                 IRtfTextrunContainer.class, true, this);
 
         final RtfExternalGraphic rtfGraphic = c.getTextrun().newImage();
-   
+
         //set URL
         if (info.getOriginalURI() != null) {
             rtfGraphic.setURL(info.getOriginalURI());
@@ -1341,7 +1341,7 @@ public class RTFHandler extends FOEventHandler {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

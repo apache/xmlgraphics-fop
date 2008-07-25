@@ -34,7 +34,7 @@ public class RDFElement extends AbstractMetadataElement {
     public RDFElement(FONode parent) {
         super(parent);
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "RDF";

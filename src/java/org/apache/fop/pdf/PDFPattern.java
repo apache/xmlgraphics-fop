@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 // Java
@@ -118,8 +118,8 @@ public class PDFPattern extends PDFPathPaint {
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
     public PDFPattern(PDFResources theResources, int thePatternType,    // 1
-                      int thePaintType, int theTilingType, List theBBox, 
-                      double theXStep, double theYStep, 
+                      int thePaintType, int theTilingType, List theBBox,
+                      double theXStep, double theYStep,
                       List theMatrix, List theXUID,
                       StringBuffer thePatternDataStream) {
         super();
@@ -272,9 +272,9 @@ public class PDFPattern extends PDFPathPaint {
                 pdfStream.setDocument(getDocumentSafely());
                 pdfStream.add(this.patternDataStream.toString());
                 pdfStream.getFilterList().addDefaultFilters(
-                        getDocument().getFilterMap(), 
+                        getDocument().getFilterMap(),
                         PDFFilterList.CONTENT_FILTER);
-                encodedStream = pdfStream.encodeStream();        
+                encodedStream = pdfStream.encodeStream();
                 p.append(pdfStream.getFilterList().buildFilterDictEntries());
                 p.append("/Length " + (encodedStream.getSize() + 1)
                          + " \n");

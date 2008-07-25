@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,13 +45,13 @@ public interface ITableAttributes {
 
     /** half the space between the cells of a table row in twips */
     String ATTR_RTF_15_TRGAPH = "trgaph";
-    
+
     /**
      *  Position of the leftmost edge of the table with respect to the
      * left edge of its column
      */
     String ATTR_ROW_LEFT_INDENT = "trleft";
-    
+
     /** table row header */
     String ATTR_HEADER = "trhdr";
 
@@ -140,7 +140,7 @@ public interface ITableAttributes {
 //Table row attributes
     /** row attribute, keep-together */
     String ROW_KEEP_TOGETHER = "trkeep";
-    
+
     /** Height of a table row in twips */
     String ROW_HEIGHT = "trrh";
 
@@ -206,5 +206,5 @@ public interface ITableAttributes {
      */
     String[] CELL_VERT_ALIGN = {
         ATTR_CELL_VERT_ALIGN_TOP, ATTR_CELL_VERT_ALIGN_CENTER, ATTR_CELL_VERT_ALIGN_BOTTOM};
-    
+
 }

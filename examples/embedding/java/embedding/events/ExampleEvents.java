@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding.events;
 
 import java.io.BufferedOutputStream;
@@ -68,21 +68,21 @@ public class ExampleEvents {
      */
     public void convertFO2PDF(URL fo, File pdf)
             throws IOException, FOPException, TransformerException {
-        
+
         OutputStream out = null;
-        
+
         try {
             //Create the user agent for this processing run
             FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-            
+
             //Adding a simple logging listener that writes to stdout and stderr
             foUserAgent.getEventBroadcaster().addEventListener(new SysOutEventListener());
-            
+
             // Add your own event listener
             foUserAgent.getEventBroadcaster().addEventListener(new MyEventListener());
-            
+
             // configure foUserAgent further as desired
-    
+
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
@@ -94,13 +94,13 @@ public class ExampleEvents {
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(); // identity transformer
-            
+
             // Setup input stream
             Source src = new StreamSource(fo.toExternalForm());
 
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(fop.getDefaultHandler());
-            
+
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
 
@@ -114,7 +114,7 @@ public class ExampleEvents {
         public void processEvent(Event event) {
             if ("org.apache.fop.events.ResourceEventProducer.imageNotFound"
                     .equals(event.getEventID())) {
-                
+
                 //Get the FileNotFoundException that's part of the event's parameters
                 FileNotFoundException fnfe = (FileNotFoundException)event.getParam("fnfe");
 
@@ -122,16 +122,16 @@ public class ExampleEvents {
                         + "!!! ===---");
                 //Stop processing when an image could not be found. Otherwise, FOP would just
                 //continue without the image!
-                
+
                 System.out.println("Throwing a RuntimeException...");
                 throw new RuntimeException(EventFormatter.format(event), fnfe);
             } else {
                 //ignore all other events
             }
         }
-        
+
     }
-    
+
     /** A simple event listener that writes the events to stdout and sterr. */
     private static class SysOutEventListener implements EventListener {
 
@@ -152,7 +152,7 @@ public class ExampleEvents {
             }
         }
     }
-    
+
 
     /**
      * This method extracts the original exception from some exception. The exception
@@ -185,7 +185,7 @@ public class ExampleEvents {
         try {
             System.out.println("FOP ExampleEvents\n");
             System.out.println("Preparing...");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
@@ -199,9 +199,9 @@ public class ExampleEvents {
             System.out.println("Output: PDF (" + pdffile + ")");
             System.out.println();
             System.out.println("Transforming...");
-            
+
             ExampleEvents app = new ExampleEvents();
-            
+
             try {
                 app.convertFO2PDF(fo, pdffile);
             } catch (TransformerException te) {
@@ -215,7 +215,7 @@ public class ExampleEvents {
                 System.out.println("Aborted!");
                 System.exit(-1);
             }
-            
+
             System.out.println("Success!");
         } catch (Exception e) {
             //Some other error (shouldn't happen in this example)

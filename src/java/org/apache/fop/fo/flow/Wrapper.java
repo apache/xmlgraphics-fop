@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,20 +31,20 @@ import org.apache.fop.fo.ValidationException;
 /**
  * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_wrapper">
  * <code>fo:wrapper</code></a> object.
- * The <code>fo:wrapper</code> object serves as a property holder for 
+ * The <code>fo:wrapper</code> object serves as a property holder for
  * its child node objects.
  */
 public class Wrapper extends FObjMixed {
     // The value of properties relevant for fo:wrapper.
     // End of property values
-    
+
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
 
     /**
      * Create a Wrapper instance that is a child of the
      * given {@link FONode}
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public Wrapper(FONode parent) {
@@ -54,16 +54,16 @@ public class Wrapper extends FObjMixed {
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
-     * <br><i>Additionally (unimplemented): "An fo:wrapper that is a child of an 
-     * fo:multi-properties is only permitted to have children that would 
+     * <br><i>Additionally (unimplemented): "An fo:wrapper that is a child of an
+     * fo:multi-properties is only permitted to have children that would
      * be permitted in place of the fo:multi-properties."</i>
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if ("marker".equals(localName)) {
                 if (blockOrInlineItemFound) {
-                   nodesOutOfOrderError(loc, "fo:marker", 
+                   nodesOutOfOrderError(loc, "fo:marker",
                         "(#PCDATA|%inline;|%block;)");
                 }
             } else if (isBlockOrInlineItem(nsURI, localName)) {

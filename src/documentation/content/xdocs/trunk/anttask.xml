@@ -150,7 +150,7 @@
       </tr> 
       <tr> 
        <td>throwexceptions</td> 
-       <td>Controls whether or not an exception is thrown if an error occurs during rendering.</strong></td> 
+       <td>Controls whether or not an exception is thrown if an error occurs during rendering.</td> 
        <td>Default is <code>true</code></td> 
       </tr> 
      </table>

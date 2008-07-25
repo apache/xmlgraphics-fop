@@ -110,7 +110,7 @@ public class StructuredFieldReader {
                 length[0] = bufferData[b];
                 length[1] = bufferData[a];
 
-                int reclength = ((length[0] & 0xFF) << 8) 
+                int reclength = ((length[0] & 0xFF) << 8)
                                 + (length[1] & 0xFF) - identifier.length - 2;
 
                 byte[] retval = new byte[reclength];

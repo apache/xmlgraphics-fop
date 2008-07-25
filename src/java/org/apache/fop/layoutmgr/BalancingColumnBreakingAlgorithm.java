@@ -30,11 +30,11 @@ import org.apache.fop.traits.MinOptMax;
 public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
 
     private Log log = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
-    
+
     private int columnCount;
     private int fullLen;
     private int idealPartLen;
-    
+
     public BalancingColumnBreakingAlgorithm(LayoutManager topLevelLM,
             PageProvider pageProvider,
             PageBreakingLayoutListener layoutListener,
@@ -43,18 +43,18 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             boolean partOverflowRecovery,
             int columnCount) {
         super(topLevelLM, pageProvider, layoutListener,
-                alignment, alignmentLast, 
+                alignment, alignmentLast,
                 footnoteSeparatorLength, partOverflowRecovery, false, false);
         this.columnCount = columnCount;
         this.considerTooShort = true; //This is important!
     }
-    
+
     /** {@inheritDoc} */
     protected double computeDemerits(KnuthNode activeNode,
             KnuthElement element, int fitnessClass, double r) {
         double dem = super.computeDemerits(activeNode, element, fitnessClass, r);
         if (log.isTraceEnabled()) {
-            log.trace("original demerit=" + dem + " " + totalWidth 
+            log.trace("original demerit=" + dem + " " + totalWidth
                     + " line=" + activeNode.line + "/" + columnCount
                     + " pos=" + activeNode.position + "/" + (par.size() - 1));
         }
@@ -71,7 +71,7 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             avgRestLen = restLen / remParts;
         }
         if (log.isTraceEnabled()) {
-            log.trace("remaining parts: " + remParts + " rest len: " + restLen 
+            log.trace("remaining parts: " + remParts + " rest len: " + restLen
                     + " avg=" + avgRestLen);
         }
         double balance = (idealPartLen - partLen) / 1000f;
@@ -92,9 +92,9 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
                 dem = dem * 1.2f;
             }
         }
-        //Step 2: This helps keep the trailing parts shorter than the previous ones 
+        //Step 2: This helps keep the trailing parts shorter than the previous ones
         dem += (avgRestLen) / 1000f;
-        
+
         if (activeNode.line >= columnCount) {
             //We don't want more columns than available
             dem = Double.MAX_VALUE;

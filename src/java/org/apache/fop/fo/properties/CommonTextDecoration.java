@@ -39,30 +39,30 @@ public class CommonTextDecoration {
     private static final int OVERLINE     = 2;
     private static final int LINE_THROUGH = 4;
     private static final int BLINK        = 8;
-    
+
     private int decoration;
     private Color underColor;
     private Color overColor;
     private Color throughColor;
-    
+
     /**
      * Creates a new CommonTextDecoration object with default values.
      */
     public CommonTextDecoration() {
     }
-    
+
     /**
      * Creates a CommonTextDecoration object from a property list.
      * @param pList the property list to build the object for
      * @return a CommonTextDecoration object or null if the obj would only have default values
      * @throws PropertyException if there's a problem while processing the property
      */
-    public static CommonTextDecoration createFromPropertyList(PropertyList pList) 
+    public static CommonTextDecoration createFromPropertyList(PropertyList pList)
                 throws PropertyException {
         return calcTextDecoration(pList);
     }
-    
-    private static CommonTextDecoration calcTextDecoration(PropertyList pList) 
+
+    private static CommonTextDecoration calcTextDecoration(PropertyList pList)
                 throws PropertyException {
         CommonTextDecoration deco = null;
         PropertyList parentList = pList.getParentPropertyList();
@@ -76,7 +76,7 @@ public class CommonTextDecoration {
             List list = textDecoProp.getList();
             Iterator i = list.iterator();
             while (i.hasNext()) {
-                Property prop = (Property)i.next(); 
+                Property prop = (Property)i.next();
                 int propEnum = prop.getEnum();
                 FOUserAgent ua = (pList == null)
                         ? null
@@ -135,7 +135,7 @@ public class CommonTextDecoration {
         }
         return deco;
     }
-    
+
     /** @return true if underline is active */
     public boolean hasUnderline() {
         return (this.decoration & UNDERLINE) != 0;
@@ -155,12 +155,12 @@ public class CommonTextDecoration {
     public boolean isBlinking() {
         return (this.decoration & BLINK) != 0;
     }
-    
+
     /** @return the color of the underline mark */
     public Color getUnderlineColor() {
         return this.underColor;
     }
-    
+
     /** @return the color of the overline mark */
     public Color getOverlineColor() {
         return this.overColor;

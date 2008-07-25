@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,13 +36,13 @@ public class AFMFile {
     private String fontName;
     private String fullName;
     private String familyName;
-    
+
     private String weight;
     private RectangularShape fontBBox;
-    
+
     private String encodingScheme;
     private String characterSet;
-    
+
     private Number capHeight;
     private Number xHeight;
     private Number ascender;
@@ -52,17 +52,17 @@ public class AFMFile {
 
     private AFMWritingDirectionMetrics[] writingDirectionMetrics
         = new AFMWritingDirectionMetrics[3];
-    
+
     private List charMetrics = new java.util.ArrayList();
     //List<AFMCharMetrics>
     private Map charNameToMetrics = new java.util.HashMap();
     //Map<String, AFMCharMetrics>
     private int firstChar = -1;
     private int lastChar = -1;
-    
+
     private Map kerningMap;
     //Map<String, Map<String, Dimension2D>>
-    
+
     /**
      * Default constructor.
      */
@@ -149,10 +149,10 @@ public class AFMFile {
     public int[] getFontBBoxAsIntArray() {
         RectangularShape rect = getFontBBox();
         return new int[] {
-                (int)Math.floor(rect.getMinX()), (int)Math.floor(rect.getMinY()), 
-                (int)Math.ceil(rect.getMaxX()), (int)Math.ceil(rect.getMaxY())}; 
+                (int)Math.floor(rect.getMinX()), (int)Math.floor(rect.getMinY()),
+                (int)Math.ceil(rect.getMaxX()), (int)Math.ceil(rect.getMaxY())};
     }
-    
+
     /**
      * Sets the FontBBox value.
      * @param fontBBox the fontBBox to set
@@ -256,7 +256,7 @@ public class AFMFile {
     public void setDescender(Number descender) {
         this.descender = descender;
     }
-    
+
     /**
      * Returns the StdHW value.
      * @return the descender
@@ -272,7 +272,7 @@ public class AFMFile {
     public void setStdHW(Number stdHW) {
         this.stdHW = stdHW;
     }
-    
+
     /**
      * Returns the StdVW value.
      * @return the descender
@@ -288,7 +288,7 @@ public class AFMFile {
     public void setStdVW(Number stdVW) {
         this.stdVW = stdVW;
     }
-    
+
     /**
      * Gets writing direction metrics.
      * @param index the writing direction (0, 1 or 2)
@@ -297,7 +297,7 @@ public class AFMFile {
     public AFMWritingDirectionMetrics getWritingDirectionMetrics(int index) {
         return this.writingDirectionMetrics[index];
     }
-    
+
     /**
      * Sets writing direction metrics.
      * @param index the writing direction (0, 1 or 2)
@@ -331,7 +331,7 @@ public class AFMFile {
             }
         }
     }
-    
+
     /**
      * Returns the number of character available for this font.
      * @return the number of character
@@ -339,7 +339,7 @@ public class AFMFile {
     public int getCharCount() {
         return this.charMetrics.size();
     }
-    
+
     /**
      * Returns the first character index in the encoding that has a glyph.
      * @return the first character index with a glyph
@@ -347,7 +347,7 @@ public class AFMFile {
     public int getFirstChar() {
         return this.firstChar;
     }
-    
+
     /**
      * Returns the last character index in the encoding that has a glyph.
      * @return the last character index with a glyph
@@ -355,7 +355,7 @@ public class AFMFile {
     public int getLastChar() {
         return this.lastChar;
     }
-    
+
     /**
      * Returns the character metrics associated with the character name.
      * @param name the character name
@@ -364,7 +364,7 @@ public class AFMFile {
     public AFMCharMetrics getChar(String name) {
         return (AFMCharMetrics)this.charNameToMetrics.get(name);
     }
-    
+
     /**
      * Returns the list of AFMCharMetrics instances representing all the available characters.
      * @return a List of AFMCharMetrics instances
@@ -372,7 +372,7 @@ public class AFMFile {
     public List getCharMetrics() {
         return Collections.unmodifiableList(this.charMetrics);
     }
-    
+
     /**
      * Adds a X-kerning entry.
      * @param name1 the name of the first character
@@ -390,7 +390,7 @@ public class AFMFile {
         }
         entries.put(name2, new Dimension2DDouble(kx, 0));
     }
-    
+
     /**
      * Indicates whether the font has kerning information.
      * @return true if there is kerning information
@@ -398,7 +398,7 @@ public class AFMFile {
     public boolean hasKerning() {
         return this.kerningMap != null;
     }
-    
+
     /**
      * Creates and returns a kerning map for writing mode 0 (ltr) with character codes.
      * @return the kerning map or null if there is no kerning information.
@@ -441,10 +441,10 @@ public class AFMFile {
         }
         return m;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "AFM: " + getFullName();
     }
-    
+
 }

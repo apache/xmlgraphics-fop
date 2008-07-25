@@ -77,7 +77,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
     /** The FOUserAgent associated with this window */
     protected FOUserAgent foUserAgent;
     /**
-     * Renderable instance that can be used to reload and re-render a document after 
+     * Renderable instance that can be used to reload and re-render a document after
      * modifications.
      */
     protected Renderable renderable;
@@ -253,14 +253,14 @@ public class PreviewDialog extends JFrame implements StatusListener {
                                              new Insets(0, 0, 0, 0), 0, 0));
         getContentPane().add(statusBar, BorderLayout.SOUTH);
     }
-    
+
     /**
-     * Creates and initialize the AWT Viewer main window. 
+     * Creates and initialize the AWT Viewer main window.
      * @param foUserAgent the FO user agent
      * @param renderable the target for the rendering
      * @return the newly initialized preview dialog
      */
-    public static PreviewDialog createPreviewDialog(FOUserAgent foUserAgent, 
+    public static PreviewDialog createPreviewDialog(FOUserAgent foUserAgent,
                 Renderable renderable, boolean asMainWindow) {
         PreviewDialog frame = new PreviewDialog(foUserAgent, renderable);
 
@@ -295,7 +295,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
     public PreviewDialog(FOUserAgent foUserAgent) {
         this(foUserAgent, null);
     }
-    
+
     /**
      * Creates a new menubar to be shown in this window.
      * @return the newly created menubar
@@ -454,7 +454,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
         setStatus(translator.getString("Status.Show"));
         previewPanel.reload();
     }
-    
+
     /**
      * Changes the current visible page
      * @param number the page number to go to
@@ -541,7 +541,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
             fopEx.printStackTrace();
         }
     }
-    
+
     public void setScaleToFitWidth() {
         try {
             setScale(previewPanel.getScaleToFitWidth() * 100);

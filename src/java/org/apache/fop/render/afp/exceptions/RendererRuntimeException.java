@@ -24,7 +24,7 @@ package org.apache.fop.render.afp.exceptions;
  * <p/>
  */
 public class RendererRuntimeException extends NestedRuntimeException {
-    
+
     /**
      * Constructs a RendererRuntimeException with the specified message.
      * @param msg the exception mesaage
@@ -32,7 +32,7 @@ public class RendererRuntimeException extends NestedRuntimeException {
     public RendererRuntimeException(String msg) {
         super(msg);
     }
-    
+
     /**
      * Constructs a RendererRuntimeException with the specified message
      * wrapping the underlying exception.
@@ -42,5 +42,5 @@ public class RendererRuntimeException extends NestedRuntimeException {
     public RendererRuntimeException(String msg, Throwable t) {
         super(msg, t);
     }
-    
+
 }

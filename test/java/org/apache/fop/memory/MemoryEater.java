@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,29 +50,29 @@ public class MemoryEater {
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
     private FopFactory fopFactory = FopFactory.newInstance();
     private Templates replicatorTemplates;
-    
+
     public MemoryEater() throws TransformerConfigurationException, MalformedURLException {
         File xsltFile = new File("test/xsl/fo-replicator.xsl");
         Source xslt = new StreamSource(xsltFile);
         replicatorTemplates = tFactory.newTemplates(xslt);
     }
-    
+
     private void eatMemory(File foFile, int replicatorRepeats) throws Exception {
         Source src = new StreamSource(foFile);
-        
+
         Transformer transformer = replicatorTemplates.newTransformer();
         transformer.setParameter("repeats", new Integer(replicatorRepeats));
-        
+
         OutputStream out = new NullOutputStream(); //write to /dev/nul
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         userAgent.setBaseURL(foFile.getParentFile().toURL().toExternalForm());
         Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
         Result res = new SAXResult(fop.getDefaultHandler());
-        
+
         transformer.transform(src, res);
-        
+
         System.out.println("Generated " + fop.getResults().getPageCount() + " pages.");
-        
+
     }
 
     private static void prompt() throws IOException {
@@ -80,7 +80,7 @@ public class MemoryEater {
         System.out.print("Press return to continue...");
         in.readLine();
     }
-    
+
     /**
      * Main method.
      * @param args the command-line arguments
@@ -97,24 +97,24 @@ public class MemoryEater {
                 runRepeats = Integer.parseInt(args[1]);
             }
             File testFile = new File("examples/fo/basic/readme.fo");
-            
-            System.out.println("MemoryEater! About to replicate the test file " 
+
+            System.out.println("MemoryEater! About to replicate the test file "
                     + replicatorRepeats + " times and run it " + runRepeats + " times...");
             if (doPrompt) {
                 prompt();
             }
-            
-            System.out.println("Processing..."); 
+
+            System.out.println("Processing...");
             long start = System.currentTimeMillis();
-            
+
             MemoryEater app = new MemoryEater();
             for (int i = 0; i < runRepeats; i++) {
                 app.eatMemory(testFile, replicatorRepeats);
             }
-            
+
             long duration = System.currentTimeMillis() - start;
             System.out.println("Success! Job took " + duration + " ms");
-            
+
             if (doPrompt) {
                 prompt();
             }

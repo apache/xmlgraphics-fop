@@ -55,24 +55,24 @@ public class PCLGenerator {
 
     /** The ESC (escape) character */
     public static final char ESC = '\033';
-    
+
     /** A list of all supported resolutions in PCL (values in dpi) */
     public static final int[] PCL_RESOLUTIONS = new int[] {75, 100, 150, 200, 300, 600};
-    
+
     /** Selects a 4x4 Bayer dither matrix (17 grayscales) */
     public static final int DITHER_MATRIX_4X4 = 4;
     /** Selects a 8x8 Bayer dither matrix (65 grayscales) */
     public static final int DITHER_MATRIX_8X8 = 8;
-    
-    private final DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US); 
+
+    private final DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
     private final DecimalFormat df2 = new DecimalFormat("0.##", symbols);
     private final DecimalFormat df4 = new DecimalFormat("0.####", symbols);
-    
+
     private OutputStream out;
-    
+
     private boolean currentSourceTransparency = true;
     private boolean currentPatternTransparency = true;
-    
+
     private int maxBitmapResolution = PCL_RESOLUTIONS[PCL_RESOLUTIONS.length - 1];
 
     /**
@@ -80,7 +80,7 @@ public class PCLGenerator {
      * to create custom dither patterns for better grayscale quality.
      */
     private boolean usePCLShades = false;
-    
+
     /**
      * Main constructor.
      * @param out the OutputStream to write the PCL stream to
@@ -88,7 +88,7 @@ public class PCLGenerator {
     public PCLGenerator(OutputStream out) {
         this.out = out;
     }
-    
+
     /**
      * Main constructor.
      * @param out the OutputStream to write the PCL stream to
@@ -108,17 +108,17 @@ public class PCLGenerator {
         }
         this.maxBitmapResolution = maxResolution;
     }
-    
+
     /** @return the OutputStream that this generator writes to */
     public OutputStream getOutputStream() {
         return this.out;
     }
-    
+
     /** @return the maximum resolution to encode bitmap images at */
     public int getMaximumBitmapResolution() {
         return this.maxBitmapResolution;
     }
-    
+
     /**
      * Writes a PCL escape command to the output stream.
      * @param cmd the command (without the ESCAPE character)
@@ -128,7 +128,7 @@ public class PCLGenerator {
         out.write(27); //ESC
         out.write(cmd.getBytes("US-ASCII"));
     }
-    
+
     /**
      * Writes raw text (in ISO-8859-1 encoding) to the output stream.
      * @param s the text
@@ -140,7 +140,7 @@ public class PCLGenerator {
 
     /**
      * Formats a double value with two decimal positions for PCL output.
-     * 
+     *
      * @param value value to format
      * @return the formatted value
      */
@@ -150,7 +150,7 @@ public class PCLGenerator {
 
     /**
      * Formats a double value with four decimal positions for PCL output.
-     * 
+     *
      * @param value value to format
      * @return the formatted value
      */
@@ -165,7 +165,7 @@ public class PCLGenerator {
     public void universalEndOfLanguage() throws IOException {
         writeCommand("%-12345X");
     }
-    
+
     /**
      * Resets the printer and restores the user default environment.
      * @throws IOException In case of an I/O error
@@ -173,7 +173,7 @@ public class PCLGenerator {
     public void resetPrinter() throws IOException {
         writeCommand("E");
     }
-    
+
     /**
      * Sends the job separation command.
      * @throws IOException In case of an I/O error
@@ -181,7 +181,7 @@ public class PCLGenerator {
     public void separateJobs() throws IOException {
         writeCommand("&l1T");
     }
-    
+
     /**
      * Sends the form feed character.
      * @throws IOException In case of an I/O error
@@ -198,7 +198,7 @@ public class PCLGenerator {
     public void setUnitOfMeasure(int value) throws IOException {
         writeCommand("&u" + value + "D");
     }
-    
+
     /**
      * Sets the raster graphics resolution
      * @param value the resolution value (units per inch)
@@ -207,7 +207,7 @@ public class PCLGenerator {
     public void setRasterGraphicsResolution(int value) throws IOException {
         writeCommand("*t" + value + "R");
     }
-    
+
     /**
      * Selects the page size.
      * @param selector the integer representing the page size
@@ -218,7 +218,7 @@ public class PCLGenerator {
     }
 
     /**
-     * Selects the paper source. The parameter is usually printer-specific. Usually, "1" is the 
+     * Selects the paper source. The parameter is usually printer-specific. Usually, "1" is the
      * default tray, "2" is the manual paper feed, "3" is the manual envelope feed, "4" is the
      * "lower" tray and "7" is "auto-select". Consult the technical reference for your printer
      * for all available values.
@@ -230,8 +230,8 @@ public class PCLGenerator {
     }
 
     /**
-     * Selects the duplexing mode for the page. 
-     * The parameter is usually printer-specific. 
+     * Selects the duplexing mode for the page.
+     * The parameter is usually printer-specific.
      * "0" means Simplex,
      * "1" means Duplex, Long-Edge Binding,
      * "2" means Duplex, Short-Edge Binding.
@@ -249,7 +249,7 @@ public class PCLGenerator {
     public void clearHorizontalMargins() throws IOException {
         writeCommand("9");
     }
-    
+
     /**
      * The Top Margin command designates the number of lines between
      * the top of the logical page and the top of the text area.
@@ -303,7 +303,7 @@ public class PCLGenerator {
     public void pushCursorPos() throws IOException {
         writeCommand("&f0S");
     }
-    
+
     /**
      * Pops the current cursor position from the stack.
      * @throws IOException In case of an I/O error
@@ -311,7 +311,7 @@ public class PCLGenerator {
     public void popCursorPos() throws IOException {
         writeCommand("&f1S");
     }
-    
+
     /**
      * Changes the current print direction while maintaining the current cursor position.
      * @param rotate the rotation angle (counterclockwise), one of 0, 90, 180 and 270.
@@ -320,10 +320,10 @@ public class PCLGenerator {
     public void changePrintDirection(int rotate) throws IOException {
         writeCommand("&a" + rotate + "P");
     }
-    
+
     /**
      * Enters the HP GL/2 mode.
-     * @param restorePreviousHPGL2Cursor true if the previous HP GL/2 pen position should be 
+     * @param restorePreviousHPGL2Cursor true if the previous HP GL/2 pen position should be
      *                                   restored, false if the current position is maintained
      * @throws IOException In case of an I/O error
      */
@@ -334,7 +334,7 @@ public class PCLGenerator {
             writeCommand("%1B");
         }
     }
-    
+
     /**
      * Enters the PCL mode.
      * @param restorePreviousPCLCursor true if the previous PCL cursor position should be restored,
@@ -348,7 +348,7 @@ public class PCLGenerator {
             writeCommand("%1A");
         }
     }
-    
+
     /**
      * Generate a filled rectangle at the current cursor position.
      *
@@ -367,10 +367,10 @@ public class PCLGenerator {
             //y += h;
         }
         setPatternTransparencyMode(false);
-        if (usePCLShades 
+        if (usePCLShades
                 || Color.black.equals(col)
                 || Color.white.equals(col)) {
-            writeCommand("*c" + formatDouble4(w / 100.0) + "h" 
+            writeCommand("*c" + formatDouble4(w / 100.0) + "h"
                               + formatDouble4(h / 100.0) + "V");
             int lineshade = convertToPCLShade(col);
             writeCommand("*c" + lineshade + "G");
@@ -378,7 +378,7 @@ public class PCLGenerator {
         } else {
             defineGrayscalePattern(col, 32, DITHER_MATRIX_4X4);
 
-            writeCommand("*c" + formatDouble4(w / 100.0) + "h" 
+            writeCommand("*c" + formatDouble4(w / 100.0) + "h"
                               + formatDouble4(h / 100.0) + "V");
             writeCommand("*c32G");
             writeCommand("*c4P"); //User-defined pattern
@@ -391,19 +391,19 @@ public class PCLGenerator {
     private static final int[] BAYER_D2 = new int[] {0, 2, 3, 1};
     private static final int[] BAYER_D4;
     private static final int[] BAYER_D8;
-    
+
     static {
         BAYER_D4 = deriveBayerMatrix(BAYER_D2);
         BAYER_D8 = deriveBayerMatrix(BAYER_D4);
     }
-    
+
     private static void setValueInMatrix(int[] dn, int half, int part, int idx, int value) {
         int xoff = (part & 1) * half;
         int yoff = (part & 2) * half * half;
         int matrixIndex = yoff + ((int)(idx / half) * half * 2) + (idx % half) + xoff;
         dn[matrixIndex] = value;
     }
-    
+
     private static int[] deriveBayerMatrix(int[] d) {
         int[] dn = new int[d.length * 4];
         int half = (int)Math.sqrt(d.length);
@@ -414,7 +414,7 @@ public class PCLGenerator {
         }
         return dn;
     }
-    
+
     /**
      * Generates a user-defined pattern for a dithering pattern matching the grayscale value
      * of the color given.
@@ -423,7 +423,7 @@ public class PCLGenerator {
      * @param ditherMatrixSize the size of the Bayer dither matrix to use (4 or 8 supported)
      * @throws IOException In case of an I/O error
      */
-    public void defineGrayscalePattern(Color col, int patternID, int ditherMatrixSize) 
+    public void defineGrayscalePattern(Color col, int patternID, int ditherMatrixSize)
             throws IOException {
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         DataOutputStream data = new DataOutputStream(baout);
@@ -436,36 +436,36 @@ public class PCLGenerator {
         //data.writeShort(600); //X Resolution (didn't manage to get that to work)
         //data.writeShort(600); //Y Resolution
         int gray255 = convertToGray(col.getRed(), col.getGreen(), col.getBlue());
-        
+
         byte[] pattern;
         if (ditherMatrixSize == 8) {
             int gray65 = gray255 * 65 / 255;
-            
+
             pattern = new byte[BAYER_D8.length / 8];
-            
+
             for (int i = 0, c = BAYER_D8.length; i < c; i++) {
                 boolean dot = !(BAYER_D8[i] < gray65 - 1);
                 if (dot) {
                     int byteIdx = i / 8;
-                    pattern[byteIdx] |= 1 << (i % 8); 
+                    pattern[byteIdx] |= 1 << (i % 8);
                 }
             }
         } else {
             int gray17 = gray255 * 17 / 255;
-            
-            //Since a 4x4 pattern did not work, the 4x4 pattern is applied 4 times to an 
-            //8x8 pattern. Maybe this could be changed to use an 8x8 bayer dither pattern 
+
+            //Since a 4x4 pattern did not work, the 4x4 pattern is applied 4 times to an
+            //8x8 pattern. Maybe this could be changed to use an 8x8 bayer dither pattern
             //instead of the 4x4 one.
             pattern = new byte[BAYER_D4.length / 8 * 4];
-            
+
             for (int i = 0, c = BAYER_D4.length; i < c; i++) {
                 boolean dot = !(BAYER_D4[i] < gray17 - 1);
                 if (dot) {
                     int byteIdx = i / 4;
-                    pattern[byteIdx] |= 1 << (i % 4); 
-                    pattern[byteIdx] |= 1 << ((i % 4) + 4); 
-                    pattern[byteIdx + 4] |= 1 << (i % 4); 
-                    pattern[byteIdx + 4] |= 1 << ((i % 4) + 4); 
+                    pattern[byteIdx] |= 1 << (i % 4);
+                    pattern[byteIdx] |= 1 << ((i % 4) + 4);
+                    pattern[byteIdx + 4] |= 1 << (i % 4);
+                    pattern[byteIdx + 4] |= 1 << ((i % 4) + 4);
                 }
             }
         }
@@ -525,7 +525,7 @@ public class PCLGenerator {
     public final int convertToGray(int r, int g, int b) {
         return (r * 30 + g * 59 + b * 11) / 100;
     }
-    
+
     /**
      * Convert a Color value to a PCL shade value (0-100).
      * @param col the color
@@ -535,7 +535,7 @@ public class PCLGenerator {
         float gray = convertToGray(col.getRed(), col.getGreen(), col.getBlue()) / 255f;
         return (int)(100 - (gray * 100f));
     }
-    
+
     /**
      * Selects the current grayscale color (the given color is converted to grayscales).
      * @param col the color
@@ -555,7 +555,7 @@ public class PCLGenerator {
             }
         }
     }
-    
+
     /**
      * Select the current pattern
      * @param patternID the pattern ID (<ESC>*c#G command)
@@ -583,7 +583,7 @@ public class PCLGenerator {
             return false;
         }
     }
-    
+
     /**
      * Indicates whether an image is a grayscale image.
      * @param img the image
@@ -592,7 +592,7 @@ public class PCLGenerator {
     public static boolean isGrayscaleImage(RenderedImage img) {
         return (img.getColorModel().getColorSpace().getNumComponents() == 1);
     }
-    
+
     private MonochromeBitmapConverter createMonochromeBitmapConverter() {
         MonochromeBitmapConverter converter = null;
         try {
@@ -621,7 +621,7 @@ public class PCLGenerator {
     private int calculatePCLResolution(int resolution) {
         return calculatePCLResolution(resolution, false);
     }
-    
+
     /**
      * Calculates the ideal PCL resolution for a given resolution.
      * @param resolution the input resolution
@@ -653,35 +653,35 @@ public class PCLGenerator {
         }
         return PCL_RESOLUTIONS[choice];
     }
-    
+
     private boolean isValidPCLResolution(int resolution) {
         return resolution == calculatePCLResolution(resolution);
     }
-    
-    private Dimension getAdjustedDimension(Dimension orgDim, double orgResolution, 
+
+    private Dimension getAdjustedDimension(Dimension orgDim, double orgResolution,
             int pclResolution) {
         if (orgResolution == pclResolution) {
             return orgDim;
         } else {
             Dimension result = new Dimension();
-            result.width = (int)Math.round((double)orgDim.width * pclResolution / orgResolution); 
-            result.height = (int)Math.round((double)orgDim.height * pclResolution / orgResolution); 
+            result.width = (int)Math.round((double)orgDim.width * pclResolution / orgResolution);
+            result.height = (int)Math.round((double)orgDim.height * pclResolution / orgResolution);
             return result;
         }
     }
-    
+
     //Threshold table to convert an alpha channel (8-bit) into a clip mask (1-bit)
     private static final byte[] THRESHOLD_TABLE = new byte[256];
     static { // Initialize the arrays
         for (int i = 0; i < 256; i++) {
             THRESHOLD_TABLE[i] = (byte) ((i < 240) ? 255 : 0);
         }
-    }    
-    
+    }
+
     private RenderedImage getMask(RenderedImage img, Dimension targetDim) {
-        ColorModel cm = img.getColorModel(); 
+        ColorModel cm = img.getColorModel();
         if (cm.hasAlpha()) {
-            BufferedImage alpha = new BufferedImage(img.getWidth(), img.getHeight(), 
+            BufferedImage alpha = new BufferedImage(img.getWidth(), img.getHeight(),
                     BufferedImage.TYPE_BYTE_GRAY);
             Raster raster = img.getData();
             GraphicsUtil.copyBand(raster, cm.getNumColorComponents(), alpha.getRaster(), 0);
@@ -700,7 +700,7 @@ public class PCLGenerator {
                                                    targetDim.width, targetDim.height, 1, 1, null);
                 mask = new BufferedImage(colorModel, wraster, false, null);
             }
-            
+
             Graphics2D g2d = mask.createGraphics();
             try {
                 AffineTransform at = new AffineTransform();
@@ -732,7 +732,7 @@ public class PCLGenerator {
      * @param sourceTransparency true if the background should not be erased
      * @throws IOException In case of an I/O error
      */
-    public void paintBitmap(RenderedImage img, Dimension targetDim, boolean sourceTransparency) 
+    public void paintBitmap(RenderedImage img, Dimension targetDim, boolean sourceTransparency)
                 throws IOException {
         double targetResolution = img.getWidth() / UnitConv.mpt2in(targetDim.width);
         int resolution = (int)Math.round(targetResolution);
@@ -745,7 +745,7 @@ public class PCLGenerator {
         if (!monochrome) {
             //Transparency mask disabled. Doesn't work reliably
             final boolean transparencyDisabled = true;
-            RenderedImage mask = (transparencyDisabled ? null : getMask(img, effDim)); 
+            RenderedImage mask = (transparencyDisabled ? null : getMask(img, effDim));
             if (mask != null) {
                 pushCursorPos();
                 selectCurrentPattern(0, 1); //Solid white
@@ -753,11 +753,11 @@ public class PCLGenerator {
                 paintMonochromeBitmap(mask, effResolution);
                 popCursorPos();
             }
-            
+
             BufferedImage src = null;
             if (img instanceof BufferedImage && !scaled) {
                 if (!isGrayscaleImage(img) || img.getColorModel().hasAlpha()) {
-                    src = new BufferedImage(effDim.width, effDim.height, 
+                    src = new BufferedImage(effDim.width, effDim.height,
                             BufferedImage.TYPE_BYTE_GRAY);
                     ColorConvertOp op = new ColorConvertOp(
                             ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
@@ -767,7 +767,7 @@ public class PCLGenerator {
                 }
             }
             if (src == null) {
-                src = new BufferedImage(effDim.width, effDim.height, 
+                src = new BufferedImage(effDim.width, effDim.height,
                         BufferedImage.TYPE_BYTE_GRAY);
                 Graphics2D g2d = src.createGraphics();
                 try {
@@ -784,7 +784,7 @@ public class PCLGenerator {
             converter.setHint("quality", "false");
 
             BufferedImage buf = (BufferedImage)converter.convertToMonochrome(src);
-            
+
             RenderedImage red = buf;
             selectCurrentPattern(0, 0); //Solid black
             setTransparencyMode(sourceTransparency || mask != null, true);
@@ -793,7 +793,7 @@ public class PCLGenerator {
             //TODO untested!
             RenderedImage effImg = img;
             if (scaled) {
-                BufferedImage buf = new BufferedImage(effDim.width, effDim.height, 
+                BufferedImage buf = new BufferedImage(effDim.width, effDim.height,
                         BufferedImage.TYPE_BYTE_BINARY);
                 Graphics2D g2d = buf.createGraphics();
                 try {
@@ -831,7 +831,7 @@ public class PCLGenerator {
         if (!monochrome) {
             throw new IllegalArgumentException("img must be a monochrome image");
         }
-        
+
         int x = 0;
         int y = 0;
         int imgw = img.getWidth();
@@ -856,7 +856,7 @@ public class PCLGenerator {
                 if ((sample == 0)) {
                     ib |= (1 << (7 - (x % 8)));
                 }
-                    
+
                 //RLE encoding
                 if ((x % 8) == 7 || ((x + 1) == imgw)) {
                     if (rlewidth < bytewidth) {

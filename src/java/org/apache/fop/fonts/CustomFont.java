@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ public abstract class CustomFont extends Typeface
     private String embedFileName = null;
     private String embedResourceName = null;
     private FontResolver resolver = null;
-    
+
     private int capHeight = 0;
     private int xHeight = 0;
     private int ascender = 0;
@@ -72,7 +72,7 @@ public abstract class CustomFont extends Typeface
     public String getFullName() {
         return fullName;
     }
-    
+
     /**
      * Returns the font family names.
      * @return the font family names (a Set of Strings)
@@ -117,7 +117,7 @@ public abstract class CustomFont extends Typeface
         if (resolver != null && embedFileName != null) {
             result = resolver.resolve(embedFileName);
             if (result == null) {
-                throw new IOException("Unable to resolve Source '" 
+                throw new IOException("Unable to resolve Source '"
                         + embedFileName + "' for embedded font");
             }
         }
@@ -194,7 +194,7 @@ public abstract class CustomFont extends Typeface
     public int getFlags() {
         return flags;
     }
-    
+
     /** {@inheritDoc} */
     public boolean isSymbolicFont() {
         return ((getFlags() & 4) != 0) || "ZapfDingbatsEncoding".equals(getEncodingName());
@@ -210,7 +210,7 @@ public abstract class CustomFont extends Typeface
     public int getWeight() {
         return this.weight;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -293,20 +293,20 @@ public abstract class CustomFont extends Typeface
     public void setFullName(String name) {
         this.fullName = name;
     }
-    
+
     /** {@inheritDoc} */
     public void setFamilyNames(Set names) {
         this.familyNames = new java.util.HashSet(names);
     }
-    
+
     /**
      * Sets the font's subfamily name.
      * @param subFamilyName the subfamily name of the font
      */
     public void setFontSubFamilyName(String subFamilyName) {
-        this.fontSubName = subFamilyName;        
+        this.fontSubName = subFamilyName;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -374,7 +374,7 @@ public abstract class CustomFont extends Typeface
         weight = Math.min(900, weight);
         this.weight = weight;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -439,7 +439,7 @@ public abstract class CustomFont extends Typeface
         }
         this.kerning.put(key, value);
     }
-    
+
     /**
      * Replaces the existing kerning map with a new one.
      * @param kerningMap the kerning map (Map<Integer, Map<Integer, Integer>, the integers are

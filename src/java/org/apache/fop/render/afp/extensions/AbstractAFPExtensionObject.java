@@ -37,12 +37,12 @@ public abstract class AbstractAFPExtensionObject extends FONode {
      * the AFP extension attachment
      */
     protected AFPExtensionAttachment extensionAttachment;
-    
+
     /**
      * the element name of this extension
      */
     protected String name;
-            
+
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      * @param parent the parent formatting object

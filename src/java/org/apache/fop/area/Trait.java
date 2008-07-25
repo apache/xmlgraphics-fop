@@ -175,19 +175,19 @@ public class Trait implements Serializable {
 
     /** The space-before trait. */
     public static final Integer SPACE_BEFORE  = new Integer(29);
-    
+
     /** The space-after trait. */
     public static final Integer SPACE_AFTER  = new Integer(30);
-    
+
     /** The is-reference-area trait. */
     public static final Integer IS_REFERENCE_AREA = new Integer(31);
-    
+
     /** The is-viewport-area trait. */
     public static final Integer IS_VIEWPORT_AREA = new Integer(32);
-    
+
     /** Blinking trait used when rendering inline parent. */
     public static final Integer BLINK = new Integer(33);
-    
+
     /** Trait for color of underline decorations when rendering inline parent. */
     public static final Integer UNDERLINE_COLOR = new Integer(34);
     /** Trait for color of overline decorations when rendering inline parent. */
@@ -197,9 +197,9 @@ public class Trait implements Serializable {
 
     /** Maximum value used by trait keys */
     public static final int MAX_TRAIT_KEY = 36;
-    
+
     private static final TraitInfo[] TRAIT_INFO = new TraitInfo[MAX_TRAIT_KEY + 1];
-    
+
     private static class TraitInfo {
         private String name;
         private Class clazz; // Class of trait data
@@ -221,7 +221,7 @@ public class Trait implements Serializable {
     private static void put(Integer key, TraitInfo info) {
         TRAIT_INFO[key.intValue()] = info;
     }
-    
+
     static {
         // Create a hashmap mapping trait code to name for external representation
         //put(ID_LINK, new TraitInfo("id-link", String.class));
@@ -518,7 +518,7 @@ public class Trait implements Serializable {
 
         /** The background image url if any. */
         private String url = null;
-        
+
         /** The background image if any. */
         private ImageInfo imageInfo = null;
 
@@ -658,7 +658,7 @@ public class Trait implements Serializable {
                 throw new IllegalStateException("Illegal repeat style: " + repeat);
             }
         }
-        
+
         /**
          * Return the string for debugging.
          * {@inheritDoc}

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.ps;
 
 import java.awt.Dimension;
@@ -47,7 +47,7 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
     public PSGraphics2DAdapter(PSRenderer renderer) {
         this(renderer.gen, true);
     }
-    
+
     /**
      * Constructor for use without a PSRenderer instance.
      * @param gen the PostScript generator
@@ -57,16 +57,16 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
         this.gen = gen;
         this.clip = clip;
     }
-    
+
     /** {@inheritDoc} */
-    public void paintImage(Graphics2DImagePainter painter, 
+    public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException {
         float fwidth = width / 1000f;
         float fheight = height / 1000f;
         float fx = x / 1000f;
         float fy = y / 1000f;
-        
+
         // get the 'width' and 'height' attributes of the SVG document
         Dimension dim = painter.getImageSize();
         float imw = (float)dim.getWidth() / 1000f;
@@ -83,7 +83,7 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
             gen.defineRect(fx, fy, fwidth, fheight);
             gen.writeln("clip");
         }
-        
+
         // transform so that the coordinates (0,0) is from the top left
         // and positive is down and to the right. (0,0) is where the
         // viewBox puts it.

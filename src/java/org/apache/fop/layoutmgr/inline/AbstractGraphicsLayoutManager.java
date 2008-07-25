@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,14 +34,14 @@ import org.apache.fop.layoutmgr.TraitSetter;
 
 
 /**
- * LayoutManager handling the common tasks for the fo:instream-foreign-object 
+ * LayoutManager handling the common tasks for the fo:instream-foreign-object
  * and fo:external-graphics formatting objects
  */
 public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManager {
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param node
      *            the formatting object that creates this area
      */
@@ -67,17 +67,17 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         Rectangle placement = imageLayout.getPlacement();
 
         CommonBorderPaddingBackground borderProps = fobj.getCommonBorderPaddingBackground();
-        
+
         //Determine extra BPD from borders and padding
         int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
         beforeBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE, false);
-        
+
         placement.y += beforeBPD;
-        
+
         //Determine extra IPD from borders and padding
         int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START, false, this);
         startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START, false);
-        
+
         placement.x += startIPD;
 
         Area viewportArea = getChildArea();
@@ -101,7 +101,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
 
         return vp;
     }
-    
+
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context,
                                            int alignment) {
@@ -109,7 +109,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         setCurrentArea(areaCurrent);
         return super.getNextKnuthElements(context, alignment);
     }
-    
+
     /** {@inheritDoc} */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         final AbstractGraphics fobj = (AbstractGraphics)this.fobj;
@@ -129,11 +129,11 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
      * @return the appropriate area
      */
     protected abstract Area getChildArea();
-    
+
     // --------- Property Resolution related functions --------- //
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         switch (lengthBase) {

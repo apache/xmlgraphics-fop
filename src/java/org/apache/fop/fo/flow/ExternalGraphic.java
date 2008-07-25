@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ import org.apache.fop.fo.properties.FixedLength;
  * inline area that can be added to the area tree.
  */
 public class ExternalGraphic extends AbstractGraphics {
-    
+
     // The value of properties relevant for fo:external-graphic.
     // All but one of the e-g properties are kept in AbstractGraphics
     private String src;
@@ -56,7 +56,7 @@ public class ExternalGraphic extends AbstractGraphics {
     private int intrinsicWidth;
     private int intrinsicHeight;
     private Length intrinsicAlignmentAdjust;
-    
+
     /**
      * Create a new ExternalGraphic node that is a child
      * of the given {@link FONode}.
@@ -71,7 +71,7 @@ public class ExternalGraphic extends AbstractGraphics {
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         src = pList.get(PR_SRC).getString();
-        
+
         //Additional processing: obtain the image's intrinsic size and baseline information
         url = URISpecification.getURL(src);
         FOUserAgent userAgent = getUserAgent();
@@ -113,7 +113,7 @@ public class ExternalGraphic extends AbstractGraphics {
      * {@inheritDoc}
      * <br>XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);

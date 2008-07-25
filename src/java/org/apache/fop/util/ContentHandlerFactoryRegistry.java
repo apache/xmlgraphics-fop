@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,24 +36,24 @@ public class ContentHandlerFactoryRegistry {
 
     /** the logger */
     private static Log log = LogFactory.getLog(ContentHandlerFactoryRegistry.class);
-    
+
     /** Map from namespace URIs to ContentHandlerFactories */
     private Map factories = new java.util.HashMap();
-    
+
     /**
      * Default constructor.
      */
     public ContentHandlerFactoryRegistry() {
         discover();
     }
-    
+
     /**
      * Add an XML handler. The handler itself is inspected to find out what it supports.
      * @param classname the fully qualified class name
      */
     public void addContentHandlerFactory(String classname) {
         try {
-            ContentHandlerFactory factory 
+            ContentHandlerFactory factory
                 = (ContentHandlerFactory)Class.forName(classname).newInstance();
             addContentHandlerFactory(factory);
         } catch (ClassNotFoundException e) {
@@ -67,11 +67,11 @@ public class ContentHandlerFactoryRegistry {
                                                + classname);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(classname
-                                               + " is not an " 
+                                               + " is not an "
                                                + ContentHandlerFactory.class.getName());
         }
     }
-    
+
     /**
      * Add an ContentHandlerFactory. The instance is inspected to find out what it supports.
      * @param factory the ContentHandlerFactory instance
@@ -82,7 +82,7 @@ public class ContentHandlerFactoryRegistry {
             factories.put(ns[i], factory);
         }
     }
-    
+
     /**
      * Retrieves a ContentHandlerFactory instance of a given namespace URI.
      * @param namespaceURI the namespace to be handled.
@@ -92,7 +92,7 @@ public class ContentHandlerFactoryRegistry {
         ContentHandlerFactory factory = (ContentHandlerFactory)factories.get(namespaceURI);
         return factory;
     }
-    
+
     /**
      * Discovers ContentHandlerFactory implementations through the classpath and dynamically
      * registers them.
@@ -105,7 +105,7 @@ public class ContentHandlerFactoryRegistry {
                 ContentHandlerFactory factory = (ContentHandlerFactory)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dynamically adding ContentHandlerFactory: " 
+                        log.debug("Dynamically adding ContentHandlerFactory: "
                                 + factory.getClass().getName());
                     }
                     addContentHandlerFactory(factory);

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import org.apache.fop.fonts.SingleByteFont;
 public class Type1FontLoader extends FontLoader {
 
     private SingleByteFont singleFont;
-    
+
     /**
      * Constructs a new Type 1 font loader.
      * @param fontFileURI the URI to the PFB file of a Type 1 font
@@ -48,7 +48,7 @@ public class Type1FontLoader extends FontLoader {
      * @param resolver the font resolver used to resolve URIs
      * @throws IOException In case of an I/O error
      */
-    public Type1FontLoader(String fontFileURI, boolean embedded, FontResolver resolver) 
+    public Type1FontLoader(String fontFileURI, boolean embedded, FontResolver resolver)
                 throws IOException {
         super(fontFileURI, embedded, resolver);
     }
@@ -59,14 +59,14 @@ public class Type1FontLoader extends FontLoader {
                 + (Character.isUpperCase(pfbExt.charAt(2)) ? "M" : "m");
         return pfbURI.substring(0, pfbURI.length() - 4) + "." + pfmExt;
     }
-    
+
     private static final String[] AFM_EXTENSIONS = new String[] {".AFM", ".afm", ".Afm"};
-    
+
     /** {@inheritDoc} */
     protected void read() throws IOException {
         AFMFile afm = null;
         PFMFile pfm = null;
-        
+
         InputStream afmIn = null;
         for (int i = 0; i < AFM_EXTENSIONS.length; i++) {
             try {
@@ -88,7 +88,7 @@ public class Type1FontLoader extends FontLoader {
                 IOUtils.closeQuietly(afmIn);
             }
         }
-        
+
         String pfmUri = getPFMURI(this.fontFileURI);
         InputStream pfmIn = null;
         try {
@@ -104,7 +104,7 @@ public class Type1FontLoader extends FontLoader {
                 IOUtils.closeQuietly(pfmIn);
             }
         }
-        
+
         if (afm == null && pfm == null) {
             throw new java.io.FileNotFoundException(
                     "Neither an AFM nor a PFM file was found for " + this.fontFileURI);
@@ -124,7 +124,7 @@ public class Type1FontLoader extends FontLoader {
             singleFont.setEmbedFileName(this.fontFileURI);
         }
         returnFont = singleFont;
-        
+
         handleEncoding(afm, pfm);
         handleFontName(afm, pfm);
         handleMetrics(afm, pfm);
@@ -162,7 +162,7 @@ public class Type1FontLoader extends FontLoader {
             if (pfm.getCharSet() >= 0 && pfm.getCharSet() <= 2) {
                 singleFont.setEncoding(pfm.getCharSetName() + "Encoding");
             } else {
-                log.warn("The PFM reports an unsupported encoding (" 
+                log.warn("The PFM reports an unsupported encoding ("
                         + pfm.getCharSetName() + "). The font may not work as expected.");
                 singleFont.setEncoding("WinAnsiEncoding"); //Try fallback, no guarantees!
             }
@@ -203,7 +203,7 @@ public class Type1FontLoader extends FontLoader {
             if (afm.getDescender() != null) {
                 returnFont.setDescender(afm.getDescender().intValue());
             }
-            
+
             returnFont.setFontBBox(afm.getFontBBoxAsIntArray());
             if (afm.getStdVW() != null) {
                 returnFont.setStemV(afm.getStdVW().intValue());
@@ -231,7 +231,7 @@ public class Type1FontLoader extends FontLoader {
                 returnFont.setDescender(pfm.getLowerCaseDescent());
             }
         }
-        
+
         //Fallbacks when some crucial font metrics aren't available
         //(the following are all optional in AFM, but FontBBox is always available)
         if (returnFont.getXHeight(1) == 0) {
@@ -285,7 +285,7 @@ public class Type1FontLoader extends FontLoader {
         if (returnFont.getCapHeight() == 0) {
             returnFont.setCapHeight(returnFont.getAscender());
         }
-        
+
         if (afm != null) {
             String charSet = afm.getCharacterSet();
             int flags = 0;
@@ -306,7 +306,7 @@ public class Type1FontLoader extends FontLoader {
                 flags |= 64; //bit 7: Italic
             }
             returnFont.setFlags(flags);
-             
+
             returnFont.setFirstChar(afm.getFirstChar());
             returnFont.setLastChar(afm.getLastChar());
             Iterator iter = afm.getCharMetrics().iterator();

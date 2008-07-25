@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.svg;
 
 import java.awt.Graphics2D;
@@ -72,13 +72,13 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
     protected GraphicsNode createImageGraphicsNode
                 (BridgeContext ctx, Element imageElement, ParsedURL purl) {
         PDFBridgeContext pdfCtx = (PDFBridgeContext)ctx;
-        
+
         ImageManager manager = pdfCtx.getImageManager();
         ImageSessionContext sessionContext = pdfCtx.getImageSessionContext();
         try {
             ImageInfo info = manager.getImageInfo(purl.toString(), sessionContext);
             Image image = manager.getImage(info, supportedFlavors, sessionContext);
-            
+
             //TODO color profile overrides aren't handled, yet!
             //ICCColorSpaceExt colorspaceOverride = extractColorSpace(e, ctx);
             AbstractGraphicsNode specializedNode = null;
@@ -104,7 +104,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 ctx.getUserAgent().displayError(
                         new ImageException("Cannot convert an image to a usable format: " + purl));
             }
-            
+
             Rectangle2D imgBounds = getImageBounds(ctx, imageElement);
             Rectangle2D bounds = specializedNode.getPrimitiveBounds();
             float [] vb = new float[4];
@@ -113,14 +113,14 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
             vb[2] = (float) bounds.getWidth(); // width
             vb[3] = (float) bounds.getHeight(); // height
 
-            // handles the 'preserveAspectRatio', 'overflow' and 'clip' 
+            // handles the 'preserveAspectRatio', 'overflow' and 'clip'
             // and sets the appropriate AffineTransform to the image node
             initializeViewport(ctx, imageElement, specializedNode, vb, imgBounds);
             return specializedNode;
         } catch (Exception e) {
             ctx.getUserAgent().displayError(e);
         }
-        
+
         return superCreateGraphicsNode(ctx, imageElement, purl);
     }
 
@@ -144,13 +144,13 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      * the PDFGraphics2D.
      */
     public class LoaderImageNode extends AbstractGraphicsNode {
-        
+
         private Image image;
         private BridgeContext ctx;
         private Element imageElement;
         private ParsedURL purl;
         private GraphicsNode origGraphicsNode = null;
-        
+
         /**
          * Create a new image node for drawing natively handled images
          * into PDF graphics.
@@ -159,7 +159,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
          * @param imageElement the SVG image element
          * @param purl the URL to the image
          */
-        public LoaderImageNode(Image image, BridgeContext ctx, 
+        public LoaderImageNode(Image image, BridgeContext ctx,
                            Element imageElement, ParsedURL purl) {
             this.image = image;
             this.ctx  = ctx;
@@ -191,7 +191,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 if (origGraphicsNode == null) {
                     // Haven't constructed baseclass Graphics Node,
                     // so do so now.
-                    origGraphicsNode 
+                    origGraphicsNode
                         = PDFImageElementBridge.this.superCreateGraphicsNode
                             (ctx,  imageElement, purl);
                 }
@@ -223,9 +223,9 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      * A node that holds a Graphics2D image.
      */
     public class Graphics2DNode extends AbstractGraphicsNode {
-        
+
         private ImageGraphics2D image;
-        
+
         /**
          * Create a new Graphics2D node.
          * @param g2d the Graphics2D image

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,7 +52,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     private static Log log = LogFactory.getLog(ImageRenderedAdapter.class);
 
     private ImageEncodingHelper encodingHelper;
-    
+
     private PDFFilter pdfFilter = null;
     private String maskRef;
     private PDFReference softMask;
@@ -74,11 +74,11 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     public ImageRendered getImage() {
         return ((ImageRendered)this.image);
     }
-    
+
     private ColorModel getEffectiveColorModel() {
         return encodingHelper.getEncodedColorModel();
     }
-    
+
     /** {@inheritDoc} */
     protected ColorSpace getImageColorSpace() {
         return getEffectiveColorModel().getColorSpace();
@@ -90,14 +90,14 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         ColorModel cm = getEffectiveColorModel();
 
         super.setup(doc);
-        
+
         //Handle transparency mask if applicable
-        ColorModel orgcm = ri.getColorModel(); 
+        ColorModel orgcm = ri.getColorModel();
         if (orgcm.hasAlpha() && orgcm.getTransparency() == ColorModel.TRANSLUCENT) {
             doc.getProfile().verifyTransparencyAllowed(image.getInfo().getOriginalURI());
             //TODO Implement code to combine image with background color if transparency is not
             //allowed (need BufferedImage support for that)
-            
+
             AlphaRasterImage alphaImage = new AlphaRasterImage("Mask:" + getKey(), ri);
             this.softMask = doc.addImage(null, alphaImage).makeReference();
         }
@@ -130,7 +130,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         }
         return (getImage().getTransparentColor() != null);
     }
-    
+
     private static Integer getIndexOfFirstTransparentColorInPalette(RenderedImage image) {
         ColorModel cm = image.getColorModel();
         if (cm instanceof IndexColorModel) {
@@ -180,19 +180,19 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     public PDFReference getSoftMaskReference() {
         return softMask;
     }
-    
+
     /** {@inheritDoc} */
     public PDFFilter getPDFFilter() {
         return pdfFilter;
     }
-    
+
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
         encodingHelper.encode(out);
     }
 
     private static final int MAX_HIVAL = 255;
-    
+
     /** {@inheritDoc} */
     public void populateXObjectDictionary(PDFDictionary dict) {
         ColorModel cm = getEffectiveColorModel();
@@ -200,11 +200,11 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
             IndexColorModel icm = (IndexColorModel)cm;
             PDFArray indexed = new PDFArray(dict);
             indexed.add(new PDFName("Indexed"));
-            
+
             if (icm.getColorSpace().getType() != ColorSpace.TYPE_RGB) {
                 log.warn("Indexed color space is not using RGB as base color space."
                         + " The image may not be handled correctly."
-                        + " Base color space: " + icm.getColorSpace() 
+                        + " Base color space: " + icm.getColorSpace()
                         + " Image: " + image.getInfo());
             }
             indexed.add(new PDFName(toPDFColorSpace(icm.getColorSpace()).getName()));
@@ -229,7 +229,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
 
             dict.put("ColorSpace", indexed);
             dict.put("BitsPerComponent", icm.getPixelSize());
-            
+
             Integer index = getIndexOfFirstTransparentColorInPalette(getImage().getRenderedImage());
             if (index != null) {
                 PDFArray mask = new PDFArray(dict);
@@ -239,7 +239,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     public String getFilterHint() {
         return PDFFilterList.IMAGE_FILTER;

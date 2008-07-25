@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts;
 
 import java.util.Set;
@@ -45,7 +45,7 @@ public abstract class Typeface implements FontMetrics {
      * long out of statistical interest.
      */
     private long charMapOps = 0;
-    
+
     /** An optional event listener that receives events such as missing glyphs etc. */
     protected FontEventListener eventListener;
 
@@ -71,9 +71,9 @@ public abstract class Typeface implements FontMetrics {
     protected void notifyMapOperation() {
         this.charMapOps++;
     }
-    
+
     /**
-     * Indicates whether this font had to do any character mapping operations. If that was 
+     * Indicates whether this font had to do any character mapping operations. If that was
      * not the case, it's an indication that the font has never actually been used.
      * @return true if the font had to do any character mapping operations
      */
@@ -87,7 +87,7 @@ public abstract class Typeface implements FontMetrics {
      * @return True if the character is supported, Falso otherwise
      */
     public abstract boolean hasChar(char c);
-    
+
     /**
      * Determines whether the font is a multibyte font.
      * @return True if it is multibyte
@@ -100,7 +100,7 @@ public abstract class Typeface implements FontMetrics {
     public int getMaxAscent(int size) {
         return getAscender(size);
     }
-    
+
     /**
      * Sets the font event listener that can be used to receive events about particular events
      * in this class.
@@ -109,10 +109,10 @@ public abstract class Typeface implements FontMetrics {
     public void setEventListener(FontEventListener listener) {
         this.eventListener = listener;
     }
-    
+
     /**
      * Provide proper warning if a glyph is not available.
-     * 
+     *
      * @param c
      *            the character which is missing.
      */

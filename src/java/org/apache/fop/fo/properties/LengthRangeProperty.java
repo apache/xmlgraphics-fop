@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
 
         /**
          * Create a new empty instance of LengthRangeProperty.
-         * @return the new instance. 
+         * @return the new instance.
          */
         public Property makeNewProperty() {
             return new LengthRangeProperty();
@@ -64,16 +64,16 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                         && ((PercentLength) len).getPercentage() < 0)
                     || (len.isAbsolute() && len.getValue() < 0));
         }
-        
-        /** {@inheritDoc} */        
-        public Property convertProperty(Property p, 
+
+        /** {@inheritDoc} */
+        public Property convertProperty(Property p,
                                 PropertyList propertyList, FObj fo)
                         throws PropertyException {
-            
+
             if (p instanceof LengthRangeProperty) {
                 return p;
             }
-            
+
             if (this.propId == PR_BLOCK_PROGRESSION_DIMENSION
                     || this.propId == PR_INLINE_PROGRESSION_DIMENSION) {
                 Length len = p.getLength();
@@ -86,13 +86,13 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                     }
                 }
             }
-            
+
             return super.convertProperty(p, propertyList, fo);
         }
-        
-        
+
+
         /**
-         * {@inheritDoc} 
+         * {@inheritDoc}
          */
         protected Property setSubprop(Property baseProperty, int subpropertyId,
                                         Property subproperty) {
@@ -119,7 +119,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
 
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
@@ -191,7 +191,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         }
         consistent = false;
     }
-    
+
     // Minimum is prioritaire, if explicit
     private void checkConsistency(PercentBaseContext context) {
         if (consistent) {
@@ -203,7 +203,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         // Make sure max >= min
         // Must also control if have any allowed enum values!
 
-        if (!minimum.isAuto() && !maximum.isAuto() 
+        if (!minimum.isAuto() && !maximum.isAuto()
                 && minimum.getLength().getValue(context) > maximum.getLength().getValue(context)) {
             if ((bfSet & MINSET) != 0) {
                 // if minimum is explicit, force max to min
@@ -217,7 +217,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
             }
         }
         // Now make sure opt <= max and opt >= min
-        if (!optimum.isAuto() && !maximum.isAuto() 
+        if (!optimum.isAuto() && !maximum.isAuto()
                 && optimum.getLength().getValue(context) > maximum.getLength().getValue(context)) {
             if ((bfSet & OPTSET) != 0) {
                 if ((bfSet & MAXSET) != 0) {
@@ -231,8 +231,8 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                 // opt is default and max is explicit or default
                 optimum = maximum;
             }
-        } else if (!optimum.isAuto() && !minimum.isAuto() 
-                    && optimum.getLength().getValue(context) 
+        } else if (!optimum.isAuto() && !minimum.isAuto()
+                    && optimum.getLength().getValue(context)
                         < minimum.getLength().getValue(context)) {
             if ((bfSet & MINSET) != 0) {
                 // if minimum is explicit, force opt to min
@@ -244,7 +244,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                 minimum = optimum; // minimum was default value
             }
         }
-        
+
         consistent = true;
     }
 
@@ -278,8 +278,8 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     /** {@inheritDoc} */
     public String toString() {
         return "LengthRange["
-            + "min:" + getMinimum(null).getObject() 
-            + ", max:" + getMaximum(null).getObject() 
+            + "min:" + getMinimum(null).getObject()
+            + ", max:" + getMaximum(null).getObject()
             + ", opt:" + getOptimum(null).getObject() + "]";
     }
 

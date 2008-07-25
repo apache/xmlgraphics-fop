@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * a percent specified length quantity in XSL
  */
 public class PercentLength extends LengthProperty {
-    
+
     /**
      * The percentage itself, expressed as a decimal value, e.g. for 95%, set
      * the value to .95
@@ -39,7 +39,7 @@ public class PercentLength extends LengthProperty {
      * {@link #factor} should be applied to compute the actual length
      */
     private PercentBase lbase = null;
-    
+
     private double resolvedValue;
 
     /**
@@ -63,9 +63,9 @@ public class PercentLength extends LengthProperty {
     }
 
     /**
-     * Used during property resolution to check for 
+     * Used during property resolution to check for
      * negative percentages
-     * 
+     *
      * @return the percentage value
      */
     protected double getPercentage() {
@@ -95,7 +95,7 @@ public class PercentLength extends LengthProperty {
             return 0;
         }
     }
-    
+
     /** {@inheritDoc} */
     public String getString() {
         return (factor * 100.0) + "%";
@@ -103,7 +103,7 @@ public class PercentLength extends LengthProperty {
 
     /**
      * Return the length of this PercentLength.
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public int getValue() {
         return (int) getNumericValue();
@@ -113,12 +113,12 @@ public class PercentLength extends LengthProperty {
     public int getValue(PercentBaseContext context) {
         return (int) getNumericValue(context);
     }
-    
+
     /**
      * @return the String equivalent of this
      */
     public String toString() {
-        StringBuffer sb = 
+        StringBuffer sb =
             new StringBuffer(PercentLength.class.getName())
                 .append("[factor=").append(factor)
                 .append(",lbase=").append(lbase).append("]");

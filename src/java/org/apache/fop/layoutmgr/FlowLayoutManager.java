@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,12 +46,12 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * logging instance
      */
     private static Log log = LogFactory.getLog(FlowLayoutManager.class);
-    
+
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
 
     private int currentSpan = EN_NONE;
-    
+
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
@@ -96,7 +96,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 SpaceResolver.resolveElementList(returnList);
                 return returnList;
             }
-            
+
             // Set up a LayoutContext
             //MinOptMax bpd = context.getStackLimit();
 
@@ -104,7 +104,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             childLC.setStackLimitBP(context.getStackLimitBP());
             childLC.setRefIPD(context.getRefIPD());
             childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
-            
+
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             //log.debug("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
@@ -148,7 +148,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             //Propagate and clear
             context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
             childLC.clearKeepWithNextPending();
-            
+
             context.updateKeepWithNextPending(getKeepWithNextStrength());
         }
 
@@ -201,7 +201,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     public int getKeepTogetherStrength() {
         return KEEP_AUTO;
     }
-    
+
     /** {@inheritDoc} */
     public int getKeepWithNextStrength() {
         return KEEP_AUTO;
@@ -211,7 +211,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     public int getKeepWithPreviousStrength() {
         return KEEP_AUTO;
     }
-    
+
     /** {@inheritDoc} */
     public List getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/ int alignment) {
         ListIterator oldListIterator = oldList.listIterator();
@@ -255,7 +255,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 if (prevLM.mustKeepWithNext()
                     || currLM.mustKeepWithPrevious()) {
                     // add an infinite penalty to forbid a break between blocks
-                    returnedList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, 
+                    returnedList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                             new Position(this), false));
                 } else if (!((KnuthElement) returnedList.get(returnedList
                         .size() - 1)).isGlue()) {
@@ -288,7 +288,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
@@ -299,7 +299,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * Add child area to a the correct container, depending on its
      * area class. A Flow can fill at most one area container of any class
      * at any one time. The actual work is done by BlockStackingLM.
-     * 
+     *
      * @param childArea the area to add
      */
     public void addChildArea(Area childArea) {
@@ -314,7 +314,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     public Area getParentArea(Area childArea) {
         BlockParent parentArea = null;
         int aclass = childArea.getAreaClass();
-        
+
         if (aclass == Area.CLASS_NORMAL) {
             parentArea = getCurrentPV().getCurrentFlow();
         } else if (aclass == Area.CLASS_BEFORE_FLOAT) {
@@ -325,7 +325,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             throw new IllegalStateException("(internal error) Invalid "
                     + "area class (" + aclass + ") requested.");
         }
-        
+
         this.currentAreas[aclass] = parentArea;
         setCurrentArea(parentArea);
         return parentArea;
@@ -338,7 +338,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     public int getContentAreaIPD() {
         return getCurrentPV().getCurrentSpan().getColumnWidth();
     }
-   
+
     /**
      * Returns the BPD of the content area
      * @return the BPD of the content area

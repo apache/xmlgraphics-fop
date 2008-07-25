@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ public class FontWeightRange {
     /**
      * Returns an <code>FontWeightRange</code> object holding the
      * range values of the specified <code>String</code>.
-     * 
+     *
      * @param weightRangeString the value range string
      * @return an <code>FontWeightRange</code> object holding the value ranges
      */

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class represents a list of PDF filters to be applied when serializing 
+ * This class represents a list of PDF filters to be applied when serializing
  * the output of a PDF object.
  */
 public class PDFFilterList {
@@ -50,9 +50,9 @@ public class PDFFilterList {
     private List filters = new java.util.ArrayList();
 
     private boolean ignoreASCIIFilters = false;
-    
+
     private boolean disableAllFilters = false;
-        
+
     /**
      * Default constructor.
      * <p>
@@ -61,7 +61,7 @@ public class PDFFilterList {
     public PDFFilterList() {
         //nop
     }
-    
+
     /**
      * Use this descriptor if you want to have ASCII filters (such as ASCIIHex
      * and ASCII85) ignored, for example, when encryption is active.
@@ -78,7 +78,7 @@ public class PDFFilterList {
     public void setDisableAllFilters(boolean value) {
         this.disableAllFilters = value;
     }
-    
+
     /**
      * Returns true if all filters are disabled.
      * @return true if all filters are disabled
@@ -86,7 +86,7 @@ public class PDFFilterList {
     public boolean isDisableAllFilters() {
         return this.disableAllFilters;
     }
-    
+
     /**
      * Indicates whether the filter list is already initialized.
      * @return true if more there are filters present
@@ -111,7 +111,7 @@ public class PDFFilterList {
             filters.add(filter);
         }
     }
-    
+
     /**
      * Add a filter for compression of the stream by name.
      * @param filterType name of the filter to add
@@ -211,7 +211,7 @@ public class PDFFilterList {
             int nonNullParams = populateNamesAndParms(names, parms);
 
             // now build up the filter entries for the dictionary
-            return buildFilterEntries(names) 
+            return buildFilterEntries(names)
                     + (nonNullParams > 0 ? buildDecodeParms(parms) : "");
         }
         return "";
@@ -238,7 +238,7 @@ public class PDFFilterList {
             putDecodeParams(dict, parms);
         }
     }
-    
+
     private int populateNamesAndParms(List names, List parms) {
         // run the filters
         int nonNullParams = 0;
@@ -247,7 +247,7 @@ public class PDFFilterList {
             // place the names in our local vector in reverse order
             if (filter.getName().length() > 0) {
                 names.add(0, filter.getName());
-                PDFObject param = filter.getDecodeParms(); 
+                PDFObject param = filter.getDecodeParms();
                 if (param != null) {
                     parms.add(0, param);
                     nonNullParams++;
@@ -297,7 +297,7 @@ public class PDFFilterList {
             }
         }
     }
-    
+
     private String buildDecodeParms(List parms) {
         StringBuffer sb = new StringBuffer();
         boolean needParmsEntry = false;
@@ -346,9 +346,9 @@ public class PDFFilterList {
             }
         }
     }
-    
+
     /**
-     * Applies all registered filters as necessary. The method returns an 
+     * Applies all registered filters as necessary. The method returns an
      * OutputStream which will receive the filtered contents.
      * @param stream raw data output stream
      * @return OutputStream filtered output stream

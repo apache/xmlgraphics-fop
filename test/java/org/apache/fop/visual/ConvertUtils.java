@@ -32,14 +32,14 @@ public class ConvertUtils {
     /**
      * Calls an external converter application (GhostScript, for example).
      * @param cmd the full command
-     * @param envp array of strings, each element of which has environment variable settings 
+     * @param envp array of strings, each element of which has environment variable settings
      * in format name=value.
-     * @param workDir the working directory of the subprocess, or null if the subprocess should 
+     * @param workDir the working directory of the subprocess, or null if the subprocess should
      * inherit the working directory of the current process.
      * @param log the logger to log output by the external application to
      * @throws IOException in case the external call fails
      */
-    public static void convert(String cmd, String[] envp, File workDir, final Log log) 
+    public static void convert(String cmd, String[] envp, File workDir, final Log log)
                 throws IOException {
         log.debug(cmd);
 
@@ -53,7 +53,7 @@ public class ConvertUtils {
                     log.error("ERR> " + line);
                 }
             };
-            StreamRedirector errorRedirector 
+            StreamRedirector errorRedirector
                 = new StreamRedirector(process.getErrorStream(), errorHandler);
 
             //Redirect stdout output
@@ -62,11 +62,11 @@ public class ConvertUtils {
                     log.debug("OUT> " + line);
                 }
             };
-            StreamRedirector outputRedirector 
+            StreamRedirector outputRedirector
                 = new StreamRedirector(process.getInputStream(), outputHandler);
             new Thread(errorRedirector).start();
             new Thread(outputRedirector).start();
-                
+
             process.waitFor();
         } catch (java.lang.InterruptedException ie) {
             throw new IOException("The call to the external converter failed: " + ie.getMessage());
@@ -76,11 +76,11 @@ public class ConvertUtils {
 
         int exitValue = process.exitValue();
         if (exitValue != 0) {
-            throw new IOException("The call to the external converter failed. Result: " 
+            throw new IOException("The call to the external converter failed. Result: "
                     + exitValue);
         }
 
     }
-    
-    
+
+
 }

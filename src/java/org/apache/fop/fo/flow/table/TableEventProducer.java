@@ -33,7 +33,7 @@ public interface TableEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -83,7 +83,7 @@ public interface TableEventProducer extends EventProducer {
      */
     void footerOrderCannotRecover(Object source, String elementName, Locator loc)
             throws ValidationException;
-    
+
     /**
      * starts-row/ends-row for fo:table-cells non-applicable for children of an fo:table-row
      * @param source the event source
@@ -93,7 +93,7 @@ public interface TableEventProducer extends EventProducer {
     void startEndRowUnderTableRowWarning(Object source, Locator loc);
 
     /**
-     * Column-number or number of cells in the row overflows the number of fo:table-column 
+     * Column-number or number of cells in the row overflows the number of fo:table-column
      * specified for the table.
      * @param source the event source
      * @param loc the location of the error or null
@@ -166,5 +166,5 @@ public interface TableEventProducer extends EventProducer {
     void breakIgnoredDueToRowSpanning(Object source, String elementName, boolean breakBefore,
             Locator loc);
 
-    
+
 }

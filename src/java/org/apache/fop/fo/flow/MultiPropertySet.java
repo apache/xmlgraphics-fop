@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class MultiPropertySet extends FObj {
 
     /**
      * Base constructor
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public MultiPropertySet(FONode parent) {
@@ -64,7 +64,7 @@ public class MultiPropertySet extends FObj {
      * {@inheritDoc}
      * <br>XSL Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -75,7 +75,7 @@ public class MultiPropertySet extends FObj {
     public String getLocalName() {
         return "multi-property-set";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_MULTI_PROPERTY_SET}

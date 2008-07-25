@@ -33,7 +33,7 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
 
     private PDFICCStream iccStream;
     private String explicitName;
-    
+
     /**
      * Constructs a the ICCBased color space with an explicit name (ex. "DefaultRGB").
      * @param explicitName an explicit name or null if a name should be generated
@@ -43,7 +43,7 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
         this.explicitName = explicitName;
         this.iccStream = iccStream;
     }
-    
+
     /**
      * Constructs a the ICCBased color space.
      * @param iccStream the ICC stream to associate with this color space
@@ -51,12 +51,12 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
     public PDFICCBasedColorSpace(PDFICCStream iccStream) {
         this(null, iccStream);
     }
-    
+
     /** @return the ICC stream associated with this color space */
     public PDFICCStream getICCStream() {
         return this.iccStream;
     }
-    
+
     /** {@inheritDoc} */
     public int getNumComponents() {
         return iccStream.getICCProfile().getNumComponents();
@@ -151,5 +151,5 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
         sRGBProfile.setColorSpace(profile, null);
         return sRGBProfile;
     }
-    
+
 }

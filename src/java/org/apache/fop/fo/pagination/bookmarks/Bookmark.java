@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.apache.fop.fo.ValidationException;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_bookmark">
- * <code>fo:bookmark</code></a> object, first introduced in the 
+ * <code>fo:bookmark</code></a> object, first introduced in the
  * XSL 1.1 WD.
  */
 public class Bookmark extends FObj {
@@ -42,7 +42,7 @@ public class Bookmark extends FObj {
     private String internalDestination;
     private String externalDestination;
     private boolean bShow = true; // from starting-state property
-    
+
     // Valid, but unused properties. Commented out for performance
     // private CommonAccessibility commonAccessibility;
 
@@ -63,8 +63,8 @@ public class Bookmark extends FObj {
         internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
         bShow = (pList.get(PR_STARTING_STATE).getEnum() == EN_SHOW);
 
-        // per spec, internal takes precedence if both specified        
-        if (internalDestination.length() > 0) { 
+        // per spec, internal takes precedence if both specified
+        if (internalDestination.length() > 0) {
             externalDestination = null;
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
@@ -79,7 +79,7 @@ public class Bookmark extends FObj {
      * {@inheritDoc}
      * <br>XSL/FOP: (bookmark-title, bookmark*)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("bookmark-title")) {
@@ -89,7 +89,7 @@ public class Bookmark extends FObj {
             } else if (localName.equals("bookmark")) {
                 if (bookmarkTitle == null) {
                     nodesOutOfOrderError(loc, "fo:bookmark-title", "fo:bookmark");
-                }                
+                }
             } else {
                 invalidChildError(loc, nsURI, localName);
             }

@@ -61,8 +61,8 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
 
     private static Log log = LogFactory.getLog(ExternalDocumentLayoutManager.class);
 
-    private ImageLayout imageLayout; 
-    
+    private ImageLayout imageLayout;
+
     /**
      * Constructor
      *
@@ -74,7 +74,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
     }
 
     /**
-     * @return the ExternalDocument being managed by this layout manager 
+     * @return the ExternalDocument being managed by this layout manager
      */
     protected ExternalDocument getExternalDocument() {
         return (ExternalDocument)pageSeq;
@@ -84,24 +84,24 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
     public PageSequenceLayoutManager getPSLM() {
         throw new IllegalStateException("getPSLM() is illegal for " + getClass().getName());
     }
-    
+
     /** {@inheritDoc} */
     public void activateLayout() {
         initialize();
 
         FOUserAgent userAgent = pageSeq.getUserAgent();
         ImageManager imageManager = userAgent.getFactory().getImageManager();
-        
+
         String uri = getExternalDocument().getSrc();
         Integer firstPageIndex = ImageUtil.getPageIndexFromURI(uri);
         boolean hasPageIndex = (firstPageIndex != null);
-        
+
         try {
             ImageInfo info = imageManager.getImageInfo(uri, userAgent.getImageSessionContext());
-            
+
             Object moreImages = info.getCustomObjects().get(ImageInfo.HAS_MORE_IMAGES);
             boolean hasMoreImages = moreImages != null && !Boolean.FALSE.equals(moreImages);
-            
+
             Dimension intrinsicSize = info.getSize().getDimensionMpt();
             ImageLayout layout = new ImageLayout(getExternalDocument(), this, intrinsicSize);
 
@@ -111,7 +111,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
             }
 
             makePageForImage(info, layout);
-            
+
             if (!hasPageIndex && hasMoreImages) {
                 if (log.isTraceEnabled()) {
                     log.trace("Starting multi-page processing...");
@@ -129,16 +129,16 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
                         }
                         ImageInfo subinfo = imageManager.getImageInfo(
                                 tempURI.toASCIIString(), userAgent.getImageSessionContext());
-                        
+
                         moreImages = subinfo.getCustomObjects().get(ImageInfo.HAS_MORE_IMAGES);
                         hasMoreImages = moreImages != null && !Boolean.FALSE.equals(moreImages);
-                        
+
                         intrinsicSize = subinfo.getSize().getDimensionMpt();
                         layout = new ImageLayout(
                                 getExternalDocument(), this, intrinsicSize);
-                        
+
                         makePageForImage(subinfo, layout);
-                        
+
                         pageIndex++;
                     }
                 } catch (URISyntaxException e) {
@@ -170,15 +170,15 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         fillPage(info.getOriginalURI());
         finishPage();
     }
-    
+
     private void fillPage(String uri) {
 
         Dimension imageSize = this.imageLayout.getViewportSize();
-        
+
         Block blockArea = new Block();
         blockArea.setIPD(imageSize.width);
         LineArea lineArea = new LineArea();
-        
+
         Image imageArea = new Image(uri);
         TraitSetter.setProducerID(imageArea, fobj.getId());
         transferForeignAttributes(imageArea);
@@ -189,7 +189,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         vp.setBPD(imageSize.height);
         vp.setContentPosition(imageLayout.getPlacement());
         vp.setOffset(0);
-        
+
         //Link them all together...
         lineArea.addInlineArea(vp);
         lineArea.updateExtentsFromChildren();
@@ -197,7 +197,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         curPage.getPageViewport().getCurrentFlow().addBlock(blockArea);
         curPage.getPageViewport().getCurrentSpan().notifyFlowsFinished();
     }
-        
+
     /** {@inheritDoc} */
     public void finishPageSequence() {
         if (pageSeq.hasId()) {
@@ -208,7 +208,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
                 (currentPageNum - startPageNum) + 1);
         areaTreeHandler.notifyPageSequenceFinished(pageSeq,
                 (currentPageNum - startPageNum) + 1);
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Ending layout");
         }
@@ -217,9 +217,9 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
     /** {@inheritDoc} */
     protected Page createPage(int pageNumber, boolean isBlank) {
         String pageNumberString = pageSeq.makeFormattedPageNumber(pageNumber);
-        
+
         Dimension imageSize = this.imageLayout.getViewportSize();
-        
+
         // Set up the CTM on the page reference area based on writing-mode
         // and reference-orientation
         Rectangle referenceRect;
@@ -231,10 +231,10 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         FODimension reldims = new FODimension(0, 0);
         CTM pageCTM = CTM.getCTMandRelDims(pageSeq.getReferenceOrientation(),
             Constants.EN_LR_TB, referenceRect, reldims);
-        
+
         Page page = new Page(referenceRect, pageNumber, pageNumberString, isBlank);
-        
-        PageViewport pv = page.getPageViewport(); 
+
+        PageViewport pv = page.getPageViewport();
         org.apache.fop.area.Page pageArea = new org.apache.fop.area.Page();
         pv.setPage(pageArea);
 
@@ -242,8 +242,8 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         rv.setIPD(referenceRect.width);
         rv.setBPD(referenceRect.height);
         rv.setClip(true);
-        
-        BodyRegion body = new BodyRegion(Constants.FO_REGION_BODY, 
+
+        BodyRegion body = new BodyRegion(Constants.FO_REGION_BODY,
                 "fop-image-region", rv, 1, 0);
         body.setIPD(imageSize.width);
         body.setBPD(imageSize.height);
@@ -256,7 +256,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
 
         //Also creates first normal flow region
         pv.createSpan(false);
-        
+
         return page;
     }
 

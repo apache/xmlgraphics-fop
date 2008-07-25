@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,7 +75,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.messaging.MessageHandler;
 
 /**
- * This class converts an XML file to PDF using 
+ * This class converts an XML file to PDF using
  * JAXP (XSLT) and FOP (XSL:FO).
  */
 public class BookMaker implements ErrorHandler {
@@ -113,7 +113,7 @@ public class BookMaker implements ErrorHandler {
         throw e;
     }
 
-    public void makeBook() 
+    public void makeBook()
                 throws IOException, FOPException, TransformerException,
                        FactoryConfigurationError,
                        ParserConfigurationException, SAXException {
@@ -160,7 +160,7 @@ public class BookMaker implements ErrorHandler {
                             + " as SAX parser");
                 xmlReader.setErrorHandler(this);
                 xmlReader.setEntityResolver(resolver);
-        
+
                 // Setup SAX source
                 fis = new FileInputStream(xmlFile);
                 is = new InputSource(fis);
@@ -175,7 +175,7 @@ public class BookMaker implements ErrorHandler {
                             + " as SAX parser");
                 xmlReader.setErrorHandler(this);
                 xmlReader.setEntityResolver(resolver);
-        
+
                 // Setup SAX source
                 fis = new FileInputStream(xsltFile);
                 is = new InputSource(fis);
@@ -210,7 +210,7 @@ public class BookMaker implements ErrorHandler {
                         + " as TrAX transformer");
 
             // Set the value of parameters, if any, defined for stylesheet
-            if (xsltParams != null) { 
+            if (xsltParams != null) {
                 for (int i = 0; i < xsltParams.size(); i += 2) {
                     transformer.setParameter
                         ((String) xsltParams.elementAt(i),
@@ -299,7 +299,7 @@ public class BookMaker implements ErrorHandler {
             }
             if (cl.hasOption("xsl")) {
                 app.xsltFile = new File(cl.getOptionValue("xsl"));
-            }   
+            }
             if (cl.hasOption("out")) {
                 app.outFile = new File(cl.getOptionValue("out"));
             }
@@ -323,9 +323,9 @@ public class BookMaker implements ErrorHandler {
             }
             app.logger.info("");
             app.logger.info("Transforming...");
-            
+
             app.makeBook();
-            
+
             app.logger.info("Transforming done");
         } catch (Exception e) {
             app.logger.error(ExceptionUtil.printStackTrace(e));

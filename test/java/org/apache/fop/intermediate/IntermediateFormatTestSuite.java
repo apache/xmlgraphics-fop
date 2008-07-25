@@ -48,11 +48,11 @@ public class IntermediateFormatTestSuite {
             File f = (File)i.next();
             addTestCase(suite, f);
         }
-        
+
         return suite;
     }
-    
-    private static void addTestCase(TestSuite suite, 
+
+    private static void addTestCase(TestSuite suite,
             final File f) {
         suite.addTest(new AreaTreeParserTestCase(f) {
             public void runTest() throws Exception {
@@ -67,5 +67,5 @@ public class IntermediateFormatTestSuite {
             }
         });
     }
-    
+
 }

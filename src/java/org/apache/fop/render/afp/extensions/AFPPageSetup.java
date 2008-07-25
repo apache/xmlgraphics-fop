@@ -26,7 +26,7 @@ public class AFPPageSetup extends AFPExtensionAttachment {
 
     /**
      * Default constructor.
-     * 
+     *
      * @param elementName the name of the setup code object, may be null
      */
     public AFPPageSetup(String elementName) {
@@ -39,7 +39,7 @@ public class AFPPageSetup extends AFPExtensionAttachment {
      * {@inheritDoc}
      */
     public String toString() {
-        return "AFPPageSetup(element-name=" + getElementName() 
+        return "AFPPageSetup(element-name=" + getElementName()
             + " name=" + getName() + " value=" + getValue() + ")";
     }
 }

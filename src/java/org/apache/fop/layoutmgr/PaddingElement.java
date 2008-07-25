@@ -42,10 +42,10 @@ public class PaddingElement extends BorderOrPaddingElement {
             boolean isFirst, boolean isLast, PercentBaseContext context) {
         super(position, condLength, side, isFirst, isLast, context);
     }
-    
+
     /** {@inheritDoc} */
     public void notifyLayoutManager(MinOptMax effectiveLength) {
-        LayoutManager lm = getOriginatingLayoutManager(); 
+        LayoutManager lm = getOriginatingLayoutManager();
         if (lm instanceof ConditionalElementListener) {
             ((ConditionalElementListener)lm).notifyPadding(
                     getSide(), effectiveLength);
@@ -62,5 +62,5 @@ public class PaddingElement extends BorderOrPaddingElement {
         sb.append("]");
         return sb.toString();
     }
-    
+
 }

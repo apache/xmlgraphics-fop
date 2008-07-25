@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.util.HashMap;
@@ -67,10 +67,10 @@ public class PDFResources extends PDFObject {
 
     /** Map of color spaces (key: color space name) */
     protected Map colorSpaces = new HashMap();
-    
+
     /** Map of ICC color spaces (key: ICC profile description) */
     protected Map iccColorSpaces = new HashMap();
-    
+
     /**
      * create a /Resources object.
      *
@@ -93,7 +93,7 @@ public class PDFResources extends PDFObject {
 
     /**
      * Add the fonts in the font info to this PDF document's Font Resources.
-     * 
+     *
      * @param doc PDF document to add fonts to
      * @param fontInfo font info object to get font information from
      */
@@ -103,7 +103,7 @@ public class PDFResources extends PDFObject {
         while (e.hasNext()) {
             String f = (String)e.next();
             Typeface font = (Typeface)usedFonts.get(f);
-            
+
             //Check if the font actually had any mapping operations. If not, it is an indication
             //that it has never actually been used and therefore doesn't have to be embedded.
             if (font.hadMappingOperations()) {
@@ -159,7 +159,7 @@ public class PDFResources extends PDFObject {
 
     /**
      * Add a ColorSpace dictionary to the resources.
-     * @param colorSpace the color space 
+     * @param colorSpace the color space
      */
     public void addColorSpace(PDFICCBasedColorSpace colorSpace) {
         this.colorSpaces.put(colorSpace.getName(), colorSpace);

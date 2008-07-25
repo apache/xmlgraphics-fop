@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ import org.apache.fop.fo.ValidationException;
  * <code>fo:page-sequence</code></a> object.
  */
 public class PageSequence extends AbstractPageSequence {
-    
+
     // The value of properties relevant for fo:page-sequence.
     private String country;
     private String language;
@@ -87,10 +87,10 @@ public class PageSequence extends AbstractPageSequence {
         language = pList.get(PR_LANGUAGE).getString();
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         //writingMode = pList.getWritingMode();
-        
+
         if (masterReference == null || masterReference.equals("")) {
             missingPropertyError("master-reference");
-        }        
+        }
     }
 
     /** {@inheritDoc} */
@@ -124,7 +124,7 @@ public class PageSequence extends AbstractPageSequence {
      * {@inheritDoc}
         XSL Content Model: (title?,static-content*,flow)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("title")) {
@@ -138,7 +138,7 @@ public class PageSequence extends AbstractPageSequence {
             } else if (localName.equals("static-content")) {
                 if (mainFlow != null) {
                     nodesOutOfOrderError(loc, "fo:static-content", "fo:flow");
-                }                
+                }
             } else if (localName.equals("flow")) {
                 if (mainFlow != null) {
                     tooManyNodesError(loc, "fo:flow");
@@ -186,8 +186,8 @@ public class PageSequence extends AbstractPageSequence {
                     flowName, flow.getLocator());
         }
 
-        if (!getRoot().getLayoutMasterSet().regionNameExists(flowName) 
-            && !flowName.equals("xsl-before-float-separator") 
+        if (!getRoot().getLayoutMasterSet().regionNameExists(flowName)
+            && !flowName.equals("xsl-before-float-separator")
             && !flowName.equals("xsl-footnote-separator")) {
             getFOValidationEventProducer().flowNameNotMapped(this, flow.getName(),
                     flowName, flow.getLocator());
@@ -226,7 +226,7 @@ public class PageSequence extends AbstractPageSequence {
      * Determine if this PageSequence already has a flow with the given flow-name
      * Used for validation of incoming fo:flow or fo:static-content objects
      * @param flowName The flow-name to search for
-     * @return true if flow-name already defined within this page sequence, 
+     * @return true if flow-name already defined within this page sequence,
      *    false otherwise
      */
     public boolean hasFlowName(String flowName) {
@@ -237,7 +237,7 @@ public class PageSequence extends AbstractPageSequence {
     public Map getFlowMap() {
         return this.flowMap;
     }
-    
+
     /**
      * Public accessor for determining the next page master to use within this page sequence.
      * @param page the page number of the page to be created
@@ -251,9 +251,9 @@ public class PageSequence extends AbstractPageSequence {
      * @return the SimplePageMaster to use for this page
      * @throws PageProductionException if there's a problem determining the page master
      */
-    public SimplePageMaster getNextSimplePageMaster(int page, 
-            boolean isFirstPage,  
-            boolean isLastPage,  
+    public SimplePageMaster getNextSimplePageMaster(int page,
+            boolean isFirstPage,
+            boolean isLastPage,
             boolean isOnlyPage,
             boolean isBlank) throws PageProductionException {
 
@@ -263,13 +263,13 @@ public class PageSequence extends AbstractPageSequence {
         boolean isOddPage = ((page % 2) == 1);
         if (log.isDebugEnabled()) {
             log.debug("getNextSimplePageMaster(page=" + page
-                    + " isOdd=" + isOddPage 
-                    + " isFirst=" + isFirstPage 
+                    + " isOdd=" + isOddPage
+                    + " isFirst=" + isFirstPage
                     + " isLast=" + isLastPage
                     + " isOnly=" + isOnlyPage
                     + " isBlank=" + isBlank + ")");
         }
-        return pageSequenceMaster.getNextSimplePageMaster(isOddPage, 
+        return pageSequenceMaster.getNextSimplePageMaster(isOddPage,
             isFirstPage, isLastPage, isOnlyPage, isBlank);
     }
 
@@ -293,7 +293,7 @@ public class PageSequence extends AbstractPageSequence {
             return pageSequenceMaster.hasPagePositionLast();
         }
     }
-    
+
     /** @return true if the page-sequence has a page-master with page-position="only" */
     public boolean hasPagePositionOnly() {
         if (pageSequenceMaster == null) {
@@ -302,7 +302,7 @@ public class PageSequence extends AbstractPageSequence {
             return pageSequenceMaster.hasPagePositionOnly();
         }
     }
-    
+
     /**
      * Get the value of the <code>master-reference</code> property.
      * @return the "master-reference" property
@@ -323,7 +323,7 @@ public class PageSequence extends AbstractPageSequence {
     public int getNameId() {
         return FO_PAGE_SEQUENCE;
     }
-    
+
     /**
      * Get the value of the <code>country</code> property.
      * @return the country property value
@@ -331,7 +331,7 @@ public class PageSequence extends AbstractPageSequence {
     public String getCountry() {
         return this.country;
     }
-    
+
     /**
      * Get the value of the <code>language</code> property.
      * @return the language property value
@@ -347,5 +347,5 @@ public class PageSequence extends AbstractPageSequence {
         this.mainFlow = null;
         this.flowMap.clear();
     }
-    
+
 }

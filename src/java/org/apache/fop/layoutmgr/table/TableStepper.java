@@ -83,7 +83,7 @@ public class TableStepper {
     /**
      * Flag used to produce an infinite penalty if the height of the current row is
      * smaller than the first step for that row (may happen with row-spanning cells).
-     * 
+     *
      * @see #considerRowLastStep(int)
      */
     private boolean rowHeightSmallerThanFirstStep;
@@ -107,7 +107,7 @@ public class TableStepper {
 
     /**
      * Initializes the fields of this instance to handle a new row group.
-     * 
+     *
      * @param rows the new row group to handle
      */
     private void setup(EffRow[] rows) {
@@ -151,7 +151,7 @@ public class TableStepper {
 
     /**
      * Creates ActiveCell instances for cells starting on the row at the given index.
-     * 
+     *
      * @param activeCellList the list that will hold the active cells
      * @param rowIndex the index of the row from which cells must be activated
      */
@@ -289,7 +289,7 @@ public class TableStepper {
 
     /**
      * Returns the first step for the current row group.
-     * 
+     *
      * @return the first step for the current row group
      */
     private int getFirstStep() {
@@ -302,7 +302,7 @@ public class TableStepper {
 
     /**
      * Returns the next break possibility.
-     * 
+     *
      * @return the next step
      */
     private int getNextStep() {
@@ -342,7 +342,7 @@ public class TableStepper {
     /**
      * Computes the minimal necessary step to make the next row fit. That is, so such as
      * cell on the next row can contribute some content.
-     * 
+     *
      * @param cells the cells occupying the next row (may include cells starting on
      * previous rows and spanning over this one)
      */
@@ -355,7 +355,7 @@ public class TableStepper {
 
     /**
      * Computes the next minimal step.
-     * 
+     *
      * @return the minimal step from the active cells, &lt; 0 if there is no such step
      */
     private int computeMinStep() {
@@ -379,7 +379,7 @@ public class TableStepper {
     /**
      * Signals the first step to the active cells, to allow them to add more content to
      * the step if possible.
-     * 
+     *
      * @see ActiveCell#signalRowFirstStep(int)
      */
     private void signalRowFirstStep() {
@@ -391,7 +391,7 @@ public class TableStepper {
 
     /**
      * Signals the next selected step to the active cells.
-     *  
+     *
      * @param step the next step
      */
     private void signalNextStep(int step) {
@@ -416,7 +416,7 @@ public class TableStepper {
      * infinite penalty for this step. This will prevent the breaking algorithm from
      * choosing this break, but still allow to create the appropriate TableContentPosition
      * for the cells ending on the current row.</p>
-     * 
+     *
      * @param step the next step
      * @return the updated step if any
      */
@@ -445,7 +445,7 @@ public class TableStepper {
             }
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
-                activeCell.endRow(activeRowIndex);                        
+                activeCell.endRow(activeRowIndex);
                 if (!activeCell.endsOnRow(activeRowIndex)) {
                     activeCell.signalRowLastStep(maxStep);
                 }

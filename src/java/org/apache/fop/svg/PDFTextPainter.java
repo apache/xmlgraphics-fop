@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,7 +62,7 @@ import org.apache.fop.util.CharUtilities;
 public class PDFTextPainter extends StrokingTextPainter {
 
     private static final boolean DEBUG = false;
-    
+
     private boolean strokeText = false;
     private FontInfo fontInfo;
 
@@ -102,7 +102,7 @@ public class PDFTextPainter extends StrokingTextPainter {
             if ((tpi != null) && (tpi.composite != null)) {
                 g2d.setComposite(tpi.composite);
             }
-            
+
             //------------------------------------
             TextSpanLayout layout = textRun.getLayout();
             if (DEBUG) {
@@ -110,7 +110,7 @@ public class PDFTextPainter extends StrokingTextPainter {
                 System.out.println("================================================");
                 System.out.println("New text run:");
                 System.out.println("char count: " + charCount);
-                System.out.println("range: " 
+                System.out.println("range: "
                         + runaci.getBeginIndex() + " - " + runaci.getEndIndex());
                 System.out.println("glyph count: " + layout.getGlyphCount()); //=getNumGlyphs()
             }
@@ -125,26 +125,26 @@ public class PDFTextPainter extends StrokingTextPainter {
                 System.out.println("Text: " + chars);
                 pdf.currentStream.write("%Text: " + chars + "\n");
             }
-            
+
             GeneralPath debugShapes = null;
             if (DEBUG) {
                 debugShapes = new GeneralPath();
             }
-            
+
             Font[] fonts = findFonts(runaci);
             if (fonts == null || fonts.length == 0) {
                 //Draw using Java2D
                 textRun.getLayout().draw(g2d);
                 continue;
             }
-            
+
             textUtil.saveGraphicsState();
             textUtil.concatMatrix(g2d.getTransform());
             Shape imclip = g2d.getClip();
             pdf.writeClip(imclip);
-            
+
             applyColorAndPaint(tpi, pdf);
-            
+
             textUtil.beginTextObject();
             textUtil.setFonts(fonts);
             textUtil.setTextRenderingMode(tpi.fillPaint != null, tpi.strokePaint != null, false);
@@ -158,7 +158,7 @@ public class PDFTextPainter extends StrokingTextPainter {
                 boolean visibleChar = gv.isGlyphVisible(index)
                     || (CharUtilities.isAnySpace(ch) && !CharUtilities.isZeroWidthSpace(ch));
                 if (DEBUG) {
-                    System.out.println("glyph " + index 
+                    System.out.println("glyph " + index
                             + " -> " + layout.getGlyphIndex(index) + " => " + ch);
                     if (CharUtilities.isAnySpace(ch) && ch != 32) {
                         System.out.println("Space found: " + Integer.toHexString(ch));
@@ -198,9 +198,9 @@ public class PDFTextPainter extends StrokingTextPainter {
                     localTransform.concatenate(glyphTransform);
                 }
                 localTransform.scale(1, -1);
-                
-                boolean yPosChanged = (prevPos == null 
-                        || prevPos.getY() != p.getY() 
+
+                boolean yPosChanged = (prevPos == null
+                        || prevPos.getY() != p.getY()
                         || glyphTransform != null);
                 if (yPosChanged) {
                     if (index > 0) {
@@ -218,7 +218,7 @@ public class PDFTextPainter extends StrokingTextPainter {
                         textUtil.adjustGlyphTJ(adjust * 1000);
                     }
                     if (DEBUG) {
-                        System.out.println("==> x diff: " + xdiff + ", " + effxdiff 
+                        System.out.println("==> x diff: " + xdiff + ", " + effxdiff
                                 + ", charWidth: " + cw);
                     }
                 }
@@ -231,7 +231,7 @@ public class PDFTextPainter extends StrokingTextPainter {
                 }
                 char paintChar = (CharUtilities.isAnySpace(ch) ? ' ' : ch);
                 textUtil.writeTJChar(paintChar);
-                
+
                 //Update last position
                 prevPos = p;
                 prevVisibleCharWidth = textUtil.getCurrentFont().getCharWidth(chars.charAt(index));
@@ -268,7 +268,7 @@ public class PDFTextPainter extends StrokingTextPainter {
         }
         pdf.applyAlpha(fillAlpha, PDFGraphics2D.OPAQUE);
     }
-    
+
     private Font[] findFonts(AttributedCharacterIterator aci) {
         List fonts = new java.util.ArrayList();
         List gvtFonts = (List) aci.getAttribute(
@@ -343,5 +343,5 @@ public class PDFTextPainter extends StrokingTextPainter {
         }
         return (Font[])fonts.toArray(new Font[fonts.size()]);
     }
-    
+
 }

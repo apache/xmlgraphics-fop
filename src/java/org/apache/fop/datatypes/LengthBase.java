@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,7 +76,7 @@ public class LengthBase implements PercentBase {
 
     /** For percentages based on other length properties */
     private Length baseLength;
-    
+
     /**
      * Constructor
      * @param plist property list for this
@@ -133,11 +133,11 @@ public class LengthBase implements PercentBase {
     /** {@inheritDoc} */
     public String toString() {
         return super.toString()
-          + "[fo=" + fobj + "," 
+          + "[fo=" + fobj + ","
           + "baseType=" + baseType + ","
           + "baseLength=" + baseLength + "]";
     }
-    
+
     /**@return the base length as a {@link Length} */
     public Length getBaseLength() {
         return baseLength;

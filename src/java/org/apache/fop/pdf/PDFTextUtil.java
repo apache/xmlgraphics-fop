@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,9 @@ import java.awt.geom.AffineTransform;
  */
 public abstract class PDFTextUtil {
 
-    /** The number of decimal places. */ 
+    /** The number of decimal places. */
     private static final int DEC = 8;
-    
+
     /** PDF text rendering mode: Fill text */
     public static final int TR_FILL = 0;
     /** PDF text rendering mode: Stroke text */
@@ -46,30 +46,30 @@ public abstract class PDFTextUtil {
     public static final int TR_FILL_STROKE_CLIP = 6;
     /** PDF text rendering mode: Add text to path for clipping */
     public static final int TR_CLIP = 7;
-    
+
     private boolean inTextObject = false;
     private String startText;
     private String endText;
     private boolean useMultiByte;
     private StringBuffer bufTJ;
     private int textRenderingMode = TR_FILL;
-    
+
     private String currentFontName;
     private double currentFontSize;
-    
+
     /**
      * Main constructor.
      */
     public PDFTextUtil() {
         //nop
     }
-    
+
     /**
      * Writes PDF code.
      * @param code the PDF code to write
      */
     protected abstract void write(String code);
-    
+
     private void writeAffineTransform(AffineTransform at, StringBuffer sb) {
         double[] lt = new double[6];
         at.getMatrix(lt);
@@ -100,13 +100,13 @@ public abstract class PDFTextUtil {
             sb.append(PDFText.toUnicodeHex(ch));
         }
     }
-    
+
     private void checkInTextObject() {
         if (!inTextObject) {
             throw new IllegalStateException("Not in text object");
         }
     }
-    
+
     /**
      * Indicates whether we are in a text object or not.
      * @return true if we are in a text object
@@ -114,7 +114,7 @@ public abstract class PDFTextUtil {
     public boolean isInTextObject() {
         return inTextObject;
     }
-    
+
     /**
      * Called when a new text object should be started. Be sure to call setFont() before
      * issuing any text painting commands.
@@ -126,7 +126,7 @@ public abstract class PDFTextUtil {
         write("BT\n");
         this.inTextObject = true;
     }
-    
+
     /**
      * Called when a text object should be ended.
      */
@@ -136,7 +136,7 @@ public abstract class PDFTextUtil {
         this.inTextObject = false;
         initValues();
     }
-    
+
     /**
      * Resets the state fields.
      */
@@ -145,14 +145,14 @@ public abstract class PDFTextUtil {
         this.currentFontSize = 0.0;
         this.textRenderingMode = TR_FILL;
     }
-    
+
     /**
      * Creates a "q" command, pushing a copy of the entire graphics state onto the stack.
      */
     public void saveGraphicsState() {
         write("q\n");
     }
-    
+
     /**
      * Creates a "Q" command, restoring the entire graphics state to its former value by popping
      * it from the stack.
@@ -160,7 +160,7 @@ public abstract class PDFTextUtil {
     public void restoreGraphicsState() {
         write("Q\n");
     }
-    
+
     /**
      * Creates a "cm" command.
      * @param at the transformation matrix
@@ -174,7 +174,7 @@ public abstract class PDFTextUtil {
             write(sb.toString());
         }
     }
-    
+
     /**
      * Writes a "Tf" command, setting a new current font.
      * @param fontName the name of the font to select
@@ -183,7 +183,7 @@ public abstract class PDFTextUtil {
     public void writeTf(String fontName, double fontSize) {
         checkInTextObject();
         write("/" + fontName + " " + PDFNumber.doubleOut(fontSize) + " Tf\n");
-        
+
         this.startText = useMultiByte ? "<" : "(";
         this.endText = useMultiByte ? ">" : ")";
     }
@@ -220,7 +220,7 @@ public abstract class PDFTextUtil {
             write(this.textRenderingMode + " Tr\n");
         }
     }
-    
+
     /**
      * Sets the text rendering mode.
      * @param fill true if the text should be filled
@@ -239,7 +239,7 @@ public abstract class PDFTextUtil {
         }
         setTextRenderingMode(mode);
     }
-    
+
     /**
      * Writes a "Tm" command, setting a new text transformation matrix.
      * @param localTransform the new text transformation matrix

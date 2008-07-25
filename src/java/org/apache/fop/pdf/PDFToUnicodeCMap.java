@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -61,9 +61,9 @@ public class PDFToUnicodeCMap extends PDFCMap {
     protected CMapBuilder createCMapBuilder(Writer writer) {
         return new ToUnicodeCMapBuilder(writer);
     }
-    
+
     class ToUnicodeCMapBuilder extends CMapBuilder {
-        
+
         public ToUnicodeCMapBuilder(Writer writer) {
             super(writer, null);
         }
@@ -82,7 +82,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
             writeBFEntries();
             writeWrapUp();
         }
-        
+
         /**
          * Writes the character mappings for this font.
          * @param p StingBuffer to write to
@@ -99,7 +99,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
          * expressed as part of a character range).
          * @param p StringBuffer to write to
          * @param charArray all the characters to map
-         * @throws IOException 
+         * @throws IOException
          */
         protected void writeBFCharEntries(char[] charArray) throws IOException {
             int totalEntries = 0;
@@ -136,7 +136,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
          * Writes the entries for character ranges for a base font.
          * @param p StringBuffer to write to
          * @param charArray all the characters to map
-         * @throws IOException 
+         * @throws IOException
          */
         protected void writeBFRangeEntries(char[] charArray) throws IOException {
             int totalEntries = 0;
@@ -283,6 +283,6 @@ public class PDFToUnicodeCMap extends PDFCMap {
             return returnString.toString();
         }
 
-    }    
-    
+    }
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop;
 
 import java.io.File;
@@ -57,12 +57,12 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
-    
-    private SAXTransformerFactory tfactory 
+
+    private SAXTransformerFactory tfactory
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     private File backupDir = new File(getBaseDir(), "build/test-results");
-    
+
     /** @see junit.framework.TestCase#TestCase(String) */
     public URIResolutionTestCase(String name) {
         super(name);
@@ -75,7 +75,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     public void testFO1a() throws Exception {
         innerTestFO1(false);
     }
-    
+
     /**
      * Test custom URI resolution with a hand-written URIResolver.
      * @throws Exception if anything fails
@@ -83,25 +83,25 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     public void testFO1b() throws Exception {
         innerTestFO1(true);
     }
-    
+
     private void innerTestFO1(boolean withStream) throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
 
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution1.fo");
-        
-        MyURIResolver resolver = new MyURIResolver(withStream); 
+
+        MyURIResolver resolver = new MyURIResolver(withStream);
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
 
         Document doc = createAreaTree(foFile, ua);
-        
+
         //Check how many times the resolver was consulted
         assertEquals("Expected resolver to do 1 successful URI resolution",
                 1, resolver.successCount);
         assertEquals("Expected resolver to do 0 failed URI resolution",
                 0, resolver.failureCount);
         //Additional XPath checking on the area tree
-        assertEquals("viewport for external-graphic is missing", 
+        assertEquals("viewport for external-graphic is missing",
                 "true", evalXPath(doc, "boolean(//flow/block[1]/lineArea/viewport)"));
         assertEquals("46080", evalXPath(doc, "//flow/block[1]/lineArea/viewport/@ipd"));
         assertEquals("46080", evalXPath(doc, "//flow/block[1]/lineArea/viewport/@bpd"));
@@ -114,9 +114,9 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     public void DISABLEDtestFO2() throws Exception {
         //TODO This will only work when we can do URI resolution inside Batik!
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution2.fo");
-        
+
         FOUserAgent ua = fopFactory.newFOUserAgent();
-        MyURIResolver resolver = new MyURIResolver(false); 
+        MyURIResolver resolver = new MyURIResolver(false);
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
 
@@ -128,7 +128,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         Source src = new StreamSource(foFile);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
-        
+
         OutputStream out = new java.io.FileOutputStream(
                 new File(backupDir, foFile.getName() + ".pdf"));
         try {
@@ -136,7 +136,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         } finally {
             IOUtils.closeQuietly(out);
         }
-        
+
         //Check how many times the resolver was consulted
         assertEquals("Expected resolver to do 1 successful URI resolution",
                 1, resolver.successCount);
@@ -147,7 +147,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         assertTrue("Generated PDF has zero length", baout.size() > 0);
     }
 
-    private Document createAreaTree(File fo, FOUserAgent ua) 
+    private Document createAreaTree(File fo, FOUserAgent ua)
                 throws TransformerException, FOPException {
         DOMResult domres = new DOMResult();
         //Setup Transformer to convert the area tree to a DOM
@@ -158,19 +158,19 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         atrenderer.setUserAgent(ua);
         atrenderer.setContentHandler(athandler);
         ua.setRendererOverride(atrenderer);
-        
+
         Fop fop = fopFactory.newFop(ua);
 
         Transformer transformer = tfactory.newTransformer(); //Identity transf.
         Source src = new StreamSource(fo);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
-        
+
         Document doc = (Document)domres.getNode();
         saveAreaTreeXML(doc, new File(backupDir, fo.getName() + ".at.xml"));
         return doc;
     }
-    
+
     private String evalXPath(Document doc, String xpath) {
         XObject res;
         try {
@@ -193,19 +193,19 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         Result res = new StreamResult(target);
         transformer.transform(src, res);
     }
-    
+
     private class MyURIResolver implements URIResolver {
 
         private static final String PREFIX = "funky:";
-        
-        private boolean withStream; 
+
+        private boolean withStream;
         private int successCount = 0;
         private int failureCount = 0;
-        
+
         public MyURIResolver(boolean withStream) {
             this.withStream = withStream;
         }
-        
+
         /**
          * @see javax.xml.transform.URIResolver#resolve(java.lang.String, java.lang.String)
          */
@@ -235,7 +235,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
                 return null;
             }
         }
-        
+
     }
-    
+
 }

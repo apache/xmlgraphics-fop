@@ -37,9 +37,9 @@ public class ServletContextURIResolver implements URIResolver {
 
     /** The protocol name for the servlet context URIs. */
     public static final String SERVLET_CONTEXT_PROTOCOL = "servlet-context:";
-    
+
     private ServletContext servletContext;
-    
+
     /**
      * Main constructor
      * @param servletContext the servlet context to access the resources through
@@ -47,14 +47,14 @@ public class ServletContextURIResolver implements URIResolver {
     public ServletContextURIResolver(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
-    
+
     /** {@inheritDoc} */
     public Source resolve(String href, String base) throws TransformerException {
         if (href.startsWith(SERVLET_CONTEXT_PROTOCOL)) {
             return resolveServletContextURI(href.substring(SERVLET_CONTEXT_PROTOCOL.length()));
         } else {
-            if (base != null 
-                    && base.startsWith(SERVLET_CONTEXT_PROTOCOL) 
+            if (base != null
+                    && base.startsWith(SERVLET_CONTEXT_PROTOCOL)
                     && (href.indexOf(':') < 0)) {
                 String abs = base + href;
                 return resolveServletContextURI(

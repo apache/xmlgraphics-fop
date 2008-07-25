@@ -32,7 +32,7 @@ import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 /**
  * ContentHandler (parser) for restoring PSExtension objects from XML.
  */
-public class PSExtensionHandler extends DefaultHandler 
+public class PSExtensionHandler extends DefaultHandler
             implements ContentHandlerFactory.ObjectSource {
 
     /** Logger instance */
@@ -40,12 +40,12 @@ public class PSExtensionHandler extends DefaultHandler
 
     private StringBuffer content = new StringBuffer();
     private Attributes lastAttributes;
-    
+
     private PSExtensionAttachment returnedObject;
     private ObjectBuiltListener listener;
-    
+
     /** {@inheritDoc} */
-    public void startElement(String uri, String localName, String qName, Attributes attributes) 
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
         boolean handled = false;
         if (PSExtensionAttachment.CATEGORY.equals(uri)) {
@@ -61,10 +61,10 @@ public class PSExtensionHandler extends DefaultHandler
         }
         if (!handled) {
             if (PSExtensionAttachment.CATEGORY.equals(uri)) {
-                throw new SAXException("Unhandled element " + localName 
+                throw new SAXException("Unhandled element " + localName
                         + " in namespace: " + uri);
             } else {
-                log.warn("Unhandled element " + localName 
+                log.warn("Unhandled element " + localName
                         + " in namespace: " + uri);
             }
         }
@@ -78,13 +78,13 @@ public class PSExtensionHandler extends DefaultHandler
                 this.returnedObject = new PSSetupCode(name, content.toString());
             } else if (PSSetPageDevice.ELEMENT.equals(localName)) {
                 String name = lastAttributes.getValue("name");
-                this.returnedObject = new PSSetPageDevice(name, content.toString());                
+                this.returnedObject = new PSSetPageDevice(name, content.toString());
             } else if (PSCommentBefore.ELEMENT.equals(localName)) {
-                this.returnedObject = new PSCommentBefore(content.toString());          
+                this.returnedObject = new PSCommentBefore(content.toString());
             } else if (PSCommentAfter.ELEMENT.equals(localName)) {
                 this.returnedObject = new PSCommentAfter(content.toString());
             }
-        }    
+        }
         content.setLength(0); //Reset text buffer (see characters())
     }
 

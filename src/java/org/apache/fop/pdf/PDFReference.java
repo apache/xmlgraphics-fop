@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -32,11 +32,11 @@ import java.lang.ref.SoftReference;
  * PDF file.
  */
 public class PDFReference implements PDFWritable {
-    
+
     private String indirectReference;
-    
+
     private Reference objReference;
-    
+
     /**
      * Creates a new PDF reference.
      * @param obj the object to be referenced
@@ -45,7 +45,7 @@ public class PDFReference implements PDFWritable {
         this.indirectReference = obj.referencePDF();
         this.objReference = new SoftReference(obj);
     }
-    
+
     /**
      * Creates a new PDF reference, but without a reference to the original object.
      * @param ref an object reference
@@ -72,15 +72,15 @@ public class PDFReference implements PDFWritable {
             return null;
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return this.indirectReference;
     }
-    
+
     /** {@inheritDoc} */
     public void outputInline(OutputStream out, Writer writer) throws IOException {
         writer.write(toString());
     }
-    
+
 }

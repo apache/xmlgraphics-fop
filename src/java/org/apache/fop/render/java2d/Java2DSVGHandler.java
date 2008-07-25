@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -94,7 +94,7 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
                 + "currentYPosition = " + currentYPosition + "}";
         }
     }
-    
+
     /** {@inheritDoc} */
     protected void renderSVGDocument(RendererContext context,
                                      Document doc) {
@@ -105,12 +105,12 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
 
         int x = info.currentXPosition;
         int y = info.currentYPosition;
-        
+
         SVGUserAgent ua = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
-        
+
         GVTBuilder builder = new GVTBuilder();
         BridgeContext ctx = new BridgeContext(ua);
-        
+
         GraphicsNode root;
         try {
             root = builder.build(ctx, doc);
@@ -120,20 +120,20 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
             eventProducer.svgNotBuilt(this, e, getDocumentURI(doc));
             return;
         }
-        
+
         // If no viewbox is defined in the svg file, a viewbox of 100x100 is
         // assumed, as defined in SVGUserAgent.getViewportSize()
         float iw = (float) ctx.getDocumentSize().getWidth() * 1000f;
         float ih = (float) ctx.getDocumentSize().getHeight() * 1000f;
-        
+
         float w = (float) info.width;
         float h = (float) info.height;
 
         AffineTransform origTransform = info.state.getGraph().getTransform();
-        
+
         // correct integer roundoff
         info.state.getGraph().translate(x / 1000f, y / 1000f);
-        
+
         //SVGSVGElement svg = ((SVGDocument) doc).getRootElement();
         // Aspect ratio preserved by layout engine, not here
         AffineTransform at = AffineTransform.getScaleInstance(w / iw, h / ih);
@@ -148,10 +148,10 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }
-        
+
         info.state.getGraph().setTransform(origTransform);
     }
-    
+
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof Java2DRenderer);

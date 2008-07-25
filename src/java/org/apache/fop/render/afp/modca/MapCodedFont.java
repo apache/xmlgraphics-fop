@@ -237,7 +237,7 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
         } catch (UnsupportedEncodingException ex) {
             throw new FontRuntimeException("Failed to create font "
                 + " due to a UnsupportedEncodingException", ex);
-        }   
+        }
     }
 
     

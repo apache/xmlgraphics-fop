@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,20 +47,20 @@ public class TextArea extends AbstractTextArea {
     public void removeText() {
         inlines.clear();
     }
-    
+
     /**
      * Create and add a WordArea child to this TextArea.
-     * 
+     *
      * @param word   the word string
      * @param offset the offset for the next area
      */
     public void addWord(String word, int offset) {
         addWord(word, offset, null);
     }
-    
+
     /**
      * Create and add a WordArea child to this TextArea.
-     * 
+     *
      * @param word   the word string
      * @param offset the offset for the next area
      * @param letterAdjust the letter adjustment array (may be null)
@@ -70,10 +70,10 @@ public class TextArea extends AbstractTextArea {
         addChildArea(wordArea);
         wordArea.setParentArea(this);
     }
-    
+
     /**
      * Create and add a SpaceArea child to this TextArea
-     * 
+     *
      * @param space      the space character
      * @param offset     the offset for the next area
      * @param adjustable is this space adjustable?
@@ -83,13 +83,13 @@ public class TextArea extends AbstractTextArea {
         addChildArea(spaceArea);
         spaceArea.setParentArea(this);
     }
-    
+
     /**
      * Get the whole text string.
-     * Renderers whose space adjustment handling is not affected 
+     * Renderers whose space adjustment handling is not affected
      * by multi-byte characters can use this method to render the
-     * whole TextArea at once; the other renderers (for example 
-     * PDFRenderer) have to implement renderWord(WordArea) and 
+     * whole TextArea at once; the other renderers (for example
+     * PDFRenderer) have to implement renderWord(WordArea) and
      * renderSpace(SpaceArea) in order to correctly place each
      * text fragment.
      *

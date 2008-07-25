@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.awt.image.DataBuffer;
@@ -33,7 +33,7 @@ import org.apache.xmlgraphics.image.GraphicsUtil;
  * PDFImage implementation for alpha channel "images".
  */
 public class AlphaRasterImage implements PDFImage {
-    
+
     private int bitsPerComponent;
     private PDFDeviceColorSpace colorSpace;
     private Raster alpha;
@@ -117,7 +117,7 @@ public class AlphaRasterImage implements PDFImage {
     public String getSoftMask() {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     public PDFReference getSoftMaskReference() {
         return null;
@@ -127,12 +127,12 @@ public class AlphaRasterImage implements PDFImage {
     public boolean isInverted() {
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
         int w = getWidth();
         int h = getHeight();
-        
+
         //Check Raster
         int nbands = alpha.getNumBands();
         if (nbands != 1) {
@@ -171,7 +171,7 @@ public class AlphaRasterImage implements PDFImage {
         }
 
     }
-    
+
     /** {@inheritDoc} */
     public void populateXObjectDictionary(PDFDictionary dict) {
         //nop

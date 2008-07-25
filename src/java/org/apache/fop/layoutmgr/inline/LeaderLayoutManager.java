@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,10 +51,10 @@ import org.apache.fop.traits.MinOptMax;
 public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private Leader fobj;
     private Font font = null;
-    
+
     private List contentList = null;
     private ContentLayoutManager clm = null;
-    
+
     private int contentAreaIPD = 0;
 
     /**
@@ -66,7 +66,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         super(node);
         fobj = node;
     }
-    
+
     /** {@inheritDoc} */
     public void initialize() {
         FontInfo fi = fobj.getFOEventHandler().getFontInfo();
@@ -117,7 +117,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
         if (fobj.getLeaderPattern() == EN_RULE) {
             if (fobj.getRuleStyle() != EN_NONE) {
-                org.apache.fop.area.inline.Leader leader 
+                org.apache.fop.area.inline.Leader leader
                     = new org.apache.fop.area.inline.Leader();
                 leader.setRuleStyle(fobj.getRuleStyle());
                 leader.setRuleThickness(fobj.getRuleThickness().getValue(this));
@@ -167,7 +167,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
             // child FOs are assigned to the InlineStackingLM
             fobjIter = null;
-            
+
             // get breaks then add areas to FilledArea
             FilledArea fa = new FilledArea();
 
@@ -262,7 +262,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         curArea.setAdjustingInfo(ipd.max - ipd.opt, ipd.opt - ipd.min, 0);
 
         addKnuthElementsForBorderPaddingStart(seq);
-        
+
         // node is a fo:Leader
         seq.add(new KnuthInlineBox(0, alignmentContext,
                                     new LeafPosition(this, -1), true));
@@ -272,20 +272,20 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             seq.add
                 (new KnuthGlue(areaInfo.ipdArea.opt,
                                areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
-                               areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
+                               areaInfo.ipdArea.opt - areaInfo.ipdArea.min,
                                new LeafPosition(this, 0), false));
         } else {
             seq.add
                 (new KnuthGlue(areaInfo.ipdArea.opt,
                                0,
-                               0, 
+                               0,
                                new LeafPosition(this, 0), false));
         }
         seq.add(new KnuthInlineBox(0, alignmentContext,
                                     new LeafPosition(this, -1), true));
 
         addKnuthElementsForBorderPaddingEnd(seq);
-        
+
         LinkedList returnList = new LinkedList();
         returnList.add(seq);
         setFinished(true);
@@ -314,7 +314,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         List returnList = new LinkedList();
 
         addKnuthElementsForBorderPaddingStart(returnList);
-        
+
         returnList.add(new KnuthInlineBox(0, areaInfo.alignmentContext,
                                     new LeafPosition(this, -1), true));
         returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
@@ -323,20 +323,20 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             returnList.add
                 (new KnuthGlue(areaInfo.ipdArea.opt,
                                areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
-                               areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
+                               areaInfo.ipdArea.opt - areaInfo.ipdArea.min,
                                new LeafPosition(this, 0), false));
         } else {
             returnList.add
                 (new KnuthGlue(areaInfo.ipdArea.opt,
                                0,
-                               0, 
+                               0,
                                new LeafPosition(this, 0), false));
         }
         returnList.add(new KnuthInlineBox(0, areaInfo.alignmentContext,
                                     new LeafPosition(this, -1), true));
 
         addKnuthElementsForBorderPaddingEnd(returnList);
-        
+
         setFinished(true);
         return returnList;
     }
@@ -353,9 +353,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     public int getContentAreaIPD() {
         return contentAreaIPD;
     }
-   
+
     private void setContentAreaIPD(int contentAreaIPD) {
         this.contentAreaIPD = contentAreaIPD;
     }
-    
+
 }

@@ -26,7 +26,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 
 /**
  * Implements the normal "collapse" border model defined in 6.7.10 in XSL 1.0.
- * 
+ *
  * TODO Column groups are not yet checked in this algorithm!
  */
 public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {

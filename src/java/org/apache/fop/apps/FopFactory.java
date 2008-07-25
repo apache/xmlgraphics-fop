@@ -537,7 +537,7 @@ public class FopFactory implements ImageContext {
     /**
      * Gets the default page-height to use as fallback,
      * in case page-height="auto"
-     * 
+     *
      * @return the page-height, as a String
      */
     public String getPageHeight() {
@@ -547,7 +547,7 @@ public class FopFactory implements ImageContext {
     /**
      * Sets the page-height to use as fallback, in case
      * page-height="auto"
-     * 
+     *
      * @param pageHeight    page-height as a String
      */
     public void setPageHeight(String pageHeight) {
@@ -560,7 +560,7 @@ public class FopFactory implements ImageContext {
     /**
      * Gets the default page-width to use as fallback,
      * in case page-width="auto"
-     * 
+     *
      * @return the page-width, as a String
      */
     public String getPageWidth() {
@@ -570,7 +570,7 @@ public class FopFactory implements ImageContext {
     /**
      * Sets the page-width to use as fallback, in case
      * page-width="auto"
-     * 
+     *
      * @param pageWidth    page-width as a String
      */
     public void setPageWidth(String pageWidth) {
@@ -729,13 +729,13 @@ public class FopFactory implements ImageContext {
 
     /**
      * Create (if needed) and return an ICC ColorSpace instance.
-     * 
+     *
      * The ICC profile source is taken from the src attribute of the color-profile FO element.
      * If the ICC ColorSpace is not yet in the cache a new one is created and stored in the cache.
-     * 
+     *
      * The FOP URI resolver is used to try and locate the ICC file.
      * If that fails null is returned.
-     * 
+     *
      * @param baseUri a base URI to resolve relative URIs
      * @param iccProfileSrc ICC Profile source to return a ColorSpace for
      * @return ICC ColorSpace object or null if ColorSpace could not be created

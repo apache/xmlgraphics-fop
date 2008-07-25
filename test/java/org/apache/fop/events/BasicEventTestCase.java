@@ -26,27 +26,27 @@ import org.apache.fop.events.model.EventSeverity;
 public class BasicEventTestCase extends TestCase {
 
     public void testBasics() throws Exception {
-        
+
         MyEventListener listener = new MyEventListener();
 
         EventBroadcaster broadcaster = new DefaultEventBroadcaster();
         broadcaster.addEventListener(listener);
         assertTrue(broadcaster.hasEventListeners());
-        
+
         Event ev = new Event(this, "123", EventSeverity.INFO,
                 Event.paramsBuilder()
                     .param("reason", "I'm tired")
                     .param("blah", new Integer(23))
                     .build());
         broadcaster.broadcastEvent(ev);
-        
+
         ev = listener.event;
         assertNotNull(ev);
         assertEquals("123", listener.event.getEventID());
         assertEquals(EventSeverity.INFO, listener.event.getSeverity());
         assertEquals("I'm tired", ev.getParam("reason"));
         assertEquals(new Integer(23), ev.getParam("blah"));
-        
+
         broadcaster.removeEventListener(listener);
         assertFalse(broadcaster.hasEventListeners());
 
@@ -60,11 +60,11 @@ public class BasicEventTestCase extends TestCase {
         EventBroadcaster broadcaster = new DefaultEventBroadcaster();
         broadcaster.addEventListener(listener);
         assertTrue(broadcaster.hasEventListeners());
-        
-        
+
+
         TestEventProducer producer = TestEventProducer.Provider.get(broadcaster);
         producer.complain(this, "I'm tired", 23);
-        
+
         Event ev = listener.event;
         assertNotNull(ev);
         assertEquals("org.apache.fop.events.TestEventProducer.complain",
@@ -72,18 +72,18 @@ public class BasicEventTestCase extends TestCase {
         assertEquals(EventSeverity.WARN, listener.event.getSeverity());
         assertEquals("I'm tired", ev.getParam("reason"));
         assertEquals(new Integer(23), ev.getParam("blah"));
-        
+
         broadcaster.removeEventListener(listener);
         assertFalse(broadcaster.hasEventListeners());
 
         //Just check that there are no NPEs
         broadcaster.broadcastEvent(ev);
     }
-    
+
     private class MyEventListener implements EventListener {
 
         private Event event;
-        
+
         public void processEvent(Event event) {
             if (this.event != null) {
                 fail("Multiple events received");

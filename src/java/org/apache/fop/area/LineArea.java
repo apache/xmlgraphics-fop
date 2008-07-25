@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.area;
 
 import org.apache.fop.area.inline.InlineArea;
@@ -44,7 +44,7 @@ public class LineArea extends Area {
         private int availableShrink;
         private double variationFactor;
         private boolean bAddedToAreaTree;
-        
+
         private LineAdjustingInfo(int alignment, int diff,
                                   int stretch, int shrink) {
             lineAlignment = alignment;
@@ -55,7 +55,7 @@ public class LineArea extends Area {
             bAddedToAreaTree = false;
         }
     }
-    
+
     private LineAdjustingInfo adjustingInfo = null;
 
     // this class can contain the dominant char styling info
@@ -67,7 +67,7 @@ public class LineArea extends Area {
      * default constructor:
      * nothing to do
      */
-    public LineArea() {        
+    public LineArea() {
     }
 
     /**
@@ -142,7 +142,7 @@ public class LineArea extends Area {
         setIPD(ipd);
         setBPD(bpd);
     }
-    
+
     /**
      * receive notification about the ipd variation of a descendant area
      * and perform the needed adjustment, according to the alignment;
@@ -151,12 +151,12 @@ public class LineArea extends Area {
      *   <li>left-aligned text needs no adjustement;</li>
      *   <li>right-aligned text and centered text are handled locally,
      *       adjusting the indent of this LineArea;</li>
-     *   <li>justified text requires a more complex adjustment, as the 
+     *   <li>justified text requires a more complex adjustment, as the
      *       variation factor computed on the basis of the total
      *       stretch and shrink of the line must be applied in every
-     *       descendant leaf areas (text areas and leader areas).</li> 
+     *       descendant leaf areas (text areas and leader areas).</li>
      * </ul>
-     * @param ipdVariation the difference between old and new ipd 
+     * @param ipdVariation the difference between old and new ipd
      */
     public void handleIPDVariation(int ipdVariation) {
         switch (adjustingInfo.lineAlignment) {
@@ -186,7 +186,7 @@ public class LineArea extends Area {
                 throw new RuntimeException();
         }
     }
-    
+
     /**
      * apply the variation factor to all descendant areas
      * and destroy the AdjustingInfo object if there are

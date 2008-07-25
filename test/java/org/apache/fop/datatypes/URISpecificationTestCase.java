@@ -28,7 +28,7 @@ public class URISpecificationTestCase extends TestCase {
 
     public void testGetURL() throws Exception {
         String actual;
-        
+
         actual = URISpecification.getURL("http://localhost/test");
         assertEquals("http://localhost/test", actual);
 
@@ -41,10 +41,10 @@ public class URISpecificationTestCase extends TestCase {
         actual = URISpecification.getURL("url(\"http://localhost/test\")");
         assertEquals("http://localhost/test", actual);
     }
-    
+
     public void testEscapeURI() throws Exception {
         String actual;
-        
+
         actual = URISpecification.escapeURI("http://localhost/test");
         assertEquals("http://localhost/test", actual);
 
@@ -57,5 +57,5 @@ public class URISpecificationTestCase extends TestCase {
         actual = URISpecification.escapeURI("http://localhost/test test.pdf#page=6");
         assertEquals("http://localhost/test%20test.pdf#page=6", actual);
     }
-    
+
 }

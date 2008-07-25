@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.ps.extensions;
 
 // FOP
@@ -37,10 +37,10 @@ public abstract class AbstractPSExtensionElement extends FONode {
      * extension attachment
      */
     protected PSExtensionAttachment attachment;
-    
+
     /**
      * Default constructor
-     * 
+     *
      * @param parent parent of this node
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
@@ -50,14 +50,14 @@ public abstract class AbstractPSExtensionElement extends FONode {
 
     /**
      * Blocks XSL FO's from having non-FO parents.
-     * 
+     *
      * @param loc location in the FO source file
      * @param nsURI namespace of incoming node
      * @param localName (e.g. "table" for "fo:table")
      * @throws ValidationException if incoming node not valid for parent
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
@@ -69,7 +69,7 @@ public abstract class AbstractPSExtensionElement extends FONode {
      * @param data array of characters containing text to be added
      * @param start starting array element to add
      * @param length of data array to add
-     * @param pList currently applicable PropertyList 
+     * @param pList currently applicable PropertyList
      * @param locator location in fo source file.
      * @see org.apache.fop.fo.FONode#addCharacters(char[], int, int, PropertyList, Locator)
      */
@@ -92,7 +92,7 @@ public abstract class AbstractPSExtensionElement extends FONode {
     public String getNamespaceURI() {
         return PSExtensionElementMapping.NAMESPACE;
     }
-    
+
     /**
      * @return a String representation of this object
      * @see org.apache.fop.fo.FONode#getNormalNamespacePrefix()
@@ -112,7 +112,7 @@ public abstract class AbstractPSExtensionElement extends FONode {
             missingChildElementError("#PCDATA");
         }
     }
-    
+
     /**
      * @return the extension attachment if one is created by the extension element, null otherwise.
      * @see org.apache.fop.fo.FONode#getExtensionAttachment()
@@ -123,7 +123,7 @@ public abstract class AbstractPSExtensionElement extends FONode {
         }
         return this.attachment;
     }
-    
+
     /**
      * Instantiates extension attachment object
      * @return extension attachment

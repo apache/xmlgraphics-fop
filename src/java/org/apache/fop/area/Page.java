@@ -59,9 +59,9 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
 
     /** Set to true to make this page behave as if it were not empty. */
     private boolean fakeNonEmpty = false;
-    
+
     /**
-     *  Empty constructor, for cloning 
+     *  Empty constructor, for cloning
      */
     public Page() {
     }
@@ -78,7 +78,7 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
 
         // Get absolute margin properties (top, left, bottom, right)
         CommonMarginBlock mProps = spm.getCommonMarginBlock();
-        
+
         /*
          * Create the page reference area rectangle (0,0 is at top left
          * of the "page media" and y increases
@@ -92,20 +92,20 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
          * That's why we 'cheat' here and setup a context for the height but
          * use the LengthBase.BLOCK_WIDTH.
          */
-        SimplePercentBaseContext pageWidthContext 
+        SimplePercentBaseContext pageWidthContext
             = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH
                                             , pageViewPortDims.ipd);
         SimplePercentBaseContext pageHeightContext
             = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH
                                             , pageViewPortDims.bpd);
 
-        Rectangle pageRefRect 
+        Rectangle pageRefRect
             =  new Rectangle(mProps.marginLeft.getValue(pageWidthContext)
                             , mProps.marginTop.getValue(pageHeightContext)
-                            , pageViewPortDims.ipd 
-                                - mProps.marginLeft.getValue(pageWidthContext) 
+                            , pageViewPortDims.ipd
+                                - mProps.marginLeft.getValue(pageWidthContext)
                                 - mProps.marginRight.getValue(pageWidthContext)
-                            , pageViewPortDims.bpd 
+                            , pageViewPortDims.bpd
                                 - mProps.marginTop.getValue(pageHeightContext)
                                 - mProps.marginBottom.getValue(pageHeightContext));
 
@@ -142,7 +142,7 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
     public void fakeNonEmpty() {
         this.fakeNonEmpty = true;
     }
-    
+
     /**
      * Creates a RegionViewport Area object for this pagination Region.
      * @param r the region the viewport is to be created for
@@ -161,11 +161,11 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
         rv.setBPD((int)relRegionRect.getHeight());
         rv.setIPD((int)relRegionRect.getWidth());
         TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground(), null);
-        rv.setClip(r.getOverflow() == Constants.EN_HIDDEN 
+        rv.setClip(r.getOverflow() == Constants.EN_HIDDEN
                 || r.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW);
         return rv;
     }
-   
+
     /**
      * Set the region reference position within the region viewport.
      * This sets the transform that is used to place the contents of
@@ -177,15 +177,15 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      * where x=distance from left, y=distance from bottom, width=right-left
      * height=top-bottom
      */
-    private void setRegionReferencePosition(RegionReference rr, Region r, 
+    private void setRegionReferencePosition(RegionReference rr, Region r,
                                   Rectangle2D absRegVPRect) {
         FODimension reldims = new FODimension(0, 0);
         rr.setCTM(CTM.getCTMandRelDims(r.getReferenceOrientation(),
                 r.getWritingMode(), absRegVPRect, reldims));
         rr.setIPD(reldims.ipd);
         rr.setBPD(reldims.bpd);
-    }    
-    
+    }
+
     /**
      * Set the region on this page.
      *
@@ -219,7 +219,7 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
         case Constants.FO_REGION_START:
             return regionStart;
         case Constants.FO_REGION_BODY:
-            return regionBody;            
+            return regionBody;
         case Constants.FO_REGION_END:
             return regionEnd;
         case Constants.FO_REGION_AFTER:

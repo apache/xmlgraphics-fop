@@ -39,18 +39,18 @@ public class BorderPropsTestCase extends TestCase {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         //Normalize: Avoid false alarms due to color conversion (rounding)
         col = ColorUtil.parseColorString(null, ColorUtil.colorToString(col));
-        
-        BorderProps b1 = new BorderProps(Constants.EN_DOUBLE, 1250, 
+
+        BorderProps b1 = new BorderProps(Constants.EN_DOUBLE, 1250,
                 col, BorderProps.COLLAPSE_OUTER);
         String ser = b1.toString();
         BorderProps b2 = BorderProps.valueOf(null, ser);
         assertEquals(b1, b2);
 
-        b1 = new BorderProps(Constants.EN_INSET, 9999, 
+        b1 = new BorderProps(Constants.EN_INSET, 9999,
                 col, BorderProps.SEPARATE);
         ser = b1.toString();
         b2 = BorderProps.valueOf(null, ser);
         assertEquals(b1, b2);
     }
-    
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,7 +60,7 @@ public class TableContext implements ITableColumnsInfo {
      * as a number-rows-spanned attribute has been found.
      */
     private final List colRowSpanningAttrs = new java.util.ArrayList();
-    
+
     /**
      * This ArrayList contains one element for each column in the table.
      * value == true means, it's the first of multiple spanned columns
@@ -71,7 +71,7 @@ public class TableContext implements ITableColumnsInfo {
     private boolean bNextRowBelongsToHeader = false;
 
     /**
-     * 
+     *
      * @param value Specifies, if next row belongs to header
      */
     public void setNextRowBelongsToHeader(boolean value) {
@@ -79,7 +79,7 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * 
+     *
      * @return true, if next row belongs to header
      */
     public boolean getNextRowBelongsToHeader() {
@@ -87,7 +87,7 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * 
+     *
      * @param ctx BuilderContext
      */
     public TableContext(BuilderContext ctx) {
@@ -95,7 +95,7 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * Adds a column and sets its width. 
+     * Adds a column and sets its width.
      * @param width Width of next column
      */
     public void setNextColumnWidth(Float width) {
@@ -103,7 +103,7 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * 
+     *
      * @return RtfAttributes of current row-spanning cell
      */
     public RtfAttributes getColumnRowSpanningAttrs() {
@@ -111,15 +111,15 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * 
+     *
      * @return Number of currently spanned rows
      */
     public Integer getColumnRowSpanningNumber() {
         return (Integer)colRowSpanningNumber.get(colIndex);
     }
-    
+
     /**
-     * 
+     *
      * @return true, if it's the first of multiple spanning columns
      */
     public boolean getFirstSpanningCol() {
@@ -128,7 +128,7 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * 
+     *
      * @param iRowSpanning number of rows to span
      * @param attrs RtfAttributes of row-spanning cell
      */
@@ -145,7 +145,7 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * 
+     *
      * @param iRowSpanning number of rows to span in next column
      * @param attrs RtfAttributes of row-spanning cell
      */
@@ -154,10 +154,10 @@ public class TableContext implements ITableColumnsInfo {
         colRowSpanningNumber.add(iRowSpanning);
         colRowSpanningAttrs.add(colIndex, attrs);
     }
-    
+
     /**
-     * 
-     * @param bFirstSpanningCol specifies, if it's the first of 
+     *
+     * @param bFirstSpanningCol specifies, if it's the first of
      *                          multiple spanned columns
      */
     public void setCurrentFirstSpanningCol(
@@ -174,8 +174,8 @@ public class TableContext implements ITableColumnsInfo {
     }
 
     /**
-     * 
-     * @param bFirstSpanningCol specifies, if it's the first of 
+     *
+     * @param bFirstSpanningCol specifies, if it's the first of
      *                          multiple spanned columns
      */
     public void setNextFirstSpanningCol(
@@ -234,7 +234,7 @@ public class TableContext implements ITableColumnsInfo {
         if (colIndex < 0) {
             throw new IllegalStateException("colIndex must not be negative!");
         } else if (colIndex >= getNumberOfColumns()) {
-            log.warn("Column width for column " + (colIndex + 1) + " is not defined, using " 
+            log.warn("Column width for column " + (colIndex + 1) + " is not defined, using "
                     + INVALID_COLUMN_WIDTH);
             while (colIndex >= getNumberOfColumns()) {
                 setNextColumnWidth(new Float(INVALID_COLUMN_WIDTH));
@@ -250,9 +250,9 @@ public class TableContext implements ITableColumnsInfo {
     public void setColumnIndex(int index) {
         colIndex = index;
     }
-    
+
     /**
-     * @return Index of current column 
+     * @return Index of current column
      */
     public int getColumnIndex() {
         return colIndex;

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,13 +52,13 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
  *  @author rmarra
  */
 final class TextAttributesConverter {
-    
+
     /**
      * Constructor is private, because it's just a utility class.
      */
     private TextAttributesConverter() {
     }
-    
+
     /**
      * Converts all known text FO properties to RtfAttributes
      * @param props list of FO properites, which are to be converted
@@ -106,7 +106,7 @@ final class TextAttributesConverter {
         attrBaseLineShift(fobj.getBaseLineShift(), attrib);
         return attrib;
     }
-    
+
     /**
      * Converts all character related FO properties to RtfAttributes.
      * @param fobj FObj whose properties are to be converted
@@ -150,7 +150,7 @@ final class TextAttributesConverter {
         } else {
             rtfAttr.set("b", 0);
         }
-        
+
         if (font.getFontStyle() == Constants.EN_ITALIC) {
             rtfAttr.set(RtfText.ATTR_ITALIC, 1);
         } else {
@@ -176,20 +176,20 @@ final class TextAttributesConverter {
 
 
 
-    private static void attrTextDecoration(CommonTextDecoration textDecoration, 
+    private static void attrTextDecoration(CommonTextDecoration textDecoration,
                 RtfAttributes rtfAttr) {
         if (textDecoration == null) {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 0);
             rtfAttr.set(RtfText.ATTR_STRIKETHROUGH, 0);
             return;
         }
-                
+
         if (textDecoration.hasUnderline()) {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 1);
         } else {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 0);
         }
-        
+
         if (textDecoration.hasLineThrough()) {
             rtfAttr.set(RtfText.ATTR_STRIKETHROUGH, 1);
         } else {
@@ -198,9 +198,9 @@ final class TextAttributesConverter {
     }
 
     private static void attrBlockMargin(CommonMarginBlock cmb, FOPRtfAttributes rtfAttr) {
-        rtfAttr.setTwips(RtfText.SPACE_BEFORE, 
+        rtfAttr.setTwips(RtfText.SPACE_BEFORE,
                 cmb.spaceBefore.getOptimum(null).getLength());
-        rtfAttr.setTwips(RtfText.SPACE_AFTER, 
+        rtfAttr.setTwips(RtfText.SPACE_AFTER,
                 cmb.spaceAfter.getOptimum(null).getLength());
         rtfAttr.setTwips(RtfText.LEFT_INDENT_BODY, cmb.startIndent);
         rtfAttr.setTwips(RtfText.RIGHT_INDENT_BODY, cmb.endIndent);
@@ -283,20 +283,20 @@ final class TextAttributesConverter {
             CommonBorderPaddingBackground commonBorderPaddingBackground = null;
             if (node instanceof Block) {
                 Block block = (Block) node;
-                commonBorderPaddingBackground = block.getCommonBorderPaddingBackground(); 
-            } else if (node instanceof BlockContainer) { 
+                commonBorderPaddingBackground = block.getCommonBorderPaddingBackground();
+            } else if (node instanceof BlockContainer) {
                 BlockContainer container = (BlockContainer) node;
                 commonBorderPaddingBackground = container.getCommonBorderPaddingBackground();
-            } 
+            }
 
-            if (commonBorderPaddingBackground != null 
+            if (commonBorderPaddingBackground != null
                     && commonBorderPaddingBackground.hasBorder()) {
                 return true;
             }
 
             node = node.getParent();
         }
-        return false; 
+        return false;
     }
 
     /** Adds inline border information from <code>bpb</code> to <code>rtrAttr</code>. */
@@ -313,7 +313,7 @@ final class TextAttributesConverter {
      * @param bl the Block object the properties are read from
      * @param rtfAttr the RtfAttributes object the attributes are written to
      */
-    private static void attrBackgroundColor(CommonBorderPaddingBackground bpb, 
+    private static void attrBackgroundColor(CommonBorderPaddingBackground bpb,
                 RtfAttributes rtfAttr) {
         Color fopValue = bpb.backgroundColor;
         int rtfColor = 0;
@@ -334,11 +334,11 @@ final class TextAttributesConverter {
 
         rtfAttr.set(RtfText.ATTR_BACKGROUND_COLOR, rtfColor);
    }
-    
+
    private static void attrBaseLineShift(Length baselineShift, RtfAttributes rtfAttr) {
-       
+
        int s = baselineShift.getEnum();
-       
+
        if (s == Constants.EN_SUPER) {
            rtfAttr.set(RtfText.ATTR_SUPERSCRIPT);
        } else if (s == Constants.EN_SUB) {

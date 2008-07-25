@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -119,7 +119,7 @@ public class RtfListTable extends RtfContainer {
         }
 
         lists.add(list);
-        
+
         return lists.size();
     }
 
@@ -140,7 +140,7 @@ public class RtfListTable extends RtfContainer {
                 newLine();
             }
             writeGroupMark(false);
-               
+
             newLine();
             //write '\listoveridetable'
             writeGroupMark(true);
@@ -149,11 +149,11 @@ public class RtfListTable extends RtfContainer {
             newLine();
             for (Iterator it = styles.iterator(); it.hasNext();) {
                 final RtfListStyle style = (RtfListStyle)it.next();
-                        
+
                 writeGroupMark(true);
                 writeStarControlWordNS(LIST_OVR);
                 writeGroupMark(true);
-        
+
                 writeOneAttributeNS(LIST_ID, style.getRtfList().getListId().toString());
                 writeOneAttributeNS(LIST_OVR_COUNT, new Integer(0));
                 writeOneAttributeNS(LIST_NUMBER, new Integer(z++));
@@ -162,7 +162,7 @@ public class RtfListTable extends RtfContainer {
                 writeGroupMark(false);
                 newLine();
             }
-            
+
             writeGroupMark(false);
             newLine();
         }
@@ -176,7 +176,7 @@ public class RtfListTable extends RtfContainer {
     public boolean isEmpty() {
         return false;
     }
-    
+
     private void writeListTableEntry(RtfList list)
     throws IOException {
         //write list-specific attributes
@@ -184,29 +184,29 @@ public class RtfListTable extends RtfContainer {
         writeControlWordNS(LIST);
         writeOneAttributeNS(LIST_TEMPLATE_ID, list.getListTemplateId().toString());
         writeOneAttributeNS(LIST, attrib.getValue(LIST));
-        
+
         // write level-specific attributes
         writeGroupMark(true);
         writeControlWordNS(LIST_LEVEL);
-        
+
         writeOneAttributeNS(LIST_JUSTIFICATION, attrib.getValue(LIST_JUSTIFICATION));
         writeOneAttributeNS(LIST_FOLLOWING_CHAR, attrib.getValue(LIST_FOLLOWING_CHAR));
         writeOneAttributeNS(LIST_SPACE, new Integer(0));
         writeOneAttributeNS(LIST_INDENT, attrib.getValue(LIST_INDENT));
-        
+
         RtfListItem item = (RtfListItem)list.getChildren().get(0);
         if (item != null) {
             item.getRtfListStyle().writeLevelGroup(this);
         }
-        
+
         writeGroupMark(false);
-        
+
         writeGroupMark(true);
         writeControlWordNS(LIST_NAME);
         writeGroupMark(false);
-        
+
         writeOneAttributeNS(LIST_ID, list.getListId().toString());
-                
+
         writeGroupMark(false);
     }
 
