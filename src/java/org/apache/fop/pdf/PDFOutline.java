@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
@@ -50,10 +50,10 @@ public class PDFOutline extends PDFObject {
     private PDFOutline last;
 
     private int count;
-    
+
     // whether to show this outline item's child outline items
     private boolean openItem = false;
-    
+
     /**
      * title to display for the bookmark entry
      */
@@ -158,7 +158,7 @@ public class PDFOutline extends PDFObject {
                     bout.write(encode(" /Last " + last.referencePDF() + "\n"));
                 }
                 if (count > 0) {
-                    bout.write(encode(" /Count " + (openItem ? "" : "-") 
+                    bout.write(encode(" /Count " + (openItem ? "" : "-")
                         + count + "\n"));
                 }
                 if (actionRef != null) {

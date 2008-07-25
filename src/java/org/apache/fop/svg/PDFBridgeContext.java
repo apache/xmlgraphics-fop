@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import org.apache.fop.fonts.FontInfo;
  * BridgeContext which registers the custom bridges for PDF output.
  */
 public class PDFBridgeContext extends BridgeContext {
-    
+
     /** The font list. */
     private final FontInfo fontInfo;
 
@@ -44,7 +44,7 @@ public class PDFBridgeContext extends BridgeContext {
     private final ImageSessionContext imageSessionContext;
 
     private AffineTransform linkTransform;
-    
+
     /**
      * Constructs a new bridge context.
      * @param userAgent the user agent
@@ -75,8 +75,8 @@ public class PDFBridgeContext extends BridgeContext {
      * @param linkTransform AffineTransform to properly place links,
      *                      may be null
      */
-    public PDFBridgeContext(UserAgent userAgent, 
-                            FontInfo fontInfo, 
+    public PDFBridgeContext(UserAgent userAgent,
+                            FontInfo fontInfo,
                             ImageManager imageManager,
                             ImageSessionContext imageSessionContext,
                             AffineTransform linkTransform) {
@@ -115,12 +115,12 @@ public class PDFBridgeContext extends BridgeContext {
     public ImageSessionContext getImageSessionContext() {
         return this.imageSessionContext;
     }
-    
+
     private void putPDFElementBridgeConditional(String className, String testFor) {
         try {
             Class.forName(testFor);
             //if we get here the test class is available
-            
+
             Class clazz = Class.forName(className);
             Constructor constructor = clazz.getConstructor(new Class[] {FontInfo.class});
             putBridge((Bridge)constructor.newInstance(new Object[] {fontInfo}));
@@ -128,7 +128,7 @@ public class PDFBridgeContext extends BridgeContext {
             //simply ignore (bridges instantiated over this method are optional)
         }
     }
-    
+
     /** {@inheritDoc} */
     public void registerSVGBridges() {
         super.registerSVGBridges();
@@ -136,7 +136,7 @@ public class PDFBridgeContext extends BridgeContext {
         if (fontInfo != null) {
             PDFTextElementBridge textElementBridge = new PDFTextElementBridge(fontInfo);
             putBridge(textElementBridge);
-            
+
             //Batik flow text extension (may not always be available)
             //putBridge(new PDFBatikFlowTextElementBridge(fontInfo);
             putPDFElementBridgeConditional(
@@ -148,7 +148,7 @@ public class PDFBridgeContext extends BridgeContext {
             putPDFElementBridgeConditional(
                     "org.apache.fop.svg.PDFSVG12TextElementBridge",
                     "org.apache.batik.bridge.svg12.SVG12TextElementBridge");
-            
+
             //putBridge(new PDFSVGFlowRootElementBridge(fontInfo));
             putPDFElementBridgeConditional(
                     "org.apache.fop.svg.PDFSVGFlowRootElementBridge",

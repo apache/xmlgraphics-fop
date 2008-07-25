@@ -31,7 +31,7 @@ public class HyphenationTreeCache {
     private Hashtable hyphenTrees = new Hashtable();
     /** Used to avoid multiple error messages for the same language if a pattern file is missing. */
     private Set missingHyphenationTrees;
-    
+
     /**
      * Looks in the cache if a hyphenation tree is available and returns it if it is found.
      * @param lang the language
@@ -40,7 +40,7 @@ public class HyphenationTreeCache {
      */
     public HyphenationTree getHyphenationTree(String lang, String country) {
         String key = constructKey(lang, country);
-        
+
         // first try to find it in the cache
         if (hyphenTrees.containsKey(key)) {
             return (HyphenationTree)hyphenTrees.get(key);
@@ -50,7 +50,7 @@ public class HyphenationTreeCache {
             return null;
         }
     }
-    
+
     /**
      * Constructs the key for the hyphenation pattern file.
      * @param lang the language
@@ -65,7 +65,7 @@ public class HyphenationTreeCache {
         }
         return key;
     }
-    
+
     /**
      * Cache a hyphenation tree under its key.
      * @param key the key (ex. "de_CH" or "en")
@@ -74,10 +74,10 @@ public class HyphenationTreeCache {
     public void cache(String key, HyphenationTree hTree) {
         hyphenTrees.put(key, hTree);
     }
-    
+
     /**
      * Notes a key to a hyphenation tree as missing.
-     * This is to avoid searching a second time for a hyphneation pattern file which is not 
+     * This is to avoid searching a second time for a hyphneation pattern file which is not
      * available.
      * @param key the key (ex. "de_CH" or "en")
      */
@@ -87,10 +87,10 @@ public class HyphenationTreeCache {
         }
         missingHyphenationTrees.add(key);
     }
-    
+
     /**
      * Indicates whether a hyphenation file has been requested before but it wasn't available.
-     * This is to avoid searching a second time for a hyphneation pattern file which is not 
+     * This is to avoid searching a second time for a hyphneation pattern file which is not
      * available.
      * @param key the key (ex. "de_CH" or "en")
      * @return true if the hyphenation tree is unavailable
@@ -98,5 +98,5 @@ public class HyphenationTreeCache {
     public boolean isMissing(String key) {
         return (missingHyphenationTrees != null && missingHyphenationTrees.contains(key));
     }
-    
+
 }

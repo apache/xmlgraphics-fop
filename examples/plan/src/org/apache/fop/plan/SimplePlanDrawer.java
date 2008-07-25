@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.plan;
 
 import java.text.DateFormat;
@@ -35,9 +35,9 @@ import org.apache.fop.svg.SVGUtilities;
  * Simple plan drawer implementation.
  */
 public class SimplePlanDrawer implements PlanDrawer {
-    
+
     private static final String SVG_NAMESPACE = SVGDOMImplementation.SVG_NAMESPACE_URI;
-    
+
     private float fontSize;
     private HashMap hints;
     private java.awt.Font font = null;
@@ -91,8 +91,8 @@ public class SimplePlanDrawer implements PlanDrawer {
         svgRoot.setAttributeNS(null, "width", "" + width);
         svgRoot.setAttributeNS(null, "height", "" + height);
         svgRoot.setAttributeNS(null, "style",
-                               "font-size:" + 8 
-                                   + ";font-family:" 
+                               "font-size:" + 8
+                                   + ";font-family:"
                                    + hints.get(PlanHints.FONT_FAMILY));
 
         font = new java.awt.Font((String)hints.get(PlanHints.FONT_FAMILY),
@@ -249,8 +249,8 @@ public class SimplePlanDrawer implements PlanDrawer {
                             taskGraphic = SVGUtilities.createRect(doc,
                                 left + daysToStart * 300 / (totalDays - 2),
                                 topEdge + 2, days * 300 / (totalDays - 2), 10);
-                            taskGraphic.setAttributeNS(null, 
-                                "style", 
+                            taskGraphic.setAttributeNS(null,
+                                "style",
                                 "stroke:black;fill:blue;stroke-width:1;clip-path:url(#clip3)");
                             g.appendChild(taskGraphic);
                             break;
@@ -259,8 +259,8 @@ public class SimplePlanDrawer implements PlanDrawer {
                                 "m " + (left
                                     + daysToStart * 300 / (totalDays - 2) - 6)
                                     + " " + (topEdge + 6) + "l6 6l6-6l-6-6z");
-                            taskGraphic.setAttributeNS(null, 
-                                "style", 
+                            taskGraphic.setAttributeNS(null,
+                                "style",
                                 "stroke:black;fill:black;stroke-width:1;clip-path:url(#clip3)");
                             g.appendChild(taskGraphic);
                             text = SVGUtilities.createText(doc,
@@ -271,7 +271,7 @@ public class SimplePlanDrawer implements PlanDrawer {
                             break;
                         case ActionInfo.GROUPING:
                             taskGraphic = SVGUtilities.createPath(doc,
-                                "m " + (left 
+                                "m " + (left
                                     + daysToStart * 300 / (totalDays - 2) - 6)
                                     + " " + (topEdge + 6) + "l6 -6l"
                                     + (days * 300 / (totalDays - 2))
@@ -279,7 +279,7 @@ public class SimplePlanDrawer implements PlanDrawer {
                                     + -(days * 300 / (totalDays - 2) - 8)
                                     + " 0l-4 4l-6-6z");
                             taskGraphic.setAttributeNS(null,
-                                "style", 
+                                "style",
                                 "stroke:black;fill:black;stroke-width:1;clip-path:url(#clip3)");
                             g.appendChild(taskGraphic);
                             break;

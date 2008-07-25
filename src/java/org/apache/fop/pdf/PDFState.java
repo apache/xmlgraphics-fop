@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.Serializable;
@@ -50,7 +50,7 @@ import java.awt.geom.GeneralPath;
 public class PDFState {
 
     private Data data = new Data();
-    
+
     private List stateStack = new java.util.ArrayList();
 
     /**
@@ -82,7 +82,7 @@ public class PDFState {
     public Data getData() {
         return data;
     }
-    
+
     /**
      * Pop the state from the stack and set current values to popped state.
      * This should be called when a Q operator is used so
@@ -154,7 +154,7 @@ public class PDFState {
             return false;
         }
     }
-    
+
     /**
      * Set the current color.
      * Check if the new color is a change and then set the current color.
@@ -272,7 +272,7 @@ public class PDFState {
     public void setTransform(AffineTransform tf) {
         concatenate(tf);
     }
-    
+
     /**
      * Concatenates the given AffineTransform to the current one.
      * @param tf the transform to concatenate to the current level transform
@@ -343,9 +343,9 @@ public class PDFState {
 
         return newstate;
     }
-    
+
     public class Data implements Cloneable, Serializable {
-        
+
         public Color color = Color.black;
         public Color backcolor = Color.black;
         public Paint paint = null;
@@ -363,7 +363,7 @@ public class PDFState {
         public Shape clip = null;
         public PDFGState gstate = null;
 
-        
+
         /** {@inheritDoc} */
         public Object clone() throws CloneNotSupportedException {
             Data obj = new Data();
@@ -385,7 +385,7 @@ public class PDFState {
             obj.gstate = this.gstate;
             return obj;
         }
-        
+
         /**
          * Get the current Transform.
          */
@@ -407,7 +407,7 @@ public class PDFState {
         public void concatenate(AffineTransform at) {
             transform.concatenate(at);
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             return super.toString() + ", " + this.transform;

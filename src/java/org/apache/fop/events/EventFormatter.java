@@ -40,16 +40,16 @@ import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
 public final class EventFormatter {
 
     private static final Pattern INCLUDES_PATTERN = Pattern.compile("\\{\\{.+\\}\\}");
-    
+
     private static ResourceBundle defaultBundle = XMLResourceBundle.getXMLBundle(
             EventFormatter.class.getName(), EventFormatter.class.getClassLoader());
-    
+
     private static Log log = LogFactory.getLog(EventFormatter.class);
-    
+
     private EventFormatter() {
         //utility class
     }
-    
+
     /**
      * Formats an event using the default locale.
      * @param event the event
@@ -74,7 +74,7 @@ public final class EventFormatter {
         }
         return format(event, bundle);
     }
-    
+
     /**
      * Formats an event using a given locale.
      * @param event the event
@@ -150,11 +150,11 @@ public final class EventFormatter {
         params.put("severity", event.getSeverity());
         return format.format(params);
     }
-    
+
     private static class LookupFieldPart implements Part {
-        
+
         private String fieldName;
-        
+
         public LookupFieldPart(String fieldName) {
             this.fieldName = fieldName;
         }
@@ -170,14 +170,14 @@ public final class EventFormatter {
         private String getKey(Map params) {
             return (String)params.get(fieldName);
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             return "{" + this.fieldName + ", lookup}";
         }
-        
+
     }
-    
+
     /** PartFactory for lookups. */
     public static class LookupFieldPartFactory implements PartFactory {
 
@@ -190,7 +190,7 @@ public final class EventFormatter {
         public String getFormat() {
             return "lookup";
         }
-        
+
     }
 
 }

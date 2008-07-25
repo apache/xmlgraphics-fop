@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,31 +53,31 @@ import org.apache.fop.apps.MimeConstants;
  * <br/>
  * Example URL: http://servername/fop/servlet/FopPrintServlet?xml=data.xml&xsl=format.xsl
  * <br/>
- * <b>Note:</b> This servlet is derived from FopServlet. Most methods are inherited from the 
+ * <b>Note:</b> This servlet is derived from FopServlet. Most methods are inherited from the
  * superclass. Only the differences to the base class are necessary.
- * 
+ *
  * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
  */
 public class FopPrintServlet extends FopServlet {
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     protected void render(Source src, Transformer transformer, HttpServletResponse response)
             throws FOPException, TransformerException, IOException {
 
         FOUserAgent foUserAgent = getFOUserAgent();
-        
+
         //Setup FOP
         Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_PRINT, foUserAgent);
-        
+
         //Make sure the XSL transformation's result is piped through to FOP
         Result res = new SAXResult(fop.getDefaultHandler());
-        
+
         //Start the transformation and rendering process
         transformer.transform(src, res);
-        
+
         //Return the result
         reportOK(response);
     }

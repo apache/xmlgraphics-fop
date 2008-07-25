@@ -25,7 +25,7 @@ package org.apache.fop;
  * as this package equals the one specified in the manifest.
  */
 public final class Version {
-    
+
     private Version() { }
 
     /**
@@ -40,11 +40,11 @@ public final class Version {
         }
         if (version == null) {
             //Fallback if FOP is used in a development environment
-            String headURL 
+            String headURL
                 = "$HeadURL$";
             version = headURL;
             final String pathPrefix = "/xmlgraphics/fop/";
-            int pos = version.indexOf(pathPrefix); 
+            int pos = version.indexOf(pathPrefix);
             if (pos >= 0) {
                 version = version.substring(pos + pathPrefix.length() - 1, version.length() - 2);
                 pos = version.indexOf("/src/");
@@ -57,5 +57,5 @@ public final class Version {
         }
         return version;
     }
-    
+
 }

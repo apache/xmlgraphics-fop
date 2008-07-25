@@ -25,7 +25,7 @@ import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.RendererContext;
 
 /**
- * Wrapper on the RendererContext to access the information structure for drawing 
+ * Wrapper on the RendererContext to access the information structure for drawing
  * the XML document.
  */
 public class PCLRendererContext extends RendererContext.RendererContextWrapper {
@@ -48,18 +48,18 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
     public PCLRendererContext(RendererContext context) {
         super(context);
     }
-    
+
     /** @return true if the SVG image should be rendered as a bitmap */
     public boolean paintAsBitmap() {
         QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
-        return getForeignAttributes() != null 
+        return getForeignAttributes() != null
              && "bitmap".equalsIgnoreCase((String)getForeignAttributes().get(qName));
     }
-    
+
     /** @return true if clipping is disabled inside the PCLGraphics2D. */
     public boolean isClippingDisabled() {
         QName qName = new QName(ExtensionElementMapping.URI, null, "disable-clipping");
-        return getForeignAttributes() != null 
+        return getForeignAttributes() != null
              && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
     }
 
@@ -69,10 +69,10 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
      */
     public boolean isSourceTransparency() {
         QName qName = new QName(ExtensionElementMapping.URI, null, "source-transparency");
-        return getForeignAttributes() != null 
+        return getForeignAttributes() != null
              && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
     }
-    
+
     /**
      * Indicates whether an RGB canvas should be used rather than one with grayscales.
      * This can be used to work around limitations of Apache Batik if you get error while
@@ -82,8 +82,8 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
     public boolean isColorCanvas() {
         QName qName = new QName(ExtensionElementMapping.URI, null, "color-canvas");
         Boolean prop = (Boolean)context.getProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS);
-        return Boolean.TRUE.equals(prop) 
-            || (getForeignAttributes() != null 
+        return Boolean.TRUE.equals(prop)
+            || (getForeignAttributes() != null
                     && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName)));
     }
 

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ public final class BreakUtil {
      * Compares the given break classes and return the one that wins. even-page and
      * odd-page win over page, which wins over column, which wins over auto. If even-page
      * and odd-page are compared to each other, which one will be returned is undefined.
-     * 
+     *
      * @param break1 a break class, one of {@link Constants#EN_AUTO},
      * {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
      * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE}

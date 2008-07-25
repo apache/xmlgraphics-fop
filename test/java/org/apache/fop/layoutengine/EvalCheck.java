@@ -36,7 +36,7 @@ public class EvalCheck implements LayoutEngineCheck {
     private String xpath;
     private double tolerance;
     private PrefixResolver prefixResolver;
-    
+
     /**
      * Creates a new instance
      * @param expected expected value
@@ -46,7 +46,7 @@ public class EvalCheck implements LayoutEngineCheck {
         this.expected = expected;
         this.xpath = xpath;
     }
-    
+
     /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
@@ -60,7 +60,7 @@ public class EvalCheck implements LayoutEngineCheck {
         }
         this.prefixResolver = new PrefixResolverDefault(node);
     }
-    
+
     /** @see org.apache.fop.layoutengine.LayoutEngineCheck */
     public void check(LayoutResult result) {
         XObject res;
@@ -75,13 +75,13 @@ public class EvalCheck implements LayoutEngineCheck {
             double v2 = Double.parseDouble(actual);
             if (Math.abs(v1 - v2) > tolerance) {
                 throw new RuntimeException(
-                        "Expected XPath expression to evaluate to '" + expected + "', but got '" 
+                        "Expected XPath expression to evaluate to '" + expected + "', but got '"
                         + actual + "' (" + this + ", outside tolerance)");
             }
         } else {
             if (!expected.equals(actual)) {
                 throw new RuntimeException(
-                        "Expected XPath expression to evaluate to '" + expected + "', but got '" 
+                        "Expected XPath expression to evaluate to '" + expected + "', but got '"
                         + actual + "' (" + this + ")");
             }
         }

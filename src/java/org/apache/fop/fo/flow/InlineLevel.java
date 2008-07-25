@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
  * formatting objects.
  */
 public abstract class InlineLevel extends FObjMixed {
-    
+
     // The value of properties relevant for inline-level FOs.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginInline commonMarginInline;
@@ -49,7 +49,7 @@ public abstract class InlineLevel extends FObjMixed {
 
     /**
      * Base constructor
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     protected InlineLevel(FONode parent) {
@@ -76,7 +76,7 @@ public abstract class InlineLevel extends FObjMixed {
     /** @return the {@link CommonBorderPaddingBackground} */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
-    } 
+    }
 
     /** @return the {@link CommonFont} */
     public CommonFont getCommonFont() {
@@ -92,15 +92,15 @@ public abstract class InlineLevel extends FObjMixed {
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
-    
+
     /** @return the "keep-with-next" property */
     public KeepProperty getKeepWithNext() {
         return keepWithNext;
     }
-    
+
     /** @return the "keep-with-previous" property */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
     }
-    
+
 }

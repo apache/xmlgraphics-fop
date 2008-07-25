@@ -39,8 +39,8 @@ import org.apache.commons.io.IOUtils;
 /**
  * Helper class to visually compare two bitmap images.
  * <p>
- * This class was created by extracting reusable code from 
- * org.apache.batik.test.util.ImageCompareText (Apache Batik) 
+ * This class was created by extracting reusable code from
+ * org.apache.batik.test.util.ImageCompareText (Apache Batik)
  * into this separate class.
  * <p>
  * TODO Move as utility class to XML Graphics Commons when possible
@@ -51,7 +51,7 @@ public class BitmapComparator {
      * Builds a new BufferedImage that is the difference between the two input images
      * @param ref the reference bitmap
      * @param gen the newly generated bitmap
-     * @return the diff bitmap 
+     * @return the diff bitmap
      */
     public static BufferedImage buildDiffImage(BufferedImage ref,
                                                BufferedImage gen) {
@@ -104,7 +104,7 @@ public class BitmapComparator {
             ColorModel cm = gen.getColorModel();
             cm = GraphicsUtil.coerceData(genWR, cm, false);
         }
-        
+
         if (!refPre) {
             ColorModel cm = ref.getColorModel();
             cm = GraphicsUtil.coerceData(refWR, cm, false);
@@ -114,14 +114,14 @@ public class BitmapComparator {
     }
 
     /**
-     * Builds a combined image that places a number of images next to each other for 
-     * manual, visual comparison. 
+     * Builds a combined image that places a number of images next to each other for
+     * manual, visual comparison.
      * @param images the array of bitmaps
      * @return the combined image
      */
     public static BufferedImage buildCompareImage(BufferedImage[] images) {
         BufferedImage cmp = new BufferedImage(
-                images[0].getWidth() * images.length, 
+                images[0].getWidth() * images.length,
                 images[0].getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g = cmp.createGraphics();
@@ -145,8 +145,8 @@ public class BitmapComparator {
     }
 
     /**
-     * Builds a combined image that places two images next to each other for 
-     * manual, visual comparison. 
+     * Builds a combined image that places two images next to each other for
+     * manual, visual comparison.
      * @param ref the reference image
      * @param gen the actual image
      * @return the combined image
@@ -155,7 +155,7 @@ public class BitmapComparator {
             BufferedImage gen) {
         return buildCompareImage(new BufferedImage[] {ref, gen});
     }
-    
+
     /**
      * Loads an image from a URL
      * @param url the URL to the image
@@ -173,7 +173,7 @@ public class BitmapComparator {
         if (red == null) {
             return null;
         }
-        
+
         BufferedImage img = new BufferedImage(red.getWidth(),
                                               red.getHeight(),
                                               BufferedImage.TYPE_INT_ARGB);
@@ -192,7 +192,7 @@ public class BitmapComparator {
             InputStream in = new java.io.FileInputStream(bitmapFile);
             try {
                 in = new java.io.BufferedInputStream(in);
-                
+
                 ImageTagRegistry reg = ImageTagRegistry.getRegistry();
                 Filter filt = reg.readStream(in);
                 if (filt == null) {
@@ -203,7 +203,7 @@ public class BitmapComparator {
                 if (red == null) {
                     return null;
                 }
-                
+
                 BufferedImage img = new BufferedImage(red.getWidth(),
                                                       red.getHeight(),
                                                       BufferedImage.TYPE_INT_ARGB);

@@ -39,14 +39,14 @@ public class PrintRenderer extends PageableRenderer {
      * datatype: java.awt.print.PrinterJob
      */
     public static final String PRINTER_JOB = "printerjob";
-  
+
     /**
      * Printing parameter: the number of copies of the document to be printed,
      * datatype: a positive Integer
      */
     public static final String COPIES = "copies";
-    
-    
+
+
     private int copies = 1;
 
     private PrinterJob printerJob;
@@ -57,7 +57,7 @@ public class PrintRenderer extends PageableRenderer {
      */
     public PrintRenderer() {
     }
-    
+
     /**
      * Creates a new PrintRenderer and allows you to pass in a specific PrinterJob instance
      * that this renderer should work with.
@@ -69,7 +69,7 @@ public class PrintRenderer extends PageableRenderer {
         this.printerJob = printerJob;
         printerJob.setPageable(this);
     }
-    
+
     private void initializePrinterJob() {
         if (this.printerJob == null) {
             printerJob = PrinterJob.getPrinterJob();
@@ -88,9 +88,9 @@ public class PrintRenderer extends PageableRenderer {
     /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
-        
+
         Map rendererOptions = agent.getRendererOptions();
-        
+
         Object printerJobO = rendererOptions.get(PrintRenderer.PRINTER_JOB);
         if (printerJobO != null) {
             if (!(printerJobO instanceof PrinterJob)) {
@@ -118,7 +118,7 @@ public class PrintRenderer extends PageableRenderer {
     public int getEndNumber() {
         return endNumber;
     }
-    
+
     /**
      * Sets the number of the last page to be printed.
      * @param end The ending page number
@@ -126,12 +126,12 @@ public class PrintRenderer extends PageableRenderer {
     public void setEndPage(int end) {
         this.endNumber = end;
     }
-    
+
     /** @return the starting page number */
     public int getStartPage() {
         return startNumber;
     }
-    
+
     /**
      * Sets the number of the first page to be printed.
      * @param start The starting page number
@@ -139,7 +139,7 @@ public class PrintRenderer extends PageableRenderer {
     public void setStartPage(int start) {
         this.startNumber = start;
     }
-    
+
     /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         super.stopRenderer();

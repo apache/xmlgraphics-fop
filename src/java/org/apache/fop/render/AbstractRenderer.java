@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,12 +75,12 @@ import org.apache.fop.fonts.FontInfo;
  * top level processing of the area tree and adds some abstract methods to
  * handle viewports. This keeps track of the current block and inline position.
  */
-public abstract class AbstractRenderer 
+public abstract class AbstractRenderer
          implements Renderer, Constants {
 
     /** logging instance */
     protected static Log log = LogFactory.getLog("org.apache.fop.render");
-    
+
     /**
      * user agent
      */
@@ -110,9 +110,9 @@ public abstract class AbstractRenderer
 
     /** the currently active PageViewport */
     protected PageViewport currentPageViewport;
-    
+
     private Set warnedXMLHandlers;
-    
+
     /** {@inheritDoc} */
     public abstract void setupFontInfo(FontInfo fontInfo);
 
@@ -153,7 +153,7 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void processOffDocumentItem(OffDocumentItem odi) { }
 
@@ -161,17 +161,17 @@ public abstract class AbstractRenderer
     public Graphics2DAdapter getGraphics2DAdapter() {
         return null;
     }
-    
+
     /** {@inheritDoc} */
     public ImageAdapter getImageAdapter() {
         return null;
     }
-    
+
     /** @return the current PageViewport or null, if none is active */
     protected PageViewport getCurrentPageViewport() {
         return this.currentPageViewport;
     }
-    
+
     /** {@inheritDoc} */
     public void preparePage(PageViewport page) { }
 
@@ -212,7 +212,7 @@ public abstract class AbstractRenderer
     public void startPageSequence(LineArea seqTitle) {
         //do nothing
     }
-    
+
     /** {@inheritDoc} */
     public void startPageSequence(PageSequence pageSequence) {
         startPageSequence(pageSequence.getTitle());
@@ -300,7 +300,7 @@ public abstract class AbstractRenderer
      * Establishes a new viewport area.
      *
      * @param ctm the coordinate transformation matrix to use
-     * @param clippingRect the clipping rectangle if the viewport should be clipping, 
+     * @param clippingRect the clipping rectangle if the viewport should be clipping,
      *                     null if no clipping is performed.
      */
     protected abstract void startVParea(CTM ctm, Rectangle2D clippingRect);
@@ -462,7 +462,7 @@ public abstract class AbstractRenderer
             if (bv.getClip()) {
                 clippingRect = new Rectangle(saveIP, saveBP, bv.getIPD(), bv.getBPD());
             }
-            
+
             CTM ctm = bv.getCTM();
             currentIPPosition = 0;
             currentBPPosition = 0;
@@ -495,12 +495,12 @@ public abstract class AbstractRenderer
      * @param block the block area
      */
     protected abstract void renderReferenceArea(Block block);
-    
+
     /**
      * Renders a list of block areas.
      *
      * @param parent  the parent block if the parent is a block, otherwise
-     *                a null value. 
+     *                a null value.
      * @param blocks  The block areas
      */
     protected void renderBlocks(Block parent, List blocks) {
@@ -517,7 +517,7 @@ public abstract class AbstractRenderer
                 currentIPPosition += spaceStart.intValue();
             }*/
         }
-        
+
         // the position of the containing block is used for
         // absolutely positioned areas
         int contBP = currentBPPosition;
@@ -538,8 +538,8 @@ public abstract class AbstractRenderer
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                currentIPPosition = contIP 
-                        + parent.getStartIndent() 
+                currentIPPosition = contIP
+                        + parent.getStartIndent()
                         + line.getStartIndent();
                 renderLineArea(line);
                 //InlineArea child = (InlineArea) line.getInlineAreas().get(0);
@@ -637,14 +637,14 @@ public abstract class AbstractRenderer
         }
     }
 
-    /** 
+    /**
      * Common method to render the background and borders for any inline area.
      * The all borders and padding are drawn outside the specified area.
      * @param area the inline area for which the background, border and padding is to be
      * rendered
      */
     protected abstract void renderInlineAreaBackAndBorders(InlineArea area);
-    
+
     /**
      * Render the given Space.
      * @param space the space to render
@@ -676,7 +676,7 @@ public abstract class AbstractRenderer
         int saveBP = currentBPPosition;
         Iterator iter = text.getChildAreas().iterator();
         while (iter.hasNext()) {
-            renderInlineArea((InlineArea) iter.next()); 
+            renderInlineArea((InlineArea) iter.next());
         }
         currentIPPosition = saveIP + text.getAllocIPD();
     }
@@ -709,7 +709,7 @@ public abstract class AbstractRenderer
         currentBPPosition += ip.getOffset();
         Iterator iter = ip.getChildAreas().iterator();
         while (iter.hasNext()) {
-            renderInlineArea((InlineArea) iter.next()); 
+            renderInlineArea((InlineArea) iter.next());
         }
         currentIPPosition = saveIP + ip.getAllocIPD();
         currentBPPosition = saveBP;
@@ -809,7 +809,7 @@ public abstract class AbstractRenderer
                 handler.handleXML(ctx, doc, namespace);
             } catch (Exception e) {
                 // could not handle document
-                ResourceEventProducer eventProducer 
+                ResourceEventProducer eventProducer
                         = ResourceEventProducer.Provider.get(
                             ctx.getUserAgent().getEventBroadcaster());
                 eventProducer.foreignXMLProcessingError(this, doc, namespace, e);
@@ -830,7 +830,7 @@ public abstract class AbstractRenderer
 
     /**
      * Get the MIME type of the renderer.
-     * 
+     *
      * @return   The MIME type of the renderer
      */
     public String getMimeType() {

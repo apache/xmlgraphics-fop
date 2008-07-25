@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,9 +28,9 @@ import org.apache.fop.fo.expr.PropertyException;
  * Used to set the corresponding keep-* and break-* properties.
  */
 public class PageBreakShorthandParser implements ShorthandParser {
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public Property getValueForProperty(int propId,
                                                Property property,
@@ -38,11 +38,11 @@ public class PageBreakShorthandParser implements ShorthandParser {
                                                PropertyList propertyList)
                     throws PropertyException {
 
-        if (propId == Constants.PR_KEEP_WITH_PREVIOUS 
+        if (propId == Constants.PR_KEEP_WITH_PREVIOUS
                 || propId == Constants.PR_KEEP_WITH_NEXT
                 || propId == Constants.PR_KEEP_TOGETHER) {
             if (property.getEnum() == Constants.EN_AVOID) {
-                return maker.make(null, Constants.CP_WITHIN_PAGE, 
+                return maker.make(null, Constants.CP_WITHIN_PAGE,
                             propertyList, "always", propertyList.getFObj());
             }
         } else if (propId == Constants.PR_BREAK_BEFORE

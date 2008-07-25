@@ -74,21 +74,16 @@ import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.fonts.base14.Courier;
-import org.apache.fop.fonts.base14.Helvetica;
-import org.apache.fop.fonts.base14.TimesRoman;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.fonts.AFPFont;
-import org.apache.fop.render.afp.fonts.AFPFontInfo;
-import org.apache.fop.render.afp.fonts.CharacterSet;
-import org.apache.fop.render.afp.fonts.FopCharacterSet;
-import org.apache.fop.render.afp.fonts.OutlineFont;
+import org.apache.fop.render.afp.fonts.AFPFontCollection;
 import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.ImageObject;
@@ -279,53 +274,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
-        int num = 1;
-        if (super.embedFontInfoList != null && super.embedFontInfoList.size() > 0) {
-            for (Iterator it = super.embedFontInfoList.iterator(); it.hasNext();) {
-                AFPFontInfo afi = (AFPFontInfo)it.next();
-                AFPFont bf = (AFPFont)afi.getAFPFont();
-                for (Iterator it2 = afi.getFontTriplets().iterator(); it2.hasNext();) {
-                    FontTriplet ft = (FontTriplet)it2.next();
-                    this.fontInfo.addFontProperties("F" + num, ft.getName()
-                                                    , ft.getStyle(), ft.getWeight());
-                    this.fontInfo.addMetrics("F" + num, bf);
-                    num++;
-                }
-            }
-        } else {
-            AFPEventProducer eventProducer = AFPEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.warnDefaultFontSetup(this);
-        }
-        if (this.fontInfo.fontLookup("sans-serif", "normal", 400) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZH200  ",
-                    1, new Helvetica());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            this.fontInfo.addFontProperties("F" + num, "sans-serif", "normal", 400);
-            this.fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (this.fontInfo.fontLookup("serif", "normal", 400) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZN200  ",
-                    1, new TimesRoman());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            this.fontInfo.addFontProperties("F" + num, "serif", "normal", 400);
-            this.fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (this.fontInfo.fontLookup("monospace", "normal", 400) == null) {
-            CharacterSet cs  = new FopCharacterSet("T1V10500", "Cp500", "CZ4200  ",
-                    1, new Courier());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            this.fontInfo.addFontProperties("F" + num, "monospace", "normal", 400);
-            this.fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (this.fontInfo.fontLookup("any", "normal", 400) == null) {
-            FontTriplet ft = this.fontInfo.fontLookup("sans-serif", "normal", 400);
-            this.fontInfo.addFontProperties(
-                    this.fontInfo.getInternalFontKey(ft), "any", "normal", 400);
-        }
+        FontManager fontManager = userAgent.getFactory().getFontManager();
+        FontCollection[] fontCollections = new FontCollection[] {
+            new AFPFontCollection(userAgent.getEventBroadcaster(), getFontList())
+        };
+        fontManager.setup(getFontInfo(), fontCollections);
     }
 
     /**
@@ -591,8 +544,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void renderReferenceArea(Block block) {
-        //TODO Remove this method once concatenateTransformationMatrix() is implemented 
-        
+        //TODO Remove this method once concatenateTransformationMatrix() is implemented
+
         // save position and offset
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
@@ -602,7 +555,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         at.translate(currentIPPosition, currentBPPosition);
         at.translate(block.getXOffset(), block.getYOffset());
         at.translate(0, block.getSpaceBefore());
-        
+
         if (!at.isIdentity()) {
             Rectangle2D contentRect
                 = new Rectangle2D.Double(at.getTranslateX(), at.getTranslateY(),
@@ -622,12 +575,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         if (!at.isIdentity()) {
             popViewPortPos();
         }
-        
+
         // stacked and relative blocks effect stacking
         currentIPPosition = saveIP;
         currentBPPosition = saveBP;
     }
-    
+
     /** {@inheritDoc} */
     protected void renderFlow(NormalFlow flow) {
         // save position and offset
@@ -637,7 +590,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         //Establish a new coordinate system
         AffineTransform at = new AffineTransform();
         at.translate(currentIPPosition, currentBPPosition);
-        
+
         if (!at.isIdentity()) {
             Rectangle2D contentRect
                 = new Rectangle2D.Double(at.getTranslateX(), at.getTranslateY(),
@@ -648,17 +601,17 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         currentIPPosition = 0;
         currentBPPosition = 0;
         super.renderFlow(flow);
-        
+
         if (!at.isIdentity()) {
             popViewPortPos();
         }
-        
+
         // stacked and relative blocks effect stacking
         currentIPPosition = saveIP;
         currentBPPosition = saveBP;
     }
-    
-    
+
+
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         //Not used here since AFPRenderer defines its own renderBlockViewport() method.
@@ -1124,7 +1077,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                  * } else if (MimeConstants.MIME_JPEG.equals(mime)) { if
                  * (!fopimage.load(FopImage.ORIGINAL_DATA)) { return; }
                  * fact.releaseImage(url, userAgent);
-                 * 
+                 *
                  * int x = mpts2units(pos.getX() + currentIPPosition); int y =
                  * mpts2units(pos.getY() + currentBPPosition); int w =
                  * mpts2units(pos.getWidth()); int h =
@@ -1212,7 +1165,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Writes a RenderedImage to an OutputStream as raw sRGB bitmaps.
-     * 
+     *
      * @param image
      *            the RenderedImage
      * @param out
@@ -1227,7 +1180,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Draws a BufferedImage to AFP.
-     * 
+     *
      * @param image
      *            the RenderedImage
      * @param imageResolution
@@ -1533,7 +1486,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
      * (default), 90, 180, 270.
-     * 
+     *
      * @param rotation
      *            The rotation in degrees.
      */
@@ -1555,7 +1508,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Sets the rotation to be used for landsacpe pages, valid values are 0, 90,
      * 180, 270 (default).
-     * 
+     *
      * @param rotation
      *            The rotation in degrees.
      */
@@ -1575,7 +1528,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Get the MIME type of the renderer.
-     * 
+     *
      * @return   The MIME type of the renderer
      */
     public String getMimeType() {
@@ -1585,7 +1538,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Method to render the page extension.
      * <p>
-     * 
+     *
      * @param pageViewport the page object
      */
     private void renderPageObjectExtensions(PageViewport pageViewport) {
@@ -1652,7 +1605,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Converts FOP mpt measurement to afp measurement units
-     * 
+     *
      * @param mpt
      *            the millipoints value
      * @return afp measurement unit value
@@ -1664,7 +1617,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /**
      * Converts a byte array containing 24 bit RGB image data to a grayscale
      * image.
-     * 
+     *
      * @param io
      *            the target image object
      * @param raw
@@ -1839,7 +1792,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Sets the number of bits used per pixel
-     * 
+     *
      * @param bitsPerPixel
      *            number of bits per pixel
      */
@@ -1859,7 +1812,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Sets whether images are color or not
-     * 
+     *
      * @param colorImages
      *            color image output
      */
@@ -1869,7 +1822,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Sets the output/device resolution
-     * 
+     *
      * @param resolution
      *            the output resolution (dpi)
      */

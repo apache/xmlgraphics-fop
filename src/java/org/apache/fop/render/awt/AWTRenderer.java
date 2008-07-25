@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,17 +67,17 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     private boolean previewAsMainWindow;
 
     /**
-     * Renderable instance that can be used to reload and re-render a document after 
+     * Renderable instance that can be used to reload and re-render a document after
      * modifications.
      */
     protected Renderable renderable;
 
     /**
-     * Will be notified when rendering progresses 
+     * Will be notified when rendering progresses
      */
     protected StatusListener statusListener = null;
 
-    
+
     /**
      * Creates a new AWTRenderer instance.
      */
@@ -98,7 +98,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
         if (dialogDisplay) {
-            setStatusListener(PreviewDialog.createPreviewDialog(userAgent, this.renderable, 
+            setStatusListener(PreviewDialog.createPreviewDialog(userAgent, this.renderable,
                     this.previewAsMainWindow));
         }
     }
@@ -111,7 +111,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     public void setRenderable(Renderable renderable) {
         this.renderable = renderable;
     }
-    
+
     /**
      * Sets whether the preview dialog should be created and displayed when
      * the rendering is finished.
@@ -121,7 +121,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         dialogDisplay = show;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void renderPage(PageViewport pageViewport) throws IOException {
@@ -149,10 +149,10 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         Rectangle2D bounds = getPageViewport(pageNum).getViewArea();
         pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
         pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
-        double scaleX = scaleFactor 
+        double scaleX = scaleFactor
                 * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
-        double scaleY = scaleFactor 
+        double scaleY = scaleFactor
                 * (25.4 / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
         int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
@@ -167,15 +167,15 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
             if (pageIndex >= getNumberOfPages()) {
                 return null;
             }
-    
+
             PageFormat pageFormat = new PageFormat();
-    
+
             Paper paper = new Paper();
-    
+
             Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
             double width = dim.getWidth();
             double height = dim.getHeight();
-    
+
             // if the width is greater than the height assume lanscape mode
             // and swap the width and height values in the paper format
             if (width > height) {

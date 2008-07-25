@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding;
 
 // Java
@@ -60,13 +60,13 @@ public class ExampleFO2PDF {
      * @throws FOPException In case of a FOP problem
      */
     public void convertFO2PDF(File fo, File pdf) throws IOException, FOPException {
-        
+
         OutputStream out = null;
-        
+
         try {
             FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
             // configure foUserAgent as desired
-    
+
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
@@ -78,24 +78,24 @@ public class ExampleFO2PDF {
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(); // identity transformer
-            
+
             // Setup input stream
             Source src = new StreamSource(fo);
 
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(fop.getDefaultHandler());
-            
+
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
-            
+
             // Result processing
             FormattingResults foResults = fop.getResults();
             java.util.List pageSequences = foResults.getPageSequences();
             for (java.util.Iterator it = pageSequences.iterator(); it.hasNext();) {
                 PageSequenceResults pageSequenceResults = (PageSequenceResults)it.next();
-                System.out.println("PageSequence " 
-                        + (String.valueOf(pageSequenceResults.getID()).length() > 0 
-                                ? pageSequenceResults.getID() : "<no id>") 
+                System.out.println("PageSequence "
+                        + (String.valueOf(pageSequenceResults.getID()).length() > 0
+                                ? pageSequenceResults.getID() : "<no id>")
                         + " generated " + pageSequenceResults.getPageCount() + " pages.");
             }
             System.out.println("Generated " + foResults.getPageCount() + " pages in total.");
@@ -117,13 +117,13 @@ public class ExampleFO2PDF {
         try {
             System.out.println("FOP ExampleFO2PDF\n");
             System.out.println("Preparing...");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
 
-            //Setup input and output files            
+            //Setup input and output files
             File fofile = new File(baseDir, "xml/fo/helloworld.fo");
             //File fofile = new File(baseDir, "../fo/pagination/franklin_2pageseqs.fo");
             File pdffile = new File(outDir, "ResultFO2PDF.pdf");
@@ -132,10 +132,10 @@ public class ExampleFO2PDF {
             System.out.println("Output: PDF (" + pdffile + ")");
             System.out.println();
             System.out.println("Transforming...");
-            
+
             ExampleFO2PDF app = new ExampleFO2PDF();
             app.convertFO2PDF(fofile, pdffile);
-            
+
             System.out.println("Success!");
         } catch (Exception e) {
             e.printStackTrace(System.err);

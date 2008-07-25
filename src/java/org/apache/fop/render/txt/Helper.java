@@ -30,9 +30,9 @@ public final class Helper {
     private Helper() { }
 
     /**
-     * Returns nearest integer to <code>x</code>, divisible by 
-     * <code>quantum</code>. 
-     * 
+     * Returns nearest integer to <code>x</code>, divisible by
+     * <code>quantum</code>.
+     *
      * @param x integer for quantization
      * @param quantum integer, representing quantization
      * @return computed nearest integer
@@ -44,9 +44,9 @@ public final class Helper {
     }
 
     /**
-     * Returns minimal possible integer, greater or equal than 
+     * Returns minimal possible integer, greater or equal than
      * <code>x</code>, divisible by <code>quantum</code>.
-     *         
+     *
      * @param x integer for quantization
      * @param quantum integer, representing quantization
      * @return computed nearest integer
@@ -59,7 +59,7 @@ public final class Helper {
     /**
      * Returns maximum possible integer, less or equal than
      * <code>oldValue</code>, divisible by <code>quantum</code>.
-     * 
+     *
      * @param x integer for quantization
      * @param quantum integer, representing quantization
      * @return computed nearest integer
@@ -71,9 +71,9 @@ public final class Helper {
 
     /**
      * Returns the closest integer to <code>x/y</code> fraction.
-     * It's possible to consider this methos as a analog of Math.round(x/y), 
+     * It's possible to consider this methos as a analog of Math.round(x/y),
      * without having deal with non-integer.
-     * 
+     *
      * @param x integer, fraction numerator
      * @param y  integer, fraction denominator
      * @return the value of the fraction rounded to the nearest
@@ -84,31 +84,31 @@ public final class Helper {
     }
 
     /**
-     * Returns the smallest integer that is greater than or equal to the 
+     * Returns the smallest integer that is greater than or equal to the
      * <code>x/y</code> fraction.
-     * It's possible to consider this function as a analog of Math.ceil(x/y), 
+     * It's possible to consider this function as a analog of Math.ceil(x/y),
      * without having deal with non-integer.
-     * 
+     *
      * @param x integer, fraction numerator
      * @param y  integer, fraction denominator
-     * @return the smallest integer that is greater than or equal to 
+     * @return the smallest integer that is greater than or equal to
      *         <code>x/y</code> fraction
      * @see java.lang.Math#ceil(double)
      */
     public static int ceilPosition(int x, int y) {
         return ceil(x, y) / y;
     }
-    
-    
+
+
     /**
      * Returns the largest integer that is less than or equal to the
      * argument and is equal to <code>x/y</code> fraction.
-     * It's possible to consider this function as a analog of Math.floor(x/y), 
+     * It's possible to consider this function as a analog of Math.floor(x/y),
      * without having deal with non-integer.
-     * 
+     *
      * @param x integer, fraction numerator
      * @param y integer, fraction denominator
-     * @return the largest integer that is less than or equal to 
+     * @return the largest integer that is less than or equal to
      *            the argument and is equal to <code>x/y</code> fraction
      * @see java.lang.Math#floor(double)
      */

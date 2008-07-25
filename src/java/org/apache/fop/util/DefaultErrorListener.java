@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 public class DefaultErrorListener implements ErrorListener {
 
     private Log log;
-    
+
     /**
      * Main constructor
      * @param log the log instance to send log events to
@@ -39,7 +39,7 @@ public class DefaultErrorListener implements ErrorListener {
     public DefaultErrorListener(Log log) {
         this.log = log;
     }
-    
+
     /**
      * {@inheritDoc}
      */

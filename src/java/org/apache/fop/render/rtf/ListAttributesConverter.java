@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,13 +38,13 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
  * Provides methods to convert list attributes to RtfAttributes.
  */
 public final class ListAttributesConverter {
-    
+
     /**
      * Constructor is private, because it's just a utility class.
      */
     private ListAttributesConverter() {
     }
-    
+
     /**
      * Reads an FO object's properties and adds returns them as RtfAttributes.
      * @param fobj FO object
@@ -53,12 +53,12 @@ public final class ListAttributesConverter {
      */
     static RtfAttributes convertAttributes(ListBlock fobj)
     throws FOPException {
-        
+
         FOPRtfAttributes attrib = new FOPRtfAttributes();
-        
+
         attrib.setTwips(RtfListTable.LIST_INDENT, fobj.getCommonMarginBlock().startIndent);
         attrib.setTwips(RtfText.LEFT_INDENT_BODY, fobj.getCommonMarginBlock().endIndent);
-        
+
         /*
          * set list table defaults
          */
@@ -67,7 +67,7 @@ public final class ListAttributesConverter {
         attrib.set(RtfListTable.LIST, "simple");
         //set following char as tab
         attrib.set(RtfListTable.LIST_FOLLOWING_CHAR, 0);
-        
+
         return attrib;
     }
 }

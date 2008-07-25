@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,7 @@ import java.util.List;
  * Native font finder base class
  */
 public abstract class NativeFontDirFinder implements FontFinder {
-    
+
     /**
      * Generic method used by Mac and Unix font finders.
      * @return list of natively existing font directories
@@ -45,11 +45,11 @@ public abstract class NativeFontDirFinder implements FontFinder {
         }
         return fontDirList;
     }
-    
+
     /**
-     * Returns an array of directories to search for fonts in. 
+     * Returns an array of directories to search for fonts in.
      * @return an array of directories
      */
     protected abstract String[] getSearchableDirectories();
-    
+
 }

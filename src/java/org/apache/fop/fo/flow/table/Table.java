@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -224,7 +224,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
     /** {@inheritDoc} */
     public void finalizeNode() throws FOPException {
-        
+
         if (!tableBodyFound) {
            missingChildElementError(
                    "(marker*,table-column*,table-header?,table-footer?"
@@ -246,9 +246,9 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
             this.propList = null;
             rowGroupBuilder = null;
         }
-        
+
     }
-    
+
     /** {@inheritDoc} */
     protected void addChildNode(FONode child) throws FOPException {
 
@@ -274,7 +274,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
                 } else {
                     rowGroupBuilder = new VariableColRowGroupBuilder(this);
                 }
-                
+
             }
             switch (childId) {
             case FO_TABLE_FOOTER:
@@ -309,7 +309,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
      * Creates the appropriate number of additional implicit columns to match the given
      * column number. Used when the table has no explicit column: the number of columns is
      * then determined by the row that has the most columns.
-     * 
+     *
      * @param columnNumber the table must at least have this number of column
      * @throws FOPException if there was an error creating the property list for implicit
      * columns
@@ -339,7 +339,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
     /**
      * Adds a column to the columns List, and updates the columnIndex
      * used for determining initial values for column-number
-     * 
+     *
      * @param col   the column to add
      */
     private void addColumnNode(TableColumn col) {
@@ -385,7 +385,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
     /**
      * Returns the column at the given index.
-     * 
+     *
      * @param index index of the column to be retrieved, 0-based
      * @return the corresponding column (may be an implicitly created column)
      */
@@ -395,7 +395,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder {
 
     /**
      * Returns the number of columns of this table.
-     * 
+     *
      * @return the number of columns, implicit or explicit, in this table
      */
     public int getNumberOfColumns() {

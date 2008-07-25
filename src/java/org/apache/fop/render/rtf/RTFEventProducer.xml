@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<catalogue xml:lang="en">
+<?xml version="1.0" encoding="UTF-8"?><catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
   <message key="org.apache.fop.render.rtf.RTFEventProducer.onlySPMSupported">Only simple-page-masters are supported on page-sequences. Using default simple-page-master from page-sequence-master "{masterReference}".{{locator}}</message>
   <message key="org.apache.fop.render.rtf.RTFEventProducer.noSPMFound">No simple-page-master could be determined.</message>

@@ -55,7 +55,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
     /** logging instance */
     protected static Log log = LogFactory.getLog(PSFontUtils.class);
-    
+
     /**
      * Generates the PostScript code for the font dictionary.
      * @param gen PostScript generator to use for output
@@ -63,11 +63,11 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      * @throws IOException in case of an I/O problem
      */
-    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo) 
+    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo)
                 throws IOException {
         return writeFontDict(gen, fontInfo, fontInfo.getFonts());
     }
-    
+
     /**
      * Generates the PostScript code for the font dictionary.
      * @param gen PostScript generator to use for output
@@ -76,7 +76,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      * @throws IOException in case of an I/O problem
      */
-    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts) 
+    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts)
                 throws IOException {
         gen.commentln("%FOPBeginFontDict");
 
@@ -88,7 +88,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             PSResource fontRes = new PSResource(PSResource.TYPE_FONT, tf.getFontName());
             fontResources.put(key, fontRes);
             embedFont(gen, tf, fontRes);
-            
+
             if (tf instanceof SingleByteFont) {
                 SingleByteFont sbf = (SingleByteFont)tf;
                 for (int i = 0, c = sbf.getAdditionalEncodingCount(); i < c; i++) {
@@ -108,12 +108,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
     private static void reencodeFonts(PSGenerator gen, Map fonts) throws IOException {
         ResourceTracker tracker = gen.getResourceTracker();
-        
+
         if (!tracker.isResourceSupplied(WINANSI_ENCODING_RESOURCE)) {
             defineWinAnsiEncoding(gen);
         }
         gen.commentln("%FOPBeginFontReencode");
-        
+
         //Rewrite font encodings
         Iterator iter = fonts.keySet().iterator();
         while (iter.hasNext()) {
@@ -133,7 +133,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                 //ignore (no encoding redefinition)
             } else {
                 if (tf instanceof Base14Font) {
-                    //Our Base 14 fonts don't use the default encoding 
+                    //Our Base 14 fonts don't use the default encoding
                     redefineFontEncoding(gen, tf.getFontName(), tf.getEncodingName());
                 }
             }
@@ -149,7 +149,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         if (tf == null) {
             //This is to avoid an NPE if a malconfigured font is in the configuration but not
             //used in the document. If it were used, we wouldn't get this far.
-            String fallbackKey = fontInfo.getInternalFontKey(Font.DEFAULT_FONT); 
+            String fallbackKey = fontInfo.getInternalFontKey(Font.DEFAULT_FONT);
             tf = (Typeface)fonts.get(fallbackKey);
         }
         return tf;
@@ -162,7 +162,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @param fontRes the PSResource associated with the font
      * @throws IOException In case of an I/O error
      */
-    public static void embedFont(PSGenerator gen, Typeface tf, PSResource fontRes) 
+    public static void embedFont(PSGenerator gen, Typeface tf, PSResource fontRes)
                 throws IOException {
         boolean embeddedFont = false;
         if (FontType.TYPE1 == tf.getFontType()) {
@@ -171,7 +171,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                 if (isEmbeddable(cf)) {
                     InputStream in = getInputStreamOnFont(gen, cf);
                     if (in != null) {
-                        gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, 
+                        gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE,
                                 fontRes);
                         embedType1Font(gen, in);
                         gen.writeDSCComment(DSCConstants.END_RESOURCE);
@@ -193,8 +193,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     private static boolean isEmbeddable(CustomFont font) {
         return font.isEmbeddable();
     }
-    
-    private static InputStream getInputStreamOnFont(PSGenerator gen, CustomFont font) 
+
+    private static InputStream getInputStreamOnFont(PSGenerator gen, CustomFont font)
                 throws IOException {
         if (isEmbeddable(font)) {
             Source source = font.getEmbedFileSource();
@@ -239,7 +239,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @param fonts the set of fonts to work with
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      */
-    public static Map determineSuppliedFonts(ResourceTracker resTracker, 
+    public static Map determineSuppliedFonts(ResourceTracker resTracker,
             FontInfo fontInfo, Map fonts) {
         Map fontResources = new java.util.HashMap();
         Iterator iter = fonts.keySet().iterator();
@@ -337,5 +337,5 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.getResourceTracker().registerSuppliedResource(res);
         return res;
     }
-    
+
 }

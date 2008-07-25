@@ -36,7 +36,7 @@ public class TrueCheck implements LayoutEngineCheck {
     private String xpath;
     private String failureMessage;
     private PrefixResolver prefixResolver;
-    
+
     /**
      * Creates a new instance
      * @param xpath XPath statement that needs to be evaluated
@@ -44,7 +44,7 @@ public class TrueCheck implements LayoutEngineCheck {
     public TrueCheck(String xpath) {
         this.xpath = xpath;
     }
-    
+
     /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
@@ -57,7 +57,7 @@ public class TrueCheck implements LayoutEngineCheck {
         }
         this.prefixResolver = new PrefixResolverDefault(node);
     }
-    
+
     /** @see org.apache.fop.layoutengine.LayoutEngineCheck */
     public void check(LayoutResult result) {
         XObject res;
@@ -71,7 +71,7 @@ public class TrueCheck implements LayoutEngineCheck {
                 throw new RuntimeException(failureMessage);
             } else {
                 throw new RuntimeException(
-                        "Expected XPath expression to evaluate to 'true', but got '" 
+                        "Expected XPath expression to evaluate to 'true', but got '"
                         + res + "' (" + this + ")");
             }
         }
@@ -82,5 +82,5 @@ public class TrueCheck implements LayoutEngineCheck {
     public String toString() {
         return "XPath: " + xpath;
     }
-    
+
 }

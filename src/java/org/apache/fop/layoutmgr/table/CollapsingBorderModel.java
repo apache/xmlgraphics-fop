@@ -131,7 +131,7 @@ public abstract class CollapsingBorderModel {
 
     /**
      * Compares the two given styles (see {@link Constants}).
-     * 
+     *
      * @param style1 a style constant
      * @param style2 another style constant
      * @return a value &lt; 0 if style1 has less priority than style2, 0 if both are
@@ -161,7 +161,7 @@ public abstract class CollapsingBorderModel {
     /**
      * Compares the two given FO ids ({@link Constants}.FO*) in terms of border
      * declaration.
-     * 
+     *
      * @param id1 a FO id ({@link Constants#FO_TABLE}, {@link Constants#FO_TABLE_BODY},
      * etc.)
      * @param id2 another FO id
@@ -178,7 +178,7 @@ public abstract class CollapsingBorderModel {
      * Returns the border which wins the border conflict resolution. In case the two
      * borders are equivalent (identical, or only the color is different), null is
      * returned.
-     * 
+     *
      * @param border1 a border specification
      * @param border2 another border specification
      * @param discard true if the .conditionality component of the border width must be
@@ -192,7 +192,7 @@ public abstract class CollapsingBorderModel {
      * Returns the border which wins the border conflict resolution. Same as
      * {@link #determineWinner(BorderSpecification, BorderSpecification, boolean)
      * determineWinner(border1, border2, false)}.
-     * 
+     *
      * @param border1 a border specification
      * @param border2 another border specification
      * @return the winning border, null if the two borders are equivalent

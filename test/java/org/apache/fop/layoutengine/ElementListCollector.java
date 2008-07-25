@@ -30,21 +30,21 @@ import org.apache.fop.layoutmgr.ElementListObserver.Observer;
 public class ElementListCollector implements Observer {
 
     private List elementLists = new java.util.ArrayList();
-    
+
     /**
      * Resets the collector.
      */
     public void reset() {
         elementLists.clear();
     }
-    
+
     /**
      * @return the list of ElementList instances.
      */
     public List getElementLists() {
         return this.elementLists;
     }
-    
+
     /** @see org.apache.fop.layoutmgr.ElementListObserver.Observer */
     public void observe(List elementList, String category, String id) {
         elementLists.add(new ElementList(elementList, category, id));
@@ -54,11 +54,11 @@ public class ElementListCollector implements Observer {
      * Data object representing an element list along with additional information.
      */
     public static class ElementList {
-        
+
         private List elementList;
         private String category;
         private String id;
-        
+
         /**
          * Creates a new ElementList instance
          * @param elementList the element list
@@ -70,21 +70,21 @@ public class ElementListCollector implements Observer {
             this.category = category;
             this.id = id;
         }
-        
+
         /** @return the element list */
         public List getElementList() {
             return elementList;
         }
-        
+
         /** @return the category */
         public String getCategory() {
             return category;
         }
-        
+
         /** @return the ID, may be null */
         public String getID() {
             return id;
         }
     }
-    
+
 }

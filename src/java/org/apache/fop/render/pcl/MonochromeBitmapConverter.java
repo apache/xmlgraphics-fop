@@ -33,12 +33,12 @@ public interface MonochromeBitmapConverter {
      * @param value the value
      */
     void setHint(String name, String value);
-    
+
     /**
-     * Converts a grayscale bitmap image to a monochrome (1-bit) b/w bitmap image. 
+     * Converts a grayscale bitmap image to a monochrome (1-bit) b/w bitmap image.
      * @param img the grayscale image
      * @return the converted monochrome image
      */
     RenderedImage convertToMonochrome(BufferedImage img);
-    
+
 }

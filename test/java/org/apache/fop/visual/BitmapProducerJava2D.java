@@ -55,7 +55,7 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
-    
+
     private boolean deleteTempFiles;
 
     /** @see org.apache.avalon.framework.configuration.Configurable */
@@ -69,20 +69,20 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
             userAgent.setBaseURL(src.getParentFile().toURL().toString());
-            
+
             File outputFile = new File(context.getTargetDir(), src.getName() + ".java2d.png");
             OutputStream out = new FileOutputStream(outputFile);
             out = new BufferedOutputStream(out);
             try {
                 Fop fop = fopFactory.newFop(MimeConstants.MIME_PNG, userAgent, out);
                 SAXResult res = new SAXResult(fop.getDefaultHandler());
-                
+
                 Transformer transformer = getTransformer(context);
                 transformer.transform(new StreamSource(src), res);
             } finally {
                 IOUtils.closeQuietly(out);
             }
-            
+
             BufferedImage img = BitmapComparator.getImage(outputFile);
             if (deleteTempFiles) {
                 if (!outputFile.delete()) {

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ public class MultiByteFont extends CIDFont {
 
     private static int uniqueCounter = -1;
     private static final DecimalFormat COUNTER_FORMAT = new DecimalFormat("00000");
-    
+
     private String ttcName = null;
     private String encoding = "Identity-H";
 
@@ -40,7 +40,7 @@ public class MultiByteFont extends CIDFont {
     private String namePrefix = null;    // Quasi unique prefix
 
     private CIDSubset subset = new CIDSubset();
-    
+
     /** A map from Unicode indices to glyph indices */
     private BFEntry[] bfentries = null;
 
@@ -50,7 +50,7 @@ public class MultiByteFont extends CIDFont {
     public MultiByteFont() {
         // Make sure that the 3 first glyphs are included
         subset.setupFirstThreeGlyphs();
-        
+
         // Create a quasiunique prefix for fontname
         synchronized (this.getClass()) {
             uniqueCounter++;
@@ -59,7 +59,7 @@ public class MultiByteFont extends CIDFont {
             }
         }
         String cntString = COUNTER_FORMAT.format(uniqueCounter);
-        
+
         //Subset prefix as described in chapter 5.5.3 of PDF 1.4
         StringBuffer sb = new StringBuffer("E");
         for (int i = 0, c = cntString.length(); i < c; i++) {
@@ -104,11 +104,11 @@ public class MultiByteFont extends CIDFont {
     public void setCIDType(CIDFontType cidType) {
         this.cidType = cidType;
     }
-    
+
     private String getPrefixedFontName() {
         return namePrefix + FontUtil.stripWhiteSpace(super.getFontName());
     }
-    
+
     /** {@inheritDoc} */
     public String getEmbedFontName() {
         if (isEmbeddable()) {
@@ -127,7 +127,7 @@ public class MultiByteFont extends CIDFont {
     public CIDSubset getCIDSubset() {
         return this.subset;
     }
-    
+
     /** {@inheritDoc} */
     public String getEncodingName() {
         return encoding;

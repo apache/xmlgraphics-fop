@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class PDFFont extends PDFDictionary {
 
     /** Internal F-number for each font (it is not written to the font dict) */
     private String fontname;
-    
+
     /**
      * create the /Font object
      *
@@ -74,7 +74,7 @@ public class PDFFont extends PDFDictionary {
             put("Encoding", new PDFName(encoding));
         }
     }
-    
+
     /**
      * Sets the Encoding value of the font.
      * @param encoding the encoding
@@ -84,7 +84,7 @@ public class PDFFont extends PDFDictionary {
             put("Encoding", encoding);
         }
     }
-    
+
     /**
      * factory method with the basic parameters
      *
@@ -122,7 +122,7 @@ public class PDFFont extends PDFDictionary {
     public String getName() {
         return this.fontname;
     }
-    
+
     /**
      * Returns the name of the BaseFont.
      * @return the BaseFont
@@ -158,7 +158,7 @@ public class PDFFont extends PDFDictionary {
     protected void validate() {
         if (getDocumentSafely().getProfile().isFontEmbeddingRequired()) {
             if (this.getClass() == PDFFont.class) {
-                throw new PDFConformanceException("For " + getDocumentSafely().getProfile() 
+                throw new PDFConformanceException("For " + getDocumentSafely().getProfile()
                     + ", all fonts, even the base 14"
                     + " fonts, have to be embedded! Offending font: " + getBaseFont());
             }
@@ -170,5 +170,5 @@ public class PDFFont extends PDFDictionary {
         validate();
         return super.output(stream);
     }
-    
+
 }

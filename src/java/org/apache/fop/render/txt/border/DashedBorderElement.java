@@ -25,39 +25,39 @@ import java.util.Arrays;
  * This class is responsible for managing of dashed border elements.
  */
 public class DashedBorderElement extends AbstractBorderElement {
-    
+
     private static final char DASH_HORIZONTAL = '-';
 
     private static final char DASH_VERTICAL = '|';
-    
+
     private static final char UNDEFINED = '?';
-    
+
     private static final int UP2 = 1;
-    
+
     private static final int RIGHT2 = 2;
-    
+
     private static final int DOWN2 = 4;
-    
+
     private static final int LEFT2 = 8;
-    
+
     private static char[] map = new char[20];
-    
+
     static {
         Arrays.fill(map, UNDEFINED);
         map[0] = ' ';
         map[UP2] = DASH_VERTICAL;
         map[DOWN2] = DASH_VERTICAL;
         map[UP2 + DOWN2] = DASH_VERTICAL;
-        
+
         map[LEFT2] = DASH_HORIZONTAL;
         map[RIGHT2] = DASH_HORIZONTAL;
         map[LEFT2 + RIGHT2] = DASH_HORIZONTAL;
     }
-    
+
     /**
      * Constructs a newly allocated <code>DashedBorderElement</code> object.
      * Fills <code>data</code> using superclass constructor.
-     * 
+     *
      * @param type binary representation of type gives <code>data</code>
      */
     public DashedBorderElement(int type) {
@@ -66,8 +66,8 @@ public class DashedBorderElement extends AbstractBorderElement {
 
     /**
      * Merges dashed border element with instance of solid and double border
-     * element, returns instance of <code>SolidAndDoubleBorderElement</code>. 
-     * 
+     * element, returns instance of <code>SolidAndDoubleBorderElement</code>.
+     *
      * @param sdb instance of <code>SolidAndDoubleBorderElement</code> to merge
      * @return merged border element
      */
@@ -76,13 +76,13 @@ public class DashedBorderElement extends AbstractBorderElement {
         for (int i = 0; i < 4; i++) {
             e.setData(i, Math.max(data[i], sdb.getData(i)));
         }
-        return e;        
+        return e;
     }
 
     /**
-     * Merges dashed border element with dashed border element and returns 
-     * instance of <code>DashedBorderElement</code>. 
-     * 
+     * Merges dashed border element with dashed border element and returns
+     * instance of <code>DashedBorderElement</code>.
+     *
      * @param dbe instance of <code>DashedBorderElement</code> to merge
      * @return merged border element
      */
@@ -92,11 +92,11 @@ public class DashedBorderElement extends AbstractBorderElement {
         }
         return this;
     }
-    
+
     /**
-     * Converts dashed border element to 
+     * Converts dashed border element to
      * <code>SolidAndDoubleBorderElement</code>.
-     * 
+     *
      * @return converted instance of <code>SolidAndDoubleBorderElement</code>
      */
     private AbstractBorderElement toSolidAndDouble() {
@@ -104,7 +104,7 @@ public class DashedBorderElement extends AbstractBorderElement {
         for (int i = 0; i < 4; i++) {
             e.setData(i, data[i]);
         }
-        return e;        
+        return e;
     }
 
     /**
@@ -124,7 +124,7 @@ public class DashedBorderElement extends AbstractBorderElement {
         return abe;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public char convert2Char() {

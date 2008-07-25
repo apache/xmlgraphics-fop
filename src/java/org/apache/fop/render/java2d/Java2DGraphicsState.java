@@ -73,14 +73,14 @@ public class Java2DGraphicsState {
      * @param org the instance to copy
      */
     public Java2DGraphicsState(Java2DGraphicsState org) {
-        this.currentGraphics = (Graphics2D)org.currentGraphics.create(); 
+        this.currentGraphics = (Graphics2D)org.currentGraphics.create();
         this.fontInfo = org.fontInfo;
         this.initialTransform = org.initialTransform;
         this.currentStroke = org.currentStroke;
         this.currentStrokeStyle = org.currentStrokeStyle;
         this.currentStrokeWidth = org.currentStrokeWidth;
     }
-    
+
     /**
      * @return the currently valid state
      */
@@ -92,7 +92,7 @@ public class Java2DGraphicsState {
     public void dispose() {
         this.currentGraphics.dispose();
         this.currentGraphics = null;
-        
+
     }
 
     /**

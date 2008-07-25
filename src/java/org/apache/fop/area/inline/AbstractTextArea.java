@@ -36,7 +36,7 @@ public abstract class AbstractTextArea extends InlineParent {
          * (this is equivalent to the property word-spacing.optimum)
          */
         protected int spaceDifference = 0;
-        
+
         /**
          * Constructor
          *
@@ -70,7 +70,7 @@ public abstract class AbstractTextArea extends InlineParent {
     public AbstractTextArea(int stretch, int shrink, int adj) {
         textAdjustingInfo = new TextAdjustingInfo(stretch, shrink, adj);
     }
-    
+
     /**
      * Get text word space adjust.
      *
@@ -108,9 +108,9 @@ public abstract class AbstractTextArea extends InlineParent {
     }
 
     /**
-     * Set the difference between optimal width of a space and 
+     * Set the difference between optimal width of a space and
      * default width of a space according to the font; this part
-     * of the space adjustment is fixed and must not be 
+     * of the space adjustment is fixed and must not be
      * multiplied by the variation factor.
      * @param spaceDiff the space difference
      */
@@ -129,22 +129,22 @@ public abstract class AbstractTextArea extends InlineParent {
                                         int lineStretch, int lineShrink) {
         if (textAdjustingInfo != null) {
             // compute the new adjustments:
-            // if the variation factor is negative, it means that before 
+            // if the variation factor is negative, it means that before
             // the ipd variation the line had to stretch and now it has
             // to shrink (or vice versa);
-            // in this case, if the stretch and shrink are not equally 
-            // divided among the inline areas, we must compute a 
+            // in this case, if the stretch and shrink are not equally
+            // divided among the inline areas, we must compute a
             // balancing factor
             double balancingFactor = 1.0;
             if (variationFactor < 0) {
                 if (textWordSpaceAdjust < 0) {
                     // from a negative adjustment to a positive one
-                    balancingFactor 
+                    balancingFactor
                         = ((double) textAdjustingInfo.availableStretch / textAdjustingInfo.availableShrink)
                             * ((double) lineShrink / lineStretch);
                 } else {
                     // from a positive adjustment to a negative one
-                    balancingFactor 
+                    balancingFactor
                         = ((double) textAdjustingInfo.availableShrink / textAdjustingInfo.availableStretch)
                             * ((double) lineStretch / lineShrink);
                 }

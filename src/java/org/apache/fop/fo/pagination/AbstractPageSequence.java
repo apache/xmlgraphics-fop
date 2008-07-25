@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ import org.apache.fop.fo.PropertyList;
  * <code>fox:external-document</code></a> extension object.
  */
 public abstract class AbstractPageSequence extends FObj {
-    
+
     // The value of properties relevant for fo:page-sequence.
     protected Numeric initialPageNumber;
     protected int forcePageCount;
@@ -81,7 +81,7 @@ public abstract class AbstractPageSequence extends FObj {
      */
     public void initPageNumber() {
         int pageNumberType = 0;
-        
+
         if (initialPageNumber.getEnum() != 0) {
             // auto | auto-odd | auto-even.
             startingPageNumber = getRoot().getEndingPageNumberOfPreviousSequence() + 1;
@@ -143,7 +143,7 @@ public abstract class AbstractPageSequence extends FObj {
     public Numeric getInitialPageNumber() {
         return initialPageNumber;
     }
-    
+
     /**
      * Get the value of the <code>reference-orientation</code> property.
      * @return the "reference-orientation" property

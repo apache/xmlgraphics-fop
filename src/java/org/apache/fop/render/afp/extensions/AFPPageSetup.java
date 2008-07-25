@@ -49,7 +49,7 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable, XMLizabl
 
     /**
      * Default constructor.
-     * 
+     *
      * @param elementName the name of the setup code object, may be null
      */
     public AFPPageSetup(String elementName) {
@@ -75,7 +75,7 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable, XMLizabl
     }
 
     /**
-     * @return the value 
+     * @return the value
      */
     public String getValue() {
         return value;
@@ -88,7 +88,7 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable, XMLizabl
     public void setValue(String source) {
         this.value = source;
     }
-    
+
     /** {@inheritDoc} */
     public String getCategory() {
         return CATEGORY;
@@ -111,7 +111,7 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable, XMLizabl
 
     /** {@inheritDoc} */
     public String toString() {
-        return "AFPPageSetup(element-name=" + getElementName() 
+        return "AFPPageSetup(element-name=" + getElementName()
             + " name=" + getName() + " value=" + getValue() + ")";
     }
 

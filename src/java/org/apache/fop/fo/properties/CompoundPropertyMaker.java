@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,13 +26,13 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * This class extends Property.Maker with support for sub-properties.  
+ * This class extends Property.Maker with support for sub-properties.
  */
 public class CompoundPropertyMaker extends PropertyMaker {
     /**
      *  The list of subproperty makers supported by this compound maker.
-     */ 
-    private PropertyMaker[] subproperties = 
+     */
+    private PropertyMaker[] subproperties =
                     new PropertyMaker[Constants.COMPOUND_COUNT];
 
     /**
@@ -63,7 +63,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
             }
         }
     }
-    
+
     /**
      * Add a subproperty to this maker.
      * @param subproperty
@@ -72,7 +72,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
         // Place the base propId in the propId of the subproperty.
         subproperty.propId &= Constants.COMPOUND_MASK;
         subproperty.propId |= propId;
-        
+
         subproperties[getSubpropIndex(subproperty.getPropId())] = subproperty;
 
         // Store the first subproperty with a setByShorthand. That subproperty
@@ -81,8 +81,8 @@ public class CompoundPropertyMaker extends PropertyMaker {
             shorthandMaker = subproperty;
         }
     }
-    
-    
+
+
     /**
      * Return a Maker object which is used to set the values on components
      * of compound property types, such as "space".
@@ -96,11 +96,11 @@ public class CompoundPropertyMaker extends PropertyMaker {
     public PropertyMaker getSubpropMaker(int subpropertyId) {
         return subproperties[getSubpropIndex(subpropertyId)];
     }
-    
+
     /**
      * Calculate the real value of a subproperty by unmasking and shifting
      * the value into the range [0 - (COMPOUND_COUNT-1)].
-     * The value is used as index into the subproperties array. 
+     * The value is used as index into the subproperties array.
      * @param propId the property id of the sub property.
      * @return the array index.
      */
@@ -111,7 +111,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
 
     /**
      * For compound properties which can take enumerate values.
-     * Delegate the enumeration check to one of the subpropeties. 
+     * Delegate the enumeration check to one of the subpropeties.
      * @param value the string containing the property value
      * @return the Property encapsulating the enumerated equivalent of the
      * input value
@@ -136,7 +136,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      *        Is 0 when retriving a base property.
      * @param propertyList The PropertyList object being built for this FO.
      * @param tryInherit true if inherited properties should be examined.
-     * @param tryDefault true if the default value should be returned. 
+     * @param tryDefault true if the default value should be returned.
      */
     public Property get(int subpropertyId, PropertyList propertyList,
                         boolean tryInherit, boolean tryDefault)
@@ -148,7 +148,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
         }
         return p;
     }
-   
+
     /**
      * Return a Property object based on the passed Property object.
      * This method is called if the Property object built by the parser
@@ -165,7 +165,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
                                     FObj fo) throws PropertyException {
         // Delegate to the subproperty maker to do conversions.
         p = shorthandMaker.convertProperty(p, propertyList, fo);
-        
+
         if (p != null) {
             Property prop = makeCompound(propertyList, fo);
             CompoundDatatype pval = (CompoundDatatype) prop.getObject();
@@ -181,7 +181,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
     }
 
     /**
-     * Make a compound property with default values. 
+     * Make a compound property with default values.
      * @param propertyList The PropertyList object being built for this FO.
      * @return the Property object corresponding to the parameters
      * @throws PropertyException for invalid or inconsisten FO input
@@ -193,7 +193,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
             return makeCompound(propertyList, propertyList.getParentFObj());
         }
     }
-    
+
     /**
      * Create a Property object from an attribute specification.
      * @param propertyList The PropertyList object being built for this FO.
@@ -201,14 +201,14 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param fo The parent FO for the FO whose property is being made.
      * @return The initialized Property object.
      * @throws PropertyException for invalid or inconsistent FO input
-     */    
+     */
     public Property make(PropertyList propertyList, String value,
                          FObj fo) throws PropertyException {
         Property p = super.make(propertyList, value, fo);
         p = convertProperty(p, propertyList, fo);
-        return p; 
+        return p;
     }
-    
+
     /**
      * Return a property value for a compound property. If the property
      * value is already partially initialized, this method will modify it.
@@ -243,7 +243,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
         }
         return baseProperty;
     }
-    
+
     /**
      * Create a empty compound property and fill it with default values for
      * the subproperties.
@@ -265,5 +265,5 @@ public class CompoundPropertyMaker extends PropertyMaker {
             }
         }
         return p;
-    }    
+    }
 }

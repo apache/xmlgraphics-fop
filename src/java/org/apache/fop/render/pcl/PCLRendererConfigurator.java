@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,10 +27,10 @@ import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
 
 /**
- * PCL Renderer configurator 
+ * PCL Renderer configurator
  */
 public class PCLRendererConfigurator extends PrintRendererConfigurator {
-    
+
     /**
      * Default constructor
      * @param userAgent user agent
@@ -41,7 +41,7 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
 
     /**
      * Configure the PCL renderer.
-     * 
+     *
      * @param renderer PCL renderer
      * @throws FOPException fop exception
      */
@@ -49,7 +49,7 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
         Configuration cfg = super.getRendererConfig(renderer);
         if (cfg != null) {
             PCLRenderer pclRenderer = (PCLRenderer)renderer;
-            
+
             String rendering = cfg.getChild("rendering").getValue(null);
             if ("quality".equalsIgnoreCase(rendering)) {
                 pclRenderer.setQualityBeforeSpeed(true);
@@ -57,10 +57,10 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
                 pclRenderer.setQualityBeforeSpeed(false);
             } else if (rendering != null) {
                 throw new FOPException(
-                        "Valid values for 'rendering' are 'quality' and 'speed'. Value found: " 
+                        "Valid values for 'rendering' are 'quality' and 'speed'. Value found: "
                             + rendering);
             }
-            
+
             String textRendering = cfg.getChild("text-rendering").getValue(null);
             if ("bitmap".equalsIgnoreCase(textRendering)) {
                 pclRenderer.setAllTextAsBitmaps(true);
@@ -68,10 +68,10 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator {
                 pclRenderer.setAllTextAsBitmaps(false);
             } else if (textRendering != null) {
                 throw new FOPException(
-                        "Valid values for 'text-rendering' are 'auto' and 'bitmap'. Value found: " 
+                        "Valid values for 'text-rendering' are 'auto' and 'bitmap'. Value found: "
                             + textRendering);
             }
-            
+
             pclRenderer.setPJLDisabled(cfg.getChild("disable-pjl").getValueAsBoolean(false));
         }
         super.configure(renderer);

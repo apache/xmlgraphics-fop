@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 /**
@@ -50,7 +50,7 @@ public class PDFRoot extends PDFDictionary {
         new PDFName("UseThumbs"),
         new PDFName("FullScreen"),
     };
-    
+
     /**
      * create a Root (/Catalog) object. NOTE: The PDFRoot
      * object must be created before the PDF document is
@@ -94,7 +94,7 @@ public class PDFRoot extends PDFDictionary {
             return PAGEMODE_USENONE;
         }
     }
-    
+
     /**
      * add a /Page object to the root /Pages object
      *
@@ -123,7 +123,7 @@ public class PDFRoot extends PDFDictionary {
         PDFReference ref = (PDFReference)get("Pages");
         return (ref != null ? (PDFPages)ref.getObject() : null);
     }
-    
+
     /**
      * Sets the /PageLabels object.
      * @param pageLabels the /PageLabels object
@@ -131,7 +131,7 @@ public class PDFRoot extends PDFDictionary {
     public void setPageLabels(PDFPageLabels pageLabels) {
         put("PageLabels", pageLabels.makeReference());
     }
-    
+
     /**
      * Returns the /PageLabels object.
      * @return the /PageLabels object if set, null otherwise.
@@ -141,7 +141,7 @@ public class PDFRoot extends PDFDictionary {
         PDFReference ref = (PDFReference)get("PageLabels");
         return (ref != null ? (PDFPageLabels)ref.getObject() : null);
     }
-    
+
     /**
      * Set the root outline for the PDF document.
      *
@@ -149,7 +149,7 @@ public class PDFRoot extends PDFDictionary {
      */
     public void setRootOutline(PDFOutline out) {
         put("Outlines", out.makeReference());
-        
+
         //Set /PageMode to /UseOutlines by default if no other mode has been set
         PDFName mode = (PDFName)get("PageMode");
         if (mode == null) {
@@ -166,7 +166,7 @@ public class PDFRoot extends PDFDictionary {
         PDFReference ref = (PDFReference)get("Outlines");
         return (ref != null ? (PDFOutline)ref.getObject() : null);
     }
-    
+
     /**
      * Set the /Names object.
      * @param names the Names object
@@ -175,7 +175,7 @@ public class PDFRoot extends PDFDictionary {
     public void setNames(PDFNames names) {
         put("Names", names.makeReference());
     }
-    
+
     /**
      * Returns the /Names object.
      * @return the Names object if set, null otherwise.
@@ -185,7 +185,7 @@ public class PDFRoot extends PDFDictionary {
         PDFReference ref = (PDFReference)get("Names");
         return (ref != null ? (PDFNames)ref.getObject() : null);
     }
-    
+
     /**
      * Set the optional Metadata object.
      * @param meta the Metadata object
@@ -196,7 +196,7 @@ public class PDFRoot extends PDFDictionary {
             put("Metadata", meta.makeReference());
         }
     }
-    
+
     /**
      * Returns the /Metadata object
      * @return the /Metadata object if set, null otherwise.
@@ -215,7 +215,7 @@ public class PDFRoot extends PDFDictionary {
     public PDFArray getOutputIntents() {
         return (PDFArray)get("OutputIntents");
     }
-    
+
     /**
      * Adds an OutputIntent to the PDF
      * @param outputIntent the OutputIntent dictionary
@@ -223,7 +223,7 @@ public class PDFRoot extends PDFDictionary {
      */
     public void addOutputIntent(PDFOutputIntent outputIntent) {
         if (getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
-            PDFArray outputIntents = getOutputIntents(); 
+            PDFArray outputIntents = getOutputIntents();
             if (outputIntents == null) {
                 outputIntents = new PDFArray(this);
                 put("OutputIntents", outputIntents);
@@ -231,7 +231,7 @@ public class PDFRoot extends PDFDictionary {
             outputIntents.add(outputIntent);
         }
     }
-    
+
     /**
      * Returns the language identifier of the document.
      * @return the language identifier of the document (or null if not set or undefined)
@@ -240,7 +240,7 @@ public class PDFRoot extends PDFDictionary {
     public String getLanguage() {
         return (String)get("Lang");
     }
-    
+
     /**
      * Sets the language identifier of the document.
      * @param lang the language identifier of the document.
@@ -251,5 +251,5 @@ public class PDFRoot extends PDFDictionary {
         }
         put("Lang", lang);
     }
-    
+
 }

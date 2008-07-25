@@ -42,14 +42,14 @@ public class StreamRedirector implements Runnable {
         this.in = in;
         this.handler = handler;
     }
-    
+
     /**
      * @return true if the run() method was terminated by an exception.
      */
     public boolean hasFailed() {
         return (this.exception != null);
     }
-    
+
     /**
      * @return the exception if the run() method was terminated by an exception, or null
      */

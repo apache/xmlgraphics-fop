@@ -89,7 +89,7 @@ import org.apache.fop.layoutengine.LayoutEngineTestSuite;
  * source files with. Default: no stylesheet, identity transform.
  * <p>
  * The "producers" element contains a list of producer implementations with configuration.
- * The "classname" attribute specifies the fully qualified class name for the implementation.  
+ * The "classname" attribute specifies the fully qualified class name for the implementation.
  */
 public class BatchDiffer {
 
@@ -114,7 +114,7 @@ public class BatchDiffer {
      * @throws SAXException In case of a problem during SAX processing
      * @throws IOException In case of a I/O problem
      */
-    public void runBatch(File cfgFile) 
+    public void runBatch(File cfgFile)
                 throws ConfigurationException, SAXException, IOException {
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
         Configuration cfg = cfgBuilder.buildFromFile(cfgFile);
@@ -141,7 +141,7 @@ public class BatchDiffer {
                 }
             }
             BitmapProducer[] producers = getProducers(cfg.getChild("producers"));
-            
+
             //Set up directories
             File srcDir = new File(cfg.getChild("source-directory").getValue());
             if (!srcDir.exists()) {
@@ -153,12 +153,12 @@ public class BatchDiffer {
                 throw new RuntimeException("target-directory is invalid: " + targetDir);
             }
             context.setTargetDir(targetDir);
-            
+
             boolean stopOnException = cfg.getChild("stop-on-exception").getValueAsBoolean(true);
             final boolean createDiffs = cfg.getChild("create-diffs").getValueAsBoolean(true);
-            
+
             //RUN!
-            
+
             IOFileFilter filter = new SuffixFileFilter(new String[] {".xml", ".fo"});
             //Same filtering as in layout engine tests
             if (cfg.getChild("filter-disabled").getValueAsBoolean(true)) {
@@ -191,10 +191,10 @@ public class BatchDiffer {
                     }
                     //Create combined image
                     if (bitmaps[0] == null) {
-                        throw new RuntimeException("First producer didn't return a bitmap for " 
+                        throw new RuntimeException("First producer didn't return a bitmap for "
                                 + f + ". Cannot continue.");
                     }
-                    
+
                     Runnable runnable = new Runnable() {
                         public void run() {
                             try {
@@ -226,11 +226,11 @@ public class BatchDiffer {
             throw new RuntimeException("Error while configuring BatchDiffer: " + e.getMessage());
         }
     }
-    
+
     private void saveBitmaps(File targetDir, File srcFile, boolean createDiffs,
             BufferedImage[] bitmaps) throws IOException {
         BufferedImage combined = BitmapComparator.buildCompareImage(bitmaps);
-        
+
         //Save combined bitmap as PNG file
         File outputFile = new File(targetDir, srcFile.getName() + "._combined.png");
         ImageWriterUtil.saveAsPNG(combined, outputFile);
@@ -244,7 +244,7 @@ public class BatchDiffer {
             }
         }
     }
-    
+
     private BitmapProducer[] getProducers(Configuration cfg) {
         Configuration[] children = cfg.getChildren("producer");
         BitmapProducer[] producers = new BitmapProducer[children.length];
@@ -260,7 +260,7 @@ public class BatchDiffer {
         }
         return producers;
     }
-    
+
     /**
      * Main method.
      * @param args command-line arguments
@@ -278,16 +278,16 @@ public class BatchDiffer {
                 printUsage();
                 System.exit(-1);
             }
-     
+
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             BatchDiffer differ = new BatchDiffer();
             differ.runBatch(cfgFile);
-            
+
             System.out.println("Regular exit...");
         } catch (Exception e) {
             System.out.println("Exception caught...");
             e.printStackTrace();
         }
     }
-    
+
 }

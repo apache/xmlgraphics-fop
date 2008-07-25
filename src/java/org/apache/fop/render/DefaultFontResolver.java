@@ -30,7 +30,7 @@ import org.apache.fop.fonts.FontResolver;
 public class DefaultFontResolver implements FontResolver {
 
     private FOUserAgent userAgent;
-    
+
     /**
      * Main constructor.
      * @param userAgent the user agent
@@ -38,10 +38,10 @@ public class DefaultFontResolver implements FontResolver {
     public DefaultFontResolver(FOUserAgent userAgent) {
         this.userAgent = userAgent;
     }
-    
+
     /** {@inheritDoc} */
     public Source resolve(String href) {
         return userAgent.resolveURI(href, userAgent.getFontBaseURL());
     }
-    
+
 }

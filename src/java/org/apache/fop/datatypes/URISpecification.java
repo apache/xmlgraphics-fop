@@ -57,19 +57,19 @@ public class URISpecification {
 
     private static final String PUNCT = ",;:$&+=";
     private static final String RESERVED = PUNCT + "?/[]@";
-    
+
     private static boolean isValidURIChar(char ch) {
         return true;
     }
-    
+
     private static boolean isDigit(char ch) {
         return (ch >= '0' && ch <= '9');
     }
-    
+
     private static boolean isAlpha(char ch) {
         return (ch >= 'A' && ch <= 'Z') || (ch >= 'A' && ch <= 'z');
     }
-    
+
     private static boolean isHexDigit(char ch) {
         return (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f');
     }
@@ -83,7 +83,7 @@ public class URISpecification {
         }
         return false;
     }
-    
+
     private static boolean isUnreserved(char ch) {
         if (isDigit(ch) || isAlpha(ch)) {
             return true;
@@ -93,7 +93,7 @@ public class URISpecification {
         }
         return false;
     }
-    
+
     private final static char[] HEX_DIGITS = {
         '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
@@ -137,5 +137,5 @@ public class URISpecification {
         }
         return sb.toString();
     }
-    
+
 }

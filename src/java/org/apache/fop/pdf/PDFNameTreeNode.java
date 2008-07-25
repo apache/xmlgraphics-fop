@@ -43,7 +43,7 @@ public class PDFNameTreeNode extends PDFDictionary {
     public void setKids(PDFArray kids) {
         put(KIDS, kids);
     }
-    
+
     /**
      * Returns the Kids array.
      * @return the Kids array
@@ -51,7 +51,7 @@ public class PDFNameTreeNode extends PDFDictionary {
     public PDFArray getKids() {
         return (PDFArray)get(KIDS);
     }
-    
+
     /**
      * Sets the Names array.
      * @param names the Names array
@@ -59,7 +59,7 @@ public class PDFNameTreeNode extends PDFDictionary {
     public void setNames(PDFArray names) {
         put(NAMES, names);
     }
-    
+
     /**
      * Returns the Names array.
      * @return the Names array
@@ -67,7 +67,7 @@ public class PDFNameTreeNode extends PDFDictionary {
     public PDFArray getNames() {
         return (PDFArray)get(NAMES);
     }
-    
+
     /**
      * Sets the lower limit value of the Limits array.
      * @param key the lower limit value
@@ -116,6 +116,6 @@ public class PDFNameTreeNode extends PDFDictionary {
         }
         return limits;
     }
-    
+
 }
 

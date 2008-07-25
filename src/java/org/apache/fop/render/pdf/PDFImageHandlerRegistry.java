@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class PDFImageHandlerRegistry {
 
     /** the logger */
     private static Log log = LogFactory.getLog(PDFImageHandlerRegistry.class);
-    
+
     private static final Comparator HANDLER_COMPARATOR = new Comparator() {
         public int compare(Object o1, Object o2) {
             PDFImageHandler h1 = (PDFImageHandler)o1;
@@ -54,19 +54,19 @@ public class PDFImageHandlerRegistry {
     private Map handlers = new java.util.HashMap();
     /** List containing the same handlers as above but ordered by priority */
     private List handlerList = new java.util.LinkedList();
-    
+
     /** Sorted Set of registered handlers */
     private ImageFlavor[] supportedFlavors = new ImageFlavor[0];
     private int handlerRegistrations;
     private int lastSync;
-    
+
     /**
      * Default constructor.
      */
     public PDFImageHandlerRegistry() {
         discoverHandlers();
     }
-    
+
     /**
      * Add an PDFImageHandler. The handler itself is inspected to find out what it supports.
      * @param classname the fully qualified class name
@@ -87,11 +87,11 @@ public class PDFImageHandlerRegistry {
                                                + classname);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(classname
-                                               + " is not an " 
+                                               + " is not an "
                                                + PDFImageHandler.class.getName());
         }
     }
-    
+
     /**
      * Add an image handler. The handler itself is inspected to find out what it supports.
      * @param handler the PDFImageHandler instance
@@ -99,7 +99,7 @@ public class PDFImageHandlerRegistry {
     public synchronized void addHandler(PDFImageHandler handler) {
         Class imageClass = handler.getSupportedImageClass();
         this.handlers.put(imageClass, handler);
-        
+
         //Sorted insert
         ListIterator iter = this.handlerList.listIterator();
         while (iter.hasNext()) {
@@ -112,7 +112,7 @@ public class PDFImageHandlerRegistry {
         iter.add(handler);
         this.handlerRegistrations++;
     }
-    
+
     /**
      * Returns an PDFImageHandler which handles an specific image type given the MIME type
      * of the image.
@@ -143,7 +143,7 @@ public class PDFImageHandlerRegistry {
     }
 
     /**
-     * Returns the ordered array of supported image flavors. 
+     * Returns the ordered array of supported image flavors.
      * @return the array of image flavors
      */
     public synchronized ImageFlavor[] getSupportedFlavors() {
@@ -162,7 +162,7 @@ public class PDFImageHandlerRegistry {
         }
         return this.supportedFlavors;
     }
-    
+
     /**
      * Discovers PDFImageHandler implementations through the classpath and dynamically
      * registers them.
@@ -175,7 +175,7 @@ public class PDFImageHandlerRegistry {
                 PDFImageHandler handler = (PDFImageHandler)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dynamically adding PDFImageHandler: " 
+                        log.debug("Dynamically adding PDFImageHandler: "
                                 + handler.getClass().getName());
                     }
                     addHandler(handler);

@@ -33,5 +33,5 @@ public class EventConventionException extends Exception {
     public EventConventionException(String message) {
         super(message);
     }
-    
+
 }

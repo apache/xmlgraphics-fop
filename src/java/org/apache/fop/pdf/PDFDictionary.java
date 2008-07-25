@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ import org.apache.commons.io.output.CountingOutputStream;
  * Class representing a PDF dictionary object
  */
 public class PDFDictionary extends PDFObject {
-    
+
     /**
      * the entry map
      */
@@ -43,7 +43,7 @@ public class PDFDictionary extends PDFObject {
      * "entries", always make sure you adjust this list accordingly.
      */
     protected List order = new java.util.ArrayList();
-    
+
     /**
      * Create a new dictionary object.
      */
@@ -76,7 +76,7 @@ public class PDFDictionary extends PDFObject {
         }
         this.entries.put(name, value);
     }
-    
+
     /**
      * Puts a new name/value pair.
      * @param name the name
@@ -88,7 +88,7 @@ public class PDFDictionary extends PDFObject {
         }
         this.entries.put(name, new Integer(value));
     }
-    
+
     /**
      * Returns the value given a name.
      * @param name the name of the value
@@ -97,7 +97,7 @@ public class PDFDictionary extends PDFObject {
     public Object get(String name) {
         return this.entries.get(name);
     }
-    
+
     /** {@inheritDoc} */
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
@@ -105,17 +105,17 @@ public class PDFDictionary extends PDFObject {
         if (hasObjectNumber()) {
             writer.write(getObjectID());
         }
-        
+
         writeDictionary(cout, writer);
 
         if (hasObjectNumber()) {
             writer.write("\nendobj\n");
         }
-        
+
         writer.flush();
         return cout.getCount();
     }
-    
+
     /**
      * Writes the contents of the dictionary to a StringBuffer.
      * @param out the OutputStream (for binary content)

@@ -31,7 +31,7 @@ public interface PSEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
@@ -50,9 +50,9 @@ public interface PSEventProducer extends EventProducer {
         public EventModel createEventModel() {
             return loadModel(getClass(), "event-model.xml");
         }
-        
+
     }
-    
+
     /**
      * A PostScript dictionary could not be parsed.
      * @param source the event source
@@ -61,5 +61,5 @@ public interface PSEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void postscriptDictionaryParseError(Object source, String content, Exception e);
-    
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,21 +39,21 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class ColorUtil {
 
     /**
-     * 
+     *
      * keeps all the predefined and parsed colors.
      * <p>
      * This map is used to predefine given colors, as well as speeding up
      * parsing of already parsed colors.
      */
     private static Map colorMap = null;
-    
+
     /** Logger instance */
     protected static Log log = LogFactory.getLog(ColorUtil.class);
-    
+
     static {
         initializeColorMap();
     }
-    
+
     /**
      * Private constructor since this is an utility class.
      */
@@ -77,8 +77,8 @@ public final class ColorUtil {
      * <li>fop-rgb-icc(r,g,b,cs,cs-src,[num]+) (r/g/b: 0..1, num: 0..1)</li>
      * <li>cmyk(c,m,y,k) (0..1)</li>
      * </ul>
-     * 
-     * @param foUserAgent FOUserAgent object  
+     *
+     * @param foUserAgent FOUserAgent object
      * @param value
      *            the string to parse.
      * @return a Color representing the string if possible
@@ -86,7 +86,7 @@ public final class ColorUtil {
      *             if the string is not parsable or does not follow any of the
      *             given formats.
      */
-    public static Color parseColorString(FOUserAgent foUserAgent, String value) 
+    public static Color parseColorString(FOUserAgent foUserAgent, String value)
             throws PropertyException {
         if (value == null) {
             return null;
@@ -111,11 +111,11 @@ public final class ColorUtil {
             } else if (value.startsWith("cmyk")) {
                 parsedColor = parseAsCMYK(value);
             }
-            
+
             if (parsedColor == null) {
                 throw new PropertyException("Unknown Color: " + value);
             }
-            
+
             colorMap.put(value, parsedColor);
         }
 
@@ -127,7 +127,7 @@ public final class ColorUtil {
 
     /**
      * Tries to parse a color given with the system-color() function.
-     * 
+     *
      * @param value
      *            the complete line
      * @return a color if possible
@@ -149,7 +149,7 @@ public final class ColorUtil {
 
     /**
      * Tries to parse the standard java.awt.Color toString output.
-     * 
+     *
      * @param value
      *            the complete line
      * @return a color if possible
@@ -170,11 +170,11 @@ public final class ColorUtil {
                     throw new PropertyException(
                             "Invalid number of arguments for a java.awt.Color: " + value);
                 }
-                
+
                 red = Float.parseFloat(args[0].trim().substring(2)) / 255f;
                 green = Float.parseFloat(args[1].trim().substring(2)) / 255f;
                 blue = Float.parseFloat(args[2].trim().substring(2)) / 255f;
-                if ((red < 0.0 || red > 1.0) 
+                if ((red < 0.0 || red > 1.0)
                         || (green < 0.0 || green > 1.0)
                         || (blue < 0.0 || blue > 1.0)) {
                     throw new PropertyException("Color values out of range");
@@ -193,7 +193,7 @@ public final class ColorUtil {
 
     /**
      * Parse a color given with the rgb() function.
-     * 
+     *
      * @param value
      *            the complete line
      * @return a color if possible
@@ -234,7 +234,7 @@ public final class ColorUtil {
                 } else {
                     blue = Float.parseFloat(str) / 255f;
                 }
-                if ((red < 0.0 || red > 1.0) 
+                if ((red < 0.0 || red > 1.0)
                         || (green < 0.0 || green > 1.0)
                         || (blue < 0.0 || blue > 1.0)) {
                     throw new PropertyException("Color values out of range");
@@ -256,7 +256,7 @@ public final class ColorUtil {
 
     /**
      * parse a color given in the #.... format.
-     * 
+     *
      * @param value
      *            the complete line
      * @return a color if possible
@@ -297,19 +297,19 @@ public final class ColorUtil {
 
     /**
      * Parse a color specified using the fop-rgb-icc() function.
-     * 
+     *
      * @param value the function call
      * @return a color if possible
      * @throws PropertyException if the format is wrong.
      */
-    private static Color parseAsFopRgbIcc(FOUserAgent foUserAgent, String value) 
+    private static Color parseAsFopRgbIcc(FOUserAgent foUserAgent, String value)
             throws PropertyException {
         Color parsedColor;
         int poss = value.indexOf("(");
         int pose = value.indexOf(")");
         if (poss != -1 && pose != -1) {
             String[] args = value.substring(poss + 1, pose).split(",");
-            
+
             try {
                 if (args.length < 5) {
                     throw new PropertyException("Too few arguments for rgb-icc() function");
@@ -339,27 +339,27 @@ public final class ColorUtil {
                 ColorSpace colorSpace = (foUserAgent != null
                         ? foUserAgent.getFactory().getColorSpace(
                                 foUserAgent.getBaseURL(), iccProfileSrc) : null);
-                
+
                 float red = 0, green = 0, blue = 0;
                 red = Float.parseFloat(args[0].trim());
                 green = Float.parseFloat(args[1].trim());
                 blue = Float.parseFloat(args[2].trim());
                 /* Verify rgb replacement arguments */
-                if ((red < 0 || red > 1) 
-                        || (green < 0 || green > 1) 
+                if ((red < 0 || red > 1)
+                        || (green < 0 || green > 1)
                         || (blue < 0 || blue > 1)) {
                     throw new PropertyException("Color values out of range. "
                             + "Fallback RGB arguments to fop-rgb-icc() must be [0..1]");
                 }
 
                 if (colorSpace != null) {
-                    // ColorSpace available - create ColorExt (keeps track of replacement rgb 
+                    // ColorSpace available - create ColorExt (keeps track of replacement rgb
                     // values for possible later colorTOsRGBString call
-                    parsedColor = ColorExt.createFromFoRgbIcc(red, green, blue, 
+                    parsedColor = ColorExt.createFromFoRgbIcc(red, green, blue,
                             iccProfileName, iccProfileSrc, colorSpace, iccComponents);
                 } else {
                     // ICC profile could not be loaded - use rgb replacement values */
-                    log.warn("Color profile '" + iccProfileSrc 
+                    log.warn("Color profile '" + iccProfileSrc
                             + "' not found. Using rgb replacement values.");
                     parsedColor = new Color(Math.round(red * 255),
                             Math.round(green * 255), Math.round(blue * 255));
@@ -380,7 +380,7 @@ public final class ColorUtil {
 
     /**
      * Parse a color given with the cmyk() function.
-     * 
+     *
      * @param value
      *            the complete line
      * @return a color if possible
@@ -428,8 +428,8 @@ public final class ColorUtil {
                 } else {
                   black = Float.parseFloat(str);
                 }
-                
-                if ((cyan < 0.0 || cyan > 1.0) 
+
+                if ((cyan < 0.0 || cyan > 1.0)
                         || (magenta < 0.0 || magenta > 1.0)
                         || (yellow < 0.0 || yellow > 1.0)
                         || (black < 0.0 || black > 1.0)) {
@@ -439,7 +439,7 @@ public final class ColorUtil {
                 float[] cmyk = new float[] {cyan, magenta, yellow, black};
                 CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
                 float[] rgb = cmykCs.toRGB(cmyk);
-                parsedColor = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2], 
+                parsedColor = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
                         null, "#CMYK", cmykCs, cmyk);
             } catch (PropertyException pe) {
                 throw pe;
@@ -452,13 +452,13 @@ public final class ColorUtil {
         }
         return parsedColor;
     }
-    
+
     /**
      * Creates a re-parsable string representation of the given color.
      * <p>
      * First, the color will be converted into the sRGB colorspace. It will then
      * be printed as #rrggbb, or as #rrrggbbaa if an alpha value is present.
-     * 
+     *
      * @param color
      *            the color to represent.
      * @return a re-parsable string representadion.

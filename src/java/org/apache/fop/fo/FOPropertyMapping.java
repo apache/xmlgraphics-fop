@@ -101,7 +101,7 @@ public final class FOPropertyMapping implements Constants {
      * are used be the actual makers as a parameter to .useGeneric(...).
      */
     private void createGenerics() {
-        
+
         PropertyMaker sub;
 
         genericColor = new ColorProperty.Maker(0);
@@ -277,13 +277,13 @@ public final class FOPropertyMapping implements Constants {
      * @return the maker array.
      */
     public static PropertyMaker[] getGenericMappings() {
-        
+
         if (s_generics == null) {
             /* this method was never called before */
             s_generics = new PropertyMaker[PROPERTY_COUNT + 1];
             FOPropertyMapping gp = new FOPropertyMapping();
-            
-            /* Create the shorthand first. They are 
+
+            /* Create the shorthand first. They are
              * referenced by the real properties.
              */
             gp.createShorthandProperties();
@@ -313,7 +313,7 @@ public final class FOPropertyMapping implements Constants {
             gp.createTableProperties();
             gp.createWritingModeProperties();
             gp.createMiscProperties();
-    
+
             // Hardcode the subproperties.
             addSubpropMakerName("length", CP_LENGTH);
             addSubpropMakerName("conditionality", CP_CONDITIONALITY);
@@ -1848,7 +1848,7 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.setDefault("2");
         addPropertyMaker("widows", m);
-        
+
         // fox:widow-content-limit
         m  = new LengthProperty.Maker(PR_X_WIDOW_CONTENT_LIMIT);
         m.setInherited(true);
@@ -2773,7 +2773,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("normal");
         m.setDatatypeParser(new WhiteSpaceShorthandParser());
         addPropertyMaker("white-space", m);
-        
+
         // xml:lang
         m  = new StringProperty.Maker(PR_XML_LANG);
         m.setInherited(true);

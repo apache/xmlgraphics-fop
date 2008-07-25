@@ -43,7 +43,7 @@ public class AreaTreeInputHandler extends InputHandler {
      * Constructor for XML->XSLT->area tree XML input
      * @param xmlfile XML file
      * @param xsltfile XSLT file
-     * @param params Vector of command-line parameters (name, value, 
+     * @param params Vector of command-line parameters (name, value,
      *      name, value, ...) for XSL stylesheet, null if none
      */
     public AreaTreeInputHandler(File xmlfile, File xsltfile, Vector params) {
@@ -59,20 +59,20 @@ public class AreaTreeInputHandler extends InputHandler {
     }
 
     /** {@inheritDoc} */
-    public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out) 
+    public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out)
                 throws FOPException {
         FontInfo fontInfo = new FontInfo();
-        AreaTreeModel treeModel = new RenderPagesModel(userAgent, 
+        AreaTreeModel treeModel = new RenderPagesModel(userAgent,
                 outputFormat, fontInfo, out);
-        
+
         //Iterate over all intermediate files
         AreaTreeParser parser = new AreaTreeParser();
-        
+
         // Resulting SAX events (the generated FO) must be piped through to FOP
         Result res = new SAXResult(parser.getContentHandler(treeModel, userAgent));
 
         transformTo(res);
-        
+
         try {
             treeModel.endDocument();
         } catch (SAXException e) {

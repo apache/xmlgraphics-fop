@@ -23,12 +23,12 @@ package org.apache.fop.layoutmgr;
  * This class is the base class for all kinds of elements that are added to element lists. There
  * are basically two kinds of list elements: Knuth elements and unresolved elements like spaces,
  * border and padding elements which are converted to Knuth elements prior to the breaking
- * process. 
+ * process.
  */
 public abstract class ListElement {
 
     private Position position;
-    
+
     /**
      * Main constructor
      * @param position the Position instance needed by the addAreas stage of the LMs.
@@ -36,14 +36,14 @@ public abstract class ListElement {
     public ListElement(Position position) {
         this.position = position;
     }
-    
+
     /**
      * @return the Position instance for this element.
      */
     public Position getPosition() {
         return this.position;
     }
-    
+
     /**
      * Change the Position stored in this element.
      * @param position the Position instance
@@ -78,14 +78,14 @@ public abstract class ListElement {
         return false;
     }
 
-    /** @return true if the element is a penalty and represents a forced break. */ 
+    /** @return true if the element is a penalty and represents a forced break. */
     public boolean isForcedBreak() {
         return false;
     }
 
-    /** @return true if the element is an unresolved element such as a space or a border. */ 
+    /** @return true if the element is an unresolved element such as a space or a border. */
     public boolean isUnresolvedElement() {
         return true;
     }
-    
+
 }

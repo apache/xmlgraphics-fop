@@ -50,16 +50,16 @@ public class ElementListUtilsTestCase extends TestCase {
         lst.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, null, false));
         lst.add(new KnuthGlue(0, Integer.MAX_VALUE, 0, null, false));
         lst.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, null, false));
-        
+
         boolean res = ElementListUtils.removeLegalBreaks(lst, 9000);
-        
+
         assertFalse(res);
 
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(1)).getP());
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getP());
         assertEquals(0, ((KnuthPenalty)lst.get(5)).getP());
     }
-    
+
     /**
      * Tests ElementListUtils.removeLegalBreaks().
      * @throws Exception if the test fails
@@ -76,11 +76,11 @@ public class ElementListUtilsTestCase extends TestCase {
         lst.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, null, false));
         lst.add(new KnuthGlue(0, Integer.MAX_VALUE, 0, null, false));
         lst.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, null, false));
-        
+
         boolean res = ElementListUtils.removeLegalBreaks(lst, 9000);
-        
+
         assertFalse(res);
-        
+
         //Must insert an INFINITE penalty
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(1)).getP());
         assertEquals(0, ((KnuthGlue)lst.get(2)).getW());
@@ -88,7 +88,7 @@ public class ElementListUtilsTestCase extends TestCase {
         assertEquals(0, ((KnuthGlue)lst.get(5)).getW());
         assertEquals(0, ((KnuthGlue)lst.get(7)).getW());
     }
-    
+
     /**
      * Tests ElementListUtils.removeLegalBreaksFromEnd().
      * @throws Exception if the test fails
@@ -105,16 +105,16 @@ public class ElementListUtilsTestCase extends TestCase {
         lst.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, null, false));
         lst.add(new KnuthGlue(0, Integer.MAX_VALUE, 0, null, false));
         lst.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, null, false));
-        
+
         boolean res = ElementListUtils.removeLegalBreaksFromEnd(lst, 9000);
-        
+
         assertFalse(res);
 
         assertEquals(0, ((KnuthPenalty)lst.get(1)).getP());
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getP());
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(5)).getP());
     }
-    
+
     /**
      * Tests ElementListUtils.removeLegalBreaksFromEnd().
      * @throws Exception if the test fails
@@ -131,9 +131,9 @@ public class ElementListUtilsTestCase extends TestCase {
         lst.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, null, false));
         lst.add(new KnuthGlue(0, Integer.MAX_VALUE, 0, null, false));
         lst.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, null, false));
-        
+
         boolean res = ElementListUtils.removeLegalBreaksFromEnd(lst, 9000);
-        
+
         assertFalse(res);
 
         //Must insert an INFINITE penalty
@@ -142,6 +142,6 @@ public class ElementListUtilsTestCase extends TestCase {
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(5)).getP());
         assertEquals(0, ((KnuthGlue)lst.get(6)).getW());
     }
-    
-    
+
+
 }

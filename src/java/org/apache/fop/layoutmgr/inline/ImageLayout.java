@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,10 +35,10 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  * Helper class which calculates the size and position in the viewport of an image.
  */
 public class ImageLayout implements Constants {
-    
+
     /** logging instance */
     protected static Log log = LogFactory.getLog(ImageLayout.class);
-    
+
     //Input
     private GraphicsProperties props;
     private PercentBaseContext percentBaseContext;
@@ -48,7 +48,7 @@ public class ImageLayout implements Constants {
     private Rectangle placement;
     private Dimension viewportSize = new Dimension(-1, -1);
     private boolean clip;
-    
+
     /**
      * Main constructor
      * @param props the properties for the image
@@ -60,7 +60,7 @@ public class ImageLayout implements Constants {
         this.props = props;
         this.percentBaseContext = percentBaseContext;
         this.intrinsicSize = intrinsicSize;
-        
+
         doLayout();
     }
 
@@ -72,7 +72,7 @@ public class ImageLayout implements Constants {
 
         int bpd = -1;
         int ipd = -1;
-        
+
         len = props.getBlockProgressionDimension().getOptimum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
             bpd = len.getValue(percentBaseContext);
@@ -155,7 +155,7 @@ public class ImageLayout implements Constants {
         } else {
             constrainedIntrinsicSize = intrinsicSize;
         }
-        
+
         //Derive content extents where not explicit
         Dimension adjustedDim = adjustContentSize(cwidth, cheight, constrainedIntrinsicSize);
         cwidth = adjustedDim.width;
@@ -190,10 +190,10 @@ public class ImageLayout implements Constants {
         this.viewportSize.setSize(ipd, bpd);
         this.placement = new Rectangle(xoffset, yoffset, cwidth, cheight);
     }
-    
+
     private int constrainExtent(int extent, LengthRangeProperty range, Length contextExtent) {
-        boolean mayScaleUp = (contextExtent.getEnum() != EN_SCALE_DOWN_TO_FIT); 
-        boolean mayScaleDown = (contextExtent.getEnum() != EN_SCALE_UP_TO_FIT); 
+        boolean mayScaleUp = (contextExtent.getEnum() != EN_SCALE_DOWN_TO_FIT);
+        boolean mayScaleDown = (contextExtent.getEnum() != EN_SCALE_UP_TO_FIT);
         Length len;
         len = range.getMaximum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
@@ -211,7 +211,7 @@ public class ImageLayout implements Constants {
         }
         return extent;
     }
-    
+
     private Dimension constrain(Dimension size) {
         Dimension adjusted = new Dimension(size);
         int effWidth = constrainExtent(size.width,
@@ -235,7 +235,7 @@ public class ImageLayout implements Constants {
         }
         return adjusted;
     }
-    
+
     private Dimension adjustContentSize(
             final int cwidth, final int cheight,
             Dimension defaultSize) {
@@ -249,14 +249,14 @@ public class ImageLayout implements Constants {
                 if (defaultSize.height == 0) {
                     dim.width = 0;
                 } else {
-                    dim.width = (int)(defaultSize.width * (double)cheight 
+                    dim.width = (int)(defaultSize.width * (double)cheight
                             / defaultSize.height);
                 }
             } else if (cheight == -1) {
                 if (defaultSize.width == 0) {
                     dim.height = 0;
                 } else {
-                    dim.height = (int)(defaultSize.height * (double)cwidth 
+                    dim.height = (int)(defaultSize.height * (double)cwidth
                             / defaultSize.width);
                 }
             } else {
@@ -278,7 +278,7 @@ public class ImageLayout implements Constants {
         }
         return dim;
     }
-    
+
     /**
      * Given the ipd and the content width calculates the
      * required x offset based on the text-align property
@@ -336,7 +336,7 @@ public class ImageLayout implements Constants {
     public Rectangle getPlacement() {
         return this.placement;
     }
-    
+
     /**
      * Returns the size of the image's viewport.
      * @return the viewport size (in millipoints)
@@ -344,7 +344,7 @@ public class ImageLayout implements Constants {
     public Dimension getViewportSize() {
         return this.viewportSize;
     }
-    
+
     /**
      * Returns the size of the image's intrinsic (natural) size.
      * @return the intrinsic size (in millipoints)
@@ -352,7 +352,7 @@ public class ImageLayout implements Constants {
     public Dimension getIntrinsicSize() {
         return this.intrinsicSize;
     }
-    
+
     /**
      * Indicates whether the image is clipped.
      * @return true if the image shall be clipped
@@ -360,5 +360,5 @@ public class ImageLayout implements Constants {
     public boolean isClipped() {
         return this.clip;
     }
-    
+
 }

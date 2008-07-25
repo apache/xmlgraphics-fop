@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import org.apache.fop.fonts.FontType;
@@ -59,16 +59,16 @@ public class PDFFontDescriptor extends PDFDictionary {
 
     /**
      * Set the optional metrics.
-     * @param avgWidth The average width of characters in this font. 
+     * @param avgWidth The average width of characters in this font.
      * The default value is 0.
-     * @param maxWidth The maximum width of characters in this font. 
+     * @param maxWidth The maximum width of characters in this font.
      * The default value is 0.
      * @param missingWidth missing width
-     * @param leading the desired spacing between lines of text. 
+     * @param leading the desired spacing between lines of text.
      * The default value is 0.
-     * @param stemH The vertical width of the dominant horizontal stems of 
+     * @param stemH The vertical width of the dominant horizontal stems of
      * glyphs in the font. The default value is 0.
-     * @param xHeight The y-coordinate of the top of flat non-ascending 
+     * @param xHeight The y-coordinate of the top of flat non-ascending
      * lowercase letters, measured from the baseline. The default value is 0.
      */
     public void setMetrics(int avgWidth, int maxWidth, int missingWidth,
@@ -119,7 +119,7 @@ public class PDFFontDescriptor extends PDFDictionary {
         }
         return stream;
     }
-    
+
     /**
      * Sets the CIDSet stream for this font descriptor. (Optional)
      * @param cidSet the CIDSet stream
@@ -127,19 +127,19 @@ public class PDFFontDescriptor extends PDFDictionary {
     public void setCIDSet(AbstractPDFStream cidSet) {
         put("CIDSet", cidSet);
     }
-    
+
     /** @return the CIDSet stream or null if not applicable */
     public AbstractPDFStream getCIDSet() {
         return (AbstractPDFStream)get("CIDSet");
     }
-    
+
     /**
      * {@inheritDoc}
      */
     /*
     public String toPDFString() {
         StringBuffer p = new StringBuffer(128);
-        p.append(getObjectID() 
+        p.append(getObjectID()
                 + "<< /Type /FontDescriptor"
                 + "\n/FontName /" + this.basefont);
 

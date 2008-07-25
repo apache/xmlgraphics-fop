@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ public class BlockContainer extends FObj {
     /**
      * Creates a new BlockContainer instance as a child of
      * the given {@link FONode}.
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public BlockContainer(FONode parent) {
@@ -104,13 +104,13 @@ public class BlockContainer extends FObj {
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: marker* (%block;)+
-     * <br><i><b>BUT</b>: "In addition an fo:block-container that does not generate an 
-     * absolutely positioned area may have a sequence of zero or more 
+     * <br><i><b>BUT</b>: "In addition an fo:block-container that does not generate an
+     * absolutely positioned area may have a sequence of zero or more
      * fo:markers as its initial children."
      * The latter refers to block-containers with absolute-position="absolute"
      * or absolute-position="fixed".
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if ("marker".equals(localName)) {
@@ -148,7 +148,7 @@ public class BlockContainer extends FObj {
     public CommonAbsolutePosition getCommonAbsolutePosition() {
         return commonAbsolutePosition;
     }
-    
+
     /** @return the {@link CommonMarginBlock} */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
@@ -170,7 +170,7 @@ public class BlockContainer extends FObj {
     public int getDisplayAlign() {
         return displayAlign;
     }
-    
+
     /** @return the "break-after" property. */
     public int getBreakAfter() {
         return breakAfter;
@@ -220,12 +220,12 @@ public class BlockContainer extends FObj {
     public int getWritingMode() {
         return writingMode;
     }
-    
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "block-container";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_BLOCK_CONTAINER}

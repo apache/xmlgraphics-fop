@@ -26,7 +26,7 @@ public final class PDFXMode {
     public static final PDFXMode DISABLED = new PDFXMode("PDF/X disabled");
     /** PDF/X-3:2003 enabled */
     public static final PDFXMode PDFX_3_2003 = new PDFXMode("PDF/X-3:2003");
-    
+
     private String name;
 
     /**
@@ -41,7 +41,7 @@ public final class PDFXMode {
     public String getName() {
         return this.name;
     }
-    
+
     /**
      * Returns the mode enum object given a String.
      * @param s the string
@@ -54,10 +54,10 @@ public final class PDFXMode {
             return DISABLED;
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return name;
     }
-    
+
 }

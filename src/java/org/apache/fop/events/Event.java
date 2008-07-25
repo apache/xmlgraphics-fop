@@ -32,11 +32,11 @@ import org.apache.fop.events.model.EventSeverity;
 public class Event extends EventObject {
 
     private static final long serialVersionUID = -1310594422868258083L;
-    
+
     private String eventID;
     private EventSeverity severity;
     private Map params;
-    
+
     /**
      * Creates a new Event.
      * @param source the object that creates the event
@@ -50,7 +50,7 @@ public class Event extends EventObject {
         setSeverity(severity);
         this.params = params;
     }
-    
+
     /**
      * Returns the event identifier.
      * @return the event identifier
@@ -58,7 +58,7 @@ public class Event extends EventObject {
     public String getEventID() {
         return this.eventID;
     }
-    
+
     /**
      * Returns the event group identifier.
      * @return the event group identifier (or null if there is no group identifier)
@@ -71,7 +71,7 @@ public class Event extends EventObject {
             return null;
         }
     }
-    
+
     /**
      * Returns the severity level.
      * @return the severity level
@@ -79,7 +79,7 @@ public class Event extends EventObject {
     public EventSeverity getSeverity() {
         return this.severity;
     }
-    
+
     /**
      * Sets the event's severity level. This method can be used to increase or decrease the
      * severity level in a listener.
@@ -101,7 +101,7 @@ public class Event extends EventObject {
             return null;
         }
     }
-    
+
     /**
      * Returns an unmodifiable {@link java.util.Map} with all event parameters.
      * @return the parameter map
@@ -109,7 +109,7 @@ public class Event extends EventObject {
     public Map getParams() {
         return Collections.unmodifiableMap(this.params);
     }
-    
+
     /**
      * Creates and returns a fluent builder object for building up the parameter map.
      * @return the parameter builder
@@ -117,13 +117,13 @@ public class Event extends EventObject {
     public static ParamsBuilder paramsBuilder() {
         return new ParamsBuilder();
     }
-    
+
     /**
      * This class is a fluent builder class for building up the parameter map.
      */
     public static class ParamsBuilder {
         private Map params;
-        
+
         /**
          * Adds a new parameter (a name/value pair).
          * @param name the name of the parameter
@@ -137,7 +137,7 @@ public class Event extends EventObject {
             this.params.put(name, value);
             return this;
         }
-        
+
         /**
          * Returns the accumulated parameter map.
          * @return the accumulated parameter map
@@ -146,5 +146,5 @@ public class Event extends EventObject {
             return this.params;
         }
     }
-    
+
 }

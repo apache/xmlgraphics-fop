@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,43 +63,43 @@ public class FOTreeBuilder extends DefaultHandler {
 
     /** Main DefaultHandler that handles the FO namespace. */
     protected MainFOHandler mainFOHandler;
-    
+
     /** Current delegate ContentHandler to receive the SAX events */
     protected ContentHandler delegate;
 
     /** Provides information used during tree building stage. */
     private FOTreeBuilderContext builderContext;
-    
+
     /** The object that handles formatting and rendering to a stream */
     private FOEventHandler foEventHandler;
 
     /** The SAX locator object managing the line and column counters */
-    private Locator locator; 
-    
+    private Locator locator;
+
     /** The user agent for this processing run. */
     private FOUserAgent userAgent;
-    
+
     private boolean used = false;
     private boolean empty = true;
-    
+
     private int depth;
-    
+
     /**
      * <code>FOTreeBuilder</code> constructor
-     * 
+     *
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param foUserAgent   the {@link FOUserAgent} in effect for this process
      * @param stream    the <code>OutputStream</code> to direct the results to
      * @throws FOPException if the <code>FOTreeBuilder</code> cannot be properly created
      */
     public FOTreeBuilder(
-                String outputFormat, 
+                String outputFormat,
                 FOUserAgent foUserAgent,
-                OutputStream stream) 
+                OutputStream stream)
             throws FOPException {
 
         this.userAgent = foUserAgent;
-        this.elementMappingRegistry = userAgent.getFactory().getElementMappingRegistry();        
+        this.elementMappingRegistry = userAgent.getFactory().getElementMappingRegistry();
         //This creates either an AreaTreeHandler and ultimately a Renderer, or
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = foUserAgent.getRendererFactory().createFOEventHandler(
@@ -116,16 +116,16 @@ public class FOTreeBuilder extends DefaultHandler {
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
-    
-    /** 
+
+    /**
      * @return a {@link Locator} instance if it is available and not disabled
      */
     protected Locator getEffectiveLocator() {
         return (userAgent.isLocatorEnabled() ? this.locator : null);
     }
-    
+
     /** {@inheritDoc} */
-    public void characters(char[] data, int start, int length) 
+    public void characters(char[] data, int start, int length)
                 throws SAXException {
         delegate.characters(data, start, length);
     }
@@ -136,7 +136,7 @@ public class FOTreeBuilder extends DefaultHandler {
             throw new IllegalStateException("FOTreeBuilder (and the Fop class) cannot be reused."
                     + " Please instantiate a new instance.");
         }
-        
+
         used = true;
         empty = true;
         rootFObj = null;    // allows FOTreeBuilder to be reused
@@ -204,7 +204,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
     /**
      * Provides access to the underlying {@link FOEventHandler} object.
-     * 
+     *
      * @return the FOEventHandler object
      */
     public FOEventHandler getEventHandler() {
@@ -215,30 +215,30 @@ public class FOTreeBuilder extends DefaultHandler {
      * Returns the results of the rendering process. Information includes
      * the total number of pages generated and the number of pages per
      * page-sequence.
-     * 
+     *
      * @return the results of the rendering process.
      */
     public FormattingResults getResults() {
         if (getEventHandler() instanceof AreaTreeHandler) {
             return ((AreaTreeHandler) getEventHandler()).getResults();
         } else {
-            //No formatting results available for output formats no 
+            //No formatting results available for output formats no
             //involving the layout engine.
             return null;
         }
     }
-    
+
     /**
      * Main <code>DefaultHandler</code> implementation which builds the FO tree.
      */
     private class MainFOHandler extends DefaultHandler {
-        
+
         /** Current formatting object being handled */
         protected FONode currentFObj = null;
 
         /** Current propertyList for the node being handled */
         protected PropertyList currentPropertyList;
-        
+
         /** Current marker nesting-depth */
         private int nestedMarkerDepth = 0;
 
@@ -253,7 +253,7 @@ public class FOTreeBuilder extends DefaultHandler {
             // Check to ensure first node encountered is an fo:root
             if (rootFObj == null) {
                 empty = false;
-                if (!namespaceURI.equals(FOElementMapping.URI) 
+                if (!namespaceURI.equals(FOElementMapping.URI)
                         || !localName.equals("root")) {
                     FOValidationEventProducer eventProducer
                         = FOValidationEventProducer.Provider.get(
@@ -267,7 +267,7 @@ public class FOTreeBuilder extends DefaultHandler {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
                 }
             }
-            
+
             ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
 
             try {
@@ -279,7 +279,7 @@ public class FOTreeBuilder extends DefaultHandler {
                 }
                 propertyList = foNode.createPropertyList(
                                     currentPropertyList, foEventHandler);
-                foNode.processNode(localName, getEffectiveLocator(), 
+                foNode.processNode(localName, getEffectiveLocator(),
                                     attlist, propertyList);
                 if (foNode.getNameId() == Constants.FO_MARKER) {
                     if (builderContext.inMarker()) {
@@ -295,19 +295,19 @@ public class FOTreeBuilder extends DefaultHandler {
             ContentHandlerFactory chFactory = foNode.getContentHandlerFactory();
             if (chFactory != null) {
                 ContentHandler subHandler = chFactory.createContentHandler();
-                if (subHandler instanceof ObjectSource 
+                if (subHandler instanceof ObjectSource
                         && foNode instanceof ObjectBuiltListener) {
                     ((ObjectSource) subHandler).setObjectBuiltListener(
                             (ObjectBuiltListener) foNode);
                 }
-                
+
                 subHandler.startDocument();
-                subHandler.startElement(namespaceURI, localName, 
+                subHandler.startElement(namespaceURI, localName,
                         rawName, attlist);
                 depth = 1;
                 delegate = subHandler;
             }
-            
+
             if (currentFObj != null) {
                 currentFObj.addChildNode(foNode);
             }
@@ -330,28 +330,28 @@ public class FOTreeBuilder extends DefaultHandler {
                     throws SAXException {
             if (currentFObj == null) {
                 throw new SAXException(
-                        "endElement() called for " + rawName 
+                        "endElement() called for " + rawName
                             + " where there is no current element.");
-            } else if (!currentFObj.getLocalName().equals(localName) 
+            } else if (!currentFObj.getLocalName().equals(localName)
                     || !currentFObj.getNamespaceURI().equals(uri)) {
-                throw new SAXException("Mismatch: " + currentFObj.getLocalName() 
-                        + " (" + currentFObj.getNamespaceURI() 
+                throw new SAXException("Mismatch: " + currentFObj.getLocalName()
+                        + " (" + currentFObj.getNamespaceURI()
                         + ") vs. " + localName + " (" + uri + ")");
             }
-            
+
             // fo:characters can potentially be removed during
             // white-space handling.
             // Do not notify the FOEventHandler.
             if (currentFObj.getNameId() != Constants.FO_CHARACTER) {
                 currentFObj.endOfNode();
             }
-            
+
             if (currentPropertyList != null
                     && currentPropertyList.getFObj() == currentFObj
                     && !builderContext.inMarker()) {
                 currentPropertyList = currentPropertyList.getParentPropertyList();
             }
-            
+
             if (currentFObj.getNameId() == Constants.FO_MARKER) {
                 if (nestedMarkerDepth == 0) {
                     builderContext.switchMarkerContext(false);
@@ -359,19 +359,19 @@ public class FOTreeBuilder extends DefaultHandler {
                     nestedMarkerDepth--;
                 }
             }
-            
+
             if (currentFObj.getParent() == null) {
                 log.debug("endElement for top-level " + currentFObj.getName());
             }
-            
+
             currentFObj = currentFObj.getParent();
         }
 
         /** {@inheritDoc} */
-        public void characters(char[] data, int start, int length) 
+        public void characters(char[] data, int start, int length)
             throws FOPException {
             if (currentFObj != null) {
-                currentFObj.addCharacters(data, start, length, 
+                currentFObj.addCharacters(data, start, length,
                         currentPropertyList, getEffectiveLocator());
             }
         }
@@ -380,10 +380,10 @@ public class FOTreeBuilder extends DefaultHandler {
         public void endDocument() throws SAXException {
             currentFObj = null;
         }
-        
+
         /**
          * Finds the {@link Maker} used to create {@link FONode} objects of a particular type
-         * 
+         *
          * @param namespaceURI URI for the namespace of the element
          * @param localName name of the Element
          * @return the ElementMapping.Maker that can create an FO object for this element

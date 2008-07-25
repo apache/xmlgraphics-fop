@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -82,7 +82,7 @@ class CollapsingBorderResolver implements BorderResolver {
 
         /**
          * Integrates border-before specified on the table and its column.
-         * 
+         *
          * @param row the first row of the table (in the header, or in the body if the
          * table has no header)
          * @param withNormal
@@ -103,7 +103,7 @@ class CollapsingBorderResolver implements BorderResolver {
 
         /**
          * Resolves border-after for the first row, border-before for the second one.
-         * 
+         *
          * @param rowBefore
          * @param rowAfter
          */
@@ -129,7 +129,7 @@ class CollapsingBorderResolver implements BorderResolver {
 
         /**
          * Integrates border-after specified on the table and its columns.
-         * 
+         *
          * @param row the last row of the footer, or of the last body if the table has no
          * footer
          * @param withNormal
@@ -149,7 +149,7 @@ class CollapsingBorderResolver implements BorderResolver {
          * Integrates either border-before specified on the table and its columns if the
          * table has no header, or border-after specified on the cells of the header's
          * last row. For the case the grid unit are at the top of a page.
-         * 
+         *
          * @param row
          */
         void integrateLeadingBorders(List/*<GridUnit>*/ row) {
@@ -165,7 +165,7 @@ class CollapsingBorderResolver implements BorderResolver {
          * Integrates either border-after specified on the table and its columns if the
          * table has no footer, or border-before specified on the cells of the footer's
          * first row. For the case the grid unit are at the bottom of a page.
-         * 
+         *
          * @param row
          */
         void integrateTrailingBorders(List/*<GridUnit>*/ row) {
@@ -193,7 +193,7 @@ class CollapsingBorderResolver implements BorderResolver {
          * <li>Integrates the border-before of the containing part, if first row;</li>
          * <li>Resolves border-start/end between grid units.</li>
          * </ul>
-         * 
+         *
          * @param row the row being finished
          * @param container the containing element
          */
@@ -402,7 +402,7 @@ class CollapsingBorderResolver implements BorderResolver {
              * TODO The border resolution must be done only once for each table column,
              * even if it's repeated; otherwise, re-resolving against the table's borders
              * will lead to null border specifications.
-             * 
+             *
              * Eventually table columns should probably be cloned instead.
              */
             index += col.getNumberColumnsRepeated();

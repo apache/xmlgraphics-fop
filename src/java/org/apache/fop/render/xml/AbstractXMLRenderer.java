@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -88,7 +88,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
      * @param comment the comment
      */
     protected void comment(String comment) {
-        if (handler instanceof LexicalHandler) { 
+        if (handler instanceof LexicalHandler) {
             try {
                 ((LexicalHandler) handler).comment(comment.toCharArray(), 0, comment.length());
             } catch (SAXException saxe) {
@@ -96,7 +96,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
             }
         }
     }
-    
+
     /**
      * Starts a new element (without attributes).
      * @param tagName tag name of the element
@@ -158,7 +158,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
      * @param value value of the attribute
      */
     protected void addAttribute(QName name, String value) {
-        atts.addAttribute(name.getNamespaceURI(), name.getLocalName(), name.getQName(), 
+        atts.addAttribute(name.getNamespaceURI(), name.getLocalName(), name.getQName(),
                 CDATA, value);
     }
 
@@ -175,7 +175,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
         return "" + (int) rect.getX() + " " + (int) rect.getY() + " "
                   + (int) rect.getWidth() + " " + (int) rect.getHeight();
     }
-    
+
     /**
      * Adds a new attribute to the protected member variable "atts".
      * @param name name of the attribute
@@ -259,7 +259,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
      * @param attachments a list of extension attachments
      */
     protected abstract void handleExtensionAttachments(List attachments);
-    
+
     /**
      * Renders a bookmark tree
      * @param odi the bookmark data

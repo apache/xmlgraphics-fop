@@ -26,7 +26,7 @@ import java.io.Serializable;
 public final class EventSeverity implements Serializable {
 
     private static final long serialVersionUID = 4108175215810759243L;
-    
+
     /** info level */
     public static final EventSeverity INFO = new EventSeverity("INFO");
     /** warning level */
@@ -35,7 +35,7 @@ public final class EventSeverity implements Serializable {
     public static final EventSeverity ERROR = new EventSeverity("ERROR");
     /** fatal error */
     public static final EventSeverity FATAL = new EventSeverity("FATAL");
-    
+
     private String name;
 
     /**
@@ -50,7 +50,7 @@ public final class EventSeverity implements Serializable {
     public String getName() {
         return this.name;
     }
-    
+
     /**
      * Returns the enumeration/singleton object based on its name.
      * @param name the name of the enumeration value
@@ -69,14 +69,14 @@ public final class EventSeverity implements Serializable {
             throw new IllegalArgumentException("Illegal value for enumeration: " + name);
         }
     }
-    
+
     private Object readResolve() throws ObjectStreamException {
         return valueOf(getName());
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "EventSeverity:" + name;
     }
-    
+
 }

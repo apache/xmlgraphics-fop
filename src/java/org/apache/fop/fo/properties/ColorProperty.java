@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,16 +31,16 @@ import org.apache.fop.util.ColorUtil;
  * Class for properties that wrap Color values
  */
 public final class ColorProperty extends Property  {
-    
+
     /** cache holding canonical ColorProperty instances */
     private static final PropertyCache cache = new PropertyCache(ColorProperty.class);
-    
+
     /**
      * The color represented by this property.
      */
     protected final Color color;
 
-    
+
     /**
      * Inner class for creating instances of ColorTypeProperty
      */
@@ -57,7 +57,7 @@ public final class ColorProperty extends Property  {
          * Return a ColorProperty object based on the passed Property object.
          * This method is called if the Property object built by the parser
          * isn't the right type for this property.
-         * 
+         *
          * @param p
          *            The Property object return by the expression parser
          * @param propertyList
@@ -70,7 +70,7 @@ public final class ColorProperty extends Property  {
          *             for invalid or inconsistent FO input
          */
         public Property convertProperty(Property p,
-                                        PropertyList propertyList, FObj fo) 
+                                        PropertyList propertyList, FObj fo)
                     throws PropertyException {
             if (p instanceof ColorProperty) {
                 return p;
@@ -89,10 +89,10 @@ public final class ColorProperty extends Property  {
     /**
      * Set the color given a particular String. For a full List of supported
      * values please see ColorUtil.
-     * 
+     *
      * @param foUserAgent FOP user agent
      * @param value RGB value as String to be parsed
-     * @return the canonical ColorProperty instance corresponding 
+     * @return the canonical ColorProperty instance corresponding
      *         to the given value
      * @throws PropertyException if the value can't be parsed
      * @see ColorUtil#parseColorString(FOUserAgent, String)
@@ -106,13 +106,13 @@ public final class ColorProperty extends Property  {
 
     /**
      * Create a new ColorProperty with a given color.
-     * 
+     *
      * @param value the color to use.
      */
     private ColorProperty(Color value) {
         this.color = value;
     }
-    
+
     /**
      * Returns an AWT instance of this color
      * @param foUserAgent FOP user agent
@@ -141,19 +141,19 @@ public final class ColorProperty extends Property  {
     public Object getObject() {
         return this;
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        
+
         if (o instanceof ColorProperty) {
             return ((ColorProperty) o).color.equals(this.color);
         }
         return false;
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         return this.color.hashCode();

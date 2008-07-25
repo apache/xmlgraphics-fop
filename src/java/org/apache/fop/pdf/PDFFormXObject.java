@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 // Java
@@ -32,7 +32,7 @@ import java.io.OutputStream;
  * dictionary but a stream of image data.
  */
 public class PDFFormXObject extends PDFXObject {
-    
+
     private PDFStream contents;
     private PDFReference resRef;
 
@@ -49,7 +49,7 @@ public class PDFFormXObject extends PDFXObject {
         put("Name", new PDFName("Form" + xnumber));
         this.resRef = resources;
         this.contents = contents;
-        
+
         put("Type", new PDFName("XObject"));
         put("Subtype", new PDFName("Form"));
         put("FormType", new Integer(1));
@@ -76,7 +76,7 @@ public class PDFFormXObject extends PDFXObject {
             array.set(3, bbox.getHeight());
         }
     }
-    
+
     /**
      * Returns the bounding box.
      * @return the BBox value
@@ -95,7 +95,7 @@ public class PDFFormXObject extends PDFXObject {
             return null;
         }
     }
-    
+
     /**
      * Sets the Matrix value
      * @param at the AffineTransform defining the transformation matrix
@@ -122,7 +122,7 @@ public class PDFFormXObject extends PDFXObject {
             array.set(5, m[5]);
         }
     }
-    
+
     /**
      * Returns the Matrix value.
      * @return the Matrix
@@ -143,7 +143,7 @@ public class PDFFormXObject extends PDFXObject {
             return null;
         }
     }
-    
+
     /**
      * Used to set the contents of the PDF stream.
      * @param data the contents as a byte array
@@ -161,7 +161,7 @@ public class PDFFormXObject extends PDFXObject {
     /** {@inheritDoc} */
     protected int output(OutputStream stream) throws IOException {
         final int len = super.output(stream);
-        
+
         //Now that the data has been written, it can be discarded.
         this.contents = null;
         return len;
@@ -175,6 +175,6 @@ public class PDFFormXObject extends PDFXObject {
         put("Resources", resRef);
         super.populateStreamDict(lengthEntry);
     }
-    
+
 }
 

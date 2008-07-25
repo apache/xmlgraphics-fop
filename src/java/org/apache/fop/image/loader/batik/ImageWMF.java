@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,9 +35,9 @@ public class ImageWMF extends AbstractImage {
 
     /** ImageFlavor for Batik's WMFRecordStore */
     public static final ImageFlavor WMF_IMAGE = new ImageFlavor("WMFRecordStore");
-    
+
     private WMFRecordStore store;
-    
+
     /**
      * Main constructor.
      * @param info the image info object
@@ -47,7 +47,7 @@ public class ImageWMF extends AbstractImage {
         super(info);
         this.store = store;
     }
-    
+
     /** {@inheritDoc} */
     public ImageFlavor getFlavor() {
         return WMF_IMAGE;
@@ -57,7 +57,7 @@ public class ImageWMF extends AbstractImage {
     public boolean isCacheable() {
         return true;
     }
-    
+
     /**
      * Returns the contained WMF record store.
      * @return the WMFRecordStore
@@ -65,5 +65,5 @@ public class ImageWMF extends AbstractImage {
     public WMFRecordStore getRecordStore() {
         return this.store;
     }
-    
+
 }

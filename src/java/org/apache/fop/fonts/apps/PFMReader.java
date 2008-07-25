@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.fonts.apps;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
  * XML font metrics file for use in FOP.
  */
 public class PFMReader extends AbstractFontReader {
-    
+
     /**
      * Main constructor.
      */
@@ -94,7 +94,7 @@ public class PFMReader extends AbstractFontReader {
         // defined.
         LogFactory logFactory = LogFactory.getFactory();
         if (System.getProperty("org.apache.commons.logging.Log") == null) {
-            logFactory.setAttribute("org.apache.commons.logging.Log", 
+            logFactory.setAttribute("org.apache.commons.logging.Log",
                                             CommandLineLogger.class.getName());
         }
 
@@ -129,10 +129,10 @@ public class PFMReader extends AbstractFontReader {
                 PFMFile pfm = app.loadPFM(arguments[0]);
                 if (pfm != null) {
                     app.preview(pfm);
-    
+
                     Document doc = app.constructFontXML(pfm,
                             fontName, className, embResource, embFile);
-    
+
                     app.writeFontXML(doc, arguments[1]);
                 }
                 log.info("XML font metrics file successfullly created.");
@@ -177,7 +177,7 @@ public class PFMReader extends AbstractFontReader {
             log.info("XHeight: " + pfm.getXHeight());
             log.info("LowerCaseAscent: " + pfm.getLowerCaseAscent());
             log.info("LowerCaseDescent: " + pfm.getLowerCaseDescent());
-            log.info("Having widths for " + (pfm.getLastChar() - pfm.getFirstChar()) 
+            log.info("Having widths for " + (pfm.getLastChar() - pfm.getFirstChar())
                         + " characters (" + pfm.getFirstChar()
                         + "-" + pfm.getLastChar() + ").");
             log.info("for example: Char " + pfm.getFirstChar()

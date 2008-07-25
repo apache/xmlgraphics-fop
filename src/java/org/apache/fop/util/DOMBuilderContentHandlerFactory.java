@@ -35,23 +35,23 @@ import org.xml.sax.SAXException;
  */
 public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
 
-    private static SAXTransformerFactory tFactory 
+    private static SAXTransformerFactory tFactory
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     private String namespaceURI;
     private DOMImplementation domImplementation;
-    
+
     /**
      * Main Constructor
-     * @param namespaceURI the main namespace URI for the DOM to be parsed 
+     * @param namespaceURI the main namespace URI for the DOM to be parsed
      * @param domImplementation the DOMImplementation to use for build the DOM
      */
-    public DOMBuilderContentHandlerFactory(String namespaceURI, 
+    public DOMBuilderContentHandlerFactory(String namespaceURI,
                 DOMImplementation domImplementation) {
         this.namespaceURI = namespaceURI;
         this.domImplementation = domImplementation;
     }
-    
+
     /** {@inheritDoc} */
     public String[] getSupportedNamespaces() {
         return new String[] {namespaceURI};
@@ -61,13 +61,13 @@ public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
     public ContentHandler createContentHandler() throws SAXException {
         return new Handler();
     }
-    
+
     private class Handler extends DelegatingContentHandler
                 implements ContentHandlerFactory.ObjectSource {
-     
+
         private Document doc;
         private ObjectBuiltListener obListener;
-        
+
         public Handler() throws SAXException {
             super();
         }
@@ -75,7 +75,7 @@ public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
         public Document getDocument() {
             return this.doc;
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -89,7 +89,7 @@ public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
         public void setObjectBuiltListener(ObjectBuiltListener listener) {
             this.obListener = listener;
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -103,7 +103,7 @@ public class DOMBuilderContentHandlerFactory implements ContentHandlerFactory {
         /**
          * {@inheritDoc}
          */
-        public void startElement(String uri, String localName, String qName, Attributes atts) 
+        public void startElement(String uri, String localName, String qName, Attributes atts)
                     throws SAXException {
             if (doc == null) {
                 TransformerHandler handler;

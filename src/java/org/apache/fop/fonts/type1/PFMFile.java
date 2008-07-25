@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -315,7 +315,7 @@ public class PFMFile {
                     + ", 0x" + Integer.toHexString(dfCharSet)
                     + "). Trying fallback to WinAnsi.");
         }
-        return "WinAnsi"; 
+        return "WinAnsi";
     }
 
     /**
@@ -406,14 +406,14 @@ public class PFMFile {
     }
 
     /**
-     * Indicates whether the font is non-symbolic (Font uses the Adobe standard Latin character 
+     * Indicates whether the font is non-symbolic (Font uses the Adobe standard Latin character
      * set or a subset of it).
      * @return true if the font is non-symbolic
      */
     public boolean isNonSymbolic() {
         return (dfCharSet != 2); //!= Symbol fonts
     }
-    
+
     /**
      * Returns the characteristics flags for the font as
      * needed for a PDF font descriptor (See PDF specs).

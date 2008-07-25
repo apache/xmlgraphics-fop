@@ -45,7 +45,7 @@ public class RtfSpaceSplitter {
 
     /**
      * Create RtfSpaceSplitter with given RtfAttributes.
-     * 
+     *
      * @param attrs  RtfAttributes for splitting
      * @param previousSpace  integer, representing accumulated spacing
      */
@@ -62,7 +62,7 @@ public class RtfSpaceSplitter {
     /**
      * Remove attributes with name <code>key</code> from
      * <code>commonAttributes</code> and return it as int.
-     * 
+     *
      * @param key  attributes name to extract
      * @return integer, representing value of extracted attributes
      */
@@ -86,10 +86,10 @@ public class RtfSpaceSplitter {
         return spaceBefore;
     }
 
-    /** 
+    /**
      * Sets a candidate for space-before property.
-     * 
-     * @param candidate  instance of <code>RtfAttributes</code>, considered as 
+     *
+     * @param candidate  instance of <code>RtfAttributes</code>, considered as
      *        a candidate for space-before adding
      */
     public void setSpaceBeforeCandidate(RtfAttributes candidate) {
@@ -98,10 +98,10 @@ public class RtfSpaceSplitter {
         }
     }
 
-    /** 
+    /**
      * Sets a candidate for space-after property.
-     * 
-     * @param candidate  instance of <code>RtfAttributes</code>, considered as 
+     *
+     * @param candidate  instance of <code>RtfAttributes</code>, considered as
      *        a candidate for space-after adding
      */
     public void setSpaceAfterCandidate(RtfAttributes candidate) {
@@ -117,19 +117,19 @@ public class RtfSpaceSplitter {
     public boolean isAfterCadidateSet() {
         return spaceAfterCandidate != null;
     }
-    
+
     /**
      * Stops updating candidates for space-before attribute.
      */
     public void stopUpdatingSpaceBefore() {
         updatingSpaceBefore = false;
-    } 
+    }
 
     /**
      * Adds corresponding attributes to their candidates.
-     * 
-     * @return integer, representing value of space-before/space-after 
-     *   attributes, that can't be added anywhere (i.e. these attributes 
+     *
+     * @return integer, representing value of space-before/space-after
+     *   attributes, that can't be added anywhere (i.e. these attributes
      *   hasn't their candidates)
      */
     public int flush() {
@@ -144,7 +144,7 @@ public class RtfSpaceSplitter {
         if (!isAfterCadidateSet()) {
             accumulatingSpace += spaceAfter;
         } else {
-            spaceAfterCandidate.addIntegerValue(spaceAfter, 
+            spaceAfterCandidate.addIntegerValue(spaceAfter,
                             RtfText.SPACE_AFTER);
         }
 

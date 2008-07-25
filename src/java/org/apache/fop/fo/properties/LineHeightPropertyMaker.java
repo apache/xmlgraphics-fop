@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * value, instead of the computed value.
  * So when a line-height is create based on an attribute, the specified value
  * is stored in the property and in compute() the stored specified value of
- * the nearest specified is used to recalculate the line-height.  
+ * the nearest specified is used to recalculate the line-height.
  */
 
 public class LineHeightPropertyMaker extends SpaceProperty.Maker {
@@ -48,9 +48,9 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     /**
      * {@inheritDoc}
      */
-    public Property make(PropertyList propertyList, String value, FObj fo) 
+    public Property make(PropertyList propertyList, String value, FObj fo)
             throws PropertyException {
-        /* if value was specified as a number/length/percentage then 
+        /* if value was specified as a number/length/percentage then
          * conditionality and precedence components are overridden
          */
         Property p = super.make(propertyList, value, fo);
@@ -60,7 +60,7 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
                 EnumProperty.getInstance(Constants.EN_FORCE, "FORCE"), true);
         return p;
     }
-    
+
     /**
      * Recalculate the line-height value based on the nearest specified
      * value.
@@ -80,7 +80,7 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public Property convertProperty(Property p,
             PropertyList propertyList,

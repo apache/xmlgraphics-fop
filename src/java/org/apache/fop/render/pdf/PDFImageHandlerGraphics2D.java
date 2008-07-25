@@ -38,9 +38,9 @@ public class PDFImageHandlerGraphics2D implements PDFImageHandler {
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.GRAPHICS2D,
     };
-    
+
     /** {@inheritDoc} */
-    public PDFXObject generateImage(RendererContext context, Image image, 
+    public PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos)
             throws IOException {
         PDFRenderer renderer = (PDFRenderer)context.getRenderer();

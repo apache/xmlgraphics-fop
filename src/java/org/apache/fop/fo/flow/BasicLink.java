@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.apache.fop.fo.ValidationException;
  * <code>fo:basic-link</code></a> object.
  *
  * This class contains the logic to determine the link represented by this FO,
- * and whether that link is external (uses a URI) or internal (an id 
+ * and whether that link is external (uses a URI) or internal (an id
  * reference).
  */
 public class BasicLink extends Inline {
@@ -55,7 +55,7 @@ public class BasicLink extends Inline {
     /**
      * Construct a BasicLink instance with the given {@link FONode}
      * as its parent.
-     * 
+     *
      * @param parent {@link FONode} that is the parent of this object
      */
     public BasicLink(FONode parent) {
@@ -74,8 +74,8 @@ public class BasicLink extends Inline {
         // targetPresentationContext = pList.get(PR_TARGET_PRESENTATION_CONTEXT);
         // targetStylesheet = pList.get(PR_TARGET_STYLESHEET);
 
-        // per spec, internal takes precedence if both specified        
-        if (internalDestination.length() > 0) { 
+        // per spec, internal takes precedence if both specified
+        if (internalDestination.length() > 0) {
             externalDestination = null;
         } else if (externalDestination.length() == 0) {
             // slightly stronger than spec "should be specified"
@@ -96,7 +96,7 @@ public class BasicLink extends Inline {
     }
 
     /** {@inheritDoc} */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("marker")) {
@@ -162,7 +162,7 @@ public class BasicLink extends Inline {
     public String getLocalName() {
         return "basic-link";
     }
-    
+
     /**
      * {@inheritDoc}
      * @return {@link org.apache.fop.fo.Constants#FO_BASIC_LINK}

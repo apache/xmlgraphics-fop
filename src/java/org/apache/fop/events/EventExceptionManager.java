@@ -30,7 +30,7 @@ import org.apache.xmlgraphics.util.Service;
 public class EventExceptionManager {
 
     private static final Map EXCEPTION_FACTORIES = new java.util.HashMap();
-    
+
     static {
         Iterator iter;
         iter = Service.providers(ExceptionFactory.class, true);
@@ -39,7 +39,7 @@ public class EventExceptionManager {
             EXCEPTION_FACTORIES.put(factory.getExceptionClass().getName(), factory);
         }
     }
-    
+
     /**
      * Converts an event into an exception and throws that. If the exception class is null,
      * a {@link RuntimeException} will be thrown.
@@ -61,20 +61,20 @@ public class EventExceptionManager {
             throw new RuntimeException(msg);
         }
     }
-    
+
     /**
      * This interface is implementation by exception factories that can create exceptions from
      * events.
      */
     public interface ExceptionFactory {
-        
+
         /**
          * Creates an exception from an event.
          * @param event the event
          * @return the newly created exception
          */
         Throwable createException(Event event);
-        
+
         /**
          * Returns the {@link Exception} class created by this factory.
          * @return the exception class

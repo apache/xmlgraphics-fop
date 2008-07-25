@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.pdf;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ import org.apache.xmlgraphics.xmp.schemas.pdf.PDFAXMPSchema;
  * @since PDF 1.4
  */
 public class PDFMetadata extends PDFStream {
-    
+
     private Metadata xmpMetadata;
     private boolean readOnly = true;
 
@@ -62,7 +62,7 @@ public class PDFMetadata extends PDFStream {
     protected void setupFilterList() {
         if (!getFilterList().isInitialized()) {
             getFilterList().addDefaultFilters(
-                getDocumentSafely().getFilterMap(), 
+                getDocumentSafely().getFilterMap(),
                 PDFFilterList.METADATA_FILTER);
         }
         super.setupFilterList();
@@ -74,7 +74,7 @@ public class PDFMetadata extends PDFStream {
     public Metadata getMetadata() {
         return this.xmpMetadata;
     }
-    
+
     /**
      * overload the base object method so we don't have to copy
      * byte arrays around so much
@@ -86,24 +86,24 @@ public class PDFMetadata extends PDFStream {
         this.xmpMetadata = null; //Release DOM when it's not used anymore
         return length;
     }
-    
+
     /** {@inheritDoc} */
     protected void outputRawStreamData(OutputStream out) throws IOException {
         try {
             XMPSerializer.writeXMPPacket(xmpMetadata, out, this.readOnly);
         } catch (TransformerConfigurationException tce) {
-            throw new IOException("Error setting up Transformer for XMP stream serialization: " 
+            throw new IOException("Error setting up Transformer for XMP stream serialization: "
                     + tce.getMessage());
         } catch (SAXException saxe) {
-            throw new IOException("Error while serializing XMP stream: " 
+            throw new IOException("Error while serializing XMP stream: "
                     + saxe.getMessage());
         }
     }
-    
+
     /** {@inheritDoc} */
     protected void populateStreamDict(Object lengthEntry) {
         final String filterEntry = getFilterList().buildFilterDictEntries();
-        if (getDocumentSafely().getProfile().getPDFAMode().isPDFA1LevelB() 
+        if (getDocumentSafely().getProfile().getPDFAMode().isPDFA1LevelB()
                 && filterEntry != null && filterEntry.length() > 0) {
             throw new PDFConformanceException(
                     "The Filter key is prohibited when PDF/A-1 is active");
@@ -112,7 +112,7 @@ public class PDFMetadata extends PDFStream {
         put("Subtype", new PDFName("XML"));
         super.populateStreamDict(lengthEntry);
     }
-    
+
     /**
      * Creates an XMP document based on the settings on the PDF Document.
      * @param pdfDoc the PDF Document
@@ -120,7 +120,7 @@ public class PDFMetadata extends PDFStream {
      */
     public static Metadata createXMPFromPDFDocument(PDFDocument pdfDoc) {
         Metadata meta = new Metadata();
-        
+
         PDFInfo info = pdfDoc.getInfo();
         PDFRoot root = pdfDoc.getRoot();
 
@@ -129,7 +129,7 @@ public class PDFMetadata extends PDFStream {
             Date d = new Date();
             info.setCreationDate(d);
         }
-        
+
         //Important: Acrobat 7's preflight check for PDF/A-1b wants the creation date in the Info
         //object and in the XMP metadata to have the same timezone or else it shows a validation
         //error even if the times are essentially equal.
@@ -153,7 +153,7 @@ public class PDFMetadata extends PDFStream {
         dc.addDate(info.getCreationDate());
 
         //PDF/A identification
-        PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode(); 
+        PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();
         if (pdfaMode.isPDFA1LevelB()) {
             PDFAAdapter pdfa = PDFAXMPSchema.getAdapter(meta);
             pdfa.setPart(1);
@@ -163,7 +163,7 @@ public class PDFMetadata extends PDFStream {
                 pdfa.setConformance("B"); //PDF/A-1b
             }
         }
-        
+
         //XMP Basic Schema
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(meta);
         xmpBasic.setCreateDate(info.getCreationDate());
@@ -186,8 +186,8 @@ public class PDFMetadata extends PDFStream {
             adobePDF.setProducer(info.getProducer());
         }
         adobePDF.setPDFVersion(pdfDoc.getPDFVersionString());
-        
-        
+
+
         return meta;
     }
 
@@ -206,14 +206,14 @@ public class PDFMetadata extends PDFStream {
         } else {
             info.setAuthor(null);
         }
-        
+
         //dc:description["x-default"] maps to Subject as per ISO-19005-1:2005/Cor.1:2007
         info.setSubject(dc.getDescription());
-        
+
         AdobePDFAdapter pdf = AdobePDFSchema.getAdapter(meta);
         info.setKeywords(pdf.getKeywords());
         info.setProducer(pdf.getProducer());
-        
+
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(meta);
         info.setCreator(xmpBasic.getCreatorTool());
         Date d;

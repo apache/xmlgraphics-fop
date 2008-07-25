@@ -173,7 +173,7 @@ class ActiveCell {
      * Returns the actual length of the content represented by the given element. In the
      * case where this element is used as a filler to match a row's fixed height, the
      * value returned by the getW() method will be higher than the actual content.
-     * 
+     *
      * @param el an element
      * @return the actual content length corresponding to the element
      */
@@ -226,7 +226,7 @@ class ActiveCell {
     /**
      * Modifies the cell's element list by putting filler elements, so that the cell's or
      * row's explicit height is always reached.
-     * 
+     *
      * TODO this will work properly only for the first break. Then the limitation
      * explained on http://wiki.apache.org/xmlgraphics-fop/TableLayout/KnownProblems
      * occurs. The list of elements needs to be re-adjusted after each break.
@@ -269,7 +269,7 @@ class ActiveCell {
 
     /**
      * Returns true if this cell ends on the given row.
-     * 
+     *
      * @param rowIndex index of a row in the row-group, zero-based
      * @return true if this cell ends on the given row
      */
@@ -280,7 +280,7 @@ class ActiveCell {
     /**
      * Returns the length of this cell's content not yet included in the steps, plus the
      * cell's borders and paddings if applicable.
-     * 
+     *
      * @return the remaining length, zero if the cell is finished
      */
     int getRemainingLength() {
@@ -341,12 +341,12 @@ class ActiveCell {
         afterNextStep.end = knuthIter.nextIndex() - 1;
         afterNextStep.totalLength = bpBeforeNormal
                 + afterNextStep.contentLength + afterNextStep.penaltyLength
-                + bpAfterTrailing; 
+                + bpAfterTrailing;
     }
 
     /**
      * Returns the minimal step that is needed for this cell to contribute some content.
-     *  
+     *
      * @return the step for this cell's first legal break
      */
     int getFirstStep() {
@@ -363,7 +363,7 @@ class ActiveCell {
      * infinite penalty, plus the cell's content won't be taken into account since the
      * final step will be smaller than the current one (see {@link #signalNextStep(int)}).
      * This actually means that the content will be swallowed.
-     * 
+     *
      * @return the length of last step
      */
     int getLastStep() {
@@ -377,7 +377,7 @@ class ActiveCell {
 
     /**
      * Increases the next step up to the given limit.
-     * 
+     *
      * @param limit the length up to which the next step is allowed to increase
      * @see #signalRowFirstStep(int)
      * @see #signalRowLastStep(int)
@@ -398,7 +398,7 @@ class ActiveCell {
      * Gets the selected first step for the current row. If this cell's first step is
      * smaller, then it may be able to add some more of its content, since there will be
      * no break before the given step anyway.
-     * 
+     *
      * @param firstStep the current row's first step
      */
     void signalRowFirstStep(int firstStep) {
@@ -418,7 +418,7 @@ class ActiveCell {
 
     /**
      * Returns the total length up to the next legal break, not yet included in the steps.
-     * 
+     *
      * @return the total length up to the next legal break (-1 signals no further step)
      */
     int getNextStep() {
@@ -446,7 +446,7 @@ class ActiveCell {
     /**
      * Signals the length of the chosen next step, so that this cell determines whether
      * its own step may be included or not.
-     * 
+     *
      * @param minStep length of the chosen next step
      * @return the break class of the step, if any. One of {@link Constants#EN_AUTO},
      * {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
@@ -487,7 +487,7 @@ class ActiveCell {
     /**
      * Receives indication that the current row is ending, and that (collapse) borders
      * must be updated accordingly.
-     * 
+     *
      * @param rowIndex the index of the ending row
      */
     void endRow(int rowIndex) {
@@ -508,7 +508,7 @@ class ActiveCell {
     /**
      * Returns true if this cell would be finished after the given step. That is, it would
      * be included in the step and the end of its content would be reached.
-     * 
+     *
      * @param step the next step
      * @return true if this cell finishes at the given step
      */
@@ -519,7 +519,7 @@ class ActiveCell {
     /**
      * Creates and returns a CellPart instance for the content of this cell which
      * is included in the next step.
-     * 
+     *
      * @return a CellPart instance
      */
     CellPart createCellPart() {
@@ -557,7 +557,7 @@ class ActiveCell {
     /**
      * Adds the footnotes (if any) that are part of the next step, if this cell
      * contributes content to the next step.
-     * 
+     *
      * @param footnoteList the list to which this cell must add its footnotes
      */
     void addFootnotes(List footnoteList) {

@@ -31,7 +31,7 @@ public class PSSetupCode extends PSExtensionAttachment {
      * element name
      */
     protected static final String ELEMENT = "ps-setup-code";
-    
+
     private static final String ATT_NAME = "name";
 
     /**
@@ -44,7 +44,7 @@ public class PSSetupCode extends PSExtensionAttachment {
      */
     public PSSetupCode() {
     }
-    
+
     /**
      * Default constructor.
      * @param name the name of the setup code object, may be null
@@ -54,12 +54,12 @@ public class PSSetupCode extends PSExtensionAttachment {
         super(content);
         this.name = name;
     }
-            
+
     /** @return the name */
     public String getName() {
         return name;
     }
-    
+
     /**
      * Sets the name of the setup code object.
      * @param name The name to set.
@@ -72,7 +72,7 @@ public class PSSetupCode extends PSExtensionAttachment {
     public String getCategory() {
         return CATEGORY;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "PSSetupCode(name=" + getName() + ", content='" + getContent() + "')";
@@ -85,7 +85,7 @@ public class PSSetupCode extends PSExtensionAttachment {
     protected String getElement() {
         return ELEMENT;
     }
-    
+
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();

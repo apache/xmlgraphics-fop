@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -97,7 +97,7 @@ public abstract class RtfElement {
     public void newLine() throws IOException {
         writer.write("\n");
     }
-    
+
     /**
      * Write an RTF control word to our Writer
      * @param word RTF control word to write
@@ -224,7 +224,7 @@ public abstract class RtfElement {
             writeControlWord(cw);
             writeAttributes((RtfAttributes) value, null);
             return;
-        }        
+        }
         writeControlWord(cw);
     }
 
@@ -246,7 +246,7 @@ public abstract class RtfElement {
             writeControlWord(cw);
             writeAttributes((RtfAttributes) value, null);
             return;
-        }        
+        }
         writeControlWordNS(cw);
     }
 

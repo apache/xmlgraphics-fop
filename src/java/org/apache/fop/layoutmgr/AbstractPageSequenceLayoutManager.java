@@ -43,15 +43,15 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
 
     private static Log log = LogFactory.getLog(AbstractPageSequenceLayoutManager.class);
 
-    /** 
+    /**
      * AreaTreeHandler which activates the PSLM and controls
      * the rendering of its pages.
      */
     protected AreaTreeHandler areaTreeHandler;
-    
+
     /** ID tracker supplied by the AreaTreeHandler */
     protected IDTracker idTracker;
-    
+
     /** page sequence formatting object being processed by this class */
     protected AbstractPageSequence pageSeq;
 
@@ -62,7 +62,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
     protected int currentPageNum = 0;
     /** The stating page number */
     protected int startPageNum = 0;
-    
+
     /**
      * Constructor
      *
@@ -112,12 +112,12 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         startPageNum = pageSeq.getStartingPageNumber();
         currentPageNum = startPageNum - 1;
     }
-    
+
     /**
      * This returns the first PageViewport that contains an id trait
      * matching the idref argument, or null if no such PV exists.
      *
-     * @param idref the idref trait needing to be resolved 
+     * @param idref the idref trait needing to be resolved
      * @return the first PageViewport that contains the ID trait
      */
     public PageViewport getFirstPVWithID(String idref) {
@@ -132,7 +132,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
      * This returns the last PageViewport that contains an id trait
      * matching the idref argument, or null if no such PV exists.
      *
-     * @param idref the idref trait needing to be resolved 
+     * @param idref the idref trait needing to be resolved
      * @return the last PageViewport that contains the ID trait
      */
     public PageViewport getLastPVWithID(String idref) {
@@ -142,7 +142,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         }
         return null;
     }
-    
+
     /**
      * Add an ID reference to the current page.
      * When adding areas the area adds its ID reference.
@@ -156,7 +156,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
             idTracker.associateIDWithPageViewport(id, curPage.getPageViewport());
         }
     }
-    
+
     /**
      * Add an id reference of the layout manager in the AreaTreeHandler,
      * if the id hasn't been resolved yet
@@ -175,7 +175,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
             return true;
         }
     }
-    
+
     /**
      * Notify the areaTreeHandler that the LayoutManagers containing
      * idrefs have finished creating areas
@@ -184,16 +184,16 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
     public void notifyEndOfLayout(String id) {
         idTracker.signalIDProcessed(id);
     }
-    
+
     /**
-     * Identify an unresolved area (one needing an idref to be 
+     * Identify an unresolved area (one needing an idref to be
      * resolved, e.g. the internal-destination of an fo:basic-link)
      * for both the AreaTreeHandler and PageViewport object.
-     * 
+     *
      * The IDTracker keeps a document-wide list of idref's
-     * and the PV's needing them to be resolved.  It uses this to  
+     * and the PV's needing them to be resolved.  It uses this to
      * send notifications to the PV's when an id has been resolved.
-     * 
+     *
      * The PageViewport keeps lists of id's needing resolving, along
      * with the child areas (page-number-citation, basic-link, etc.)
      * of the PV needing their resolution.
@@ -216,7 +216,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
      * then the containing page does not have a qualifying area,
      * and all qualifying areas have ended.
      * Therefore we use last-ending-within-page (Constants.EN_LEWP)
-     * as the position. 
+     * as the position.
      *
      * @param rm the RetrieveMarker instance whose properties are to
      * used to find the matching Marker.
@@ -227,8 +227,8 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         AreaTreeModel areaTreeModel = areaTreeHandler.getAreaTreeModel();
         String name = rm.getRetrieveClassName();
         int pos = rm.getRetrievePosition();
-        int boundary = rm.getRetrieveBoundary();               
-        
+        int boundary = rm.getRetrieveBoundary();
+
         // get marker from the current markers on area tree
         Marker mark = (Marker)getCurrentPV().getMarker(name, pos);
         if (mark == null && boundary != EN_PAGE) {
@@ -271,10 +271,10 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
      * @return the newly created page
      */
     protected abstract Page createPage(int pageNumber, boolean isBlank);
-    
+
     /**
      * Makes a new page
-     * 
+     *
      * @param bIsBlank whether this page is blank or not
      * @param bIsLast whether this page is the last page or not
      * @return a new page
@@ -289,14 +289,14 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         curPage = createPage(currentPageNum, isBlank);
 
         if (log.isDebugEnabled()) {
-            log.debug("[" + curPage.getPageViewport().getPageNumberString() 
+            log.debug("[" + curPage.getPageViewport().getPageNumberString()
                     + (isBlank ? "*" : "") + "]");
         }
-        
+
         addIDToPage(pageSeq.getId());
         return curPage;
     }
-    
+
     /**
      * Finishes a page in preparation for a new page.
      */
@@ -304,19 +304,19 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         if (log.isTraceEnabled()) {
             curPage.getPageViewport().dumpMarkers();
         }
-        
+
         // Try to resolve any unresolved IDs for the current page.
-        // 
+        //
         idTracker.tryIDResolution(curPage.getPageViewport());
         // Queue for ID resolution and rendering
         areaTreeHandler.getAreaTreeModel().addPage(curPage.getPageViewport());
         if (log.isDebugEnabled()) {
-            log.debug("page finished: " + curPage.getPageViewport().getPageNumberString() 
+            log.debug("page finished: " + curPage.getPageViewport().getPageNumberString()
                     + ", current num: " + currentPageNum);
         }
         curPage = null;
     }
-    
+
     /** {@inheritDoc} */
     public void doForcePageCount(Numeric nextPageSeqInitialPageNumber) {
 
@@ -325,14 +325,14 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         // xsl-spec version 1.0   (15.oct 2001)
         // auto | even | odd | end-on-even | end-on-odd | no-force | inherit
         // auto:
-        // Force the last page in this page-sequence to be an odd-page 
-        // if the initial-page-number of the next page-sequence is even. 
-        // Force it to be an even-page 
-        // if the initial-page-number of the next page-sequence is odd. 
-        // If there is no next page-sequence 
+        // Force the last page in this page-sequence to be an odd-page
+        // if the initial-page-number of the next page-sequence is even.
+        // Force it to be an even-page
+        // if the initial-page-number of the next page-sequence is odd.
+        // If there is no next page-sequence
         // or if the value of its initial-page-number is "auto" do not force any page.
-            
-        // if force-page-count is auto then set the value of forcePageCount 
+
+        // if force-page-count is auto then set the value of forcePageCount
         // depending on the initial-page-number of the next page-sequence
         if (nextPageSeqInitialPageNumber != null && forcePageCount == Constants.EN_AUTO) {
             if (nextPageSeqInitialPageNumber.getEnum() != 0) {
@@ -381,5 +381,5 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
             finishPage();
         }
     }
-    
+
 }

@@ -29,14 +29,14 @@ import org.apache.fop.util.ListUtil;
  * Utilities for Knuth element lists.
  */
 public final class ElementListUtils {
-    
+
     private ElementListUtils() {
         // Utility class.
     }
 
     /**
      * Removes legal breaks in an element list. A constraint can be specified to limit the
-     * range in which the breaks are removed. Legal breaks occuring before at least 
+     * range in which the breaks are removed. Legal breaks occuring before at least
      * constraint.opt space is filled will be removed.
      * @param elements the element list
      * @param constraint min/opt/max value to restrict the range in which the breaks are removed.
@@ -48,7 +48,7 @@ public final class ElementListUtils {
 
     /**
      * Removes legal breaks in an element list. A constraint can be specified to limit the
-     * range in which the breaks are removed. Legal breaks occuring before at least 
+     * range in which the breaks are removed. Legal breaks occuring before at least
      * constraint space is filled will be removed.
      * @param elements the element list
      * @param constraint value to restrict the range in which the breaks are removed.

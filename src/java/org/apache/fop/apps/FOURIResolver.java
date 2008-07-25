@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ import org.apache.fop.util.DataURIResolver;
 /**
  * Provides FOP specific URI resolution. This is the default URIResolver
  * {@link FOUserAgent} will use unless overidden.
- * 
+ *
  * @see javax.xml.transform.URIResolver
  */
 public class FOURIResolver implements javax.xml.transform.URIResolver {
@@ -96,7 +96,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
 
     /**
      * Additional constructor
-     * 
+     *
      * @param throwExceptions
      *            true if exceptions are to be thrown if the URIs cannot be
      *            resolved.
@@ -107,7 +107,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
 
     /**
      * Handles resolve exceptions appropriately.
-     * 
+     *
      * @param errorStr
      *            error string
      * @param strict
@@ -133,7 +133,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
      * If the method is successful it will return a Source of type
      * {@link javax.xml.transform.stream.StreamSource} with its SystemID set to
      * the resolved URL used to open the underlying InputStream.
-     * 
+     *
      * @param href
      *            An href attribute, which may be relative or absolute.
      * @param base
@@ -212,13 +212,13 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
                     /*
                      * This piece of code is based on the following statement in
                      * RFC2396 section 5.2:
-                     * 
+                     *
                      * 3) If the scheme component is defined, indicating that
                      * the reference starts with a scheme name, then the
                      * reference is interpreted as an absolute URI and we are
                      * done. Otherwise, the reference URI's scheme is inherited
                      * from the base URI's scheme component.
-                     * 
+                     *
                      * Due to a loophole in prior specifications [RFC1630], some
                      * parsers allow the scheme name to be present in a relative
                      * URI if it is the same as the base URI scheme.
@@ -228,7 +228,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
                      * removing the scheme if it matches that of the base URI
                      * and the scheme is known to always use the <hier_part>
                      * syntax.
-                     * 
+                     *
                      * The URL class does not implement this work around, so we
                      * do.
                      */
@@ -281,7 +281,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
      * before the connect() method is called. Subclass FOURIResolver and
      * override this method to do things like adding the user name and password
      * for HTTP basic authentication.
-     * 
+     *
      * @param connection
      *            the URLConnection instance
      * @param href
@@ -295,7 +295,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
      * This is a convenience method for users who want to override
      * updateURLConnection for HTTP basic authentication. Simply call it using
      * the right username and password.
-     * 
+     *
      * @param connection
      *            the URLConnection to set up for HTTP basic authentication
      * @param username
@@ -327,7 +327,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
      * Sets the custom URI Resolver. It is used for resolving factory-level URIs like
      * hyphenation patterns and as backup for URI resolution performed during a
      * rendering run.
-     * 
+     *
      * @param resolver
      *            the new URI resolver
      */
@@ -337,7 +337,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
 
     /**
      * Returns the custom URI Resolver.
-     * 
+     *
      * @return the URI Resolver or null, if none is set
      */
     public URIResolver getCustomURIResolver() {

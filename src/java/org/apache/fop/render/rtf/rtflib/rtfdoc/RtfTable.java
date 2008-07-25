@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -110,16 +110,16 @@ public class RtfTable extends RtfContainer {
             writeControlWordNS("pard");
         }
 
-        writeGroupMark(true);   
+        writeGroupMark(true);
     }
-    
+
     /**
      * Overridden to write RTF suffix code, what comes after our children
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
         writeGroupMark(false);
-        
+
         if (isNestedTable()) {
             getRow().writeRowAndCellsDefintions();
         }
@@ -154,7 +154,7 @@ public class RtfTable extends RtfContainer {
     }
 
     /**
-     * 
+     *
      * @return RtfAttributes of Header
      */
     public RtfAttributes getHeaderAttribs() {
@@ -173,7 +173,7 @@ public class RtfTable extends RtfContainer {
 
         return super.getRtfAttributes();
     }
-    
+
     /** @return true if the the table is a nested table */
     public boolean isNestedTable() {
         if (isNestedTable == null) {
@@ -194,9 +194,9 @@ public class RtfTable extends RtfContainer {
 
         return false;
     }
-    
+
     /**
-     * 
+     *
      * @return Parent row table (for nested tables only)
      */
     public RtfTableRow getRow() {
@@ -209,7 +209,7 @@ public class RtfTable extends RtfContainer {
             e = e.parent;
         }
 
-        return null;  
+        return null;
     }
 
     /**
@@ -219,7 +219,7 @@ public class RtfTable extends RtfContainer {
     public void setBorderAttributes(RtfAttributes attributes) {
         borderAttributes = attributes;
     }
-    
+
     /**
      * Returns the RtfAttributes for the borders of the table.
      * @return Border attributes of the table.

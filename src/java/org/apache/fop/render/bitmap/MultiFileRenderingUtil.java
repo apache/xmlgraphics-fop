@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * This utility class helps renderers who generate one file per page, 
+ * This utility class helps renderers who generate one file per page,
  * like the PNG renderer.
  */
 public class MultiFileRenderingUtil {
@@ -16,10 +16,10 @@ public class MultiFileRenderingUtil {
     private String filePrefix;
 
     private String fileExtension;
-    
+
     /** The output directory where images are to be written */
     private File outputDir;
-    
+
     /**
      * Creates a new instance.
      * <p>
@@ -60,7 +60,7 @@ public class MultiFileRenderingUtil {
             filePrefix = s.substring(0, i);
         }
     }
-    
+
     public OutputStream createOutputStream(int pageNumber) throws IOException {
         if (filePrefix == null) {
             return null;
@@ -71,5 +71,5 @@ public class MultiFileRenderingUtil {
             return os;
         }
     }
-    
+
 }

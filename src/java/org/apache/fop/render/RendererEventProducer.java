@@ -31,7 +31,7 @@ public interface RendererEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     class Provider {
-        
+
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use

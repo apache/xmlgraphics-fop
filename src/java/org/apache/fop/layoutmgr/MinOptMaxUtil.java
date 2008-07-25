@@ -35,7 +35,7 @@ public class MinOptMaxUtil {
      * @param lr restricting source
      * @param context Percentage evaluation context
      */
-    public static void restrict(MinOptMax mom, LengthRangeProperty lr, 
+    public static void restrict(MinOptMax mom, LengthRangeProperty lr,
                                 PercentBaseContext context) {
         if (lr.getEnum() != Constants.EN_AUTO) {
             if (lr.getMinimum(context).getEnum() != Constants.EN_AUTO) {
@@ -70,7 +70,7 @@ public class MinOptMaxUtil {
     /**
      * Extends the minimum length to the given length if necessary, and adjusts opt and
      * max accordingly.
-     * 
+     *
      * @param mom the min/opt/max trait
      * @param len the new minimum length
      */
@@ -81,7 +81,7 @@ public class MinOptMaxUtil {
             mom.max = Math.max(mom.opt, mom.max);
         }
     }
-    
+
     /**
      * After a calculation on a MinOptMax, this can be called to set opt to
      * a new effective value.
@@ -95,7 +95,7 @@ public class MinOptMaxUtil {
             }
         }
     }
-    
+
     /**
      * Converts a LengthRangeProperty to a MinOptMax.
      * @param prop LengthRangeProperty
@@ -104,14 +104,14 @@ public class MinOptMaxUtil {
      */
     public static MinOptMax toMinOptMax(LengthRangeProperty prop, PercentBaseContext context) {
         MinOptMax mom = new MinOptMax(
-                (prop.getMinimum(context).isAuto() 
+                (prop.getMinimum(context).isAuto()
                         ? 0 : prop.getMinimum(context).getLength().getValue(context)),
-                (prop.getOptimum(context).isAuto() 
+                (prop.getOptimum(context).isAuto()
                         ? 0 : prop.getOptimum(context).getLength().getValue(context)),
-                (prop.getMaximum(context).isAuto() 
-                        ? Integer.MAX_VALUE 
+                (prop.getMaximum(context).isAuto()
+                        ? Integer.MAX_VALUE
                         : prop.getMaximum(context).getLength().getValue(context)));
         return mom;
     }
-    
+
 }

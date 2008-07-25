@@ -48,29 +48,29 @@ import org.apache.fop.apps.MimeConstants;
 public class ImagePreloaderTestCase extends TestCase {
 
     private FopFactory fopFactory;
-    
+
     public ImagePreloaderTestCase(String name) {
         super(name);
         fopFactory = FopFactory.newInstance();
         fopFactory.setSourceResolution(72);
         fopFactory.setTargetResolution(300);
     }
-    
+
     public void testSVG() throws Exception {
         String uri = "test/resources/images/img-w-size.svg";
-        
+
         checkSVGFile(uri);
     }
 
     public void testSVGZ() throws Exception {
         String uri = "test/resources/images/img-w-size.svgz";
-        
+
         checkSVGFile(uri);
     }
 
     private void checkSVGFile(String uri) throws ImageException, IOException {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
+
         ImageManager manager = fopFactory.getImageManager();
         ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
@@ -82,11 +82,11 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(16000, info.getSize().getWidthMpt());
         assertEquals(16000, info.getSize().getHeightMpt());
     }
-    
+
     public void testSVGNoSize() throws Exception {
         String uri = "test/resources/images/img.svg";
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
+
         ImageManager manager = fopFactory.getImageManager();
         ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
@@ -102,7 +102,7 @@ public class ImagePreloaderTestCase extends TestCase {
     public void testSVGWithDOM() throws Exception {
         String uri = "my:SVGImage";
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
+
         userAgent.setURIResolver(new URIResolver() {
 
             public Source resolve(String href, String base) throws TransformerException {
@@ -114,23 +114,23 @@ public class ImagePreloaderTestCase extends TestCase {
                     element.setAttribute("viewBox", "0 0 20 20");
                     element.setAttribute("width", "20pt");
                     element.setAttribute("height", "20pt");
-                    
+
                     Element rect = doc.createElementNS(svgNS, "rect");
                     rect.setAttribute("x", "5");
                     rect.setAttribute("y", "5");
                     rect.setAttribute("width", "10");
                     rect.setAttribute("height", "10");
                     element.appendChild(rect);
-                    
+
                     DOMSource src = new DOMSource(doc);
                     return src;
                 } else {
                     return null;
                 }
             }
-            
+
         });
-        
+
         ImageManager manager = fopFactory.getImageManager();
         ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
@@ -145,9 +145,9 @@ public class ImagePreloaderTestCase extends TestCase {
 
     public void testWMF() throws Exception {
         String uri = "test/resources/images/testChart.wmf";
-        
+
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
+
         ImageManager manager = fopFactory.getImageManager();
         ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
@@ -159,5 +159,5 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(792000, info.getSize().getWidthMpt());
         assertEquals(612000, info.getSize().getHeightMpt());
     }
- 
+
 }

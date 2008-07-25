@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,20 +21,20 @@ package org.apache.fop.config;
 
 /*
  * this font has a metrics-url that does not exist on filesystem
- */ 
+ */
 public class FontsDirectoryBadTestCase extends BaseDestructiveUserConfigTestCase {
 
     public FontsDirectoryBadTestCase(String name) {
         super(name);
     }
-    
+
     /**
      * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
      */
     public String getUserConfigFilename() {
         return "test_fonts_directory_bad.xconf";
     }
-    
+
     /** get test FOP config File */
     protected String getFontFOFilePath() {
         return "test/xml/bugtests/font-dir.fo";

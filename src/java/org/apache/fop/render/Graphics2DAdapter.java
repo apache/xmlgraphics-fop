@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render;
 
 import java.io.IOException;
@@ -43,10 +43,10 @@ public interface Graphics2DAdapter {
      * @param height height of the image
      * @throws IOException In case of an I/O error while writing the output format
      */
-    void paintImage(org.apache.xmlgraphics.java2d.Graphics2DImagePainter painter, 
+    void paintImage(org.apache.xmlgraphics.java2d.Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException;
-    
+
     /**
      * Paints an arbitrary images on a given Graphics2D instance. The renderer
      * providing this functionality must set up a Graphics2D instance so that
@@ -62,8 +62,8 @@ public interface Graphics2DAdapter {
      * @throws IOException In case of an I/O error while writing the output format
      * @deprecated Use the variant with the Graphics2DImagePainter from XML Graphics Commons instead
      */
-    void paintImage(Graphics2DImagePainter painter, 
+    void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException;
-    
+
 }

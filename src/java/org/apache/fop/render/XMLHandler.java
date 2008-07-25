@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render;
 
 import org.w3c.dom.Document;
@@ -46,9 +46,9 @@ public interface XMLHandler {
      * @param ns             The Namespace of the foreign object
      * @exception Exception  If an error occurs during processing.
      */
-    void handleXML(RendererContext context, 
+    void handleXML(RendererContext context,
             Document doc, String ns) throws Exception;
-    
+
     /**
      * Checks if this XMLHandler supports handling an XML namespace for a particular renderer.
      * @param renderer the renderer for which to check.
@@ -57,7 +57,7 @@ public interface XMLHandler {
     boolean supportsRenderer(Renderer renderer);
 
     /**
-     * @return the XML namespace for the XML dialect this XMLHandler supports, 
+     * @return the XML namespace for the XML dialect this XMLHandler supports,
      * null if all XML content is handled by this instance.
      */
     String getNamespace();

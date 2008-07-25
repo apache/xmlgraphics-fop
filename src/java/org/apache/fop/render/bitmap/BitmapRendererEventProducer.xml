@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<catalogue xml:lang="en">
+<?xml version="1.0" encoding="UTF-8"?><catalogue xml:lang="en">
   <message key="org.apache.fop.render.bitmap.BitmapRendererEventProducer.stoppingAfterFirstPageNoFilename">No filename information available. Stopping early after the first page.</message>
   <message key="org.apache.fop.render.bitmap.BitmapRendererEventProducer.stoppingAfterFirstPageNoMultiWriter">Image writer does not support multiple images. Only the first page has been produced.</message>
   <message key="org.apache.fop.render.bitmap.BitmapRendererEventProducer.noImageWriterFound">Could not get an ImageWriter to produce "{mime}". The most likely explanation for this is a class loading problem.</message>

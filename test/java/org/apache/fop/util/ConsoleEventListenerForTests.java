@@ -28,11 +28,11 @@ import org.apache.fop.events.model.EventSeverity;
 public class ConsoleEventListenerForTests implements EventListener {
 
     private String name;
-    
+
     public ConsoleEventListenerForTests(String name) {
         this.name = name;
     }
-    
+
     /** {@inheritDoc} */
     public void processEvent(Event event) {
         if (this.name != null) {

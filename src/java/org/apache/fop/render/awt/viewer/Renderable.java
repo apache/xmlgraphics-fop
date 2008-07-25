@@ -35,5 +35,5 @@ public interface Renderable {
      */
     void renderTo(FOUserAgent userAgent, String outputFormat)
             throws FOPException;
-    
+
 }

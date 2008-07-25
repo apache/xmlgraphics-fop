@@ -29,5 +29,5 @@ public interface Java2DRendererContextConstants extends
 
     /** The current Java2DGraphicsState. */
     String JAVA2D_STATE = "state";
-    
+
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * Superclass for properties that wrap an enumeration value
  */
 public final class EnumProperty extends Property {
-    
+
     /** cache holding all canonical EnumProperty instances */
     private static final PropertyCache cache = new PropertyCache(EnumProperty.class);
 
@@ -102,7 +102,7 @@ public final class EnumProperty extends Property {
     public boolean equals(Object obj) {
         if (obj instanceof EnumProperty) {
             EnumProperty ep = (EnumProperty)obj;
-            return (ep.value == this.value) 
+            return (ep.value == this.value)
                 && ((ep.text == this.text)
                     || (ep.text != null
                         && ep.text.equals(this.text)));

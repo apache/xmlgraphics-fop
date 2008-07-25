@@ -51,7 +51,7 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         throws IOException {
 
         byte[] data = new byte[29];
-        data[0] = 0x5A; 
+        data[0] = 0x5A;
 
         byte[] len = BinaryUtils.convert(data.length - 1, 2);
         data[1] = len[0]; // Length
@@ -70,7 +70,7 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         data[13] = 0x4B; // tid = Measurement Units Triplet
         data[14] = 0x00; // XaoBase = 10 inches
         data[15] = 0x00; // YaoBase = 10 inches
-        
+
         // XaoUnits
         byte[] xdpi = BinaryUtils.convert(widthResolution * 10, 2);
         data[16] = xdpi[0];
@@ -80,7 +80,7 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         byte[] ydpi = BinaryUtils.convert(heightResolution * 10, 2);
         data[18] = ydpi[0];
         data[19] = ydpi[1];
-        
+
         data[20] = 0x09; // Triplet length
         data[21] = 0x4C; // tid = Object Area Size
         data[22] = 0x02; // Size Type

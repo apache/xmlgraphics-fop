@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package embedding.intermediate;
 
 import java.io.File;
@@ -81,26 +81,26 @@ public class ExampleConcat {
      * @throws FOPException In case of a FOP problem
      * @throws TransformerException In case of a XSL transformation problem
      */
-    public void convertToIntermediate(Source src, Source xslt, File intermediate) 
+    public void convertToIntermediate(Source src, Source xslt, File intermediate)
                 throws IOException, FOPException, TransformerException {
-        
+
         //Create a user agent
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        
+
         //Create an instance of the target renderer so the XMLRenderer can use its font setup
         Renderer targetRenderer = userAgent.getRendererFactory().createRenderer(
-                userAgent, MimeConstants.MIME_PDF); 
-        
+                userAgent, MimeConstants.MIME_PDF);
+
         //Create the XMLRenderer to create the intermediate format (area tree XML)
         XMLRenderer xmlRenderer = new XMLRenderer();
         xmlRenderer.setUserAgent(userAgent);
-        
+
         //Tell the XMLRenderer to mimic the target renderer
         xmlRenderer.mimicRenderer(targetRenderer);
-        
+
         //Make sure the prepared XMLRenderer is used
         userAgent.setRendererOverride(xmlRenderer);
-        
+
         // Setup output
         OutputStream out = new java.io.FileOutputStream(intermediate);
         out = new java.io.BufferedOutputStream(out);
@@ -117,7 +117,7 @@ public class ExampleConcat {
             } else {
                 transformer = factory.newTransformer();
             }
-        
+
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(fop.getDefaultHandler());
 
@@ -136,7 +136,7 @@ public class ExampleConcat {
      * @throws TransformerException In case of a XSL transformation problem
      * @throws SAXException In case of an XML-related problem
      */
-    public void concatToPDF(File[] files, File pdffile) 
+    public void concatToPDF(File[] files, File pdffile)
             throws IOException, TransformerException, SAXException {
         // Setup output
         OutputStream out = new java.io.FileOutputStream(pdffile);
@@ -147,23 +147,23 @@ public class ExampleConcat {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
             //Construct the AreaTreeModel that will received the individual pages
-            AreaTreeModel treeModel = new RenderPagesModel(userAgent, 
+            AreaTreeModel treeModel = new RenderPagesModel(userAgent,
                     MimeConstants.MIME_PDF, fontInfo, out);
-            
+
             //Iterate over all intermediate files
             AreaTreeParser parser = new AreaTreeParser();
             for (int i = 0; i < files.length; i++) {
                 Source src = new StreamSource(files[i]);
                 parser.parse(src, treeModel, userAgent);
             }
-            
+
             //Signal the end of the processing. The renderer can finalize the target document.
             treeModel.endDocument();
         } finally {
             out.close();
         }
     }
-    
+
     /**
      * Main method.
      * @param args command-line arguments
@@ -171,12 +171,12 @@ public class ExampleConcat {
     public static void main(String[] args) {
         try {
             System.out.println("FOP ExampleConcat\n");
-            
+
             //Setup directories
             File baseDir = new File(".");
             File outDir = new File(baseDir, "out");
             outDir.mkdirs();
-            
+
             //Setup output file
             File xsltfile = new File(baseDir, "xml/xslt/projectteam2fo.xsl");
             File[] files = new File[] {
@@ -184,31 +184,31 @@ public class ExampleConcat {
                     new File(outDir, "team2.at.xml")};
             File pdffile = new File(outDir, "ResultConcat.pdf");
             for (int i = 0; i < files.length; i++) {
-                System.out.println("Intermediate file " + (i + 1) + ": " 
+                System.out.println("Intermediate file " + (i + 1) + ": "
                         + files[i].getCanonicalPath());
             }
             System.out.println("PDF Output File: " + pdffile.getCanonicalPath());
             System.out.println();
-            
+
 
             ProjectTeam team1 = ExampleObj2XML.createSampleProjectTeam();
             ProjectTeam team2 = createAnotherProjectTeam();
-            
+
             ExampleConcat app = new ExampleConcat();
-            
+
             //Create intermediate files
             app.convertToIntermediate(
-                    team1.getSourceForProjectTeam(), 
+                    team1.getSourceForProjectTeam(),
                     new StreamSource(xsltfile), files[0]);
             app.convertToIntermediate(
-                    team2.getSourceForProjectTeam(), 
+                    team2.getSourceForProjectTeam(),
                     new StreamSource(xsltfile), files[1]);
-            
+
             //Concatenate the individual intermediate files to one document
             app.concatToPDF(files, pdffile);
-            
+
             System.out.println("Success!");
-            
+
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);

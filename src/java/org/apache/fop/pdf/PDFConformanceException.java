@@ -33,7 +33,7 @@ public class PDFConformanceException extends RuntimeException {
     public PDFConformanceException() {
         super();
     }
-    
+
     /**
      * Constructs an PDFConformanceException with the specified detail
      * message. A detail message is a String that describes this particular
@@ -43,5 +43,5 @@ public class PDFConformanceException extends RuntimeException {
     public PDFConformanceException(String message) {
         super(message);
     }
-    
+
 }

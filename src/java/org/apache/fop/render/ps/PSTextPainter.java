@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -70,10 +70,10 @@ import org.apache.fop.fonts.FontTriplet;
  * @version $Id$
  */
 public class PSTextPainter implements TextPainter {
-    
+
     /** the logger for this class */
     protected Log log = LogFactory.getLog(PSTextPainter.class);
-    
+
     private NativeTextHandler nativeTextHandler;
     private FontInfo fontInfo;
 
@@ -81,7 +81,7 @@ public class PSTextPainter implements TextPainter {
      * Use the stroking text painter to get the bounds and shape.
      * Also used as a fallback to draw the string with strokes.
      */
-    protected static final TextPainter 
+    protected static final TextPainter
         PROXY_PAINTER = StrokingTextPainter.getInstance();
 
     /**
@@ -102,19 +102,19 @@ public class PSTextPainter implements TextPainter {
     public void paint(TextNode node, Graphics2D g2d) {
         String txt = node.getText();
         Point2D loc = node.getLocation();
-    
+
         if (hasUnsupportedAttributes(node)) {
             PROXY_PAINTER.paint(node, g2d);
         } else {
             paintTextRuns(node.getTextRuns(), g2d, loc);
         }
     }
-    
-    
+
+
     private boolean hasUnsupportedAttributes(TextNode node) {
         Iterator i = node.getTextRuns().iterator();
         while (i.hasNext()) {
-            StrokingTextPainter.TextRun 
+            StrokingTextPainter.TextRun
                     run = (StrokingTextPainter.TextRun)i.next();
             AttributedCharacterIterator aci = run.getACI();
             boolean hasUnsupported = hasUnsupportedAttributes(aci);
@@ -127,17 +127,17 @@ public class PSTextPainter implements TextPainter {
 
     private boolean hasUnsupportedAttributes(AttributedCharacterIterator aci) {
         boolean hasunsupported = false;
-        
+
         String text = getText(aci);
         Font font = makeFont(aci);
         if (hasUnsupportedGlyphs(text, font)) {
             log.trace("-> Unsupported glyphs found");
             hasunsupported = true;
         }
-        
+
         TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
             GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
-        if ((tpi != null) 
+        if ((tpi != null)
                 && ((tpi.strokeStroke != null && tpi.strokePaint != null)
                     || (tpi.strikethroughStroke != null)
                     || (tpi.underlineStroke != null)
@@ -169,7 +169,7 @@ public class PSTextPainter implements TextPainter {
             log.trace("-> word spacing found");
             hasunsupported = true;
         }
-        
+
         Object lengthAdjust = aci.getAttribute(
                             GVTAttributedCharacterIterator.TextAttribute.LENGTH_ADJUST);
         if (lengthAdjust != null) {
@@ -179,7 +179,7 @@ public class PSTextPainter implements TextPainter {
 
         Object writeMod = aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE);
-        if (writeMod != null 
+        if (writeMod != null
             && !GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE_LTR.equals(
                   writeMod)) {
             log.trace("-> Unsupported writing modes found");
@@ -193,7 +193,7 @@ public class PSTextPainter implements TextPainter {
             log.trace("-> vertical orientation found");
             hasunsupported = true;
         }
-        
+
         Object rcDel = aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.TEXT_COMPOUND_DELIMITER);
         //Batik 1.6 returns null here which makes it impossible to determine whether this can
@@ -202,7 +202,7 @@ public class PSTextPainter implements TextPainter {
             log.trace("-> spans found");
             hasunsupported = true; //Filter spans
         }
-        
+
         if (hasunsupported) {
             log.trace("Unsupported attributes found in ACI, using StrokingTextPainter");
         }
@@ -219,7 +219,7 @@ public class PSTextPainter implements TextPainter {
         Point2D currentloc = loc;
         Iterator i = textRuns.iterator();
         while (i.hasNext()) {
-            StrokingTextPainter.TextRun 
+            StrokingTextPainter.TextRun
                     run = (StrokingTextPainter.TextRun)i.next();
             currentloc = paintTextRun(run, g2d, currentloc);
         }
@@ -251,7 +251,7 @@ public class PSTextPainter implements TextPainter {
     }
 
     /**
-     * Paint an ACI on a Graphics2D at a given location. The method has to 
+     * Paint an ACI on a Graphics2D at a given location. The method has to
      * update the location after painting.
      * @param aci ACI to paint
      * @param g2d Graphics2D to paint on
@@ -260,18 +260,18 @@ public class PSTextPainter implements TextPainter {
      */
     protected Point2D paintACI(AttributedCharacterIterator aci, Graphics2D g2d, Point2D loc) {
         //ACIUtils.dumpAttrs(aci);
-        
+
         aci.first();
 
         updateLocationFromACI(aci, loc);
 
         TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
             GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
-        
+
         if (tpi == null) {
             return loc;
         }
-        
+
         TextNode.Anchor anchor = (TextNode.Anchor)aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
 
@@ -315,7 +315,7 @@ public class PSTextPainter implements TextPainter {
                 default: //nop
             }
         }
-        
+
         drawPrimitiveString(g2d, loc, font, txt, tx);
         loc.setLocation(loc.getX() + (double)advance, loc.getY());
         return loc;
@@ -354,25 +354,25 @@ public class PSTextPainter implements TextPainter {
         }
         if (ypos != null) {
             loc.setLocation(loc.getX(), ypos.doubleValue());
-        } 
+        }
         if (dxpos != null) {
             loc.setLocation(loc.getX() + dxpos.doubleValue(), loc.getY());
-        } 
+        }
         if (dypos != null) {
             loc.setLocation(loc.getX(), loc.getY() + dypos.doubleValue());
-        } 
+        }
     }
 
     private String getStyle(AttributedCharacterIterator aci) {
         Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
         return ((posture != null) && (posture.floatValue() > 0.0))
-                       ? "italic" 
+                       ? "italic"
                        : "normal";
     }
 
     private int getWeight(AttributedCharacterIterator aci) {
         Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
-        return ((taWeight != null) &&  (taWeight.floatValue() > 1.0)) 
+        return ((taWeight != null) &&  (taWeight.floatValue() > 1.0))
                        ? Font.WEIGHT_BOLD
                        : Font.WEIGHT_NORMAL;
     }
@@ -479,8 +479,8 @@ public class PSTextPainter implements TextPainter {
      * @return the bounds of the text
      */
     public Rectangle2D getBounds2D(TextNode node) {
-        /* (todo) getBounds2D() is too slow 
-         * because it uses the StrokingTextPainter. We should implement this 
+        /* (todo) getBounds2D() is too slow
+         * because it uses the StrokingTextPainter. We should implement this
          * method ourselves. */
         return PROXY_PAINTER.getBounds2D(node);
     }

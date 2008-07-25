@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,30 +24,30 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * This subclass of LengthProperty.Maker handles the special treatment of 
+ * This subclass of LengthProperty.Maker handles the special treatment of
  * relative font sizes described in 7.8.4.
  */
-public class FontSizePropertyMaker 
+public class FontSizePropertyMaker
     extends LengthProperty.Maker implements Constants {
 
     /** The default normal font size in mpt */
     private static final int FONT_SIZE_NORMAL = 12000;
     /** The factor to be applied when stepping font sizes upwards */
     private static final double FONT_SIZE_GROWTH_FACTOR = 1.2;
-    
+
     /**
-     * Create a length property which can handle relative font sizes 
+     * Create a length property which can handle relative font sizes
      * @param propId the font size property id.
      */
     public FontSizePropertyMaker(int propId) {
         super(propId);
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      * Contrary to basic lengths, percentages for font-size can be resolved
-     * here already: if the property evaluates to a {@link PercentLength}, 
+     * here already: if the property evaluates to a {@link PercentLength},
      * it is immediately replaced by the resolved {@link FixedLength}.
      */
     public Property make(PropertyList propertyList, String value, FObj fo) throws PropertyException {
@@ -82,7 +82,7 @@ public class FontSizePropertyMaker
         }
         return super.convertProperty(p, propertyList, fo);
     }
-    
+
     /**
      * Calculates the nearest absolute font size to the given
      * font size.
@@ -107,7 +107,7 @@ public class FontSizePropertyMaker
         }
         // baseFontSize is between last and next step font size
         // Return the step value closer to the baseFontSize
-        if (Math.abs(lastStepFontSize - baseFontSize) 
+        if (Math.abs(lastStepFontSize - baseFontSize)
                 <= Math.abs(baseFontSize - nextStepFontSize)) {
             return lastStepFontSize;
         }

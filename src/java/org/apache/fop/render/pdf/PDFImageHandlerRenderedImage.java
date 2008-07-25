@@ -40,11 +40,11 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.BUFFERED_IMAGE,
-        ImageFlavor.RENDERED_IMAGE        
+        ImageFlavor.RENDERED_IMAGE
     };
-    
+
     /** {@inheritDoc} */
-    public PDFXObject generateImage(RendererContext context, Image image, 
+    public PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos)
             throws IOException {
         PDFRenderer renderer = (PDFRenderer)context.getRenderer();
@@ -53,7 +53,7 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
                 PDFRendererContextConstants.PDF_DOCUMENT);
         PDFResourceContext resContext = (PDFResourceContext)context.getProperty(
                 PDFRendererContextConstants.PDF_CONTEXT);
-        
+
         PDFImage pdfimage = new ImageRenderedAdapter(imageRend, image.getInfo().getOriginalURI());
         PDFXObject xobj = pdfDoc.addImage(resContext, pdfimage);
 
@@ -62,7 +62,7 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
         float w = (float)pos.getWidth() / 1000f;
         float h = (float)pos.getHeight() / 1000f;
         renderer.placeImage(x, y, w, h, xobj);
-        
+
         return xobj;
     }
 
