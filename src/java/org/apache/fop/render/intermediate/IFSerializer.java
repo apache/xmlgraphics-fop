@@ -202,22 +202,13 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
-        StringBuffer sb = new StringBuffer();
-        toString(transform, sb);
-        startViewport(sb.toString(), size, clipRect);
+        startViewport(toString(transform), size, clipRect);
     }
 
     /** {@inheritDoc} */
     public void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect)
             throws IFException {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0, c = transforms.length; i < c; i++) {
-            if (i > 0) {
-                sb.append(' ');
-            }
-            toString(transforms[i], sb);
-        }
-        startViewport(sb.toString(), size, clipRect);
+        startViewport(toString(transforms), size, clipRect);
     }
 
     private void startViewport(String transform, Dimension size, Rectangle clipRect) throws IFException {
@@ -248,21 +239,12 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
 
     /** {@inheritDoc} */
     public void startGroup(AffineTransform[] transforms) throws IFException {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0, c = transforms.length; i < c; i++) {
-            if (i > 0) {
-                sb.append(' ');
-            }
-            toString(transforms[i], sb);
-        }
-        startGroup(sb.toString());
+        startGroup(toString(transforms));
     }
 
     /** {@inheritDoc} */
     public void startGroup(AffineTransform transform) throws IFException {
-        StringBuffer sb = new StringBuffer();
-        toString(transform, sb);
-        startGroup(sb.toString());
+        startGroup(toString(transform));
     }
 
     private void startGroup(String transform) throws IFException {

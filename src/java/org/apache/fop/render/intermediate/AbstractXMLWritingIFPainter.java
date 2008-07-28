@@ -120,7 +120,7 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
      * @param sb the StringBuffer to write the transform method to
      * @return the StringBuffer passed to this method
      */
-    protected StringBuffer toString(AffineTransform transform, StringBuffer sb) {
+    public static StringBuffer toString(AffineTransform transform, StringBuffer sb) {
         if (transform.isIdentity()) {
             return sb;
         }
@@ -143,6 +143,40 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
         }
         sb.append(')');
         return sb;
+    }
+
+    /**
+     * Converts an {@code AffineTransform} array to an SVG style transform method sequence.
+     * @param transforms the transformation matrix array
+     * @param sb the StringBuffer to write the transform method sequence to
+     * @return the StringBuffer passed to this method
+     */
+    public static StringBuffer toString(AffineTransform[] transforms, StringBuffer sb) {
+        for (int i = 0, c = transforms.length; i < c; i++) {
+            if (i > 0) {
+                sb.append(' ');
+            }
+            toString(transforms[i], sb);
+        }
+        return sb;
+    }
+
+    /**
+     * Converts an {@code AffineTransform} array to an SVG style transform method sequence.
+     * @param transforms the transformation matrix array
+     * @return the formatted array
+     */
+    public static String toString(AffineTransform[] transforms) {
+        return toString(transforms, new StringBuffer()).toString();
+    }
+
+    /**
+     * Converts an {@code AffineTransform} instance to an SVG style transform method.
+     * @param transform the transformation matrix
+     * @return the formatted array
+     */
+    public static String toString(AffineTransform transform) {
+        return toString(transform, new StringBuffer()).toString();
     }
 
     /**
