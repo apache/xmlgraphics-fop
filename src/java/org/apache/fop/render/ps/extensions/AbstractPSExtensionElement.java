@@ -64,24 +64,16 @@ public abstract class AbstractPSExtensionElement extends FONode {
         }
     }
 
-    /**
-     * Adds characters (does nothing here)
-     * @param data array of characters containing text to be added
-     * @param start starting array element to add
-     * @param length of data array to add
-     * @param pList currently applicable PropertyList
-     * @param locator location in fo source file.
-     * @see org.apache.fop.fo.FONode#addCharacters(char[], int, int, PropertyList, Locator)
-     */
-    protected void addCharacters(char[] data, int start, int length,
+    /** {@inheritDoc} */
+    protected void characters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) {
         PSExtensionAttachment a = (PSExtensionAttachment)getExtensionAttachment();
         if (a.getContent() != null) {
             StringBuffer sb = new StringBuffer(a.getContent());
-            sb.append(data, start, length - start);
+            sb.append(data, start, length);
             a.setContent(sb.toString());
         } else {
-            a.setContent(new String(data, start, length - start));
+            a.setContent(new String(data, start, length));
         }
     }
 

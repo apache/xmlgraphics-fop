@@ -50,7 +50,7 @@ public abstract class FObjMixed extends FObj {
     }
 
     /** {@inheritDoc} */
-    protected void addCharacters(char[] data, int start, int length,
+    protected void characters(char[] data, int start, int length,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
         if (ft == null) {
@@ -60,7 +60,7 @@ public abstract class FObjMixed extends FObj {
                 ft.bind(pList);
             }
         }
-        ft.addCharacters(data, start, length, null, null);
+        ft.characters(data, start, length, null, null);
     }
 
     /** {@inheritDoc} */

@@ -20,13 +20,14 @@
 package org.apache.fop.render.afp.extensions;
 
 // FOP
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Base class for the AFP-specific extension elements.
@@ -60,9 +61,9 @@ public abstract class AbstractAFPExtensionObject extends FONode {
     }
 
     /** {@inheritDoc} */
-    protected void addCharacters(char[] data, int start, int end,
+    protected void characters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) {
-        setupCode.setContent(new String(data, start, end - start));
+        setupCode.setContent(new String(data, start, length));
     }
 
     /** {@inheritDoc} */

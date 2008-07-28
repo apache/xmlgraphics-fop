@@ -21,8 +21,8 @@ package org.apache.fop.fo.pagination.bookmarks;
 
 import org.xml.sax.Locator;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
@@ -52,9 +52,10 @@ public class BookmarkTitle extends FObj {
      * @param data the character data
      * @param start the start position in the data array
      * @param length the length of the character array
+     * @param pList currently applicable PropertyList
      * @param locator location in fo source file.
      */
-    protected void addCharacters(char[] data, int start, int length,
+    protected void characters(char[] data, int start, int length,
                                  PropertyList pList,
                                  Locator locator) {
         title += new String(data, start, length);

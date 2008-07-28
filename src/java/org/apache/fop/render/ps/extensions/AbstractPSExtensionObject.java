@@ -54,14 +54,14 @@ public abstract class AbstractPSExtensionObject extends FONode {
     }
 
     /** {@inheritDoc} */
-    protected void addCharacters(char[] data, int start, int length,
+    protected void characters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) {
         if (setupCode.getContent() != null) {
             StringBuffer sb = new StringBuffer(setupCode.getContent());
             sb.append(data, start, length - start);
             setupCode.setContent(sb.toString());
         } else {
-            setupCode.setContent(new String(data, start, length - start));
+            setupCode.setContent(new String(data, start, length));
         }
     }
 
