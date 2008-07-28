@@ -371,7 +371,7 @@ public class FOTreeBuilder extends DefaultHandler {
         public void characters(char[] data, int start, int length)
             throws FOPException {
             if (currentFObj != null) {
-                currentFObj.addCharacters(data, start, length,
+                currentFObj.characters(data, start, length,
                         currentPropertyList, getEffectiveLocator());
             }
         }
