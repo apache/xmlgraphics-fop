@@ -25,12 +25,14 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -226,5 +228,27 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
      */
     protected abstract void parseAndRender(Source src, OutputStream out)
             throws Exception;
+
+    /**
+     * Sets an error listener which doesn't swallow errors like Xalan's default one.
+     * @param transformer the transformer to set the error listener on
+     */
+    protected void setErrorListener(Transformer transformer) {
+        transformer.setErrorListener(new ErrorListener() {
+
+            public void error(TransformerException exception) throws TransformerException {
+                throw exception;
+            }
+
+            public void fatalError(TransformerException exception) throws TransformerException {
+                throw exception;
+            }
+
+            public void warning(TransformerException exception) throws TransformerException {
+                //ignore
+            }
+
+        });
+    }
 
 }
