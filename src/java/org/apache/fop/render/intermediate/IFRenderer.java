@@ -34,6 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.SAXException;
 
+import org.apache.batik.parser.AWTTransformProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -89,6 +90,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     private Stack graphicContextStack = new Stack();
     private Stack viewportDimensionStack = new Stack();
     private IFGraphicContext graphicContext = new IFGraphicContext();
+    //private Stack groupStack = new Stack();
 
     private Metadata documentMetadata;
 
@@ -293,15 +295,26 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void restoreGraphicsState() {
-        while (graphicContext.getGroupDepth() > 0) {
-            try {
-                painter.endGroup();
-            } catch (IFException e) {
-                handleIFException(e);
+        while (graphicContext.getGroupStackSize() > 0) {
+            IFGraphicContext.Group[] groups = graphicContext.dropGroups();
+            for (int i = groups.length - 1; i >= 0; i--) {
+                try {
+                    groups[i].end(painter);
+                } catch (IFException ife) {
+                    handleIFException(ife);
+                }
             }
-            graphicContext.endGroup();
         }
         graphicContext = (IFGraphicContext)graphicContextStack.pop();
+    }
+
+    private void pushGroup(IFGraphicContext.Group group) {
+        graphicContext.pushGroup(group);
+        try {
+            group.start(painter);
+        } catch (IFException ife) {
+            handleIFException(ife);
+        }
     }
 
     /** {@inheritDoc} */
@@ -309,8 +322,18 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         log.debug("Block.FIXED --> break out");
         List breakOutList = new java.util.ArrayList();
         while (!this.graphicContextStack.empty()) {
+            //Handle groups
+            IFGraphicContext.Group[] groups = graphicContext.getGroups();
+            for (int j = groups.length - 1; j >= 0; j--) {
+                try {
+                    groups[j].end(painter);
+                } catch (IFException ife) {
+                    handleIFException(ife);
+                }
+            }
+
             breakOutList.add(0, this.graphicContext);
-            restoreGraphicsState();
+            graphicContext = (IFGraphicContext)graphicContextStack.pop();
         }
         return breakOutList;
     }
@@ -319,25 +342,36 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         log.debug("Block.FIXED --> restoring context after break-out");
         for (int i = 0, c = breakOutList.size(); i < c; i++) {
-            saveGraphicsState();
+            graphicContextStack.push(graphicContext);
             this.graphicContext = (IFGraphicContext)breakOutList.get(i);
+
+            //Handle groups
+            IFGraphicContext.Group[] groups = graphicContext.getGroups();
+            for (int j = 0, jc = groups.length; j < jc; j++) {
+                try {
+                    groups[j].start(painter);
+                } catch (IFException ife) {
+                    handleIFException(ife);
+                }
+            }
         }
+        log.debug("restored.");
     }
 
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         if (!at.isIdentity()) {
+            concatenateTransformationMatrixMpt(ptToMpt(at));
+        }
+    }
+
+    private void concatenateTransformationMatrixMpt(AffineTransform at) {
+        if (!at.isIdentity()) {
             if (log.isDebugEnabled()) {
                 log.debug("-----concatenateTransformationMatrix: " + at);
             }
-            AffineTransform atmpt = ptToMpt(at);
-            graphicContext.transform(atmpt);
-            graphicContext.startGroup();
-            try {
-                painter.startGroup(atmpt);
-            } catch (IFException e) {
-                handleIFException(e);
-            }
+            IFGraphicContext.Group group = new IFGraphicContext.Group(at);
+            pushGroup(group);
         }
     }
 
@@ -361,9 +395,120 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void renderBlockViewport(BlockViewport bv, List children) {
+        //Essentially the same code as in the super class but optimized for the IF
+
+        //This is the content-rect
         Dimension dim = new Dimension(bv.getIPD(), bv.getBPD());
         viewportDimensionStack.push(dim);
-        super.renderBlockViewport(bv, children);
+
+        // save positions
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        CTM ctm = bv.getCTM();
+        int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
+        int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
+
+        if (bv.getPositioning() == Block.ABSOLUTE
+                || bv.getPositioning() == Block.FIXED) {
+
+            //For FIXED, we need to break out of the current viewports to the
+            //one established by the page. We save the state stack for restoration
+            //after the block-container has been painted. See below.
+            List breakOutList = null;
+            if (bv.getPositioning() == Block.FIXED) {
+                breakOutList = breakOutOfStateStack();
+            }
+
+            AffineTransform positionTransform = new AffineTransform();
+            positionTransform.translate(bv.getXOffset(), bv.getYOffset());
+
+            //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
+            positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
+
+            //Free transformation for the block-container viewport
+            String transf;
+            transf = bv.getForeignAttributeValue(FOX_TRANSFORM);
+            if (transf != null) {
+                AffineTransform freeTransform = AWTTransformProducer.createAffineTransform(transf);
+                positionTransform.concatenate(freeTransform);
+            }
+
+            saveGraphicsState();
+            //Viewport position
+            concatenateTransformationMatrixMpt(positionTransform);
+
+            //Background and borders
+            float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd());
+            float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter());
+            drawBackAndBorders(bv, 0, 0,
+                    (dim.width + bpwidth) / 1000f, (dim.height + bpheight) / 1000f);
+
+            //Shift to content rectangle after border painting
+            AffineTransform contentRectTransform = new AffineTransform();
+            contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
+            concatenateTransformationMatrixMpt(contentRectTransform);
+
+            //Clipping
+            Rectangle clipRect = null;
+            if (bv.getClip()) {
+                clipRect = new Rectangle(0, 0, dim.width, dim.height);
+                //clipRect(0f, 0f, width, height);
+            }
+
+            //saveGraphicsState();
+            //Set up coordinate system for content rectangle
+            AffineTransform contentTransform = ctm.toAffineTransform();
+            //concatenateTransformationMatrixMpt(contentTransform);
+            startViewport(contentTransform, clipRect);
+
+            currentIPPosition = 0;
+            currentBPPosition = 0;
+            renderBlocks(bv, children);
+
+            endViewport();
+            //restoreGraphicsState();
+            restoreGraphicsState();
+
+            if (breakOutList != null) {
+                restoreStateStackAfterBreakOut(breakOutList);
+            }
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+        } else {
+
+            currentBPPosition += bv.getSpaceBefore();
+
+            //borders and background in the old coordinate system
+            handleBlockTraits(bv);
+
+            //Advance to start of content area
+            currentIPPosition += bv.getStartIndent();
+
+            CTM tempctm = new CTM(containingIPPosition, currentBPPosition);
+            ctm = tempctm.multiply(ctm);
+
+            //Now adjust for border/padding
+            currentBPPosition += borderPaddingBefore;
+
+            Rectangle2D clippingRect = null;
+            if (bv.getClip()) {
+                clippingRect = new Rectangle(currentIPPosition, currentBPPosition,
+                        bv.getIPD(), bv.getBPD());
+            }
+
+            startVParea(ctm, clippingRect);
+            currentIPPosition = 0;
+            currentBPPosition = 0;
+            renderBlocks(bv, children);
+            endVParea();
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+
+            currentBPPosition += (int)(bv.getAllocBPD());
+        }
         viewportDimensionStack.pop();
     }
 
@@ -380,38 +525,43 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         if (log.isDebugEnabled()) {
             log.debug("startVParea() ctm=" + ctm + ", clippingRect=" + clippingRect);
         }
-        saveGraphicsState();
         AffineTransform at = new AffineTransform(ctm.toArray());
-        graphicContext.transform(at);
-        try {
-            Rectangle clipRect = null;
-            if (clippingRect != null) {
-                clipRect = new Rectangle(
-                        (int)clippingRect.getMinX() - currentIPPosition,
-                        (int)clippingRect.getMinY() - currentBPPosition,
-                        (int)clippingRect.getWidth(), (int)clippingRect.getHeight());
-            }
-            painter.startViewport(at, (Dimension)viewportDimensionStack.peek(), clipRect);
-        } catch (IFException e) {
-            handleIFException(e);
+        Rectangle clipRect = null;
+        if (clippingRect != null) {
+            clipRect = new Rectangle(
+                    (int)clippingRect.getMinX() - currentIPPosition,
+                    (int)clippingRect.getMinY() - currentBPPosition,
+                    (int)clippingRect.getWidth(), (int)clippingRect.getHeight());
         }
+        startViewport(at, clipRect);
         if (log.isDebugEnabled()) {
             log.debug("startVPArea: " + at + " --> " + graphicContext.getTransform());
+        }
+    }
+
+    private void startViewport(AffineTransform at, Rectangle clipRect) {
+        saveGraphicsState();
+        try {
+            IFGraphicContext.Viewport viewport = new IFGraphicContext.Viewport(
+                    at, (Dimension)viewportDimensionStack.peek(), clipRect);
+            graphicContext.pushGroup(viewport);
+            viewport.start(painter);
+        } catch (IFException e) {
+            handleIFException(e);
         }
     }
 
     /** {@inheritDoc} */
     protected void endVParea() {
         log.debug("endVParea()");
-        try {
-            painter.endViewport();
-        } catch (IFException e) {
-            handleIFException(e);
-        }
-        restoreGraphicsState();
+        endViewport();
         if (log.isDebugEnabled()) {
             log.debug("endVPArea() --> " + graphicContext.getTransform());
         }
+    }
+
+    private void endViewport() {
+        restoreGraphicsState();
     }
 
     /*
