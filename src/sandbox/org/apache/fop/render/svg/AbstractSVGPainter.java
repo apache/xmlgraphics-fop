@@ -85,20 +85,7 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
     /** {@inheritDoc} */
     public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
-        StringBuffer sb = new StringBuffer();
-        toString(transform, sb);
-        startViewport(sb.toString(), size, clipRect);
-    }
-
-    private String toString(AffineTransform[] transforms) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0, c = transforms.length; i < c; i++) {
-            if (i > 0) {
-                sb.append(' ');
-            }
-            toString(transforms[i], sb);
-        }
-        return sb.toString();
+        startViewport(toString(transform), size, clipRect);
     }
 
     /** {@inheritDoc} */
@@ -166,9 +153,7 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
 
     /** {@inheritDoc} */
     public void startGroup(AffineTransform transform) throws IFException {
-        StringBuffer sb = new StringBuffer();
-        toString(transform, sb);
-        startGroup(sb.toString());
+        startGroup(toString(transform));
     }
 
     private void startGroup(String transform) throws IFException {
