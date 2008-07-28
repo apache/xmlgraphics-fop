@@ -25,13 +25,15 @@ import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Abstract class modelling generic, non-XSL-FO XML objects. Such objects are
@@ -203,17 +205,10 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
         }
     }
 
-    /**
-     * Add parsed characters to this object
-     *
-     * @param data array of characters contaning the text to add
-     * @param start starting array element to add
-     * @param length number of characters from the array to add
-     * @param pList the currently applicable property list
-     * @param locator location in fo source file.
-     */
-    protected void addCharacters(char[] data, int start, int length,
-                                 PropertyList pList, Locator locator) {
+    /** {@inheritDoc} */
+    protected void characters(char[] data, int start, int length,
+                                 PropertyList pList, Locator locator) throws FOPException {
+        super.characters(data, start, length, pList, locator);
         String str = new String(data, start, length);
         org.w3c.dom.Text text = doc.createTextNode(str);
         element.appendChild(text);

@@ -53,6 +53,10 @@
   
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="JM" type="fix" fixes-bug="45470">
+        Added LayoutManagerMapping.registerMaker() to make registration of custom
+        layout managers easier.
+      </action>
       <action context="Layout" dev="LF" type="fix">
         Fixed absolute positioning of block-containers when specified
         using right and bottom instead of left and top.
