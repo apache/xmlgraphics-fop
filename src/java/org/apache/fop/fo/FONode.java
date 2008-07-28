@@ -274,15 +274,34 @@ public abstract class FONode implements Cloneable {
      *
      * @param data array of characters containing text to be added
      * @param start starting array element to add
+     * @param end ending array element to add
+     * @param pList currently applicable PropertyList
+     * @param locator location in the XSL-FO source file.
+     * @throws FOPException if there's a problem during processing
+     * @deprecated Please override {@code #characters(char[], int, int, PropertyList, Locator)}
+     *          instead!
+     */
+    protected void addCharacters(char[] data, int start, int end,
+                                 PropertyList pList,
+                                 Locator locator) throws FOPException {
+        // ignore
+    }
+
+    /**
+     * Adds characters. Does nothing by default. To be overridden in subclasses
+     * that allow <code>#PCDATA</code> content.
+     *
+     * @param data array of characters containing text to be added
+     * @param start starting array element to add
      * @param length number of elements to add
      * @param pList currently applicable PropertyList
      * @param locator location in the XSL-FO source file.
      * @throws FOPException if there's a problem during processing
      */
-    protected void addCharacters(char[] data, int start, int length,
+    protected void characters(char[] data, int start, int length,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
-        // ignore
+        addCharacters(data, start, start + length, pList, locator);
     }
 
     /**

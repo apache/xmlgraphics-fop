@@ -20,14 +20,15 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
@@ -65,8 +66,6 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
-import org.apache.fop.area.AreaTreeHandler;
-
 import org.apache.fop.layoutmgr.inline.BasicLinkLayoutManager;
 import org.apache.fop.layoutmgr.inline.BidiLayoutManager;
 import org.apache.fop.layoutmgr.inline.CharacterLayoutManager;
@@ -78,8 +77,8 @@ import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.InstreamForeignObjectLM;
 import org.apache.fop.layoutmgr.inline.LeaderLayoutManager;
-import org.apache.fop.layoutmgr.inline.PageNumberCitationLayoutManager;
 import org.apache.fop.layoutmgr.inline.PageNumberCitationLastLayoutManager;
+import org.apache.fop.layoutmgr.inline.PageNumberCitationLayoutManager;
 import org.apache.fop.layoutmgr.inline.PageNumberLayoutManager;
 import org.apache.fop.layoutmgr.inline.TextLayoutManager;
 import org.apache.fop.layoutmgr.inline.WrapperLayoutManager;
@@ -107,41 +106,50 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
      * Initializes the set of maker objects associated with this LayoutManagerMapping
      */
     protected void initialize() {
-        makers.put(FOText.class, new FOTextLayoutManagerMaker());
-        makers.put(FObjMixed.class, new Maker());
-        makers.put(BidiOverride.class, new BidiOverrideLayoutManagerMaker());
-        makers.put(Inline.class, new InlineLayoutManagerMaker());
-        makers.put(Footnote.class, new FootnodeLayoutManagerMaker());
-        makers.put(InlineContainer.class,
+        registerMaker(FOText.class, new FOTextLayoutManagerMaker());
+        registerMaker(FObjMixed.class, new Maker());
+        registerMaker(BidiOverride.class, new BidiOverrideLayoutManagerMaker());
+        registerMaker(Inline.class, new InlineLayoutManagerMaker());
+        registerMaker(Footnote.class, new FootnodeLayoutManagerMaker());
+        registerMaker(InlineContainer.class,
                    new InlineContainerLayoutManagerMaker());
-        makers.put(BasicLink.class, new BasicLinkLayoutManagerMaker());
-        makers.put(Block.class, new BlockLayoutManagerMaker());
-        makers.put(Leader.class, new LeaderLayoutManagerMaker());
-        makers.put(RetrieveMarker.class, new RetrieveMarkerLayoutManagerMaker());
-        makers.put(RetrieveTableMarker.class, new Maker());
-        makers.put(Character.class, new CharacterLayoutManagerMaker());
-        makers.put(ExternalGraphic.class,
+        registerMaker(BasicLink.class, new BasicLinkLayoutManagerMaker());
+        registerMaker(Block.class, new BlockLayoutManagerMaker());
+        registerMaker(Leader.class, new LeaderLayoutManagerMaker());
+        registerMaker(RetrieveMarker.class, new RetrieveMarkerLayoutManagerMaker());
+        registerMaker(RetrieveTableMarker.class, new Maker());
+        registerMaker(Character.class, new CharacterLayoutManagerMaker());
+        registerMaker(ExternalGraphic.class,
                    new ExternalGraphicLayoutManagerMaker());
-        makers.put(BlockContainer.class,
+        registerMaker(BlockContainer.class,
                    new BlockContainerLayoutManagerMaker());
-        makers.put(ListItem.class, new ListItemLayoutManagerMaker());
-        makers.put(ListBlock.class, new ListBlockLayoutManagerMaker());
-        makers.put(InstreamForeignObject.class,
+        registerMaker(ListItem.class, new ListItemLayoutManagerMaker());
+        registerMaker(ListBlock.class, new ListBlockLayoutManagerMaker());
+        registerMaker(InstreamForeignObject.class,
                    new InstreamForeignObjectLayoutManagerMaker());
-        makers.put(PageNumber.class, new PageNumberLayoutManagerMaker());
-        makers.put(PageNumberCitation.class,
+        registerMaker(PageNumber.class, new PageNumberLayoutManagerMaker());
+        registerMaker(PageNumberCitation.class,
                    new PageNumberCitationLayoutManagerMaker());
-        makers.put(PageNumberCitationLast.class,
+        registerMaker(PageNumberCitationLast.class,
                 new PageNumberCitationLastLayoutManagerMaker());
-        makers.put(Table.class, new TableLayoutManagerMaker());
-        makers.put(TableBody.class, new Maker());
-        makers.put(TableColumn.class, new Maker());
-        makers.put(TableRow.class, new Maker());
-        makers.put(TableCell.class, new Maker());
-        makers.put(TableFooter.class, new Maker());
-        makers.put(TableHeader.class, new Maker());
-        makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
-        makers.put(Title.class, new InlineLayoutManagerMaker());
+        registerMaker(Table.class, new TableLayoutManagerMaker());
+        registerMaker(TableBody.class, new Maker());
+        registerMaker(TableColumn.class, new Maker());
+        registerMaker(TableRow.class, new Maker());
+        registerMaker(TableCell.class, new Maker());
+        registerMaker(TableFooter.class, new Maker());
+        registerMaker(TableHeader.class, new Maker());
+        registerMaker(Wrapper.class, new WrapperLayoutManagerMaker());
+        registerMaker(Title.class, new InlineLayoutManagerMaker());
+    }
+
+    /**
+     * Registers a Maker class for a specific formatting object.
+     * @param clazz the formatting object class
+     * @param maker the maker for the layout manager
+     */
+    protected void registerMaker(Class clazz, Maker maker) {
+        makers.put(clazz, maker);
     }
 
     /**

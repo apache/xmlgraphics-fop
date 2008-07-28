@@ -93,7 +93,7 @@ public class FOText extends FONode implements CharSequence {
     }
 
     /** {@inheritDoc} */
-    protected void addCharacters(char[] data, int start, int length,
+    protected void characters(char[] data, int start, int length,
             PropertyList list, Locator locator) throws FOPException {
 
         if (this.charBuffer == null) {
