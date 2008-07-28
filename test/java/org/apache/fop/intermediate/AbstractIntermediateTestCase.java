@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -138,6 +139,7 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
      */
     protected void saveDOM(Document doc, File tgtFile) throws Exception {
         Transformer transformer = tFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         Source src = new DOMSource(doc);
         Result res = new StreamResult(tgtFile);
         transformer.transform(src, res);
