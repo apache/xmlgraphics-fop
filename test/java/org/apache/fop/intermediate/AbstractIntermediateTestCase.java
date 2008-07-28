@@ -96,6 +96,12 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
         }
     }
 
+    /** {@inheritDoc} */
+    protected void tearDown() throws Exception {
+        this.intermediate = null; //Release memory
+        super.tearDown();
+    }
+
     /**
      * Returns the file extension for the intermediate file format.
      * @return the file extension
