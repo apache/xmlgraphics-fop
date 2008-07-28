@@ -860,8 +860,10 @@ public abstract class AbstractRenderer
         double[] matrix = new double[6];
         at.getMatrix(matrix);
         //Convert to millipoints
-        matrix[4] = matrix[4] * 1000;
-        matrix[5] = matrix[5] * 1000;
+        //Math.round() because things like this can happen: 65.6 * 1000 = 65.599999999999999
+        //which is bad for testing
+        matrix[4] = Math.round(matrix[4] * 1000);
+        matrix[5] = Math.round(matrix[5] * 1000);
         return new AffineTransform(matrix);
     }
 }
