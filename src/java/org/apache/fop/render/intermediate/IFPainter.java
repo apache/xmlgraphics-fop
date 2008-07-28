@@ -214,10 +214,14 @@ public interface IFPainter {
      */
     void endPageTrailer() throws IFException;
 
-    void startBox(AffineTransform transform, Dimension size, boolean clip) throws IFException;
-    void startBox(AffineTransform[] transforms, Dimension size, boolean clip) throws IFException;
+    void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect) throws IFException;
+    void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect) throws IFException;
     //For transform, Batik's org.apache.batik.parser.TransformListHandler/Parser can be used
-    void endBox() throws IFException;
+    void endViewport() throws IFException;
+
+    void startGroup(AffineTransform[] transforms) throws IFException;
+    void startGroup(AffineTransform transform) throws IFException;
+    void endGroup() throws IFException;
 
     /**
      * Updates the current font.

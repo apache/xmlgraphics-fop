@@ -200,15 +200,15 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
-    public void startBox(AffineTransform transform, Dimension size, boolean clip)
+    public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
         StringBuffer sb = new StringBuffer();
         toString(transform, sb);
-        startBox(sb.toString(), size, clip);
+        startViewport(sb.toString(), size, clipRect);
     }
 
     /** {@inheritDoc} */
-    public void startBox(AffineTransform[] transforms, Dimension size, boolean clip)
+    public void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect)
             throws IFException {
         StringBuffer sb = new StringBuffer();
         for (int i = 0, c = transforms.length; i < c; i++) {
@@ -217,32 +217,72 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             }
             toString(transforms[i], sb);
         }
-        startBox(sb.toString(), size, clip);
+        startViewport(sb.toString(), size, clipRect);
     }
 
-    private void startBox(String transform, Dimension size, boolean clip) throws IFException {
+    private void startViewport(String transform, Dimension size, Rectangle clipRect) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
-            atts.addAttribute("", "transform", "transform", CDATA, transform);
-            if (size != null) {
-                atts.addAttribute("", "width", "width", CDATA, Integer.toString(size.width));
-                atts.addAttribute("", "height", "height", CDATA, Integer.toString(size.height));
+            if (transform != null && transform.length() > 0) {
+                atts.addAttribute("", "transform", "transform", CDATA, transform);
             }
-            if (clip) {
-                atts.addAttribute("", "clip", "clip", CDATA, "true");
+            atts.addAttribute("", "width", "width", CDATA, Integer.toString(size.width));
+            atts.addAttribute("", "height", "height", CDATA, Integer.toString(size.height));
+            if (clipRect != null) {
+                atts.addAttribute("", "clip-rect", "clip-rect", CDATA, toString(clipRect));
             }
-            startElement(EL_BOX, atts);
+            startElement(EL_VIEWPORT, atts);
         } catch (SAXException e) {
-            throw new IFException("SAX error in startBox()", e);
+            throw new IFException("SAX error in startViewport()", e);
         }
     }
 
     /** {@inheritDoc} */
-    public void endBox() throws IFException {
+    public void endViewport() throws IFException {
         try {
-            endElement(EL_BOX);
+            endElement(EL_VIEWPORT);
         } catch (SAXException e) {
-            throw new IFException("SAX error in endBox()", e);
+            throw new IFException("SAX error in endViewport()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void startGroup(AffineTransform[] transforms) throws IFException {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0, c = transforms.length; i < c; i++) {
+            if (i > 0) {
+                sb.append(' ');
+            }
+            toString(transforms[i], sb);
+        }
+        startGroup(sb.toString());
+    }
+
+    /** {@inheritDoc} */
+    public void startGroup(AffineTransform transform) throws IFException {
+        StringBuffer sb = new StringBuffer();
+        toString(transform, sb);
+        startGroup(sb.toString());
+    }
+
+    private void startGroup(String transform) throws IFException {
+        try {
+            AttributesImpl atts = new AttributesImpl();
+            if (transform != null && transform.length() > 0) {
+                atts.addAttribute("", "transform", "transform", CDATA, transform);
+            }
+            startElement(EL_GROUP, atts);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in startGroup()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void endGroup() throws IFException {
+        try {
+            endElement(EL_GROUP);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in endGroup()", e);
         }
     }
 

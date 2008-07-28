@@ -47,5 +47,6 @@ public interface IFConstants {
     String EL_PAGE_HEADER = "page-header";
     String EL_PAGE_TRAILER = "page-trailer";
     String EL_PAGE_CONTENT = "content";
-    String EL_BOX = "box";
+    String EL_VIEWPORT = "viewport";
+    String EL_GROUP = "g";
 }

@@ -37,7 +37,6 @@ import org.xml.sax.SAXException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreAdapter;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreSchema;
@@ -48,16 +47,19 @@ import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
@@ -85,7 +87,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     private boolean inPageSequence = false;
 
     private Stack graphicContextStack = new Stack();
-    private GraphicContext graphicContext = new GraphicContext();
+    private Stack viewportDimensionStack = new Stack();
+    private IFGraphicContext graphicContext = new IFGraphicContext();
 
     private Metadata documentMetadata;
 
@@ -285,12 +288,20 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void saveGraphicsState() {
         graphicContextStack.push(graphicContext);
-        graphicContext = (GraphicContext)graphicContext.clone();
+        graphicContext = (IFGraphicContext)graphicContext.clone();
     }
 
     /** {@inheritDoc} */
     protected void restoreGraphicsState() {
-        graphicContext = (GraphicContext)graphicContextStack.pop();
+        while (graphicContext.getGroupDepth() > 0) {
+            try {
+                painter.endGroup();
+            } catch (IFException e) {
+                handleIFException(e);
+            }
+            graphicContext.endGroup();
+        }
+        graphicContext = (IFGraphicContext)graphicContextStack.pop();
     }
 
     /** {@inheritDoc} */
@@ -309,39 +320,78 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         log.debug("Block.FIXED --> restoring context after break-out");
         for (int i = 0, c = breakOutList.size(); i < c; i++) {
             saveGraphicsState();
-            this.graphicContext = (GraphicContext)breakOutList.get(i);
+            this.graphicContext = (IFGraphicContext)breakOutList.get(i);
         }
     }
 
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         if (!at.isIdentity()) {
-            graphicContext.transform(ptToMpt(at));
+            if (log.isDebugEnabled()) {
+                log.debug("-----concatenateTransformationMatrix: " + at);
+            }
+            AffineTransform atmpt = ptToMpt(at);
+            graphicContext.transform(atmpt);
+            graphicContext.startGroup();
+            try {
+                painter.startGroup(atmpt);
+            } catch (IFException e) {
+                handleIFException(e);
+            }
         }
     }
 
     /** {@inheritDoc} */
     protected void beginTextObject() {
-        // TODO Auto-generated method stub
-
+        //nop - Ignore, handled by painter internally
     }
 
     /** {@inheritDoc} */
     protected void endTextObject() {
-        // TODO Auto-generated method stub
+        //nop - Ignore, handled by painter internally
+    }
 
+    /** {@inheritDoc} */
+    protected void renderRegionViewport(RegionViewport viewport) {
+        Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
+        viewportDimensionStack.push(dim);
+        super.renderRegionViewport(viewport);
+        viewportDimensionStack.pop();
+    }
+
+    /** {@inheritDoc} */
+    protected void renderBlockViewport(BlockViewport bv, List children) {
+        Dimension dim = new Dimension(bv.getIPD(), bv.getBPD());
+        viewportDimensionStack.push(dim);
+        super.renderBlockViewport(bv, children);
+        viewportDimensionStack.pop();
+    }
+
+    /** {@inheritDoc} */
+    public void renderViewport(Viewport viewport) {
+        Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
+        viewportDimensionStack.push(dim);
+        super.renderViewport(viewport);
+        viewportDimensionStack.pop();
     }
 
     /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         if (log.isDebugEnabled()) {
-            log.debug("startVParea() ctm=" + ctm + ", rect=" + clippingRect);
+            log.debug("startVParea() ctm=" + ctm + ", clippingRect=" + clippingRect);
         }
         saveGraphicsState();
         AffineTransform at = new AffineTransform(ctm.toArray());
         graphicContext.transform(at);
         try {
-            painter.startBox(at, null, false);
+            Rectangle clipRect = null;
+            if (clippingRect != null) {
+                clipRect = new Rectangle(
+                        (int)clippingRect.getMinX() - currentIPPosition,
+                        (int)clippingRect.getMinY() - currentBPPosition,
+                        (int)clippingRect.getWidth(), (int)clippingRect.getHeight());
+            }
+            painter.startViewport(at, (Dimension)viewportDimensionStack.peek(), clipRect);
         } catch (IFException e) {
             handleIFException(e);
         }
@@ -354,7 +404,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     protected void endVParea() {
         log.debug("endVParea()");
         try {
-            painter.endBox();
+            painter.endViewport();
         } catch (IFException e) {
             handleIFException(e);
         }
@@ -364,9 +414,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    /*
     protected void renderReferenceArea(Block block) {
         // TODO Auto-generated method stub
-    }
+    }*/
 
     /** {@inheritDoc} */
     protected void renderBlock(Block block) {
@@ -502,28 +553,30 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         // TODO Auto-generated method stub
-
+        log.warn("drawImage() NYI");
     }
 
     protected void clip() {
         // TODO Auto-generated method stub
-
+        log.warn("clip() NYI");
     }
 
     protected void clipRect(float x, float y, float width, float height) {
         // TODO Auto-generated method stub
-
+        log.warn("clipRect() NYI");
     }
 
     protected void closePath() {
         // TODO Auto-generated method stub
-
+        log.warn("closePath() NYI");
     }
 
     protected void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
             boolean startOrBefore, int style, Color col) {
         // TODO Auto-generated method stub
-
+        //log.warn("drawBorderLine() NYI");
+        updateColor(col, true);
+        fillRect(x1, y1, x2 - x1, y2 - y1);
     }
 
     private Rectangle toMillipointRectangle(float x, float y, float width, float height) {
@@ -545,13 +598,13 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void moveTo(float x, float y) {
         // TODO Auto-generated method stub
-
+        log.warn("moveTo() NYI");
     }
 
     /** {@inheritDoc} */
     protected void lineTo(float x, float y) {
         // TODO Auto-generated method stub
-
+        log.warn("lineTo() NYI");
     }
 
     /** {@inheritDoc} */

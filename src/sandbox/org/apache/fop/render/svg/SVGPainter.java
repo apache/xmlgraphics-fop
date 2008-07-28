@@ -133,7 +133,16 @@ public class SVGPainter extends AbstractSVGPainter {
     public void startPage(int index, String name, Dimension size) throws IFException {
         OutputStream out;
         try {
-            out = this.multiFileUtil.createOutputStream(index);
+            if (index == 0) {
+                out = null;
+            } else {
+                out = this.multiFileUtil.createOutputStream(index);
+                if (out == null) {
+                    //TODO Convert to event
+                    throw new IFException(
+                            "No filename information available. Stopping after first page.", null);
+                }
+            }
         } catch (IOException ioe) {
             throw new IFException("I/O exception while setting up output file", ioe);
         }

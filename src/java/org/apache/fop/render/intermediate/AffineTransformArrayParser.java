@@ -33,6 +33,8 @@ import org.apache.batik.parser.TransformListParser;
  */
 public class AffineTransformArrayParser implements TransformListHandler {
 
+    private static final AffineTransform[] EMPTY_ARRAY = new AffineTransform[0];
+
     private List transforms;
 
     /**
@@ -60,6 +62,9 @@ public class AffineTransformArrayParser implements TransformListHandler {
      */
     public static AffineTransform[] createAffineTransform(String s)
                 throws ParseException {
+        if (s == null) {
+            return EMPTY_ARRAY;
+        }
         TransformListParser p = new TransformListParser();
         AffineTransformArrayParser th = new AffineTransformArrayParser();
 

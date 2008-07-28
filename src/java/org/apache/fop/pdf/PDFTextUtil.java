@@ -270,7 +270,12 @@ public abstract class PDFTextUtil {
      * @param adjust the glyph adjust value in thousands of text unit space.
      */
     public void adjustGlyphTJ(double adjust) {
-        bufTJ.append(endText).append(" ");
+        if (bufTJ == null) {
+            bufTJ = new StringBuffer();
+        }
+        if (bufTJ.length() > 0) {
+            bufTJ.append(endText).append(" ");
+        }
         bufTJ.append(PDFNumber.doubleOut(adjust, DEC - 4));
         bufTJ.append(" ");
         bufTJ.append(startText);

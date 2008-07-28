@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.intermediate;
 
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -131,6 +132,9 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
      * @return the StringBuffer passed to this method
      */
     protected StringBuffer toString(AffineTransform transform, StringBuffer sb) {
+        if (transform.isIdentity()) {
+            return sb;
+        }
         double[] matrix = new double[6];
         transform.getMatrix(matrix);
         if (matrix[0] == 1 && matrix[3] == 1 && matrix[1] == 0 && matrix[2] == 0) {
@@ -210,4 +214,20 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
         }
         return sb.toString();
     }
+
+    /**
+     * Converts a rectangle into a space-separated string.
+     * @param rect the rectangle
+     * @return the space-separated array of coordinates
+     */
+    protected String toString(Rectangle rect) {
+        if (rect == null) {
+            return "";
+        }
+        StringBuffer sb = new StringBuffer();
+        sb.append(rect.x).append(' ').append(rect.y).append(' ');
+        sb.append(rect.width).append(' ').append(rect.height);
+        return sb.toString();
+    }
+
 }
