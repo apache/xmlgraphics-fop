@@ -22,12 +22,10 @@ package org.apache.fop.intermediate;
 import java.io.File;
 import java.io.OutputStream;
 
-import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
@@ -70,21 +68,7 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
             transformer = tFactory.newTransformer();
         }
 
-        transformer.setErrorListener(new ErrorListener() {
-
-            public void error(TransformerException exception) throws TransformerException {
-                throw exception;
-            }
-
-            public void fatalError(TransformerException exception) throws TransformerException {
-                throw exception;
-            }
-
-            public void warning(TransformerException exception) throws TransformerException {
-                //ignore
-            }
-
-        });
+        setErrorListener(transformer);
 
         //Set up XMLRenderer to render to a DOM
         DOMResult domResult = new DOMResult();

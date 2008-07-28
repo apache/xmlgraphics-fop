@@ -69,6 +69,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         } else {
             transformer = tFactory.newTransformer();
         }
+        setErrorListener(transformer);
 
         //Set up XMLRenderer to render to a DOM
         TransformerHandler handler = tFactory.newTransformerHandler();
