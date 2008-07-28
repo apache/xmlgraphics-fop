@@ -21,9 +21,6 @@ package org.apache.fop.render.intermediate;
 
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -39,6 +36,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.util.DecimalFormatCache;
 
 /**
  * Abstract base class for XML-writing IFPainter implementations.
@@ -107,22 +105,13 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
 
     /* ---=== helper methods ===--- */
 
-    private static final String BASE_FORMAT = "0.################";
-
-    private static class DecimalFormatThreadLocal extends ThreadLocal {
-
-        protected synchronized Object initialValue() {
-            DecimalFormat df = new DecimalFormat(BASE_FORMAT, new DecimalFormatSymbols(Locale.US));
-            return df;
-        }
-    };
-
-    //DecimalFormat is not thread-safe!
-    private static final ThreadLocal DECIMAL_FORMAT = new DecimalFormatThreadLocal();
-
     private static String format(double value) {
-        DecimalFormat df = (DecimalFormat)DECIMAL_FORMAT.get();
-        return df.format(value);
+        if (value == -0.0) {
+            //Don't allow negative zero because of testing
+            //See http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.2.3
+            value = 0.0;
+        }
+        return DecimalFormatCache.getDecimalFormat(6).format(value);
     }
 
     /**
@@ -155,7 +144,6 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
         sb.append(')');
         return sb;
     }
-
 
     /**
      * Convenience method to generate a startElement SAX event.

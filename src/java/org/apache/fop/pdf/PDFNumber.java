@@ -19,13 +19,11 @@
 
 package org.apache.fop.pdf;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
+import org.apache.fop.util.DecimalFormatCache;
 
 /**
  * This class represents a simple number object. It also contains contains some
- * utility methods for outputing numbers to PDF.
+ * utility methods for outputting numbers to PDF.
  */
 public class PDFNumber extends PDFObject {
 
@@ -67,11 +65,6 @@ public class PDFNumber extends PDFObject {
         return doubleOut(doubleDown, 6);
     }
 
-    // Static cache. Possible concurrency implications. See comment in doubleOut(double, int).
-    private static DecimalFormat[] decimalFormatCache = new DecimalFormat[17];
-
-    private static final String BASE_FORMAT = "0.################";
-
     /**
      * Output a double value to a string suitable for PDF.
      * In this method it is possible to set the maximum
@@ -82,29 +75,10 @@ public class PDFNumber extends PDFObject {
      * @return the value as a string
      */
     public static String doubleOut(double doubleDown, int dec) {
-        if (dec < 0 || dec >= decimalFormatCache.length) {
-            throw new IllegalArgumentException("Parameter dec must be between 1 and "
-                    + (decimalFormatCache.length + 1));
-        }
-        if (decimalFormatCache[dec] == null) {
-            //We don't care about the rare case where a DecimalFormat might be replaced in
-            //a multi-threaded environment, so we don't synchronize the access to the static
-            //array (mainly for performance reasons). After all, the DecimalFormat instances
-            //read-only objects so it doesn't matter which instance is used as long as one
-            //is available.
-            String s = "0";
-            if (dec > 0) {
-                s = BASE_FORMAT.substring(0, dec + 2);
-            }
-            DecimalFormat df = new DecimalFormat(s, new DecimalFormatSymbols(Locale.US));
-            decimalFormatCache[dec] = df;
-        }
-        return decimalFormatCache[dec].format(doubleDown);
+        return DecimalFormatCache.getDecimalFormat(dec).format(doubleDown);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String toPDFString() {
         if (getNumber() == null) {
             throw new IllegalArgumentException(

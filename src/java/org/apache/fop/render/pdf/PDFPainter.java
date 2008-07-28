@@ -490,8 +490,6 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
                         ch = (char)(ch % 256);
                     }
                 }
-                //int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
-                //glyphAdjust -= tls;
             } else {
                 if (CharUtilities.isFixedWidthSpace(orgChar)) {
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
