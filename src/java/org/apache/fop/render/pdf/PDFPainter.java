@@ -294,24 +294,33 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void startBox(AffineTransform transform, Dimension size, boolean clip)
+    public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
+        saveGraphicsState();
+        currentStream.add(CTMHelper.toPDFString(transform, true) + " cm\n");
+        if (clipRect != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(format(clipRect.x)).append(' ');
+            sb.append(format(clipRect.y)).append(' ');
+            sb.append(format(clipRect.width)).append(' ');
+            sb.append(format(clipRect.height)).append(" re W n\n");
+            currentStream.add(sb.toString());
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void startGroup(AffineTransform transform) throws IFException {
         saveGraphicsState();
         currentStream.add(CTMHelper.toPDFString(transform, true) + " cm\n");
     }
 
     /** {@inheritDoc} */
-    public void startBox(AffineTransform[] transforms, Dimension size, boolean clip)
-            throws IFException {
-        AffineTransform at = new AffineTransform();
-        for (int i = 0, c = transforms.length; i < c; i++) {
-            at.concatenate(transforms[i]);
-        }
-        startBox(at, size, clip);
+    public void endGroup() throws IFException {
+        restoreGraphicsState();
     }
 
     /** {@inheritDoc} */
-    public void endBox() throws IFException {
+    public void endViewport() throws IFException {
         restoreGraphicsState();
     }
 
@@ -348,7 +357,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     }
 
     /**
-     * Formats a int value (normally coordinates in millipoints) as Strings.
+     * Formats a integer value (normally coordinates in millipoints) to a String.
      * @param value the value (in millipoints)
      * @return the formatted value
      */
@@ -494,7 +503,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
             }
             textutil.writeTJMappedChar(ch);
 
-            if (dx != null && i < dxl) {
+            if (dx != null && i < dxl - 1) {
                 glyphAdjust += dx[i + 1];
             }
 

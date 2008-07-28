@@ -19,6 +19,10 @@
 
 package org.apache.fop.render.intermediate;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -45,6 +49,25 @@ public abstract class AbstractIFPainter implements IFPainter {
      */
     protected FOUserAgent getUserAgent() {
         return this.userAgent;
+    }
+
+    private AffineTransform combine(AffineTransform[] transforms) {
+        AffineTransform at = new AffineTransform();
+        for (int i = 0, c = transforms.length; i < c; i++) {
+            at.concatenate(transforms[i]);
+        }
+        return at;
+    }
+
+    /** {@inheritDoc} */
+    public void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect)
+            throws IFException {
+        startViewport(combine(transforms), size, clipRect);
+    }
+
+    /** {@inheritDoc} */
+    public void startGroup(AffineTransform[] transforms) throws IFException {
+        startGroup(combine(transforms));
     }
 
 }

@@ -83,16 +83,14 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
     }
 
     /** {@inheritDoc} */
-    public void startBox(AffineTransform transform, Dimension size, boolean clip)
+    public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
         StringBuffer sb = new StringBuffer();
         toString(transform, sb);
-        startBox(sb.toString(), size, clip);
+        startViewport(sb.toString(), size, clipRect);
     }
 
-    /** {@inheritDoc} */
-    public void startBox(AffineTransform[] transforms, Dimension size, boolean clip)
-            throws IFException {
+    private String toString(AffineTransform[] transforms) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0, c = transforms.length; i < c; i++) {
             if (i > 0) {
@@ -100,35 +98,97 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
             }
             toString(transforms[i], sb);
         }
-        startBox(sb.toString(), size, clip);
+        return sb.toString();
     }
 
-    private void startBox(String transform, Dimension size, boolean clip) throws IFException {
+    /** {@inheritDoc} */
+    public void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect)
+            throws IFException {
+        startViewport(toString(transforms), size, clipRect);
+    }
+
+    private void startViewport(String transform, Dimension size, Rectangle clipRect)
+            throws IFException {
         try {
             establish(MODE_NORMAL);
             AttributesImpl atts = new AttributesImpl();
-            atts.addAttribute("", "transform", "transform", CDATA, transform);
-            /*
-            if (size != null) {
-                atts.addAttribute("", "width", "width", CDATA, Integer.toString(size.width));
-                atts.addAttribute("", "height", "height", CDATA, Integer.toString(size.height));
+            if (transform != null && transform.length() > 0) {
+                atts.addAttribute("", "transform", "transform", CDATA, transform);
             }
-            if (clip) {
-                atts.addAttribute("", "clip", "clip", CDATA, "true");
-            }*/
             startElement("g", atts);
+
+            atts.clear();
+            atts.addAttribute("", "width", "width", CDATA, Integer.toString(size.width));
+            atts.addAttribute("", "height", "height", CDATA, Integer.toString(size.height));
+            if (clipRect != null) {
+                int[] v = new int[] {
+                        clipRect.y,
+                        -clipRect.x + size.width - clipRect.width,
+                        -clipRect.y + size.height - clipRect.height,
+                        clipRect.x};
+                int sum = 0;
+                for (int i = 0; i < 4; i++) {
+                    sum += Math.abs(v[i]);
+                }
+                if (sum != 0) {
+                    StringBuffer sb = new StringBuffer("rect(");
+                    sb.append(v[0]).append(',');
+                    sb.append(v[1]).append(',');
+                    sb.append(v[2]).append(',');
+                    sb.append(v[3]).append(')');
+                    atts.addAttribute("", "clip", "clip", CDATA, sb.toString());
+                }
+                atts.addAttribute("", "overflow", "overflow", CDATA, "hidden");
+            } else {
+                atts.addAttribute("", "overflow", "overflow", CDATA, "visible");
+            }
+            startElement("svg", atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startBox()", e);
         }
     }
 
     /** {@inheritDoc} */
-    public void endBox() throws IFException {
+    public void endViewport() throws IFException {
         try {
             establish(MODE_NORMAL);
+            endElement("svg");
             endElement("g");
         } catch (SAXException e) {
             throw new IFException("SAX error in endBox()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void startGroup(AffineTransform[] transforms) throws IFException {
+        startGroup(toString(transforms));
+    }
+
+    /** {@inheritDoc} */
+    public void startGroup(AffineTransform transform) throws IFException {
+        StringBuffer sb = new StringBuffer();
+        toString(transform, sb);
+        startGroup(sb.toString());
+    }
+
+    private void startGroup(String transform) throws IFException {
+        try {
+            AttributesImpl atts = new AttributesImpl();
+            if (transform != null && transform.length() > 0) {
+                atts.addAttribute("", "transform", "transform", CDATA, transform);
+            }
+            startElement("g", atts);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in startGroup()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void endGroup() throws IFException {
+        try {
+            endElement("g");
+        } catch (SAXException e) {
+            throw new IFException("SAX error in endGroup()", e);
         }
     }
 

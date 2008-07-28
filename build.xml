@@ -592,6 +592,7 @@ RetroWeaver will be added here -->
       <include name="org/apache/fop/render/pdf/**"/>
       <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
       <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
+      <include name="org/apache/fop/render/intermediate/IFPainterConfigurator.class"/>
       <include name="org/apache/fop/render/*RendererConfigurator**"/>
       <include name="org/apache/fop/pdf/**"/>
     </patternset>

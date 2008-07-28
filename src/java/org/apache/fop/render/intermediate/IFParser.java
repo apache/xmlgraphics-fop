@@ -122,15 +122,16 @@ public class IFParser implements IFConstants {
             this.painter = painter;
             this.userAgent = userAgent;
             this.elementMappingRegistry = elementMappingRegistry;
-            elementHandlers.put("document", new DocumentHandler());
-            elementHandlers.put("header", new DocumentHeaderHandler());
-            elementHandlers.put("page-sequence", new PageSequenceHandler());
-            elementHandlers.put("page", new PageHandler());
-            elementHandlers.put("page-header", new PageHeaderHandler());
-            elementHandlers.put("content", new PageContentHandler());
-            elementHandlers.put("page-trailer", new PageTrailerHandler());
+            elementHandlers.put(EL_DOCUMENT, new DocumentHandler());
+            elementHandlers.put(EL_HEADER, new DocumentHeaderHandler());
+            elementHandlers.put(EL_PAGE_SEQUENCE, new PageSequenceHandler());
+            elementHandlers.put(EL_PAGE, new PageHandler());
+            elementHandlers.put(EL_PAGE_HEADER, new PageHeaderHandler());
+            elementHandlers.put(EL_PAGE_CONTENT, new PageContentHandler());
+            elementHandlers.put(EL_PAGE_TRAILER, new PageTrailerHandler());
             //Page content
-            elementHandlers.put("box", new BoxHandler());
+            elementHandlers.put(EL_VIEWPORT, new ViewportHandler());
+            elementHandlers.put(EL_GROUP, new GroupHandler());
             elementHandlers.put("font", new FontHandler());
             elementHandlers.put("text", new TextHandler());
             elementHandlers.put("rect", new RectHandler());
@@ -366,18 +367,35 @@ public class IFParser implements IFConstants {
 
         }
 
-        private class BoxHandler extends AbstractElementHandler {
+        private class ViewportHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
                 String transform = attributes.getValue("transform");
                 AffineTransform[] transforms
                     = AffineTransformArrayParser.createAffineTransform(transform);
-                //TODO Incomplete implementation
-                painter.startBox(transforms, null, false);
+                int width = Integer.parseInt(attributes.getValue("width"));
+                int height = Integer.parseInt(attributes.getValue("height"));
+                Rectangle clipRect = getAttributeAsRectangle(attributes, "clip-rect");
+                painter.startViewport(transforms, new Dimension(width, height), clipRect);
             }
 
             public void endElement() throws IFException {
-                painter.endBox();
+                painter.endViewport();
+            }
+
+        }
+
+        private class GroupHandler extends AbstractElementHandler {
+
+            public void startElement(Attributes attributes) throws IFException {
+                String transform = attributes.getValue("transform");
+                AffineTransform[] transforms
+                    = AffineTransformArrayParser.createAffineTransform(transform);
+                painter.startGroup(transforms);
+            }
+
+            public void endElement() throws IFException {
+                painter.endGroup();
             }
 
         }
@@ -515,8 +533,11 @@ public class IFParser implements IFConstants {
         }
 
         private static Rectangle getAttributeAsRectangle(Attributes attributes, String name) {
-            String s = attributes.getValue(name).trim();
-            int[] values = ConversionUtils.toIntArray(s, "\\s");
+            String s = attributes.getValue(name);
+            if (s == null) {
+                return null;
+            }
+            int[] values = ConversionUtils.toIntArray(s.trim(), "\\s");
             if (values.length != 4) {
                 throw new IllegalArgumentException("Rectangle must consist of 4 int values!");
             }
