@@ -23,13 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.events.EventBroadcaster;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.fonts.base14.Courier;
-import org.apache.fop.fonts.base14.Helvetica;
-import org.apache.fop.fonts.base14.TimesRoman;
 import org.apache.fop.render.afp.AFPEventProducer;
 
 /**
@@ -37,34 +33,29 @@ import org.apache.fop.render.afp.AFPEventProducer;
  */
 public class AFPFontCollection implements FontCollection {
 
-    private static final String DEFAULT_CODEPAGE = "T1V10500";
-    
-    private static final String DEFAULT_ENCODING = "Cp500";
+    private final EventBroadcaster eventBroadcaster;
 
-    
-    private EventBroadcaster eventBroadcaster;
-    
-    private List/*<EmbedFontInfo>*/ embedFontInfoList;
+    private final List/*<AFPFontInfo>*/ fontInfoList;
 
     /**
      * Main constructor
      *
      * @param eventBroadcaster the event broadcaster
-     * @param embedFontInfoList the embed font info list
+     * @param fontInfoList the font info list
      */
     public AFPFontCollection(EventBroadcaster eventBroadcaster,
-            List/*<EmbedFontInfo>*/ embedFontInfoList) {
+            List/*<AFPFontInfo>*/ fontInfoList) {
         this.eventBroadcaster = eventBroadcaster;
-        this.embedFontInfoList = embedFontInfoList;
+        this.fontInfoList = fontInfoList;
     }
-        
+
     /** {@inheritDoc} */
     public int setup(int start, FontInfo fontInfo) {
         int num = 1;
-        if (embedFontInfoList != null && embedFontInfoList.size() > 0) {
-            for (Iterator it = embedFontInfoList.iterator(); it.hasNext();) {
+        if (fontInfoList != null && fontInfoList.size() > 0) {
+            for (Iterator it = fontInfoList.iterator(); it.hasNext();) {
                 AFPFontInfo afpFontInfo = (AFPFontInfo)it.next();
-                AFPFont afpFont = (AFPFont)afpFontInfo.getAFPFont();
+                AFPFont afpFont = afpFontInfo.getAFPFont();
                 List/*<FontTriplet>*/ tripletList = afpFontInfo.getFontTriplets();
                 for (Iterator it2 = tripletList.iterator(); it2.hasNext();) {
                     FontTriplet triplet = (FontTriplet)it2.next();
@@ -77,41 +68,10 @@ public class AFPFontCollection implements FontCollection {
         } else {
             AFPEventProducer eventProducer = AFPEventProducer.Provider.get(eventBroadcaster);
             eventProducer.warnDefaultFontSetup(this);
-        }
 
-        // note: these fonts may not exist on your AFP installation
-        if (fontInfo.fontLookup("sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            CharacterSet cs  = new FopCharacterSet(DEFAULT_CODEPAGE, DEFAULT_ENCODING, "CZH200",
-                    1, new Helvetica());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            fontInfo.addFontProperties(
-                    "F" + num, "sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (fontInfo.fontLookup("serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            CharacterSet cs  = new FopCharacterSet(DEFAULT_CODEPAGE, DEFAULT_ENCODING, "CZN200",
-                    1, new TimesRoman());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            fontInfo.addFontProperties("F" + num, "serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (fontInfo.fontLookup("monospace", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            CharacterSet cs  = new FopCharacterSet(DEFAULT_CODEPAGE, DEFAULT_ENCODING, "CZ4200",
-                    1, new Courier());
-            AFPFont bf = new OutlineFont("Helvetica", cs);
-            fontInfo.addFontProperties(
-                    "F" + num, "monospace", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            fontInfo.addMetrics("F" + num, bf);
-            num++;
-        }
-        if (fontInfo.fontLookup("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
-            FontTriplet ft = fontInfo.fontLookup(
-                    "sans-serif", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            fontInfo.addFontProperties(
-                    fontInfo.getInternalFontKey(ft), "any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            num++;
+            // Go with a default base 12 configuration for AFP environments
+            FontCollection base12FontCollection = new AFPBase12FontCollection();
+            num = base12FontCollection.setup(num, fontInfo);
         }
         return num;
     }

@@ -49,8 +49,15 @@ public class CharacterSet {
     /** Static logging instance */
     protected static final Log log = LogFactory.getLog(CharacterSet.class.getName());
 
+    /** default codepage */
+    protected static final String DEFAULT_CODEPAGE = "T1V10500";
+
+    /** default encoding */
+    protected static final String DEFAULT_ENCODING = "Cp500";
+
     private static final int MAX_NAME_LEN = 8;
-    
+
+
     /** The code page to which the character set relates */
     protected String codePage;
 
@@ -67,7 +74,7 @@ public class CharacterSet {
     private boolean isMetricsLoaded = false;
 
     /** The current orientation (currently only 0 is supported by FOP) */
-    private String currentOrientation = "0";
+    private final String currentOrientation = "0";
 
     /** The collection of objects for each orientation */
     private Map characterSetOrientations = null;
@@ -195,7 +202,7 @@ public class CharacterSet {
 
     /**
      * XHeight refers to the height of the lower case letters above the baseline.
-     * 
+     *
      * @return the typical height of characters
      */
     public int getXHeight() {

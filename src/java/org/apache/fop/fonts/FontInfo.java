@@ -110,6 +110,19 @@ public class FontInfo {
     }
 
     /**
+     * Adds a series of new font triplets given an array of font family names.
+     * @param name internal key
+     * @param families an array of font family names
+     * @param style font style (normal, italic, oblique...)
+     * @param weight font weight
+     */
+    public void addFontProperties(String name, String[] families, String style, int weight) {
+        for (int i = 0; i < families.length; i++) {
+            addFontProperties(name, families[i], style, weight);
+        }
+    }
+
+    /**
      * Adds a new font triplet.
      * @param internalFontKey internal font key
      * @param triplet the font triplet to associate with the internal key
@@ -215,7 +228,7 @@ public class FontInfo {
     }
 
     private FontTriplet fuzzyFontLookup(String family, String style,
-            int weight, FontTriplet startKey, boolean substFont) {
+            int weight, FontTriplet startKey, boolean substitutable) {
         FontTriplet key;
         String internalFontKey = null;
         if (!family.equals(startKey.getName())) {
@@ -232,7 +245,8 @@ public class FontInfo {
             internalFontKey = getInternalFontKey(key);
         }
 
-        if (!substFont && internalFontKey == null) {
+        // return null if not found and not substitutable
+        if (!substitutable && internalFontKey == null) {
             return null;
         }
 
@@ -263,12 +277,12 @@ public class FontInfo {
 
         // fallback 2: try the same font-family with default style and weight
         /* obsolete: replaced by the loop above
-        if (f == null) {
+        if (internalFontKey == null) {
             key = createFontKey(family, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            f = getInternalFontKey(key);
+            internalFontKey = getInternalFontKey(key);
         }*/
 
-        // fallback 3: try any family with orig style/weight
+        // fallback 3: try any family with original style/weight
         if (internalFontKey == null) {
             return fuzzyFontLookup("any", style, weight, startKey, false);
         }
