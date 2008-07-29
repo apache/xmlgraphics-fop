@@ -60,4 +60,12 @@ public interface AFPEventProducer extends EventProducer {
      */
     void warnDefaultFontSetup(Object source);
 
+    /**
+     * Warn about a missing default "any" font configuration.
+     * @param source the event source
+     * @param style the font style
+     * @param weight the font weight
+     * @event.severity WARN
+     */
+    void warnMissingDefaultFont(Object source, String style, int weight);
 }

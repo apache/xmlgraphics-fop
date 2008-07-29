@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catalogue xml:lang="en">
   <message key="org.apache.fop.render.afp.AFPEventProducer.warnDefaultFontSetup">No AFP fonts configured. Using default setup.</message>
+  <message key="org.apache.fop.render.afp.AFPEventProducer.warnMissingDefaultFont">No AFP default "any", {style}, {weight} font configured.</message>
 </catalogue>

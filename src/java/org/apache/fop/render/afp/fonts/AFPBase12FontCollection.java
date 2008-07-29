@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp.fonts;
 
@@ -79,13 +79,12 @@ public class AFPBase12FontCollection implements FontCollection {
         RasterFont font = null;
 
         /** standard font family reference names for Helvetica font */
-        final String[] helveticaNamesPlusAny = {"Helvetica", "Arial", "sans-serif", "any"};
+        final String[] helveticaNames = {"Helvetica", "Arial", "sans-serif"};
         font = new RasterFont("Helvetica");
         addCharacterSet(font, "C0H200", new Helvetica());
-        num = addFontProperties(fontInfo, font, helveticaNamesPlusAny,
+        num = addFontProperties(fontInfo, font, helveticaNames,
                 Font.STYLE_NORMAL, Font.WEIGHT_NORMAL, num);
 
-        final String[] helveticaNames = {"Helvetica", "Arial", "sans-serif"};
         font = new RasterFont("Helvetica Italic");
         addCharacterSet(font, "C0H300", new HelveticaOblique());
         num = addFontProperties(fontInfo, font, helveticaNames,
@@ -102,8 +101,11 @@ public class AFPBase12FontCollection implements FontCollection {
                 Font.STYLE_ITALIC, Font.WEIGHT_BOLD, num);
 
 
+        /** standard font family reference names for Times font */
+
+        /** any is treated as serif */
         final String[] timesNames = {"Times", "TimesRoman", "Times Roman", "Times-Roman",
-                "Times New Roman", "TimesNewRoman", "serif"};
+                "Times New Roman", "TimesNewRoman", "serif", "any"};
 
         font = new RasterFont("Times Roman");
         addCharacterSet(font, "CON200", new TimesRoman());

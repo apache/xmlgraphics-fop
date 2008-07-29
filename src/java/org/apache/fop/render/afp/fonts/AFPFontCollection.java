@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.events.EventBroadcaster;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -52,6 +53,7 @@ public class AFPFontCollection implements FontCollection {
     /** {@inheritDoc} */
     public int setup(int start, FontInfo fontInfo) {
         int num = 1;
+        AFPEventProducer eventProducer = AFPEventProducer.Provider.get(eventBroadcaster);
         if (fontInfoList != null && fontInfoList.size() > 0) {
             for (Iterator it = fontInfoList.iterator(); it.hasNext();) {
                 AFPFontInfo afpFontInfo = (AFPFontInfo)it.next();
@@ -65,8 +67,19 @@ public class AFPFontCollection implements FontCollection {
                     num++;
                 }
             }
+            if (fontInfo.fontLookup("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
+                eventProducer.warnMissingDefaultFont(this, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
+            }
+            if (fontInfo.fontLookup("any", Font.STYLE_ITALIC, Font.WEIGHT_NORMAL) == null) {
+                eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_NORMAL);
+            }
+            if (fontInfo.fontLookup("any", Font.STYLE_NORMAL, Font.WEIGHT_BOLD) == null) {
+                eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
+            }
+            if (fontInfo.fontLookup("any", Font.STYLE_ITALIC, Font.WEIGHT_BOLD) == null) {
+                eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
+            }
         } else {
-            AFPEventProducer eventProducer = AFPEventProducer.Provider.get(eventBroadcaster);
             eventProducer.warnDefaultFontSetup(this);
 
             // Go with a default base 12 configuration for AFP environments
