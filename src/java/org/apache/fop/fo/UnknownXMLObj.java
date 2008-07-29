@@ -21,6 +21,8 @@ package org.apache.fop.fo;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.apps.FOPException;
+
 /**
  * Class for handling generic XML from a namespace not recognized by FOP
  */
@@ -72,9 +74,7 @@ public class UnknownXMLObj extends XMLObj {
         return null; //We don't know that in this case.
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void addChildNode(FONode child) {
         if (doc == null) {
             createBasicDocument();
@@ -82,15 +82,13 @@ public class UnknownXMLObj extends XMLObj {
         super.addChildNode(child);
     }
 
-    /**
-     *  {@inheritDoc}
-     */
-    protected void addCharacters(char data[], int start, int length,
-                                 PropertyList pList, Locator locator) {
+    /** {@inheritDoc} */
+    protected void characters(char[] data, int start, int length,
+                                 PropertyList pList, Locator locator) throws FOPException {
         if (doc == null) {
             createBasicDocument();
         }
-        super.addCharacters(data, start, length, pList, locator);
+        super.characters(data, start, length, pList, locator);
     }
 
 }
