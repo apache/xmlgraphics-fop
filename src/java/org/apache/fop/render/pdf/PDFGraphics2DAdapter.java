@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.pdf;
 
 import java.awt.Color;
@@ -49,18 +49,18 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
     public PDFGraphics2DAdapter(PDFRenderer renderer) {
         this.renderer = renderer;
     }
-    
+
     /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException {
-        
+
         PDFSVGHandler.PDFInfo pdfInfo = PDFSVGHandler.getPDFInfo(context);
         float fwidth = width / 1000f;
         float fheight = height / 1000f;
         float fx = x / 1000f;
         float fy = y / 1000f;
-        
+
         // get the 'width' and 'height' attributes of the SVG document
         Dimension dim = painter.getImageSize();
         float imw = (float)dim.getWidth() / 1000f;
@@ -72,7 +72,7 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
         renderer.saveGraphicsState();
         renderer.setColor(Color.black, false, null);
         renderer.setColor(Color.black, true, null);
-        
+
         //TODO Clip to the image area.
 
         // transform so that the coordinates (0,0) is from the top left
@@ -86,13 +86,13 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
         if (pdfInfo.pdfContext == null) {
             pdfInfo.pdfContext = pdfInfo.pdfPage;
         }
-        PDFGraphics2D graphics = new PDFGraphics2D(textAsShapes, 
+        PDFGraphics2D graphics = new PDFGraphics2D(textAsShapes,
                 pdfInfo.fi, pdfInfo.pdfDoc,
                 pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
                 renderer.currentFontName,
                 renderer.currentFontSize);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
-        
+
         AffineTransform transform = new AffineTransform();
         transform.translate(fx, fy);
         pdfInfo.pdfState.concatenate(transform);
@@ -105,7 +105,7 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
             RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
             BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
 
-            float scale = PDFRenderer.NORMAL_PDF_RESOLUTION 
+            float scale = PDFRenderer.NORMAL_PDF_RESOLUTION
                             / context.getUserAgent().getTargetResolution();
             graphics.drawImage(bi, new AffineTransform(scale, 0, 0, scale, 0, 0), null);
         } else {
@@ -115,15 +115,14 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
         pdfInfo.currentStream.add(graphics.getString());
         renderer.restoreGraphicsState();
-        pdfInfo.pdfState.pop();
     }
 
     /** {@inheritDoc} */
     protected void setRenderingHintsForBufferedImage(Graphics2D g2d) {
         super.setRenderingHintsForBufferedImage(g2d);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
 
