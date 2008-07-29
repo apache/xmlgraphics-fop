@@ -199,7 +199,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
             if (afi != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Adding font " + afi.getAFPFont().getFontName());
-                    List/*FontTriplet*/ fontTriplets = afi.getFontTriplets();
+                    List/*<FontTriplet>*/ fontTriplets = afi.getFontTriplets();
                     for (int j = 0; j < fontTriplets.size(); ++j) {
                         FontTriplet triplet = (FontTriplet) fontTriplets.get(j);
                         log.debug("  Font triplet "
