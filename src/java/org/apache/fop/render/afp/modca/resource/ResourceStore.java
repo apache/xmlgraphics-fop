@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,16 +44,16 @@ public final class ResourceStore {
 
     /** Internal temporary storage buffer size */
     private static final int BUFFER_SIZE = 4096;
-        
+
     /** Used for storage of data objects */
     private RandomAccessFile raFile;
-    
+
     /** The temporary cache file */
     private File tempFile;
 
     /** The file outputstream */
     private FileOutputStream fos;
-    
+
     /**
      * Default constructor
      */
@@ -68,15 +68,18 @@ public final class ResourceStore {
             log.error(e.getMessage());
         }
     }
-    
+
     /**
-     * Clears the data object cache
+     * Clears the data object cache.
+     * @throws IOException if an error occurs while clearing the store
      */
-    public void clear() {
+    public void clear() throws IOException {
         if (tempFile != null) {
-            if (!tempFile.delete()) {
-                // failed to delete to schedule so attempt to delete on exit from the VM
-                tempFile.deleteOnExit();
+            raFile.close();
+            raFile = null;
+            fos = null;
+            if (tempFile.exists() && !tempFile.delete()) {
+                throw new IOException("Could not delete temporary file: " + tempFile);
             }
             tempFile = null;
         }
@@ -90,13 +93,13 @@ public final class ResourceStore {
             super.finalize();
         }
     }
-    
+
     /**
      * Stores a named data object in the cache
-     * 
+     *
      * @param dataObj a named data object
      * @return a new save information record
-     * 
+     *
      * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
     public StoreInfo save(AbstractNamedAFPObject dataObj) throws IOException {
@@ -111,13 +114,13 @@ public final class ResourceStore {
         storeInfo.size = (int)(raFile.getFilePointer() - storeInfo.position);
         return storeInfo;
     }
-    
+
     /**
      * Writes out the resource given the save information to the given outputstream.
-     * 
+     *
      * @param saveInfo the save information
      * @param os the outputstream to write to
-     * 
+     *
      * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
     public void writeToStream(StoreInfo saveInfo, OutputStream os) throws IOException {
@@ -135,5 +138,5 @@ public final class ResourceStore {
         raFile.read(buffer, 0, lastChunkLength);
         os.write(buffer, 0, lastChunkLength);
     }
-    
+
 }
