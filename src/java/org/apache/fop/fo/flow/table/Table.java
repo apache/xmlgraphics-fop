@@ -31,6 +31,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -42,7 +43,7 @@ import org.apache.fop.fo.properties.TableColLength;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table">
  * <code>fo:table</code></a> object.
  */
-public class Table extends TableFObj implements ColumnNumberManagerHolder {
+public class Table extends TableFObj implements ColumnNumberManagerHolder, BreakPropertySet {
 
     /** properties */
     private CommonBorderPaddingBackground commonBorderPaddingBackground;

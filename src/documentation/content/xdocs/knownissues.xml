@@ -66,6 +66,7 @@
   <section>
     <title>Other known issues</title>
     <p>This section lists other known issues.</p>
+    <!-- See <root>/known-issues.xml for the source document of this section! -->
     <xi:include href="cocoon://knownissues-raw-static.xml#xpointer(/document/body/*)"/>
   </section>
 </section>

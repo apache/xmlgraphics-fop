@@ -68,10 +68,10 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         }
 
         //Prepare
-        float pxToMillimeter = (float)UnitConv.mm2in(72); //default: 72dpi
+        float pxToMillimeter = UnitConv.IN2MM / 72; //default: 72dpi
         Number ptm = (Number)hints.get(ImageProcessingHints.SOURCE_RESOLUTION);
         if (ptm != null) {
-            pxToMillimeter = (float)UnitConv.mm2in(ptm.doubleValue());
+            pxToMillimeter = (float)(UnitConv.IN2MM / ptm.doubleValue());
         }
         UserAgent ua = createBatikUserAgent(pxToMillimeter);
         GVTBuilder builder = new GVTBuilder();
