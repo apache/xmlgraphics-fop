@@ -377,6 +377,7 @@ which will be used to configure the chosen Forrest skin.
       <height>125</height>
     </credit>
     -->
+    <!--
     <credit box-location="alt2">
       <name>ApacheCon US 2008</name>
       <url>http://us.apachecon.com/</url>
@@ -384,6 +385,7 @@ which will be used to configure the chosen Forrest skin.
       <width>125</width>
       <height>125</height>
     </credit>
+    -->
     
     <credit role="pdf">
       <name>PDF created by Apache FOP</name>
