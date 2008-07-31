@@ -89,6 +89,25 @@
         <tr>
           <td>Repository URL</td>
           <td>
+            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95/">
+              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95/</code>
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>Web view</td>
+          <td>
+            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_95/">
+              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_95/</code>
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2">Previous Stable Release</th>
+        </tr>
+        <tr>
+          <td>Repository URL</td>
+          <td>
             <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_94/">
               <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_94/</code>
             </link>
@@ -103,40 +122,34 @@
           </td>
         </tr>
         <tr>
-          <th colspan="2">Latest Release</th>
-        </tr>
-        <tr>
-          <td>Repository URL</td>
-          <td>
-            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95beta/">
-              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95beta/</code>
-            </link>
-          </td>
-        </tr>
-        <tr>
-          <td>Web view</td>
-          <td>
-            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_95beta/">
-              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_95beta/</code>
-            </link>
-          </td>
-        </tr>
-        <tr>
           <th colspan="2">Trunk</th>
         </tr>
         <tr>
           <td>Repository URL</td>
           <td>
+            Main Repository:
             <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/">
               <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/</code>
             </link>
+            <br/>
+            European Mirror:
+            <link href="http://svn.eu.apache.org/repos/asf/xmlgraphics/fop/trunk/">
+              <code>http://svn.eu.apache.org/repos/asf/xmlgraphics/fop/trunk/</code>
+            </link>
+            
           </td>
         </tr>
         <tr>
           <td>Web view</td>
           <td>
+            Main Repository:
             <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/">
               <code>http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/</code>
+            </link>
+            <br/>
+            European Mirror:
+            <link href="http://svn.eu.apache.org/viewvc/xmlgraphics/fop/trunk/">
+              <code>http://svn.eu.apache.org/viewvc/xmlgraphics/fop/trunk/</code>
             </link>
           </td>
         </tr>
@@ -146,7 +159,9 @@
         build FOP from the source files. For details please see the "Build" page on the documentation tab
         for the version you've downloaded.
       </p>
+      <!-- No hopes to reenable them because of problems with long path names on Solaris
       <fixme author="jeremias">Reenable the link to the SVN snapshots once they are available.</fixme>
+      -->
     </section>
     <section id="archives">
       <title>Archive Download</title>
