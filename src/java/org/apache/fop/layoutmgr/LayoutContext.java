@@ -47,12 +47,10 @@ public class LayoutContext {
     public static final int CHECK_REF_AREA = 0x08;
 
     /**
-     * If this flag is set, it indicates that any leading fo:character
-     * objects with suppress-at-line-break="suppress" should not generate
-     * areas. This is the case at the beginning of each new LineArea
-     * except the first.
+     * If this flag is set, it indicates that any break-before values other than "auto" should
+     * not cause a mandatory break as this break was already handled by a parent layout manager.
      */
-    public static final int SUPPRESS_LEADING_SPACE = 0x10;
+    public static final int SUPPRESS_BREAK_BEFORE = 0x10;
     public static final int FIRST_AREA = 0x20;
     public static final int TRY_HYPHENATE = 0x40;
     public static final int LAST_AREA = 0x80;
@@ -227,8 +225,8 @@ public class LayoutContext {
         return ((this.flags & LAST_AREA) != 0);
     }
 
-    public boolean suppressLeadingSpace() {
-        return ((this.flags & SUPPRESS_LEADING_SPACE) != 0);
+    public boolean suppressBreakBefore() {
+        return ((this.flags & SUPPRESS_BREAK_BEFORE) != 0);
     }
 
     /**
@@ -655,7 +653,7 @@ public class LayoutContext {
         + "\nSpace Adjust: \t" + getSpaceAdjust()
         + "\nIPD Adjust: \t" + getIPDAdjust()
         + "\nResolve Leading Space: \t" + resolveLeadingSpace()
-        + "\nSuppress Leading Space: \t" + suppressLeadingSpace()
+        + "\nSuppress Break Before: \t" + suppressBreakBefore()
         + "\nIs First Area: \t" + isFirstArea()
         + "\nStarts New Area: \t" + startsNewArea()
         + "\nIs Last Area: \t" + isLastArea()

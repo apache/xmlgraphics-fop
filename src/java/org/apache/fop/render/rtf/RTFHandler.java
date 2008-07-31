@@ -20,6 +20,8 @@
 package org.apache.fop.render.rtf;
 
 // Java
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,12 +53,13 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.flow.BasicLink;
@@ -74,6 +77,7 @@ import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
+import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableFooter;
@@ -89,8 +93,10 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.FixedLength;
+import org.apache.fop.fo.properties.EnumLength;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.layoutmgr.inline.ImageLayout;
+import org.apache.fop.layoutmgr.table.ColumnSetup;
 import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.RendererEventProducer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
@@ -110,6 +116,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFootnote;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
@@ -117,6 +124,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
+import org.apache.fop.render.rtf.rtflib.tools.PercentContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
 
 /**
@@ -150,6 +158,10 @@ public class RTFHandler extends FOEventHandler {
 
     private SimplePageMaster pagemaster;
 
+    private int nestedTableDepth = 1;
+
+    private PercentContext percentManager = new PercentContext();
+
     /**
      * Creates a new RTF structure handler.
      * @param userAgent the FOUserAgent for this process
@@ -173,9 +185,7 @@ public class RTFHandler extends FOEventHandler {
         eventProducer.ioError(this, ioe);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startDocument() throws SAXException {
         // TODO sections should be created
         try {
@@ -187,9 +197,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endDocument() throws SAXException {
         try {
             rtfFile.flush();
@@ -199,9 +207,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startPageSequence(PageSequence pageSeq)  {
         try {
             //This is needed for region handling
@@ -240,6 +246,14 @@ public class RTFHandler extends FOEventHandler {
 
             builderContext.pushContainer(sect);
 
+            //Calculate usable page width for this flow
+            int useAblePageWidth = pagemaster.getPageWidth().getValue()
+                - pagemaster.getCommonMarginBlock().marginLeft.getValue()
+                - pagemaster.getCommonMarginBlock().marginRight.getValue()
+                - sect.getRtfAttributes().getValueAsInteger(RtfPage.MARGIN_LEFT).intValue()
+                - sect.getRtfAttributes().getValueAsInteger(RtfPage.MARGIN_RIGHT).intValue();
+            percentManager.setDimension(pageSeq, useAblePageWidth);
+
             bHeaderSpecified = false;
             bFooterSpecified = false;
         } catch (IOException ioe) {
@@ -247,9 +261,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endPageSequence(PageSequence pageSeq) {
         if (bDefer) {
             //If endBlock was called while SAX parsing, and the passed FO is Block
@@ -267,9 +279,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startFlow(Flow fl) {
         if (bDefer) {
             return;
@@ -357,9 +367,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endFlow(Flow fl) {
         if (bDefer) {
             return;
@@ -384,9 +392,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startBlock(Block bl) {
         if (bDefer) {
             return;
@@ -414,10 +420,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endBlock(Block bl) {
 
         if (bDefer) {
@@ -443,9 +446,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startBlockContainer(BlockContainer blc) {
         if (bDefer) {
             return;
@@ -472,9 +473,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endBlockContainer(BlockContainer bl) {
         if (bDefer) {
             return;
@@ -499,9 +498,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startTable(Table tbl) {
         if (bDefer) {
             return;
@@ -519,6 +516,8 @@ public class RTFHandler extends FOEventHandler {
                 = TableAttributesConverter.convertTableAttributes(tbl);
 
             RtfTable table = tc.newTable(atts, tableContext);
+            table.setNestedTableDepth(nestedTableDepth);
+            nestedTableDepth++;
 
             CommonBorderPaddingBackground border = tbl.getCommonBorderPaddingBackground();
             RtfAttributes borderAttributes = new RtfAttributes();
@@ -545,53 +544,32 @@ public class RTFHandler extends FOEventHandler {
         builderContext.pushTableContext(tableContext);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endTable(Table tbl) {
         if (bDefer) {
             return;
         }
 
+        nestedTableDepth--;
         builderContext.popTableContext();
         builderContext.popContainer();
     }
 
-    /**
-    *
-    * @param tc TableColumn that is starting;
-    */
-
+    /** {@inheritDoc} */
     public void startColumn(TableColumn tc) {
         if (bDefer) {
             return;
         }
 
         try {
-            /**
-             * Pass a SimplePercentBaseContext to getValue in order to
-             * avoid a NullPointerException, which occurs when you use
-             * proportional-column-width function in column-width attribute.
-             * Of course the results won't be correct, but at least the
-             * rest of the document will be rendered. Usage of the
-             * TableLayoutManager is not welcome due to design reasons and
-             * it also does not provide the correct values.
-             * TODO: Make proportional-column-width working for rtf output
-             */
-             SimplePercentBaseContext context
-                = new SimplePercentBaseContext(null,
-                                               LengthBase.TABLE_UNITS,
-                                               100000);
+            int iWidth = tc.getColumnWidth().getValue(percentManager);
+            percentManager.setDimension(tc, iWidth);
 
-            Integer iWidth
-                = new Integer(tc.getColumnWidth().getValue(context) / 1000);
-
-            String strWidth = iWidth.toString() + FixedLength.POINT;
-            Float width = new Float(
-                    FoUnitsConverter.getInstance().convertToTwips(strWidth));
+            //convert to twips
+            Float width = new Float(FoUnitsConverter.getInstance().convertMptToTwips(iWidth));
             builderContext.getTableContext().setNextColumnWidth(width);
             builderContext.getTableContext().setNextColumnRowSpanning(
-                    new Integer(0), null);
+                  new Integer(0), null);
             builderContext.getTableContext().setNextFirstSpanningCol(false);
         } catch (Exception e) {
             log.error("startColumn: " + e.getMessage());
@@ -599,49 +577,34 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-     /**
-     *
-     * @param tc TableColumn that is ending;
-     */
-
+    /** {@inheritDoc} */
     public void endColumn(TableColumn tc) {
         if (bDefer) {
             return;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startHeader(TableHeader header) {
         startPart(header);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endHeader(TableHeader header) {
         endPart(header);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startFooter(TableFooter footer) {
         startPart(footer);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endFooter(TableFooter footer) {
         endPart(footer);
     }
 
-    /**
-     *
-     * @param inl Inline that is starting.
-     */
+    /** {@inheritDoc} */
     public void startInline(Inline inl) {
         if (bDefer) {
             return;
@@ -669,10 +632,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     *
-     * @param inl Inline that is ending.
-     */
+    /** {@inheritDoc} */
     public void endInline(Inline inl) {
         if (bDefer) {
             return;
@@ -735,10 +695,7 @@ public class RTFHandler extends FOEventHandler {
         startPart(body);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endBody(TableBody body) {
         endPart(body);
     }
@@ -775,9 +732,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endRow(TableRow tr) {
         if (bDefer) {
             return;
@@ -814,9 +769,7 @@ public class RTFHandler extends FOEventHandler {
         builderContext.getTableContext().decreaseRowSpannings();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startCell(TableCell tc) {
         if (bDefer) {
             return;
@@ -868,7 +821,6 @@ public class RTFHandler extends FOEventHandler {
             //process number-columns-spanned attribute
             if (numberColumnsSpanned > 0) {
                 // Get the number of columns spanned
-                RtfTable table = row.getTable();
                 tctx.setCurrentFirstSpanningCol(true);
 
                 // We widthdraw one cell because the first cell is already created
@@ -876,6 +828,8 @@ public class RTFHandler extends FOEventHandler {
                  for (int i = 0; i < numberColumnsSpanned - 1; ++i) {
                     tctx.selectNextColumn();
 
+                    //aggregate width for further elements
+                    width += tctx.getColumnWidth();
                     tctx.setCurrentFirstSpanningCol(false);
                     RtfTableCell hCell = row.newTableCellMergedHorizontally(
                             0, null);
@@ -890,10 +844,12 @@ public class RTFHandler extends FOEventHandler {
                                 cell.getRtfAttributes());
                     } else {
                         tctx.setCurrentColumnRowSpanning(
-                                new Integer(numberRowsSpanned), null);
+                                new Integer(numberRowsSpanned), cell.getRtfAttributes());
                     }
                 }
             }
+            //save width of the cell, convert from twips to mpt
+            percentManager.setDimension(tc, (int)width * 50);
 
             builderContext.pushContainer(cell);
         } catch (IOException ioe) {
@@ -904,9 +860,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endCell(TableCell tc) {
         if (bDefer) {
             return;
@@ -917,9 +871,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     // Lists
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startList(ListBlock lb) {
         if (bDefer) {
             return;
@@ -944,9 +896,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endList(ListBlock lb) {
         if (bDefer) {
             return;
@@ -955,9 +905,7 @@ public class RTFHandler extends FOEventHandler {
         builderContext.popContainer();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startListItem(ListItem li) {
         if (bDefer) {
             return;
@@ -995,9 +943,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endListItem(ListItem li) {
         if (bDefer) {
             return;
@@ -1006,9 +952,7 @@ public class RTFHandler extends FOEventHandler {
         builderContext.popContainer();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startListLabel() {
         if (bDefer) {
             return;
@@ -1028,9 +972,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endListLabel() {
         if (bDefer) {
             return;
@@ -1039,46 +981,32 @@ public class RTFHandler extends FOEventHandler {
         builderContext.popContainer();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startListBody() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endListBody() {
     }
 
     // Static Regions
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startStatic() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endStatic() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startMarkup() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endMarkup() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startLink(BasicLink basicLink) {
         if (bDefer) {
             return;
@@ -1109,9 +1037,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endLink() {
         if (bDefer) {
             return;
@@ -1120,9 +1046,7 @@ public class RTFHandler extends FOEventHandler {
         builderContext.popContainer();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void image(ExternalGraphic eg) {
         if (bDefer) {
             return;
@@ -1153,16 +1077,14 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void foreignObject(InstreamForeignObject ifo) {
         if (bDefer) {
             return;
         }
 
         try {
-            XMLObj child = (XMLObj) ifo.getChildXMLObj();
+            XMLObj child = ifo.getChildXMLObj();
             Document doc = child.getDOMDocument();
             String ns = child.getNamespaceURI();
 
@@ -1191,7 +1113,8 @@ public class RTFHandler extends FOEventHandler {
 
             FOUserAgent userAgent = ifo.getUserAgent();
             ImageManager manager = userAgent.getFactory().getImageManager();
-            Image converted = manager.convertImage(image, FLAVORS);
+            Map hints = ImageUtil.getDefaultHints(ua.getImageSessionContext());
+            Image converted = manager.convertImage(image, FLAVORS, hints);
             putGraphic(ifo, converted);
 
         } catch (ImageException ie) {
@@ -1242,7 +1165,7 @@ public class RTFHandler extends FOEventHandler {
             throws IOException {
         byte[] rawData = null;
 
-        ImageInfo info = image.getInfo();
+        final ImageInfo info = image.getInfo();
 
         if (image instanceof ImageRawStream) {
             ImageRawStream rawImage = (ImageRawStream)image;
@@ -1261,6 +1184,25 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
 
+        //Set up percentage calculations
+        this.percentManager.setDimension(abstractGraphic);
+        PercentBaseContext pContext = new PercentBaseContext() {
+
+            public int getBaseLength(int lengthBase, FObj fobj) {
+                switch (lengthBase) {
+                case LengthBase.IMAGE_INTRINSIC_WIDTH:
+                    return info.getSize().getWidthMpt();
+                case LengthBase.IMAGE_INTRINSIC_HEIGHT:
+                    return info.getSize().getHeightMpt();
+                default:
+                    return percentManager.getBaseLength(lengthBase, fobj);
+                }
+            }
+
+        };
+        ImageLayout layout = new ImageLayout(abstractGraphic, pContext,
+                image.getInfo().getSize().getDimensionMpt());
+
         final IRtfTextrunContainer c
             = (IRtfTextrunContainer)builderContext.getContainer(
                 IRtfTextrunContainer.class, true, this);
@@ -1273,63 +1215,23 @@ public class RTFHandler extends FOEventHandler {
         }
         rtfGraphic.setImageData(rawData);
 
-        //set scaling
-        if (abstractGraphic.getScaling() == Constants.EN_UNIFORM) {
-            rtfGraphic.setScaling ("uniform");
-        }
+        FoUnitsConverter converter = FoUnitsConverter.getInstance();
+        Dimension viewport = layout.getViewportSize();
+        Rectangle placement = layout.getPlacement();
+        int cropLeft = Math.round(converter.convertMptToTwips(-placement.x));
+        int cropTop = Math.round(converter.convertMptToTwips(-placement.y));
+        int cropRight = Math.round(converter.convertMptToTwips(
+                -1 * (viewport.width - placement.x - placement.width)));
+        int cropBottom = Math.round(converter.convertMptToTwips(
+                -1 * (viewport.height - placement.y - placement.height)));
+        rtfGraphic.setCropping(cropLeft, cropTop, cropRight, cropBottom);
 
-        //get width
-        int width = 0;
-        if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
-            width = info.getSize().getWidthMpt();
-        } else {
-            width = abstractGraphic.getWidth().getValue();
-        }
-
-        //get height
-        int height = 0;
-        if (abstractGraphic.getWidth().getEnum() == Constants.EN_AUTO) {
-            height = info.getSize().getHeightMpt();
-        } else {
-            height = abstractGraphic.getHeight().getValue();
-        }
-
-        //get content-width
-        int contentwidth = 0;
-        if (abstractGraphic.getContentWidth().getEnum()
-                == Constants.EN_AUTO) {
-            contentwidth = info.getSize().getWidthMpt();
-        } else if (abstractGraphic.getContentWidth().getEnum()
-                == Constants.EN_SCALE_TO_FIT) {
-            contentwidth = width;
-        } else {
-            //TODO: check, if the value is a percent value
-            contentwidth = abstractGraphic.getContentWidth().getValue();
-        }
-
-        //get content-width
-        int contentheight = 0;
-        if (abstractGraphic.getContentHeight().getEnum()
-                == Constants.EN_AUTO) {
-
-            contentheight = info.getSize().getHeightMpt();
-
-        } else if (abstractGraphic.getContentHeight().getEnum()
-                == Constants.EN_SCALE_TO_FIT) {
-
-            contentheight = height;
-        } else {
-            //TODO: check, if the value is a percent value
-            contentheight = abstractGraphic.getContentHeight().getValue();
-        }
-
-        //set width in rtf
-        //newGraphic.setWidth((long) (contentwidth / 1000f) + FixedLength.POINT);
-        rtfGraphic.setWidth((long) (contentwidth / 50f) + "twips");
-
-        //set height in rtf
-        //newGraphic.setHeight((long) (contentheight / 1000f) + FixedLength.POINT);
-        rtfGraphic.setHeight((long) (contentheight / 50f) + "twips");
+        int width = Math.round(converter.convertMptToTwips(viewport.width));
+        int height = Math.round(converter.convertMptToTwips(viewport.height));
+        width += cropLeft + cropRight;
+        height += cropTop + cropBottom;
+        rtfGraphic.setWidthTwips(width);
+        rtfGraphic.setHeightTwips(height);
 
         //TODO: make this configurable:
         //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();
@@ -1342,15 +1244,11 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void pageRef() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startFootnote(Footnote footnote) {
         if (bDefer) {
             return;
@@ -1375,9 +1273,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endFootnote(Footnote footnote) {
         if (bDefer) {
             return;
@@ -1386,9 +1282,7 @@ public class RTFHandler extends FOEventHandler {
         builderContext.popContainer();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startFootnoteBody(FootnoteBody body) {
         if (bDefer) {
             return;
@@ -1409,9 +1303,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endFootnoteBody(FootnoteBody body) {
         if (bDefer) {
             return;
@@ -1432,10 +1324,28 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void leader(Leader l) {
+        if (bDefer) {
+            return;
+        }
+
+        try {
+            percentManager.setDimension(l);
+            RtfAttributes rtfAttr = TextAttributesConverter.convertLeaderAttributes(
+                    l, percentManager);
+
+            IRtfTextrunContainer container
+                  = (IRtfTextrunContainer)builderContext.getContainer(
+                      IRtfTextrunContainer.class, true, this);
+            RtfTextrun textrun = container.getTextrun();
+
+            textrun.addLeader(rtfAttr);
+
+        } catch (Exception e) {
+            log.error("startLeader: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
@@ -1469,10 +1379,7 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     *
-     * @param pagenum PageNumber that is starting.
-     */
+    /** {@inheritDoc} */
     public void startPageNumber(PageNumber pagenum) {
         if (bDefer) {
             return;
@@ -1497,14 +1404,62 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     *
-     * @param pagenum PageNumber that is ending.
-     */
+    /** {@inheritDoc} */
     public void endPageNumber(PageNumber pagenum) {
         if (bDefer) {
             return;
         }
+    }
+
+    /** {@inheritDoc} */
+    public void startPageNumberCitation(PageNumberCitation l) {
+        if (bDefer) {
+            return;
+        }
+        try {
+
+            IRtfTextrunContainer container
+                  = (IRtfTextrunContainer)builderContext.getContainer(
+                      IRtfTextrunContainer.class, true, this);
+            RtfTextrun textrun = container.getTextrun();
+
+            textrun.addPageNumberCitation(l.getRefId());
+
+        } catch (Exception e) {
+            log.error("startPageNumberCitation: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private void prepareTable(Table tab) {
+        // Allows to receive the available width of the table
+        percentManager.setDimension(tab);
+
+        // Table gets expanded by half of the border on each side inside Word
+        // When using wide borders the table gets cut off
+        int tabDiff = tab.getCommonBorderPaddingBackground().getBorderStartWidth(false) / 2
+                + tab.getCommonBorderPaddingBackground().getBorderEndWidth(false);
+
+        // check for "auto" value
+        if (!(tab.getInlineProgressionDimension().getMaximum(null).getLength()
+                    instanceof EnumLength)) {
+            // value specified
+            percentManager.setDimension(tab,
+                    tab.getInlineProgressionDimension().getMaximum(null)
+                        .getLength().getValue(percentManager)
+                    - tabDiff);
+        } else {
+            // set table width again without border width
+            percentManager.setDimension(tab, percentManager.getBaseLength(
+                    LengthBase.CONTAINING_BLOCK_WIDTH, tab) - tabDiff);
+        }
+
+        ColumnSetup columnSetup = new ColumnSetup(tab);
+        //int sumOfColumns = columnSetup.getSumOfColumnWidths(percentManager);
+        float tableWidth = percentManager.getBaseLength(LengthBase.CONTAINING_BLOCK_WIDTH, tab);
+        float tableUnit = columnSetup.computeTableUnit(percentManager, Math.round(tableWidth));
+        percentManager.setTableUnit(tab, Math.round(tableUnit));
+
     }
 
     /**
@@ -1659,6 +1614,16 @@ public class RTFHandler extends FOEventHandler {
             } else {
                 endCell( (TableCell) foNode);
             }
+        } else if (foNode instanceof Leader) {
+            if (bStart) {
+                leader((Leader) foNode);
+            }
+        } else if (foNode instanceof PageNumberCitation) {
+            if (bStart) {
+                startPageNumberCitation((PageNumberCitation) foNode);
+            } else {
+                endPageNumberCitation((PageNumberCitation) foNode);
+            }
         } else {
             RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
                     getUserAgent().getEventBroadcaster());
@@ -1701,9 +1666,12 @@ public class RTFHandler extends FOEventHandler {
 
             //recurse all table-columns
             if (table.getColumns() != null) {
-                for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
-                    recurseFONode( (FONode) it.next() );
-                }
+              //Calculation for column-widths which are not set
+              prepareTable(table);
+
+              for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
+                  recurseFONode( (FONode) it.next() );
+              }
             } else {
                 //TODO Implement implicit column setup handling!
                 RTFEventProducer eventProducer = RTFEventProducer.Provider.get(

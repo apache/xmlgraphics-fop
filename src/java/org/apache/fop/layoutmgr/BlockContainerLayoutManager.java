@@ -251,12 +251,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         List returnList = new LinkedList();
 
         if (!breakBeforeServed) {
-            try {
+            breakBeforeServed = true;
+            if (!context.suppressBreakBefore()) {
                 if (addKnuthElementsForBreakBefore(returnList, context)) {
                     return returnList;
                 }
-            } finally {
-                breakBeforeServed = true;
             }
         }
 
@@ -281,6 +280,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 childLC.setStackLimitBP(MinOptMax.subtract(context.getStackLimitBP(), stackLimit));
                 childLC.setRefIPD(relDims.ipd);
                 childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+                if (curLM == this.childLMs.get(0)) {
+                    childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
+                    //Handled already by the parent (break collapsing, see above)
+                }
 
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);

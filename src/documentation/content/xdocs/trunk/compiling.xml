@@ -66,7 +66,7 @@
       <section id="env-ant">
         <title>Apache Ant</title>
         <p>
-          <a href="ext:ant">Apache Ant</a> must be installed in order to
+          <a href="ext:ant">Apache Ant</a> (Version 1.7 or later) must be installed in order to
           build FOP. Following best practices we don't include Ant with FOP anymore. You can find the
           <a href="ext:ant/manual/">instructions to install Ant in the Ant manual</a> on the web.
         </p>

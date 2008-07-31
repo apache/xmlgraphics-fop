@@ -133,11 +133,11 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * @throws IOException for I/O problems
      */
     protected void writeRtfContent() throws IOException {
-
         if (getTable().isNestedTable()) {
             //nested table
             writeControlWord("intbl");
-            writeControlWord("itap2");
+            //itap is the depth (level) of the current nested table
+            writeControlWord("itap" + getTable().getNestedTableDepth());
         } else {
             //normal (not nested) table
             writeRowAndCellsDefintions();

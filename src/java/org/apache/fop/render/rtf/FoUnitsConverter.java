@@ -19,10 +19,9 @@
 
 package org.apache.fop.render.rtf;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-//FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FixedLength;
 
@@ -142,5 +141,9 @@ final class FoUnitsConverter {
 
         // RTF font size units are in half-points
         return (int)(result * 2.0);
+    }
+
+    public float convertMptToTwips(int width) {
+        return width * POINT_TO_TWIPS / 1000;
     }
 }

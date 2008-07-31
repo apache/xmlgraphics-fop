@@ -21,8 +21,9 @@
         MIF and SVG output support have not been restored, yet.
       </known-issue>
       <known-issue>
-        Java2D/AWT support has been improved, but some problems remain,
-        for example with block-containers.
+        RTF output is inferior to other output formats supported by FOP.
+        For details, please see the "Output Targets" page of the release
+        you're using.
       </known-issue>
       <known-issue>
         Auto table layout is not implemented, yet.
@@ -79,10 +80,6 @@
       <known-issue>
         Not all FO elements can be referenced by their "id", most notably:
         table-body, table-header, table-footer and table-row.
-      </known-issue>
-      <known-issue>
-        The backgrounds of table-body, table-header, table-footer and 
-        table-column are not painted, yet.
       </known-issue>
       <known-issue>
         Border and padding conditionality are not supported on table-cells, yet.

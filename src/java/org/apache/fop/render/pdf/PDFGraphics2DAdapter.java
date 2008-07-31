@@ -115,7 +115,6 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
         pdfInfo.currentStream.add(graphics.getString());
         renderer.restoreGraphicsState();
-        pdfInfo.pdfState.pop();
     }
 
     /** {@inheritDoc} */

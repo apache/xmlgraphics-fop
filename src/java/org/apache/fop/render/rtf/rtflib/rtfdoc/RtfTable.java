@@ -26,8 +26,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 /**  Container for RtfRow elements
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
@@ -42,6 +42,9 @@ public class RtfTable extends RtfContainer {
     /** Added by Boris Poudérous on 07/22/2002 in order to process
      *  number-columns-spanned attribute */
     private ITableColumnsInfo tableContext;
+
+    /** Shows the table depth necessary for nested tables */
+    private int nestedTableDepth = 0;
 
     /** Create an RTF element as a child of given container */
     RtfTable(IRtfTableContainer parent, Writer w, ITableColumnsInfo tc)
@@ -210,6 +213,22 @@ public class RtfTable extends RtfContainer {
         }
 
         return null;
+    }
+
+    /**
+     * Sets the nested table depth.
+     * @param nestedTableDepth the nested table depth
+     */
+    public void setNestedTableDepth(int nestedTableDepth) {
+        this.nestedTableDepth = nestedTableDepth;
+    }
+
+    /**
+     * Returns the nested table depth.
+     * @return the nested table depth
+     */
+    public int getNestedTableDepth() {
+        return this.nestedTableDepth;
     }
 
     /**
