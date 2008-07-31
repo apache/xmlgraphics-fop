@@ -168,7 +168,7 @@
       <action context="Renderers" dev="JM" type="fix" importance="high">
         Fixed rendering of fixed block-containers in AFP output.
       </action>
-      <action context="Layout" dev="VH" type="fix" fixes-bug="41621" importance="high">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="44621" importance="high">
         Various bugfixes for table layout.
       </action>
       <action context="Renderers" dev="JM" type="fix">
