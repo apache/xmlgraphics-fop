@@ -90,11 +90,11 @@ http://xmlgraphics.apache.org/fop/stable/running.html
   RELEASE NOTES
 ==============================================================================
 
-Version 0.95beta
-================
+Version 0.95
+============
 
-This is a pre-version of the third production grade release of the new FOP
-codebase. It contains many bug fixes and new features. See below for details.
+This is a production grade release of Apache FOP.
+It contains many bug fixes and new features. See below for details.
 
 Compliance
 ----------
@@ -128,6 +128,10 @@ http://xmlgraphics.apache.org/fop/0.95/changes_0.95.html.
 The long list of changes in this and earlier releases is available at
 http://xmlgraphics.apache.org/fop/changes.html.
 
+Changes since Version 0.95beta
+------------------------------
+Please refer to the list of changes on the web:
+http://xmlgraphics.apache.org/fop/changes.html
 
 
 Version 0.94
