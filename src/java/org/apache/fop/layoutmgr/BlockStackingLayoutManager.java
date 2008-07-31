@@ -31,11 +31,13 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.BreakUtil;
 import org.apache.fop.util.ListUtil;
 
 /**
@@ -255,12 +257,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         List returnList = new LinkedList();
 
         if (!breakBeforeServed) {
-            try {
+            breakBeforeServed = true;
+            if (!context.suppressBreakBefore()) {
                 if (addKnuthElementsForBreakBefore(returnList, context)) {
                     return returnList;
                 }
-            } finally {
-                breakBeforeServed = true;
             }
         }
 
@@ -293,6 +294,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 //        .getStackLimit(), stackSize));
                 childLC.setStackLimitBP(context.getStackLimitBP());
                 childLC.setRefIPD(referenceIPD);
+            }
+            if (curLM == this.childLMs.get(0)) {
+                childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
+                //Handled already by the parent (break collapsing, see above)
             }
 
             // get elements from curLM
@@ -1004,18 +1009,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      */
     protected boolean addKnuthElementsForBreakBefore(List returnList,
             LayoutContext context) {
-        int breakBefore = -1;
-        if (fobj instanceof org.apache.fop.fo.flow.Block) {
-            breakBefore = ((org.apache.fop.fo.flow.Block) fobj).getBreakBefore();
-        } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
-            breakBefore = ((org.apache.fop.fo.flow.BlockContainer) fobj).getBreakBefore();
-        } else if (fobj instanceof org.apache.fop.fo.flow.ListBlock) {
-            breakBefore = ((org.apache.fop.fo.flow.ListBlock) fobj).getBreakBefore();
-        } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
-            breakBefore = ((org.apache.fop.fo.flow.ListItem) fobj).getBreakBefore();
-        } else if (fobj instanceof org.apache.fop.fo.flow.table.Table) {
-            breakBefore = ((org.apache.fop.fo.flow.table.Table) fobj).getBreakBefore();
-        }
+        int breakBefore = getBreakBefore();
         if (breakBefore == EN_PAGE
                 || breakBefore == EN_COLUMN
                 || breakBefore == EN_EVEN_PAGE
@@ -1030,6 +1024,27 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
+     * Returns the break-before value of the current formatting object.
+     * @return the break-before value (Constants.EN_*)
+     */
+    private int getBreakBefore() {
+        int breakBefore = EN_AUTO;
+        if (fobj instanceof BreakPropertySet) {
+            breakBefore = ((BreakPropertySet)fobj).getBreakBefore();
+        }
+        if (true /* uncomment to only partially merge: && breakBefore != EN_AUTO*/) {
+            LayoutManager lm = getChildLM();
+            //It is assumed this is only called when the first LM is active.
+            if (lm instanceof BlockStackingLayoutManager) {
+                BlockStackingLayoutManager bslm = (BlockStackingLayoutManager)lm;
+                breakBefore = BreakUtil.compareBreakClasses(
+                        breakBefore, bslm.getBreakBefore());
+            }
+        }
+        return breakBefore;
+    }
+    
+    /**
      * Creates Knuth elements for break-after and adds them to the return list.
      * @param returnList return list to add the additional elements to
      * @param context the layout context
@@ -1038,16 +1053,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected boolean addKnuthElementsForBreakAfter(List returnList,
             LayoutContext context) {
         int breakAfter = -1;
-        if (fobj instanceof org.apache.fop.fo.flow.Block) {
-            breakAfter = ((org.apache.fop.fo.flow.Block) fobj).getBreakAfter();
-        } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
-            breakAfter = ((org.apache.fop.fo.flow.BlockContainer) fobj).getBreakAfter();
-        } else if (fobj instanceof org.apache.fop.fo.flow.ListBlock) {
-            breakAfter = ((org.apache.fop.fo.flow.ListBlock) fobj).getBreakAfter();
-        } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
-            breakAfter = ((org.apache.fop.fo.flow.ListItem) fobj).getBreakAfter();
-        } else if (fobj instanceof org.apache.fop.fo.flow.table.Table) {
-            breakAfter = ((org.apache.fop.fo.flow.table.Table) fobj).getBreakAfter();
+        if (fobj instanceof BreakPropertySet) {
+            breakAfter = ((BreakPropertySet)fobj).getBreakAfter();
         }
         if (breakAfter == EN_PAGE
                 || breakAfter == EN_COLUMN

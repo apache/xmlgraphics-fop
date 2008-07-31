@@ -401,6 +401,7 @@ list of possible build targets.
         <include name="**/*.icm"/>
         <include name="**/*.xml"/>
         <include name="**/*.LICENSE.txt"/>
+        <include name="**/*.xsl"/>
       </fileset>
       <fileset dir="${build.gensrc.dir}">
         <include name="**/*.xml"/>

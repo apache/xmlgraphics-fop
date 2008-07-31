@@ -754,6 +754,24 @@ out = proc.getOutputStream();]]></source>
   <note>RTF output is currently unmaintained and lacks many features compared to other output
     formats. Using other editable formats like Open Document Format, instead of producing XSL-FO
     then RTF through FOP, might give better results.</note>
+  <p>
+    These are some known restrictions compared to other supported output formats (not a complete list):
+  </p>
+  <ul>
+    <li>
+      Not supported/implemented:
+      <ul>
+        <li>break-before/after (supported by the RTF library but not tied into the RTFHandler)</li>
+        <li>fo:page-number-citation-last</li>
+        <li>keeps (supported by the RTF library but not tied into the RTFHandler)</li>
+        <li>region-start/end (RTF limitation)</li>
+        <li>multiple columns</li>
+      </ul>
+    </li>
+    <li>Only a single page-master is supported</li>
+    <li>Not all variations of fo:leader are supported (RTF limitation)</li>
+    <li>percentages are not supported everywhere</li>
+  </ul>
 </section>
 <section id="xml">
   <title>XML (Area Tree XML)</title>
@@ -786,6 +804,16 @@ out = proc.getOutputStream();]]></source>
     It is possible to directly print the document from the command line.
     This is done with the same code that renders to the Java2D/AWT renderer.
   </p>
+  <section id="print-issues">
+    <title>Known issues</title>
+    <p>
+      If you run into the problem that the printed output is incomplete on Windows:
+      this often happens to users printing to a PCL printer.
+      There seems to be an incompatibility between Java and certain PCL printer drivers
+      on Windows. Since most network-enabled laser printers support PostScript, try
+      switching to the PostScript printer driver for that printer model.
+    </p>
+  </section>
 </section>
 <section id="bitmap">
   <title>Bitmap (TIFF/PNG)</title>
@@ -935,5 +963,6 @@ out = proc.getOutputStream();]]></source>
 
   </body>
 </document>
+
 
 

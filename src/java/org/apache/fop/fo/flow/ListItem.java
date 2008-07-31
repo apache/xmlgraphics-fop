@@ -26,6 +26,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -34,7 +35,7 @@ import org.apache.fop.fo.properties.KeepProperty;
  * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_list-item">
  * <code>fo:list-item</code></a> object.
  */
-public class ListItem extends FObj {
+public class ListItem extends FObj implements BreakPropertySet {
     // The value of properties relevant for fo:list-item.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;

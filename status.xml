@@ -175,11 +175,116 @@
       </action>
     </release>
     <release version="0.95" date="TBD">
+      <notes>
+        <section>
+          <title>Notes</title>
+          <p>
+            Besides the important changes listed below, the most important areas with
+            improvements in this release are:
+          </p>
+          <ul>
+            <li>
+              Many bugfixes in tables, plus some new features (full support for keeps and
+              breaks, border conditionality, background on columns and header/footer/body)
+            </li>
+            <li>
+              Improvements and bugfixes for font handling and font
+              auto-detection/-registration.
+            </li>
+            <li>
+              Performance improvements and memory optimizations for the property handling
+              in the FO tree.
+            </li>
+          </ul>
+          <p>
+            Please note that with this release, we've dropped support for Java 1.3.
+            FOP will, from now on, <strong>require at least Java 1.4</strong>.
+          </p>
+          <p>
+            There have been a few changes in tables that make FOP both more strict and more
+            compliant to the Recommendation:
+            <ul>
+              <li>XSL-FO 1.1 explicitly states that a row-spanning fo:table-cell element is not
+                allowed to span further than its enclosing fo:table-header/footer/body element
+                (see bottom of <link href="http://www.w3.org/TR/xsl11/#fo_table">section
+                  6.7.3</link>). From now on FOP will give a validation error if a document
+                contains such an erroneous cell.
+              </li>
+              <li>
+                <p>If an fo:table element contains explicit fo:table-column children, then those
+                  elements set the total number of columns in the table. This means that a
+                  validation error will now occur if a row contains more cells than available
+                  columns. This change allows to improve performance, since the rendering of the
+                  table may start as soon as the table-column elements have been parsed.</p>
+                <p>If more flexibility is needed, then the fo:table-column elements may be just
+                  omitted. The final number of columns will then be set by the row that has the
+                  most cells.</p>
+              </li>
+            </ul>
+          </p>
+          <p>
+            The image libraries Jimi and JAI are no longer needed (and used) for image loading.
+            Instead we rely completely on the Image I/O API that has been introduced with
+            Java 1.4. If you still need support for bitmap image formats that do not work
+            out-of-the-box, we recommend adding
+            <link href="http://jai-imageio.dev.java.net/">JAI Image I/O Tools</link>
+            (an Image I/O compatible image codec package) to the classpath. JAI is still required
+            for building the FOP distribution but it is optional for normal builds and at run-time.
+          </p>
+          <note>
+            This final 0.95 release contains all the 
+            <a href="changes_0.95beta.html">changes made for Apache FOP 0.95beta</a>.
+          </note>
+        </section>
+      </notes>
       <action context="Renderers" dev="JM" type="fix">
-        Fixed positioning of absolutely positioned block-containers in multi-column documents.
+        Fixed a color selection problem which occurred after an image has been painted
+        through the Graphics2DAdapter in PDF output.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="41306">
+        Fixed page ordering problem with AWTRenderer.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="39980">
+        Fixed image scaling for RTF output.
+      </action>
+      <action context="API" dev="JM" type="fix">
+        Fixed the -imagein command-line option.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="43825" due-to="Maximilian Aster">
+        Added support for fo:leader for RTF output (no full support!). Fixes problems with empty leaders
+        being used to force empty lines among other issues.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="43824" due-to="Maximilian Aster">
+        Added support for page-number-citation for RTF output.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="43606" due-to="Maximilian Aster">
+        Fixed handling of proportional-column-width() and percentages for table column in RTF
+        output.
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="45295">
+        Fixed NullPointerException when page-number-citations are used inside a marker.
+      </action>
+      <action context="Images" dev="JM" type="fix">
+        Fixed two bugs concerning resolution handling with SVG images and their
+        conversion to bitmaps for RTF output.
+      </action>
+      <action context="Code" dev="JM" type="fix" fixes-bug="44887" importance="high">
+        Fixed potential multi-threading problem concerning the use of DecimalFormat.
+      </action>
+      <action context="Layout" dev="JM" type="fix" fixes-bug="44412">
+        Regression bugfix: Multiple collapsible breaks don't cause empty pages anymore.
       </action>
       <action context="Renderers" dev="JM" type="fix">
+        Fixed resolution handling inside AWT preview dialog.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" importance="high">
+        Fixed positioning of absolutely positioned block-containers in multi-column documents.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" importance="high">
         Fixed rendering of fixed block-containers in AFP output.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="41621" importance="high">
+        Various bugfixes for table layout.
       </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed regression causing bad positioning of block-containers if used as descendant
