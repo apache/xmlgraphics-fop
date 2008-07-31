@@ -60,8 +60,18 @@
       -->
     <!--/release-->
     <release version="0.95" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed a color selection problem which occurred after an image has been painted
+        through the Graphics2DAdapter in PDF output.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="41306">
+        Fixed page ordering problem with AWTRenderer.
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="39980">
         Fixed image scaling for RTF output.
+      </action>
+      <action context="API" dev="JM" type="fix">
+        Fixed the -imagein command-line option.
       </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="43825" due-to="Maximilian Aster">
         Added support for fo:leader for RTF output (no full support!). Fixes problems with empty leaders
@@ -73,6 +83,9 @@
       <action context="Renderers" dev="JM" type="fix" fixes-bug="43606" due-to="Maximilian Aster">
         Fixed handling of proportional-column-width() and percentages for table column in RTF
         output.
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="45295">
+        Fixed NullPointerException when page-number-citations are used inside a marker.
       </action>
       <action context="Images" dev="JM" type="fix">
         Fixed two bugs concerning resolution handling with SVG images and their
@@ -92,6 +105,9 @@
       </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed rendering of fixed block-containers in AFP output.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="41621">
+        Various bugfixes for table layout.
       </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed regression causing bad positioning of block-containers if used as descendant
