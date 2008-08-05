@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.svg;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -45,5 +47,8 @@ public interface SVGConstants {
     String XLINK_PREFIX = "xlink";
     /** XML namespace for XLink */
     String XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
+
+    /** the SVG element */
+    QName SVG_ELEMENT = new QName(NAMESPACE, null, "svg");
 
 }

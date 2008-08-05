@@ -22,7 +22,6 @@ package org.apache.fop.render;
 //Java
 import java.util.Map;
 
-//FOP
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -30,7 +29,7 @@ import org.apache.fop.apps.FOUserAgent;
  * so that external handlers can get information to be able to render to the
  * render target.
  */
-public class RendererContext {
+public class RendererContext implements RenderingContext {
 
     private String mime;
     private AbstractRenderer renderer;

@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.pdf;
 
-import java.awt.Color;
 import java.awt.color.ICC_Profile;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +40,6 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAMode;
-import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
@@ -54,7 +52,6 @@ import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPageLabels;
-import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.util.ColorProfileUtil;
 
@@ -409,31 +406,5 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         //expressed in a more space-efficient way
         nums.put(pageIndex, dict);
     }
-
-    /**
-     * Establishes a new foreground or fill color. In contrast to updateColor
-     * this method does not check the PDFState for optimization possibilities.
-     * @param col the color to apply
-     * @param fill true to set the fill color, false for the foreground color
-     * @param pdf StringBuffer to write the PDF code to
-     */
-    public void setColor(Color col, boolean fill, StringBuffer pdf) {
-        assert pdf != null;
-        PDFColor color = new PDFColor(this.pdfDoc, col);
-        pdf.append(color.getColorSpaceOut(fill));
-    }
-
-    /**
-     * Establishes a new foreground or fill color.
-     * @param col the color to apply
-     * @param fill true to set the fill color, false for the foreground color
-     * @param stream the PDFStream to write the PDF code to
-     */
-    public void setColor(Color col, boolean fill, PDFStream stream) {
-        assert stream != null;
-        PDFColor color = new PDFColor(this.pdfDoc, col);
-        stream.add(color.getColorSpaceOut(fill));
-    }
-
 
 }

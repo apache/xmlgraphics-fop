@@ -24,6 +24,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.ImageHandlerRegistry;
 
 /**
  * Abstract base class for IFPainter implementations.
@@ -31,6 +32,9 @@ import org.apache.fop.apps.FOUserAgent;
 public abstract class AbstractIFPainter implements IFPainter {
 
     private FOUserAgent userAgent;
+
+    /** Image handler registry */
+    protected ImageHandlerRegistry imageHandlerRegistry = new ImageHandlerRegistry();
 
     /**
      * Default constructor.
@@ -40,6 +44,9 @@ public abstract class AbstractIFPainter implements IFPainter {
 
     /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent ua) {
+        if (this.userAgent != null) {
+            throw new IllegalStateException("The user agent was already set");
+        }
         this.userAgent = ua;
     }
 

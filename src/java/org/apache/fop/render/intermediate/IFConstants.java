@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.intermediate;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.MimeConstants;
 
 /**
@@ -39,6 +41,8 @@ public interface IFConstants {
     String XLINK_PREFIX = "xlink";
     /** XML namespace for XLink */
     String XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
+    /** xlink:href attribute */
+    QName XLINK_HREF = new QName(XLINK_NAMESPACE, XLINK_PREFIX, "href");
 
     String EL_DOCUMENT = "document";
     String EL_HEADER = "header";
@@ -49,4 +53,5 @@ public interface IFConstants {
     String EL_PAGE_CONTENT = "content";
     String EL_VIEWPORT = "viewport";
     String EL_GROUP = "g";
+    String EL_IMAGE = "image";
 }

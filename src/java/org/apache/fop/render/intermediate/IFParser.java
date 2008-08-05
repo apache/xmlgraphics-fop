@@ -135,6 +135,7 @@ public class IFParser implements IFConstants {
             elementHandlers.put("font", new FontHandler());
             elementHandlers.put("text", new TextHandler());
             elementHandlers.put("rect", new RectHandler());
+            elementHandlers.put(EL_IMAGE, new ImageHandler());
         }
 
 
@@ -457,6 +458,24 @@ public class IFParser implements IFConstants {
                 painter.drawRect(new Rectangle(x, y, width, height), fillColor, strokeColor);
             }
 
+        }
+
+        private class ImageHandler extends AbstractElementHandler {
+
+            public void endElement() throws IFException {
+                int x = Integer.parseInt(lastAttributes.getValue("x"));
+                int y = Integer.parseInt(lastAttributes.getValue("y"));
+                int width = Integer.parseInt(lastAttributes.getValue("width"));
+                int height = Integer.parseInt(lastAttributes.getValue("height"));
+                String uri = lastAttributes.getValue(
+                        XLINK_HREF.getNamespaceURI(), XLINK_HREF.getLocalName());
+                Map foreignAttributes = null; //TODO Implement me!
+                painter.drawImage(uri, new Rectangle(x, y, width, height), foreignAttributes);
+            }
+
+            public boolean ignoreCharacters() {
+                return false;
+            }
         }
 
 

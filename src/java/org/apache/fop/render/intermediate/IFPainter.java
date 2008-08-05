@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.util.Map;
 
 import javax.xml.transform.Result;
 
@@ -257,7 +258,7 @@ public interface IFPainter {
      * @throws IFException if an error occurs while handling this event
      */
     void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException;
-    void drawImage(String uri, Rectangle rect) throws IFException; //external images
+    void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException; //external images
     void startImage(Rectangle rect) throws IFException; //followed by a SAX stream (SVG etc.)
     void endImage() throws IFException;
     //etc. etc.
