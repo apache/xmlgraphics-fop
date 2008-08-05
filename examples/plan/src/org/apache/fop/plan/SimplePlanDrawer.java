@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+
 import org.apache.fop.svg.SVGUtilities;
 
 /**
@@ -83,13 +84,15 @@ public class SimplePlanDrawer implements PlanDrawer {
 
         String title = "";
 
-        DOMImplementation impl =
-            SVGDOMImplementation.getDOMImplementation();
+        DOMImplementation impl
+            = SVGDOMImplementation.getDOMImplementation();
         Document doc = impl.createDocument(SVG_NAMESPACE, "svg", null);
 
         Element svgRoot = doc.getDocumentElement();
-        svgRoot.setAttributeNS(null, "width", "" + width);
-        svgRoot.setAttributeNS(null, "height", "" + height);
+        svgRoot.setAttributeNS(null, "width", Float.toString(width));
+        svgRoot.setAttributeNS(null, "height", Float.toString(height));
+        svgRoot.setAttributeNS(null, "viewBox",
+                "0 0 " + Float.toString(width) + " " + Float.toString(height));
         svgRoot.setAttributeNS(null, "style",
                                "font-size:" + 8
                                    + ";font-family:"
@@ -99,8 +102,8 @@ public class SimplePlanDrawer implements PlanDrawer {
                                   java.awt.Font.PLAIN, (int)fontSize);
 
         if (bord) {
-            Element border =
-                SVGUtilities.createRect(doc, 0, 0, width, height);
+            Element border
+                = SVGUtilities.createRect(doc, 0, 0, width, height);
             border.setAttributeNS(null, "style", "stroke:black;fill:none");
             svgRoot.appendChild(border);
         }
