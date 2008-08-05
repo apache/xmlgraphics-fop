@@ -229,7 +229,7 @@
             for building the FOP distribution but it is optional for normal builds and at run-time.
           </p>
           <note>
-            This final 0.95 release contains all the 
+            This final 0.95 release also includes all of the 
             <a href="changes_0.95beta.html">changes made for Apache FOP 0.95beta</a>.
           </note>
         </section>
@@ -280,7 +280,7 @@
       <action context="Renderers" dev="JM" type="fix" importance="high">
         Fixed rendering of fixed block-containers in AFP output.
       </action>
-      <action context="Layout" dev="VH" type="fix" fixes-bug="41621" importance="high">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="44621" importance="high">
         Various bugfixes for table layout.
       </action>
       <action context="Renderers" dev="JM" type="fix">
