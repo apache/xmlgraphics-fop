@@ -276,6 +276,9 @@ public abstract class PDFTextUtil {
         if (bufTJ.length() > 0) {
             bufTJ.append(endText).append(" ");
         }
+        if (bufTJ.length() == 0) {
+            bufTJ.append("[");
+        }
         bufTJ.append(PDFNumber.doubleOut(adjust, DEC - 4));
         bufTJ.append(" ");
         bufTJ.append(startText);
