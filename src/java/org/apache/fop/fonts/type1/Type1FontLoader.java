@@ -100,6 +100,11 @@ public class Type1FontLoader extends FontLoader {
             try {
                 pfm = new PFMFile();
                 pfm.load(pfmIn);
+            } catch (IOException ioe) {
+                if (afm == null) {
+                    //Ignore the exception if we have a valid PFM. PFM is only the fallback.
+                    throw ioe;
+                }
             } finally {
                 IOUtils.closeQuietly(pfmIn);
             }
