@@ -34,7 +34,6 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -194,7 +193,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
 
             //The whole image had to be loaded for this, so keep it
             ImageXMLDOM xmlImage = new ImageXMLDOM(info,
-                    doc, SVGDOMImplementation.SVG_NAMESPACE_URI);
+                    doc, BatikImageFlavors.SVG_DOM);
             info.getCustomObjects().put(ImageInfo.ORIGINAL_IMAGE, xmlImage);
             return info;
         }
