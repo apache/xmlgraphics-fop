@@ -62,6 +62,7 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.fonts.Font;
@@ -168,8 +169,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 }
                 if (this.painter == null) {
                     this.painter = new IFSerializer();
+                    this.painter.setUserAgent(getUserAgent());
                 }
-                this.painter.setUserAgent(getUserAgent());
                 this.painter.setFontInfo(fontInfo);
                 this.painter.setResult(result);
             }
@@ -695,15 +696,22 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void renderImage(Image image, Rectangle2D pos) {
-        if (log.isDebugEnabled()) {
-            log.debug("renderImage() image=" + image + ", pos=" + pos);
-        }
-        super.renderImage(image, pos);
+        drawImage(image.getURL(), pos, image.getForeignAttributes());
     }
 
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
-        // TODO Auto-generated method stub
-        log.warn("drawImage() NYI");
+    /** {@inheritDoc} */
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+        Rectangle posInt = new Rectangle(
+                currentIPPosition + (int)pos.getX(),
+                currentBPPosition + (int)pos.getY(),
+                (int)pos.getWidth(),
+                (int)pos.getHeight());
+        uri = URISpecification.getURL(uri);
+        try {
+            painter.drawImage(uri, posInt, foreignAttributes);
+        } catch (IFException ife) {
+            handleIFException(ife);
+        }
     }
 
     protected void clip() {

@@ -24,13 +24,30 @@ import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Map;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.util.MimeConstants;
+import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.xmp.Metadata;
 
+import org.apache.fop.events.ResourceEventProducer;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.intermediate.AbstractXMLWritingIFPainter;
+import org.apache.fop.render.intermediate.IFConstants;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.util.ColorUtil;
@@ -40,6 +57,9 @@ import org.apache.fop.util.ColorUtil;
  */
 public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
             implements SVGConstants {
+
+    /** logging instance */
+    private static Log log = LogFactory.getLog(AbstractSVGPainter.class);
 
     /** Holds the intermediate format state */
     protected IFState state;
@@ -184,11 +204,81 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
 
     }
 
-    /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect) throws IFException {
-        //establish(MODE_NORMAL);
-        // TODO Auto-generated method stub
+    private QName CONVERSION_MODE = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
 
+    /** {@inheritDoc} */
+    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
+        try {
+            establish(MODE_NORMAL);
+
+            ImageManager manager = getUserAgent().getFactory().getImageManager();
+            ImageInfo info = null;
+            try {
+                ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+                info = manager.getImageInfo(uri, sessionContext);
+                String mime = info.getMimeType();
+                String conversionMode = (String)foreignAttributes.get(CONVERSION_MODE);
+                if ("reference".equals(conversionMode)
+                        && (MimeConstants.MIME_GIF.equals(mime)
+                        || MimeConstants.MIME_JPEG.equals(mime)
+                        || MimeConstants.MIME_PNG.equals(mime)
+                        || MimeConstants.MIME_SVG.equals(mime))) {
+                    //Just reference the image
+                    //TODO Some additional URI rewriting might be necessary
+                    AttributesImpl atts = new AttributesImpl();
+                    addAttribute(atts, IFConstants.XLINK_HREF, uri);
+                    atts.addAttribute("", "x", "x", CDATA, Integer.toString(rect.x));
+                    atts.addAttribute("", "y", "y", CDATA, Integer.toString(rect.y));
+                    atts.addAttribute("", "width", "width", CDATA, Integer.toString(rect.width));
+                    atts.addAttribute("", "height", "height", CDATA, Integer.toString(rect.height));
+                    element("image", atts);
+                } else {
+                    //Convert the image
+                    SVGRenderingContext svgContext = new SVGRenderingContext(
+                            getUserAgent(), handler);
+
+                    Map hints = ImageUtil.getDefaultHints(sessionContext);
+                    org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
+                                info, imageHandlerRegistry.getSupportedFlavors(svgContext),
+                                hints, sessionContext);
+
+                    //First check for a dynamically registered handler
+                    ImageHandler handler = imageHandlerRegistry.getHandler(svgContext, img);
+                    if (handler == null) {
+                        throw new UnsupportedOperationException(
+                                "No ImageHandler available for image: "
+                                    + info + " (" + img.getClass().getName() + ")");
+                    }
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("Using ImageHandler: " + handler.getClass().getName());
+                    }
+                    try {
+                        //TODO foreign attributes
+                        handler.handleImage(svgContext, img, rect);
+                    } catch (IOException ioe) {
+                        ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                                getUserAgent().getEventBroadcaster());
+                        eventProducer.imageWritingError(this, ioe);
+                        return;
+                    }
+                }
+            } catch (ImageException ie) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
+            } catch (FileNotFoundException fe) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
+            } catch (IOException ioe) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
+            }
+        } catch (SAXException e) {
+            throw new IFException("SAX error in drawImage()", e);
+        }
     }
 
     /** {@inheritDoc} */

@@ -44,8 +44,6 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFResourceContext;
-import org.apache.fop.pdf.PDFState;
-import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
@@ -78,10 +76,10 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         PDFInfo pdfi = new PDFInfo();
         pdfi.pdfDoc = (PDFDocument)context.getProperty(PDF_DOCUMENT);
         pdfi.outputStream = (OutputStream)context.getProperty(OUTPUT_STREAM);
-        pdfi.pdfState = (PDFState)context.getProperty(PDF_STATE);
+        //pdfi.pdfState = (PDFState)context.getProperty(PDF_STATE);
         pdfi.pdfPage = (PDFPage)context.getProperty(PDF_PAGE);
         pdfi.pdfContext = (PDFResourceContext)context.getProperty(PDF_CONTEXT);
-        pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
+        //pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
         pdfi.width = ((Integer)context.getProperty(WIDTH)).intValue();
         pdfi.height = ((Integer)context.getProperty(HEIGHT)).intValue();
         pdfi.fi = (FontInfo)context.getProperty(PDF_FONT_INFO);
@@ -108,13 +106,13 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         /** see OUTPUT_STREAM */
         public OutputStream outputStream;
         /** see PDF_STATE */
-        public PDFState pdfState;
+        //public PDFState pdfState;
         /** see PDF_PAGE */
         public PDFPage pdfPage;
         /** see PDF_CONTEXT */
         public PDFResourceContext pdfContext;
         /** see PDF_STREAM */
-        public PDFStream currentStream;
+        //public PDFStream currentStream;
         /** see PDF_WIDTH */
         public int width;
         /** see PDF_HEIGHT */
@@ -216,14 +214,15 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
          * Note: To have the svg overlay (under) a text area then use
          * an fo:block-container
          */
-        pdfInfo.currentStream.add("%SVG setup\n");
-        renderer.saveGraphicsState();
-        renderer.setColor(Color.black, false, null);
-        renderer.setColor(Color.black, true, null);
+        PDFContentGenerator generator = renderer.getGenerator();
+        generator.comment("SVG setup");
+        generator.saveGraphicsState();
+        generator.setColor(Color.black, false);
+        generator.setColor(Color.black, true);
 
         if (!scaling.isIdentity()) {
-            pdfInfo.currentStream.add("%viewbox\n");
-            pdfInfo.currentStream.add(CTMHelper.toPDFString(scaling, false) + " cm\n");
+            generator.comment("viewbox");
+            generator.add(CTMHelper.toPDFString(scaling, false) + " cm\n");
         }
 
         //SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
@@ -238,38 +237,38 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
         if (!resolutionScaling.isIdentity()) {
-            pdfInfo.currentStream.add("%resolution scaling for " + uaResolution
+            generator.comment("resolution scaling for " + uaResolution
                         + " -> " + deviceResolution + "\n");
-            pdfInfo.currentStream.add(
+            generator.add(
                     CTMHelper.toPDFString(resolutionScaling, false) + " cm\n");
             graphics.scale(1 / s, 1 / s);
         }
 
-        pdfInfo.currentStream.add("%SVG start\n");
+        generator.comment("SVG start");
 
         //Save state and update coordinate system for the SVG image
-        pdfInfo.pdfState.push();
-        pdfInfo.pdfState.concatenate(imageTransform);
+        generator.getState().push();
+        generator.getState().concatenate(imageTransform);
 
         //Now that we have the complete transformation matrix for the image, we can update the
         //transformation matrix for the AElementBridge.
         PDFAElementBridge aBridge = (PDFAElementBridge)ctx.getBridge(
                 SVGDOMImplementation.SVG_NAMESPACE_URI, SVGConstants.SVG_A_TAG);
-        aBridge.getCurrentTransform().setTransform(pdfInfo.pdfState.getTransform());
+        aBridge.getCurrentTransform().setTransform(generator.getState().getTransform());
 
-        graphics.setPDFState(pdfInfo.pdfState);
+        graphics.setPDFState(generator.getState());
         graphics.setOutputStream(pdfInfo.outputStream);
         try {
             root.paint(graphics);
-            pdfInfo.currentStream.add(graphics.getString());
+            generator.add(graphics.getString());
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }
-        pdfInfo.pdfState.pop();
-        renderer.restoreGraphicsState();
-        pdfInfo.currentStream.add("%SVG end\n");
+        generator.getState().pop();
+        generator.restoreGraphicsState();
+        generator.comment("SVG end");
     }
 
     /** {@inheritDoc} */

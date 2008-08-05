@@ -17,39 +17,43 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pdf;
+package org.apache.fop.render.svg;
+
+import org.xml.sax.ContentHandler;
+
+import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
-import org.apache.fop.render.intermediate.IFPainter;
-import org.apache.fop.render.intermediate.IFPainterConfigurator;
+import org.apache.fop.render.AbstractRenderingContext;
 
 /**
- * Painter factory for PDF output.
+ * Rendering context for SVG production.
  */
-public class PDFPainterMaker extends AbstractIFPainterMaker {
+public class SVGRenderingContext extends AbstractRenderingContext {
 
-    //TODO Revert to normal MIME after stabilization!
-    private static final String[] MIMES = new String[] {MimeConstants.MIME_PDF + ";mode=painter"};
+    private ContentHandler handler;
 
-    /** {@inheritDoc} */
-    public IFPainter makePainter(FOUserAgent ua) {
-        return new PDFPainter();
+    /**
+     * Main constructor.
+     * @param userAgent the user agent
+     * @param handler the target content handler
+     */
+    public SVGRenderingContext(FOUserAgent userAgent, ContentHandler handler) {
+        super(userAgent);
+        this.handler = handler;
     }
 
     /** {@inheritDoc} */
-    public boolean needsOutputStream() {
-        return true;
+    public String getMimeType() {
+        return MimeConstants.MIME_SVG;
     }
 
-    /** {@inheritDoc} */
-    public String[] getSupportedMimeTypes() {
-        return MIMES;
-    }
-
-    public IFPainterConfigurator getConfigurator(FOUserAgent userAgent) {
-        return new PDFRendererConfigurator(userAgent);
+    /**
+     * Returns the target content handler.
+     * @return the content handler
+     */
+    public ContentHandler getContentHandler() {
+        return this.handler;
     }
 
 }

@@ -31,12 +31,15 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RenderingContext;
 
 /**
- * PDFImageHandler implementation which handles CCITT encoded images (CCITT fax group 3/4).
+ * Image handler implementation which handles CCITT encoded images (CCITT fax group 3/4)
+ * for PDF output.
  */
-public class PDFImageHandlerRawCCITTFax implements PDFImageHandler {
+public class PDFImageHandlerRawCCITTFax implements PDFImageHandler, ImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RAW_CCITTFAX,
@@ -66,6 +69,24 @@ public class PDFImageHandlerRawCCITTFax implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
+    public void handleImage(RenderingContext context, Image image, Rectangle pos)
+                throws IOException {
+        PDFRenderingContext pdfContext = (PDFRenderingContext)context;
+        PDFContentGenerator generator = pdfContext.getGenerator();
+        ImageRawCCITTFax ccitt = (ImageRawCCITTFax)image;
+
+        PDFImage pdfimage = new ImageRawCCITTFaxAdapter(ccitt, image.getInfo().getOriginalURI());
+        PDFXObject xobj = generator.getDocument().addImage(
+                generator.getResourceContext(), pdfimage);
+
+        float x = (float)pos.getX() / 1000f;
+        float y = (float)pos.getY() / 1000f;
+        float w = (float)pos.getWidth() / 1000f;
+        float h = (float)pos.getHeight() / 1000f;
+        generator.placeImage(x, y, w, h, xobj);
+    }
+
+    /** {@inheritDoc} */
     public int getPriority() {
         return 100;
     }
@@ -78,6 +99,12 @@ public class PDFImageHandlerRawCCITTFax implements PDFImageHandler {
     /** {@inheritDoc} */
     public ImageFlavor[] getSupportedImageFlavors() {
         return FLAVORS;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isCompatible(RenderingContext targetContext, Image image) {
+        return (image == null || image instanceof ImageRawCCITTFax)
+                && targetContext instanceof PDFRenderingContext;
     }
 
 }

@@ -35,6 +35,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.util.DecimalFormatCache;
 
@@ -216,6 +218,17 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
     protected void element(String localName, Attributes atts) throws SAXException {
         handler.startElement(getMainNamespace(), localName, localName, atts);
         handler.endElement(getMainNamespace(), localName, localName);
+    }
+
+    /**
+     * Adds an attribute to a given {@code AttributesImpl} instance.
+     * @param atts the attributes collection
+     * @param attribute the attribute to add
+     * @param value the attribute's CDATA value
+     */
+    protected void addAttribute(AttributesImpl atts, QName attribute, String value) {
+        atts.addAttribute(attribute.getNamespaceURI(),
+                attribute.getLocalName(), attribute.getQName(), CDATA, value);
     }
 
     /**

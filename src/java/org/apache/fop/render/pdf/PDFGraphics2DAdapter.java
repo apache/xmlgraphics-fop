@@ -55,6 +55,7 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
             RendererContext context,
             int x, int y, int width, int height) throws IOException {
 
+        PDFContentGenerator generator = renderer.getGenerator();
         PDFSVGHandler.PDFInfo pdfInfo = PDFSVGHandler.getPDFInfo(context);
         float fwidth = width / 1000f;
         float fheight = height / 1000f;
@@ -69,16 +70,17 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
         float sx = fwidth / (float)imw;
         float sy = fheight / (float)imh;
 
-        renderer.saveGraphicsState();
-        renderer.setColor(Color.black, false, null);
-        renderer.setColor(Color.black, true, null);
+        generator.comment("G2D start");
+        generator.saveGraphicsState();
+        generator.updateColor(Color.black, false, null);
+        generator.updateColor(Color.black, true, null);
 
         //TODO Clip to the image area.
 
         // transform so that the coordinates (0,0) is from the top left
         // and positive is down and to the right. (0,0) is where the
         // viewBox puts it.
-        renderer.currentStream.add(sx + " 0 0 " + sy + " " + fx + " "
+        generator.add(sx + " 0 0 " + sy + " " + fx + " "
                           + fy + " cm\n");
 
 
@@ -95,8 +97,8 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
         AffineTransform transform = new AffineTransform();
         transform.translate(fx, fy);
-        pdfInfo.pdfState.concatenate(transform);
-        graphics.setPDFState(pdfInfo.pdfState);
+        generator.getState().concatenate(transform);
+        graphics.setPDFState(generator.getState());
         graphics.setOutputStream(pdfInfo.outputStream);
 
         if (pdfInfo.paintAsBitmap) {
@@ -113,9 +115,9 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
             painter.paint(graphics, area);
         }
 
-        pdfInfo.currentStream.add(graphics.getString());
-        renderer.restoreGraphicsState();
-        pdfInfo.pdfState.pop();
+        generator.add(graphics.getString());
+        generator.restoreGraphicsState();
+        generator.comment("G2D end");
     }
 
     /** {@inheritDoc} */

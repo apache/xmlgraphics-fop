@@ -31,12 +31,14 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RenderingContext;
 
 /**
- * PDFImageHandler implementation which handles raw JPEG images.
+ * Image handler implementation which handles raw JPEG images for PDF output.
  */
-public class PDFImageHandlerRawJPEG implements PDFImageHandler {
+public class PDFImageHandlerRawJPEG implements PDFImageHandler, ImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RAW_JPEG,
@@ -66,6 +68,24 @@ public class PDFImageHandlerRawJPEG implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
+    public void handleImage(RenderingContext context, Image image, Rectangle pos)
+                throws IOException {
+        PDFRenderingContext pdfContext = (PDFRenderingContext)context;
+        PDFContentGenerator generator = pdfContext.getGenerator();
+        ImageRawJPEG imageJPEG = (ImageRawJPEG)image;
+
+        PDFImage pdfimage = new ImageRawJPEGAdapter(imageJPEG, image.getInfo().getOriginalURI());
+        PDFXObject xobj = generator.getDocument().addImage(
+                generator.getResourceContext(), pdfimage);
+
+        float x = (float)pos.getX() / 1000f;
+        float y = (float)pos.getY() / 1000f;
+        float w = (float)pos.getWidth() / 1000f;
+        float h = (float)pos.getHeight() / 1000f;
+        generator.placeImage(x, y, w, h, xobj);
+    }
+
+    /** {@inheritDoc} */
     public int getPriority() {
         return 100;
     }
@@ -78,6 +98,12 @@ public class PDFImageHandlerRawJPEG implements PDFImageHandler {
     /** {@inheritDoc} */
     public ImageFlavor[] getSupportedImageFlavors() {
         return FLAVORS;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isCompatible(RenderingContext targetContext, Image image) {
+        return (image == null || image instanceof ImageRawJPEG)
+                && targetContext instanceof PDFRenderingContext;
     }
 
 }

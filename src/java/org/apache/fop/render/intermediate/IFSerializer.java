@@ -24,10 +24,13 @@ import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.util.ColorUtil;
@@ -275,9 +278,25 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect) throws IFException {
-        // TODO Auto-generated method stub
-
+    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
+        try {
+            AttributesImpl atts = new AttributesImpl();
+            addAttribute(atts, XLINK_HREF, uri);
+            atts.addAttribute("", "x", "x", CDATA, Integer.toString(rect.x));
+            atts.addAttribute("", "y", "y", CDATA, Integer.toString(rect.y));
+            atts.addAttribute("", "width", "width", CDATA, Integer.toString(rect.width));
+            atts.addAttribute("", "height", "height", CDATA, Integer.toString(rect.height));
+            if (foreignAttributes != null) {
+                Iterator iter = foreignAttributes.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry)iter.next();
+                    addAttribute(atts, (QName)entry.getKey(), entry.getValue().toString());
+                }
+            }
+            element(EL_IMAGE, atts);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in startGroup()", e);
+        }
     }
 
     /** {@inheritDoc} */
