@@ -45,7 +45,7 @@ public class ImageLoaderSVG extends AbstractImageLoader {
      * @param targetFlavor the target flavor
      */
     public ImageLoaderSVG(ImageFlavor targetFlavor) {
-        if (!(ImageFlavor.XML_DOM.equals(targetFlavor))) {
+        if (!(targetFlavor.isCompatible(ImageFlavor.XML_DOM))) {
             throw new IllegalArgumentException("Unsupported target ImageFlavor: " + targetFlavor);
         }
         this.targetFlavor = targetFlavor;

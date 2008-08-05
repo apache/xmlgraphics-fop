@@ -30,7 +30,7 @@ import org.apache.xmlgraphics.util.MimeConstants;
 public class ImageLoaderFactorySVG extends AbstractImageLoaderFactory {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
-        ImageFlavor.XML_DOM};
+        BatikImageFlavors.SVG_DOM};
 
     private static final String[] MIMES = new String[] {
         MimeConstants.MIME_SVG};

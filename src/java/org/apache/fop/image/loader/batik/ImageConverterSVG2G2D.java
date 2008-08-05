@@ -132,7 +132,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
 
     /** {@inheritDoc} */
     public ImageFlavor getSourceFlavor() {
-        return ImageFlavor.XML_DOM;
+        return BatikImageFlavors.SVG_DOM;
     }
 
     /** {@inheritDoc} */
