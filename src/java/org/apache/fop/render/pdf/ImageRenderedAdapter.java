@@ -75,6 +75,18 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
         return ((ImageRendered)this.image);
     }
 
+    /** {@inheritDoc} */
+    public int getWidth() {
+        RenderedImage ri = getImage().getRenderedImage();
+        return ri.getWidth();
+    }
+
+    /** {@inheritDoc} */
+    public int getHeight() {
+        RenderedImage ri = getImage().getRenderedImage();
+        return ri.getHeight();
+    }
+
     private ColorModel getEffectiveColorModel() {
         return encodingHelper.getEncodedColorModel();
     }
