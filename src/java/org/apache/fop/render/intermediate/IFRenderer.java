@@ -670,14 +670,14 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 glyphAdjust -= tls;
             }
             curX += font.getCharWidth(ch);
-            if (letterAdjust != null && i < l - 1) {
-                glyphAdjust -= letterAdjust[i + 1];
+            if (letterAdjust != null && i < l) {
+                glyphAdjust -= letterAdjust[i];
             }
 
             float adjust = glyphAdjust / fontSize;
 
             if (adjust != 0) {
-                dx[i] = Math.round(adjust);
+                dx[i] = Math.round(adjust * -10);
                 if (dx[i] != 0) {
                     hasDX = true;
                 }

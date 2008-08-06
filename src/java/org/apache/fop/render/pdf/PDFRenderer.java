@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
@@ -1296,8 +1297,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
             info = manager.getImageInfo(uri, sessionContext);
 
             Map hints = ImageUtil.getDefaultHints(sessionContext);
+            ImageFlavor[] supportedFlavors = imageHandlerRegistry.getSupportedFlavors();
             org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
-                        info, imageHandlerRegistry.getSupportedFlavors(), hints, sessionContext);
+                        info, supportedFlavors, hints, sessionContext);
 
             //First check for a dynamically registered handler
             PDFImageHandler handler = imageHandlerRegistry.getHandler(img.getClass());

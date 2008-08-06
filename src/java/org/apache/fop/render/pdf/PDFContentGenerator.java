@@ -185,23 +185,27 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Concatenates the given transformation matrix with the current one.
-     * @param transform the transformation matrix (in points)
+     * Converts a transformation matrix from millipoints to points.
+     * @param transform the transformation matrix (in millipoints)
+     * @return the converted transformation matrix (in points)
      */
-    public void concatenate(AffineTransform transform) {
-        concatenate(transform, false);
+    public AffineTransform toPoints(AffineTransform transform) {
+        final double[] matrix = new double[6];
+        transform.getMatrix(matrix);
+        //Convert from millipoints to points
+        matrix[4] /= 1000;
+        matrix[5] /= 1000;
+        return new AffineTransform(matrix);
     }
 
     /**
      * Concatenates the given transformation matrix with the current one.
-     * @param transform the transformation matrix
-     * @param convertMillipoints true if the coordinates are in millipoints and need to be
-     *          converted to points
+     * @param transform the transformation matrix (in points)
      */
-    public void concatenate(AffineTransform transform, boolean convertMillipoints) {
+    public void concatenate(AffineTransform transform) {
         if (!transform.isIdentity()) {
             currentState.concatenate(transform);
-            currentStream.add(CTMHelper.toPDFString(transform, convertMillipoints) + " cm\n");
+            currentStream.add(CTMHelper.toPDFString(transform, false) + " cm\n");
         }
     }
 

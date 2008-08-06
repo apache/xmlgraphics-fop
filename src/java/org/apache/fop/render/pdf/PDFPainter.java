@@ -209,8 +209,8 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream, this.currentPage);
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFPainter's
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
-                size.height);
-        generator.concatenate(basicPageTransform, true);
+                size.height / 1000f);
+        generator.concatenate(basicPageTransform);
     }
 
     /** {@inheritDoc} */
@@ -260,7 +260,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
         generator.saveGraphicsState();
-        generator.add(CTMHelper.toPDFString(transform, true) + " cm\n");
+        generator.concatenate(generator.toPoints(transform));
         if (clipRect != null) {
             StringBuffer sb = new StringBuffer();
             sb.append(format(clipRect.x)).append(' ');
@@ -279,7 +279,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     /** {@inheritDoc} */
     public void startGroup(AffineTransform transform) throws IFException {
         generator.saveGraphicsState();
-        generator.add(CTMHelper.toPDFString(transform, true) + " cm\n");
+        generator.concatenate(generator.toPoints(transform));
     }
 
     /** {@inheritDoc} */
@@ -470,7 +470,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         int dxl = (dx != null ? dx.length : 0);
 
         if (dx != null && dxl > 0 && dx[0] != 0) {
-            textutil.adjustGlyphTJ(dx[0] / fontSize);
+            textutil.adjustGlyphTJ(dx[0]);
         }
         for (int i = 0; i < l; i++) {
             char orgChar = text.charAt(i);
@@ -504,7 +504,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
             }
 
             if (glyphAdjust != 0) {
-                textutil.adjustGlyphTJ(glyphAdjust / fontSize);
+                textutil.adjustGlyphTJ(-glyphAdjust / 10f);
             }
 
         }
