@@ -28,12 +28,9 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -47,6 +44,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
@@ -54,6 +53,7 @@ import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.ConversionUtils;
+import org.apache.fop.util.DOMBuilderContentHandlerFactory;
 import org.apache.fop.util.DefaultErrorListener;
 
 /**
@@ -114,8 +114,8 @@ public class IFParser implements IFConstants {
         //private Stack delegateStack = new Stack();
         private int delegateDepth;
         private ContentHandler delegate;
-        private DOMImplementation domImplementation;
-
+        private boolean inForeignObject;
+        private Document foreignObject;
 
         public Handler(IFPainter painter, FOUserAgent userAgent,
                 ElementMappingRegistry elementMappingRegistry) {
@@ -146,32 +146,10 @@ public class IFParser implements IFConstants {
                 //delegateStack.push(qName);
                 delegateDepth++;
                 delegate.startElement(uri, localName, qName, attributes);
-            } else if (domImplementation != null) {
-                //domImplementation is set so we need to start a new DOM building sub-process
-                TransformerHandler handler;
-                try {
-                    handler = tFactory.newTransformerHandler();
-                } catch (TransformerConfigurationException e) {
-                    throw new SAXException("Error creating a new TransformerHandler", e);
-                }
-                Document doc = domImplementation.createDocument(uri, qName, null);
-                //It's easier to work with an empty document, so remove the root element
-                doc.removeChild(doc.getDocumentElement());
-                handler.setResult(new DOMResult(doc));
-                //Area parent = (Area)areaStack.peek();
-                //((ForeignObject)parent).setDocument(doc);
-
-                //activate delegate for nested foreign document
-                domImplementation = null; //Not needed anymore now
-                this.delegate = handler;
-                //delegateStack.push(qName);
-                delegateDepth++;
-                delegate.startDocument();
-                delegate.startElement(uri, localName, qName, attributes);
             } else {
-                lastAttributes = new AttributesImpl(attributes);
                 boolean handled = true;
                 if (NAMESPACE.equals(uri)) {
+                    lastAttributes = new AttributesImpl(attributes);
                     ElementHandler elementHandler = (ElementHandler)elementHandlers.get(localName);
                     content.setLength(0);
                     ignoreCharacters = true;
@@ -191,15 +169,19 @@ public class IFParser implements IFConstants {
                     ContentHandlerFactoryRegistry registry
                             = userAgent.getFactory().getContentHandlerFactoryRegistry();
                     ContentHandlerFactory factory = registry.getFactory(uri);
-                    if (factory != null) {
-                        delegate = factory.createContentHandler();
-                        //delegateStack.push(qName);
-                        delegateDepth++;
-                        delegate.startDocument();
-                        delegate.startElement(uri, localName, qName, attributes);
-                    } else {
-                        handled = false;
+                    if (factory == null) {
+                        DOMImplementation domImplementation
+                            = elementMappingRegistry.getDOMImplementationForNamespace(uri);
+                        if (domImplementation == null) {
+                            throw new SAXException("No DOMImplementation could be"
+                                    + " identified to handle namespace: " + uri);
+                        }
+                        factory = new DOMBuilderContentHandlerFactory(uri, domImplementation);
                     }
+                    delegate = factory.createContentHandler();
+                    delegateDepth++;
+                    delegate.startDocument();
+                    delegate.startElement(uri, localName, qName, attributes);
                 }
                 if (!handled) {
                     if (uri == null || uri.length() == 0) {
@@ -228,13 +210,16 @@ public class IFParser implements IFConstants {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (delegate != null) {
                 delegate.endElement(uri, localName, qName);
-                //delegateStack.pop();
                 delegateDepth--;
                 if (delegateDepth == 0) {
                     delegate.endDocument();
                     if (delegate instanceof ContentHandlerFactory.ObjectSource) {
                         Object obj = ((ContentHandlerFactory.ObjectSource)delegate).getObject();
-                        handleExternallyGeneratedObject(obj);
+                        if (inForeignObject) {
+                            this.foreignObject = (Document)obj;
+                        } else {
+                            handleExternallyGeneratedObject(obj);
+                        }
                     }
                     delegate = null; //Sub-document is processed, return to normal processing
                 }
@@ -251,7 +236,9 @@ public class IFParser implements IFConstants {
                     }
                     ignoreCharacters = true;
                 } else {
-                    //log.debug("Ignoring " + localName + " in namespace: " + uri);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Ignoring " + localName + " in namespace: " + uri);
+                    }
                 }
             }
         }
@@ -462,15 +449,29 @@ public class IFParser implements IFConstants {
 
         private class ImageHandler extends AbstractElementHandler {
 
+            public void startElement(Attributes attributes) throws IFException {
+                inForeignObject = true;
+            }
+
             public void endElement() throws IFException {
                 int x = Integer.parseInt(lastAttributes.getValue("x"));
                 int y = Integer.parseInt(lastAttributes.getValue("y"));
                 int width = Integer.parseInt(lastAttributes.getValue("width"));
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
-                String uri = lastAttributes.getValue(
-                        XLINK_HREF.getNamespaceURI(), XLINK_HREF.getLocalName());
-                Map foreignAttributes = null; //TODO Implement me!
-                painter.drawImage(uri, new Rectangle(x, y, width, height), foreignAttributes);
+                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                if (foreignObject != null) {
+                    painter.drawImage(foreignObject,
+                            new Rectangle(x, y, width, height), foreignAttributes);
+                    foreignObject = null;
+                } else {
+                    String uri = lastAttributes.getValue(
+                            XLINK_HREF.getNamespaceURI(), XLINK_HREF.getLocalName());
+                    if (uri == null) {
+                        throw new IFException("xlink:href is missing on image", null);
+                    }
+                    painter.drawImage(uri, new Rectangle(x, y, width, height), foreignAttributes);
+                }
+                inForeignObject = false;
             }
 
             public boolean ignoreCharacters() {
@@ -570,6 +571,28 @@ public class IFParser implements IFConstants {
             } else {
                 return ConversionUtils.toIntArray(s.trim(), "\\s");
             }
+        }
+
+        private static Map getForeignAttributes(Attributes atts) {
+            Map foreignAttributes = null;
+            for (int i = 0, c = atts.getLength(); i < c; i++) {
+                String ns = atts.getURI(i);
+                if (ns.length() > 0) {
+                    if ("http://www.w3.org/2000/xmlns/".equals(ns)) {
+                        continue;
+                    } else if (NAMESPACE.equals(ns)) {
+                        continue;
+                    } else if (XLINK_NAMESPACE.equals(ns)) {
+                        continue;
+                    }
+                    if (foreignAttributes == null) {
+                        foreignAttributes = new java.util.HashMap();
+                    }
+                    QName qname = new QName(ns, atts.getQName(i));
+                    foreignAttributes.put(qname, atts.getValue(i));
+                }
+            }
+            return foreignAttributes;
         }
 
         /** {@inheritDoc} */
