@@ -28,6 +28,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -38,14 +40,13 @@ import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractXMLWritingIFPainter;
 import org.apache.fop.render.intermediate.IFConstants;
 import org.apache.fop.render.intermediate.IFException;
@@ -197,14 +198,8 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
         }
     }
 
-    /** {@inheritDoc} */
-    public void startImage(Rectangle rect) throws IFException {
-        //establish(MODE_NORMAL);
-        // TODO Auto-generated method stub
-
-    }
-
-    private QName CONVERSION_MODE = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
+    private static final QName CONVERSION_MODE
+            = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
@@ -216,6 +211,7 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
             try {
                 ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
                 info = manager.getImageInfo(uri, sessionContext);
+
                 String mime = info.getMimeType();
                 String conversionMode = (String)foreignAttributes.get(CONVERSION_MODE);
                 if ("reference".equals(conversionMode)
@@ -233,35 +229,7 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
                     atts.addAttribute("", "height", "height", CDATA, Integer.toString(rect.height));
                     element("image", atts);
                 } else {
-                    //Convert the image
-                    SVGRenderingContext svgContext = new SVGRenderingContext(
-                            getUserAgent(), handler);
-
-                    Map hints = ImageUtil.getDefaultHints(sessionContext);
-                    org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
-                                info, imageHandlerRegistry.getSupportedFlavors(svgContext),
-                                hints, sessionContext);
-
-                    //First check for a dynamically registered handler
-                    ImageHandler handler = imageHandlerRegistry.getHandler(svgContext, img);
-                    if (handler == null) {
-                        throw new UnsupportedOperationException(
-                                "No ImageHandler available for image: "
-                                    + info + " (" + img.getClass().getName() + ")");
-                    }
-
-                    if (log.isDebugEnabled()) {
-                        log.debug("Using ImageHandler: " + handler.getClass().getName());
-                    }
-                    try {
-                        //TODO foreign attributes
-                        handler.handleImage(svgContext, img, rect);
-                    } catch (IOException ioe) {
-                        ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                                getUserAgent().getEventBroadcaster());
-                        eventProducer.imageWritingError(this, ioe);
-                        return;
-                    }
+                    drawImageUsingImageHandler(info, rect);
                 }
             } catch (ImageException ie) {
                 ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
@@ -282,9 +250,21 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
     }
 
     /** {@inheritDoc} */
-    public void endImage() throws IFException {
-        // TODO Auto-generated method stub
+    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+        try {
+            establish(MODE_NORMAL);
 
+            drawImageUsingDocument(doc, rect);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in drawImage()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected RenderingContext createRenderingContext() {
+        SVGRenderingContext svgContext = new SVGRenderingContext(
+                getUserAgent(), handler);
+        return svgContext;
     }
 
     /** {@inheritDoc} */

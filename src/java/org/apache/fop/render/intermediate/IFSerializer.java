@@ -27,13 +27,17 @@ import java.awt.geom.AffineTransform;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
+import org.apache.fop.render.RenderingContext;
 import org.apache.fop.util.ColorUtil;
+import org.apache.fop.util.DOM2SAX;
 
 /**
  * IFPainter implementation that serializes the intermediate format to XML.
@@ -214,7 +218,8 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         startViewport(toString(transforms), size, clipRect);
     }
 
-    private void startViewport(String transform, Dimension size, Rectangle clipRect) throws IFException {
+    private void startViewport(String transform, Dimension size, Rectangle clipRect)
+                throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             if (transform != null && transform.length() > 0) {
@@ -272,12 +277,6 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
-    public void startImage(Rectangle rect) throws IFException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
@@ -300,9 +299,26 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
-    public void endImage() throws IFException {
-        // TODO Auto-generated method stub
-
+    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+        try {
+            AttributesImpl atts = new AttributesImpl();
+            atts.addAttribute("", "x", "x", CDATA, Integer.toString(rect.x));
+            atts.addAttribute("", "y", "y", CDATA, Integer.toString(rect.y));
+            atts.addAttribute("", "width", "width", CDATA, Integer.toString(rect.width));
+            atts.addAttribute("", "height", "height", CDATA, Integer.toString(rect.height));
+            if (foreignAttributes != null) {
+                Iterator iter = foreignAttributes.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry)iter.next();
+                    addAttribute(atts, (QName)entry.getKey(), entry.getValue().toString());
+                }
+            }
+            startElement(EL_IMAGE, atts);
+            new DOM2SAX(handler).writeDocument(doc, true);
+            endElement(EL_IMAGE);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in startGroup()", e);
+        }
     }
 
     /** {@inheritDoc} */
@@ -404,6 +420,11 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             throw new UnsupportedOperationException(
                     "Don't know how to handle extension object: " + extension);
         }
+    }
+
+    /** {@inheritDoc} */
+    protected RenderingContext createRenderingContext() {
+        throw new IllegalStateException("Should never be called!");
     }
 
 }
