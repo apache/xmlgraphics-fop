@@ -32,6 +32,8 @@ import java.util.Stack;
 
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Document;
+
 import org.xml.sax.SAXException;
 
 import org.apache.batik.parser.AWTTransformProducer;
@@ -57,6 +59,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
+import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
@@ -73,6 +76,10 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Renderer;
 
+/**
+ * This renderer implementation is an adapter to the {@code IFPainter} interface. It is used
+ * to generate content using FOP's intermediate format.
+ */
 public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** logging instance */
@@ -714,21 +721,41 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    /** {@inheritDoc} */
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+        endTextObject();
+        Rectangle posInt = new Rectangle(
+                currentIPPosition + (int)pos.getX(),
+                currentBPPosition + (int)pos.getY(),
+                (int)pos.getWidth(),
+                (int)pos.getHeight());
+        Document doc = fo.getDocument();
+        try {
+            painter.drawImage(doc, posInt, fo.getForeignAttributes());
+        } catch (IFException ife) {
+            handleIFException(ife);
+        }
+    }
+
+    /** {@inheritDoc} */
     protected void clip() {
         // TODO Auto-generated method stub
         log.warn("clip() NYI");
     }
 
+    /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
         // TODO Auto-generated method stub
         log.warn("clipRect() NYI");
     }
 
+    /** {@inheritDoc} */
     protected void closePath() {
         // TODO Auto-generated method stub
         log.warn("closePath() NYI");
     }
 
+    /** {@inheritDoc} */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
             boolean startOrBefore, int style, Color col) {
         // TODO Auto-generated method stub

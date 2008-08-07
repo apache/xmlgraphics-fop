@@ -28,6 +28,8 @@ import java.util.Map;
 
 import javax.xml.transform.Result;
 
+import org.w3c.dom.Document;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 
@@ -258,9 +260,33 @@ public interface IFPainter {
      * @throws IFException if an error occurs while handling this event
      */
     void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException;
-    void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException; //external images
-    void startImage(Rectangle rect) throws IFException; //followed by a SAX stream (SVG etc.)
-    void endImage() throws IFException;
+
+    /**
+     * Draws an image identified by a URI inside a given rectangle. This is the equivalent to
+     * an fo:external-graphic in XSL-FO.
+     * @param uri the image's URI
+     * @param rect the rectangle in which the image shall be painted
+     * @param foreignAttributes a optional Map with foreign attributes (Map<QName,String>)
+     * @throws IFException if an error occurs while handling this event
+     */
+    void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException;
+
+    /**
+     * Draws an image (represented by a DOM document) inside a given rectangle. This is the
+     * equivalent to an fo:instream-foreign-object in XSL-FO.
+     * @param doc the DOM document containing the foreign object
+     * @param rect the rectangle in which the image shall be painted
+     * @param foreignAttributes a optional Map with foreign attributes (Map<QName,String>)
+     * @throws IFException if an error occurs while handling this event
+     */
+    void drawImage(Document doc, Rectangle rect, Map foreignAttributes)
+                throws IFException;
+    //Note: For now, all foreign objects are handled as DOM documents. At the moment, all known
+    //implementations use a DOM anyway, so optimizing this to work with SAX wouldn't result in
+    //any performance benefits. The IFRenderer itself has a DOM anyway. Only the IFParser could
+    //potentially profit if there's an image handler that can efficiently deal with the foreign
+    //object without building a DOM.
+
     //etc. etc.
 
     /**

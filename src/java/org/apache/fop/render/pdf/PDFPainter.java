@@ -24,23 +24,18 @@ import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
+
+import org.w3c.dom.Document;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
@@ -55,7 +50,7 @@ import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
@@ -295,60 +290,16 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
             return;
         }
 
-        ImageManager manager = getUserAgent().getFactory().getImageManager();
-        ImageInfo info = null;
-        try {
-            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
-            info = manager.getImageInfo(uri, sessionContext);
+        drawImageUsingURI(uri, rect);
 
-            PDFRenderingContext pdfContext = new PDFRenderingContext(
-                    getUserAgent(), generator, currentPage, getFontInfo());
+        flushPDFDoc();
+    }
 
-            Map hints = ImageUtil.getDefaultHints(sessionContext);
-            org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
-                        info, imageHandlerRegistry.getSupportedFlavors(pdfContext),
-                        hints, sessionContext);
-
-            //First check for a dynamically registered handler
-            ImageHandler handler = imageHandlerRegistry.getHandler(pdfContext, img);
-            if (handler == null) {
-                throw new UnsupportedOperationException(
-                        "No ImageHandler available for image: "
-                            + info + " (" + img.getClass().getName() + ")");
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Using ImageHandler: " + handler.getClass().getName());
-            }
-            try {
-                //TODO foreign attributes
-                handler.handleImage(pdfContext, img, rect);
-            } catch (IOException ioe) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        getUserAgent().getEventBroadcaster());
-                eventProducer.imageWritingError(this, ioe);
-                return;
-            }
-        } catch (ImageException ie) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.imageError(this, (info != null ? info.toString() : uri), ie, null);
-        } catch (FileNotFoundException fe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.imageNotFound(this, (info != null ? info.toString() : uri), fe, null);
-        } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.imageIOError(this, (info != null ? info.toString() : uri), ioe, null);
-        }
-
-        // output new data
-        try {
-            generator.flushPDFDoc();
-        } catch (IOException ioe) {
-            throw new IFException("I/O error flushing the PDF document", ioe);
-        }
+    /** {@inheritDoc} */
+    protected RenderingContext createRenderingContext() {
+        PDFRenderingContext pdfContext = new PDFRenderingContext(
+                getUserAgent(), generator, currentPage, getFontInfo());
+        return pdfContext;
     }
 
     /**
@@ -369,17 +320,20 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         generator.restoreGraphicsState();
     }
 
-
     /** {@inheritDoc} */
-    public void startImage(Rectangle rect) throws IFException {
-        // TODO Auto-generated method stub
+    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+        drawImageUsingDocument(doc, rect);
 
+        flushPDFDoc();
     }
 
-    /** {@inheritDoc} */
-    public void endImage() throws IFException {
-        // TODO Auto-generated method stub
-
+    private void flushPDFDoc() throws IFException {
+        // output new data
+        try {
+            generator.flushPDFDoc();
+        } catch (IOException ioe) {
+            throw new IFException("I/O error flushing the PDF document", ioe);
+        }
     }
 
     /** {@inheritDoc} */
