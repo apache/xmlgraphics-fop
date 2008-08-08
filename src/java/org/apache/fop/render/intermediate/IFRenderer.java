@@ -271,8 +271,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void renderPage(PageViewport page) throws IOException, FOPException {
-        if (log.isDebugEnabled()) {
-            log.debug("renderPage() " + page);
+        if (log.isTraceEnabled()) {
+            log.trace("renderPage() " + page);
         }
         try {
             Rectangle2D viewArea = page.getViewArea();
@@ -375,8 +375,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     private void concatenateTransformationMatrixMpt(AffineTransform at) {
         if (!at.isIdentity()) {
-            if (log.isDebugEnabled()) {
-                log.debug("-----concatenateTransformationMatrix: " + at);
+            if (log.isTraceEnabled()) {
+                log.trace("-----concatenateTransformationMatrix: " + at);
             }
             IFGraphicContext.Group group = new IFGraphicContext.Group(at);
             pushGroup(group);
@@ -530,8 +530,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
-        if (log.isDebugEnabled()) {
-            log.debug("startVParea() ctm=" + ctm + ", clippingRect=" + clippingRect);
+        if (log.isTraceEnabled()) {
+            log.trace("startVParea() ctm=" + ctm + ", clippingRect=" + clippingRect);
         }
         AffineTransform at = new AffineTransform(ctm.toArray());
         Rectangle clipRect = null;
@@ -542,8 +542,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                     (int)clippingRect.getWidth(), (int)clippingRect.getHeight());
         }
         startViewport(at, clipRect);
-        if (log.isDebugEnabled()) {
-            log.debug("startVPArea: " + at + " --> " + graphicContext.getTransform());
+        if (log.isTraceEnabled()) {
+            log.trace("startVPArea: " + at + " --> " + graphicContext.getTransform());
         }
     }
 
@@ -561,10 +561,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void endVParea() {
-        log.debug("endVParea()");
+        log.trace("endVParea()");
         endViewport();
-        if (log.isDebugEnabled()) {
-            log.debug("endVPArea() --> " + graphicContext.getTransform());
+        if (log.isTraceEnabled()) {
+            log.trace("endVPArea() --> " + graphicContext.getTransform());
         }
     }
 
@@ -579,8 +579,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void renderBlock(Block block) {
-        if (log.isDebugEnabled()) {
-            log.debug("renderBlock() " + block);
+        if (log.isTraceEnabled()) {
+            log.trace("renderBlock() " + block);
         }
         super.renderBlock(block);
     }
@@ -595,8 +595,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void renderText(TextArea text) {
-        if (log.isDebugEnabled()) {
-            log.debug("renderText() " + text);
+        if (log.isTraceEnabled()) {
+            log.trace("renderText() " + text);
         }
         renderInlineAreaBackAndBorders(text);
         Color ct = (Color) text.getTrait(Trait.COLOR);
