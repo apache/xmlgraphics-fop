@@ -52,14 +52,12 @@
   </contexts>
   
   <changes>
-    <!--release version="FOP Trunk" date="TBD"-->
-      <!-- change reverted, to be added back later
-        <action context="Renderers" dev="AC" importance="high" type="add">
-        Added SVG support for AFP (GOCA).
-        </action>
-      -->
-    <!--/release-->
-    <release version="0.95" date="TBD">
+    <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="JM" type="fix">
+        Fixed ID resolution for nested bookmarks with duplicated IDs.
+      </action>
+    </release>
+    <release version="0.95" date="05 August 2008">
       <notes>
         <section>
           <title>Notes</title>
