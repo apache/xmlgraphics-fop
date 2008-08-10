@@ -108,6 +108,8 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
     /**
      * Handles resolve exceptions appropriately.
      *
+     * @param e
+     *            the exception
      * @param errorStr
      *            error string
      * @param strict
@@ -232,17 +234,16 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
                      * The URL class does not implement this work around, so we
                      * do.
                      */
+                    assert (baseURL != null);
                     String scheme = baseURL.getProtocol() + ":";
-                    if (href.startsWith(scheme)) {
+                    if (href.startsWith(scheme) && "file:".equals(scheme)) {
                         href = href.substring(scheme.length());
-                        if ("file:".equals(scheme)) {
-                            int colonPos = href.indexOf(':');
-                            int slashPos = href.indexOf('/');
-                            if (slashPos >= 0 && colonPos >= 0
-                                    && colonPos < slashPos) {
-                                href = "/" + href; // Absolute file URL doesn't
-                                // have a leading slash
-                            }
+                        int colonPos = href.indexOf(':');
+                        int slashPos = href.indexOf('/');
+                        if (slashPos >= 0 && colonPos >= 0
+                                && colonPos < slashPos) {
+                            href = "/" + href; // Absolute file URL doesn't
+                            // have a leading slash
                         }
                     }
                     try {
