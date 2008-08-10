@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="45606" due-to="Pavel Kysilka">
+        Fixed generation of "fonttbl" for RTF output to fix loading problem with AbiWord.
+      </action>
       <action context="Layout" dev="JM" type="fix">
         Fixed ID resolution for nested bookmarks with duplicated IDs.
       </action>
