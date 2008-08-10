@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="JM" type="fix">
+        Fixed ID resolution for nested bookmarks with duplicated IDs.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="45490" due-to="Thomas Stieler">
         Fixed a slight error when resolving non-file URLs: avoid
         altering the original 'href' if the protocol is other than 'file:'
