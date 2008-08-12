@@ -30,7 +30,7 @@ import org.apache.fop.util.XMLUtil;
 /**
  * Action class which represents a "go-to" action to an absolute coordinate on a page.
  */
-public class GoToXYAction extends AbstractAction implements BookmarkExtensionConstants {
+public class GoToXYAction extends AbstractAction implements DocumentNavigationExtensionConstants {
 
     private int pageIndex;
     private Point targetLocation;

@@ -34,7 +34,7 @@ import org.apache.fop.util.XMLUtil;
 /**
  * This class is a bookmark element for use in the intermediate format.
  */
-public class Bookmark implements XMLizable, BookmarkExtensionConstants {
+public class Bookmark implements XMLizable, DocumentNavigationExtensionConstants {
 
     private String title;
     private boolean show;

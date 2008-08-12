@@ -32,7 +32,7 @@ import org.apache.xmlgraphics.util.XMLizable;
 /**
  * This class is the root of the bookmark tree for use in the intermediate format.
  */
-public class BookmarkTree implements XMLizable, BookmarkExtensionConstants {
+public class BookmarkTree implements XMLizable, DocumentNavigationExtensionConstants {
 
     private List bookmarks = new java.util.ArrayList();
 

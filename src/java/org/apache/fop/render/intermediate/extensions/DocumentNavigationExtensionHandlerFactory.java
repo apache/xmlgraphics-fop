@@ -35,13 +35,13 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.XMLUtil;
 
 /**
- * Factory for the ContentHandler that handles the IF bookmarks namespace.
+ * Factory for the ContentHandler that handles the IF document navigation namespace.
  */
-public class BookmarkExtensionHandlerFactory
-        implements ContentHandlerFactory, BookmarkExtensionConstants {
+public class DocumentNavigationExtensionHandlerFactory
+        implements ContentHandlerFactory, DocumentNavigationExtensionConstants {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(BookmarkExtensionHandlerFactory.class);
+    protected static Log log = LogFactory.getLog(DocumentNavigationExtensionHandlerFactory.class);
 
     /** {@inheritDoc} */
     public String[] getSupportedNamespaces() {
@@ -50,17 +50,16 @@ public class BookmarkExtensionHandlerFactory
 
     /** {@inheritDoc} */
     public ContentHandler createContentHandler() {
-        return new BookmarkExtensionHandler();
+        return new Handler();
     }
 
-    private static class BookmarkExtensionHandler extends DefaultHandler
+    private static class Handler extends DefaultHandler
                 implements ContentHandlerFactory.ObjectSource {
 
         private StringBuffer content = new StringBuffer();
-        //private Attributes lastAttributes;
         private Stack objectStack = new Stack();
-        private BookmarkTree bookmarkTree;
 
+        private Object objectBuilt;
         private ObjectBuiltListener listener;
 
         /** {@inheritDoc} */
@@ -69,10 +68,10 @@ public class BookmarkExtensionHandlerFactory
             boolean handled = false;
             if (NAMESPACE.equals(uri)) {
                 if (BOOKMARK_TREE.getLocalName().equals(localName)) {
-                    if (bookmarkTree != null) {
+                    if (!objectStack.isEmpty()) {
                         throw new SAXException(localName + " must be the root element!");
                     }
-                    bookmarkTree = new BookmarkTree();
+                    BookmarkTree bookmarkTree = new BookmarkTree();
                     objectStack.push(bookmarkTree);
                 } else if (BOOKMARK.getLocalName().equals(localName)) {
                     String title = attributes.getValue("title");
@@ -91,6 +90,13 @@ public class BookmarkExtensionHandlerFactory
                         ((Bookmark)o).addChildBookmark(b);
                     }
                     objectStack.push(b);
+                } else if (NAMED_DESTINATION.getLocalName().equals(localName)) {
+                    if (!objectStack.isEmpty()) {
+                        throw new SAXException(localName + " must be the root element!");
+                    }
+                    String name = attributes.getValue("name");
+                    NamedDestination dest = new NamedDestination(name, null);
+                    objectStack.push(dest);
                 } else if (GOTO_XY.getLocalName().equals(localName)) {
                     int pageIndex = XMLUtil.getAttributeAsInt(attributes, "page-index");
                     int x = XMLUtil.getAttributeAsInt(attributes, "x");
@@ -130,6 +136,10 @@ public class BookmarkExtensionHandlerFactory
                     } else {
                         objectStack.pop();
                     }
+                } else if (NAMED_DESTINATION.getLocalName().equals(localName)) {
+                    AbstractAction action = (AbstractAction)objectStack.pop();
+                    NamedDestination dest = (NamedDestination)objectStack.peek();
+                    dest.setAction(action);
                 }
             }
             content.setLength(0); // Reset text buffer (see characters())
@@ -142,14 +152,16 @@ public class BookmarkExtensionHandlerFactory
 
         /** {@inheritDoc} */
         public void endDocument() throws SAXException {
+            this.objectBuilt = objectStack.pop();
+            assert objectStack.isEmpty();
             if (listener != null) {
-                listener.notifyObjectBuilt(getObject());
+                listener.notifyObjectBuilt(this.objectBuilt);
             }
         }
 
         /** {@inheritDoc} */
         public Object getObject() {
-            return bookmarkTree;
+            return objectBuilt;
         }
 
         /** {@inheritDoc} */

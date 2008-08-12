@@ -29,7 +29,7 @@ import org.apache.fop.util.XMLUtil;
  * Action class which represents a "URI" action, i.e. an action that will call up an external
  * resource identified by a URI.
  */
-public class URIAction extends AbstractAction implements BookmarkExtensionConstants {
+public class URIAction extends AbstractAction implements DocumentNavigationExtensionConstants {
 
     private String uri;
 
