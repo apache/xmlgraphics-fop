@@ -34,6 +34,7 @@ import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.intermediate.IFParser;
@@ -51,6 +52,11 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
      */
     public IFParserTestCase(File testFile) {
         super(testFile);
+    }
+
+    /** {@inheritDoc} */
+    protected String getTargetMIME() {
+        return MimeConstants.MIME_PDF + ";mode=painter";
     }
 
     /** {@inheritDoc} */
