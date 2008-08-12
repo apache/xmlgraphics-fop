@@ -207,11 +207,6 @@ public interface IFPainter {
     void startPageTrailer() throws IFException;
 
     /**
-     * @todo Solve with extension because not all formats support that?
-     */
-    void addTarget(String name, int x, int y) throws IFException;
-
-    /**
      * Indicates the end of the page trailer.
      * @throws IFException if an error occurs while handling this event
      */

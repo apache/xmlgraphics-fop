@@ -335,12 +335,6 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         }
     }
 
-    /** {@inheritDoc} */
-    public void addTarget(String name, int x, int y) throws IFException {
-        // TODO Auto-generated method stub
-
-    }
-
     /**
      * Formats a integer value (normally coordinates in millipoints) to a String.
      * @param value the value (in millipoints)

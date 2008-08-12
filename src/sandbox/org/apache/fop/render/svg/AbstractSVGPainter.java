@@ -267,13 +267,6 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
         return svgContext;
     }
 
-    /** {@inheritDoc} */
-    public void addTarget(String name, int x, int y) throws IFException {
-        //establish(MODE_NORMAL);
-        // TODO Auto-generated method stub
-
-    }
-
     private static String toString(Paint paint) {
         //TODO Paint serialization: Fine-tune and extend!
         if (paint instanceof Color) {
