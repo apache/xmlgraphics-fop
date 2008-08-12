@@ -83,6 +83,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
 import org.apache.fop.render.intermediate.extensions.GoToXYAction;
+import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.render.pdf.PDFEventProducer;
 
 /**
@@ -269,10 +270,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         PageViewport pv = dd.getPageViewport();
         if (pv != null) {
             GoToXYAction action = getGoToActionForID(targetID, pv.getPageIndex());
-            /*
-            pdfDoc.getFactory().makeDestination(
-                    dd.getIDRef(), gt.makeReference());
-                    */
+            NamedDestination namedDestination = new NamedDestination(targetID, action);
+            try {
+                painter.handleExtensionObject(namedDestination);
+            } catch (IFException ife) {
+                handleIFException(ife);
+            }
         } else {
             //Warning already issued by AreaTreeHandler (debug level is sufficient)
             log.debug("Unresolved destination item received: " + dd.getIDRef());

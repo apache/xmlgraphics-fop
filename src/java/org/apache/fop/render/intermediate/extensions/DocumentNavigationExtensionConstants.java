@@ -24,17 +24,21 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.render.intermediate.IFConstants;
 
 /**
- * Constants for the IF bookmark extension.
+ * Constants for the IF document-level navigation extension.
  */
-public interface BookmarkExtensionConstants {
+public interface DocumentNavigationExtensionConstants {
 
     /** Namespace URI for the bookmark extension */
-    String NAMESPACE = IFConstants.NAMESPACE + "/bookmarks";
+    String NAMESPACE = IFConstants.NAMESPACE + "/document-navigation";
 
     /** the bookmark-tree element */
     QName BOOKMARK_TREE = new QName(NAMESPACE, "bookmark-tree");
     /** the bookmark element */
     QName BOOKMARK = new QName(NAMESPACE, "bookmark");
+
+    /** the named-destination element */
+    QName NAMED_DESTINATION = new QName(NAMESPACE, "named-destination");
+
     /** the goto-xy element */
     QName GOTO_XY = new QName(NAMESPACE, "goto-xy");
     /** the goto-uri element */
