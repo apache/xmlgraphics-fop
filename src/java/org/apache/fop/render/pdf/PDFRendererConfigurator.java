@@ -30,6 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.CustomFontCollection;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
+import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
@@ -215,15 +216,16 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator
         List fontCollections = new java.util.ArrayList();
         fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
 
+        FontEventListener listener = new FontEventAdapter(userAgent.getEventBroadcaster());
         Configuration cfg = super.getRendererConfig(painter.getMimeType());
         if (cfg != null) {
             FontResolver fontResolver = new DefaultFontResolver(userAgent);
-            List fontList = buildFontList(cfg, fontResolver);
+            List fontList = buildFontList(cfg, fontResolver, listener);
             fontCollections.add(new CustomFontCollection(fontResolver, fontList));
         }
 
         FontInfo fontInfo = new FontInfo();
-        fontInfo.setEventListener(new FontEventAdapter(userAgent.getEventBroadcaster()));
+        fontInfo.setEventListener(listener);
         fontManager.setup(fontInfo,
                 (FontCollection[])fontCollections.toArray(
                         new FontCollection[fontCollections.size()]));

@@ -87,7 +87,9 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         PrintRenderer printRenderer = (PrintRenderer)renderer;
         FontResolver fontResolver = printRenderer.getFontResolver();
 
-        List embedFontInfoList = buildFontList(cfg, fontResolver);
+        FontEventListener listener = new FontEventAdapter(
+                renderer.getUserAgent().getEventBroadcaster());
+        List embedFontInfoList = buildFontList(cfg, fontResolver, listener);
         printRenderer.addFontList(embedFontInfoList);
     }
 
@@ -95,10 +97,12 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      * Builds the font list from configuration.
      * @param cfg the configuration object
      * @param fontResolver a font resolver
+     * @param listener the font event listener
      * @return the list of {@code EmbedFontInfo} objects
      * @throws FOPException if an error occurs while processing the configuration
      */
-    protected List buildFontList(Configuration cfg, FontResolver fontResolver) throws FOPException {
+    protected List buildFontList(Configuration cfg, FontResolver fontResolver,
+                    FontEventListener listener) throws FOPException {
         FopFactory factory = userAgent.getFactory();
         FontManager fontManager = factory.getFontManager();
         if (fontResolver == null) {
@@ -109,8 +113,6 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         boolean strict = factory.validateUserConfigStrictly();
         FontCache fontCache = fontManager.getFontCache();
 
-        FontEventListener listener = new FontEventAdapter(
-                renderer.getUserAgent().getEventBroadcaster());
         List/*<EmbedFontInfo>*/ embedFontInfoList = buildFontListFromConfiguration(cfg,
                 fontResolver, strict, fontManager, listener);
 
