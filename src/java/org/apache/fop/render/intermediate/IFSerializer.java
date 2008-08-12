@@ -322,12 +322,6 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         }
     }
 
-    /** {@inheritDoc} */
-    public void addTarget(String name, int x, int y) throws IFException {
-        // TODO Auto-generated method stub
-
-    }
-
     private static String toString(Paint paint) {
         if (paint instanceof Color) {
             return ColorUtil.colorToString((Color)paint);
