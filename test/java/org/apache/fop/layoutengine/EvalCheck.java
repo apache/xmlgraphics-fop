@@ -21,16 +21,20 @@ package org.apache.fop.layoutengine;
 
 import javax.xml.transform.TransformerException;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import org.apache.xml.utils.PrefixResolver;
 import org.apache.xml.utils.PrefixResolverDefault;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
-import org.w3c.dom.Node;
+
+import org.apache.fop.intermediate.IFCheck;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
  */
-public class EvalCheck implements LayoutEngineCheck {
+public class EvalCheck implements LayoutEngineCheck, IFCheck {
 
     private String expected;
     private String xpath;
@@ -58,14 +62,23 @@ public class EvalCheck implements LayoutEngineCheck {
         if (nd != null) {
             this.tolerance = Double.parseDouble(nd.getNodeValue());
         }
-        this.prefixResolver = new PrefixResolverDefault(node);
+        this.prefixResolver = new MyPrefixResolver(new PrefixResolverDefault(node));
     }
 
-    /** @see org.apache.fop.layoutengine.LayoutEngineCheck */
+    /** {@inheritDoc} */
     public void check(LayoutResult result) {
+        doCheck(result.getAreaTree());
+    }
+
+    /** {@inheritDoc} */
+    public void check(Document intermediate) {
+        doCheck(intermediate);
+    }
+
+    private void doCheck(Document doc) {
         XObject res;
         try {
-            res = XPathAPI.eval(result.getAreaTree(), xpath, prefixResolver);
+            res = XPathAPI.eval(doc, xpath, prefixResolver);
         } catch (TransformerException e) {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
@@ -87,9 +100,45 @@ public class EvalCheck implements LayoutEngineCheck {
         }
     }
 
-    /** @see java.lang.Object#toString() */
+    /** {@inheritDoc} */
     public String toString() {
         return "XPath: " + xpath;
+    }
+
+    private static class MyPrefixResolver implements PrefixResolver {
+
+        private PrefixResolver delegate;
+
+        public MyPrefixResolver(PrefixResolver delegate) {
+            this.delegate = delegate;
+        }
+
+        /** {@inheritDoc} */
+        public String getBaseIdentifier() {
+            String s = delegate.getBaseIdentifier();
+            System.out.println(s);
+            return s;
+        }
+
+        /** {@inheritDoc} */
+        public String getNamespaceForPrefix(String prefix) {
+            String s = delegate.getNamespaceForPrefix(prefix);
+            System.out.println(s);
+            return s;
+        }
+
+        /** {@inheritDoc} */
+        public String getNamespaceForPrefix(String prefix, Node context) {
+            String s = delegate.getNamespaceForPrefix(prefix, context);
+            System.out.println(s);
+            return s;
+        }
+
+        /** {@inheritDoc} */
+        public boolean handlesNullPrefixes() {
+            return delegate.handlesNullPrefixes();
+        }
+
     }
 
 }

@@ -21,6 +21,7 @@ package org.apache.fop.render.intermediate;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -49,9 +50,12 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
+import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.DestinationData;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageSequence;
@@ -61,6 +65,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
@@ -75,6 +80,10 @@ import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.intermediate.extensions.Bookmark;
+import org.apache.fop.render.intermediate.extensions.BookmarkTree;
+import org.apache.fop.render.intermediate.extensions.GoToXYAction;
+import org.apache.fop.render.pdf.PDFEventProducer;
 
 /**
  * This renderer implementation is an adapter to the {@code IFPainter} interface. It is used
@@ -101,6 +110,28 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     //private Stack groupStack = new Stack();
 
     private Metadata documentMetadata;
+
+    /**
+     * Maps XSL-FO element IDs to their on-page XY-positions
+     * Must be used in conjunction with the page reference to fully specify the details
+     * of a "go-to" action.
+     */
+    private Map idPositions = new java.util.HashMap();
+
+    /**
+     * Maps XSL-FO element IDs to "go-to" actions targeting the corresponding areas
+     * These objects may not all be fully filled in yet
+     */
+    private Map idGoTos = new java.util.HashMap();
+
+    /**
+     * The "go-to" actions in idGoTos that are not complete yet
+     */
+    private List unfinishedGoTos = new java.util.ArrayList();
+    // can't use a Set because PDFGoTo.equals returns true if the target is the same,
+    // even if the object number differs
+
+    private BookmarkTree bookmarkTree;
 
     /**
      * Main constructor
@@ -200,17 +231,29 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 painter.endPageSequence();
                 this.inPageSequence = false;
             }
+            finishOpenGoTos();
+            if (this.bookmarkTree != null) {
+                painter.handleExtensionObject(this.bookmarkTree);
+            }
             painter.endDocument();
         } catch (IFException e) {
             handleIFExceptionWithIOException(e);
         }
+        idPositions.clear();
+        idGoTos.clear();
         super.stopRenderer();
         log.debug("Rendering finished.");
     }
 
     /** {@inheritDoc} */
     public void processOffDocumentItem(OffDocumentItem odi) {
-        if (odi instanceof OffDocumentExtensionAttachment) {
+        if (odi instanceof DestinationData) {
+            // render Destinations
+            renderDestination((DestinationData) odi);
+        } else if (odi instanceof BookmarkData) {
+            // render Bookmark-Tree
+            renderBookmarkTree((BookmarkData) odi);
+        } else if (odi instanceof OffDocumentExtensionAttachment) {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
             if (XMPMetadata.CATEGORY.equals(attachment.getCategory())) {
                 renderXMPMetadata((XMPMetadata)attachment);
@@ -218,8 +261,167 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    private void renderDestination(DestinationData dd) {
+        String targetID = dd.getIDRef();
+        if (targetID == null || targetID.length() == 0) {
+            throw new IllegalArgumentException("DestinationData must contain a ID reference");
+        }
+        PageViewport pv = dd.getPageViewport();
+        if (pv != null) {
+            GoToXYAction action = getGoToActionForID(targetID, pv.getPageIndex());
+            /*
+            pdfDoc.getFactory().makeDestination(
+                    dd.getIDRef(), gt.makeReference());
+                    */
+        } else {
+            //Warning already issued by AreaTreeHandler (debug level is sufficient)
+            log.debug("Unresolved destination item received: " + dd.getIDRef());
+        }
+    }
+
+    /**
+     * Renders a Bookmark-Tree object
+     * @param bookmarks the BookmarkData object containing all the Bookmark-Items
+     */
+    protected void renderBookmarkTree(BookmarkData bookmarks) {
+        assert this.bookmarkTree == null;
+        this.bookmarkTree = new BookmarkTree();
+        for (int i = 0; i < bookmarks.getCount(); i++) {
+            BookmarkData ext = bookmarks.getSubData(i);
+            Bookmark b = renderBookmarkItem(ext);
+            bookmarkTree.addBookmark(b);
+        }
+    }
+
+    private Bookmark renderBookmarkItem(BookmarkData bookmarkItem) {
+
+        String targetID = bookmarkItem.getIDRef();
+        if (targetID == null || targetID.length() == 0) {
+            throw new IllegalArgumentException("DestinationData must contain a ID reference");
+        }
+        GoToXYAction action = null;
+        PageViewport pv = bookmarkItem.getPageViewport();
+
+        if (pv != null) {
+            action = getGoToActionForID(targetID, pv.getPageIndex());
+        } else {
+            //Warning already issued by AreaTreeHandler (debug level is sufficient)
+            log.debug("Bookmark with IDRef \"" + targetID + "\" has a null PageViewport.");
+        }
+
+        Bookmark b = new Bookmark(
+                bookmarkItem.getBookmarkTitle(),
+                bookmarkItem.showChildItems(),
+                action);
+        for (int i = 0; i < bookmarkItem.getCount(); i++) {
+            b.addChildBookmark(renderBookmarkItem(bookmarkItem.getSubData(i)));
+        }
+        return b;
+    }
+
     private void renderXMPMetadata(XMPMetadata metadata) {
         this.documentMetadata = metadata.getMetadata();
+    }
+
+    private GoToXYAction getGoToActionForID(String targetID, int pageIndex) {
+        // Already a PDFGoTo present for this target? If not, create.
+        GoToXYAction action = (GoToXYAction)idGoTos.get(targetID);
+        if (action == null) {
+            //String pdfPageRef = (String) pageReferences.get(pvKey);
+            Point position = (Point)idPositions.get(targetID);
+            // can the GoTo already be fully filled in?
+            if (/*pdfPageRef != null &&*/ position != null) {
+                // getPDFGoTo shares PDFGoTo objects as much as possible.
+                // It also takes care of assignObjectNumber and addTrailerObject.
+                //action = pdfDoc.getFactory().getPDFGoTo(pdfPageRef, position);
+                action = new GoToXYAction(pageIndex, position);
+            } else {
+                // Not complete yet, can't use getPDFGoTo:
+                action = new GoToXYAction(pageIndex, null);
+                unfinishedGoTos.add(action);
+            }
+            idGoTos.put(targetID, action);
+        }
+        return action;
+    }
+
+    private void finishOpenGoTos() {
+        int count = unfinishedGoTos.size();
+        if (count > 0) {
+            Point defaultPos = new Point(0, 0);  // top-o-page
+            while (!unfinishedGoTos.isEmpty()) {
+                GoToXYAction action = (GoToXYAction)unfinishedGoTos.get(0);
+                noteGoToPosition(action, defaultPos);
+            }
+            PDFEventProducer eventProducer = PDFEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.nonFullyResolvedLinkTargets(this, count);
+            // dysfunctional if pageref is null
+        }
+    }
+
+    private void noteGoToPosition(GoToXYAction action, Point position) {
+        action.setTargetLocation(position);
+        unfinishedGoTos.remove(action);
+    }
+
+    private void noteGoToPosition(GoToXYAction action, PageViewport pv, Point position) {
+        noteGoToPosition(action, position);
+    }
+
+    private void saveAbsolutePosition(String id, PageViewport pv,
+            int relativeIPP, int relativeBPP, AffineTransform tf) {
+        Point position = new Point(relativeIPP, relativeBPP);
+        tf.transform(position, position);
+        idPositions.put(id, position);
+        // is there already a PDFGoTo waiting to be completed?
+        GoToXYAction action = (GoToXYAction)idGoTos.get(id);
+        if (action != null) {
+            noteGoToPosition(action, pv, position);
+        }
+    }
+
+    private void saveAbsolutePosition(String id, int relativeIPP, int relativeBPP) {
+        saveAbsolutePosition(id, this.currentPageViewport,
+                             relativeIPP, relativeBPP, graphicContext.getTransform());
+    }
+
+    protected void saveBlockPosIfTargetable(Block block) {
+        String id = getTargetableID(block);
+        if (id != null) {
+            // FIXME: Like elsewhere in the renderer code, absolute and relative
+            //        directions are happily mixed here. This makes sure that the
+            //        links point to the right location, but it is not correct.
+            int ipp = block.getXOffset();
+            int bpp = block.getYOffset() + block.getSpaceBefore();
+            int positioning = block.getPositioning();
+            if (!(positioning == Block.FIXED || positioning == Block.ABSOLUTE)) {
+                ipp += currentIPPosition;
+                bpp += currentBPPosition;
+            }
+            saveAbsolutePosition(id, currentPageViewport, ipp, bpp, graphicContext.getTransform());
+        }
+    }
+
+    private void saveInlinePosIfTargetable(InlineArea inlineArea) {
+        String id = getTargetableID(inlineArea);
+        if (id != null) {
+            int extraMarginBefore = 5000; // millipoints
+            int ipp = currentIPPosition;
+            int bpp = currentBPPosition + inlineArea.getOffset() - extraMarginBefore;
+            saveAbsolutePosition(id, ipp, bpp);
+        }
+    }
+
+    private String getTargetableID(Area area) {
+        String id = (String) area.getTrait(Trait.PROD_ID);
+        if (id == null || id.length() == 0
+            || !currentPageViewport.isFirstWithID(id)
+            || idPositions.containsKey(id)) {
+            return null;
+        } else {
+            return id;
+        }
     }
 
     /** {@inheritDoc} */
@@ -235,7 +437,6 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 painter.endDocumentHeader();
                 this.inPageSequence = true;
             }
-            //TODO Put the page-sequence's ID in the area tree
             painter.startPageSequence(null);
         } catch (IFException e) {
             handleIFException(e);
@@ -572,16 +773,18 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         restoreGraphicsState();
     }
 
-    /*
-    protected void renderReferenceArea(Block block) {
-        // TODO Auto-generated method stub
-    }*/
+    /** {@inheritDoc} */
+    protected void renderInlineArea(InlineArea inlineArea) {
+        saveInlinePosIfTargetable(inlineArea);
+        super.renderInlineArea(inlineArea);
+    }
 
     /** {@inheritDoc} */
     protected void renderBlock(Block block) {
         if (log.isTraceEnabled()) {
             log.trace("renderBlock() " + block);
         }
+        saveBlockPosIfTargetable(block);
         super.renderBlock(block);
     }
 

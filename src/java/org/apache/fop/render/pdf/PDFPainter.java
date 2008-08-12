@@ -24,7 +24,9 @@ import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.w3c.dom.Document;
@@ -42,10 +44,13 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
+import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFTextUtil;
@@ -54,6 +59,10 @@ import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.extensions.AbstractAction;
+import org.apache.fop.render.intermediate.extensions.Bookmark;
+import org.apache.fop.render.intermediate.extensions.BookmarkTree;
+import org.apache.fop.render.intermediate.extensions.GoToXYAction;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -85,18 +94,14 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     /** the current annotation list to add annotations to */
     protected PDFResourceContext currentContext;
 
-    /**
-     * Map of pages using the PageViewport as the key
-     * this is used for prepared pages that cannot be immediately
-     * rendered
-     */
-    protected Map pages;
-
     /** the current page to add annotations to */
     protected PDFPage currentPage;
 
     /** the current page's PDF reference string (to avoid numerous function calls) */
     protected String currentPageRef;
+
+    /** Used for bookmarks/outlines. */
+    private Map pageReferences = new java.util.HashMap();
 
     /**
      * Default constructor.
@@ -152,23 +157,15 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
         try {
-            //finishOpenGoTos();
-
             pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
             pdfDoc.outputTrailer(this.outputStream);
 
             this.pdfDoc = null;
 
-            this.pages = null;
-
-            //pageReferences.clear();
             pdfResources = null;
             this.generator = null;
             currentContext = null;
             currentPage = null;
-
-            //idPositions.clear();
-            //idGoTos.clear();
         } catch (IOException ioe) {
             throw new IFException("I/O error in endDocument()", ioe);
         }
@@ -200,6 +197,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         pdfUtil.generatePageLabel(index, name);
 
         currentPageRef = currentPage.referencePDF();
+        this.pageReferences.put(new Integer(index), new PageReference(currentPage, size));
 
         this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream, this.currentPage);
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFPainter's
@@ -488,6 +486,45 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         }
     }
 
+    private void renderBookmarkTree(BookmarkTree tree) {
+        Iterator iter = tree.getBookmarks().iterator();
+        while (iter.hasNext()) {
+            Bookmark b = (Bookmark)iter.next();
+            renderBookmark(b, null);
+        }
+    }
+
+    private void renderBookmark(Bookmark bookmark, PDFOutline parent) {
+        if (parent == null) {
+            parent = pdfDoc.getOutlineRoot();
+        }
+        PDFAction action = getAction(bookmark.getAction());
+        PDFOutline pdfOutline = pdfDoc.getFactory().makeOutline(parent,
+            bookmark.getTitle(), action, bookmark.isShown());
+        Iterator iter = bookmark.getChildBookmarks().iterator();
+        while (iter.hasNext()) {
+            Bookmark b = (Bookmark)iter.next();
+            renderBookmark(b, pdfOutline);
+        }
+    }
+
+    private PDFAction getAction(AbstractAction action) {
+        if (action instanceof GoToXYAction) {
+            GoToXYAction a = (GoToXYAction)action;
+            PageReference pageRef = (PageReference)this.pageReferences.get(
+                    new Integer(a.getPageIndex()));
+            //Convert target location from millipoints to points and adjust for different
+            //page origin
+            Point2D p2d = new Point2D.Double(
+                    a.getTargetLocation().x / 1000.0,
+                    (pageRef.pageDimension.height - a.getTargetLocation().y) / 1000.0);
+            return pdfDoc.getFactory().getPDFGoTo(pageRef.pageRef.toString(), p2d);
+        } else {
+            throw new UnsupportedOperationException("Unsupported action type: "
+                    + action + " (" + action.getClass().getName() + ")");
+        }
+    }
+
     /** {@inheritDoc} */
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof XMPMetadata) {
@@ -495,9 +532,22 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         } else if (extension instanceof Metadata) {
             XMPMetadata wrapper = new XMPMetadata(((Metadata)extension));
             pdfUtil.renderXMPMetadata(wrapper);
+        } else if (extension instanceof BookmarkTree) {
+            renderBookmarkTree((BookmarkTree)extension);
         } else {
-            throw new UnsupportedOperationException(
-                    "Don't know how to handle extension object: " + extension);
+            log.warn("Don't know how to handle extension object: "
+                    + extension + " (" + extension.getClass().getName());
+        }
+    }
+
+    private static final class PageReference {
+
+        private PDFReference pageRef;
+        private Dimension pageDimension;
+
+        private PageReference(PDFPage page, Dimension dim) {
+            this.pageRef = page.makeReference();
+            this.pageDimension = new Dimension(dim);
         }
     }
 
