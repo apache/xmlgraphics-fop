@@ -63,6 +63,7 @@ import org.apache.fop.render.intermediate.extensions.AbstractAction;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
 import org.apache.fop.render.intermediate.extensions.GoToXYAction;
+import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -508,6 +509,12 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         }
     }
 
+    private void renderNamedDestination(NamedDestination destination) {
+        PDFAction action = getAction(destination.getAction());
+        pdfDoc.getFactory().makeDestination(
+                destination.getName(), action.makeReference());
+    }
+
     private PDFAction getAction(AbstractAction action) {
         if (action instanceof GoToXYAction) {
             GoToXYAction a = (GoToXYAction)action;
@@ -534,6 +541,8 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
             pdfUtil.renderXMPMetadata(wrapper);
         } else if (extension instanceof BookmarkTree) {
             renderBookmarkTree((BookmarkTree)extension);
+        } else if (extension instanceof NamedDestination) {
+            renderNamedDestination((NamedDestination)extension);
         } else {
             log.warn("Don't know how to handle extension object: "
                     + extension + " (" + extension.getClass().getName());
