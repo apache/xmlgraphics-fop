@@ -232,7 +232,7 @@ public class DOM2SAX {
 
                     // Add attribute to list
                     attrs.addAttribute(attr.getNamespaceURI(),
-                            getLocalName(attr), qnameAttr, "CDATA", attr
+                            getLocalName(attr), qnameAttr, XMLUtil.CDATA, attr
                                     .getNodeValue());
                 }
             }

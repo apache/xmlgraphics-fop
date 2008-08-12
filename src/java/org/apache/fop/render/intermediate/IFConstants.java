@@ -19,30 +19,19 @@
 
 package org.apache.fop.render.intermediate;
 
-import org.apache.xmlgraphics.util.QName;
-
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.util.XMLConstants;
 
 /**
  * Constants for the intermediate format.
  */
-public interface IFConstants {
+public interface IFConstants extends XMLConstants {
 
     /** MIME type of the intermediate format. */
     String MIME_TYPE = MimeConstants.MIME_FOP_IF;
 
     /** XML namespace of the intermediate format. */
     String NAMESPACE = "http://xmlgraphics.apache.org/fop/intermediate";
-
-    /** XML namespace. */
-    String XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace";
-
-    /** Namespace prefix for XLink */
-    String XLINK_PREFIX = "xlink";
-    /** XML namespace for XLink */
-    String XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
-    /** xlink:href attribute */
-    QName XLINK_HREF = new QName(XLINK_NAMESPACE, XLINK_PREFIX, "href");
 
     String EL_DOCUMENT = "document";
     String EL_HEADER = "header";
