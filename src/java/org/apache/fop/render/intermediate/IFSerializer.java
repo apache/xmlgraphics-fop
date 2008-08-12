@@ -38,6 +38,7 @@ import org.apache.xmlgraphics.util.XMLizable;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.DOM2SAX;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * IFPainter implementation that serializes the intermediate format to XML.
@@ -112,7 +113,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         try {
             AttributesImpl atts = new AttributesImpl();
             if (id != null) {
-                atts.addAttribute(XML_NAMESPACE, "id", "xml:id", CDATA, id);
+                atts.addAttribute(XML_NAMESPACE, "id", "xml:id", XMLUtil.CDATA, id);
             }
             startElement(EL_PAGE_SEQUENCE, atts);
         } catch (SAXException e) {
@@ -133,10 +134,10 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     public void startPage(int index, String name, Dimension size) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
-            atts.addAttribute("", "index", "index", CDATA, Integer.toString(index));
-            atts.addAttribute("", "name", "name", CDATA, name);
-            atts.addAttribute("", "width", "width", CDATA, Integer.toString(size.width));
-            atts.addAttribute("", "height", "height", CDATA, Integer.toString(size.height));
+            addAttribute(atts, "index", Integer.toString(index));
+            addAttribute(atts, "name", name);
+            addAttribute(atts, "width", Integer.toString(size.width));
+            addAttribute(atts, "height", Integer.toString(size.height));
             startElement(EL_PAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPage()", e);
@@ -223,12 +224,12 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         try {
             AttributesImpl atts = new AttributesImpl();
             if (transform != null && transform.length() > 0) {
-                atts.addAttribute("", "transform", "transform", CDATA, transform);
+                addAttribute(atts,"transform", transform);
             }
-            atts.addAttribute("", "width", "width", CDATA, Integer.toString(size.width));
-            atts.addAttribute("", "height", "height", CDATA, Integer.toString(size.height));
+            addAttribute(atts, "width", Integer.toString(size.width));
+            addAttribute(atts, "height", Integer.toString(size.height));
             if (clipRect != null) {
-                atts.addAttribute("", "clip-rect", "clip-rect", CDATA, toString(clipRect));
+                addAttribute(atts, "clip-rect", toString(clipRect));
             }
             startElement(EL_VIEWPORT, atts);
         } catch (SAXException e) {
@@ -259,7 +260,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         try {
             AttributesImpl atts = new AttributesImpl();
             if (transform != null && transform.length() > 0) {
-                atts.addAttribute("", "transform", "transform", CDATA, transform);
+                addAttribute(atts, "transform", transform);
             }
             startElement(EL_GROUP, atts);
         } catch (SAXException e) {
@@ -281,10 +282,10 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, XLINK_HREF, uri);
-            atts.addAttribute("", "x", "x", CDATA, Integer.toString(rect.x));
-            atts.addAttribute("", "y", "y", CDATA, Integer.toString(rect.y));
-            atts.addAttribute("", "width", "width", CDATA, Integer.toString(rect.width));
-            atts.addAttribute("", "height", "height", CDATA, Integer.toString(rect.height));
+            addAttribute(atts, "x", Integer.toString(rect.x));
+            addAttribute(atts, "y", Integer.toString(rect.y));
+            addAttribute(atts, "width", Integer.toString(rect.width));
+            addAttribute(atts, "height", Integer.toString(rect.height));
             if (foreignAttributes != null) {
                 Iterator iter = foreignAttributes.entrySet().iterator();
                 while (iter.hasNext()) {
@@ -302,10 +303,10 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
-            atts.addAttribute("", "x", "x", CDATA, Integer.toString(rect.x));
-            atts.addAttribute("", "y", "y", CDATA, Integer.toString(rect.y));
-            atts.addAttribute("", "width", "width", CDATA, Integer.toString(rect.width));
-            atts.addAttribute("", "height", "height", CDATA, Integer.toString(rect.height));
+            addAttribute(atts, "x", Integer.toString(rect.x));
+            addAttribute(atts, "y", Integer.toString(rect.y));
+            addAttribute(atts, "width", Integer.toString(rect.width));
+            addAttribute(atts, "height", Integer.toString(rect.height));
             if (foreignAttributes != null) {
                 Iterator iter = foreignAttributes.entrySet().iterator();
                 while (iter.hasNext()) {
@@ -342,15 +343,15 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         }
         try {
             AttributesImpl atts = new AttributesImpl();
-            atts.addAttribute("", "x", "x", CDATA, Integer.toString(rect.x));
-            atts.addAttribute("", "y", "y", CDATA, Integer.toString(rect.y));
-            atts.addAttribute("", "width", "width", CDATA, Integer.toString(rect.width));
-            atts.addAttribute("", "height", "height", CDATA, Integer.toString(rect.height));
+            addAttribute(atts, "x", Integer.toString(rect.x));
+            addAttribute(atts, "y", Integer.toString(rect.y));
+            addAttribute(atts, "width", Integer.toString(rect.width));
+            addAttribute(atts, "height", Integer.toString(rect.height));
             if (fill != null) {
-                atts.addAttribute("", "fill", "fill", CDATA, toString(fill));
+                addAttribute(atts, "fill", toString(fill));
             }
             if (stroke != null) {
-                atts.addAttribute("", "stroke", "sroke", CDATA, toString(stroke));
+                addAttribute(atts, "sroke", toString(stroke));
             }
             element("rect", atts);
         } catch (SAXException e) {
@@ -362,13 +363,13 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
-            atts.addAttribute("", "x", "x", CDATA, Integer.toString(x));
-            atts.addAttribute("", "y", "y", CDATA, Integer.toString(y));
+            addAttribute(atts, "x", Integer.toString(x));
+            addAttribute(atts, "y", Integer.toString(y));
             if (dx != null) {
-                atts.addAttribute("", "dx", "dx", CDATA, toString(dx));
+                addAttribute(atts, "dx", toString(dx));
             }
             if (dy != null) {
-                atts.addAttribute("", "dy", "dy", CDATA, toString(dy));
+                addAttribute(atts, "dy", toString(dy));
             }
             startElement("text", atts);
             char[] chars = text.toCharArray();
@@ -385,22 +386,22 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         try {
             AttributesImpl atts = new AttributesImpl();
             if (family != null) {
-                atts.addAttribute("", "family", "family", CDATA, family);
+                addAttribute(atts, "family", family);
             }
             if (style != null) {
-                atts.addAttribute("", "style", "style", CDATA, style);
+                addAttribute(atts, "style", style);
             }
             if (weight != null) {
-                atts.addAttribute("", "weight", "weight", CDATA, weight.toString());
+                addAttribute(atts, "weight", weight.toString());
             }
             if (variant != null) {
-                atts.addAttribute("", "variant", "variant", CDATA, variant);
+                addAttribute(atts, "variant", variant);
             }
             if (size != null) {
-                atts.addAttribute("", "size", "size", CDATA, size.toString());
+                addAttribute(atts, "size", size.toString());
             }
             if (color != null) {
-                atts.addAttribute("", "color", "color", CDATA, toString(color));
+                addAttribute(atts, "color", toString(color));
             }
             element("font", atts);
         } catch (SAXException e) {
@@ -418,7 +419,8 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             }
         } else {
             throw new UnsupportedOperationException(
-                    "Don't know how to handle extension object: " + extension);
+                    "Don't know how to handle extension object: "
+                    + extension + " (" + extension.getClass().getName() + ")");
         }
     }
 

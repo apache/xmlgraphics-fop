@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
 import javax.xml.transform.Source;
@@ -47,14 +46,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
-import org.apache.fop.util.ConversionUtils;
 import org.apache.fop.util.DOMBuilderContentHandlerFactory;
 import org.apache.fop.util.DefaultErrorListener;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * This is a parser for the intermediate format XML which converts the intermediate file into
@@ -173,8 +173,11 @@ public class IFParser implements IFConstants {
                         DOMImplementation domImplementation
                             = elementMappingRegistry.getDOMImplementationForNamespace(uri);
                         if (domImplementation == null) {
+                            domImplementation = ElementMapping.getDefaultDOMImplementation();
+                            /*
                             throw new SAXException("No DOMImplementation could be"
                                     + " identified to handle namespace: " + uri);
+                                    */
                         }
                         factory = new DOMBuilderContentHandlerFactory(uri, domImplementation);
                     }
@@ -363,7 +366,7 @@ public class IFParser implements IFConstants {
                     = AffineTransformArrayParser.createAffineTransform(transform);
                 int width = Integer.parseInt(attributes.getValue("width"));
                 int height = Integer.parseInt(attributes.getValue("height"));
-                Rectangle clipRect = getAttributeAsRectangle(attributes, "clip-rect");
+                Rectangle clipRect = XMLUtil.getAttributeAsRectangle(attributes, "clip-rect");
                 painter.startViewport(transforms, new Dimension(width, height), clipRect);
             }
 
@@ -393,9 +396,9 @@ public class IFParser implements IFConstants {
             public void startElement(Attributes attributes) throws IFException {
                 String family = attributes.getValue("family");
                 String style = attributes.getValue("style");
-                Integer weight = getAttributeAsInteger(attributes, "weight");
+                Integer weight = XMLUtil.getAttributeAsInteger(attributes, "weight");
                 String variant = attributes.getValue("variant");
-                Integer size = getAttributeAsInteger(attributes, "size");
+                Integer size = XMLUtil.getAttributeAsInteger(attributes, "size");
                 Color color;
                 try {
                     color = getAttributeAsColor(attributes, "color");
@@ -412,8 +415,8 @@ public class IFParser implements IFConstants {
             public void endElement() throws IFException {
                 int x = Integer.parseInt(lastAttributes.getValue("x"));
                 int y = Integer.parseInt(lastAttributes.getValue("y"));
-                int[] dx = getAttributeAsIntArray(lastAttributes, "dx");
-                int[] dy = getAttributeAsIntArray(lastAttributes, "dy");
+                int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
+                int[] dy = XMLUtil.getAttributeAsIntArray(lastAttributes, "dy");
                 painter.drawText(x, y, dx, dy, content.toString());
             }
 
@@ -504,72 +507,13 @@ public class IFParser implements IFConstants {
             }
         }
 
-        private static boolean getAttributeAsBoolean(Attributes attributes, String name,
-                boolean defaultValue) {
-            String s = attributes.getValue(name);
-            if (s == null) {
-                return defaultValue;
-            } else {
-                return Boolean.valueOf(s).booleanValue();
-            }
-        }
-
-        private static int getAttributeAsInteger(Attributes attributes, String name,
-                int defaultValue) {
-            String s = attributes.getValue(name);
-            if (s == null) {
-                return defaultValue;
-            } else {
-                return Integer.parseInt(s);
-            }
-        }
-
-        private static Integer getAttributeAsInteger(Attributes attributes, String name) {
-            String s = attributes.getValue(name);
-            if (s == null) {
-                return null;
-            } else {
-                return new Integer(s);
-            }
-        }
-
         private Color getAttributeAsColor(Attributes attributes, String name)
-                throws PropertyException {
+                    throws PropertyException {
             String s = attributes.getValue(name);
             if (s == null) {
                 return null;
             } else {
                 return ColorUtil.parseColorString(userAgent, s);
-            }
-        }
-
-        private static Rectangle2D getAttributeAsRectangle2D(Attributes attributes, String name) {
-            String s = attributes.getValue(name).trim();
-            double[] values = ConversionUtils.toDoubleArray(s, "\\s");
-            if (values.length != 4) {
-                throw new IllegalArgumentException("Rectangle must consist of 4 double values!");
-            }
-            return new Rectangle2D.Double(values[0], values[1], values[2], values[3]);
-        }
-
-        private static Rectangle getAttributeAsRectangle(Attributes attributes, String name) {
-            String s = attributes.getValue(name);
-            if (s == null) {
-                return null;
-            }
-            int[] values = ConversionUtils.toIntArray(s.trim(), "\\s");
-            if (values.length != 4) {
-                throw new IllegalArgumentException("Rectangle must consist of 4 int values!");
-            }
-            return new Rectangle(values[0], values[1], values[2], values[3]);
-        }
-
-        private static int[] getAttributeAsIntArray(Attributes attributes, String name) {
-            String s = attributes.getValue(name);
-            if (s == null) {
-                return null;
-            } else {
-                return ConversionUtils.toIntArray(s.trim(), "\\s");
             }
         }
 

@@ -22,11 +22,12 @@ package org.apache.fop.render.svg;
 import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.util.XMLConstants;
 
 /**
  * Constants for the intermediate format.
  */
-public interface SVGConstants {
+public interface SVGConstants extends XMLConstants {
 
     /** MIME type for SVG. */
     String MIME_TYPE = MimeConstants.MIME_SVG;
@@ -39,14 +40,6 @@ public interface SVGConstants {
 
     /** XML namespace for SVG. */
     String NAMESPACE = "http://www.w3.org/2000/svg";
-
-    /** XML namespace. */
-    String XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace";
-
-    /** Namespace prefix for XLink */
-    String XLINK_PREFIX = "xlink";
-    /** XML namespace for XLink */
-    String XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
 
     /** the SVG element */
     QName SVG_ELEMENT = new QName(NAMESPACE, null, "svg");

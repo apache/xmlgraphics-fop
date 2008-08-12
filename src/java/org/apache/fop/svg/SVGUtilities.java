@@ -19,16 +19,17 @@
 
 package org.apache.fop.svg;
 
-import java.util.StringTokenizer;
+import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.font.FontRenderContext;
+import java.util.StringTokenizer;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
 import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.util.XMLConstants;
 
 /**
  * Some utilities for creating svg DOM documents and elements.
@@ -218,7 +219,7 @@ public class SVGUtilities {
     public static final Element createImage(Document doc, String ref,
                                             float width, float height) {
         Element border = doc.createElementNS(SVG_NS, "image");
-        border.setAttributeNS("http://www.w3.org/1999/xlink", "href",
+        border.setAttributeNS(XMLConstants.XLINK_NAMESPACE_URI, "href",
                               ref);
         border.setAttributeNS(null, "width", "" + width);
         border.setAttributeNS(null, "height", "" + height);

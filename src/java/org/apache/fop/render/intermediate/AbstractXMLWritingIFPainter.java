@@ -39,6 +39,7 @@ import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.util.DecimalFormatCache;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * Abstract base class for XML-writing IFPainter implementations.
@@ -46,9 +47,6 @@ import org.apache.fop.util.DecimalFormatCache;
 public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
 
     private static final Attributes EMPTY_ATTS = new AttributesImpl();
-
-    /** Constant for the "CDATA" attribute type. */
-    protected static final String CDATA = "CDATA";
 
     /**
      * Default SAXTransformerFactory that can be used by subclasses.
@@ -228,7 +226,18 @@ public abstract class AbstractXMLWritingIFPainter extends AbstractIFPainter {
      */
     protected void addAttribute(AttributesImpl atts, QName attribute, String value) {
         atts.addAttribute(attribute.getNamespaceURI(),
-                attribute.getLocalName(), attribute.getQName(), CDATA, value);
+                attribute.getLocalName(), attribute.getQName(), XMLUtil.CDATA, value);
+    }
+
+    /**
+     * Adds an attribute to a given {@code AttributesImpl} instance. The attribute will be
+     * added in the default namespace.
+     * @param atts the attributes collection
+     * @param localName the local name of the attribute
+     * @param value the attribute's CDATA value
+     */
+    protected void addAttribute(AttributesImpl atts, String localName, String value) {
+        atts.addAttribute("", localName, localName, XMLUtil.CDATA, value);
     }
 
     /**
