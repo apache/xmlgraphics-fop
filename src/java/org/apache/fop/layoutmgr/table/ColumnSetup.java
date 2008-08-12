@@ -184,10 +184,22 @@ public class ColumnSetup {
      * @return the computed base unit (in millipoint)
      */
     protected double computeTableUnit(TableLayoutManager tlm) {
+        return computeTableUnit(tlm, tlm.getContentAreaIPD());
+    }
+
+    /**
+     * Works out the base unit for resolving proportional-column-width()
+     * [p-c-w(x) = x * base_unit_ipd]
+     *
+     * @param percentBaseContext the percent base context for relative values
+     * @param contentAreaIPD the IPD of the available content area
+     * @return the computed base unit (in millipoints)
+     */
+    public float computeTableUnit(PercentBaseContext percentBaseContext, int contentAreaIPD) {
 
         int sumCols = 0;
         float factors = 0;
-        double unit = 0;
+        float unit = 0;
 
         /* calculate the total width (specified absolute/percentages),
          * and work out the total number of factors to use to distribute
@@ -196,7 +208,7 @@ public class ColumnSetup {
         for (Iterator i = colWidths.iterator(); i.hasNext();) {
             Length colWidth = (Length) i.next();
             if (colWidth != null) {
-                sumCols += colWidth.getValue(tlm);
+                sumCols += colWidth.getValue(percentBaseContext);
                 if (colWidth instanceof RelativeNumericProperty) {
                     factors += ((RelativeNumericProperty) colWidth).getTableUnits();
                 } else if (colWidth instanceof TableColLength) {
@@ -209,8 +221,8 @@ public class ColumnSetup {
          * factors (if any)
          */
         if (factors > 0) {
-            if (sumCols < tlm.getContentAreaIPD()) {
-                unit = (tlm.getContentAreaIPD() - sumCols) / factors;
+            if (sumCols < contentAreaIPD) {
+                unit = (contentAreaIPD - sumCols) / factors;
             } else {
                 log.warn("No space remaining to distribute over columns.");
             }

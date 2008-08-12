@@ -267,12 +267,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         addKnuthElementsForSpaceAfter(returnList, alignment);
 
-        //addKnuthElementsForBreakBefore(returnList, context);
-        int breakBefore = BreakUtil.compareBreakClasses(getTable().getBreakBefore(),
-                childLC.getBreakBefore());
-        if (breakBefore != Constants.EN_AUTO) {
-            returnList.add(0, new BreakElement(getAuxiliaryPosition(), 0,
-                    -KnuthElement.INFINITE, breakBefore, context));
+        if (!context.suppressBreakBefore()) {
+            //addKnuthElementsForBreakBefore(returnList, context);
+            int breakBefore = BreakUtil.compareBreakClasses(getTable().getBreakBefore(),
+                    childLC.getBreakBefore());
+            if (breakBefore != Constants.EN_AUTO) {
+                returnList.add(0, new BreakElement(getAuxiliaryPosition(), 0,
+                        -KnuthElement.INFINITE, breakBefore, context));
+            }
         }
 
         //addKnuthElementsForBreakAfter(returnList, context);

@@ -21,6 +21,7 @@ package org.apache.fop.render.rtf;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
+
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.expr.NumericOp;
@@ -58,6 +59,8 @@ final class PageAttributesConverter {
 
             attrib.setTwips(RtfPage.PAGE_WIDTH, pagemaster.getPageWidth());
             attrib.setTwips(RtfPage.PAGE_HEIGHT, pagemaster.getPageHeight());
+            //Sets the document level property
+            attrib.set(RtfPage.ITAP, "0");
 
             Object widthRaw = attrib.getValue(RtfPage.PAGE_WIDTH);
             Object heightRaw = attrib.getValue(RtfPage.PAGE_HEIGHT);
@@ -102,7 +105,7 @@ final class PageAttributesConverter {
             if (after != null) {
                 afterBottom = (Length) NumericOp.addition(pageBottom, after.getExtent());
             }
-            attrib.setTwips(RtfPage.FOOTERY, beforeTop);
+            attrib.setTwips(RtfPage.FOOTERY, afterBottom);
         } catch (Exception e) {
             log.error("Exception in convertPageAttributes: "
                 + e.getMessage() + "- page attributes ignored");

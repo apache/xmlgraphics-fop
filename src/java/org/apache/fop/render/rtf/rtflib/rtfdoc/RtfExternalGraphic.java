@@ -269,6 +269,9 @@ public class RtfExternalGraphic extends RtfElement {
      */
     protected boolean scaleUniform = false;
 
+    /** cropping on left/top/right/bottom edges for \piccrop*N */
+    private int[] cropValues = new int[4];
+
     /**
      * Graphic compression rate
      */
@@ -406,6 +409,7 @@ public class RtfExternalGraphic extends RtfElement {
 
         computeImageSize();
         writeSizeInfo();
+        writeAttributes(getRtfAttributes(), null);
 
         for (int i = 0; i < imagedata.length; i++) {
             int iData = imagedata [i];
@@ -519,6 +523,19 @@ public class RtfExternalGraphic extends RtfElement {
                 writeControlWord("picscaley" + widthDesired * 100 / width);
             }
         }
+
+        if (this.cropValues[0] != 0) {
+            writeOneAttribute("piccropl", new Integer(this.cropValues[0]));
+        }
+        if (this.cropValues[1] != 0) {
+            writeOneAttribute("piccropt", new Integer(this.cropValues[1]));
+        }
+        if (this.cropValues[2] != 0) {
+            writeOneAttribute("piccropr", new Integer(this.cropValues[2]));
+        }
+        if (this.cropValues[3] != 0) {
+            writeOneAttribute("piccropb", new Integer(this.cropValues[3]));
+        }
     }
 
     //////////////////////////////////////////////////
@@ -546,6 +563,24 @@ public class RtfExternalGraphic extends RtfElement {
     }
 
     /**
+     * Sets the desired width of the image.
+     * @param twips The desired image width (in twips)
+     */
+    public void setWidthTwips(int twips) {
+        this.widthDesired = twips;
+        this.perCentW = false;
+    }
+
+    /**
+     * Sets the desired height of the image.
+     * @param twips The desired image height (in twips)
+     */
+    public void setHeightTwips(int twips) {
+        this.heightDesired = twips;
+        this.perCentH = false;
+    }
+
+    /**
      * Sets the flag whether the image size shall be adjusted.
      *
      * @param value
@@ -553,9 +588,34 @@ public class RtfExternalGraphic extends RtfElement {
      * false   no adjustment
      */
     public void setScaling(String value) {
-        if (value.equalsIgnoreCase("uniform")) {
-            this.scaleUniform = true;
-        }
+        setUniformScaling("uniform".equalsIgnoreCase(value));
+    }
+
+    /**
+     * Sets the flag whether the image size shall be adjusted.
+     *
+     * @param uniform
+     *                true    image width or height shall be adjusted automatically\n
+     *                false   no adjustment
+     */
+    public void setUniformScaling(boolean uniform) {
+        this.scaleUniform = uniform;
+    }
+
+    /**
+     * Sets cropping values for all four edges for the \piccrop*N commands.
+     * A positive value crops toward the center of the picture;
+     * a negative value crops away from the center, adding a space border around the picture
+     * @param left left cropping value (in twips)
+     * @param top top cropping value (in twips)
+     * @param right right cropping value (in twips)
+     * @param bottom bottom cropping value (in twips)
+     */
+    public void setCropping(int left, int top, int right, int bottom) {
+        this.cropValues[0] = left;
+        this.cropValues[1] = top;
+        this.cropValues[2] = right;
+        this.cropValues[3] = bottom;
     }
 
     /**

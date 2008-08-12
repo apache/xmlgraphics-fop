@@ -63,7 +63,8 @@ public class PDFDocumentGraphics2DConfigurator {
 
             List/*<EmbedFontInfo>*/ embedFontInfoList
                 = PrintRendererConfigurator.buildFontListFromConfiguration(
-                    cfg, fontResolver, false, fontManager);
+                    cfg, fontResolver, false, fontManager, null);
+            //TODO Wire in the FontEventListener
             if (fontManager.useCache()) {
                 fontManager.getFontCache().save();
             }

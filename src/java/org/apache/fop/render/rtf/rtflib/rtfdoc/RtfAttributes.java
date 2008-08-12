@@ -28,6 +28,7 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -161,6 +162,15 @@ implements java.lang.Cloneable {
      */
     public Object getValue(String name) {
         return values.get(name);
+    }
+
+    /**
+     * Returns a value as an Integer. The value is simply cast to an Integer.
+     * @param name String containing attribute name
+     * @return the value of an attribute, null if not found
+     */
+    public Integer getValueAsInteger(String name) {
+        return (Integer)values.get(name);
     }
 
     /**

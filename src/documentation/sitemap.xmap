@@ -17,6 +17,9 @@
 -->
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
   <map:components>
+    <map:serializers default="html">
+      <map:serializer name="rss" mime-type="application/rss+xml" src="org.apache.cocoon.serialization.XMLSerializer"/>
+    </map:serializers>
   </map:components>
 
   <map:pipelines>
@@ -69,6 +72,26 @@
         <map:serialize type="xml-document"/>
       </map:match>
     </map:pipeline>
-     
+
+    <!-- This is used by xinclude statements for News-->
+    <map:pipeline>
+      <map:match type="regexp" pattern="^(.*?)([^/]*)subproject-news-document.xml">
+        <map:generate src="{properties:content.xdocs}{1}news-data.xml"/>
+        <map:transform src="resources/stylesheets/news2document.xsl" >
+          <map:parameter name="path" value="{1}{2}"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+      <map:match type="regexp" pattern="^(.*?)([^/]*)subproject-news-feed.rss">
+        <map:generate src="{properties:content.xdocs}{1}news-data.xml"/>
+        <map:transform src="resources/stylesheets/news2rss.xsl" >
+          <map:parameter name="path" value="{1}{2}"/>
+          <map:parameter name="project-name" value="{properties:projectInfo.project.fullname}"/>
+          <map:parameter name="project-url" value="{properties:projectInfo.project.url}"/>
+        </map:transform>
+        <map:serialize type="rss"/>
+      </map:match>
+    </map:pipeline>
+    
   </map:pipelines>
 </map:sitemap>

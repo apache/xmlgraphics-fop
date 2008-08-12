@@ -27,6 +27,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -35,7 +36,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-row">
  * <code>fo:table-row</code></a> object.
  */
-public class TableRow extends TableCellContainer {
+public class TableRow extends TableCellContainer implements BreakPropertySet {
     // The value of properties relevant for fo:table-row.
     private LengthRangeProperty blockProgressionDimension;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;

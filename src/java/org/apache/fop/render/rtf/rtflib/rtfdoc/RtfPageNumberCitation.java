@@ -26,8 +26,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * @author Christopher Scott, scottc@westinghouse.com
@@ -50,9 +50,9 @@ public class RtfPageNumberCitation extends RtfContainer {
     private String id = null;
 
     /** Create an RTF page number citation as a child of given container with default attributes */
-    RtfPageNumberCitation (IRtfPageNumberCitationContainer parent, Writer w, String id)
+    RtfPageNumberCitation (RtfContainer parent, Writer w, String id)
             throws IOException {
-        super((RtfContainer)parent, w);
+        super(parent, w);
         this.id = id;
     }
 
@@ -92,7 +92,7 @@ public class RtfPageNumberCitation extends RtfContainer {
             writeStarControlWord(pageRef);
             writeGroupMark(false);
             writeGroupMark(true);
-            writeControlWord(RTF_FIELD_RESULT);
+            writeControlWord(RTF_FIELD_RESULT + '#'); //To see where the page-number would be
             writeGroupMark(false);
             writeGroupMark(false);
         }
