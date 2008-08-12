@@ -34,9 +34,15 @@
       <fo:bookmark-tree>
         <fo:bookmark internal-destination="chapter1">
           <fo:bookmark-title>Chapter 1</fo:bookmark-title>
+          <fo:bookmark internal-destination="chapter1">
+            <fo:bookmark-title>Nested Chapter 1</fo:bookmark-title>
+          </fo:bookmark>
         </fo:bookmark>
         <fo:bookmark internal-destination="chapter1" starting-state="hide">
           <fo:bookmark-title>Again Chapter 1</fo:bookmark-title>
+        </fo:bookmark>
+        <fo:bookmark internal-destination="chapter2">
+          <fo:bookmark-title>Chapter 2</fo:bookmark-title>
         </fo:bookmark>
       </fo:bookmark-tree>
       <fo:page-sequence id="page-sequence" master-reference="normal">
@@ -58,10 +64,13 @@
     
     <eval expected="Chapter 1" xpath="//bookmarkTree/bookmark[1]/@title"/>
     <eval expected="true" xpath="//bookmarkTree/bookmark[1]/@show-children"/>
+    <eval expected="Nested Chapter 1" xpath="//bookmarkTree/bookmark[1]/bookmark[1]/@title"/>
+    <eval expected="true" xpath="//bookmarkTree/bookmark[1]/bookmark[1]/@show-children"/>
     <eval expected="Again Chapter 1" xpath="//bookmarkTree/bookmark[2]/@title"/>
     <eval expected="false" xpath="//bookmarkTree/bookmark[2]/@show-children"/>
 
     <eval expected="(P1,chapter1)" xpath="//bookmarkTree/bookmark[1]/@internal-link"/>
+    <eval expected="(P1,chapter1)" xpath="//bookmarkTree/bookmark[1]/bookmark[1]/@internal-link"/>
     <eval expected="(P1,chapter1)" xpath="//bookmarkTree/bookmark[2]/@internal-link"/>
     
   </checks>

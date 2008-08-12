@@ -22,8 +22,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 // Java
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 // FOP
@@ -176,6 +176,15 @@ public class RtfTextrun extends RtfContainer {
     }
 
     /**
+     * Inserts a page number citation.
+     * @param refId the identifier being referenced
+     * @throws IOException for I/O problems
+     */
+    public void addPageNumberCitation(String refId) throws IOException {
+        RtfPageNumberCitation r = new RtfPageNumberCitation(this, writer, refId);
+    }
+
+    /**
      * Pop inline attributes.
      *
      * @throws IOException for I/O problems
@@ -240,6 +249,15 @@ public class RtfTextrun extends RtfContainer {
                 addCloseGroupMark();
             }
         }
+    }
+
+    /**
+     * Inserts a leader.
+     * @param attrs Attributes for the leader
+     * @throws IOException for I/O problems
+     */
+    public void addLeader(RtfAttributes attrs) throws IOException {
+        new RtfLeader(this, writer, attrs);
     }
 
     /**

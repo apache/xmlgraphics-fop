@@ -21,25 +21,30 @@ package org.apache.fop.render.rtf;
 
 import java.awt.Color;
 
-//FOP
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Inline;
+import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonTextDecoration;
-import org.apache.fop.render.rtf.BorderAttributesConverter;
+import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IBorderAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfLeader;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 
 /**  Converts FO properties to RtfAttributes
@@ -52,6 +57,8 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
  *  @author rmarra
  */
 final class TextAttributesConverter {
+
+    private static Log log = LogFactory.getLog(TextAttributesConverter.class);
 
     /**
      * Constructor is private, because it's just a utility class.
@@ -135,6 +142,131 @@ final class TextAttributesConverter {
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         attrInlineBorder(fobj.getCommonBorderPaddingBackground(), attrib);
         return attrib;
+    }
+
+
+    /**
+     * Converts FO properties used by RtfLeader to RtfAttributes.
+     * @param fobj Leader
+     * @param context PercentBaseContext
+     * @return RtfAttributes
+     * @throws FOPException
+     */
+    public static RtfAttributes convertLeaderAttributes(Leader fobj, PercentBaseContext context)
+                throws FOPException {
+        boolean tab = false;
+        FOPRtfAttributes attrib = new FOPRtfAttributes();
+        attrib.set(RtfText.ATTR_FONT_FAMILY,
+        RtfFontManager.getInstance().getFontNumber(fobj.getCommonFont().getFirstFontFamily()));
+
+        if (fobj.getLeaderLength() != null) {
+            attrib.set(RtfLeader.LEADER_WIDTH, convertMptToTwips(fobj.getLeaderLength().getMaximum(
+                    context).getLength().getValue(context)));
+
+            if (fobj.getLeaderLength().getMaximum(context) instanceof PercentLength) {
+                if (((PercentLength)fobj.getLeaderLength().getMaximum(context)).getString().equals(
+                            "100.0%")) {
+                    // Use Tab instead of white spaces
+                    attrib.set(RtfLeader.LEADER_USETAB, 1);
+                    tab = true;
+                }
+            }
+        }
+
+        attrFontColor(fobj.getColor(), attrib);
+
+        if (fobj.getLeaderPatternWidth() != null) {
+            //TODO calculate pattern width not possible for white spaces, because its using
+            //underlines for tab it would work with LEADER_PATTERN_WIDTH (expndtw)
+        }
+
+        switch(fobj.getLeaderPattern()) {
+        case Constants.EN_DOTS:
+            if (tab) {
+                attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_TAB_DOTTED);
+            } else {
+                attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_DOTTED);
+            }
+            break;
+        case Constants.EN_SPACE:
+            //nothing has to be set for spaces
+            break;
+        case Constants.EN_RULE:
+            //Things like start-indent, space-after, ... not supported?
+            //Leader class does not offer these properties
+            //TODO aggregate them with the leader width or
+            // create a second - blank leader - before
+
+            if (fobj.getRuleThickness() != null) {
+                //TODO See inside RtfLeader, better calculation for
+                //white spaces would be necessary
+                //attrib.set(RtfLeader.LEADER_RULE_THICKNESS,
+                //    fobj.getRuleThickness().getValue(context));
+                log.warn("RTF: fo:leader rule-thickness not supported");
+            }
+
+            switch (fobj.getRuleStyle()) {
+            case Constants.EN_SOLID:
+                if (tab) {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_TAB_THICK);
+                } else {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_THICK);
+                }
+                break;
+            case Constants.EN_DASHED:
+                if (tab) {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_TAB_MIDDLEDOTTED);
+                } else {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_MIDDLEDOTTED);
+                }
+                break;
+            case Constants.EN_DOTTED:
+                if (tab) {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_TAB_DOTTED);
+                } else {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_DOTTED);
+                }
+                break;
+            case Constants.EN_DOUBLE:
+                if (tab) {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_TAB_EQUAL);
+                } else {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_EQUAL);
+                }
+                break;
+            case Constants.EN_GROOVE:
+                if (tab) {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_TAB_HYPHENS);
+                } else {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_HYPHENS);
+                }
+                break;
+            case Constants.EN_RIDGE:
+                if (tab) {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_TAB_UNDERLINE);
+                } else {
+                    attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_UNDERLINE);
+                }
+                break;
+            default:
+                break;
+            }
+            break;
+        case Constants.EN_USECONTENT:
+            log.warn("RTF: fo:leader use-content not supported");
+            break;
+        default:
+            break;
+        }
+
+        if (fobj.getLeaderAlignment() == Constants.EN_REFERENCE_AREA) {
+            log.warn("RTF: fo:leader reference-area not supported");
+        }
+        return attrib;
+    }
+
+    private static int convertMptToTwips(int mpt) {
+        return Math.round(FoUnitsConverter.getInstance().convertMptToTwips(mpt));
     }
 
     private static void attrFont(CommonFont font, FOPRtfAttributes rtfAttr) {

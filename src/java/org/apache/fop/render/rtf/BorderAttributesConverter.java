@@ -75,10 +75,12 @@ public final class BorderAttributesConverter {
 
             // Add padding to corresponding space (space-before or space-after)
             // if side == START or END, do nothing
-            if (side == CommonBorderPaddingBackground.BEFORE) {
-                attributes.addIntegerValue(padding, RtfText.SPACE_BEFORE);
-            } else if (side == CommonBorderPaddingBackground.AFTER) {
-                attributes.addIntegerValue(padding, RtfText.SPACE_AFTER);
+            if (padding != 0) {
+                if (side == CommonBorderPaddingBackground.BEFORE) {
+                    attributes.addIntegerValue(padding, RtfText.SPACE_BEFORE);
+                } else if (side == CommonBorderPaddingBackground.AFTER) {
+                    attributes.addIntegerValue(padding, RtfText.SPACE_AFTER);
+                }
             }
         }
     }

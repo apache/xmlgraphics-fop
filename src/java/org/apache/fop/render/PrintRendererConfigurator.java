@@ -43,6 +43,8 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCache;
+import org.apache.fop.fonts.FontEventAdapter;
+import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
@@ -107,8 +109,10 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         boolean strict = factory.validateUserConfigStrictly();
         FontCache fontCache = fontManager.getFontCache();
 
+        FontEventListener listener = new FontEventAdapter(
+                renderer.getUserAgent().getEventBroadcaster());
         List/*<EmbedFontInfo>*/ embedFontInfoList = buildFontListFromConfiguration(cfg,
-                fontResolver, strict, fontManager);
+                fontResolver, strict, fontManager, listener);
 
         if (fontCache != null && fontCache.hasChanged()) {
             fontCache.save();
@@ -123,12 +127,14 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      * @param fontResolver the FontResolver to use
      * @param strict true if an Exception should be thrown if an error is found.
      * @param fontManager the font manager
+     * @param listener a font event listener
      * @return a List of EmbedFontInfo objects.
      * @throws FOPException If an error occurs while processing the configuration
      */
     public static List/*<EmbedFontInfo>*/ buildFontListFromConfiguration(Configuration cfg,
             FontResolver fontResolver,
-            boolean strict, FontManager fontManager) throws FOPException {
+            boolean strict, FontManager fontManager,
+            FontEventListener listener) throws FOPException {
         FontCache fontCache = fontManager.getFontCache();
         String fontBaseURL = fontManager.getFontBaseURL();
         List/*<EmbedFontInfo>*/ fontInfoList
@@ -157,7 +163,8 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                                     fontFileFinder.find(fontBase.getAbsolutePath()),
                                     fontInfoList,
                                     fontResolver,
-                                    fontCache
+                                    fontCache,
+                                    listener
                             );
                         }
                     } catch (IOException e) {
@@ -171,7 +178,8 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                             fontFileFinder.find(),
                             fontInfoList,
                             fontResolver,
-                            fontCache
+                            fontCache,
+                            listener
                     );
                 } catch (IOException e) {
                     LogUtil.handleException(log, e, strict);
@@ -180,12 +188,12 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                 // load fonts from classpath
                 addFontInfoListFromFileList(ClasspathResource.getInstance()
                         .listResourcesOfMimeType("application/x-font"),
-                        fontInfoList, fontResolver, fontCache);
+                        fontInfoList, fontResolver, fontCache, listener);
                 addFontInfoListFromFileList(
                         ClasspathResource.getInstance()
                                 .listResourcesOfMimeType(
                                         "application/x-font-truetype"),
-                        fontInfoList, fontResolver, fontCache);
+                        fontInfoList, fontResolver, fontCache, listener);
             }
 
             // directory (multiple font) configuration
@@ -210,7 +218,8 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
                             fontFileFinder.find(directory),
                             fontInfoList,
                             fontResolver,
-                            fontCache
+                            fontCache,
+                            listener
                     );
                 } catch (IOException e) {
                     LogUtil.handleException(log, e, strict);
@@ -221,7 +230,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             Configuration[] font = fonts.getChildren("font");
             for (int i = 0; i < font.length; i++) {
                 EmbedFontInfo embedFontInfo = getFontInfoFromConfiguration(
-                        font[i], fontResolver, strict, fontCache);
+                        font[i], fontResolver, strict, fontCache, listener);
                 if (embedFontInfo != null) {
                     fontInfoList.add(embedFontInfo);
                 }
@@ -265,11 +274,12 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      */
     private static void addFontInfoListFromFileList(
             List fontFileList, List/*<EmbedFontInfo>*/ embedFontInfoList,
-            FontResolver resolver, FontCache fontCache) {
+            FontResolver resolver, FontCache fontCache, FontEventListener listener) {
         for (Iterator iter = fontFileList.iterator(); iter.hasNext();) {
             URL fontUrl = (URL)iter.next();
             // parse font to ascertain font info
             FontInfoFinder finder = new FontInfoFinder();
+            finder.setEventListener(listener);
             //EmbedFontInfo fontInfo = finder.find(fontUrl, resolver, fontCache);
 
             //List<EmbedFontInfo> embedFontInfoList = finder.find(fontUrl, resolver, fontCache);
@@ -345,7 +355,8 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      * @throws FOPException if something's wrong with the config data
      */
     private static EmbedFontInfo getFontInfoFromConfiguration(
-            Configuration fontCfg, FontResolver fontResolver, boolean strict, FontCache fontCache)
+            Configuration fontCfg, FontResolver fontResolver, boolean strict,
+            FontCache fontCache, FontEventListener listener)
                     throws FOPException {
         String metricsUrl = fontCfg.getAttribute("metrics-url", null);
         String embedUrl = fontCfg.getAttribute("embed-url", null);
@@ -397,6 +408,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             }
             if (fontFile != null) {
                 FontInfoFinder finder = new FontInfoFinder();
+                finder.setEventListener(listener);
                 EmbedFontInfo[] infos = finder.find(fontUrl, fontResolver, fontCache);
                 return infos[0]; //When subFont is set, only one font is returned
             } else {

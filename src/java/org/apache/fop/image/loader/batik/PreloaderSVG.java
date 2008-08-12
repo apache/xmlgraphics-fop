@@ -45,6 +45,7 @@ import org.apache.xmlgraphics.image.loader.impl.AbstractImagePreloader;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.util.MimeConstants;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.svg.SimpleSVGUserAgent;
 import org.apache.fop.util.UnclosableInputStream;
@@ -118,7 +119,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                     in.mark(length + 1);
                     SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
                             getParserName());
-                    doc = (SVGDocument) factory.createSVGDocument(src.getSystemId(), in);
+                    doc = factory.createSVGDocument(src.getSystemId(), in);
                 }
                 ImageInfo info = createImageInfo(uri, context, doc);
 
@@ -153,7 +154,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
 
         private ImageInfo createImageInfo(String uri, ImageContext context, SVGDocument doc) {
             Element e = doc.getRootElement();
-            float pxUnitToMillimeter = 25.4f / context.getSourceResolution();
+            float pxUnitToMillimeter = UnitConv.IN2MM / context.getSourceResolution();
             UserAgent userAg = new SimpleSVGUserAgent(pxUnitToMillimeter,
                         new AffineTransform()) {
 
@@ -183,9 +184,12 @@ public class PreloaderSVG extends AbstractImagePreloader {
             float height = UnitProcessor.svgVerticalLengthToUserSpace(
                     s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
 
+            int widthMpt = (int)Math.round(px2mpt(width, context.getSourceResolution()));
+            int heightMpt = (int)Math.round(px2mpt(height, context.getSourceResolution()));
+
             ImageInfo info = new ImageInfo(uri, MimeConstants.MIME_SVG);
             ImageSize size = new ImageSize();
-            size.setSizeInMillipoints(Math.round(width * 1000), Math.round(height * 1000));
+            size.setSizeInMillipoints(widthMpt, heightMpt);
             //Set the resolution to that of the FOUserAgent
             size.setResolution(context.getSourceResolution());
             size.calcPixelsFromSize();
@@ -207,6 +211,10 @@ public class PreloaderSVG extends AbstractImagePreloader {
             }
         }
 
+    }
+
+    private static double px2mpt(double px, double resolution) {
+        return px * 1000 * UnitConv.IN2PT / resolution;
     }
 
 }

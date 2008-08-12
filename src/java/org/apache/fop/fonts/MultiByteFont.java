@@ -29,7 +29,6 @@ import java.util.Map;
 public class MultiByteFont extends CIDFont {
 
     private static int uniqueCounter = -1;
-    private static final DecimalFormat COUNTER_FORMAT = new DecimalFormat("00000");
 
     private String ttcName = null;
     private String encoding = "Identity-H";
@@ -58,7 +57,8 @@ public class MultiByteFont extends CIDFont {
                 uniqueCounter = 0; //We need maximum 5 character then we start again
             }
         }
-        String cntString = COUNTER_FORMAT.format(uniqueCounter);
+        DecimalFormat counterFormat = new DecimalFormat("00000");
+        String cntString = counterFormat.format(uniqueCounter);
 
         //Subset prefix as described in chapter 5.5.3 of PDF 1.4
         StringBuffer sb = new StringBuffer("E");
