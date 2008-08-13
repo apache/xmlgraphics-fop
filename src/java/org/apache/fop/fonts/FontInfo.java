@@ -450,7 +450,7 @@ public class FontInfo {
         FontTriplet key = null;
         String f = null;
         int newWeight = weight;
-        if (newWeight < 400) {
+        if (newWeight <= 400) {
             while (f == null && newWeight > 100) {
                 newWeight -= 100;
                 key = createFontKey(family, style, newWeight);

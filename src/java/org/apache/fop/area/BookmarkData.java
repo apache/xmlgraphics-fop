@@ -218,25 +218,24 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * id reference.
      *
      * {@inheritDoc} List)
-     * @todo check to make sure it works if multiple bookmark-items
-     * have the same idref
      */
     public void resolveIDRef(String id, List pages) {
-        if (!id.equals(idRef)) {
-            Collection refs = (Collection)unresolvedIDRefs.get(id);
-            if (refs != null) {
-                Iterator iter = refs.iterator();
-                while (iter.hasNext()) {
-                    BookmarkData bd = (BookmarkData)iter.next();
-                    bd.resolveIDRef(id, pages);
-                }
-                unresolvedIDRefs.remove(id);
-            }
-        } else {
+        if (id.equals(idRef)) {
+            //Own ID has been resolved, so note the page
             pageRef = (PageViewport) pages.get(0);
-            // TODO get rect area of id on page
-            unresolvedIDRefs.remove(idRef);
+            //Note: Determining the placement inside the page is the renderer's job.
         }
+
+        //Notify all child bookmarks
+        Collection refs = (Collection)unresolvedIDRefs.get(id);
+        if (refs != null) {
+            Iterator iter = refs.iterator();
+            while (iter.hasNext()) {
+                BookmarkData bd = (BookmarkData)iter.next();
+                bd.resolveIDRef(id, pages);
+            }
+        }
+        unresolvedIDRefs.remove(id);
     }
 
     /**

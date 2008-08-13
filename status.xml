@@ -50,9 +50,19 @@
     <context id="Extensions" title="Changes to the Bundled Extensions"/>
     <context id="Images" title="Changes to the Image Support"/>
   </contexts>
-  
+
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="45606" due-to="Pavel Kysilka">
+        Fixed generation of "fonttbl" for RTF output to fix loading problem with AbiWord.
+      </action>
+      <action context="Layout" dev="JM" type="fix">
+        Fixed ID resolution for nested bookmarks with duplicated IDs.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="45490" due-to="Thomas Stieler">
+        Fixed a slight error when resolving non-file URLs: avoid
+        altering the original 'href' if the protocol is other than 'file:'
+      </action>
       <action context="Layout" dev="JM" type="fix" fixes-bug="45470">
         Added LayoutManagerMapping.registerMaker() to make registration of custom
         layout managers easier.
@@ -74,10 +84,10 @@
         when the page bpd is not the same for all pages.
       </action>
       <action context="Code" dev="AD" type="update" importance="high">
-        Changed FONode.addCharacters() parameter to closer match the signature of 
+        Changed FONode.addCharacters() parameter to closer match the signature of
         the standard SAX characters() event (reduces confusion and computations).
-        <em>!! Implementors of extensions that subclass FONode directly, and 
-        offer an implementation for addCharacters() should take care to make 
+        <em>!! Implementors of extensions that subclass FONode directly, and
+        offer an implementation for addCharacters() should take care to make
         similar modifications in their code !!</em>
       </action>
       <!-- change reverted, to be added back later
@@ -88,7 +98,7 @@
         Added de-duplication and externalization support for IOCA and GOCA data resource objects.
       </action -->
       <action context="Renderers" dev="JM" type="add" fixes-bug="45115" due-to="Martin Edge">
-        Added a PCL-specific extension attribute on simple-page-master for controlling 
+        Added a PCL-specific extension attribute on simple-page-master for controlling
         the simplex/duplex mode.
       </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="45097">
@@ -102,7 +112,7 @@
         Support character-by-character font-selection strategy on fo:character element.
       </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="44794">
-        Added support for page-number-citation and page-number-citation-last 
+        Added support for page-number-citation and page-number-citation-last
         of fo:inline. Corrected behavior for page-number-citation-last
         of fo:block: forward references now properly resolved.
       </action>
@@ -174,7 +184,7 @@
         in the font's primary encoding.
       </action>
     </release>
-    <release version="0.95" date="TBD">
+    <release version="0.95" date="05 August 2008">
       <notes>
         <section>
           <title>Notes</title>
@@ -232,7 +242,7 @@
             for building the FOP distribution but it is optional for normal builds and at run-time.
           </p>
           <note>
-            This final 0.95 release contains all the 
+            This final 0.95 release also includes all of the
             <a href="changes_0.95beta.html">changes made for Apache FOP 0.95beta</a>.
           </note>
         </section>
@@ -283,7 +293,7 @@
       <action context="Renderers" dev="JM" type="fix" importance="high">
         Fixed rendering of fixed block-containers in AFP output.
       </action>
-      <action context="Layout" dev="VH" type="fix" fixes-bug="41621" importance="high">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="44621" importance="high">
         Various bugfixes for table layout.
       </action>
       <action context="Renderers" dev="JM" type="fix">
@@ -501,7 +511,7 @@
         will make up an entire page. See the documentation for details.
       </action>
       <action context="Layout" dev="JM" type="add">
-        Added minimal support for the .minimum/.maximum components of block/inline-progression-dimension 
+        Added minimal support for the .minimum/.maximum components of block/inline-progression-dimension
         on fo:external-graphic and fo:instream-foreign-object.
       </action>
       <action context="Layout" dev="JM" type="add" importance="high">
@@ -630,7 +640,7 @@
         Fix to avoid a ClassCastException in renderer configuration.
       </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="43439" due-to="Adrian Cumiskey">
-        Fixed the restoration of the TLE values from the intermediate format 
+        Fixed the restoration of the TLE values from the intermediate format
         for the AFP extension elements.
       </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="43041" due-to="Adrian Cumiskey">
@@ -646,9 +656,9 @@
       <action context="Layout" dev="AD" type="update">
         PropertyCache phase 2:<br/>
         • improvement of the PropertyCache itself should now guarantee acceptable
-            performance of the static caches in multi-session environments, which is 
+            performance of the static caches in multi-session environments, which is
             a possible problem with synchronizedMap.<br/>
-        • changed CommonFont to use the cache: 
+        • changed CommonFont to use the cache:
             added CachedCommonFont to contain the properties that are always cacheable
             CommonFont itself is only cached if the remaining properties are absolutes.<br/>
         • changed CommonHyphenation, KeepProperty, ColorProperty and FontFamilyProperty to use the cache.<br/>
@@ -663,7 +673,7 @@
       <action context="Layout" dev="AD" type="fix" fixes-bug="43274" due-to="ckohrn.at.tng.de">
         Fixed erroneous usage of inherited color-values in SVG.
       </action>
-    </release>    
+    </release>
     <release version="0.94" date="24th August 2007">
       <action context="Code" dev="JM" type="fix">
         AFP Renderer: Bugfix for 1 bit images where the width is not a multiple of 8.
@@ -696,7 +706,7 @@
         -> changed implementations of FObj.addChildNode(), .removeChild() and .getChildNodes()
       </action>
       <action context="Code" dev="AD" type="update" fixes-bug="42089" due-to="Adrian Cumiskey">
-        Code cleanup and restructuring: 
+        Code cleanup and restructuring:
         Refactoring of PageSequenceLayoutManager and provide common FObj id property use
       </action>
       <action context="Code" dev="AD" type="add">
@@ -785,7 +795,7 @@
         the available ipd, causing a restart.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Fix for PDF corruption when a TrueType font with spaces in its name is embedded and no 
+        Fix for PDF corruption when a TrueType font with spaces in its name is embedded and no
         XML font metrics file for that font is used.
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="41426" due-to="Adrian Cumiskey">
@@ -808,7 +818,7 @@
       <action context="Code" dev="MM" type="add" importance="high">
         Added support for UAX#14 type line breaking. Support does not extend across nested fo:inline elements.
       </action>
-    </release>    
+    </release>
     <release version="0.93" date="9 January 2007">
       <notes>
         <section>
@@ -849,10 +859,10 @@
         Enabled Copy/Paste from PDF content in Acrobat Reader for text using embedded TrueType fonts.
       </action>
       <action context="Code" dev="SP" type="update" fixes-bug="41044" due-to="Richard Wheeldon">
-        Commented out unused properties, in order to minimize memory usage. 
+        Commented out unused properties, in order to minimize memory usage.
       </action>
       <action context="Code" dev="SP" type="update" fixes-bug="41009" due-to="Richard Wheeldon">
-        Removed unused attributes from TableCell. 
+        Removed unused attributes from TableCell.
       </action>
       <action context="Code" dev="JM" type="add">
         Added initial support for loading fonts without a pre-created XML font metric
@@ -860,7 +870,7 @@
       </action>
       <action context="Code" dev="JM" type="add" fixes-bug="40729" due-to="Peter Coppens" importance="high">
         Support for the rgb-icc() function and for a proprietary cmyk() function (for device CMYK
-        colors only through the PDF renderer so far). 
+        colors only through the PDF renderer so far).
       </action>
       <action context="Code" dev="JM" type="update" fixes-bug="40813" due-to="Richard Wheeldon">
         Minor fixes and improvements for the AWT Preview (keyboard shortcuts, scrolling, windows
@@ -890,7 +900,7 @@
         white background in order to produce bitmap output with transparency.
       </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="39414">
-        Split up FOText instances larger than 32K characters to avoid 
+        Split up FOText instances larger than 32K characters to avoid
         integer overflow during layout.
       </action>
       <action context="Code" dev="JM" type="fix">
@@ -908,7 +918,7 @@
         Added relaxed validation for empty list-item-*, as suggested by Gary Reed.
       </action>
       <action context="Code" dev="AD" type="update">
-        Modified proportional-column-width() function to log an error if used 
+        Modified proportional-column-width() function to log an error if used
         with table-layout=auto
       </action>
       <action context="Code" dev="AD" type="fix">
@@ -928,7 +938,7 @@
         Bugfix: Table headers and footers were swallowed when a table was nested in a list-block.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Fixed a bug with indent handling when margins are used on a surrounding block and 
+        Fixed a bug with indent handling when margins are used on a surrounding block and
         not start/end-indent.
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="40106" due-to="Jeroen Meijer">
@@ -951,7 +961,7 @@
         (Note: the use of pixels in XSL-FO is discouraged!)
       </action>
       <action context="Code" dev="JM" type="fix">
-        Bugfix: Potential multi-threading issue (ConcurrentModificationException) 
+        Bugfix: Potential multi-threading issue (ConcurrentModificationException)
         eliminated for ElementMapping classes.
       </action>
       <action context="Code" dev="JM" type="fix">
@@ -999,7 +1009,7 @@
         Bugfix: All fonts names were converted unnecessarily to lower case in RTF output.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Bugfix: The combination of hyphenation and kerning resulted in slightly ragged 
+        Bugfix: The combination of hyphenation and kerning resulted in slightly ragged
         right ends for right-aligned and justified text.
       </action>
       <action context="Code" dev="JM" type="fix">
@@ -1011,7 +1021,7 @@
         table-columns.
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="39607" due-to="Julien Aymé">
-        Bugfix: NullPointerException in RTF library when there are no borders on 
+        Bugfix: NullPointerException in RTF library when there are no borders on
         the parent table.
       </action>
       <action context="Code" dev="JM" type="add" importance="high">
@@ -1050,7 +1060,7 @@
         in a block-container.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Bugfix: basic-links with internal destinations in documents with multiple 
+        Bugfix: basic-links with internal destinations in documents with multiple
         page-sequences sometimes pointed at the wrong page.
       </action>
       <action context="Code" dev="JM" type="fix">
@@ -1062,14 +1072,14 @@
         Bugfix: Fixed OutOfMemoryException with long data URLs (RFC 2397).
       </action>
       <action context="Code" dev="JM" type="add" fixes-bug="39118" due-to="Pierre-Henri Kraus">
-        Initial support for page-number-citation-last (XSL 1.1). Works without problems 
+        Initial support for page-number-citation-last (XSL 1.1). Works without problems
         only for page-sequence so far.
       </action>
     </release>
     <release version="0.92beta" date="18 Apr 2006">
       <action context="Code" dev="JM" type="fix">
         Bugfix: The generation of the PDF "d" (setdash) command was assuming that
-        only integer values can be used but that isn't the case. Dash patterns 
+        only integer values can be used but that isn't the case. Dash patterns
         PDFGraphics2D would be wrong in the process.
       </action>
       <action context="Code" dev="JM" type="fix">
@@ -1103,7 +1113,7 @@
         FOP 0.20.5. (See "hyphenation-base" option in the user configuration)
       </action>
       <action context="Code" dev="JM" type="fix">
-        Bugfix: Certain filter combinations in PDF could lead to invalid PDFs. 
+        Bugfix: Certain filter combinations in PDF could lead to invalid PDFs.
         DecodeParams were not properly handled.
       </action>
       <action context="Code" dev="JM" type="fix">
@@ -1169,19 +1179,19 @@
         Added support for the from-table-column() function.
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="38397">
-        Bugfix: Spanned cells could lead to an false error message about overlapping 
+        Bugfix: Spanned cells could lead to an false error message about overlapping
         cells and ultimately a NullPointerException.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Bugfix: Regions with non-standard names got ignored in RTF output leading to 
+        Bugfix: Regions with non-standard names got ignored in RTF output leading to
         missing headers and footers.
       </action>
       <action context="Code" dev="JM" type="fix">
-        The RTF output now properly generates the "\landscape" flag for documents in 
+        The RTF output now properly generates the "\landscape" flag for documents in
         landscape orientation.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Following a clarification by the XSL FO SG, space traits are only set on the 
+        Following a clarification by the XSL FO SG, space traits are only set on the
         first and last area generated by an FO, and not on every area anymore.
       </action>
       <action context="Code" dev="JM" type="add">
@@ -1292,7 +1302,7 @@
         was not rendered at all.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Fixed a bug where the area for a finished cell that is broken over pages was 
+        Fixed a bug where the area for a finished cell that is broken over pages was
         created once for each row it was spanned over instead of only once.
       </action>
       <action context="Code" dev="JM" type="add">
@@ -1343,7 +1353,7 @@
       <action context="Code" dev="JM" type="add">
         Added an alternative set of rules for calculating text indents which tries to mimic
         the behaviour of many commercial FO implementations that chose to break the rules
-        in the FO specification in order to better meet the natural expectations of 
+        in the FO specification in order to better meet the natural expectations of
         inexperienced FO users.
       </action>
       <action context="Code" dev="JM" type="fix" fixes-bug="37815" due-to="Tom Craddock">
@@ -1363,14 +1373,14 @@
       </action>
       <action context="Code" dev="JM" type="add">
         font-family list still not fully supported but a comma-separated list is now properly tokenized.
-        FOP will now go through all fonts in the list to find one that is available, but it doesn't 
-        do so per character, yet. 
+        FOP will now go through all fonts in the list to find one that is available, but it doesn't
+        do so per character, yet.
       </action>
       <action context="Code" dev="JM" type="add">
         Implemented "Overconstrained Geometry" rules (5.3.4, XSL 1.0) for the most important cases.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Bugfix: Relatively positioned BlockViewports (from block-containers) caused the paint 
+        Bugfix: Relatively positioned BlockViewports (from block-containers) caused the paint
         cursor not be be properly advanced when space-before or space-after were present.
       </action>
       <action context="Code" dev="JM" type="fix">
@@ -1378,12 +1388,12 @@
         didn't get removed.
       </action>
       <action context="Code" dev="JM" type="fix">
-        The validation check for non-zero borders and padding on a region-* and for empty static-content 
-        elements is now turned off when relaxed validation is active to improve compatibility with 
+        The validation check for non-zero borders and padding on a region-* and for empty static-content
+        elements is now turned off when relaxed validation is active to improve compatibility with
         FO documents written for other FO implementations.
       </action>
       <action context="Code" dev="JM" type="fix">
-        Bugfix for "/ by zero" ArithmeticExceptions when an URL to a non-existing image is used 
+        Bugfix for "/ by zero" ArithmeticExceptions when an URL to a non-existing image is used
         and content-width and/or content-height is used.
       </action>
       <action context="Code" dev="JM" type="fix">
@@ -1406,15 +1416,15 @@
     </release>
     <release version="0.90alpha1" date="22 Nov 2005">
       <action context="Code" dev="all" type="update">
-        <strong>Complete redesign of the FOP codebase</strong> in the period between Dec 2001 and Nov 2005. 
-        There are just too many changes to list here. If you like to know details, run 
+        <strong>Complete redesign of the FOP codebase</strong> in the period between Dec 2001 and Nov 2005.
+        There are just too many changes to list here. If you like to know details, run
         <code>"svn log --verbose http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/"</code>.
       </action>
     </release>
     <release version="0.20.5" date="18 July 2003">
       <action context="Code" dev="all" type="update">
-        For the change log for the maintenance branch 
-        (where FOP 0.20.5 came from), please see the "CHANGES" file in the distribution, or 
+        For the change log for the maintenance branch
+        (where FOP 0.20.5 came from), please see the "CHANGES" file in the distribution, or
         <link href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/branches/fop-0_20_2-maintain/CHANGES?view=markup">the CHANGES file in the SVN repository</link>.
       </action>
     </release>
@@ -1428,5 +1438,5 @@
       </action>
     </actions>
   </todo>
-  
+
 </status>

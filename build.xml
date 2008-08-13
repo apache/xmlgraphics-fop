@@ -67,6 +67,8 @@ list of possible build targets.
     <include name="KEYS"/>
     <include name="status.xml"/>
     <include name="fop.bat"/>
+    <include name="fop.cmd"/>
+    <include name="fop.js"/>
     <include name="fop"/>
   </fileset>
   <fileset dir="${basedir}" id="dist.bin.lib">

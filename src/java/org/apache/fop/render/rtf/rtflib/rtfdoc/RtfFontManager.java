@@ -144,21 +144,22 @@ public final class RtfFontManager {
         }
 
         header.newLine();
-        header.writeGroupMark (true);
-        header.writeControlWord ("fonttbl;");
+        header.writeGroupMark(true);
+        header.writeControlWord("fonttbl");
 
         int len = fontTable.size ();
 
         for (int i = 0; i < len; i++) {
-            header.writeGroupMark (true);
+            header.writeGroupMark(true);
             header.newLine();
-            header.write ("\\f" + i);
-            header.write (" " + (String) fontTable.elementAt (i));
-            header.writeGroupMark (false);
+            header.write("\\f" + i);
+            header.write(" " + (String) fontTable.elementAt (i));
+            header.write(";");
+            header.writeGroupMark(false);
         }
 
         header.newLine();
-        header.writeGroupMark (false);
+        header.writeGroupMark(false);
     }
 
 
