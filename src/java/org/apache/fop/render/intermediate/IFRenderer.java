@@ -232,10 +232,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 painter.endPageSequence();
                 this.inPageSequence = false;
             }
+            painter.startDocumentTrailer();
             finishOpenGoTos();
             if (this.bookmarkTree != null) {
                 painter.handleExtensionObject(this.bookmarkTree);
             }
+            painter.endDocumentTrailer();
             painter.endDocument();
         } catch (IFException e) {
             handleIFExceptionWithIOException(e);

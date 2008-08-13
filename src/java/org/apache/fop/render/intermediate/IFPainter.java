@@ -60,6 +60,9 @@ import org.apache.fop.fonts.FontInfo;
  *     ]*
  *   endPageSequence()
  *   ]*
+ *   startDocumentTrailer()
+ *   [handleExtension()]*
+ *   endDocumentTrailer()
  * endDocument()
  *
  * #box:
@@ -147,6 +150,23 @@ public interface IFPainter {
      * @throws IFException if an error occurs while handling this event
      */
     void endDocumentHeader() throws IFException;
+
+    /**
+     * Indicates the start of the document trailer. This method is called after the last
+     * page sequence. Extensions sent to the painter between
+     * {@code #startDocumentTrailer()} and {@code #endDocumentTrailer()} apply to the document as
+     * a whole and is used for document-level content that is only known after all pages have
+     * been rendered (like named destinations or the bookmark tree).
+     * @throws IFException if an error occurs while handling this event
+     */
+    void startDocumentTrailer() throws IFException;
+
+    /**
+     * Indicates the end of the document trailer. This method is called right before the
+     * {@code #endDocument()} method.
+     * @throws IFException if an error occurs while handling this event
+     */
+    void endDocumentTrailer() throws IFException;
 
     /**
      * Indicates the start of a new page sequence.

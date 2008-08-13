@@ -99,6 +99,24 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
+    public void startDocumentTrailer() throws IFException {
+        try {
+            startElement(EL_TRAILER);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in startDocumentTrailer()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void endDocumentTrailer() throws IFException {
+        try {
+            endElement(EL_TRAILER);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in startDocumentTrailer()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
     public void endDocument() throws IFException {
         try {
             endElement(EL_DOCUMENT);

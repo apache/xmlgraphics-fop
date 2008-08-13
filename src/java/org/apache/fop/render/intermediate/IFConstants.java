@@ -35,6 +35,7 @@ public interface IFConstants extends XMLConstants {
 
     String EL_DOCUMENT = "document";
     String EL_HEADER = "header";
+    String EL_TRAILER = "trailer";
     String EL_PAGE_SEQUENCE = "page-sequence";
     String EL_PAGE = "page";
     String EL_PAGE_HEADER = "page-header";

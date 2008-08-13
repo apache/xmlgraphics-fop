@@ -83,6 +83,46 @@ public abstract class AbstractIFPainter implements IFPainter {
         return this.userAgent;
     }
 
+    /** {@inheritDoc} */
+    public void startDocumentHeader() throws IFException {
+        //nop
+    }
+
+    /** {@inheritDoc} */
+    public void endDocumentHeader() throws IFException {
+        //nop
+    }
+
+    /** {@inheritDoc} */
+    public void startDocumentTrailer() throws IFException {
+        //nop
+    }
+
+    /** {@inheritDoc} */
+    public void endDocumentTrailer() throws IFException {
+        //nop
+    }
+
+    /** {@inheritDoc} */
+    public void startPageHeader() throws IFException {
+        //nop
+    }
+
+    /** {@inheritDoc} */
+    public void endPageHeader() throws IFException {
+        //nop
+    }
+
+    /** {@inheritDoc} */
+    public void startPageTrailer() throws IFException {
+        //nop
+    }
+
+    /** {@inheritDoc} */
+    public void endPageTrailer() throws IFException {
+        //nop
+    }
+
     private AffineTransform combine(AffineTransform[] transforms) {
         AffineTransform at = new AffineTransform();
         for (int i = 0, c = transforms.length; i < c; i++) {

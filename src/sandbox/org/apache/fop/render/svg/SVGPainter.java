@@ -117,6 +117,7 @@ public class SVGPainter extends AbstractSVGPainter {
 
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
+        //nop
     }
 
     /** {@inheritDoc} */
@@ -219,14 +220,6 @@ public class SVGPainter extends AbstractSVGPainter {
     }
 
     /** {@inheritDoc} */
-    public void startPageHeader() throws IFException {
-    }
-
-    /** {@inheritDoc} */
-    public void endPageHeader() throws IFException {
-    }
-
-    /** {@inheritDoc} */
     public void startPageContent() throws IFException {
         super.startPageContent();
         try {
@@ -244,14 +237,6 @@ public class SVGPainter extends AbstractSVGPainter {
             throw new IFException("SAX error in endPageContent()", e);
         }
         super.endPageContent();
-    }
-
-    /** {@inheritDoc} */
-    public void startPageTrailer() throws IFException {
-    }
-
-    /** {@inheritDoc} */
-    public void endPageTrailer() throws IFException {
     }
 
     /** {@inheritDoc} */
