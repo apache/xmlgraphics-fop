@@ -82,29 +82,29 @@
     <eval expected="(P2,chapter2-sec1)" xpath="//bookmarkTree/bookmark[2]/bookmark[1]/@internal-link"/>
     <eval expected="(P2,chapter2-sec2)" xpath="//bookmarkTree/bookmark[2]/bookmark[2]/@internal-link"/>
   </checks>
-  <if-checks xmlns:bm="http://xmlgraphics.apache.org/fop/intermediate/bookmarks">
-    <eval expected="show" xpath="//bm:bookmark-tree/bm:bookmark[1]/@starting-state"/>
-    <eval expected="Chapter 1" xpath="//bm:bookmark-tree/bm:bookmark[1]/@title"/>
-    <eval expected="0" xpath="//bm:bookmark-tree/bm:bookmark[1]/bm:goto-xy/@page-index"/>
-    <eval expected="20000" xpath="//bm:bookmark-tree/bm:bookmark[1]/bm:goto-xy/@x"/>
-    <eval expected="20000" xpath="//bm:bookmark-tree/bm:bookmark[1]/bm:goto-xy/@y"/>
+  <if-checks xmlns:n="http://xmlgraphics.apache.org/fop/intermediate/document-navigation">
+    <eval expected="show" xpath="//n:bookmark-tree/n:bookmark[1]/@starting-state"/>
+    <eval expected="Chapter 1" xpath="//n:bookmark-tree/n:bookmark[1]/@title"/>
+    <eval expected="0" xpath="//n:bookmark-tree/n:bookmark[1]/n:goto-xy/@page-index"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[1]/n:goto-xy/@x"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[1]/n:goto-xy/@y"/>
 
-    <eval expected="hide" xpath="//bm:bookmark-tree/bm:bookmark[2]/@starting-state"/>
-    <eval expected="Chapter 2" xpath="//bm:bookmark-tree/bm:bookmark[2]/@title"/>
-    <eval expected="1" xpath="//bm:bookmark-tree/bm:bookmark[2]/bm:goto-xy/@page-index"/>
-    <eval expected="20000" xpath="//bm:bookmark-tree/bm:bookmark[2]/bm:goto-xy/@x"/>
-    <eval expected="20000" xpath="//bm:bookmark-tree/bm:bookmark[2]/bm:goto-xy/@y"/>
+    <eval expected="hide" xpath="//n:bookmark-tree/n:bookmark[2]/@starting-state"/>
+    <eval expected="Chapter 2" xpath="//n:bookmark-tree/n:bookmark[2]/@title"/>
+    <eval expected="1" xpath="//n:bookmark-tree/n:bookmark[2]/n:goto-xy/@page-index"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[2]/n:goto-xy/@x"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[2]/n:goto-xy/@y"/>
 
-    <eval expected="show" xpath="//bm:bookmark-tree/bm:bookmark[2]/bm:bookmark[1]/@starting-state"/>
-    <eval expected="Section 1" xpath="//bm:bookmark-tree/bm:bookmark[2]/bm:bookmark[1]/@title"/>
-    <eval expected="1" xpath="//bm:bookmark-tree/bm:bookmark[2]/bm:bookmark[1]/bm:goto-xy/@page-index"/>
-    <eval expected="20000" xpath="//bm:bookmark-tree/bm:bookmark[2]/bm:bookmark[1]/bm:goto-xy/@x"/>
-    <eval expected="51680" xpath="//bm:bookmark-tree/bm:bookmark[2]/bm:bookmark[1]/bm:goto-xy/@y"/>
+    <eval expected="show" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/@starting-state"/>
+    <eval expected="Section 1" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/@title"/>
+    <eval expected="1" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@page-index"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@x"/>
+    <eval expected="51680" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@y"/>
     
-    <eval expected="show" xpath="//bm:bookmark-tree/bm:bookmark[3]/@starting-state"/>
-    <eval expected="Fixed Block Container" xpath="//bm:bookmark-tree/bm:bookmark[3]/@title"/>
-    <eval expected="1" xpath="//bm:bookmark-tree/bm:bookmark[3]/bm:goto-xy/@page-index"/>
-    <eval expected="216000" xpath="//bm:bookmark-tree/bm:bookmark[3]/bm:goto-xy/@x"/>
-    <eval expected="216000" xpath="//bm:bookmark-tree/bm:bookmark[3]/bm:goto-xy/@y"/>
+    <eval expected="show" xpath="//n:bookmark-tree/n:bookmark[3]/@starting-state"/>
+    <eval expected="Fixed Block Container" xpath="//n:bookmark-tree/n:bookmark[3]/@title"/>
+    <eval expected="1" xpath="//n:bookmark-tree/n:bookmark[3]/n:goto-xy/@page-index"/>
+    <eval expected="216000" xpath="//n:bookmark-tree/n:bookmark[3]/n:goto-xy/@x"/>
+    <eval expected="216000" xpath="//n:bookmark-tree/n:bookmark[3]/n:goto-xy/@y"/>
   </if-checks>
 </testcase>
