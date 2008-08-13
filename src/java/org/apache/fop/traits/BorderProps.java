@@ -21,7 +21,8 @@ package org.apache.fop.traits;
 
 import java.awt.Color;
 import java.io.Serializable;
-import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
@@ -162,13 +163,19 @@ public class BorderProps implements Serializable {
     public static BorderProps valueOf(FOUserAgent foUserAgent, String s) {
         if (s.startsWith("(") && s.endsWith(")")) {
             s = s.substring(1, s.length() - 1);
-            StringTokenizer st = new StringTokenizer(s, ",");
-            String style = st.nextToken();
-            String color = st.nextToken();
-            int width = Integer.parseInt(st.nextToken());
+            Pattern pattern = Pattern.compile("([^,\\(]+(?:\\(.*\\))?)");
+            Matcher m = pattern.matcher(s);
+            boolean found;
+            found = m.find();
+            String style = m.group();
+            found = m.find();
+            String color = m.group();
+            found = m.find();
+            int width = Integer.parseInt(m.group());
             int mode = SEPARATE;
-            if (st.hasMoreTokens()) {
-                String ms = st.nextToken();
+            found = m.find();
+            if (found) {
+                String ms = m.group();
                 if ("collapse-inner".equalsIgnoreCase(ms)) {
                     mode = COLLAPSE_INNER;
                 } else if ("collapse-outer".equalsIgnoreCase(ms)) {

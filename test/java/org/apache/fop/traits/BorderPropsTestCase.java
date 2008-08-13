@@ -24,6 +24,8 @@ import java.awt.Color;
 import junit.framework.TestCase;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.util.CMYKColorSpace;
+import org.apache.fop.util.ColorExt;
 import org.apache.fop.util.ColorUtil;
 
 /**
@@ -46,6 +48,11 @@ public class BorderPropsTestCase extends TestCase {
         BorderProps b2 = BorderProps.valueOf(null, ser);
         assertEquals(b1, b2);
 
+        float[] cmyk = new float[] {1.0f, 1.0f, 0.5f, 1.0f};
+        CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
+        float[] rgb = cmykCs.toRGB(cmyk);
+        col = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
+                null, "#CMYK", cmykCs, cmyk);
         b1 = new BorderProps(Constants.EN_INSET, 9999,
                 col, BorderProps.SEPARATE);
         ser = b1.toString();
