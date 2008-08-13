@@ -147,10 +147,6 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void startDocumentHeader() throws IFException {
-    }
-
-    /** {@inheritDoc} */
     public void endDocumentHeader() throws IFException {
         pdfUtil.generateDefaultXMPMetadata();
     }
@@ -208,14 +204,6 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void startPageHeader() throws IFException {
-    }
-
-    /** {@inheritDoc} */
-    public void endPageHeader() throws IFException {
-    }
-
-    /** {@inheritDoc} */
     public void startPageContent() throws IFException {
         this.state = IFState.create();
     }
@@ -223,14 +211,6 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     /** {@inheritDoc} */
     public void endPageContent() throws IFException {
         assert this.state.pop() == null;
-    }
-
-    /** {@inheritDoc} */
-    public void startPageTrailer() throws IFException {
-    }
-
-    /** {@inheritDoc} */
-    public void endPageTrailer() throws IFException {
     }
 
     /** {@inheritDoc} */

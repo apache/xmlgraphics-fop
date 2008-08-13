@@ -124,6 +124,7 @@ public class IFParser implements IFConstants {
             this.elementMappingRegistry = elementMappingRegistry;
             elementHandlers.put(EL_DOCUMENT, new DocumentHandler());
             elementHandlers.put(EL_HEADER, new DocumentHeaderHandler());
+            elementHandlers.put(EL_TRAILER, new DocumentTrailerHandler());
             elementHandlers.put(EL_PAGE_SEQUENCE, new PageSequenceHandler());
             elementHandlers.put(EL_PAGE, new PageHandler());
             elementHandlers.put(EL_PAGE_HEADER, new PageHeaderHandler());
@@ -289,6 +290,18 @@ public class IFParser implements IFConstants {
 
             public void endElement() throws IFException {
                 painter.endDocumentHeader();
+            }
+
+        }
+
+        private class DocumentTrailerHandler extends AbstractElementHandler {
+
+            public void startElement(Attributes attributes) throws IFException {
+                painter.startDocumentTrailer();
+            }
+
+            public void endElement() throws IFException {
+                painter.endDocumentTrailer();
             }
 
         }
