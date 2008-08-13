@@ -62,7 +62,7 @@ public class EvalCheck implements LayoutEngineCheck, IFCheck {
         if (nd != null) {
             this.tolerance = Double.parseDouble(nd.getNodeValue());
         }
-        this.prefixResolver = new MyPrefixResolver(new PrefixResolverDefault(node));
+        this.prefixResolver = new PrefixResolverDefault(node);
     }
 
     /** {@inheritDoc} */
@@ -103,42 +103,6 @@ public class EvalCheck implements LayoutEngineCheck, IFCheck {
     /** {@inheritDoc} */
     public String toString() {
         return "XPath: " + xpath;
-    }
-
-    private static class MyPrefixResolver implements PrefixResolver {
-
-        private PrefixResolver delegate;
-
-        public MyPrefixResolver(PrefixResolver delegate) {
-            this.delegate = delegate;
-        }
-
-        /** {@inheritDoc} */
-        public String getBaseIdentifier() {
-            String s = delegate.getBaseIdentifier();
-            System.out.println(s);
-            return s;
-        }
-
-        /** {@inheritDoc} */
-        public String getNamespaceForPrefix(String prefix) {
-            String s = delegate.getNamespaceForPrefix(prefix);
-            System.out.println(s);
-            return s;
-        }
-
-        /** {@inheritDoc} */
-        public String getNamespaceForPrefix(String prefix, Node context) {
-            String s = delegate.getNamespaceForPrefix(prefix, context);
-            System.out.println(s);
-            return s;
-        }
-
-        /** {@inheritDoc} */
-        public boolean handlesNullPrefixes() {
-            return delegate.handlesNullPrefixes();
-        }
-
     }
 
 }

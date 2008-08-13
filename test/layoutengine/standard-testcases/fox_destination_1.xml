@@ -58,4 +58,21 @@
     <eval expected="(P2,chapter2-sec1)" xpath="//destination[3]/@internal-link"/>
     <eval expected="(P2,chapter2-sec2)" xpath="//destination[4]/@internal-link"/>
   </checks>
+  <if-checks xmlns:n="http://xmlgraphics.apache.org/fop/intermediate/document-navigation">
+    <eval expected="0" xpath="//n:named-destination[@name='chapter1']/n:goto-xy/@page-index"/>
+    <eval expected="0" xpath="//n:named-destination[@name='chapter1']/n:goto-xy/@x"/>
+    <eval expected="0" xpath="//n:named-destination[@name='chapter1']/n:goto-xy/@y"/>
+    
+    <eval expected="1" xpath="//n:named-destination[@name='chapter2']/n:goto-xy/@page-index"/>
+    <eval expected="0" xpath="//n:named-destination[@name='chapter2']/n:goto-xy/@x"/>
+    <eval expected="0" xpath="//n:named-destination[@name='chapter2']/n:goto-xy/@y"/>
+    
+    <eval expected="1" xpath="//n:named-destination[@name='chapter2-sec1']/n:goto-xy/@page-index"/>
+    <eval expected="0" xpath="//n:named-destination[@name='chapter2-sec1']/n:goto-xy/@x"/>
+    <eval expected="31680" xpath="//n:named-destination[@name='chapter2-sec1']/n:goto-xy/@y"/>
+
+    <eval expected="1" xpath="//n:named-destination[@name='chapter2-sec2']/n:goto-xy/@page-index"/>
+    <eval expected="0" xpath="//n:named-destination[@name='chapter2-sec2']/n:goto-xy/@x"/>
+    <eval expected="60480" xpath="//n:named-destination[@name='chapter2-sec2']/n:goto-xy/@y"/>
+  </if-checks>
 </testcase>
