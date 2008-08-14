@@ -78,6 +78,7 @@ import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.fonts.AFPFontCollection;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.PageObject;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -502,7 +503,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
                 float h3 = height / 3;
                 
-                lineDataInfo.color = lightenColor(col, -colFactor);
+                lineDataInfo.color = ColorUtil.lightenColor(col, -colFactor);
                 lineDataInfo.thickness = Math.round(h3);
                 lineDataInfo.y1 = lineDataInfo.y2 = coords[Y1];
                 afpDataStream.createLine(lineDataInfo);
@@ -511,7 +512,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 lineDataInfo.y1 = lineDataInfo.y2 = Math.round(dstPts[Y1] + h3);
                 afpDataStream.createLine(lineDataInfo);
                 
-                lineDataInfo.color = lightenColor(col, colFactor);
+                lineDataInfo.color = ColorUtil.lightenColor(col, colFactor);
                 lineDataInfo.y1 = lineDataInfo.y2
                     = Math.round(dstPts[Y1] + h3 + h3);                
                 afpDataStream.createLine(lineDataInfo);
@@ -524,7 +525,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 float w3 = width / 3;
                 float xm1 = dstPts[X1] + (w3 / 2);
 
-                lineDataInfo.color = lightenColor(col, -colFactor);
+                lineDataInfo.color = ColorUtil.lightenColor(col, -colFactor);
                 lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1);
                 afpDataStream.createLine(lineDataInfo);
                 
@@ -532,7 +533,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1 + w3);
                 afpDataStream.createLine(lineDataInfo);
 
-                lineDataInfo.color = lightenColor(col, colFactor);
+                lineDataInfo.color = ColorUtil.lightenColor(col, colFactor);
                 lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1 + w3 + w3);
                 afpDataStream.createLine(lineDataInfo);
             }

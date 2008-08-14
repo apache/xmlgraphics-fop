@@ -69,6 +69,10 @@
                 </fo:instream-foreign-object></fo:leader>
               Content is svg 20 x 10 which is wider than the leader-length
           </fo:block>
+          <fo:block>
+            <fo:leader leader-length="36pt" leader-pattern="use-content"> </fo:leader>
+            Content is " "
+          </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -172,5 +176,9 @@
     <eval expected="0" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/@offset"/>
     <eval expected="20000" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/viewport/@ipd"/>
     <eval expected="-1384" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/viewport/@offset"/>
+
+    <eval expected="11100" xpath="//flow/block[8]/lineArea/@bpd"/>
+    <eval expected="36000" xpath="//flow/block[8]/lineArea/space[1]/@ipd"/>
+    <eval expected="0" xpath="//flow/block[8]/lineArea/space[1]/@offset"/>
   </checks>
 </testcase>
