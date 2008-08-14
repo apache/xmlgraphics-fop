@@ -183,17 +183,23 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             childContext.setAlignmentContext(context.getAlignmentContext());
             contentList = clm.getNextKnuthElements(childContext, 0);
             int width = clm.getStackingSize();
-            Space spacer = null;
-            if (fobj.getLeaderPatternWidth().getValue(this) > width) {
-                spacer = new Space();
-                spacer.setIPD(fobj.getLeaderPatternWidth().getValue(this) - width);
-                width = fobj.getLeaderPatternWidth().getValue(this);
+            if (width != 0) {
+                Space spacer = null;
+                if (fobj.getLeaderPatternWidth().getValue(this) > width) {
+                    spacer = new Space();
+                    spacer.setIPD(fobj.getLeaderPatternWidth().getValue(this) - width);
+                    width = fobj.getLeaderPatternWidth().getValue(this);
+                }
+                fa.setUnitWidth(width);
+                if (spacer != null) {
+                    fa.addChildArea(spacer);
+                }
+                leaderArea = fa;
+            } else {
+                //Content collapsed to nothing, so use a space
+                leaderArea = new Space();
+                leaderArea.setBPD(1);
             }
-            fa.setUnitWidth(width);
-            if (spacer != null) {
-                fa.addChildArea(spacer);
-            }
-            leaderArea = fa;
         }
         TraitSetter.setProducerID(leaderArea, fobj.getId());
         return leaderArea;

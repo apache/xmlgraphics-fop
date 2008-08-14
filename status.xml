@@ -53,6 +53,10 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="JM" type="fix">
+        Fixed the source for a NullPointerException when the content of an fo:leader with
+        leader-pattern="use-content" collapses to zero width during layout.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed border trait parsing for the area tree XML when CMYK or ICC colors were used.
       </action>
