@@ -6,6 +6,18 @@
   
   <renderers>
     <renderer mime="application/pdf">
+      <filterList type="tiff">
+        <value>ascii-85</value>
+      </filterList>
+      <filterList type="default">
+        <value>null</value>
+      </filterList>
+      <filterList type="image">
+        <value>null</value>
+      </filterList>
+      <filterList type="content">
+        <value>null</value>
+      </filterList>
       <fonts>
         <font metrics-url="test/resources/fonts/glb12.ttf.xml" embed-url="test/resources/fonts/glb12.ttf">
           <font-triplet name="Gladiator" style="normal" weight="normal"/>

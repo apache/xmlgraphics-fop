@@ -36,6 +36,7 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.DOM2SAX;
 import org.apache.fop.util.XMLUtil;
@@ -242,7 +243,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
         try {
             AttributesImpl atts = new AttributesImpl();
             if (transform != null && transform.length() > 0) {
-                addAttribute(atts,"transform", transform);
+                addAttribute(atts, "transform", transform);
             }
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
@@ -363,11 +364,41 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
                 addAttribute(atts, "fill", toString(fill));
             }
             if (stroke != null) {
-                addAttribute(atts, "sroke", toString(stroke));
+                addAttribute(atts, "stroke", toString(stroke));
             }
-            element("rect", atts);
+            element(EL_RECT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in drawRect()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
+            BorderProps start, BorderProps end) throws IFException {
+        if (before == null && after == null && start == null && end == null) {
+            return;
+        }
+        try {
+            AttributesImpl atts = new AttributesImpl();
+            addAttribute(atts, "x", Integer.toString(rect.x));
+            addAttribute(atts, "y", Integer.toString(rect.y));
+            addAttribute(atts, "width", Integer.toString(rect.width));
+            addAttribute(atts, "height", Integer.toString(rect.height));
+            if (before != null) {
+                addAttribute(atts, "before", before.toString());
+            }
+            if (after != null) {
+                addAttribute(atts, "after", after.toString());
+            }
+            if (start != null) {
+                addAttribute(atts, "start", start.toString());
+            }
+            if (end != null) {
+                addAttribute(atts, "end", end.toString());
+            }
+            element(EL_BORDER_RECT, atts);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in drawBorderRect()", e);
         }
     }
 
@@ -383,10 +414,10 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             if (dy != null) {
                 addAttribute(atts, "dy", toString(dy));
             }
-            startElement("text", atts);
+            startElement(EL_TEXT, atts);
             char[] chars = text.toCharArray();
             handler.characters(chars, 0, chars.length);
-            endElement("text");
+            endElement(EL_TEXT);
         } catch (SAXException e) {
             throw new IFException("SAX error in setFont()", e);
         }
@@ -415,7 +446,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             if (color != null) {
                 addAttribute(atts, "color", toString(color));
             }
-            element("font", atts);
+            element(EL_FONT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in setFont()", e);
         }

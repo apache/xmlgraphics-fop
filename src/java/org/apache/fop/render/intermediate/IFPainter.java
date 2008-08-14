@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.traits.BorderProps;
 
 /**
  * Interface used to paint whole documents layouted by Apache FOP.
@@ -275,6 +276,20 @@ public interface IFPainter {
      * @throws IFException if an error occurs while handling this event
      */
     void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException;
+
+    /**
+     * Draws a border rectangle. The border segments are specified through {@code BorderProps}
+     * instances.
+     * @param rect the rectangle's coordinates and extent
+     * @param before the border segment on the before-side (top)
+     * @param after the border segment on the after-side (bottom)
+     * @param start the border segment on the start-side (left)
+     * @param end the border segment on the end-side (right)
+     * @throws IFException if an error occurs while handling this event
+     */
+    void drawBorderRect(Rectangle rect,
+            BorderProps before, BorderProps after,
+            BorderProps start, BorderProps end) throws IFException;
 
     /**
      * Draws an image identified by a URI inside a given rectangle. This is the equivalent to

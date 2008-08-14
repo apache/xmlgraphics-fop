@@ -85,12 +85,18 @@ import org.apache.fop.render.intermediate.extensions.BookmarkTree;
 import org.apache.fop.render.intermediate.extensions.GoToXYAction;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.render.pdf.PDFEventProducer;
+import org.apache.fop.traits.BorderProps;
 
 /**
  * This renderer implementation is an adapter to the {@code IFPainter} interface. It is used
  * to generate content using FOP's intermediate format.
  */
 public class IFRenderer extends AbstractPathOrientedRenderer {
+
+    //TODO Many parts of the Renderer infrastructure are using floats (coordinates in points)
+    //instead of ints (in millipoints). A lot of conversion to and from is performed.
+    //When the new IF is established, the Renderer infrastructure should be revisited so check
+    //if optimizations can be done to avoid int->float->int conversions.
 
     /** logging instance */
     protected static Log log = LogFactory.getLog(IFRenderer.class);
@@ -964,17 +970,36 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
+    protected void drawBorders(float startx, float starty,
+            float width, float height,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+        Rectangle rect = toMillipointRectangle(startx, starty, width, height);
+        try {
+            painter.drawBorderRect(rect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+        } catch (IFException ife) {
+            handleIFException(ife);
+        }
+    }
+
+    /** {@inheritDoc} */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
             boolean startOrBefore, int style, Color col) {
-        // TODO Auto-generated method stub
-        //log.warn("drawBorderLine() NYI");
+        log.warn("drawBorderLine() not properly implemented, yet");
         updateColor(col, true);
         fillRect(x1, y1, x2 - x1, y2 - y1);
     }
 
+    private int toMillipoints(float coordinate) {
+        return (int)(coordinate * 1000);
+    }
+
     private Rectangle toMillipointRectangle(float x, float y, float width, float height) {
         return new Rectangle(
-                (int)(x * 1000), (int)(y * 1000), (int)(width * 1000), (int)(height * 1000));
+                toMillipoints(x),
+                toMillipoints(y),
+                toMillipoints(width),
+                toMillipoints(height));
     }
 
     /** {@inheritDoc} */

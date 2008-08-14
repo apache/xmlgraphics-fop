@@ -60,6 +60,8 @@ public abstract class AbstractIFPainter implements IFPainter {
 
     /** Image handler registry */
     protected ImageHandlerRegistry imageHandlerRegistry = new ImageHandlerRegistry();
+    //TODO Move reference to FOPFactory to the user has a chance to add his own implementations
+    //and so the lookup process isn't redone for each painter instance.
 
     /**
      * Default constructor.

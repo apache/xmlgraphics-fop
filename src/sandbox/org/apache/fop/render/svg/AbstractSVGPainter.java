@@ -51,6 +51,7 @@ import org.apache.fop.render.intermediate.AbstractXMLWritingIFPainter;
 import org.apache.fop.render.intermediate.IFConstants;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 
 /**
@@ -298,6 +299,12 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
         } catch (SAXException e) {
             throw new IFException("SAX error in drawRect()", e);
         }
+    }
+
+    /** {@inheritDoc} */
+    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
+            BorderProps start, BorderProps end) throws IFException {
+        // TODO Auto-generated method stub
     }
 
     /** {@inheritDoc} */

@@ -222,7 +222,7 @@ public class PDFContentGenerator {
      * @param value the value
      * @return the formatted value
      */
-    protected static String format(float value) {
+    public static final String format(float value) {
         return PDFNumber.doubleOut(value);
     }
 
