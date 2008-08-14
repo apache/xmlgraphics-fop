@@ -49,6 +49,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
@@ -133,9 +134,10 @@ public class IFParser implements IFConstants {
             //Page content
             elementHandlers.put(EL_VIEWPORT, new ViewportHandler());
             elementHandlers.put(EL_GROUP, new GroupHandler());
-            elementHandlers.put("font", new FontHandler());
-            elementHandlers.put("text", new TextHandler());
-            elementHandlers.put("rect", new RectHandler());
+            elementHandlers.put(EL_FONT, new FontHandler());
+            elementHandlers.put(EL_TEXT, new TextHandler());
+            elementHandlers.put(EL_RECT, new RectHandler());
+            elementHandlers.put(EL_BORDER_RECT, new BorderRectHandler());
             elementHandlers.put(EL_IMAGE, new ImageHandler());
         }
 
@@ -442,10 +444,10 @@ public class IFParser implements IFConstants {
         private class RectHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
-                int x = Integer.parseInt(lastAttributes.getValue("x"));
-                int y = Integer.parseInt(lastAttributes.getValue("y"));
-                int width = Integer.parseInt(lastAttributes.getValue("width"));
-                int height = Integer.parseInt(lastAttributes.getValue("height"));
+                int x = Integer.parseInt(attributes.getValue("x"));
+                int y = Integer.parseInt(attributes.getValue("y"));
+                int width = Integer.parseInt(attributes.getValue("width"));
+                int height = Integer.parseInt(attributes.getValue("height"));
                 Color fillColor;
                 try {
                     fillColor = getAttributeAsColor(attributes, "fill");
@@ -459,6 +461,29 @@ public class IFParser implements IFConstants {
                     throw new IFException("Error parsing the stroke attribute", pe);
                 }
                 painter.drawRect(new Rectangle(x, y, width, height), fillColor, strokeColor);
+            }
+
+        }
+
+        private static final String[] SIDES = new String[] {"before", "after", "start", "end"};
+
+        private class BorderRectHandler extends AbstractElementHandler {
+
+            public void startElement(Attributes attributes) throws IFException {
+                int x = Integer.parseInt(attributes.getValue("x"));
+                int y = Integer.parseInt(attributes.getValue("y"));
+                int width = Integer.parseInt(attributes.getValue("width"));
+                int height = Integer.parseInt(attributes.getValue("height"));
+                BorderProps[] borders = new BorderProps[4];
+                for (int i = 0; i < 4; i++) {
+                    String b = attributes.getValue(SIDES[i]);
+                    if (b != null) {
+                        borders[i] = BorderProps.valueOf(userAgent, b);
+                    }
+                }
+
+                painter.drawBorderRect(new Rectangle(x, y, width, height),
+                        borders[0], borders[1], borders[2], borders[3]);
             }
 
         }

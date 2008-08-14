@@ -64,6 +64,7 @@ import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
 import org.apache.fop.render.intermediate.extensions.GoToXYAction;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
+import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -91,6 +92,8 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
 
     /** The current content generator */
     protected PDFContentGenerator generator;
+
+    private PDFBorderPainter borderPainter;
 
     /** the current annotation list to add annotations to */
     protected PDFResourceContext currentContext;
@@ -201,6 +204,8 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 size.height / 1000f);
         generator.concatenate(basicPageTransform);
+
+        this.borderPainter = new PDFBorderPainter(this.generator);
     }
 
     /** {@inheritDoc} */
@@ -355,6 +360,13 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
             sb.append('\n');
             generator.add(sb.toString());
         }
+    }
+
+    /** {@inheritDoc} */
+    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
+            BorderProps start, BorderProps end) throws IFException {
+        this.borderPainter.drawBorders(rect, before, after, start, end);
+
     }
 
     private Typeface getTypeface(String fontName) {
