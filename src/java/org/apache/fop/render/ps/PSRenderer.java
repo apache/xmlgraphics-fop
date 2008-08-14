@@ -106,6 +106,7 @@ import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * Renderer that renders to PostScript.
@@ -839,8 +840,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                     float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
                     gen.useDash(null);
                     if (horz) {
-                        Color uppercol = lightenColor(col, -colFactor);
-                        Color lowercol = lightenColor(col, colFactor);
+                        Color uppercol = ColorUtil.lightenColor(col, -colFactor);
+                        Color lowercol = ColorUtil.lightenColor(col, colFactor);
                         float h3 = h / 3;
                         gen.useLineWidth(h3);
                         float ym1 = y1 + (h3 / 2);
@@ -851,8 +852,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                         gen.useColor(lowercol);
                         drawLine(x1, ym1 + h3 + h3, x2, ym1 + h3 + h3);
                     } else {
-                        Color leftcol = lightenColor(col, -colFactor);
-                        Color rightcol = lightenColor(col, colFactor);
+                        Color leftcol = ColorUtil.lightenColor(col, -colFactor);
+                        Color rightcol = ColorUtil.lightenColor(col, colFactor);
                         float w3 = w / 3;
                         gen.useLineWidth(w3);
                         float xm1 = x1 + (w3 / 2);
@@ -869,13 +870,13 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                     colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
                     gen.useDash(null);
                     if (horz) {
-                        Color c = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
+                        Color c = ColorUtil.lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                         gen.useLineWidth(h);
                         float ym1 = y1 + (h / 2);
                         gen.useColor(c);
                         drawLine(x1, ym1, x2, ym1);
                     } else {
-                        Color c = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
+                        Color c = ColorUtil.lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                         gen.useLineWidth(w);
                         float xm1 = x1 + (w / 2);
                         gen.useColor(c);
@@ -1570,7 +1571,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 case EN_RIDGE:
                     float half = area.getRuleThickness() / 2000f;
 
-                    gen.useColor(lightenColor(col, 0.6f));
+                    gen.useColor(ColorUtil.lightenColor(col, 0.6f));
                     moveTo(startx, starty);
                     lineTo(endx, starty);
                     lineTo(endx, starty + 2 * half);

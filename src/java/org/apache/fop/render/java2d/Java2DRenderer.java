@@ -77,6 +77,7 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * The <code>Java2DRenderer</code> class provides the abstract technical
@@ -652,8 +653,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             case Constants.EN_RIDGE:
                 float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
                 if (horz) {
-                    Color uppercol = lightenColor(col, -colFactor);
-                    Color lowercol = lightenColor(col, colFactor);
+                    Color uppercol = ColorUtil.lightenColor(col, -colFactor);
+                    Color lowercol = ColorUtil.lightenColor(col, colFactor);
                     float h3 = h / 3;
                     float ym1 = y1 + (h3 / 2);
                     g2d.setStroke(new BasicStroke(h3));
@@ -664,8 +665,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                     g2d.setColor(lowercol);
                     g2d.draw(new Line2D.Float(x1, ym1 + h3 + h3, x2, ym1 + h3 + h3));
                 } else {
-                    Color leftcol = lightenColor(col, -colFactor);
-                    Color rightcol = lightenColor(col, colFactor);
+                    Color leftcol = ColorUtil.lightenColor(col, -colFactor);
+                    Color rightcol = ColorUtil.lightenColor(col, colFactor);
                     float w3 = w / 3;
                     float xm1 = x1 + (w3 / 2);
                     g2d.setStroke(new BasicStroke(w3));
@@ -681,13 +682,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             case Constants.EN_OUTSET:
                 colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
                 if (horz) {
-                    col = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
+                    col = ColorUtil.lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                     g2d.setStroke(new BasicStroke(h));
                     float ym1 = y1 + (h / 2);
                     g2d.setColor(col);
                     g2d.draw(new Line2D.Float(x1, ym1, x2, ym1));
                 } else {
-                    col = lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
+                    col = ColorUtil.lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                     float xm1 = x1 + (w / 2);
                     g2d.setStroke(new BasicStroke(w));
                     g2d.setColor(col);
@@ -859,7 +860,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         case EN_RIDGE:
             float half = area.getRuleThickness() / 2000f;
 
-            state.updateColor(lightenColor(col, 0.6f));
+            state.updateColor(ColorUtil.lightenColor(col, 0.6f));
             moveTo(startx, starty);
             lineTo(endx, starty);
             lineTo(endx, starty + 2 * half);

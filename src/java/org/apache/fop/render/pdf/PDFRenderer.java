@@ -116,6 +116,7 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorProfileUtil;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * Renderer that renders areas to PDF.
@@ -938,8 +939,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
                 currentStream.add("[] 0 d ");
                 if (horz) {
-                    Color uppercol = lightenColor(col, -colFactor);
-                    Color lowercol = lightenColor(col, colFactor);
+                    Color uppercol = ColorUtil.lightenColor(col, -colFactor);
+                    Color lowercol = ColorUtil.lightenColor(col, colFactor);
                     float h3 = h / 3;
                     currentStream.add(format(h3) + " w\n");
                     float ym1 = y1 + (h3 / 2);
@@ -953,8 +954,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     currentStream.add(format(x1) + " " + format(ym1 + h3 + h3) + " m "
                                         + format(x2) + " " + format(ym1 + h3 + h3) + " l S\n");
                 } else {
-                    Color leftcol = lightenColor(col, -colFactor);
-                    Color rightcol = lightenColor(col, colFactor);
+                    Color leftcol = ColorUtil.lightenColor(col, -colFactor);
+                    Color rightcol = ColorUtil.lightenColor(col, colFactor);
                     float w3 = w / 3;
                     currentStream.add(format(w3) + " w\n");
                     float xm1 = x1 + (w3 / 2);
@@ -977,14 +978,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 currentStream.add("[] 0 d ");
                 Color c = col;
                 if (horz) {
-                    c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                    c = ColorUtil.lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
                     currentStream.add(format(h) + " w\n");
                     float ym1 = y1 + (h / 2);
                     setColor(c, false, null);
                     currentStream.add(format(x1) + " " + format(ym1) + " m "
                             + format(x2) + " " + format(ym1) + " l S\n");
                 } else {
-                    c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                    c = ColorUtil.lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
                     currentStream.add(format(w) + " w\n");
                     float xm1 = x1 + (w / 2);
                     setColor(c, false, null);
@@ -1771,7 +1772,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             case EN_RIDGE:
                 float half = area.getRuleThickness() / 2000f;
 
-                setColor(lightenColor(col, 0.6f), true, null);
+                setColor(ColorUtil.lightenColor(col, 0.6f), true, null);
                 currentStream.add(format(startx) + " " + format(starty) + " m\n");
                 currentStream.add(format(endx) + " " + format(starty) + " l\n");
                 currentStream.add(format(endx) + " " + format(starty + 2 * half) + " l\n");
