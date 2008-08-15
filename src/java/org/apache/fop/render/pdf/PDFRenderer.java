@@ -623,7 +623,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
                 generator.comment("------ break out!");
             }
             breakOutList.add(0, data); //Insert because of stack-popping
-            generator.restoreGraphicsState();
+            generator.restoreGraphicsState(false);
         }
         return breakOutList;
     }
