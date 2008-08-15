@@ -365,8 +365,8 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     /** {@inheritDoc} */
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
             BorderProps start, BorderProps end) throws IFException {
+        generator.endTextObject();
         this.borderPainter.drawBorders(rect, before, after, start, end);
-
     }
 
     private Typeface getTypeface(String fontName) {
