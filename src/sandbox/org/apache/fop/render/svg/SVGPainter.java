@@ -109,6 +109,9 @@ public class SVGPainter extends AbstractSVGPainter {
             TransformerHandler toDOMHandler = tFactory.newTransformerHandler();
             toDOMHandler.setResult(new DOMResult(this.reusedParts));
             this.handler = toDOMHandler;
+            this.handler.startDocument();
+        } catch (SAXException se) {
+            throw new IFException("SAX error in startDocument()", se);
         } catch (TransformerConfigurationException e) {
             throw new IFException(
                     "Error while setting up a TransformerHandler for SVG generation", e);
@@ -118,6 +121,18 @@ public class SVGPainter extends AbstractSVGPainter {
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
         //nop
+    }
+
+    /** {@inheritDoc} */
+    public void endDocumentHeader() throws IFException {
+        super.endDocumentHeader();
+        try {
+            //Stop recording parts reused for each page
+            this.handler.endDocument();
+            this.handler = null;
+        } catch (SAXException e) {
+            throw new IFException("SAX error in endDocumentHeader()", e);
+        }
     }
 
     /** {@inheritDoc} */
