@@ -193,6 +193,7 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
     /** {@inheritDoc} */
     public void endGroup() throws IFException {
         try {
+            establish(MODE_NORMAL);
             endElement("g");
         } catch (SAXException e) {
             throw new IFException("SAX error in endGroup()", e);
