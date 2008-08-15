@@ -176,7 +176,7 @@ public class BatchDiffer {
                     final BufferedImage[] bitmaps = new BufferedImage[producers.length];
                     for (int j = 0; j < producers.length; j++) {
                         times[j] = System.currentTimeMillis();
-                        bitmaps[j] = producers[j].produce(f, context);
+                        bitmaps[j] = producers[j].produce(f, j, context);
                         times[j] = System.currentTimeMillis() - times[j];
                     }
                     if (log.isDebugEnabled()) {
