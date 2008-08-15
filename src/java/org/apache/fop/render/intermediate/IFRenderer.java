@@ -27,6 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -139,6 +140,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     // even if the object number differs
 
     private BookmarkTree bookmarkTree;
+
+    private TextUtil textUtil = new TextUtil();
 
     /**
      * Main constructor
@@ -831,10 +834,13 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             handleIFException(e);
         }
 
-        super.renderText(text);
-
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        textUtil.flush();
+        textUtil.setStartPosition(rx, bl);
+        super.renderText(text);
+
+        textUtil.flush();
         renderTextDecoration(tf, size, text, bl, rx);
     }
 
@@ -859,9 +865,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         if (space.isAdjustable()) {
             //Used for justified text, for example
-            int tws = -((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
-                         - 2 * textArea.getTextLetterSpaceAdjust();
-            this.currentIPPosition -= tws;
+            int tws = ((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
+                         + 2 * textArea.getTextLetterSpaceAdjust();
+            if (tws != 0) {
+                float fontSize = font.getFontSize() / 1000f;
+                textUtil.adjust(Math.round(tws / fontSize * 10));
+            }
         }
         super.renderSpace(space);
     }
@@ -876,43 +885,75 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     protected void renderText(String s,
                            int[] letterAdjust,
                            Font font, AbstractTextArea parentArea) {
-        int curX = currentIPPosition;
         float fontSize = font.getFontSize() / 1000f;
 
         int l = s.length();
 
-        int[] dx = new int[l];
-        boolean hasDX = false;
         for (int i = 0; i < l; i++) {
             char ch = s.charAt(i);
+            textUtil.addChar(ch);
             float glyphAdjust = 0;
             if (font.hasChar(ch)) {
                 int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
-                glyphAdjust -= tls;
+                glyphAdjust += tls;
             }
-            curX += font.getCharWidth(ch);
             if (letterAdjust != null && i < l) {
-                glyphAdjust -= letterAdjust[i];
+                glyphAdjust += letterAdjust[i];
             }
 
             float adjust = glyphAdjust / fontSize;
 
+            textUtil.adjust(Math.round(adjust * 10));
+        }
+    }
+
+    private class TextUtil {
+        private static final int INITIAL_BUFFER_SIZE = 16;
+        private int[] dx = new int[INITIAL_BUFFER_SIZE];
+        private boolean hasDX = false;
+        private StringBuffer text = new StringBuffer();
+        private int startx, starty;
+
+        void addChar(char ch) {
+            text.append(ch);
+        }
+
+        void adjust(int adjust) {
             if (adjust != 0) {
-                dx[i] = Math.round(adjust * -10);
-                if (dx[i] != 0) {
-                    hasDX = true;
+                int idx = text.length();
+                if (idx > dx.length - 1) {
+                    int[] newDX = new int[dx.length + INITIAL_BUFFER_SIZE];
+                    System.arraycopy(dx, 0, newDX, 0, dx.length);
+                    dx = newDX;
                 }
+                dx[idx] += adjust;
+                hasDX = true;
             }
-            curX += adjust;
         }
-        try {
-            int rx = currentIPPosition + parentArea.getBorderAndPaddingWidthStart();
-            int bl = currentBPPosition + parentArea.getOffset() + parentArea.getBaselineOffset();
-            painter.drawText(rx, bl, (hasDX ? dx : null), null, s);
-        } catch (IFException e) {
-            handleIFException(e);
+
+        void reset() {
+            if (text.length() > 0) {
+                text.setLength(0);
+                Arrays.fill(dx, 0);
+                hasDX = false;
+            }
         }
-        this.currentIPPosition = curX;
+
+        void setStartPosition(int x, int y) {
+            this.startx = x;
+            this.starty = y;
+        }
+
+        void flush() {
+            if (text.length() > 0) {
+                try {
+                    painter.drawText(startx, starty, (hasDX ? dx : null), null, text.toString());
+                } catch (IFException e) {
+                    handleIFException(e);
+                }
+                reset();
+            }
+        }
     }
 
     /** {@inheritDoc} */
