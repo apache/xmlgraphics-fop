@@ -409,7 +409,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         int dxl = (dx != null ? dx.length : 0);
 
         if (dx != null && dxl > 0 && dx[0] != 0) {
-            textutil.adjustGlyphTJ(dx[0]);
+            textutil.adjustGlyphTJ(-dx[0] / 10f);
         }
         for (int i = 0; i < l; i++) {
             char orgChar = text.charAt(i);
