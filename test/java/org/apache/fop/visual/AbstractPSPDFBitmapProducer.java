@@ -35,6 +35,7 @@ import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -70,11 +71,16 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
 
     private String converter;
     private boolean deleteTempFiles;
+    /** the bitmap producer's target format */
+    protected String targetFormat;
 
-    /** @see org.apache.avalon.framework.configuration.Configurable */
+    /** {@inheritDoc} */
     public void configure(Configuration cfg) throws ConfigurationException {
         this.converter = cfg.getChild("converter").getValue();
         this.deleteTempFiles = cfg.getChild("delete-temp-files").getValueAsBoolean(true);
+        if (cfg.getChild("target-format", false) != null) {
+            this.targetFormat = cfg.getChild("target-format").getValue();
+        }
     }
 
     /**
@@ -106,19 +112,21 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
     /**
      * @return the output format for the FOP renderer, i.e. a MIME type.
      */
-    protected abstract String getTargetFormat();
+    protected String getTargetFormat() {
+        return this.targetFormat;
+    }
 
-    /** @see org.apache.fop.visual.BitmapProducer */
-    public BufferedImage produce(File src, ProducerContext context) {
+    /** {@inheritDoc} */
+    public BufferedImage produce(File src, int index, ProducerContext context) {
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
             userAgent.setBaseURL(src.getParentFile().toURL().toString());
 
             File tempOut = new File(context.getTargetDir(),
-                    src.getName() + "." + getTargetExtension());
+                    src.getName() + "." + index + "." + getTargetExtension());
             File tempPNG = new File(context.getTargetDir(),
-                    src.getName() + "." + getTargetExtension() + ".png");
+                    src.getName() + "." + index + "." + getTargetExtension() + ".png");
             try {
                 OutputStream out = new FileOutputStream(tempOut);
                 out = new BufferedOutputStream(out);
