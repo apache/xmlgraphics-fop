@@ -584,12 +584,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         if (!at.isIdentity()) {
-            concatenateTransformationMatrixMpt(ptToMpt(at));
+            concatenateTransformationMatrixMpt(ptToMpt(at), false);
         }
     }
 
-    private void concatenateTransformationMatrixMpt(AffineTransform at) {
-        if (!at.isIdentity()) {
+    private void concatenateTransformationMatrixMpt(AffineTransform at, boolean force) {
+        if (force || !at.isIdentity()) {
             if (log.isTraceEnabled()) {
                 log.trace("-----concatenateTransformationMatrix: " + at);
             }
@@ -659,7 +659,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
             saveGraphicsState();
             //Viewport position
-            concatenateTransformationMatrixMpt(positionTransform);
+            concatenateTransformationMatrixMpt(positionTransform, false);
 
             //Background and borders
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd());
@@ -670,7 +670,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             //Shift to content rectangle after border painting
             AffineTransform contentRectTransform = new AffineTransform();
             contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
-            concatenateTransformationMatrixMpt(contentRectTransform);
+            concatenateTransformationMatrixMpt(contentRectTransform, false);
 
             //Clipping
             Rectangle clipRect = null;
@@ -994,20 +994,22 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void clip() {
-        // TODO Auto-generated method stub
-        log.warn("clip() NYI");
+        throw new IllegalStateException("Not used");
     }
 
     /** {@inheritDoc} */
     protected void clipRect(float x, float y, float width, float height) {
-        // TODO Auto-generated method stub
-        log.warn("clipRect() NYI");
+        pushGroup(new IFGraphicContext.Group());
+        try {
+            painter.clipRect(toMillipointRectangle(x, y, width, height));
+        } catch (IFException ife) {
+            handleIFException(ife);
+        }
     }
 
     /** {@inheritDoc} */
     protected void closePath() {
-        // TODO Auto-generated method stub
-        log.warn("closePath() NYI");
+        throw new IllegalStateException("Not used");
     }
 
     /** {@inheritDoc} */
@@ -1056,14 +1058,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void moveTo(float x, float y) {
-        // TODO Auto-generated method stub
-        log.warn("moveTo() NYI");
+        throw new IllegalStateException("Not used");
     }
 
     /** {@inheritDoc} */
     protected void lineTo(float x, float y) {
-        // TODO Auto-generated method stub
-        log.warn("lineTo() NYI");
+        throw new IllegalStateException("Not used");
     }
 
     /** {@inheritDoc} */

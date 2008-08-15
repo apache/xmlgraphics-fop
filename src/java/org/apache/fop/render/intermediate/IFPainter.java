@@ -269,6 +269,14 @@ public interface IFPainter {
     void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException;
 
     /**
+     * Restricts the current clipping region with the given rectangle.
+     * @param rect the rectangle's coordinates and extent
+     * @throws IFException if an error occurs while handling this event
+     */
+    void clipRect(Rectangle rect) throws IFException;
+    //TODO clipRect() shall be considered temporary until verified with SVG and PCL
+
+    /**
      * Draws a rectangle. Either fill or stroke has to be specified.
      * @param rect the rectangle's coordinates and extent
      * @param fill the fill paint (may be null)

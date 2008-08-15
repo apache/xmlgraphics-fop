@@ -279,6 +279,11 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
     }
 
     /** {@inheritDoc} */
+    public void clipRect(Rectangle rect) throws IFException {
+        //TODO Implement me!!!
+    }
+
+    /** {@inheritDoc} */
     public void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException {
         if (fill == null && stroke == null) {
             return;
