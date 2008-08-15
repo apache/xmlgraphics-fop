@@ -136,6 +136,7 @@ public class IFParser implements IFConstants {
             elementHandlers.put(EL_GROUP, new GroupHandler());
             elementHandlers.put(EL_FONT, new FontHandler());
             elementHandlers.put(EL_TEXT, new TextHandler());
+            elementHandlers.put(EL_CLIP_RECT, new ClipRectHandler());
             elementHandlers.put(EL_RECT, new RectHandler());
             elementHandlers.put(EL_BORDER_RECT, new BorderRectHandler());
             elementHandlers.put(EL_IMAGE, new ImageHandler());
@@ -437,6 +438,18 @@ public class IFParser implements IFConstants {
 
             public boolean ignoreCharacters() {
                 return false;
+            }
+
+        }
+
+        private class ClipRectHandler extends AbstractElementHandler {
+
+            public void startElement(Attributes attributes) throws IFException {
+                int x = Integer.parseInt(attributes.getValue("x"));
+                int y = Integer.parseInt(attributes.getValue("y"));
+                int width = Integer.parseInt(attributes.getValue("width"));
+                int height = Integer.parseInt(attributes.getValue("height"));
+                painter.clipRect(new Rectangle(x, y, width, height));
             }
 
         }

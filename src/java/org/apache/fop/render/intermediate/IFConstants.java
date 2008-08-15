@@ -44,6 +44,7 @@ public interface IFConstants extends XMLConstants {
     String EL_VIEWPORT = "viewport";
     String EL_GROUP = "g";
     String EL_IMAGE = "image";
+    String EL_CLIP_RECT = "clip-rect";
     String EL_RECT = "rect";
     String EL_BORDER_RECT = "border-rect";
     String EL_FONT = "font";

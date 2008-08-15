@@ -31,6 +31,8 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
  */
 public class IFGraphicContext extends GraphicContext {
 
+    private static final AffineTransform[] EMPTY_TRANSFORM_ARRAY = new AffineTransform[0];
+
     private List groupList = new java.util.ArrayList();
 
     /**
@@ -86,6 +88,10 @@ public class IFGraphicContext extends GraphicContext {
 
         public Group(AffineTransform transform) {
             this(new AffineTransform[] {transform});
+        }
+
+        public Group() {
+            this(EMPTY_TRANSFORM_ARRAY);
         }
 
         public AffineTransform[] getTransforms() {

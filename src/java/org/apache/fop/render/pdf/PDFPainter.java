@@ -241,12 +241,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         generator.saveGraphicsState();
         generator.concatenate(generator.toPoints(transform));
         if (clipRect != null) {
-            StringBuffer sb = new StringBuffer();
-            sb.append(format(clipRect.x)).append(' ');
-            sb.append(format(clipRect.y)).append(' ');
-            sb.append(format(clipRect.width)).append(' ');
-            sb.append(format(clipRect.height)).append(" re W n\n");
-            generator.add(sb.toString());
+            clipRect(clipRect);
         }
     }
 
@@ -330,6 +325,17 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     }
 
     /** {@inheritDoc} */
+    public void clipRect(Rectangle rect) throws IFException {
+        generator.endTextObject();
+        StringBuffer sb = new StringBuffer();
+        sb.append(format(rect.x)).append(' ');
+        sb.append(format(rect.y)).append(' ');
+        sb.append(format(rect.width)).append(' ');
+        sb.append(format(rect.height)).append(" re W n\n");
+        generator.add(sb.toString());
+    }
+
+    /** {@inheritDoc} */
     public void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException {
         if (fill == null && stroke == null) {
             return;
@@ -365,8 +371,10 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     /** {@inheritDoc} */
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
             BorderProps start, BorderProps end) throws IFException {
-        generator.endTextObject();
-        this.borderPainter.drawBorders(rect, before, after, start, end);
+        if (before != null || after != null || start != null || end != null) {
+            generator.endTextObject();
+            this.borderPainter.drawBorders(rect, before, after, start, end);
+        }
     }
 
     private Typeface getTypeface(String fontName) {
@@ -387,6 +395,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
         //TODO Ignored: state.getFontVariant()
+        //TODO Opportunity for font caching if font state is more heavily used
         String fontKey = fontInfo.getInternalFontKey(triplet);
         int sizeMillipoints = state.getFontSize();
         float fontSize = sizeMillipoints / 1000f;
@@ -431,7 +440,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
                 if (CharUtilities.isFixedWidthSpace(orgChar)) {
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
                     ch = font.mapChar(CharUtilities.SPACE);
-                    glyphAdjust = font.getCharWidth(ch) - font.getCharWidth(orgChar);
+                    glyphAdjust = -(font.getCharWidth(ch) - font.getCharWidth(orgChar));
                 } else {
                     ch = font.mapChar(orgChar);
                 }

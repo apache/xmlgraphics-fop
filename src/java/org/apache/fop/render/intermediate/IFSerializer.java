@@ -350,6 +350,20 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
+    public void clipRect(Rectangle rect) throws IFException {
+        try {
+            AttributesImpl atts = new AttributesImpl();
+            addAttribute(atts, "x", Integer.toString(rect.x));
+            addAttribute(atts, "y", Integer.toString(rect.y));
+            addAttribute(atts, "width", Integer.toString(rect.width));
+            addAttribute(atts, "height", Integer.toString(rect.height));
+            element(EL_CLIP_RECT, atts);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in clipRect()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
     public void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException {
         if (fill == null && stroke == null) {
             return;
