@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,16 +58,16 @@ class FeasibleBreaks<L extends Layout> {
 
     private BestBreak<L> best = null;
 
-    private Collection<Layout> alternatives = new LinkedList<Layout>();
+    private Collection<Alternative> alternatives = new LinkedList<Alternative>();
 
     void add(L layout, double demerits, int difference) {
         if (best == null) {
             best = new BestBreak<L>(layout, demerits, difference);
         } else if (demerits < best.demerits) {
-            alternatives.add(best.layout);
+            alternatives.add(new Alternative(best.layout, best.demerits));
             best.set(layout, demerits, difference);
         } else {
-            alternatives.add(layout);
+            alternatives.add(new Alternative(layout, demerits));
         }
     }
 
@@ -75,7 +75,7 @@ class FeasibleBreaks<L extends Layout> {
         return best;
     }
 
-    Collection<Layout> getAlternatives() {
+    Collection<Alternative> getAlternatives() {
         return alternatives;
     }
 }

@@ -17,26 +17,18 @@
 
 /* $Id$ */
 
-package org.apache.fop.prototype.knuth;
+package org.apache.fop.prototype.layoutmgr;
+
+import org.apache.fop.prototype.breaking.ActiveLayouts;
+import org.apache.fop.prototype.breaking.layout.Layout;
 
 /**
- * A box.
+ * TODO javadoc
  */
-public class Box extends KnuthElement {
+abstract class AbstractLayoutManager<L extends Layout> {
 
-    /**
-     * @param length
-     * @param content
-     */
-    public Box(int length, String content) {
-        super(length, content);
-    }
+    protected NonLeafLayoutManager<Layout> parent;
 
-    public boolean isBox() {
-        return true;
-    }
+    protected ActiveLayouts<L> layouts;
 
-    public String toString() {
-        return "Box w = " + getLength() + super.toString();
-    }
 }

@@ -17,26 +17,15 @@
 
 /* $Id$ */
 
-package org.apache.fop.prototype.knuth;
+package org.apache.fop.prototype.layoutmgr;
 
 /**
- * A box.
+ * TODO javadoc
  */
-public class Box extends KnuthElement {
+public interface Dimensions {
 
-    /**
-     * @param length
-     * @param content
-     */
-    public Box(int length, String content) {
-        super(length, content);
-    }
+    int getBPD(int partNumber);
 
-    public boolean isBox() {
-        return true;
-    }
+    int getIPD(int partNumber, int bpd);
 
-    public String toString() {
-        return "Box w = " + getLength() + super.toString();
-    }
 }
