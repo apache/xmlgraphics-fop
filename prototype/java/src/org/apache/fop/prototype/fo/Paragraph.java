@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,17 +35,17 @@ import org.apache.fop.prototype.knuth.Penalty;
  */
 public class Paragraph implements TypographicElement {
 
-    private List<String> words;
+    private String[] words;
 
     private Font font;
 
-    public Paragraph(List<String> words, Font font) {
+    public Paragraph(Font font, String... words) {
         this.words = words;
         this.font = font;
     }
 
     public List<KnuthElement> getKnuthElements() {
-        List<KnuthElement> elements = new ArrayList<KnuthElement>(3 * words.size() + 2);
+        List<KnuthElement> elements = new ArrayList<KnuthElement>(3 * words.length + 2);
         int spaceWidth = font.getCharWidth(' ');
         for (String word: words) {
             elements.add(new Box(getWordWidth(word), word));

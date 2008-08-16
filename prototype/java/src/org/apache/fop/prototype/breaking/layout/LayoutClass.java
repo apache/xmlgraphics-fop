@@ -19,42 +19,9 @@
 
 package org.apache.fop.prototype.breaking.layout;
 
-import java.util.Collection;
-import java.util.List;
+/**
+ * TODO javadoc
+ */
+public interface LayoutClass {
 
-import org.apache.fop.prototype.breaking.Alternative;
-import org.apache.fop.prototype.knuth.KnuthElement;
-
-public interface Layout {
-
-    LayoutClass getLayoutClass();
-
-    Layout getPrevious();
-
-    void setPrevious(Layout previous);
-
-    /** Returns the demerits represented by this layout plus all of its predecessors. */
-    double getDemerits();
-
-    void setDemerits(double demerits);
-
-    ProgressInfo getProgress();
-
-    Collection<Alternative> getAlternatives();
-
-    List<KnuthElement> getElements();
-
-    void addElement(KnuthElement e);
-
-    int getDifference();
-
-    int getIPD(int bpd); // TODO block-specific
-
-    int getDimension(); // TODO package-private
-
-    Layout clone(Collection<Alternative> alternatives);
-
-    void setPage(); // TODO page-specific
-
-    boolean isPage();
 }

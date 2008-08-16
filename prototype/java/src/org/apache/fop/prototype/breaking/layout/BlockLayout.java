@@ -19,42 +19,37 @@
 
 package org.apache.fop.prototype.breaking.layout;
 
-import java.util.Collection;
-import java.util.List;
+import org.apache.fop.prototype.breaking.PageDimensions;
 
-import org.apache.fop.prototype.breaking.Alternative;
-import org.apache.fop.prototype.knuth.KnuthElement;
+/**
+ * TODO javadoc
+ */
+public class BlockLayout extends StandardLayout {
 
-public interface Layout {
+    private PageDimensions partDims;
 
-    LayoutClass getLayoutClass();
+    /**
+     * @param dimension
+     */
+    public BlockLayout(PageDimensions partDims) {
+        super(partDims.getBpd());
+        this.partDims = partDims;
+    }
 
-    Layout getPrevious();
+    /**
+     * @param previous
+     * @param alternatives
+     * @param dimension
+     */
+    public BlockLayout(Layout previous, int partNumber, PageDimensions partDims) {
+        super(previous, partNumber, partDims.getBpd());
+        this.partDims = partDims;
+    }
 
-    void setPrevious(Layout previous);
+    /** {@inheritDoc} */
+    @Override
+    public int getIPD(int bpd) {
+        return partDims.getIpd();
+    }
 
-    /** Returns the demerits represented by this layout plus all of its predecessors. */
-    double getDemerits();
-
-    void setDemerits(double demerits);
-
-    ProgressInfo getProgress();
-
-    Collection<Alternative> getAlternatives();
-
-    List<KnuthElement> getElements();
-
-    void addElement(KnuthElement e);
-
-    int getDifference();
-
-    int getIPD(int bpd); // TODO block-specific
-
-    int getDimension(); // TODO package-private
-
-    Layout clone(Collection<Alternative> alternatives);
-
-    void setPage(); // TODO page-specific
-
-    boolean isPage();
 }
