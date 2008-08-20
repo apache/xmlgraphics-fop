@@ -1148,7 +1148,7 @@ public class PCLRenderer extends PrintRenderer {
         RendererContext context = super.createRendererContext(
                 x, y, width, height, foreignAttributes);
         context.setProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS,
-                new Boolean(this.useColorCanvas));
+                Boolean.valueOf(this.useColorCanvas));
         return context;
     }
 
