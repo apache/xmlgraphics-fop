@@ -45,8 +45,7 @@ import java.util.Locale;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.xmlgraphics.image.GraphicsUtil;
-
-import org.apache.fop.util.UnitConv;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * This class provides methods for generating PCL print files.
@@ -68,7 +67,7 @@ public class PCLGenerator {
     private final DecimalFormat df2 = new DecimalFormat("0.##", symbols);
     private final DecimalFormat df4 = new DecimalFormat("0.####", symbols);
 
-    private OutputStream out;
+    private final OutputStream out;
 
     private boolean currentSourceTransparency = true;
     private boolean currentPatternTransparency = true;
@@ -79,7 +78,7 @@ public class PCLGenerator {
      * true: Standard PCL shades are used (poor quality). false: user-defined pattern are used
      * to create custom dither patterns for better grayscale quality.
      */
-    private boolean usePCLShades = false;
+    private final boolean usePCLShades = false;
 
     /**
      * Main constructor.
@@ -400,7 +399,7 @@ public class PCLGenerator {
     private static void setValueInMatrix(int[] dn, int half, int part, int idx, int value) {
         int xoff = (part & 1) * half;
         int yoff = (part & 2) * half * half;
-        int matrixIndex = yoff + ((int)(idx / half) * half * 2) + (idx % half) + xoff;
+        int matrixIndex = yoff + ((idx / half) * half * 2) + (idx % half) + xoff;
         dn[matrixIndex] = value;
     }
 
