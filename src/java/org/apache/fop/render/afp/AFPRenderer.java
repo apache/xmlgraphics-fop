@@ -935,7 +935,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         RendererContext context;
         context = super.createRendererContext(x, y, width, height, foreignAttributes);
         context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE,
-                new Boolean(!this.colorImages));
+                Boolean.valueOf(!this.colorImages));
         return context;
     }
 
