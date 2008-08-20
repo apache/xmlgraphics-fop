@@ -459,15 +459,31 @@ list of possible build targets.
       </manifest>
     </jar>
   </target>
-  <target name="retro" depends="compile">
-<!--
+  <target name="retro-unavail" unless="java14.rt.lib">
+    <echo message="Please set the path to a JDK 1.4 installation in your build-local.properties" />
+    <echo message="to allow for verification!" />
+  </target>
+  <target name="retro-avail" depends="compile" if="java14.rt.lib">
     <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
       <classpath>
-        <path refid="libs-build-classpath"/>
         <path refid="libs-build-tools-classpath"/>
       </classpath>
     </taskdef>
-RetroWeaver will be added here -->
+    <path id="verify-classpath">
+      <pathelement location="${java14.rt.lib}"/>
+      <pathelement location="${java14.jce.lib}"/>
+      <pathelement location="${ant.home}/lib/ant.jar"/>
+      <path refid="libs-build-classpath"/>
+    </path>
+    <!-- If we decide to use retroweaver for the actual weaving, the mkdir and
+         destdir= will have to be removed. Also, the weaving task would additionally
+	 need to be defined even if no jdk 14 is available. -->
+    <mkdir dir="${build.dir}/temp"/>
+    <retroweaver srcdir="${build.classes.dir}" destdir="${build.dir}/temp"
+       classpathref="verify-classpath" lazy="false"
+       verify="true" target="1.4" />
+  </target>
+  <target name="retro" depends="retro-avail,retro-unavail,compile">
   </target>
 <!-- =================================================================== -->
 <!-- main FOP JARs                                                       -->
