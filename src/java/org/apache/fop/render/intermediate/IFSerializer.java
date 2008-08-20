@@ -22,6 +22,7 @@ package org.apache.fop.render.intermediate;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.DOM2SAX;
 import org.apache.fop.util.XMLUtil;
@@ -364,8 +366,8 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
-    public void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException {
-        if (fill == null && stroke == null) {
+    public void fillRect(Rectangle rect, Paint fill) throws IFException {
+        if (fill == null) {
             return;
         }
         try {
@@ -374,15 +376,10 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             addAttribute(atts, "y", Integer.toString(rect.y));
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
-            if (fill != null) {
-                addAttribute(atts, "fill", toString(fill));
-            }
-            if (stroke != null) {
-                addAttribute(atts, "stroke", toString(stroke));
-            }
+            addAttribute(atts, "fill", toString(fill));
             element(EL_RECT, atts);
         } catch (SAXException e) {
-            throw new IFException("SAX error in drawRect()", e);
+            throw new IFException("SAX error in fillRect()", e);
         }
     }
 
@@ -413,6 +410,24 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             element(EL_BORDER_RECT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in drawBorderRect()", e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+            throws IFException {
+        try {
+            AttributesImpl atts = new AttributesImpl();
+            addAttribute(atts, "x1", Integer.toString(start.x));
+            addAttribute(atts, "y1", Integer.toString(start.y));
+            addAttribute(atts, "x2", Integer.toString(end.x));
+            addAttribute(atts, "y2", Integer.toString(end.y));
+            addAttribute(atts, "stroke-width", Integer.toString(width));
+            addAttribute(atts, "color", Integer.toString(width));
+            addAttribute(atts, "style", style.getName());
+            element(EL_LINE, atts);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in drawLine()", e);
         }
     }
 

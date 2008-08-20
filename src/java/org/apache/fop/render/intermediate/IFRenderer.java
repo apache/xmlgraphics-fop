@@ -67,6 +67,7 @@ import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
@@ -87,6 +88,7 @@ import org.apache.fop.render.intermediate.extensions.GoToXYAction;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.render.pdf.PDFEventProducer;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.RuleStyle;
 
 /**
  * This renderer implementation is an adapter to the {@code IFPainter} interface. It is used
@@ -993,6 +995,30 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
+    public void renderLeader(Leader area) {
+        renderInlineAreaBackAndBorders(area);
+
+        int style = area.getRuleStyle();
+        int ruleThickness = area.getRuleThickness();
+        int startx = currentIPPosition + area.getBorderAndPaddingWidthStart();
+        int starty = currentBPPosition + area.getOffset() + (ruleThickness / 2);
+        int endx = currentIPPosition
+                        + area.getBorderAndPaddingWidthStart()
+                        + area.getIPD();
+        Color col = (Color)area.getTrait(Trait.COLOR);
+
+        Point start = new Point(startx, starty);
+        Point end = new Point(endx, starty);
+        try {
+            painter.drawLine(start, end, ruleThickness, col, RuleStyle.valueOf(style));
+        } catch (IFException ife) {
+            handleIFException(ife);
+        }
+
+        super.renderLeader(area);
+    }
+
+    /** {@inheritDoc} */
     protected void clip() {
         throw new IllegalStateException("Not used");
     }
@@ -1048,9 +1074,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void fillRect(float x, float y, float width, float height) {
         try {
-            painter.drawRect(
+            painter.fillRect(
                     toMillipointRectangle(x, y, width, height),
-                    this.graphicContext.getPaint(), null);
+                    this.graphicContext.getPaint());
         } catch (IFException e) {
             handleIFException(e);
         }

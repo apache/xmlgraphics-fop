@@ -22,6 +22,7 @@ package org.apache.fop.render.pdf;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -65,6 +66,7 @@ import org.apache.fop.render.intermediate.extensions.BookmarkTree;
 import org.apache.fop.render.intermediate.extensions.GoToXYAction;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -327,17 +329,12 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     /** {@inheritDoc} */
     public void clipRect(Rectangle rect) throws IFException {
         generator.endTextObject();
-        StringBuffer sb = new StringBuffer();
-        sb.append(format(rect.x)).append(' ');
-        sb.append(format(rect.y)).append(' ');
-        sb.append(format(rect.width)).append(' ');
-        sb.append(format(rect.height)).append(" re W n\n");
-        generator.add(sb.toString());
+        generator.clipRect(rect);
     }
 
     /** {@inheritDoc} */
-    public void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException {
-        if (fill == null && stroke == null) {
+    public void fillRect(Rectangle rect, Paint fill) throws IFException {
+        if (fill == null) {
             return;
         }
         generator.endTextObject();
@@ -349,9 +346,6 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
                     throw new UnsupportedOperationException("Non-Color paints NYI");
                 }
             }
-            if (stroke != null) {
-                throw new UnsupportedOperationException("stroke NYI");
-            }
             StringBuffer sb = new StringBuffer();
             sb.append(format(rect.x)).append(' ');
             sb.append(format(rect.y)).append(' ');
@@ -360,9 +354,10 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
             if (fill != null) {
                 sb.append(" f");
             }
+            /* Removed from method signature as it is currently not used
             if (stroke != null) {
                 sb.append(" S");
-            }
+            }*/
             sb.append('\n');
             generator.add(sb.toString());
         }
@@ -375,6 +370,13 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
             generator.endTextObject();
             this.borderPainter.drawBorders(rect, before, after, start, end);
         }
+    }
+
+    /** {@inheritDoc} */
+    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+        throws IFException {
+        generator.endTextObject();
+        this.borderPainter.drawLine(start, end, width, color, style);
     }
 
     private Typeface getTypeface(String fontName) {

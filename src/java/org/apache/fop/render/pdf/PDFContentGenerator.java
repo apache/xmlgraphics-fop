@@ -20,6 +20,7 @@
 package org.apache.fop.render.pdf;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -207,6 +208,19 @@ public class PDFContentGenerator {
             currentState.concatenate(transform);
             currentStream.add(CTMHelper.toPDFString(transform, false) + " cm\n");
         }
+    }
+
+    /**
+     * Intersects the current clip region with the given rectangle.
+     * @param rect the clip rectangle
+     */
+    public void clipRect(Rectangle rect) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(format(rect.x / 1000f)).append(' ');
+        sb.append(format(rect.y / 1000f)).append(' ');
+        sb.append(format(rect.width / 1000f)).append(' ');
+        sb.append(format(rect.height / 1000f)).append(" re W n\n");
+        add(sb.toString());
     }
 
     /**

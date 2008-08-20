@@ -22,6 +22,7 @@ package org.apache.fop.render.intermediate;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.w3c.dom.Document;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.RuleStyle;
 
 /**
  * Interface used to paint whole documents layouted by Apache FOP.
@@ -277,13 +279,12 @@ public interface IFPainter {
     //TODO clipRect() shall be considered temporary until verified with SVG and PCL
 
     /**
-     * Draws a rectangle. Either fill or stroke has to be specified.
+     * Fills a rectangular area.
      * @param rect the rectangle's coordinates and extent
-     * @param fill the fill paint (may be null)
-     * @param stroke the stroke color (may be null)
+     * @param fill the fill paint
      * @throws IFException if an error occurs while handling this event
      */
-    void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException;
+    void fillRect(Rectangle rect, Paint fill) throws IFException;
 
     /**
      * Draws a border rectangle. The border segments are specified through {@code BorderProps}
@@ -298,6 +299,18 @@ public interface IFPainter {
     void drawBorderRect(Rectangle rect,
             BorderProps before, BorderProps after,
             BorderProps start, BorderProps end) throws IFException;
+
+    /**
+     * Draws a line. NOTE: Currently, only horizontal lines are implemented!
+     * @param start the start point of the line
+     * @param end the end point of the line
+     * @param width the line width
+     * @param color the line color
+     * @param style the line style (using the Constants.EN_* constants for the rule-style property)
+     * @throws IFException if an error occurs while handling this event
+     */
+    void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+            throws IFException;
 
     /**
      * Draws an image identified by a URI inside a given rectangle. This is the equivalent to

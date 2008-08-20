@@ -91,6 +91,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -167,6 +168,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
 
     /** The current content generator to produce PDF commands with */
     protected PDFContentGenerator generator;
+    private PDFBorderPainter borderPainter;
 
     /**
      * the current annotation list to add annotations to
@@ -188,6 +190,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
 
     /** Image handler registry */
     private PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
+
 
     /**
      * create the PDF renderer
@@ -460,17 +463,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         pageHeight = (int) h;
 
         this.generator = new PDFContentGenerator(this.pdfDoc, this.ostream, this.currentPage);
-        /*
-        currentStream = this.pdfDoc.getFactory()
-            .makeStream(PDFFilterList.CONTENT_FILTER, false);
-        this.textutil = new PDFTextUtil() {
-            protected void write(String code) {
-                currentStream.add(code);
-            }
-        };
+        this.borderPainter = new PDFBorderPainter(this.generator);
 
-        currentState = new PDFState();
-        */
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFRenderer's
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 pageHeight / 1000f);
@@ -1223,66 +1217,17 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     public void renderLeader(Leader area) {
         renderInlineAreaBackAndBorders(area);
 
-        getState().push();
-        saveGraphicsState();
         int style = area.getRuleStyle();
-        float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
-        float starty = (currentBPPosition + area.getOffset()) / 1000f;
-        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
-                        + area.getIPD()) / 1000f;
-        float ruleThickness = area.getRuleThickness() / 1000f;
+        int ruleThickness = area.getRuleThickness();
+        int startx = currentIPPosition + area.getBorderAndPaddingWidthStart();
+        int starty = currentBPPosition + area.getOffset() + (ruleThickness / 2);
+        int endx = currentIPPosition
+                        + area.getBorderAndPaddingWidthStart()
+                        + area.getIPD();
         Color col = (Color)area.getTrait(Trait.COLOR);
 
-        switch (style) {
-            case EN_SOLID:
-            case EN_DASHED:
-            case EN_DOUBLE:
-                drawBorderLine(startx, starty, endx, starty + ruleThickness,
-                        true, true, style, col);
-                break;
-            case EN_DOTTED:
-                clipRect(startx, starty, endx - startx, ruleThickness);
-                //This displaces the dots to the right by half a dot's width
-                //TODO There's room for improvement here
-                generator.add("1 0 0 1 " + format(ruleThickness / 2) + " 0 cm\n");
-                drawBorderLine(startx, starty, endx, starty + ruleThickness,
-                        true, true, style, col);
-                break;
-            case EN_GROOVE:
-            case EN_RIDGE:
-                float half = area.getRuleThickness() / 2000f;
-
-                generator.setColor(lightenColor(col, 0.6f), true);
-                generator.add(format(startx) + " " + format(starty) + " m\n");
-                generator.add(format(endx) + " " + format(starty) + " l\n");
-                generator.add(format(endx) + " " + format(starty + 2 * half) + " l\n");
-                generator.add(format(startx) + " " + format(starty + 2 * half) + " l\n");
-                generator.add("h\n");
-                generator.add("f\n");
-                generator.setColor(col, true);
-                if (style == EN_GROOVE) {
-                    generator.add(format(startx) + " " + format(starty) + " m\n");
-                    generator.add(format(endx) + " " + format(starty) + " l\n");
-                    generator.add(format(endx) + " " + format(starty + half) + " l\n");
-                    generator.add(format(startx + half) + " " + format(starty + half) + " l\n");
-                    generator.add(format(startx) + " " + format(starty + 2 * half) + " l\n");
-                } else {
-                    generator.add(format(endx) + " " + format(starty) + " m\n");
-                    generator.add(format(endx) + " " + format(starty + 2 * half) + " l\n");
-                    generator.add(format(startx) + " " + format(starty + 2 * half) + " l\n");
-                    generator.add(format(startx) + " " + format(starty + half) + " l\n");
-                    generator.add(format(endx - half) + " " + format(starty + half) + " l\n");
-                }
-                generator.add("h\n");
-                generator.add("f\n");
-                break;
-            default:
-                throw new UnsupportedOperationException("rule style not supported");
-        }
-
-        restoreGraphicsState();
-        getState().pop();
-        beginTextObject();
+        borderPainter.drawLine(new Point(startx, starty), new Point(endx, starty),
+                ruleThickness, col, RuleStyle.valueOf(style));
         super.renderLeader(area);
     }
 
