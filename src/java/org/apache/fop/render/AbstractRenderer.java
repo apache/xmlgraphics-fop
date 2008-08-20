@@ -21,7 +21,6 @@ package org.apache.fop.render;
 
 // Java
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -835,33 +834,5 @@ public abstract class AbstractRenderer
      */
     public String getMimeType() {
         return null;
-    }
-
-    /**
-     * Converts a millipoint-based transformation matrix to points.
-     * @param at a millipoint-based transformation matrix
-     * @return a point-based transformation matrix
-     */
-    protected AffineTransform mptToPt(AffineTransform at) {
-        double[] matrix = new double[6];
-        at.getMatrix(matrix);
-        //Convert to points
-        matrix[4] = matrix[4] / 1000;
-        matrix[5] = matrix[5] / 1000;
-        return new AffineTransform(matrix);
-    }
-
-    /**
-     * Converts a point-based transformation matrix to millipoints.
-     * @param at a point-based transformation matrix
-     * @return a millipoint-based transformation matrix
-     */
-    protected AffineTransform ptToMpt(AffineTransform at) {
-        double[] matrix = new double[6];
-        at.getMatrix(matrix);
-        //Convert to millipoints
-        matrix[4] = matrix[4] * 1000;
-        matrix[5] = matrix[5] * 1000;
-        return new AffineTransform(matrix);
     }
 }

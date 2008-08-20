@@ -968,7 +968,7 @@ public class PCLRenderer extends PrintRenderer {
 
             saveGraphicsState();
             //Viewport position
-            concatenateTransformationMatrix(mptToPt(positionTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(positionTransform));
 
             //Background and borders
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
@@ -978,7 +978,7 @@ public class PCLRenderer extends PrintRenderer {
             //Shift to content rectangle after border painting
             AffineTransform contentRectTransform = new AffineTransform();
             contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
-            concatenateTransformationMatrix(mptToPt(contentRectTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(contentRectTransform));
 
             //Clipping
             if (bv.getClip()) {
@@ -988,7 +988,7 @@ public class PCLRenderer extends PrintRenderer {
             saveGraphicsState();
             //Set up coordinate system for content rectangle
             AffineTransform contentTransform = ctm.toAffineTransform();
-            concatenateTransformationMatrix(mptToPt(contentTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(contentTransform));
 
             currentIPPosition = 0;
             currentBPPosition = 0;
@@ -1058,7 +1058,7 @@ public class PCLRenderer extends PrintRenderer {
 
         if (!at.isIdentity()) {
             saveGraphicsState();
-            concatenateTransformationMatrix(mptToPt(at));
+            concatenateTransformationMatrix(UnitConv.mptToPt(at));
         }
 
         currentIPPosition = 0;
@@ -1096,7 +1096,7 @@ public class PCLRenderer extends PrintRenderer {
 
         if (!at.isIdentity()) {
             saveGraphicsState();
-            concatenateTransformationMatrix(mptToPt(at));
+            concatenateTransformationMatrix(UnitConv.mptToPt(at));
         }
 
         currentIPPosition = 0;
@@ -1119,7 +1119,7 @@ public class PCLRenderer extends PrintRenderer {
      */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         if (!at.isIdentity()) {
-            graphicContext.transform(ptToMpt(at));
+            graphicContext.transform(UnitConv.ptToMpt(at));
             changePrintDirection();
         }
     }

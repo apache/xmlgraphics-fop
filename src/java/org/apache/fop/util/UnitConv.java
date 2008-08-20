@@ -19,6 +19,8 @@
 
 package org.apache.fop.util;
 
+import java.awt.geom.AffineTransform;
+
 /**
  * Utility class for unit conversions.
  */
@@ -123,6 +125,34 @@ public final class UnitConv {
      */
     public static double mpt2px(double mpt, int resolution) {
         return mpt2in(mpt) * resolution;
+    }
+
+    /**
+     * Converts a millipoint-based transformation matrix to points.
+     * @param at a millipoint-based transformation matrix
+     * @return a point-based transformation matrix
+     */
+    public static AffineTransform mptToPt(AffineTransform at) {
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        //Convert to points
+        matrix[4] = matrix[4] / 1000;
+        matrix[5] = matrix[5] / 1000;
+        return new AffineTransform(matrix);
+    }
+
+    /**
+     * Converts a point-based transformation matrix to millipoints.
+     * @param at a point-based transformation matrix
+     * @return a millipoint-based transformation matrix
+     */
+    public static AffineTransform ptToMpt(AffineTransform at) {
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        //Convert to millipoints
+        matrix[4] = matrix[4] * 1000;
+        matrix[5] = matrix[5] * 1000;
+        return new AffineTransform(matrix);
     }
 
 }

@@ -48,6 +48,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.util.UnitConv;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -519,7 +520,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
             saveGraphicsState();
             //Viewport position
-            concatenateTransformationMatrix(mptToPt(positionTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(positionTransform));
 
             //Background and borders
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
@@ -529,7 +530,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             //Shift to content rectangle after border painting
             AffineTransform contentRectTransform = new AffineTransform();
             contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
-            concatenateTransformationMatrix(mptToPt(contentRectTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(contentRectTransform));
 
             //Clipping
             if (bv.getClip()) {
@@ -539,7 +540,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             saveGraphicsState();
             //Set up coordinate system for content rectangle
             AffineTransform contentTransform = ctm.toAffineTransform();
-            concatenateTransformationMatrix(mptToPt(contentTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(contentTransform));
 
             currentIPPosition = 0;
             currentBPPosition = 0;
@@ -603,7 +604,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
         if (!at.isIdentity()) {
             saveGraphicsState();
-            concatenateTransformationMatrix(mptToPt(at));
+            concatenateTransformationMatrix(UnitConv.mptToPt(at));
         }
 
         currentIPPosition = 0;
@@ -636,7 +637,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
         if (!at.isIdentity()) {
             saveGraphicsState();
-            concatenateTransformationMatrix(mptToPt(at));
+            concatenateTransformationMatrix(UnitConv.mptToPt(at));
         }
 
         currentIPPosition = 0;

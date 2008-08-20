@@ -37,6 +37,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.txt.border.AbstractBorderElement;
 import org.apache.fop.render.txt.border.BorderManager;
+import org.apache.fop.util.UnitConv;
 
 /**
  * Renderer that renders areas to plain text.
@@ -570,7 +571,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
-        currentState.push(new CTM(ptToMpt(at)));
+        currentState.push(new CTM(UnitConv.ptToMpt(at)));
     }
 
 }
