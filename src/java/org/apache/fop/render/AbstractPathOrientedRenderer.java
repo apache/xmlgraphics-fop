@@ -48,7 +48,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.util.UnitConv;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -485,8 +485,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
         //This is the content-rect
-        float width = (float)bv.getIPD() / 1000f;
-        float height = (float)bv.getBPD() / 1000f;
+        float width = bv.getIPD() / 1000f;
+        float height = bv.getBPD() / 1000f;
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
@@ -581,7 +581,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
 
-            currentBPPosition += (int)(bv.getAllocBPD());
+            currentBPPosition += (bv.getAllocBPD());
         }
     }
 

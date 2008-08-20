@@ -35,7 +35,7 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
-import org.apache.fop.util.UnitConv;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * Abstract base class for Graphics2DAdapter implementations.
