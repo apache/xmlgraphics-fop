@@ -20,9 +20,11 @@
 package org.apache.fop.render.intermediate;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.RuleStyle;
 
 /**
  * This is an abstract base class for handling border painting.
@@ -198,7 +200,10 @@ public abstract class BorderPainter {
 
 
     protected abstract void drawBorderLine(int x1, int y1, int x2, int y2,
-            boolean horz, boolean startOrBefore, int style, Color col);
+            boolean horz, boolean startOrBefore, int style, Color color);
+
+    public abstract void drawLine(Point start, Point end,
+            int width, Color color, RuleStyle style);
 
     protected abstract void moveTo(int x, int y);
 

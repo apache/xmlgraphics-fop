@@ -22,6 +22,7 @@ package org.apache.fop.render.svg;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Paint;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.FileNotFoundException;
@@ -52,6 +53,7 @@ import org.apache.fop.render.intermediate.IFConstants;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 
 /**
@@ -284,8 +286,8 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
     }
 
     /** {@inheritDoc} */
-    public void drawRect(Rectangle rect, Paint fill, Color stroke) throws IFException {
-        if (fill == null && stroke == null) {
+    public void fillRect(Rectangle rect, Paint fill) throws IFException {
+        if (fill == null) {
             return;
         }
         try {
@@ -298,12 +300,13 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
             if (fill != null) {
                 atts.addAttribute("", "fill", "fill", CDATA, toString(fill));
             }
+            /* disabled
             if (stroke != null) {
-                atts.addAttribute("", "stroke", "sroke", CDATA, toString(stroke));
-            }
+                atts.addAttribute("", "stroke", "stroke", CDATA, toString(stroke));
+            }*/
             element("rect", atts);
         } catch (SAXException e) {
-            throw new IFException("SAX error in drawRect()", e);
+            throw new IFException("SAX error in fillRect()", e);
         }
     }
 
@@ -311,6 +314,25 @@ public abstract class AbstractSVGPainter extends AbstractXMLWritingIFPainter
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
             BorderProps start, BorderProps end) throws IFException {
         // TODO Auto-generated method stub
+    }
+
+    /** {@inheritDoc} */
+    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+            throws IFException {
+        try {
+            establish(MODE_NORMAL);
+            AttributesImpl atts = new AttributesImpl();
+            atts.addAttribute("", "x1", "x1", CDATA, Integer.toString(start.x));
+            atts.addAttribute("", "y1", "y1", CDATA, Integer.toString(start.y));
+            atts.addAttribute("", "x2", "x2", CDATA, Integer.toString(end.x));
+            atts.addAttribute("", "y2", "y2", CDATA, Integer.toString(end.y));
+            atts.addAttribute("", "stroke-width", "stroke-width", CDATA, toString(color));
+            atts.addAttribute("", "fill", "fill", CDATA, toString(color));
+            //TODO Handle style parameter
+            element("line", atts);
+        } catch (SAXException e) {
+            throw new IFException("SAX error in drawLine()", e);
+        }
     }
 
     /** {@inheritDoc} */

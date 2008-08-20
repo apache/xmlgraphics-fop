@@ -20,6 +20,8 @@
 package org.apache.fop.render.pdf;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.intermediate.BorderPainter;
+import org.apache.fop.traits.RuleStyle;
 
 /**
  * PDF-specific implementation of the {@code BorderPainter}.
@@ -221,6 +224,65 @@ public class PDFBorderPainter extends BorderPainter {
         }
     }
 
+    /** {@inheritDoc} */
+    public void drawLine(Point start, Point end,
+            int width, Color color, RuleStyle style) {
+        if (start.y != end.y) {
+            //TODO Support arbitrary lines if necessary
+            throw new UnsupportedOperationException(
+                    "Can only deal with horizontal lines right now");
+        }
+
+        saveGraphicsState();
+        int half = width / 2;
+        int starty = start.y - half;
+        Rectangle boundingRect = new Rectangle(start.x, start.y - half, end.x - start.x, width);
+        switch (style.getEnumValue()) {
+        case Constants.EN_SOLID:
+        case Constants.EN_DASHED:
+        case Constants.EN_DOUBLE:
+            drawBorderLine(start.x, start.y - half, end.x, end.y + half,
+                    true, true, style.getEnumValue(), color);
+            break;
+        case Constants.EN_DOTTED:
+            generator.clipRect(boundingRect);
+            //This displaces the dots to the right by half a dot's width
+            //TODO There's room for improvement here
+            generator.add("1 0 0 1 " + format(half) + " 0 cm\n");
+            drawBorderLine(start.x, start.y - half, end.x, end.y + half,
+                    true, true, style.getEnumValue(), color);
+            break;
+        case Constants.EN_GROOVE:
+        case Constants.EN_RIDGE:
+            generator.setColor(PrintRenderer.lightenColor(color, 0.6f), true);
+            generator.add(format(start.x) + " " + format(starty) + " m\n");
+            generator.add(format(end.x) + " " + format(starty) + " l\n");
+            generator.add(format(end.x) + " " + format(starty + 2 * half) + " l\n");
+            generator.add(format(start.x) + " " + format(starty + 2 * half) + " l\n");
+            generator.add("h\n");
+            generator.add("f\n");
+            generator.setColor(color, true);
+            if (style == RuleStyle.GROOVE) {
+                generator.add(format(start.x) + " " + format(starty) + " m\n");
+                generator.add(format(end.x) + " " + format(starty) + " l\n");
+                generator.add(format(end.x) + " " + format(starty + half) + " l\n");
+                generator.add(format(start.x + half) + " " + format(starty + half) + " l\n");
+                generator.add(format(start.x) + " " + format(starty + 2 * half) + " l\n");
+            } else {
+                generator.add(format(end.x) + " " + format(starty) + " m\n");
+                generator.add(format(end.x) + " " + format(starty + 2 * half) + " l\n");
+                generator.add(format(start.x) + " " + format(starty + 2 * half) + " l\n");
+                generator.add(format(start.x) + " " + format(starty + half) + " l\n");
+                generator.add(format(end.x - half) + " " + format(starty + half) + " l\n");
+            }
+            generator.add("h\n");
+            generator.add("f\n");
+            break;
+        default:
+            throw new UnsupportedOperationException("rule style not supported");
+        }
+        restoreGraphicsState();
+    }
 
     static final String format(int coordinate) {
         return format(coordinate / 1000f);

@@ -21,6 +21,7 @@ package org.apache.fop.render.intermediate;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
@@ -50,6 +51,7 @@ import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
@@ -138,6 +140,7 @@ public class IFParser implements IFConstants {
             elementHandlers.put(EL_TEXT, new TextHandler());
             elementHandlers.put(EL_CLIP_RECT, new ClipRectHandler());
             elementHandlers.put(EL_RECT, new RectHandler());
+            elementHandlers.put(EL_LINE, new LineHandler());
             elementHandlers.put(EL_BORDER_RECT, new BorderRectHandler());
             elementHandlers.put(EL_IMAGE, new ImageHandler());
         }
@@ -467,13 +470,27 @@ public class IFParser implements IFConstants {
                 } catch (PropertyException pe) {
                     throw new IFException("Error parsing the fill attribute", pe);
                 }
-                Color strokeColor;
+                painter.fillRect(new Rectangle(x, y, width, height), fillColor);
+            }
+
+        }
+
+        private class LineHandler extends AbstractElementHandler {
+
+            public void startElement(Attributes attributes) throws IFException {
+                int x1 = Integer.parseInt(attributes.getValue("x1"));
+                int y1 = Integer.parseInt(attributes.getValue("y1"));
+                int x2 = Integer.parseInt(attributes.getValue("x2"));
+                int y2 = Integer.parseInt(attributes.getValue("y2"));
+                int width = Integer.parseInt(attributes.getValue("stroke-width"));
+                Color color;
                 try {
-                    strokeColor = getAttributeAsColor(attributes, "stroke");
+                    color = getAttributeAsColor(attributes, "color");
                 } catch (PropertyException pe) {
-                    throw new IFException("Error parsing the stroke attribute", pe);
+                    throw new IFException("Error parsing the fill attribute", pe);
                 }
-                painter.drawRect(new Rectangle(x, y, width, height), fillColor, strokeColor);
+                RuleStyle style = RuleStyle.valueOf(attributes.getValue("style"));
+                painter.drawLine(new Point(x1, y1), new Point(x2, y2), width, color, style);
             }
 
         }

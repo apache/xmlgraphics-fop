@@ -25,13 +25,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.util.ColorUtil;
 
 /**
  * Border properties.
- * Class to store border trait propties for the area tree.
+ * Class to store border trait properties for the area tree.
  */
 public class BorderProps implements Serializable {
 
@@ -89,45 +88,11 @@ public class BorderProps implements Serializable {
     }
 
     private String getStyleString() {
-        switch (style) {
-        case Constants.EN_NONE: return "none";
-        case Constants.EN_HIDDEN: return "hidden";
-        case Constants.EN_DOTTED: return "dotted";
-        case Constants.EN_DASHED: return "dashed";
-        case Constants.EN_SOLID: return "solid";
-        case Constants.EN_DOUBLE: return "double";
-        case Constants.EN_GROOVE: return "groove";
-        case Constants.EN_RIDGE: return "ridge";
-        case Constants.EN_INSET: return "inset";
-        case Constants.EN_OUTSET: return "outset";
-        default: throw new IllegalStateException("Illegal border style: " + style);
-        }
+        return BorderStyle.valueOf(style).getName();
     }
 
     private static int getConstantForStyle(String style) {
-        if ("none".equalsIgnoreCase(style)) {
-            return Constants.EN_NONE;
-        } else if ("hidden".equalsIgnoreCase(style)) {
-            return Constants.EN_HIDDEN;
-        } else if ("dotted".equalsIgnoreCase(style)) {
-            return Constants.EN_DOTTED;
-        } else if ("dashed".equalsIgnoreCase(style)) {
-            return Constants.EN_DASHED;
-        } else if ("solid".equalsIgnoreCase(style)) {
-            return Constants.EN_SOLID;
-        } else if ("double".equalsIgnoreCase(style)) {
-            return Constants.EN_DOUBLE;
-        } else if ("groove".equalsIgnoreCase(style)) {
-            return Constants.EN_GROOVE;
-        } else if ("ridge".equalsIgnoreCase(style)) {
-            return Constants.EN_RIDGE;
-        } else if ("inset".equalsIgnoreCase(style)) {
-            return Constants.EN_INSET;
-        } else if ("outset".equalsIgnoreCase(style)) {
-            return Constants.EN_OUTSET;
-        } else {
-            throw new IllegalStateException("Illegal border style: " + style);
-        }
+        return BorderStyle.valueOf(style).getEnumValue();
     }
 
     /** {@inheritDoc} */
