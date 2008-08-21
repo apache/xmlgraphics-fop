@@ -385,6 +385,47 @@
         </p>
       </answer>
     </faq>
+    <faq id="saxexception-mismatch">
+      <question>I get a SAXException: Mismatch: page-sequence vs. root
+        (or similar).</question>
+      <answer>
+        <p>
+          The full exception usually looks similar to this:
+        </p>
+        <source>Mismatch: page-sequence (http://www.w3.org/1999/XSL/Format) vs. root
+        (http://www.w3.org/1999/XSL/Format)</source>
+        <p>
+          This exception is usually a follow-up error after another exception. Sometimes
+          the original exception gets swallowed by Xalan's default <code>ErrorListener</code>
+          (should be fixed in the latest Xalan release).
+        </p>
+        <p>
+          The work-around is to set an explicit <code>ErrorListener</code> on the
+          <code>Transformer</code>. The <code>ErrorListener</code> can be as simple as this:
+        </p>
+        <source><![CDATA[
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.TransformerException;
+
+public class DefaultErrorListener implements ErrorListener {
+    
+    public void warning(TransformerException exc) {
+        System.err.println(exc.toString());
+    }
+
+    public void error(TransformerException exc)
+            throws TransformerException {
+        throw exc;
+    }
+
+    public void fatalError(TransformerException exc)
+            throws TransformerException {
+        throw exc;
+    }
+
+}]]></source>
+      </answer>
+    </faq>
   </part>
   <part id="part-output">
     <title>Problems with FOP output</title>
