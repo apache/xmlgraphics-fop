@@ -474,7 +474,6 @@ list of possible build targets.
       <pathelement location="${java14.jce.lib}"/>
       <pathelement location="${ant.home}/lib/ant.jar"/>
       <path refid="libs-build-classpath"/>
-      <path refid="libs-build-tools-classpath"/>
     </path>
     <!-- If we decide to use retroweaver for the actual weaving, the mkdir and
          destdir= will have to be removed. Also, the weaving task would additionally
