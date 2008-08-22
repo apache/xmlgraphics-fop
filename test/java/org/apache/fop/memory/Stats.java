@@ -26,8 +26,11 @@ class Stats {
 
     private static final int INTERVAL = 2000;
 
-    private long lastProgressDump = System.currentTimeMillis();
+    private long startTime = System.currentTimeMillis();
+    private long lastProgressDump = startTime;
     private int pagesProduced;
+
+    private int totalPagesProduced;
 
     private int step;
     private int stepCount;
@@ -44,6 +47,7 @@ class Stats {
 
     public void notifyPagesProduced(int count) {
         pagesProduced += count;
+        totalPagesProduced += count;
     }
 
     public void reset() {
@@ -62,6 +66,14 @@ class Stats {
         long ppm = 60000 * pagesProduced / duration;
         System.out.println("Speed: " + ppm + "ppm");
         samples.add(new Sample((int)ppm));
+    }
+
+    public void dumpFinalStats() {
+        long duration = System.currentTimeMillis() - startTime;
+        System.out.println("Final statistics");
+        System.out.println("Pages produced: " +totalPagesProduced);
+        long ppm = 60000 * totalPagesProduced / duration;
+        System.out.println("Average speed: " + ppm + "ppm");
     }
 
     public String getGoogleChartURL() {

@@ -52,7 +52,7 @@ public class MemoryEater {
     private FopFactory fopFactory = FopFactory.newInstance();
     private Templates replicatorTemplates;
 
-    private Stats stats = new Stats();
+    private Stats stats;
 
     public MemoryEater() throws TransformerConfigurationException, MalformedURLException {
         File xsltFile = new File("test/xsl/fo-replicator.xsl");
@@ -61,10 +61,12 @@ public class MemoryEater {
     }
 
     private void eatMemory(File foFile, int runRepeats, int replicatorRepeats) throws Exception {
+        stats = new Stats();
         for (int i = 0; i < runRepeats; i++) {
             eatMemory(i, foFile, replicatorRepeats);
             stats.progress(i, runRepeats);
         }
+        stats.dumpFinalStats();
         System.out.println(stats.getGoogleChartURL());
     }
 
