@@ -26,7 +26,6 @@ import org.apache.fop.events.BasicEventTestCase;
 import org.apache.fop.pdf.PDFObjectTestCase;
 import org.apache.fop.traits.BorderPropsTestCase;
 import org.apache.fop.util.ColorUtilTestCase;
-import org.apache.fop.util.DataURIResolverTestCase;
 import org.apache.fop.util.ElementListUtilsTestCase;
 import org.apache.fop.util.PDFNumberTestCase;
 import org.apache.fop.util.XMLResourceBundleTestCase;
@@ -49,7 +48,6 @@ public class UtilityCodeTestSuite {
         suite.addTest(new TestSuite(ColorUtilTestCase.class));
         suite.addTest(new TestSuite(BorderPropsTestCase.class));
         suite.addTest(new TestSuite(ElementListUtilsTestCase.class));
-        suite.addTest(new TestSuite(DataURIResolverTestCase.class));
         suite.addTest(new TestSuite(BasicEventTestCase.class));
         suite.addTest(new TestSuite(XMLResourceBundleTestCase.class));
         //$JUnit-END$
