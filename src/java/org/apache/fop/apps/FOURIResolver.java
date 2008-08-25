@@ -49,7 +49,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
     private Log log = LogFactory.getLog("FOP");
 
     /** Common URIResolver */
-    private URIResolver commonURIResolver = CommonURIResolver.getInstance();
+    private CommonURIResolver commonURIResolver = new CommonURIResolver();
 
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
