@@ -592,8 +592,10 @@ Check the following:</p>
         text flows into adjacent cells/block, obscuring stuff there.</question>
       <answer>
         <p>
-          Clipping as specified by the <code>overflow="hidden"</code> is not yet
-          implemented.  If you have long words overflowing table cells, try to
+          Since the <code>overflow</code> property doesn't apply to table-cell, you
+          can wrap the cell content in a block-container and specify
+          <code>overflow="hidden"</code> there. Alternatively,
+          if you have long words overflowing table cells, try to
           get them hyphenated. Artificial names like product identifications or
           long numbers usually aren't hyphenated. You can try special processing
           at XSLT level, like
@@ -614,6 +616,15 @@ Check the following:</p>
           Check the <link href="http://dpawson.co.uk/xsl">XSL FAQ</link> and the
           <link href="http://www.mulberrytech.com/xsl/xsl-list/">XSL list
           archive</link> for how to perform these tasks.
+        </p>
+        <p>
+          If your text is not hyphenated at all and overflows the cell, please check
+          if you've specified <code>keep-together="always"</code> on the table-cell
+          or one of its parent elements. <code>keep-together="always"</code> implicitely
+          also sets <code>keep-together.within-line="always"</code> which forbids FOP
+          to break the text into multiple lines. This is important as FOP supports inline-level
+          keeps since version 0.94. It's a good idea not to use the shorthand
+          <code>keep-together="always"</code> at all!
         </p>
       </answer>
     </faq>
