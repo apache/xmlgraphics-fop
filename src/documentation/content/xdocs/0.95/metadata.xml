@@ -65,7 +65,7 @@
         <!-- Dublin Core properties go here -->
         <dc:title>Document title</dc:title>
         <dc:creator>Document author</dc:creator>
-        <dc:description>Document subject</dc:subject>
+        <dc:description>Document subject</dc:description>
       </rdf:Description>
       <rdf:Description rdf:about=""
           xmlns:xmp="http://ns.adobe.com/xap/1.0/">
