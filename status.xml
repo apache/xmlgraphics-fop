@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="JM" type="fix">
+        Fixed memory leak in property cache (not cleaning stale PropertyCache$CacheEntry instances).
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed text stroking in SVG when the stroke-width is zero.
       </action>

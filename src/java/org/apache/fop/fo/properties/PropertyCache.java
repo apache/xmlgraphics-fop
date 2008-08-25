@@ -33,9 +33,12 @@ import java.lang.ref.WeakReference;
  */
 public final class PropertyCache {
 
+    private static final int SEGMENT_COUNT = 32; //0x20
+    private static final int INITIAL_BUCKET_COUNT = SEGMENT_COUNT;
+
     /** bitmask to apply to the hash to get to the
      *  corresponding cache segment */
-    private static final int SEGMENT_MASK = 0x1F;
+    private static final int SEGMENT_MASK = SEGMENT_COUNT - 1; //0x1F
     /**
      * Indicates whether the cache should be used at all
      * Can be controlled by the system property:
@@ -44,13 +47,13 @@ public final class PropertyCache {
     private final boolean useCache;
 
     /** the segments array (length = 32) */
-    private CacheSegment[] segments = new CacheSegment[SEGMENT_MASK + 1];
+    private CacheSegment[] segments = new CacheSegment[SEGMENT_COUNT];
     /** the table of hash-buckets */
-    private CacheEntry[] table = new CacheEntry[8];
+    private CacheEntry[] table = new CacheEntry[INITIAL_BUCKET_COUNT];
 
     private Class runtimeType;
 
-    final boolean[] votesForRehash = new boolean[SEGMENT_MASK + 1];
+    private boolean[] votesForRehash = new boolean[SEGMENT_COUNT];
 
     /* same hash function as used by java.util.HashMap */
     private static int hash(Object x) {
@@ -72,53 +75,61 @@ public final class PropertyCache {
     }
 
     /* Class modeling a cached entry */
-    private final class CacheEntry extends WeakReference {
-        volatile CacheEntry nextEntry;
-        final int hash;
+    private static class CacheEntry extends WeakReference {
+        private volatile CacheEntry nextEntry;
+        private final int hash;
 
         /* main constructor */
         public CacheEntry(Object p, CacheEntry nextEntry, ReferenceQueue refQueue) {
             super(p, refQueue);
             this.nextEntry = nextEntry;
-            this.hash = p.hashCode();
+            this.hash = hash(p);
+        }
+
+        /* main constructor */
+        public CacheEntry(Object p, CacheEntry nextEntry) {
+            super(p);
+            this.nextEntry = nextEntry;
+            this.hash = hash(p);
         }
 
     }
 
     /* Wrapper objects to synchronize on */
-    private final class CacheSegment {
+    private static class CacheSegment {
         private int count = 0;
-        private volatile ReferenceQueue staleEntries = new ReferenceQueue();
     }
 
     private void cleanSegment(int segmentIndex) {
-        CacheEntry entry;
         CacheSegment segment = segments[segmentIndex];
-        int bucketIndex;
+
         int oldCount = segment.count;
 
-        while ((entry = (CacheEntry) segment.staleEntries.poll()) != null) {
-            bucketIndex = hash(entry.hash) & (table.length - 1);
-            /* remove obsolete entry */
-            /* 1. move to the corresponding entry */
+        /* clean all buckets in this segment */
+        for (int bucketIndex = segmentIndex;
+                    bucketIndex < table.length;
+                    bucketIndex += SEGMENT_COUNT) {
             CacheEntry prev = null;
-            CacheEntry e = table[bucketIndex];
-            while (e != null
-                    && e.nextEntry != null
-                    && e.hash != entry.hash) {
-                prev = e;
-                e = e.nextEntry;
+            CacheEntry entry = table[bucketIndex];
+            if (entry == null) {
+                continue;
             }
-            if (e != null) {
-                /* 2. remove reference from the chain */
-                if (prev == null) {
-                    table[bucketIndex] = e.nextEntry;
+            do {
+                if (entry.get() == null) {
+                    if (prev == null) {
+                        table[bucketIndex] = entry.nextEntry;
+                    } else {
+                        prev.nextEntry = entry.nextEntry;
+                    }
+                    segment.count--;
+                    assert segment.count >= 0;
                 } else {
-                    prev.nextEntry = e.nextEntry;
+                    prev = entry;
                 }
-                segment.count--;
-            }
+                entry = entry.nextEntry;
+            } while (entry != null);
         }
+
         synchronized (votesForRehash) {
             if (oldCount > segment.count) {
                 votesForRehash[segmentIndex] = false;
@@ -129,7 +140,7 @@ public final class PropertyCache {
                 /* first time for this segment */
                 votesForRehash[segmentIndex] = true;
                 int voteCount = 0;
-                for (int i = SEGMENT_MASK + 1; --i >= 0; ) {
+                for (int i = SEGMENT_MASK + 1; --i >= 0;) {
                     if (votesForRehash[i]) {
                         voteCount++;
                     }
@@ -156,14 +167,15 @@ public final class PropertyCache {
     private void put(Object o) {
 
         int hash = hash(o);
-        CacheSegment segment = segments[hash & SEGMENT_MASK];
+        int segmentIndex = hash & SEGMENT_MASK;
+        CacheSegment segment = segments[segmentIndex];
 
         synchronized (segment) {
             int index = hash & (table.length - 1);
             CacheEntry entry = table[index];
 
             if (entry == null) {
-                entry = new CacheEntry(o, null, segment.staleEntries);
+                entry = new CacheEntry(o, null);
                 table[index] = entry;
                 segment.count++;
             } else {
@@ -171,14 +183,14 @@ public final class PropertyCache {
                 if (eq(p, o)) {
                     return;
                 } else {
-                    CacheEntry newEntry = new CacheEntry(o, entry, segment.staleEntries);
+                    CacheEntry newEntry = new CacheEntry(o, entry);
                     table[index] = newEntry;
                     segment.count++;
                 }
             }
 
             if (segment.count > (2 * table.length)) {
-                cleanSegment(hash & SEGMENT_MASK);
+                  cleanSegment(segmentIndex);
             }
         }
     }
@@ -195,7 +207,7 @@ public final class PropertyCache {
 
         /* try non-synched first */
         for (CacheEntry e = entry; e != null; e = e.nextEntry) {
-            if (e.hash == o.hashCode()
+            if (e.hash == hash
                     && (q = e.get()) != null
                     &&  eq(q, o)) {
                 return q;
@@ -209,7 +221,7 @@ public final class PropertyCache {
         synchronized (segment) {
             entry = table[index];
             for (CacheEntry e = entry; e != null; e = e.nextEntry) {
-                if (e.hash == o.hashCode()
+                if (e.hash == hash
                         && (q = e.get()) != null
                         &&  eq(q, o)) {
                     return q;
@@ -235,7 +247,7 @@ public final class PropertyCache {
                 /* double the amount of buckets */
                 int newLength = table.length << 1;
                 if (newLength > 0) { //no overflow?
-                    /* reset segmentcounts */
+                    /* reset segment counts */
                     for (int i = segments.length; --i >= 0;) {
                         segments[i].count = 0;
                     }
@@ -250,8 +262,7 @@ public final class PropertyCache {
                             if ((o = c.get()) != null) {
                                 hash = c.hash;
                                 idx = hash & newLength;
-                                newTable[idx] = new CacheEntry(o, newTable[idx],
-                                        segments[hash & SEGMENT_MASK].staleEntries);
+                                newTable[idx] = new CacheEntry(o, newTable[idx]);
                                 segments[hash & SEGMENT_MASK].count++;
                             }
                         }
@@ -313,7 +324,7 @@ public final class PropertyCache {
      *  @param prop the Property instance to check for
      *  @return the cached instance
      */
-    public final Property fetch(Property prop) {
+    public Property fetch(Property prop) {
 
         return (Property) fetch((Object) prop);
     }
@@ -326,7 +337,7 @@ public final class PropertyCache {
      *  @param chy the CommonHyphenation instance to check for
      *  @return the cached instance
      */
-    public final CommonHyphenation fetch(CommonHyphenation chy) {
+    public CommonHyphenation fetch(CommonHyphenation chy) {
 
         return (CommonHyphenation) fetch((Object) chy);
     }
@@ -339,7 +350,7 @@ public final class PropertyCache {
      *  @param cf the CommonFont instance to check for
      *  @return the cached instance
      */
-    public final CommonFont fetch(CommonFont cf) {
+    public CommonFont fetch(CommonFont cf) {
 
         return (CommonFont) fetch((Object) cf);
     }
@@ -352,21 +363,21 @@ public final class PropertyCache {
      *  @param cbpb the CommonBorderPaddingBackground instance to check for
      *  @return the cached instance
      */
-    public final CommonBorderPaddingBackground fetch(CommonBorderPaddingBackground cbpb) {
+    public CommonBorderPaddingBackground fetch(CommonBorderPaddingBackground cbpb) {
 
         return (CommonBorderPaddingBackground) fetch((Object) cbpb);
     }
 
     /**
-     *  Checks if the given {@link CommonBorderPaddingBackground.BorderInfo} is present in the cache -
-     *  if so, returns a reference to the cached instance.
+     *  Checks if the given {@link CommonBorderPaddingBackground.BorderInfo} is present
+     *  in the cache - if so, returns a reference to the cached instance.
      *  Otherwise the given object is added to the cache and returned.
      *
      *  @param bi the BorderInfo instance to check for
      *  @return the cached instance
      */
-    public final CommonBorderPaddingBackground.BorderInfo fetch(CommonBorderPaddingBackground.BorderInfo bi) {
-
+    public CommonBorderPaddingBackground.BorderInfo fetch(
+            CommonBorderPaddingBackground.BorderInfo bi) {
         return (CommonBorderPaddingBackground.BorderInfo) fetch((Object) bi);
     }
 
