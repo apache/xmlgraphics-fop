@@ -28,9 +28,6 @@
   <body>
     <section id="overview">
       <title>Overview</title>
-      <warning>
-        Support for PDF/A is available beginning with version 0.92.
-      </warning>
       <p>
         PDF/A is a standard which turns PDF into an "electronic document file 
         format for long-term preservation". PDF/A-1 is the first part of the 
