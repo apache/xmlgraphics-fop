@@ -393,6 +393,7 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
     /** {@inheritDoc} */
     public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
         //Note: dy is currently ignored
+        generator.updateColor(state.getTextColor(), true, null);
         generator.beginTextObject();
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
@@ -401,7 +402,6 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
         String fontKey = fontInfo.getInternalFontKey(triplet);
         int sizeMillipoints = state.getFontSize();
         float fontSize = sizeMillipoints / 1000f;
-        generator.updateColor(state.getTextColor(), true, null);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface tf = getTypeface(fontKey);
@@ -442,7 +442,8 @@ public class PDFPainter extends AbstractBinaryWritingIFPainter {
                 if (CharUtilities.isFixedWidthSpace(orgChar)) {
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
                     ch = font.mapChar(CharUtilities.SPACE);
-                    glyphAdjust = -(font.getCharWidth(ch) - font.getCharWidth(orgChar));
+                    int spaceDiff = font.getCharWidth(ch) - font.getCharWidth(orgChar);
+                    glyphAdjust = -(10 * spaceDiff / fontSize);
                 } else {
                     ch = font.mapChar(orgChar);
                 }
