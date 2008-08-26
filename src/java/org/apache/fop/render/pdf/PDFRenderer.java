@@ -1226,6 +1226,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
                         + area.getIPD();
         Color col = (Color)area.getTrait(Trait.COLOR);
 
+        endTextObject();
         borderPainter.drawLine(new Point(startx, starty), new Point(endx, starty),
                 ruleThickness, col, RuleStyle.valueOf(style));
         super.renderLeader(area);
