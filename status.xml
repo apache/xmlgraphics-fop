@@ -53,6 +53,12 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="JM" type="fix" importance="high">
+        Fixed memory leak in property cache (not cleaning stale PropertyCache$CacheEntry instances).
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed text stroking in SVG when the stroke-width is zero.
+      </action>
       <action context="Layout" dev="JM" type="fix">
         Fixed the source for a division by zero when the content of an fo:leader with
         leader-pattern="use-content" collapses to zero width during layout.
@@ -135,7 +141,7 @@
         Fixed a ClassCastException when using an fo:wrapper as a child
         of an fo:block-container.
       </action>
-      <action context="Fonts" dev="AC" type="add">
+      <action context="Fonts" dev="AC" type="add" importance="high">
         Add support for font substitution.
       </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="43650">
@@ -158,7 +164,7 @@
         Add partial support for the "show-destination" property on fo:basic-link
         (PDF output only; see limitations on the compliance page)
       </action>
-      <action context="Layout" dev="JM" type="add">
+      <action context="Layout" dev="JM" type="add" importance="high">
         Added minimal support for integer keep values on the various keep properties on block-level
         FOs. For now, all integer values are treated the same (i.e. without strength distinction).
         Using integers allows to avoid overflows that can happen when "always" is used extensively.
@@ -186,7 +192,7 @@
         When a JPEG image is embedded, an optionally embedded color profile is filtered out
         as it's already embedded separately in the PDF file.
       </action>
-      <action context="Fonts" dev="JM" type="add">
+      <action context="Fonts" dev="JM" type="add" importance="high">
         Added support for addressing all glyphs available in a Type 1 font, not just the ones
         in the font's primary encoding.
       </action>
@@ -685,7 +691,7 @@
       <action context="Code" dev="JM" type="fix">
         AFP Renderer: Bugfix for 1 bit images where the width is not a multiple of 8.
       </action>
-      <action context="Code" dev="MM" type="add">
+      <action context="Code" dev="MM" type="add" importance="high">
         Support for keep-together.within-line="always".
       </action>
       <action context="Code" dev="MM" type="fix">

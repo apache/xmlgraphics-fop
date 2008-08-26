@@ -34,14 +34,12 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.xmlgraphics.util.io.Base64EncodeStream;
-
-import org.apache.fop.util.DataURIResolver;
+import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 
 /**
  * Provides FOP specific URI resolution. This is the default URIResolver
- * {@link FOUserAgent} will use unless overidden.
+ * {@link FOUserAgent} will use unless overridden.
  *
  * @see javax.xml.transform.URIResolver
  */
@@ -50,8 +48,8 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
     // log
     private Log log = LogFactory.getLog("FOP");
 
-    /** URIResolver for RFC 2397 data URLs */
-    private URIResolver dataURIResolver = new DataURIResolver();
+    /** Common URIResolver */
+    private CommonURIResolver commonURIResolver = new CommonURIResolver();
 
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
@@ -152,7 +150,7 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
 
         // data URLs can be quite long so evaluate early and don't try to build a File
         // (can lead to problems)
-        source = dataURIResolver.resolve(href, base);
+        source = commonURIResolver.resolve(href, base);
 
         // Custom uri resolution
         if (source == null && uriResolver != null) {

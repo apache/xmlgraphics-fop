@@ -24,68 +24,72 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 /**
- * An OutputStream wrapper for a Writer.
+ * @deprecated
+ * @see org.apache.xmlgraphics.util.WriterOutputStream
  */
 public class WriterOutputStream extends OutputStream {
 
-    private Writer writer;
-    private String encoding;
+    private final org.apache.xmlgraphics.util.WriterOutputStream writerOutputStream;
 
     /**
-     * Creates a new WriterOutputStream.
-     * @param writer the Writer to write to
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.WriterOutputStream#WriterOutputStream(Writer)
+     *      String)
      */
     public WriterOutputStream(Writer writer) {
-        this(writer, null);
+        writerOutputStream = new org.apache.xmlgraphics.util.WriterOutputStream(
+                writer);
     }
 
     /**
-     * Creates a new WriterOutputStream.
-     * @param writer the Writer to write to
-     * @param encoding the encoding to use, or null if the default encoding should be used
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.WriterOutputStream#WriterOutputStream(Writer,
+     *      String) String)
      */
     public WriterOutputStream(Writer writer, String encoding) {
-        this.writer = writer;
-        this.encoding = encoding;
+        writerOutputStream = new org.apache.xmlgraphics.util.WriterOutputStream(
+                writer, encoding);
     }
 
     /**
-     * {@inheritDoc}
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.WriterOutputStream#close()
      */
     public void close() throws IOException {
-        writer.close();
+        writerOutputStream.close();
     }
 
     /**
-     * {@inheritDoc}
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.WriterOutputStream#flush()
      */
     public void flush() throws IOException {
-        writer.flush();
+        writerOutputStream.flush();
     }
 
     /**
-     * {@inheritDoc}
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.WriterOutputStream#write(byte[], int,
+     *      int)
      */
     public void write(byte[] buf, int offset, int length) throws IOException {
-        if (encoding != null) {
-            writer.write(new String(buf, offset, length, encoding));
-        } else {
-            writer.write(new String(buf, offset, length));
-        }
+        writerOutputStream.write(buf, offset, length);
     }
 
     /**
-     * {@inheritDoc}
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.WriterOutputStream#write(byte[])
      */
     public void write(byte[] buf) throws IOException {
-        write(buf, 0, buf.length);
+        writerOutputStream.write(buf);
     }
 
     /**
-     * {@inheritDoc}
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.WriterOutputStream#write(int)
      */
     public void write(int b) throws IOException {
-        write(new byte[] {(byte)b});
+        writerOutputStream.write(b);
     }
 
 }

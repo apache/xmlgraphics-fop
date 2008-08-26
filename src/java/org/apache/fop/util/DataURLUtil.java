@@ -21,47 +21,33 @@ package org.apache.fop.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.io.Writer;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.xmlgraphics.util.io.Base64EncodeStream;
-
 /**
- * Utility classes for generating RFC 2397 data URLs.
+ * @deprecated
+ * @see org.apache.xmlgraphics.util.uri.DataURLUtil
  */
 public class DataURLUtil {
 
     /**
-     * Creates a new data URL and returns it as a String.
-     * @param in the InputStream to read the data from
-     * @param mediatype the MIME type of the content, or null
-     * @return the newly created data URL
-     * @throws IOException if an I/O error occurs
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.uri.DataURLUtil#createDataURL(InputStream,
+     *      String)
      */
-    public static String createDataURL(InputStream in, String mediatype) throws IOException {
-        StringWriter writer = new StringWriter();
-        writeDataURL(in, mediatype, writer);
-        return writer.toString();
+    public static String createDataURL(InputStream in, String mediatype)
+            throws IOException {
+        return org.apache.xmlgraphics.util.uri.DataURLUtil.createDataURL(in,
+                mediatype);
     }
 
     /**
-     * Generates a data URL and writes it to a Writer.
-     * @param in the InputStream to read the data from
-     * @param mediatype the MIME type of the content, or null
-     * @param writer the Writer to write to
-     * @throws IOException if an I/O error occurs
+     * @deprecated
+     * @see org.apache.xmlgraphics.util.uri.DataURLUtil#writeDataURL(InputStream,
+     *      String, Writer)
      */
-    public static void writeDataURL(InputStream in, String mediatype, Writer writer)
-            throws IOException {
-        writer.write("data:");
-        if (mediatype != null) {
-            writer.write(mediatype);
-        }
-        writer.write(";base64,");
-        Base64EncodeStream out = new Base64EncodeStream(
-                new WriterOutputStream(writer, "US-ASCII"));
-        IOUtils.copy(in, out);
-        out.flush();
+    public static void writeDataURL(InputStream in, String mediatype,
+            Writer writer) throws IOException {
+        org.apache.xmlgraphics.util.uri.DataURLUtil.writeDataURL(in, mediatype,
+                writer);
     }
 }
