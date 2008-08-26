@@ -1054,7 +1054,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
             boolean startOrBefore, int style, Color col) {
-        log.warn("drawBorderLine() not properly implemented, yet");
+        //Simplified implementation that is only used by renderTextDecoration()
+        //drawBorders() is overridden and uses the Painter's high-level method drawBorderRect()
         updateColor(col, true);
         fillRect(x1, y1, x2 - x1, y2 - y1);
     }
