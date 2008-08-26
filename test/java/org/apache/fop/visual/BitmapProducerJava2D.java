@@ -38,6 +38,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.util.DefaultErrorListener;
 
 /**
  * BitmapProducer implementation that uses the Java2DRenderer to create bitmaps.
@@ -80,6 +81,7 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
                 SAXResult res = new SAXResult(fop.getDefaultHandler());
 
                 Transformer transformer = getTransformer(context);
+                transformer.setErrorListener(new DefaultErrorListener(log));
                 transformer.transform(new StreamSource(src), res);
             } finally {
                 IOUtils.closeQuietly(out);

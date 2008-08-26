@@ -39,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.util.DefaultErrorListener;
 
 /**
  * BitmapProducer implementation that uses the PS or PDF renderer and an external converter
@@ -135,6 +136,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
                     SAXResult res = new SAXResult(fop.getDefaultHandler());
 
                     Transformer transformer = getTransformer(context);
+                    transformer.setErrorListener(new DefaultErrorListener(log));
                     transformer.transform(new StreamSource(src), res);
                 } finally {
                     IOUtils.closeQuietly(out);
