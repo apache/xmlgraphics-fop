@@ -28,6 +28,24 @@ import java.awt.geom.AffineTransform;
 public final class UnitConv {
 
     /**
+     * conversion factory from millimeters to inches.
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2MM instead.
+     */
+    public static final float IN2MM = org.apache.xmlgraphics.util.UnitConv.IN2MM;
+
+    /**
+     * conversion factory from centimeters to inches.
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2CM instead.
+     */
+    public static final float IN2CM = org.apache.xmlgraphics.util.UnitConv.IN2CM;
+
+    /**
+     * conversion factory from inches to points.
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2PT instead.
+     */
+    public static final int IN2PT = org.apache.xmlgraphics.util.UnitConv.IN2PT;
+
+    /**
      * Converts millimeters (mm) to points (pt)
      * @param mm the value in mm
      * @return the value in pt
