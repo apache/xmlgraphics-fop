@@ -1060,7 +1060,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     private int toMillipoints(float coordinate) {
-        return (int)(coordinate * 1000);
+        return Math.round(coordinate * 1000);
     }
 
     private Rectangle toMillipointRectangle(float x, float y, float width, float height) {
