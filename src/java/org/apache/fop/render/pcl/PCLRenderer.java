@@ -80,7 +80,6 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
@@ -108,18 +107,13 @@ import org.apache.fop.util.UnitConv;
 /**
  * Renderer for the PCL 5 printer language. It also uses HP GL/2 for certain graphic elements.
  */
-public class PCLRenderer extends PrintRenderer {
+public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PCLRenderer.class);
 
     /** The MIME type for PCL */
     public static final String MIME_TYPE = MimeConstants.MIME_PCL_ALT;
-
-    private static final QName CONV_MODE
-            = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
-    private static final QName SRC_TRANSPARENCY
-            = new QName(ExtensionElementMapping.URI, null, "source-transparency");
 
     /** The OutputStream to write the PCL stream to */
     protected OutputStream out;
@@ -548,18 +542,7 @@ public class PCLRenderer extends PrintRenderer {
         AffineTransform at = graphicContext.getTransform();
         int newDir;
         try {
-            if (at.getScaleX() == 0 && at.getScaleY() == 0
-                    && at.getShearX() == 1 && at.getShearY() == -1) {
-                newDir = 90;
-            } else if (at.getScaleX() == -1 && at.getScaleY() == -1
-                    && at.getShearX() == 0 && at.getShearY() == 0) {
-                newDir = 180;
-            } else if (at.getScaleX() == 0 && at.getScaleY() == 0
-                    && at.getShearX() == -1 && at.getShearY() == 1) {
-                newDir = 270;
-            } else {
-                newDir = 0;
-            }
+            newDir = PCLRenderingUtil.determinePrintDirection(at);
             if (newDir != this.currentPrintDirection) {
                 this.currentPrintDirection = newDir;
                 gen.changePrintDirection(this.currentPrintDirection);
