@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.fop.util.store.Streamable;
+import org.apache.fop.render.afp.Streamable;
 
 /**
  * A Resource Group contains a set of overlays.

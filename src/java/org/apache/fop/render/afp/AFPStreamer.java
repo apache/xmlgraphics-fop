@@ -35,7 +35,7 @@ import org.apache.fop.render.afp.modca.DataStream;
 import org.apache.fop.render.afp.modca.Factory;
 import org.apache.fop.render.afp.modca.ResourceGroup;
 import org.apache.fop.render.afp.modca.StreamedResourceGroup;
-import org.apache.fop.util.store.Streamable;
+import org.apache.fop.render.afp.Streamable;
 
 /**
  * Manages the streaming of the AFP output

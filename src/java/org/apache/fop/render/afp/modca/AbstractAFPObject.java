@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.util.store.Streamable;
+import org.apache.fop.render.afp.Streamable;
 
 /**
  * This is the base class for all data stream objects. Page objects are

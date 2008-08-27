@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import org.apache.fop.util.store.Streamable;
+import org.apache.fop.render.afp.Streamable;
 
 /**
  * The document is the highest level of the MO:DCA data-stream document

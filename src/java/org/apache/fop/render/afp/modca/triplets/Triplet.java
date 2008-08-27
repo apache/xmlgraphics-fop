@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.fop.render.afp.AFPConstants;
-import org.apache.fop.util.store.Streamable;
+import org.apache.fop.render.afp.Streamable;
 
 /**
  * A simple implementation of a MOD:CA triplet
