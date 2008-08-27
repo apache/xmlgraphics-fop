@@ -53,6 +53,10 @@ import org.apache.fop.util.UnitConv;
  */
 public class PCLGenerator {
 
+    private static final String US_ASCII = "US-ASCII";
+
+    private static final String ISO_8859_1 = "ISO-8859-1";
+
     /** The ESC (escape) character */
     public static final char ESC = '\033';
 
@@ -114,6 +118,14 @@ public class PCLGenerator {
         return this.out;
     }
 
+    /**
+     * Returns the currently active text encoding.
+     * @return the text encoding
+     */
+    public String getTextEncoding() {
+        return ISO_8859_1;
+    }
+
     /** @return the maximum resolution to encode bitmap images at */
     public int getMaximumBitmapResolution() {
         return this.maxBitmapResolution;
@@ -126,7 +138,7 @@ public class PCLGenerator {
      */
     public void writeCommand(String cmd) throws IOException {
         out.write(27); //ESC
-        out.write(cmd.getBytes("US-ASCII"));
+        out.write(cmd.getBytes(US_ASCII));
     }
 
     /**
@@ -135,7 +147,7 @@ public class PCLGenerator {
      * @throws IOException In case of an I/O error
      */
     public void writeText(String s) throws IOException {
-        out.write(s.getBytes("ISO-8859-1"));
+        out.write(s.getBytes(ISO_8859_1));
     }
 
     /**

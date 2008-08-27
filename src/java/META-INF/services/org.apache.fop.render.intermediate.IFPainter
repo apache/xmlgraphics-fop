@@ -1,1 +1,2 @@
 org.apache.fop.render.pdf.PDFPainterMaker
+org.apache.fop.render.pcl.PCLPainterMaker
