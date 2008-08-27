@@ -50,6 +50,7 @@ public class UtilityCodeTestSuite {
         suite.addTest(new TestSuite(ElementListUtilsTestCase.class));
         suite.addTest(new TestSuite(BasicEventTestCase.class));
         suite.addTest(new TestSuite(XMLResourceBundleTestCase.class));
+        suite.addTest(new TestSuite(URIResolutionTestCase.class));
         //$JUnit-END$
         return suite;
     }

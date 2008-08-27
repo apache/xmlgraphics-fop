@@ -51,7 +51,7 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fo.FOValidationEventProducer.flowNameNotMapped">The flow-name "{flowName}" on {elementName} could not be mapped to a region-name in the layout-master-set.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.masterNotFound">The master-reference "{masterReference}" on {elementName} matches no simple-page-master or page-sequence-master.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.illegalRegionName">The region-name "{regionName}" for {elementName} is not permitted.{{locator}}</message>
-  <message key="org.apache.fop.fo.FOValidationEventProducer.nonZeroBorderPaddingOnRegion">Border and padding for {elementName} "{regionName}" must be '0' (See 6.4.13 in XSL 1.0).{{locator}}</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.nonZeroBorderPaddingOnRegion">Border and padding for {elementName} "{regionName}" should be '0' (See 6.4.14 in XSL 1.1); non-standard values are allowed if relaxed validation is enabled. {{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.columnCountErrorOnRegionBodyOverflowScroll">If overflow property is set to "scroll" on {elementName}, a column-count other than "1" may not be specified.{{locator}}</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.invalidFORoot">First element must be the fo:root formatting object. Found {elementName} instead. Please make sure you're producing a valid XSL-FO document.</message>
   <message key="org.apache.fop.fo.FOValidationEventProducer.emptyDocument">Document is empty (something might be wrong with your XSLT stylesheet).</message>
