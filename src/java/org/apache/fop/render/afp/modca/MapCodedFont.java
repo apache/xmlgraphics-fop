@@ -57,7 +57,7 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         byte[] startData = new byte[9];

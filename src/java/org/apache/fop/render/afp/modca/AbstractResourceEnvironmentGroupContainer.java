@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,11 +22,10 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.modca.resource.ResourceManager;
 
 /**
- * An abstract class which encapsulates the common features of 
- * Document and PageGroup resource containers 
+ * An abstract class which encapsulates the common features of
+ * Document and PageGroup resource containers
  */
 public abstract class AbstractResourceEnvironmentGroupContainer
     extends AbstractResourceGroupContainer {
@@ -38,17 +37,18 @@ public abstract class AbstractResourceEnvironmentGroupContainer
 
     /**
      * Main constructor
-     * 
-     * @param resourceManager the resource manager 
+     *
+     * @param factory the object factory
      * @param name the name of this resource container
      */
-    public AbstractResourceEnvironmentGroupContainer(ResourceManager resourceManager, String name) {
-        super(resourceManager, name);
+    public AbstractResourceEnvironmentGroupContainer(
+            Factory factory, String name) {
+        super(factory, name);
     }
 
     /**
      * Adds a page to the resource container.
-     * 
+     *
      * @param page - the Page object
      */
     public void addPage(PageObject page) {
@@ -57,7 +57,7 @@ public abstract class AbstractResourceEnvironmentGroupContainer
 
     /**
      * Adds a PageGroup to the resource container.
-     * 
+     *
      * @param pageGroup the PageGroup object
      */
     public void addPageGroup(PageGroup pageGroup) {
@@ -78,13 +78,13 @@ public abstract class AbstractResourceEnvironmentGroupContainer
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (resourceEnvironmentGroup != null) {
-            resourceEnvironmentGroup.write(os);
+            resourceEnvironmentGroup.writeToStream(os);
         }
     }
-    
+
     /**
      * Returns the resource environment group
-     * 
+     *
      * @return the resource environment group
      */
     protected ResourceEnvironmentGroup getResourceEnvironmentGroup() {
@@ -92,5 +92,5 @@ public abstract class AbstractResourceEnvironmentGroupContainer
             this.resourceEnvironmentGroup = new ResourceEnvironmentGroup();
         }
         return this.resourceEnvironmentGroup;
-    }    
+    }
 }

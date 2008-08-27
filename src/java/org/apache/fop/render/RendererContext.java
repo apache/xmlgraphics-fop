@@ -32,10 +32,10 @@ import org.apache.fop.apps.FOUserAgent;
  */
 public class RendererContext {
 
-    private String mime;
-    private AbstractRenderer renderer;
+    private final String mime;
+    private final AbstractRenderer renderer;
     private FOUserAgent userAgent;
-    private Map props = new java.util.HashMap();
+    private final Map props = new java.util.HashMap();
 
     /**
      * Contructor for this class. It takes a MIME type as parameter.
@@ -158,6 +158,19 @@ public class RendererContext {
         /** @return the foreign attributes */
         public Map getForeignAttributes() {
             return (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return "RendererContextWrapper{"
+                + "userAgent=" + getUserAgent()
+                + "x=" + getCurrentXPosition()
+                + "y=" + getCurrentYPosition()
+                + "width=" + getWidth()
+                + "height=" + getHeight()
+                + "foreignAttributes=" + getForeignAttributes()
+            + "}";
+
         }
     }
 }

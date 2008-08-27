@@ -27,18 +27,11 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.render.afp.AFPFontAttributes;
+import org.apache.fop.render.afp.AFPResourceLevel;
 import org.apache.fop.render.afp.LineDataInfo;
 import org.apache.fop.render.afp.TextDataInfo;
-import org.apache.fop.render.afp.DataObjectInfo;
-import org.apache.fop.render.afp.ObjectAreaInfo;
-import org.apache.fop.render.afp.ResourceInfo;
-import org.apache.fop.render.afp.ResourceLevel;
 import org.apache.fop.render.afp.fonts.AFPFont;
-import org.apache.fop.render.afp.modca.resource.ResourceFactory;
-import org.apache.fop.render.afp.modca.resource.ResourceManager;
-import org.apache.fop.render.afp.modca.resource.StoreInfo;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 
 /**
@@ -56,7 +49,7 @@ import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
  * is accommodated by including resource objects in the documents that reference
  * them.
  */
-public class AFPDataStream extends AbstractResourceGroupContainer {
+public class DataStream {
 
     /** Static logging instance */
     protected static Log log = LogFactory.getLog("org.apache.fop.render.afp.modca");
@@ -67,7 +60,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     /** The application producing the AFP document */
     // not used
     // private String producer = null;
-    
+
     /** The AFP document object */
     private Document document = null;
 
@@ -92,30 +85,37 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     /** The rotation */
     private int orientation;
 
-    /** The outputstream for the data stream */
-    private OutputStream outputStream = null;
-
-    /** Maintain a reference count of instream objects for referencing purposes */
-    private int instreamObjectCount = 0;
-
     /** The MO:DCA interchange set in use (default to MO:DCA-P IS/2 set) */
     private InterchangeSet interchangeSet
         = InterchangeSet.valueOf(InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
 
-    private ResourceFactory factory;
+    private final Factory factory;
+
+    private OutputStream outputStream;
 
     /**
-     * Default constructor for the AFPDataStream.
+     * Default constructor for the AFPDocumentStream.
+     *
+     * @param factory the resource factory
+     * @param outputStream the outputstream to write to
      */
-    public AFPDataStream() {
-        this.resourceManager = new ResourceManager();
-        this.factory = resourceManager.getFactory();
-        this.document = factory.createDocument();
+    public DataStream(Factory factory, OutputStream outputStream) {
+        this.factory = factory;
+        this.outputStream = outputStream;
+    }
+
+    /**
+     * Returns the outputstream
+     *
+     * @return the outputstream
+     */
+    public OutputStream getOutputStream() {
+        return this.outputStream;
     }
 
     /**
      * Returns the document object
-     * 
+     *
      * @return the document object
      */
     private Document getDocument() {
@@ -124,10 +124,10 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
     /**
      * Returns the current page
-     * 
+     *
      * @return the current page
      */
-    protected AbstractPageObject getCurrentPage() {
+    public AbstractPageObject getCurrentPage() {
         return this.currentPage;
     }
 
@@ -146,18 +146,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         }
     }
 
-    /**
-     * Sets the OutputStream
-     *
-     * @param outputStream
-     *            the AFP OutputStream
-     */
-    public void setOutputStream(OutputStream outputStream) {
-        this.outputStream = outputStream;
-    }
-
     /** {@inheritDoc} */
-    public void write() throws IOException {
+    public void endDocument() throws IOException {
         if (complete) {
             String msg = "Invalid state - document already ended.";
             log.warn("endDocument():: " + msg);
@@ -174,20 +164,10 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
             endPageGroup();
         }
 
-        if (interchangeSet.supportsLevel2()) {
-            // Write out any external resource groups
-            resourceManager.writeExternal();
-
-            // Write out any print-file level resources
-            if (hasResources()) {
-                getResourceGroup().write(this.outputStream);
-            }
-        }
-
         // Write out document
         if (document != null) {
             document.endDocument();
-            document.write(this.outputStream);
+            document.writeToStream(this.outputStream);
         }
 
         this.outputStream.flush();
@@ -197,10 +177,6 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         this.document = null;
 
         this.outputStream = null;
-
-        this.resourceManager.clearStore();
-        
-        this.resourceManager = null;
     }
 
     /**
@@ -221,7 +197,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     public void startPage(int pageWidth, int pageHeight, int pageRotation,
             int pageWidthRes, int pageHeightRes) {
         currentPageObject = factory.createPage(pageWidth, pageHeight,
-                pageRotation, pageWidthRes, pageHeightRes);        
+                pageRotation, pageWidthRes, pageHeightRes);
         currentPage = currentPageObject;
         currentOverlay = null;
     }
@@ -258,8 +234,10 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
     /**
      * Helper method to mark the end of the current overlay.
+     *
+     * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public void endOverlay() {
+    public void endOverlay() throws IOException {
         if (currentOverlay != null) {
             currentOverlay.endPage();
             currentOverlay = null;
@@ -297,18 +275,22 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
     /**
      * Helper method to mark the end of the current page.
+     *
+     * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public void endPage() {
+    public void endPage() throws IOException {
         if (currentPageObject != null) {
             currentPageObject.endPage();
             if (currentPageGroup != null) {
                 currentPageGroup.addPage(currentPageObject);
+                currentPageGroup.writeToStream(this.outputStream);
             } else {
                 document.addPage(currentPageObject);
+                document.writeToStream(this.outputStream);
             }
+            currentPageObject = null;
+            currentPage = null;
         }
-        currentPageObject = null;
-        currentPage = null;
     }
 
     /**
@@ -328,14 +310,14 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
     /**
      * Sets the orientation to be used for element positioning
-     * 
+     *
      * @param orientation
      *            the orientation used for element positioning
      */
     public void setOrientation(int orientation) {
         this.orientation = orientation;
     }
-    
+
     /**
      * Creates the given page fonts in the current page
      *
@@ -365,7 +347,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            the point size of the font
      */
     public void createFont(int fontReference, AFPFont font, int size) {
-        getCurrentPage().createFont(fontReference, font, size);
+        currentPage.createFont(fontReference, font, size);
     }
 
     /**
@@ -377,147 +359,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void createText(TextDataInfo textDataInfo) {
         textDataInfo.setOrientation(orientation);
-        getCurrentPage().createText(textDataInfo);
+        currentPage.createText(textDataInfo);
     }
-
-    /**
-     * Creates a data object in the datastream. The data object resides
-     * according to its type, info and MO:DCA-L (resource) support.
-     *
-     * @param dataObjectInfo the data object info
-     *            
-     * @throws java.io.IOException an I/O exception of some sort has occurred.
-     */
-    public void createObject(DataObjectInfo dataObjectInfo) throws IOException {
-        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-        String uri = resourceInfo.getUri();
-
-        if (uri == null) {
-            uri = "/";
-        }
-        // if this is an instream data object adjust uri to ensure that it is
-        // unique
-        if (uri.endsWith("/")) {
-            uri += "#" + (++instreamObjectCount);
-            resourceInfo.setUri(uri);
-        }
-
-        // Update placement with current state
-        ObjectAreaInfo areaInfo = dataObjectInfo.getObjectAreaInfo();
-        areaInfo.setX(areaInfo.getX());
-        areaInfo.setY(areaInfo.getY());
-        areaInfo.setRotation(this.rotation);
-
-        // Do we have a recognised/registered object type?
-        Registry registry = Registry.getInstance();
-        Registry.ObjectType objectType = registry.getObjectType(dataObjectInfo);
-        if (objectType != null) {
-            dataObjectInfo.setObjectType(objectType);
-        } else {
-            log.info("Unknown object type for '" + dataObjectInfo + "'");
-        }
-        
-        StoreInfo storeInfo = resourceManager.create(dataObjectInfo);
-
-        if (objectType != null) {
-            
-            ResourceLevel resourceLevel = resourceInfo.getLevel();
-
-            // is MO:DCA-L available?
-            if (interchangeSet.supportsLevel2()) {
-            
-                // Can this data object use the include object (IOB) referencing
-                // mechanism?
-                if (objectType.isIncludable()) {
-                    
-                    // Create and return include
-                    String objectName = storeInfo.getObjectName();
-                    IncludeObject includeObj = factory.createInclude(objectName, dataObjectInfo);
-                    getCurrentPage().addObject(includeObj);
-                    
-                    // Record the resource cache key (uri) in the ResourceGroup
-                    ResourceGroup resourceGroup = getResourceGroup(resourceLevel);
-                    resourceGroup.addObject(storeInfo);
-                    return;   
-                } else {
-                    log.warn("Data object located at '" + uri + "'"
-                            + " of type '" + objectType.getMimeType() + "'"
-                            + " cannot be referenced with an include"
-                            + " so it will be embedded directly in the page");
-                }                
-            } else {
-                if (resourceLevel.isExternal()) {
-                    log.warn(interchangeSet
-                            + ": not available, object " + getName() + " will reside inline");
-                }
-            }
-        }
-        // Unrecognised/unsupported object type so add object reference directly in current page
-        currentPageObject.addObject(storeInfo);
-    }
-
-//    /**
-//     * Sets the object view port taking into account rotation.
-//     *
-//     * @param x
-//     *            the x position of the object
-//     * @param y
-//     *            the y position of the object
-//     * @param w
-//     *            the width of the object
-//     * @param h
-//     *            the height of the object
-//     * @param wr
-//     *            the resolution width of the object
-//     * @param hr
-//     *            the resolution height of the object
-//     * @return a new graphics object
-//     */
-//    private void setObjectViewPort(AbstractDataObject dataObj, int x, int y,
-//            int w, int h, int wr, int hr) {
-//        int xOrigin;
-//        int yOrigin;
-//        int width;
-//        int height;
-//        int widthRes;
-//        int heightRes;
-//        switch (this.rotation) {
-//        case 90:
-//            xOrigin = getCurrentPage().getWidth() - y - yOffset;
-//            yOrigin = x + xOffset;
-//            width = h;
-//            height = w;
-//            widthRes = hr;
-//            heightRes = wr;
-//            break;
-//        case 180:
-//            xOrigin = getCurrentPage().getWidth() - x - xOffset;
-//            yOrigin = getCurrentPage().getHeight() - y - yOffset;
-//            width = w;
-//            height = h;
-//            widthRes = wr;
-//            heightRes = hr;
-//            break;
-//        case 270:
-//            xOrigin = y + yOffset;
-//            yOrigin = getCurrentPage().getHeight() - x - xOffset;
-//            width = h;
-//            height = w;
-//            widthRes = hr;
-//            heightRes = wr;
-//            break;
-//        default:
-//            xOrigin = x + xOffset;
-//            yOrigin = y + yOffset;
-//            width = w;
-//            height = h;
-//            widthRes = wr;
-//            heightRes = hr;
-//            break;
-//        }
-//        dataObj.setViewport(xOrigin, yOrigin, width, height, widthRes,
-//                heightRes, rotation);
-//    }
 
     /**
      * Method to create a line on the current page.
@@ -526,7 +369,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void createLine(LineDataInfo lineDataInfo) {
         lineDataInfo.setOrientation(orientation);
-        getCurrentPage().createLine(lineDataInfo);
+        currentPage.createLine(lineDataInfo);
     }
 
     /**
@@ -568,7 +411,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            the name of the medium map
      */
     public void createInvokeMediumMap(String name) {
-        getCurrentPageGroup().createInvokeMediumMap(name);
+        currentPageGroup.createInvokeMediumMap(name);
     }
 
     /**
@@ -586,23 +429,23 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         int yOrigin;
         switch (orientation) {
         case 90:
-            xOrigin = getCurrentPage().getWidth() - y;
+            xOrigin = currentPage.getWidth() - y;
             yOrigin = x;
             break;
         case 180:
-            xOrigin = getCurrentPage().getWidth() - x;
-            yOrigin = getCurrentPage().getHeight() - y;
+            xOrigin = currentPage.getWidth() - x;
+            yOrigin = currentPage.getHeight() - y;
             break;
         case 270:
             xOrigin = y;
-            yOrigin = getCurrentPage().getHeight() - x;
+            yOrigin = currentPage.getHeight() - x;
             break;
         default:
             xOrigin = x;
             yOrigin = y;
             break;
         }
-        getCurrentPage().createIncludePageSegment(name, xOrigin, yOrigin);
+        currentPage.createIncludePageSegment(name, xOrigin, yOrigin);
     }
 
     /**
@@ -613,9 +456,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void createPageTagLogicalElement(TagLogicalElementBean[] attributes) {
         for (int i = 0; i < attributes.length; i++) {
-            String name = (String) attributes[i].getKey();
-            String value = (String) attributes[i].getValue();
-            getCurrentPage().createTagLogicalElement(name, value);
+            String name = attributes[i].getKey();
+            String value = attributes[i].getValue();
+            currentPage.createTagLogicalElement(name, value);
         }
     }
 
@@ -627,9 +470,9 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      */
     public void createPageGroupTagLogicalElement(TagLogicalElementBean[] attributes) {
         for (int i = 0; i < attributes.length; i++) {
-            String name = (String) attributes[i].getKey();
-            String value = (String) attributes[i].getValue();
-            getCurrentPageGroup().createTagLogicalElement(name, value);
+            String name = attributes[i].getKey();
+            String value = attributes[i].getValue();
+            currentPageGroup.createTagLogicalElement(name, value);
         }
     }
 
@@ -645,7 +488,7 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
         if (currentPageGroup != null) {
             currentPageGroup.createTagLogicalElement(name, value);
         } else {
-            getCurrentPage().createTagLogicalElement(name, value);
+            currentPage.createTagLogicalElement(name, value);
         }
     }
 
@@ -656,37 +499,50 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
      *            byte data
      */
     public void createNoOperation(String content) {
-        getCurrentPage().createNoOperation(content);
+        currentPage.createNoOperation(content);
     }
 
     /**
      * Returns the current page group
-     * 
+     *
      * @return the current page group
      */
-    private PageGroup getCurrentPageGroup() {
-        if (currentPageGroup == null) {
-            this.currentPageGroup = factory.createPageGroup();
-        }
-        return currentPageGroup;
+    public PageGroup getCurrentPageGroup() {
+        return this.currentPageGroup;
+    }
+
+    /**
+     * Start a new document.
+     *
+     * @throws IOException thrown if an I/O exception of some sort has occurred
+     */
+    public void startDocument() throws IOException {
+        this.document = factory.createDocument();
+        document.writeToStream(this.outputStream);
     }
 
     /**
      * Start a new page group. When processing has finished on the current page
      * group the {@link #endPageGroup()}method must be invoked to mark the page
      * group ending.
+     *
+     * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public void startPageGroup() {
-        getCurrentPageGroup();
+    public void startPageGroup() throws IOException {
+        endPageGroup();
+        this.currentPageGroup = factory.createPageGroup();
     }
 
     /**
      * Helper method to mark the end of the page group.
+     *
+     * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public void endPageGroup() {
+    public void endPageGroup() throws IOException {
         if (currentPageGroup != null) {
             currentPageGroup.endPageGroup();
-            getDocument().addPageGroup(currentPageGroup);
+            document.addPageGroup(currentPageGroup);
+            document.writeToStream(outputStream);
             currentPageGroup = null;
         }
     }
@@ -724,57 +580,8 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
     }
 
     /**
-     * Sets the default resource group file
-     *
-     * @param filePath the default resource group file path
-     */
-    public void setDefaultResourceGroupFilePath(String filePath) {
-        resourceManager.getExternalManager().setDefaultFilePath(filePath);
-    }
-
-//    /**
-//     * Returns the external resource group manager
-//     * 
-//     * @return the resource group manager
-//     */
-//    protected ExternalResourceGroupManager getExternalResourceGroupManager() {
-//        if (externalResourceGroupManager == null) {
-//            this.externalResourceGroupManager = new ExternalResourceGroupManager();
-//        }
-//        return this.externalResourceGroupManager;
-//    }
-
-    /**
-     * Returns the resource group for a given resource info
-     *
-     * @param level a resource level
-     * @return a resource group for the given resource info
-     */
-    private ResourceGroup getResourceGroup(ResourceLevel level) {
-        ResourceGroup resourceGroup = null;
-        if (level.isExternal()) {
-            resourceGroup = resourceManager.getExternalManager().getResourceGroup(level);
-            // use print-file level resource group in the absence
-            // of an external resource group file definition
-            if (resourceGroup == null) {
-                level.setLevel(ResourceLevel.PRINT_FILE);
-            }
-        }
-        if (level.isPrintFile()) {
-            resourceGroup = getResourceGroup();
-        } else if (level.isDocument()) {
-            resourceGroup = getDocument().getResourceGroup();
-        } else if (level.isPageGroup()) {
-            resourceGroup = getCurrentPageGroup().getResourceGroup();
-        } else if (level.isPage()) {
-            resourceGroup = currentPageObject.getResourceGroup();
-        } 
-        return resourceGroup;
-    }
-
-    /**
      * Sets the MO:DCA interchange set to use
-     * 
+     *
      * @param interchangeSet the MO:DCA interchange set
      */
     public void setInterchangeSet(InterchangeSet interchangeSet) {
@@ -783,10 +590,29 @@ public class AFPDataStream extends AbstractResourceGroupContainer {
 
     /**
      * Returns the MO:DCA interchange set in use
-     * 
+     *
      * @return the MO:DCA interchange set in use
      */
     public InterchangeSet getInterchangeSet() {
         return this.interchangeSet;
     }
+
+    /**
+     * Returns the resource group for a given resource info
+     *
+     * @param level a resource level
+     * @return a resource group for the given resource info
+     */
+    public ResourceGroup getResourceGroup(AFPResourceLevel level) {
+        ResourceGroup resourceGroup = null;
+        if (level.isDocument()) {
+            resourceGroup = document.getResourceGroup();
+        } else if (level.isPageGroup()) {
+            resourceGroup = currentPageGroup.getResourceGroup();
+        } else if (level.isPage()) {
+            resourceGroup = currentPageObject.getResourceGroup();
+        }
+        return resourceGroup;
+    }
+
 }

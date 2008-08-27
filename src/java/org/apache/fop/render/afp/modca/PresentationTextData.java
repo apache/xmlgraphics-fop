@@ -20,10 +20,10 @@
 package org.apache.fop.render.afp.modca;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.render.afp.LineDataInfo;
 import org.apache.fop.render.afp.TextDataInfo;
 import org.apache.fop.render.afp.tools.BinaryUtils;
@@ -35,18 +35,18 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * that position them - modal control sequences that adjust the positions by
  * small amounts - other functions causing text to be presented with differences
  * in appearance.
- * 
+ *
  * The graphic characters are expected to conform to a coded font representation
  * so that they can be translated from the code point in the object data to the
  * character in the coded font. The units of measure for linear displacements
  * are derived from the PresentationTextDescriptor or from the hierarchical
  * defaults.
- * 
+ *
  * In addition to graphic character code points, Presentation Text data can
  * contain embedded control sequences. These are strings of two or more bytes
  * which signal an alternate mode of processing for the content of the current
  * Presentation Text data.
- * 
+ *
  */
 public class PresentationTextData extends AbstractAFPObject {
 
@@ -58,17 +58,17 @@ public class PresentationTextData extends AbstractAFPObject {
     /**
      * The afp data relating to this presentation text data.
      */
-    private ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+    private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     /**
      * The current x coordinate.
      */
-    private int currentXCoordinate = -1;
+    private int currentX = -1;
 
     /**
      * The current y cooridnate
      */
-    private int currentYCoordinate = -1;
+    private int currentY = -1;
 
     /**
      * The current font
@@ -106,7 +106,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * Constructor for the PresentationTextData, the boolean flag indicate
      * whether the control sequence prefix should be set to indicate the start
      * of a new control sequence.
-     * 
+     *
      * @param controlInd
      *            The control sequence indicator.
      */
@@ -133,7 +133,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * The Set Coded Font Local control sequence activates a coded font and
      * specifies the character attributes to be used. This is a modal control
      * sequence.
-     * 
+     *
      * @param font
      *            The font local identifier.
      * @param afpdata
@@ -154,7 +154,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * Establishes the current presentation position on the baseline at a new
      * I-axis coordinate, which is a specified number of measurement units from
      * the B-axis. There is no change to the current B-axis coordinate.
-     * 
+     *
      * @param coordinate
      *            The coordinate for the inline move.
      * @param afpdata
@@ -164,14 +164,14 @@ public class PresentationTextData extends AbstractAFPObject {
             ByteArrayOutputStream afpdata) {
         byte[] b = BinaryUtils.convert(coordinate, 2);
         afpdata.write(new byte[] {0x04, (byte) 0xC7, b[0], b[1]}, 0, 4);
-        currentXCoordinate = coordinate;
+        currentX = coordinate;
     }
 
     /**
      * Establishes the baseline and the current presentation position at a new
      * B-axis coordinate, which is a specified number of measurement units from
      * the I-axis. There is no change to the current I-axis coordinate.
-     * 
+     *
      * @param coordinate
      *            The coordinate for the baseline move.
      * @param afpdata
@@ -181,15 +181,15 @@ public class PresentationTextData extends AbstractAFPObject {
             ByteArrayOutputStream afpdata) {
         byte[] b = BinaryUtils.convert(coordinate, 2);
         afpdata.write(new byte[] {0x04, (byte) 0xD3, b[0], b[1]}, 0, 4);
-        currentYCoordinate = coordinate;
+        currentY = coordinate;
     }
 
     private static final int TRANSPARENT_MAX_SIZE = 253;
-    
+
     /**
      * The Transparent Data control sequence contains a sequence of code points
      * that are presented without a scan for embedded control sequences.
-     * 
+     *
      * @param data
      *            The text data to add.
      * @param afpdata
@@ -212,7 +212,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * Draws a line of specified length and specified width in the B-direction
      * from the current presentation position. The location of the current
      * presentation position is unchanged.
-     * 
+     *
      * @param length
      *            The length of the rule.
      * @param width
@@ -240,7 +240,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * Draws a line of specified length and specified width in the I-direction
      * from the current presentation position. The location of the current
      * presentation position is unchanged.
-     * 
+     *
      * @param length
      *            The length of the rule.
      * @param width
@@ -266,7 +266,7 @@ public class PresentationTextData extends AbstractAFPObject {
 
     /**
      * Create the presentation text data for the byte array of data.
-     * 
+     *
      * @param textDataInfo
      *            the afp text data
      * @throws MaximumSizeExceededException
@@ -280,18 +280,18 @@ public class PresentationTextData extends AbstractAFPObject {
         if (currentOrientation != textDataInfo.getOrientation()) {
             setTextOrientation(textDataInfo.getOrientation(), afpdata);
             currentOrientation = textDataInfo.getOrientation();
-            currentXCoordinate = -1;
-            currentYCoordinate = -1;
+            currentX = -1;
+            currentY = -1;
         }
 
         // Avoid unnecessary specification of the Y co-ordinate
-        if (textDataInfo.getY() != currentYCoordinate) {
+        if (textDataInfo.getY() != currentY) {
             absoluteMoveBaseline(textDataInfo.getY(), afpdata);
-            currentXCoordinate = -1;
+            currentX = -1;
         }
 
         // Avoid unnecessary specification of the X co-ordinate
-        if (textDataInfo.getX() != currentXCoordinate) {
+        if (textDataInfo.getX() != currentX) {
             absoluteMoveInline(textDataInfo.getX(), afpdata);
         }
 
@@ -320,11 +320,11 @@ public class PresentationTextData extends AbstractAFPObject {
 
         setCodedFont(BinaryUtils.convert(textDataInfo.getFontReference())[0],
                 afpdata);
-        
+
         // Add transparent data
         byte[] data = textDataInfo.getData();
         if (data.length <= TRANSPARENT_MAX_SIZE) {
-            addTransparentData(data, afpdata);            
+            addTransparentData(data, afpdata);
         } else {
             // data size greater than TRANSPARENT_MAX_SIZE so slice
             int numTransData = data.length / TRANSPARENT_MAX_SIZE;
@@ -337,16 +337,16 @@ public class PresentationTextData extends AbstractAFPObject {
             }
             int remainingTransData = data.length / TRANSPARENT_MAX_SIZE;
             buff = new byte[remainingTransData];
-            System.arraycopy(data, currIndex, buff, 0, remainingTransData);        
+            System.arraycopy(data, currIndex, buff, 0, remainingTransData);
             addTransparentData(buff, afpdata);
         }
-        currentXCoordinate = -1;
+        currentX = -1;
 
         int dataSize = afpdata.size();
 
         if (baos.size() + dataSize > MAX_SIZE) {
-            currentXCoordinate = -1;
-            currentYCoordinate = -1;
+            currentX = -1;
+            currentY = -1;
             throw new MaximumSizeExceededException();
         }
 
@@ -357,7 +357,7 @@ public class PresentationTextData extends AbstractAFPObject {
     /**
      * Drawing of lines using the starting and ending coordinates, thickness and
      * colour arguments.
-     * 
+     *
      * @param lineDataInfo the line data information.
      * @throws MaximumSizeExceededException
      *            thrown if the maximum number of line data has been exceeded
@@ -373,19 +373,19 @@ public class PresentationTextData extends AbstractAFPObject {
         int x2 = lineDataInfo.getX2();
         int y2 = lineDataInfo.getY2();
         Color col = lineDataInfo.getColor();
-        
+
         if (currentOrientation != orientation) {
             setTextOrientation(orientation, afpdata);
             currentOrientation = orientation;
         }
 
         // Avoid unnecessary specification of the Y coordinate
-        if (y1 != currentYCoordinate) {
+        if (y1 != currentY) {
             absoluteMoveBaseline(y1, afpdata);
         }
 
         // Avoid unnecessary specification of the X coordinate
-        if (x1 != currentXCoordinate) {
+        if (x1 != currentX) {
             absoluteMoveInline(x1, afpdata);
         }
 
@@ -405,8 +405,8 @@ public class PresentationTextData extends AbstractAFPObject {
         int dataSize = afpdata.size();
 
         if (baos.size() + dataSize > MAX_SIZE) {
-            currentXCoordinate = -1;
-            currentYCoordinate = -1;
+            currentX = -1;
+            currentY = -1;
             throw new MaximumSizeExceededException();
         }
 
@@ -417,12 +417,12 @@ public class PresentationTextData extends AbstractAFPObject {
     /**
      * The Set Text Orientation control sequence establishes the I-direction and
      * B-direction for the subsequent text. This is a modal control sequence.
-     * 
+     *
      * Semantics: This control sequence specifies the I-axis and B-axis
      * orientations with respect to the Xp-axis for the current Presentation
      * Text object. The orientations are rotational values expressed in degrees
      * and minutes.
-     * 
+     *
      * @param orientation
      *            The text orientation (0, 90, 180, 270).
      * @param afpdata
@@ -464,7 +464,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * defines the color space and encoding for that value. The specified color
      * value is applied to foreground areas of the text presentation space. This
      * is a modal control sequence.
-     * 
+     *
      * @param col
      *            The color to be set.
      * @param afpdata
@@ -488,13 +488,13 @@ public class PresentationTextData extends AbstractAFPObject {
             (byte) (col.getGreen()), // Green intensity
             (byte) (col.getBlue()), // Blue intensity
         };
-        
+
         afpdata.write(colorData, 0, colorData.length);
     }
 
     /**
      * //TODO This is a modal control sequence.
-     * 
+     *
      * @param incr
      *            The increment to be set.
      * @param afpdata
@@ -513,7 +513,7 @@ public class PresentationTextData extends AbstractAFPObject {
 
     /**
      * //TODO This is a modal control sequence.
-     * 
+     *
      * @param incr
      *            The increment to be set.
      * @param afpdata
@@ -529,7 +529,7 @@ public class PresentationTextData extends AbstractAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = baos.toByteArray();
         byte[] size = BinaryUtils.convert(data.length - 1, 2);
         data[1] = size[0];
@@ -543,7 +543,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * and zero or more parameters. The control sequence can extend multiple
      * presentation text data objects, but must eventually be terminated. This
      * method terminates the control sequence.
-     * 
+     *
      * @throws MaximumSizeExceededException
      *       thrown in the event that maximum size has been exceeded
      */

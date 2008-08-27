@@ -17,36 +17,34 @@
 
 /* $Id: $ */
 
-package org.apache.fop.render.afp.goca;
+package org.apache.fop.render;
 
-import org.apache.fop.render.afp.modca.AbstractPreparedAFPObject;
+import java.util.Collection;
 
 /**
- * A GOCA graphics image data
+ * No copy constructor for java.util.Stack so extended and implemented one.
  */
-public class GraphicsImageEnd extends AbstractPreparedAFPObject {
-    
+public class StateStack extends java.util.Stack {
+
+    private static final long serialVersionUID = 4897178211223823041L;
+
     /**
      * Default constructor
      */
-    public GraphicsImageEnd() {
-        prepareData();
+    public StateStack() {
+        super();
     }
 
     /**
-     * {@inheritDoc}
+     * Copy constructor
+     *
+     * @param c initial contents of stack
      */
-    protected void prepareData() {
-        super.data = new byte[] {
-            (byte) 0x93, // GEIMG order code
-            0x00 // LENGTH
-        };
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        return "GraphicsImageEnd";
+    public StateStack(Collection c) {
+        elementCount = c.size();
+        // 10% for growth
+        elementData = new Object[
+                      (int)Math.min((elementCount * 110L) / 100, Integer.MAX_VALUE)];
+        c.toArray(elementData);
     }
 }

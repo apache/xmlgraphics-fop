@@ -36,19 +36,6 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-
-import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
-import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
-import org.apache.xmlgraphics.ps.ImageEncodingHelper;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -63,7 +50,6 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
@@ -76,9 +62,20 @@ import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.fonts.AFPFontCollection;
-import org.apache.fop.render.afp.modca.AFPDataStream;
+import org.apache.fop.render.afp.modca.DataStream;
 import org.apache.fop.render.afp.modca.PageObject;
-import org.apache.fop.util.ColorUtil;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -140,40 +137,37 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public static final int NORMAL_AFP_RESOLUTION = 72;
 
     private static final int X = 0;
-
     private static final int Y = 1;
 
-    private static final int X1 = 0;
-
-    private static final int Y1 = 1;
-
-    private static final int X2 = 2;
-
-    private static final int Y2 = 3;
-
-    /**
-     * The afp data stream object responsible for generating afp data
-     */
-    private AFPDataStream afpDataStream = null;
-
-    /**
-     * The map of page segments
-     */
-    private Map/*<String,String>*/pageSegmentsMap = null;
-
-    /**
-     * The map of saved incomplete pages
-     */
-    private Map pages = null;
+    /** resource manager */
+    private AFPResourceManager resourceManager;
 
     /** drawing state */
-    private AFPState currentState = new AFPState();
+    private final AFPState state;
+
+    /** unit converter */
+    private final AFPUnitConverter unitConv;
+
+    /** line painter */
+    private AFPBorderPainter borderPainter;
+
+    /** The map of page segments */
+    private final Map/*<String,String>*/pageSegmentMap = new java.util.HashMap/*<String,String>*/();
+
+    /** The map of saved incomplete pages */
+    private final Map pages = new java.util.HashMap/*<PageViewport,PageObject>*/();
+
+    /** the afp datastream */
+    private DataStream dataStream;
 
     /**
      * Constructor for AFPRenderer.
      */
     public AFPRenderer() {
         super();
+        this.resourceManager = new AFPResourceManager();
+        this.state = new AFPState();
+        this.unitConv = state.getUnitConverter();
     }
 
     /** {@inheritDoc} */
@@ -193,22 +187,31 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
-        currentState.setColor(new Color(255, 255, 255));
-        getAFPDataStream().setPortraitRotation(currentState.getPortraitRotation());
-        afpDataStream.setLandscapeRotation(currentState.getLandscapeRotation());
-        afpDataStream.setOutputStream(outputStream);
+        state.setColor(new Color(255, 255, 255));
+        resourceManager.setOutputStream(outputStream);
+
+        this.dataStream = resourceManager.getDataStream();
+        dataStream.setPortraitRotation(state.getPortraitRotation());
+        dataStream.setLandscapeRotation(state.getLandscapeRotation());
+        dataStream.startDocument();
+
+        this.borderPainter = new AFPBorderPainter(state, dataStream);
     }
 
     /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
-        getAFPDataStream().write();
-        afpDataStream = null;
+        dataStream.endDocument();
+        resourceManager.writeToStream();
+        resourceManager = null;
     }
 
     /** {@inheritDoc} */
     public void startPageSequence(LineArea seqTitle) {
-        getAFPDataStream().endPageGroup();
-        afpDataStream.startPageGroup();
+        try {
+            dataStream.startPageGroup();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
     }
 
     /** {@inheritDoc} */
@@ -219,22 +222,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     public void preparePage(PageViewport page) {
         final int pageRotation = 0;
-        int pageWidth = currentState.getPageWidth();
-        int pageHeight = currentState.getPageHeight();
-        getAFPDataStream().startPage(pageWidth, pageHeight, pageRotation,
-                getResolution(), getResolution());
+        int pageWidth = state.getPageWidth();
+        int pageHeight = state.getPageHeight();
+        int resolution = state.getResolution();
+        dataStream.startPage(pageWidth, pageHeight, pageRotation,
+                resolution, resolution);
 
         renderPageObjectExtensions(page);
 
-        PageObject currentPage = getAFPDataStream().savePage();
-        getPages().put(page, currentPage);
-    }
-
-    private Map/*<PageViewport, PageObject>*/ getPages() {
-        if (this.pages == null) {
-            this.pages = new java.util.HashMap/*<PageViewport, PageObject>*/();
-        }
-        return this.pages;
+        PageObject currentPage = dataStream.savePage();
+        pages.put(page, currentPage);
     }
 
     /** {@inheritDoc} */
@@ -245,7 +242,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
-        return new AFPGraphics2DAdapter();
+        return new AFPGraphics2DAdapter(this);
     }
 
     /** {@inheritDoc} */
@@ -271,36 +268,44 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         if (!at.isIdentity()) {
-            currentState.concatenate(at);
+            state.concatenate(at);
         }
+    }
+
+    /**
+     * Returns the base AFP transform
+     *
+     * @return the base AFP transform
+     */
+    private AffineTransform getBaseTransform() {
+        AffineTransform baseTransform = new AffineTransform();
+        double scale = unitConv.mpt2units(1);
+        baseTransform.scale(scale, scale);
+        return baseTransform;
     }
 
     /** {@inheritDoc} */
     public void renderPage(PageViewport pageViewport) throws IOException, FOPException {
-        currentState.clear();
+        state.clear();
 
         Rectangle2D bounds = pageViewport.getViewArea();
 
-        AffineTransform basicPageTransform = new AffineTransform();
-        int resolution = currentState.getResolution();
-        double scale = mpt2units(1);
-        basicPageTransform.scale(scale, scale);
+        state.concatenate(getBaseTransform());
 
-        currentState.concatenate(basicPageTransform);
-
-        if (getPages().containsKey(pageViewport)) {
-            getAFPDataStream().restorePage(
-                    (PageObject)getPages().remove(pageViewport));
+        if (pages.containsKey(pageViewport)) {
+            dataStream.restorePage(
+                    (PageObject)pages.remove(pageViewport));
         } else {
             int pageWidth
-                = (int)Math.round(mpt2units((float)bounds.getWidth()));
-            currentState.setPageWidth(pageWidth);
+                = Math.round(unitConv.mpt2units((float)bounds.getWidth()));
+            state.setPageWidth(pageWidth);
             int pageHeight
-                = (int)Math.round(mpt2units((float)bounds.getHeight()));
-            currentState.setPageHeight(pageHeight);
+                = Math.round(unitConv.mpt2units((float)bounds.getHeight()));
+            state.setPageHeight(pageHeight);
 
             final int pageRotation = 0;
-            getAFPDataStream().startPage(pageWidth, pageHeight, pageRotation,
+            int resolution = state.getResolution();
+            dataStream.startPage(pageWidth, pageHeight, pageRotation,
                     resolution, resolution);
 
             renderPageObjectExtensions(pageViewport);
@@ -308,12 +313,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         super.renderPage(pageViewport);
 
-        AFPPageFonts pageFonts = currentState.getPageFonts();
+        AFPPageFonts pageFonts = state.getPageFonts();
         if (pageFonts != null && !pageFonts.isEmpty()) {
-            getAFPDataStream().addFontsToCurrentPage(pageFonts);
+            dataStream.addFontsToCurrentPage(pageFonts);
         }
 
-        getAFPDataStream().endPage();
+        dataStream.endPage();
     }
 
     /** {@inheritDoc} */
@@ -347,220 +352,15 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         log.debug("NYI closePath()");
     }
 
-    private int[] mpts2units(float[] srcPts, float[] dstPts) {
-        return transformPoints(srcPts, dstPts, true);
-    }
-
-    private int[] pts2units(float[] srcPts, float[] dstPts) {
-        return transformPoints(srcPts, dstPts, false);
-    }
-
-    private int[] mpts2units(float[] srcPts) {
-        return transformPoints(srcPts, null, true);
-    }
-
-    private int[] pts2units(float[] srcPts) {
-        return transformPoints(srcPts, null, false);
-    }
-
-    private float mpt2units(float mpt) {
-        return mpt / ((float)AFPConstants.DPI_72_MPTS / currentState.getResolution());
-    }
-
     /** {@inheritDoc} */
     public void fillRect(float x, float y, float width, float height) {
-        float[] srcPts = new float[] {x * 1000, y * 1000};
-        float[] dstPts = new float[srcPts.length];
-        int[] coords = mpts2units(srcPts, dstPts);
-        int x2 = Math.round(mpt2units(dstPts[X] + width * 1000));
-        LineDataInfo lineDataInfo = new LineDataInfo();
-        lineDataInfo.x1 = coords[X];
-        lineDataInfo.y1 = coords[Y];
-        lineDataInfo.x2 = x2;
-        lineDataInfo.y2 = coords[Y];
-        lineDataInfo.thickness = Math.round(mpt2units(height * 1000));
-        lineDataInfo.color = currentState.getColor();
-        getAFPDataStream().createLine(lineDataInfo);
+        borderPainter.fillRect(x, y, width, height);
     }
 
     /** {@inheritDoc} */
     public void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
-        float[] srcPts = new float[] {x1 * 1000, y1 * 1000, x2 * 1000, y2 * 1000};
-        float[] dstPts = new float[srcPts.length];
-        int[] coords = mpts2units(srcPts, dstPts);
-
-        float width = dstPts[X2] - dstPts[X1];
-        float height = dstPts[Y2] - dstPts[Y1];
-        if ((width < 0) || (height < 0)) {
-            log.error("Negative extent received. Border won't be painted.");
-            return;
-        }
-
-        LineDataInfo lineDataInfo = new LineDataInfo();
-        lineDataInfo.color = col;
-
-        switch (style) {
-        
-        case Constants.EN_DOUBLE:
-            
-            lineDataInfo.x1 = coords[X1];
-            lineDataInfo.y1 = coords[Y1];
-
-            if (horz) {
-                float h3 = height / 3;
-                lineDataInfo.thickness = Math.round(h3);
-                
-                lineDataInfo.x2 = coords[X2];
-                lineDataInfo.y2 = coords[Y1];
-                afpDataStream.createLine(lineDataInfo);
-                                
-                int ym2 = Math.round(dstPts[Y1] + h3 + h3);
-                lineDataInfo.y1 = ym2;
-                lineDataInfo.y2 = ym2;
-                afpDataStream.createLine(lineDataInfo);
-            } else {
-                float w3 = width / 3;
-                lineDataInfo.thickness = Math.round(w3);
-
-                lineDataInfo.x2 = coords[X1];
-                lineDataInfo.y2 = coords[Y2];                
-                afpDataStream.createLine(lineDataInfo);
-                
-                int xm2 = Math.round(dstPts[X1] + w3 + w3);
-                lineDataInfo.x1 = xm2;
-                lineDataInfo.x2 = xm2;
-                afpDataStream.createLine(lineDataInfo);
-            }
-            break;
-            
-        case Constants.EN_DASHED:
-            lineDataInfo.x1 = coords[X1];
-
-            if (horz) {
-                float w2 = 2 * height;
-
-                lineDataInfo.y1 = coords[Y1];
-                lineDataInfo.x2 = coords[X1] + Math.round(w2);
-                lineDataInfo.y2 = coords[Y1];
-                lineDataInfo.thickness = Math.round(height);
-                
-                while (lineDataInfo.x1 + w2 < coords[X2]) {
-                    afpDataStream.createLine(lineDataInfo);                    
-                    lineDataInfo.x1 += 2 * w2; 
-                }
-            } else {
-                float h2 = 2 * width;
-
-                lineDataInfo.y1 = coords[Y2];
-                lineDataInfo.x2 = coords[X1];
-                lineDataInfo.y2 = coords[Y1] + Math.round(h2);
-                lineDataInfo.thickness = Math.round(width);
-
-                while (lineDataInfo.y2 < coords[Y2]) {
-                    afpDataStream.createLine(lineDataInfo);
-                    lineDataInfo.y2 += 2 * h2;
-                }
-            }
-            break;
-            
-        case Constants.EN_DOTTED:
-
-            lineDataInfo.x1 = coords[X1];
-            lineDataInfo.y1 = coords[Y1];
-
-            if (horz) {
-                lineDataInfo.thickness = Math.round(height);
-                lineDataInfo.x2 = coords[X1] + lineDataInfo.thickness;
-                lineDataInfo.y2 = coords[Y1];
-                while (lineDataInfo.x2 < coords[X2]) {
-                    afpDataStream.createLine(lineDataInfo);
-                    coords[X1] += 2 * height;
-                    lineDataInfo.x1 = coords[X1];
-                    lineDataInfo.x2 = coords[X1] + lineDataInfo.thickness;
-                }
-            } else {
-                lineDataInfo.thickness = Math.round(width);
-                lineDataInfo.x2 = coords[X1];
-                lineDataInfo.y2 = coords[Y1] + lineDataInfo.thickness;
-                
-                while (lineDataInfo.y2 < coords[Y2]) {
-                    afpDataStream.createLine(lineDataInfo);
-                    coords[Y1] += 2 * width;
-                    lineDataInfo.y1 = coords[Y1];
-                    lineDataInfo.y2 = coords[Y1] + lineDataInfo.thickness;
-                }
-            }
-            break;
-        case Constants.EN_GROOVE:
-        case Constants.EN_RIDGE: {
-            
-            float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
-            if (horz) {
-
-                lineDataInfo.x1 = coords[X1];
-                lineDataInfo.x2 = coords[X2];                
-
-                float h3 = height / 3;
-                
-                lineDataInfo.color = ColorUtil.lightenColor(col, -colFactor);
-                lineDataInfo.thickness = Math.round(h3);
-                lineDataInfo.y1 = lineDataInfo.y2 = coords[Y1];
-                afpDataStream.createLine(lineDataInfo);
-                
-                lineDataInfo.color = col;                 
-                lineDataInfo.y1 = lineDataInfo.y2 = Math.round(dstPts[Y1] + h3);
-                afpDataStream.createLine(lineDataInfo);
-                
-                lineDataInfo.color = ColorUtil.lightenColor(col, colFactor);
-                lineDataInfo.y1 = lineDataInfo.y2
-                    = Math.round(dstPts[Y1] + h3 + h3);                
-                afpDataStream.createLine(lineDataInfo);
-                
-            } else {
-
-                lineDataInfo.y1 = coords[Y1];
-                lineDataInfo.y2 = coords[Y2];                
-
-                float w3 = width / 3;
-                float xm1 = dstPts[X1] + (w3 / 2);
-
-                lineDataInfo.color = ColorUtil.lightenColor(col, -colFactor);
-                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1);
-                afpDataStream.createLine(lineDataInfo);
-                
-                lineDataInfo.color = col;
-                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1 + w3);
-                afpDataStream.createLine(lineDataInfo);
-
-                lineDataInfo.color = ColorUtil.lightenColor(col, colFactor);
-                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1 + w3 + w3);
-                afpDataStream.createLine(lineDataInfo);
-            }
-            break;
-        }
-        
-        case Constants.EN_HIDDEN:
-            break;
-            
-        case Constants.EN_INSET:
-        case Constants.EN_OUTSET:
-        default:
-              lineDataInfo.x1 = coords[X1]; 
-              lineDataInfo.y1 = coords[Y1];
-              if (horz) {
-                  lineDataInfo.thickness = Math.round(height); 
-                  lineDataInfo.x2 = coords[X2];
-                  lineDataInfo.y2 = coords[Y1];
-              } else {
-                  lineDataInfo.thickness = Math.round(width); 
-                  lineDataInfo.x2 = coords[X1];
-                  lineDataInfo.y2 = coords[Y2];                  
-              }
-              lineDataInfo.x2 = (horz ? coords[X2] : coords[X1]);
-              lineDataInfo.y2 = (horz ? coords[Y1] : coords[Y2]);
-              afpDataStream.createLine(lineDataInfo);
-        }
+        borderPainter.drawBorderLine(x1, y1, x2, y2, horz, startOrBefore, style, col);
     }
 
     /** {@inheritDoc} */
@@ -571,135 +371,188 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 foreignAttributes);
         context.setProperty(AFPRendererContextConstants.AFP_FONT_INFO,
                 this.fontInfo);
-        context.setProperty(AFPRendererContextConstants.AFP_DATASTREAM,
-                getAFPDataStream());
-        context.setProperty(AFPRendererContextConstants.AFP_STATE, getState());
+        context.setProperty(AFPRendererContextConstants.AFP_RESOURCE_MANAGER,
+                this.resourceManager);
+        context.setProperty(AFPRendererContextConstants.AFP_STATE, state);
         return context;
     }
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
-            ImageFlavor.RAW_CCITTFAX, ImageFlavor.GRAPHICS2D,
-            ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE,
-            ImageFlavor.XML_DOM };
+        ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.GRAPHICS2D,
+        ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE,
+        ImageFlavor.XML_DOM, /*ImageFlavor.RAW_EPS*/ };
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         uri = URISpecification.getURL(uri);
-        currentState.setImageUri(uri);
+        state.setImageUri(uri);
         Rectangle posInt = new Rectangle((int) pos.getX(), (int) pos.getY(),
                 (int) pos.getWidth(), (int) pos.getHeight());
-        Point origin = new Point(currentIPPosition, currentBPPosition);
-        int x = origin.x + posInt.x;
-        int y = origin.y + posInt.y;
-
-        String name = (String)getPageSegments().get(uri);
+        String name = (String)pageSegmentMap.get(uri);
+        int x = currentIPPosition + posInt.x;
+        int y = currentBPPosition + posInt.y;
+        float[] srcPts = {x, y};
+        int[] coords = unitConv.mpts2units(srcPts);
         if (name != null) {
-            float[] srcPts = {x, y};
-            int[] coords = mpts2units(srcPts);
-            getAFPDataStream().createIncludePageSegment(name, coords[X], coords[Y]);
+            dataStream.createIncludePageSegment(name, coords[X], coords[Y]);
         } else {
-            ImageManager manager = getUserAgent().getFactory().getImageManager();
+            Point origin = new Point(currentIPPosition, currentBPPosition);
+
+            ImageManager manager = userAgent.getFactory().getImageManager();
             ImageInfo info = null;
             InputStream in = null;
             try {
-                ImageSessionContext sessionContext = getUserAgent()
+                ImageSessionContext sessionContext = userAgent
                         .getImageSessionContext();
                 info = manager.getImageInfo(uri, sessionContext);
 
                 // Only now fully load/prepare the image
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
-                org.apache.xmlgraphics.image.loader.Image img = manager
-                        .getImage(info, FLAVORS, hints, sessionContext);
+                org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
+                        info, FLAVORS, hints, sessionContext);
 
-                // ...and process the image
-                if (img instanceof ImageGraphics2D) {
+                if (/*img instanceof ImageRawJPEG || */img instanceof ImageRawStream
+                        || img instanceof ImageRendered) {
+                    AFPImageObjectInfo imageObjectInfo
+                        = getImageObjectInfo(uri, info, pos, origin, img);
+                    resourceManager.createObject(imageObjectInfo);
+                } else if (img instanceof ImageGraphics2D) { // ...and process the image
                     ImageGraphics2D imageG2D = (ImageGraphics2D) img;
-                    RendererContext context = createRendererContext(posInt.x,
-                            posInt.y, posInt.width, posInt.height,
-                            foreignAttributes);
+                    RendererContext rendererContext = createRendererContext(
+                            x, y, posInt.width, posInt.height, foreignAttributes);
                     getGraphics2DAdapter().paintImage(
-                            imageG2D.getGraphics2DImagePainter(), context,
-                            origin.x + posInt.x, origin.y + posInt.y,
-                            posInt.width, posInt.height);
-                } else if (img instanceof ImageRendered) {
-                    ImageRendered imgRend = (ImageRendered) img;
-                    RenderedImage ri = imgRend.getRenderedImage();
-                    drawBufferedImage(info, ri, getResolution(), posInt.x
-                            + currentIPPosition, posInt.y + currentBPPosition,
-                            posInt.width, posInt.height, foreignAttributes);
-                } else if (img instanceof ImageRawCCITTFax) {
-                    ImageRawCCITTFax ccitt = (ImageRawCCITTFax) img;
-                    in = ccitt.createInputStream();
-                    byte[] buf = IOUtils.toByteArray(in);
-                    float[] srcPts = new float[] {
-                            posInt.x + currentIPPosition,
-                            posInt.y + currentBPPosition,
-                            (float)posInt.getWidth(),
-                            (float)posInt.getHeight()
-                    };
-                    int[] coords = mpts2units(srcPts);
-                    
-                    // create image object parameters
-                    ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
-                    imageObjectInfo.setBuffered(false);
-                    imageObjectInfo.setUri(uri);
-                    
-                    String mimeType = info.getMimeType();
-                    if (mimeType != null) {
-                        imageObjectInfo.setMimeType(mimeType);
-                    }
-
-                    ObjectAreaInfo objectAreaInfo = new ObjectAreaInfo();
-                    objectAreaInfo.setX(coords[X]);
-                    objectAreaInfo.setY(coords[Y]);
-                    int resolution = currentState.getResolution();
-                    int w = Math.round(mpt2units((float)posInt.getWidth() * 1000));
-                    int h = Math.round(mpt2units((float)posInt.getHeight() * 1000));
-                    objectAreaInfo.setWidth(w);
-                    objectAreaInfo.setHeight(h);
-                    objectAreaInfo.setWidthRes(resolution);
-                    objectAreaInfo.setHeightRes(resolution);
-                    imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
-
-                    imageObjectInfo.setData(buf);
-                    imageObjectInfo.setDataHeight(ccitt.getSize().getHeightPx());
-                    imageObjectInfo.setDataWidth(ccitt.getSize().getWidthPx());
-                    imageObjectInfo.setColor(currentState.isColorImages());
-                    imageObjectInfo.setBitsPerPixel(currentState.getBitsPerPixel());
-                    imageObjectInfo.setCompression(ccitt.getCompression());
-                    imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
-                    
-                    getAFPDataStream().createObject(imageObjectInfo);
+                            imageG2D.getGraphics2DImagePainter(), rendererContext,
+                            origin.x + posInt.x, origin.y + posInt.y, posInt.width,
+                            posInt.height);
                 } else if (img instanceof ImageXMLDOM) {
                     ImageXMLDOM imgXML = (ImageXMLDOM) img;
-                    renderDocument(imgXML.getDocument(), imgXML
-                            .getRootNamespace(), pos, foreignAttributes);
+                    renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
+                            posInt, foreignAttributes);
                 } else {
                     throw new UnsupportedOperationException(
                             "Unsupported image type: " + img);
                 }
-
             } catch (ImageException ie) {
                 ResourceEventProducer eventProducer = ResourceEventProducer.Provider
-                        .get(getUserAgent().getEventBroadcaster());
+                        .get(userAgent.getEventBroadcaster());
                 eventProducer.imageError(this, (info != null ? info.toString()
                         : uri), ie, null);
             } catch (FileNotFoundException fe) {
                 ResourceEventProducer eventProducer = ResourceEventProducer.Provider
-                        .get(getUserAgent().getEventBroadcaster());
-                eventProducer.imageNotFound(this, (info != null ? info
-                        .toString() : uri), fe, null);
+                        .get(userAgent.getEventBroadcaster());
+                eventProducer.imageNotFound(this, (info != null ? info.toString()
+                        : uri), fe, null);
             } catch (IOException ioe) {
                 ResourceEventProducer eventProducer = ResourceEventProducer.Provider
-                        .get(getUserAgent().getEventBroadcaster());
-                eventProducer.imageIOError(this, (info != null ? info
-                        .toString() : uri), ioe, null);
+                        .get(userAgent.getEventBroadcaster());
+                eventProducer.imageIOError(this, (info != null ? info.toString()
+                        : uri), ioe, null);
             } finally {
                 if (in != null) {
                     IOUtils.closeQuietly(in);
                 }
             }
         }
+    }
+
+    /**
+     * Gets the AFP image object information for a given image
+     *
+     * @param uri the image uri
+     * @param info the image info
+     * @param pos the image content area
+     * @param origin the current position
+     * @param img the image
+     * @return an image object info
+     * @throws IOException thrown if an I/O exception of some sort has occurred
+     */
+    private AFPImageObjectInfo getImageObjectInfo(String uri, ImageInfo info, Rectangle2D pos,
+            Point origin, org.apache.xmlgraphics.image.loader.Image img) throws IOException {
+        AFPImageObjectInfo imageObjectInfo = new AFPImageObjectInfo();
+        imageObjectInfo.setUri(uri);
+        imageObjectInfo.setColor(state.isColorImages());
+        imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
+        imageObjectInfo.setMimeType(info.getMimeType());
+
+        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
+
+        float srcX = origin.x + (float)pos.getX();
+        float srcY = origin.y + (float)pos.getY();
+        int[] coords = unitConv.mpts2units(new float[] {srcX, srcY});
+        objectAreaInfo.setX(coords[X]);
+        objectAreaInfo.setY(coords[Y]);
+
+        int width = Math.round(unitConv.mpt2units((float)pos.getWidth()));
+        objectAreaInfo.setWidth(width);
+
+        int height = Math.round(unitConv.mpt2units((float)pos.getHeight()));
+        objectAreaInfo.setHeight(height);
+
+        String mimeType = info.getMimeType();
+        if (mimeType != null) {
+            imageObjectInfo.setMimeType(mimeType);
+        }
+        imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
+
+        if (img instanceof ImageRendered) {
+            imageObjectInfo.setBuffered(true);
+
+            ImageRendered imageRendered = (ImageRendered) img;
+            RenderedImage renderedImage = imageRendered.getRenderedImage();
+
+            ByteArrayOutputStream baout = new ByteArrayOutputStream();
+            try {
+                // Serialize image
+                // TODO Eventually, this should be changed not to buffer as
+                // this
+                // increases the
+                // memory consumption (see PostScript output)
+                ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baout);
+            } catch (IOException ioe) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider
+                        .get(userAgent.getEventBroadcaster());
+                eventProducer.imageWritingError(this, ioe);
+                throw ioe;
+            }
+            imageObjectInfo.setData(baout.toByteArray());
+
+            int resolution = state.getResolution();
+            objectAreaInfo.setWidthRes(resolution);
+            objectAreaInfo.setHeightRes(resolution);
+
+            imageObjectInfo.setDataHeight(renderedImage.getHeight());
+            imageObjectInfo.setDataWidth(renderedImage.getWidth());
+        } else {
+            imageObjectInfo.setBuffered(false);
+
+//            int resolution = state.getResolution();
+//            objectAreaInfo.setWidthRes(resolution);
+//            objectAreaInfo.setHeightRes(resolution);
+
+            ImageRawStream rawStream = (ImageRawStream) img;
+
+            int xresol = (int) (rawStream.getSize().getDpiHorizontal() * 10);
+            objectAreaInfo.setWidthRes(xresol);
+
+            int yresol = (int) (rawStream.getSize().getDpiVertical() * 10);
+            objectAreaInfo.setHeightRes(yresol);
+
+            InputStream inputStream = rawStream.createInputStream();
+            byte[] buf = IOUtils.toByteArray(inputStream);
+            imageObjectInfo.setData(buf);
+
+            int dataHeight = rawStream.getSize().getHeightPx();
+            imageObjectInfo.setDataHeight(dataHeight);
+
+            int dataWidth = rawStream.getSize().getWidthPx();
+            imageObjectInfo.setDataWidth(dataWidth);
+
+            if (img instanceof ImageRawCCITTFax) {
+                ImageRawCCITTFax ccitt = (ImageRawCCITTFax) img;
+                imageObjectInfo.setCompression(ccitt.getCompression());
+            }
+        }
+        return imageObjectInfo;
     }
 
     /**
@@ -719,80 +572,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         ImageEncodingHelper.encodeRenderedImageAsRGB(image, out);
     }
 
-    /**
-     * Draws a BufferedImage to AFP.
-     *
-     * @param imageInfo
-     *            the image info
-     * @param image
-     *            the RenderedImage
-     * @param imageRes
-     *            the resolution of the BufferedImage
-     * @param x
-     *            the x coordinate (in mpt)
-     * @param y
-     *            the y coordinate (in mpt)
-     * @param width
-     *            the width of the viewport (in mpt)
-     * @param height
-     *            the height of the viewport (in mpt)
-     * @param foreignAttributes
-     *            a mapping of foreign attributes
-     * @throws java.io.IOException an I/O exception of some sort has occurred.
-     */
-    public void drawBufferedImage(ImageInfo imageInfo, RenderedImage image,
-            int imageRes, int x, int y, int width, int height, Map foreignAttributes) throws IOException {
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        try {
-            // Serialize image
-            // TODO Eventually, this should be changed not to buffer as this
-            // increases the
-            // memory consumption (see PostScript output)
-            ImageEncodingHelper.encodeRenderedImageAsRGB(image, baout);
-        } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Provider
-                    .get(getUserAgent().getEventBroadcaster());
-            eventProducer.imageWritingError(this, ioe);
-            return;
-        }
-
-        // create image object parameters
-        ImageObjectInfo imageObjectInfo = new ImageObjectInfo();
-        imageObjectInfo.setBuffered(true);
-        if (imageInfo != null) {
-            imageObjectInfo.setUri(imageInfo.getOriginalURI());
-            imageObjectInfo.setMimeType(imageInfo.getMimeType());
-        }
-
-        ObjectAreaInfo objectAreaInfo = new ObjectAreaInfo();
-
-        float[] srcPts = new float[] {x, y};
-        int[] coords = mpts2units(srcPts);
-        objectAreaInfo.setX(coords[X]);
-        objectAreaInfo.setY(coords[Y]);
-        int w = Math.round(mpt2units(width));
-        int h = Math.round(mpt2units(height));
-        objectAreaInfo.setWidth(w);
-        objectAreaInfo.setHeight(h);
-
-        objectAreaInfo.setWidthRes(imageRes);
-        objectAreaInfo.setHeightRes(imageRes);
-        imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
-
-        imageObjectInfo.setData(baout.toByteArray());
-        imageObjectInfo.setDataHeight(image.getHeight());
-        imageObjectInfo.setDataWidth(image.getWidth());
-        imageObjectInfo.setColor(currentState.isColorImages());
-        imageObjectInfo.setBitsPerPixel(currentState.getBitsPerPixel());
-        imageObjectInfo.setResourceInfoFromForeignAttributes(foreignAttributes);
-
-        getAFPDataStream().createObject(imageObjectInfo);
-    }
-
     /** {@inheritDoc} */
     public void updateColor(Color col, boolean fill) {
         if (fill) {
-            currentState.setColor(col);
+            state.setColor(col);
         }
     }
 
@@ -814,8 +597,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         List breakOutList = new java.util.ArrayList();
         AbstractState.AbstractData data;
         while (true) {
-            data = currentState.getData();
-            if (currentState.pop() == null) {
+            data = state.getData();
+            if (state.pop() == null) {
                 break;
             }
             breakOutList.add(0, data); //Insert because of stack-popping
@@ -825,23 +608,23 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void saveGraphicsState() {
-        currentState.push();
+        state.push();
     }
 
     /** {@inheritDoc} */
     public void restoreGraphicsState() {
-        currentState.pop();
+        state.pop();
     }
 
     /** Indicates the beginning of a text object. */
     public void beginTextObject() {
-        //TODO maybe?
+        //TODO PDF specific maybe?
         log.debug("NYI beginTextObject()");
     }
 
     /** Indicates the end of a text object. */
     public void endTextObject() {
-        //TODO maybe?
+        //TODO PDF specific maybe?
         log.debug("NYI endTextObject()");
     }
 
@@ -857,7 +640,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         String name = getInternalFontNameForArea(text);
         int fontSize = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
-        currentState.setFontSize(fontSize);
+        state.setFontSize(fontSize);
         AFPFont font = (AFPFont)fontInfo.getFonts().get(name);
 
         // Set letterSpacing
@@ -867,10 +650,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         AFPFontAttributes afpFontAttributes
             = new AFPFontAttributes(name, font, fontSize);
 
-        AFPPageFonts pageFonts = currentState.getPageFonts();
+        AFPPageFonts pageFonts = state.getPageFonts();
         if (!pageFonts.containsKey(afpFontAttributes.getFontKey())) {
             // Font not found on current page, so add the new one
-            afpFontAttributes.setFontReference(currentState.incrementPageFontCount());
+            afpFontAttributes.setFontReference(state.incrementPageFontCount());
             pageFonts.put(afpFontAttributes.getFontKey(), afpFontAttributes);
         } else {
             // Use the previously stored font attributes
@@ -904,16 +687,18 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         int x = (currentIPPosition + text.getBorderAndPaddingWidthStart());
         int y = (currentBPPosition + text.getOffset() + text.getBaselineOffset());
         float[] srcPts = new float[] {x, y};
-        int[] coords = mpts2units(srcPts);
+        int[] coords = unitConv.mpts2units(srcPts);
 
         Color color = (Color) text.getTrait(Trait.COLOR);
 
         int variableSpaceCharacterIncrement = font.getWidth(' ', fontSize) / 1000
           + text.getTextWordSpaceAdjust()
           + text.getTextLetterSpaceAdjust();
-        variableSpaceCharacterIncrement = Math.round(mpt2units(variableSpaceCharacterIncrement));
+        variableSpaceCharacterIncrement
+            = Math.round(unitConv.mpt2units(variableSpaceCharacterIncrement));
 
-        int interCharacterAdjustment = Math.round(mpt2units(text.getTextLetterSpaceAdjust()));
+        int interCharacterAdjustment
+            = Math.round(unitConv.mpt2units(text.getTextLetterSpaceAdjust()));
 
         TextDataInfo textDataInfo = new TextDataInfo();
         textDataInfo.setFontReference(fontReference);
@@ -923,14 +708,15 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         textDataInfo.setVariableSpaceCharacterIncrement(variableSpaceCharacterIncrement);
         textDataInfo.setInterCharacterAdjustment(interCharacterAdjustment);
         textDataInfo.setData(data);
-        textDataInfo.setOrientation(currentState.getOrientation());
-        getAFPDataStream().createText(textDataInfo);
+        textDataInfo.setOrientation(state.getOrientation());
+        dataStream.createText(textDataInfo);
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         // where previous line area failed to take up entire allocated space
 
         super.renderText(text);
 
+        //TODO fix text decoration
         renderTextDecoration(font, fontSize, text, coords[Y], coords[X]);
     }
 
@@ -970,46 +756,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Sets the rotation to be used for portrait pages, valid values are 0
-     * (default), 90, 180, 270.
-     *
-     * @param rotation
-     *            The rotation in degrees.
-     */
-    public void setPortraitRotation(int rotation) {
-        currentState.setPortraitRotation(rotation);
-    }
-
-    /**
-     * Sets the rotation to be used for landsacpe pages, valid values are 0, 90,
-     * 180, 270 (default).
-     *
-     * @param rotation
-     *            The rotation in degrees.
-     */
-    public void setLandscapeRotation(int rotation) {
-        currentState.setLandscapeRotation(rotation);
-    }
-
-    /**
      * Get the MIME type of the renderer.
      *
      * @return The MIME type of the renderer
      */
     public String getMimeType() {
         return MimeConstants.MIME_AFP;
-    }
-
-    /**
-     * Returns the page segments map
-     * 
-     * @return the page segments map
-     */
-    private Map/*<String,String>*/getPageSegments() {
-        if (pageSegmentsMap == null) {
-            pageSegmentsMap = new java.util.HashMap/*<String,String>*/();
-        }
-        return pageSegmentsMap;
     }
 
     /**
@@ -1020,7 +772,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            the page object
      */
     private void renderPageObjectExtensions(PageViewport pageViewport) {
-        this.pageSegmentsMap = null;
+        pageSegmentMap.clear();
         if (pageViewport.getExtensionAttachments() != null
                 && pageViewport.getExtensionAttachments().size() > 0) {
             // Extract all AFPPageSetup instances from the attachment list on
@@ -1034,23 +786,22 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
                         String overlay = aps.getName();
                         if (overlay != null) {
-                            getAFPDataStream()
-                                    .createIncludePageOverlay(overlay);
+                            dataStream.createIncludePageOverlay(overlay);
                         }
                     } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT
                             .equals(element)) {
                         String name = aps.getName();
                         String source = aps.getValue();
-                        getPageSegments().put(source, name);
+                        pageSegmentMap.put(source, name);
                     } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT
                             .equals(element)) {
                         String name = aps.getName();
                         String value = aps.getValue();
-                        getAFPDataStream().createTagLogicalElement(name, value);
+                        dataStream.createTagLogicalElement(name, value);
                     } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
                         String content = aps.getContent();
                         if (content != null) {
-                            getAFPDataStream().createNoOperation(content);
+                            dataStream.createNoOperation(content);
                         }
                     }
                 }
@@ -1060,13 +811,35 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * Sets the rotation to be used for portrait pages, valid values are 0
+     * (default), 90, 180, 270.
+     *
+     * @param rotation
+     *            The rotation in degrees.
+     */
+    public void setPortraitRotation(int rotation) {
+        state.setPortraitRotation(rotation);
+    }
+
+    /**
+     * Sets the rotation to be used for landsacpe pages, valid values are 0, 90,
+     * 180, 270 (default).
+     *
+     * @param rotation
+     *            The rotation in degrees.
+     */
+    public void setLandscapeRotation(int rotation) {
+        state.setLandscapeRotation(rotation);
+    }
+
+    /**
      * Sets the number of bits used per pixel
      *
      * @param bitsPerPixel
      *            number of bits per pixel
      */
     public void setBitsPerPixel(int bitsPerPixel) {
-        currentState.setBitsPerPixel(bitsPerPixel);
+        state.setBitsPerPixel(bitsPerPixel);
     }
 
     /**
@@ -1076,7 +849,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            color image output
      */
     public void setColorImages(boolean colorImages) {
-        currentState.setColorImages(colorImages);
+        state.setColorImages(colorImages);
     }
 
     /**
@@ -1084,11 +857,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *
      * @return the AFPDataStream
      */
-    public AFPDataStream getAFPDataStream() {
-        if (afpDataStream == null) {
-            this.afpDataStream = new AFPDataStream();
-        }
-        return afpDataStream;
+    public DataStream getAFPDocumentStream() {
+        return this.dataStream;
     }
 
     /**
@@ -1098,7 +868,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            the output resolution (dpi)
      */
     public void setResolution(int resolution) {
-        ((AFPState)getState()).setResolution(resolution);
+        state.setResolution(resolution);
     }
 
     /**
@@ -1107,19 +877,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * @return the resolution in dpi
      */
     public int getResolution() {
-        return ((AFPState)getState()).getResolution();
+        return state.getResolution();
     }
 
     /**
      * Returns the current AFP state
-     * 
+     *
      * @return the current AFP state
      */
-    protected AbstractState getState() {
-        if (currentState == null) {
-            currentState = new AFPState();
-        }
-        return currentState;
+    public AbstractState getState() {
+        return this.state;
     }
 
     // TODO: remove this and use the superclass implementation
@@ -1158,25 +925,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         currentBPPosition = saveBP;
     }
 
-    protected int[] transformPoints(float[] srcPts, float[] dstPts) {
-        return transformPoints(srcPts, dstPts, true);
-    }
-
-    protected int[] transformPoints(float[] srcPts, float[] dstPts, boolean milli) {
-        if (dstPts == null) {
-            dstPts = new float[srcPts.length];
-        }
-        AbstractState state = (AbstractState)getState();
-        AffineTransform at = state.getData().getTransform();
-        at.transform(srcPts, 0, dstPts, 0, srcPts.length / 2);
-        int[] coords = new int[srcPts.length];
-        for (int i = 0; i < srcPts.length; i++) {
-            if (!milli) {
-                dstPts[i] *= 1000;
-            }
-            coords[i] = Math.round(dstPts[i]);
-        }
-        return coords;
+    /**
+     * Sets the default resource group file path
+     * @param filePath the default resource group file path
+     */
+    public void setDefaultResourceGroupFilePath(String filePath) {
+        resourceManager.setDefaultResourceGroupFilePath(filePath);
     }
 
 }

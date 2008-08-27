@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public abstract class AbstractPreparedObjectContainer extends AbstractNamedAFPObject
 implements PreparedAFPObject {
-    
+
     /** list of objects contained within this container */
     protected List/*<PreparedAFPObject>*/ objects = null;
 
@@ -41,18 +41,16 @@ implements PreparedAFPObject {
 
     /**
      * Named constructor
-     * 
+     *
      * @param name the name of the container
      */
     protected AbstractPreparedObjectContainer(String name) {
         super(name);
     }
-    
+
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
-        if (objects != null) {
-            super.writeObjects(objects, os);
-        }
+        super.writeObjects(objects, os);
     }
 
     private List/*<PreparedAFPObject>*/ getObjects() {
@@ -61,10 +59,10 @@ implements PreparedAFPObject {
         }
         return this.objects;
     }
-    
+
     /**
      * Adds a given prepared object to this container
-     * 
+     *
      * @param preparedObject the prepared object
      * @return the drawingOrder if it was added, null otherwise
      */
@@ -72,10 +70,10 @@ implements PreparedAFPObject {
         getObjects().add(preparedObject);
         return preparedObject;
     }
-    
+
     /**
      * Returns the current data length
-     * 
+     *
      * @return the current data length of this container including
      * all enclosed objects (and their containers)
      */
@@ -91,5 +89,5 @@ implements PreparedAFPObject {
             }
         }
         return dataLen;
-    } 
+    }
 }

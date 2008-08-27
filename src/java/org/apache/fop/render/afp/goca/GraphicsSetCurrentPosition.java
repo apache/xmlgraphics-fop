@@ -26,15 +26,15 @@ package org.apache.fop.render.afp.goca;
 public class GraphicsSetCurrentPosition extends AbstractGraphicsCoord {
 
     /**
+     * Constructor
+     *
      * @param coords the x/y coordinates for this object
      */
     public GraphicsSetCurrentPosition(int[] coords) {
         super(coords);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected byte getOrderCode() {
         return (byte)0x21;
     }

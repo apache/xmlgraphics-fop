@@ -17,10 +17,13 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.ioca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.fop.render.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.render.afp.modca.Factory;
 
 /**
  * An Image Segment is represented by a set of self-defining fields, fields
@@ -35,117 +38,100 @@ import java.io.OutputStream;
 public class ImageSegment extends AbstractNamedAFPObject {
 
     /**
-     * Default name for the object environment group
-     */
-    private static final String DEFAULT_NAME = "IS000001";
-
-    /**
      * The ImageContent for the image segment
      */
     private ImageContent imageContent = null;
 
-    /**
-     * Default constructor for the ImageSegment.
-     */
-    public ImageSegment() {
-        this(DEFAULT_NAME);
-    }
+    private final Factory factory;
 
     /**
      * Constructor for the image segment with the specified name,
      * the name must be a fixed length of eight characters.
-     * 
-     * @param name The name of the image.
+     * @param factory the object factory
+     *
+     * @param name the name of the image.
      */
-    public ImageSegment(String name) {
+    public ImageSegment(Factory factory, String name) {
         super(name);
+        this.factory = factory;
     }
 
-    /** {@inheritDoc} */
-    protected int getNameLength() {
-        return 4;
+    private ImageContent getImageContent() {
+        if (imageContent == null) {
+            this.imageContent = factory.createImageContent();
+        }
+        return imageContent;
     }
 
     /**
      * Sets the image size parameters resolution, hsize and vsize.
-     * 
-     * @param hresol The horizontal resolution of the image.
-     * @param vresol The vertical resolution of the image.
+     *
      * @param hsize The horizontal size of the image.
      * @param vsize The vertival size of the image.
+     * @param hresol The horizontal resolution of the image.
+     * @param vresol The vertical resolution of the image.
      */
-    public void setImageSize(int hresol, int vresol, int hsize, int vsize) {
-        if (imageContent == null) {
-            imageContent = new ImageContent();
-        }
-        imageContent.setImageSize(hresol, vresol, hsize, vsize);
+    public void setImageSize(int hsize, int vsize, int hresol, int vresol) {
+        getImageContent().setImageSize(hsize, vsize, hresol, vresol);
     }
 
     /**
      * Sets the image encoding.
-     * 
+     *
      * @param encoding The image encoding.
      */
-    public void setImageEncoding(byte encoding) {
-        if (imageContent == null) {
-            imageContent = new ImageContent();
-        }
-        imageContent.setImageEncoding(encoding);
+    public void setEncoding(byte encoding) {
+        getImageContent().setImageEncoding(encoding);
     }
 
     /**
      * Sets the image compression.
-     * 
+     *
      * @param compression The image compression.
      */
-    public void setImageCompression(byte compression) {
-        if (imageContent == null) {
-            imageContent = new ImageContent();
-        }
-        imageContent.setImageCompression(compression);
+    public void setCompression(byte compression) {
+        getImageContent().setImageCompression(compression);
     }
 
     /**
      * Sets the image IDE size.
-     * 
+     *
      * @param size The IDE size.
      */
-    public void setImageIDESize(byte size) {
-        if (imageContent == null) {
-            imageContent = new ImageContent();
-        }
-        imageContent.setImageIDESize(size);
+    public void setIDESize(byte size) {
+        getImageContent().setImageIDESize(size);
     }
 
     /**
      * Sets the image IDE color model.
-     * 
-     * @param colorModel    the IDE color model.
+     *
+     * @param colorModel the IDE color model.
      */
-    public void setImageIDEColorModel(byte colorModel) {
-        if (imageContent == null) {
-            imageContent = new ImageContent();
-        }
-        imageContent.setImageIDEColorModel(colorModel);
+    public void setIDEColorModel(byte colorModel) {
+        getImageContent().setImageIDEColorModel(colorModel);
     }
 
     /**
-     * Set the data of the image.
-     * 
+     * Set the data image data.
+     *
      * @param data the image data
      */
-    public void setImageData(byte[] data) {
-        if (imageContent == null) {
-            imageContent = new ImageContent();
-        }
-        imageContent.setImageData(data);
+    public void setData(byte[] data) {
+        getImageContent().setImageData(data);
     }
 
     /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         if (imageContent != null) {
-            imageContent.write(os);
+            imageContent.writeToStream(os);
         }
+    }
+
+    private static final int NAME_LENGTH = 4;
+
+    /** {@inheritDoc} */
+    protected int getNameLength() {
+        return NAME_LENGTH;
     }
 
     /** {@inheritDoc} */

@@ -24,16 +24,16 @@ import org.apache.xmlgraphics.util.MimeConstants;
 /**
  *  A graphics object info which contains necessary painting objects
  */
-public class GraphicsObjectInfo extends DataObjectInfo {
+public class AFPGraphicsObjectInfo extends AFPDataObjectInfo {
 
-    private GraphicsObjectPainter painter;
+    private AFPGraphicsObjectPainter painter;
 
     /**
      * Returns the graphics painter
      * 
      * @return the graphics painter
      */
-    public GraphicsObjectPainter getPainter() {
+    public AFPGraphicsObjectPainter getPainter() {
         return painter;
     }
 
@@ -42,7 +42,7 @@ public class GraphicsObjectInfo extends DataObjectInfo {
      * 
      * @param graphicsPainter the graphics painter
      */
-    public void setPainter(GraphicsObjectPainter graphicsPainter) {
+    public void setPainter(AFPGraphicsObjectPainter graphicsPainter) {
         this.painter = graphicsPainter;
     }
     

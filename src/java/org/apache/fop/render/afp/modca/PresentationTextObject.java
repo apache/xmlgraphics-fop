@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.afp.modca;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -41,14 +40,8 @@ import org.apache.fop.render.afp.TextDataInfo;
  * collection of the graphic characters and control codes is called Presentation
  * Text, and the object that contains the Presentation Text is called the
  * PresentationText object.
- *
  */
 public class PresentationTextObject extends AbstractNamedAFPObject {
-
-    /**
-     * Default name for the presentation text object
-     */
-    private static final String DEFAULT_NAME = "PTO00001";
 
     /**
      * The current presentation text data
@@ -61,15 +54,9 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
     private List/*<PresentationTextData>*/ presentationTextDataList = null;
 
     /**
-     * Default constructor for the PresentationTextObject
-     */
-    public PresentationTextObject() {
-        this(DEFAULT_NAME);
-    }
-
-    /**
      * Construct a new PresentationTextObject for the specified name argument,
      * the name should be an 8 character identifier.
+     *
      * @param name the name of this presentation object
      */
     public PresentationTextObject(String name) {
@@ -134,32 +121,16 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
         this.currentPresentationTextData = null;
     }
 
-    /**
-     * Accessor method to write the AFP datastream for the PresentationTextObject.
-     * 
-     * @param os The stream to write to
-     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
-     */
-    public void write(OutputStream os) throws IOException {
-        writeStart(os);
-        writeObjects(this.presentationTextDataList, os);
-        writeEnd(os);
-    }
-
-    /**
-     * Returns the name of this presentation text object
-     * 
-     * @return the name of this presentation text object
-     */
-    public String getName() {
-        return name;
-    }
-
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.BEGIN, Category.PRESENTATION_TEXT);
         os.write(data);
+    }
+
+    /** {@inheritDoc} */
+    protected void writeContent(OutputStream os) throws IOException {
+        writeObjects(this.presentationTextDataList, os);
     }
 
     /** {@inheritDoc} */
@@ -187,7 +158,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
             endControlSequence();
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         if (presentationTextDataList != null) {

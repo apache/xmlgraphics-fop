@@ -24,163 +24,82 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.fop.render.afp.modca.resource.ResourceManager;
-import org.apache.fop.render.afp.modca.resource.ResourceStore;
-import org.apache.fop.render.afp.modca.resource.StoreInfo;
+import org.apache.fop.util.store.Streamable;
 
 /**
  * A Resource Group contains a set of overlays.
  */
-public final class ResourceGroup extends AbstractNamedAFPObject {
-    
-    /** Default name for the resource group */
-    private static final String DEFAULT_NAME = "RG000001";
+public class ResourceGroup extends AbstractNamedAFPObject {
 
     /** Set of resource uri */
-    private Set/*<String>*/ resourceSet = new java.util.HashSet/*<String>*/();
-
-    private ResourceManager resourceManager;
-    
-    /**
-     * Default constructor
-     */
-    public ResourceGroup(ResourceManager resourceManager) {
-        this(resourceManager, DEFAULT_NAME);
-    }
+    private final Set/*<String>*/ resourceSet = new java.util.HashSet/*<String>*/();
 
     /**
      * Constructor for the ResourceGroup, this takes a
      * name parameter which must be 8 characters long.
-     * 
+     *
      * @param name the resource group name
-     * @param resourceManager the resource group manager
      */
-    public ResourceGroup(ResourceManager resourceManager, String name) {
+    public ResourceGroup(String name) {
         super(name);
-        this.resourceManager = resourceManager;
     }
-    
-//    /**
-//     * Creates a data object in this resource group
-//     * 
-//     * @param dataObjectInfo the data object info
-//     * @return an include object reference
-//     */
-//    public IncludeObject createObject(DataObjectInfo dataObjectInfo) {
-//        String uri = dataObjectInfo.getUri();
-//        resourceSet.get();
-//        DataObjectAccessor dataObjectAccessor
-//            = (DataObjectAccessor)getResourceMap().getData(dataObjectInfo.getUri());
-//        ResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-//        ResourceLevel resourceLevel = resourceInfo.getLevel();
-//        AbstractDataObject dataObj;
-//        if (dataObjectAccessor == null) {
-//            dataObj = dataObjectFactory.createObject(dataObjectInfo);
-//            ObjectContainer objectContainer = null;
-//            String resourceName = resourceInfo.getName();
-//            if (resourceName != null) {
-//                objectContainer = new ObjectContainer(resourceName);
-//            } else {
-//                objectContainer = createObjectContainer();
-//                resourceName = objectContainer.getName();
-//            }
-//            objectContainer.setDataObject(dataObj);
-//            objectContainer.setDataObjectInfo(dataObjectInfo);
-//            
-//            // When located at print-file level or externally,
-//            // wrap the object container in a resource object
-//            if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
-//                ResourceObject resourceObject = new ResourceObject(resourceName);
-//                resourceObject.setDataObject(objectContainer);
-//                resourceObject.setDataObjectInfo(dataObjectInfo);
-//                dataObjectAccessor = resourceObject;
-//            } else { // Access data object through container
-//                dataObjectAccessor = objectContainer;
-//            }
-//            
-//            // Add to resource map
-//            getResourceMap().put(dataObjectInfo.getUri(), dataObjectAccessor);            
-//        }
-//        String name = dataObjectAccessor.getName();
-//        IncludeObject includeObj = dataObjectFactory.createInclude(dataObjectInfo);
-//        return includeObj;
-//    }
-    
-//    /**
-//     * Checks if a named object is of a valid type to be added to a resource group
-//     * 
-//     * @param namedObj a named object
-//     * @return true if the named object is of a valid type to be added to a resource group
-//     */
-//    private boolean isValidObjectType(AbstractNamedAFPObject namedObj) {
-//        return (namedObj instanceof Overlay
-//                || namedObj instanceof ResourceObject
-//                || namedObj instanceof PageSegment
-//                || namedObj instanceof GraphicsObject
-//                || namedObj instanceof ImageObject
-//                || namedObj instanceof ObjectContainer
-//                || namedObj instanceof Document
-//                // || namedObj instanceof FormMap
-//                // || namedObj instanceof BarcodeObject 
-//                );
-//    }
 
     /**
-     * Add this object cache record to this resource group
-     * 
-     * @param record the cache record
+     * Add this named object to this resource group
+     *
+     * @param namedObject a named object
+     * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
-    public void addObject(StoreInfo record) {
-        resourceSet.add(record);
+    public void addObject(AbstractNamedAFPObject namedObject) throws IOException {
+        resourceSet.add(namedObject);
     }
-    
+
     /**
      * Returns the number of resources contained in this resource group
-     * 
+     *
      * @return the number of resources contained in this resource group
      */
     public int getResourceCount() {
-        return resourceSet.size(); 
+        return resourceSet.size();
     }
-    
+
     /**
      * Returns true if the resource exists within this resource group,
      * false otherwise.
-     * 
+     *
      * @param uri the uri of the resource
      * @return true if the resource exists within this resource group
      */
     public boolean resourceExists(String uri) {
         return resourceSet.contains(uri);
     }
-    
-    /** {@inheritDoc} */
-    public void writeContent(OutputStream os) throws IOException {
-        Iterator it = resourceSet.iterator();
-
-        if (it.hasNext()) {            
-            ResourceStore store = resourceManager.getStore();
-            do {
-                StoreInfo saveInfo = (StoreInfo)it.next();
-                store.writeToStream(saveInfo, os);
-            } while (it.hasNext());
-        }
-    }
 
     /** {@inheritDoc} */
-    protected void writeStart(OutputStream os) throws IOException {
+    public void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.BEGIN, Category.RESOURCE_GROUP);
         os.write(data);
     }
 
     /** {@inheritDoc} */
-    protected void writeEnd(OutputStream os) throws IOException {
+    public void writeContent(OutputStream os) throws IOException {
+        Iterator it = resourceSet.iterator();
+        while (it.hasNext()) {
+            Object object = it.next();
+            if (object instanceof Streamable) {
+                Streamable streamableObject = (Streamable)object;
+                streamableObject.writeToStream(os);
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.END, Category.RESOURCE_GROUP);
         os.write(data);
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return this.name + " " + resourceSet/*getResourceMap()*/;

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,18 +24,19 @@ package org.apache.fop.render.afp.goca;
  * straight lines drawn from the given position or current position
  */
 public final class GraphicsFillet extends AbstractGraphicsCoord {
-    
+
     /**
+     * Constructor
+     *
      * @param coords the x/y coordinates for this object
      */
     public GraphicsFillet(int[] coords) {
         super(coords);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected byte getOrderCode() {
         return (byte)0xC5;
     }
+
 }

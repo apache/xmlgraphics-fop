@@ -58,16 +58,16 @@ public class IncludeObject extends AbstractNamedAFPObject {
      * the included object is of type barcode
      */
     public static final byte TYPE_BARCODE = (byte)0xEB;
-    
+
     /**
      * the included object is of type image
      */
     public static final byte TYPE_IMAGE = (byte)0xFB;
-        
+
     /**
      * The object type (default is other)
      */
-    private byte dataObjectType = TYPE_OTHER;
+    private byte objectType = TYPE_OTHER;
 
     /**
      * The orientation on the include object
@@ -75,13 +75,13 @@ public class IncludeObject extends AbstractNamedAFPObject {
     private int orientation = 0;
 
     /**
-     * The X-axis origin of the object area 
+     * The X-axis origin of the object area
      */
-    private int xOffset = 0; 
-    
+    private int xOffset = 0;
+
     /**
-     * The Y-axis origin of the object area 
-     */    
+     * The Y-axis origin of the object area
+     */
     private int yOffset = 0;
 
     /**
@@ -93,7 +93,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
      * The Y-axis origin defined in the object
      */
     private int yContentOffset = 0;
-    
+
     /**
      * Constructor for the include object with the specified name, the name must
      * be a fixed length of eight characters and is the name of the referenced
@@ -122,8 +122,8 @@ public class IncludeObject extends AbstractNamedAFPObject {
     }
 
     /**
-     * Sets the x and y offset to the origin in the object area 
-     * 
+     * Sets the x and y offset to the origin in the object area
+     *
      * @param x the X-axis origin of the object area
      * @param y the Y-axis origin of the object area
      */
@@ -131,10 +131,10 @@ public class IncludeObject extends AbstractNamedAFPObject {
         this.xOffset = x;
         this.yOffset = y;
     }
-    
+
     /**
      * Sets the x and y offset of the content area to the object area
-     *  
+     *
      * @param x the X-axis origin defined in the object
      * @param y the Y-axis origin defined in the object
      */
@@ -142,18 +142,18 @@ public class IncludeObject extends AbstractNamedAFPObject {
         this.xContentOffset = x;
         this.yContentOffset = y;
     }
-    
+
     /**
      * Sets the data object type
-     * 
+     *
      * @param type the data object type
      */
-    public void setDataObjectType(byte type) {
-        this.dataObjectType = type;
+    public void setObjectType(byte type) {
+        this.objectType = type;
     }
-    
+
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {       
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[36];
         super.copySF(data, Type.INCLUDE, Category.DATA_RESOURCE);
 
@@ -163,18 +163,18 @@ public class IncludeObject extends AbstractNamedAFPObject {
         data[2] = len[1];
 
         data[17] = 0x00; // reserved
-        data[18] = dataObjectType;
+        data[18] = objectType;
 
         //XoaOset (object area)
         if (xOffset >= -1) {
             byte[] x = BinaryUtils.convert(xOffset, 3);
             data[19] = x[0];
             data[20] = x[1];
-            data[21] = x[2];            
+            data[21] = x[2];
         } else {
             data[19] = (byte)0xFF;
             data[20] = (byte)0xFF;
-            data[21] = (byte)0xFF;            
+            data[21] = (byte)0xFF;
         }
 
         // YoaOset (object area)
@@ -182,20 +182,21 @@ public class IncludeObject extends AbstractNamedAFPObject {
             byte[] y = BinaryUtils.convert(yOffset, 3);
             data[22] = y[0];
             data[23] = y[1];
-            data[24] = y[2];                        
+            data[24] = y[2];
         } else {
             data[22] = (byte)0xFF;
             data[23] = (byte)0xFF;
-            data[24] = (byte)0xFF;            
+            data[24] = (byte)0xFF;
         }
 
+        // XoaOrent/YoaOrent
         switch (orientation) {
             case -1: // use x/y axis orientation defined in object
                 data[25] = (byte)0xFF; // x axis rotation
                 data[26] = (byte)0xFF; //
                 data[27] = (byte)0xFF; // y axis rotation
                 data[28] = (byte)0xFF;
-                break;                
+                break;
             case 90:
                 data[25] = 0x2D;
                 data[26] = 0x00;
@@ -227,7 +228,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
             byte[] y = BinaryUtils.convert(xContentOffset, 3);
             data[29] = y[0];
             data[30] = y[1];
-            data[31] = y[2];            
+            data[31] = y[2];
         } else {
             data[29] = (byte)0xFF;
             data[30] = (byte)0xFF;
@@ -239,7 +240,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
             byte[] y = BinaryUtils.convert(yContentOffset, 3);
             data[32] = y[0];
             data[33] = y[1];
-            data[34] = y[2];                        
+            data[34] = y[2];
         } else {
             data[32] = (byte)0xFF;
             data[33] = (byte)0xFF;
@@ -249,12 +250,11 @@ public class IncludeObject extends AbstractNamedAFPObject {
 
         // Write structured field data
         os.write(data);
-        
-        // Write triplet for FQN internal/external object reference 
-        byte[] tripletData = super.getTripletData();
+
+        // Write triplet for FQN internal/external object reference
         os.write(tripletData);
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return "IOB: " + this.getName();

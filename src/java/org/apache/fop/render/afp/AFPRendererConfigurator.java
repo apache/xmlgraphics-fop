@@ -36,7 +36,6 @@ import org.apache.fop.render.afp.fonts.CharacterSet;
 import org.apache.fop.render.afp.fonts.FopCharacterSet;
 import org.apache.fop.render.afp.fonts.OutlineFont;
 import org.apache.fop.render.afp.fonts.RasterFont;
-import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.util.LogUtil;
 
 /**
@@ -260,8 +259,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                 }
                 File resourceGroupFile = new File(resourceGroupDest);
                 if (resourceGroupFile.canWrite()) {
-                    AFPDataStream datastream = afpRenderer.getAFPDataStream();
-                    datastream.setDefaultResourceGroupFilePath(resourceGroupDest);
+                    afpRenderer.setDefaultResourceGroupFilePath(resourceGroupDest);
                 } else {
                     log.warn("Unable to write to default external resource group file '"
                                 + resourceGroupDest + "'");

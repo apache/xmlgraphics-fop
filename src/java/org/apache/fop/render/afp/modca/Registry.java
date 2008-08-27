@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,33 +21,32 @@ package org.apache.fop.render.afp.modca;
 
 import java.util.Collections;
 
-import org.apache.fop.render.afp.DataObjectInfo;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 /**
- * MOD:CA Registry of object types 
+ * MOD:CA Registry of object types
  */
 public final class Registry {
-    /** IOB supported object types */    
-    private static final byte COMPID_GIF = 22;
-    private static final byte COMPID_JFIF = 23; // jpeg file interchange format 
-    private static final byte COMPID_PDF_SINGLE_PAGE = 25; 
-    private static final byte COMPID_PCL_PAGE_OBJECT = 34; 
-    
-    /** IOB unsupported object types */
+    /** IOB supported object types */
     private static final byte COMPID_EPS = 13;
     private static final byte COMPID_TIFF = 14;
+    private static final byte COMPID_GIF = 22;
+    private static final byte COMPID_JFIF = 23; // jpeg file interchange format
+    private static final byte COMPID_PDF_SINGLE_PAGE = 25;
+    private static final byte COMPID_PCL_PAGE_OBJECT = 34;
 
     /** mime type entry mapping */
-    private java.util.Map/*<String, Registry.ObjectType>*/ mimeObjectTypeMap
+    private final java.util.Map/*<String, ObjectType>*/ mimeObjectTypeMap
         = Collections.synchronizedMap(
-                new java.util.HashMap/*<String, Registry.ObjectType>*/());
+                new java.util.HashMap/*<String, ObjectType>*/());
 
     /** singleton instance */
     private static Registry instance = null;
 
     /**
-     * @return a single instance of an ObjectTypeRegistry
+     * Returns a single instance of a MO:DCA Registry
+     *
+     * @return a single instance of an MO:DCA Registry
      */
     public static Registry getInstance() {
         synchronized (Registry.class) {
@@ -57,11 +56,17 @@ public final class Registry {
         }
         return instance;
     }
-    
+
+    /**
+     * private constructor
+     */
     private Registry() {
         init();
     }
-    
+
+    /**
+     * Initializes the mimetype map
+     */
     private void init() {
         mimeObjectTypeMap.put(
                 MimeConstants.MIME_EPS,
@@ -69,7 +74,7 @@ public final class Registry {
                         COMPID_EPS,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x0D},
                         "Encapsulated Postscript",
-                        false,
+                        true,
                         MimeConstants.MIME_EPS
                 )
         );
@@ -79,7 +84,7 @@ public final class Registry {
                         COMPID_TIFF,
                         new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x0E},
                         "TIFF",
-                        false,
+                        true,
                         MimeConstants.MIME_TIFF
                 )
         );
@@ -111,7 +116,7 @@ public final class Registry {
                         true,
                         MimeConstants.MIME_PDF
                 )
-        );         
+        );
         mimeObjectTypeMap.put(
                 MimeConstants.MIME_PCL,
                 new ObjectType(
@@ -121,38 +126,32 @@ public final class Registry {
                         true,
                         MimeConstants.MIME_PCL
                 )
-        );        
+        );
     }
 
     /**
-     * Returns the Registry ObjectType for a given data object info
-     * or null if not registered
-     * 
-     * @param dataObjectInfo the data object info
-     * @return the Registry ObjectType for a given data object info
-     * or null if not registered
+     * Returns the MOD:CA object type given a mimetype
+     *
+     * @param mimeType the object mimetype
+     * @return the MOD:CA object type
      */
-    public Registry.ObjectType getObjectType(DataObjectInfo dataObjectInfo) {
-        String mimeType = dataObjectInfo.getMimeType();
-        if (mimeType != null) {
-            return (Registry.ObjectType)mimeObjectTypeMap.get(mimeType);
-        }
-        return null; 
+    public ObjectType getObjectType(String mimeType) {
+        return (ObjectType)mimeObjectTypeMap.get(mimeType);
     }
 
     /**
      * Encapsulates a MOD:CA Registry Object Type entry
      */
     public class ObjectType {
-        private byte componentId; 
-        private byte[] oid;
-        private String name;
-        private boolean includable;
-        private String mimeType;
+        private final byte componentId;
+        private final byte[] oid;
+        private final String name;
+        private final boolean includable;
+        private final String mimeType;
 
         /**
          * Main constructor
-         * 
+         *
          * @param componentId the component id of this object type
          * @param oid the object id of this object type
          * @param name the object type name
@@ -167,10 +166,10 @@ public final class Registry {
             this.componentId = componentId;
             this.oid = oid;
         }
-     
+
         /**
          * Returns a MOD:CA object type OID from a given a componentId
-         * 
+         *
          * @return the corresponding object type id for a given component id
          * or null if the component id is unknown and the object type OID was not found.
          */
@@ -180,8 +179,8 @@ public final class Registry {
 
         /**
          * Returns the object type name for the given componentId
-         * 
-         * @return the object type name for the given componentId 
+         *
+         * @return the object type name for the given componentId
          */
         public String getName() {
             return this.name;
@@ -189,7 +188,7 @@ public final class Registry {
 
         /**
          * Returns the compontentId for this entry
-         * 
+         *
          * @return the compontentId for this entry
          */
         public byte getComponentId() {
@@ -198,7 +197,7 @@ public final class Registry {
 
         /**
          * Returns true if this component can be included with an IOB structured field
-         * 
+         *
          * @return true if this component can be included with an IOB structured field
          */
         public boolean isIncludable() {
@@ -207,7 +206,7 @@ public final class Registry {
 
         /**
          * Returns the mime type associated with this object type
-         * 
+         *
          * @return the mime type associated with this object type
          */
         public String getMimeType() {

@@ -31,14 +31,18 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
     protected int[] coords = null;
 
     /**
+     * Constructor
+     *
      * @param coords the x/y coordinates for this object
      */
     public AbstractGraphicsCoord(int[] coords) {
         this.coords = coords;
         prepareData();
     }
-               
+
     /**
+     * Constructor
+     *
      * @param x the x coordinate for this object
      * @param y the y coordinate for this object
      */
@@ -47,6 +51,8 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
     }
 
     /**
+     * Constructor
+     *
      * @param x1 the x1 coordinate for this object
      * @param y1 the y1 coordinate for this object
      * @param x2 the x2 coordinate for this object
@@ -57,13 +63,17 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
     }
 
     /**
+     * Returns the order code to use
+     *
      * @return the order code to use
      */
     protected abstract byte getOrderCode();
 
     /**
+     * Returns the length of this order code (typically this is the same as the coordinate length)
+     *
      * @return the length of this order code
-     * (typically this is the same as the coordinate length)
+     *
      */
     protected int getLength() {
         return this.coords.length * 2;
@@ -71,6 +81,7 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
 
     /**
      * Creates a newly created and initialized byte data
+     *
      * @return a newly created and initialized byte data
      */
     protected byte[] createData() {
@@ -81,9 +92,7 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
         return data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void prepareData() {
         super.data = createData();
         int fromIndex = data.length - getLength();
@@ -92,6 +101,7 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
 
     /**
      * Adds the coordinates to the structured field data
+     *
      * @param data the structured field data
      * @param fromIndex the start index
      */
@@ -100,11 +110,13 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
         for (int i = 0; i < coords.length; i++, fromIndex += 2) {
             byte[] coord = BinaryUtils.convert(coords[i], 2);
             data[fromIndex] = coord[0];
-            data[fromIndex + 1] = coord[1];            
+            data[fromIndex + 1] = coord[1];
         }
     }
-    
+
     /**
+     * Returns the short name of this GOCA object
+     *
      * @return the short name of this GOCA object
      */
     public String getName() {
@@ -112,16 +124,14 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
         return className.substring(className.lastIndexOf(".") + 1);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         String coordsStr = "";
         for (int i = 0; i < coords.length; i++) {
             coordsStr += (i % 2 == 0) ? "x" : "y";
-            coordsStr += (i / 2) + "=" + coords[i] + ",";                   
+            coordsStr += (i / 2) + "=" + coords[i] + ",";
         }
         coordsStr = coordsStr.substring(0, coordsStr.length() - 1);
-        return getName() + "(" + coordsStr + ")";
-    }        
+        return getName() + "{" + coordsStr + "}";
+    }
 }

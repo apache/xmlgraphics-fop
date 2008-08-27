@@ -33,7 +33,7 @@ public class PageDescriptor extends AbstractDescriptor {
     /**
      * Construct a page descriptor for the specified page width
      * and page height.
-     * 
+     *
      * @param width The page width.
      * @param height The page height.
      * @param widthResolution The page width resolution
@@ -44,23 +44,15 @@ public class PageDescriptor extends AbstractDescriptor {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
-
-        log.debug("width=" + width);
-        log.debug("height=" + height);
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[24];
-        data[0] = 0x5A;
-        data[1] = 0x00;
+        copySF(data, Type.DESCRIPTOR, Category.PAGE);
         data[2] = 0x17;
-        data[3] = (byte) 0xD3;
-        data[4] = (byte) 0xA6;
-        data[5] = (byte) 0xAF;
 
-        data[6] = 0x00; // Flags
-        data[7] = 0x00; // Reserved
-        data[8] = 0x00;  // Reserved
-
+        // XpgBase
         data[9] = 0x00; // XpgBase = 10 inches
+
+        // YpgBase
         data[10] = 0x00; // YpgBase = 10 inches
 
         // XpgUnits

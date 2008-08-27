@@ -21,9 +21,8 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
-
-import org.apache.fop.render.afp.modca.resource.ResourceManager;
 
 /**
  * A page group is used in the data stream to define a named, logical grouping
@@ -39,17 +38,17 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
     /** The tag logical elements contained within this group */
     private List tagLogicalElements = null;
 
-    /** The page state */
-    private boolean complete = false;
+    /** the page group started state */
+    private boolean started = false;
 
     /**
      * Constructor for the PageGroup.
-     * 
-     * @param manager the resource manager
+     *
+     * @param factory the resource manager
      * @param name the name of the page group
      */
-    public PageGroup(ResourceManager manager, String name) {
-        super(manager, name);
+    public PageGroup(Factory factory, String name) {
+        super(factory, name);
     }
 
     private List getTagLogicalElements() {
@@ -58,7 +57,7 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
         }
         return this.tagLogicalElements;
     }
-    
+
     /**
      * Creates a TagLogicalElement on the page.
      *
@@ -68,7 +67,7 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
      *            the value of the tag
      */
     public void createTagLogicalElement(String name, String value) {
-        TagLogicalElement tle = new TagLogicalElement(name, value);
+        TagLogicalElement tle = factory.createTagLogicalElement(name, value);
         if (!getTagLogicalElements().contains(tle)) {
             getTagLogicalElements().add(tle);
         }
@@ -79,14 +78,6 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
      */
     protected void endPageGroup() {
         complete = true;
-    }
-
-    /**
-     * Returns an indication if the page group is complete
-     * @return whether or not this page group is complete or not
-     */
-    public boolean isComplete() {
-        return complete;
     }
 
     /** {@inheritDoc} */
@@ -108,7 +99,30 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
         copySF(data, Type.END, Category.PAGE_GROUP);
         os.write(data);
     }
-    
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        if (!started) {
+            writeStart(os);
+            started = true;
+        }
+
+        Iterator it = objects.iterator();
+        while (it.hasNext()) {
+            AbstractAFPObject ao = (AbstractAFPObject)it.next();
+            if (ao instanceof PageObject && ((PageObject)ao).isComplete()) {
+                ao.writeToStream(os);
+                it.remove();
+            } else {
+                break;
+            }
+        }
+
+        if (complete) {
+            writeEnd(os);
+        }
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return this.getName();

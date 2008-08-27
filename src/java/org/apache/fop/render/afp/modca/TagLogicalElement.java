@@ -69,7 +69,7 @@ public class TagLogicalElement extends AbstractAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
 
         byte[] data = new byte[17 + name.length() + value.length()];
 

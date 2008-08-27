@@ -30,28 +30,20 @@ import org.apache.fop.render.afp.tools.StringUtils;
 /**
  * A GOCA graphics data
  */
-public final class GraphicsData extends AbstractPreparedObjectContainer {   
-    
-    /**
-     * The maximum graphics data length
-     */ 
+public final class GraphicsData extends AbstractPreparedObjectContainer {
+
+    /** The maximum graphics data length */
     public static final int MAX_DATA_LEN = 32767;
 
-    /**
-     * The graphics segment
-     */
+    /** The graphics segment */
     private GraphicsChainedSegment currentSegment = null;
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     public int getDataLength() {
         return 8 + super.getDataLength();
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
         int l = getDataLength();
@@ -76,7 +68,7 @@ public final class GraphicsData extends AbstractPreparedObjectContainer {
     public void beginArea() {
         getSegment().beginArea();
     }
-    
+
     /**
      * Ends a graphics area (end of fill)
      */
@@ -86,16 +78,18 @@ public final class GraphicsData extends AbstractPreparedObjectContainer {
 
     /**
      * Returns a new segment name
+     *
      * @return a new segment name
      */
     private String createSegmentName() {
         return StringUtils.lpad(String.valueOf(
                 (super.objects != null ? super.objects.size() : 0) + 1),
-            '0', 4);        
+            '0', 4);
     }
-    
+
     /**
      * Returns the current graphics segment, creating one if one does not exist
+     *
      * @return the current graphics chained segment
      */
     private GraphicsChainedSegment getSegment() {
@@ -107,24 +101,23 @@ public final class GraphicsData extends AbstractPreparedObjectContainer {
 
     /**
      * Creates a new graphics segment
+     *
      * @return a newly created graphics segment
      */
     public GraphicsChainedSegment newSegment() {
         String name = createSegmentName();
         if (currentSegment == null) {
-            this.currentSegment = new GraphicsChainedSegment(name);            
+            this.currentSegment = new GraphicsChainedSegment(name);
         } else {
-            this.currentSegment = new GraphicsChainedSegment(name, currentSegment);            
+            this.currentSegment = new GraphicsChainedSegment(name, currentSegment);
         }
         super.addObject(currentSegment);
         return currentSegment;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
-        if (currentSegment == null 
+        if (currentSegment == null
             || (currentSegment.getDataLength() + drawingOrder.getDataLength())
             >= GraphicsChainedSegment.MAX_DATA_LEN) {
             newSegment();
@@ -132,10 +125,8 @@ public final class GraphicsData extends AbstractPreparedObjectContainer {
         currentSegment.addObject(drawingOrder);
         return drawingOrder;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     public String toString() {
         return "GraphicsData";
     }

@@ -25,42 +25,37 @@ package org.apache.fop.render.afp.goca;
 public final class GraphicsBox extends AbstractGraphicsCoord {
 
     /**
+     * Constructor
+     *
      * @param coords the x/y coordinates for this object
      */
     public GraphicsBox(int[] coords) {
         super(coords);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected byte getOrderCode() {
         return (byte)0xC0;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     protected int getLength() {
         return 10;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void prepareData() {
         super.data = createData();
         final int fromIndex = 4;
         addCoords(data, fromIndex);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected byte[] createData() {
         byte[] data = super.createData();
         data[2] = (byte)0x20; // CONTROL draw control flags
         data[3] = 0x00; // reserved
         return data;
     }
+
 }

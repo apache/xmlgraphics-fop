@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,43 +30,43 @@ import org.apache.fop.render.afp.tools.StringUtils;
  * The object data may or may not be defined by an IBM presentation architecture
  */
 public class ObjectClassificationTriplet extends Triplet {
-    
+
     /**
      * The scope of this object is the including page or overlay
      */
     public static final byte CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT = 0x01;
-    
+
     /**
      * The scope of this object is not defined
      */
     public static final byte CLASS_TIME_VARIANT_PRESENTATION_OBJECT = 0x10;
-    
+
     /**
      * This is not a presentation object, the scope of this object is not defined
      */
     public static final byte CLASS_EXECUTABLE_PROGRAM = 0x20;
-    
-    /** 
+
+    /**
      * Setup information file, document level.  This is not a presentation object,
-     */    
+     */
     public static final byte CLASS_SETUP_FILE = 0x30;
-    
+
     /**
      * This is a resource used by a presentation object that may itself be a resource.
      * The scope of the resource is the object that uses the resource.
      */
     public static final byte CLASS_SECONDARY_RESOURCE = 0x40;
 
-    /** 
+    /**
      * Data object font.  This is a non-FOCA font resource used to present
      * text in a data object.  The scope of the resource is the object that
      * uses the resource.
      */
     public static final byte CLASS_DATA_OBJECT_FONT = 0x41;
-        
+
     /**
      * Main constructor
-     * 
+     *
      * @param objectClass
      *             the object class type
      * @param objectType
@@ -79,15 +79,15 @@ public class ObjectClassificationTriplet extends Triplet {
         // no object level or company name specified
         this(objectClass, objectType, strucFlgs, null, null);
     }
-    
-    
+
+
     private static final int OBJECT_LEVEL_LEN = 8;
     private static final int OBJECT_TYPE_NAME_LEN = 32;
     private static final int COMPANY_NAME_LEN = 32;
-    
+
     /**
      * Fully parameterized constructor
-     * 
+     *
      * @param objectClass
      *             the object class type
      * @param objectType
@@ -104,7 +104,7 @@ public class ObjectClassificationTriplet extends Triplet {
         super(OBJECT_CLASSIFICATION);
 
         if (objectType == null) {
-            throw new UnsupportedOperationException("MO:DCA Registry object type is null");
+            throw new IllegalArgumentException("MO:DCA Registry object type is null");
         }
 
         byte[] data = new byte[94];
@@ -112,14 +112,14 @@ public class ObjectClassificationTriplet extends Triplet {
         data[1] = objectClass; // ObjClass
         data[2] = 0x00; // reserved (must be zero)
         data[3] = 0x00; // reserved (must be zero)
-        // StrucFlgs - Information on the structure of the object container        
+        // StrucFlgs - Information on the structure of the object container
         data[4] = strucFlgs.getValue();
         data[5] = 0x00; // StrucFlgs
-                
+
         byte[] oid = objectType.getOID();
         // RegObjId - MOD:CA-registered ASN.1 OID for object type (8-23)
         System.arraycopy(oid, 0, data, 6, oid.length);
-            
+
         // ObjTpName - name of object type (24-55)
         byte[] objTpName;
         try {
@@ -129,7 +129,7 @@ public class ObjectClassificationTriplet extends Triplet {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException("an encoding exception occurred");
         }
-             
+
         // ObjLev - release level or version number of object type (56-63)
         byte[] objectLevel;
         try {
@@ -138,9 +138,9 @@ public class ObjectClassificationTriplet extends Triplet {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException("an encoding exception occurred");
         }
-        System.arraycopy(objectLevel, 0, data, 54, objectLevel.length);        
-        
-        // CompName - name of company or org that owns object definition (64-95)
+        System.arraycopy(objectLevel, 0, data, 54, objectLevel.length);
+
+        // CompName - name of company or organization that owns object definition (64-95)
         byte[] companyName;
         try {
             companyName = StringUtils.rpad(compName, ' ', COMPANY_NAME_LEN).getBytes(
@@ -149,7 +149,8 @@ public class ObjectClassificationTriplet extends Triplet {
             throw new IllegalArgumentException("an encoding exception occurred");
         }
         System.arraycopy(companyName, 0, data, 62, companyName.length);
-        
+
         super.setData(data);
     }
+
 }

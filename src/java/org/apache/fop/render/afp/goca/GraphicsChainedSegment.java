@@ -45,7 +45,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
 
     /**
      * Main constructor
-     * 
+     *
      * @param name
      *            the name of this graphics segment
      */
@@ -55,7 +55,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
 
     /**
      * Constructor
-     * 
+     *
      * @param name
      *            the name of this graphics segment
      * @param previous
@@ -80,21 +80,23 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         return dataLen;
     }
 
-    /** {@inheritDoc} */
-    protected int getNameLength() {
-        return 4;
-    }
-
     private static final byte APPEND_NEW_SEGMENT = 0;
 //    private static final byte PROLOG = 4;
 //    private static final byte APPEND_TO_EXISING = 48;
+
+    private static final int NAME_LENGTH = 4;
+
+    /** {@inheritDoc} */
+    protected int getNameLength() {
+        return NAME_LENGTH;
+    }
 
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
         int len = super.getDataLength();
         byte[] segLen = BinaryUtils.convert(len, 2);
-        
+
         byte[] nameBytes = getNameBytes();
         byte[] data = new byte[] {
             0x70, // BEGIN_SEGMENT
@@ -115,7 +117,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         // P/S NAME (predecessor name)
         if (previous != null) {
             nameBytes = previous.getNameBytes();
-            System.arraycopy(nameBytes, 0, data, 10, 4);
+            System.arraycopy(nameBytes, 0, data, 10, NAME_LENGTH);
         }
         os.write(data);
     }
@@ -126,7 +128,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
         if (previous == null) {
             GraphicsChainedSegment current = this.next;
             while (current != null) {
-                current.write(os);
+                current.writeToStream(os);
                 current = current.next;
             }
         }

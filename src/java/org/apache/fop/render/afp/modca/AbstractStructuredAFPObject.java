@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.afp.modca;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -27,6 +26,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
@@ -34,16 +34,17 @@ import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.fop.render.afp.modca.triplets.StrucFlgs;
 import org.apache.fop.render.afp.modca.triplets.Triplet;
+import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
  * An abstract class encapsulating an MODCA structured object
  */
-public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {    
+public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     /**
      * list of object triplets
      */
     protected List/*<Triplet>*/ triplets = null;
-    
+
     /**
      * triplet data created from triplet list
      */
@@ -54,10 +55,10 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
      */
     protected AbstractStructuredAFPObject() {
     }
-    
+
     /**
      * Returns the triplet data length
-     * 
+     *
      * @return the triplet data length
      */
     protected int getTripletDataLength() {
@@ -73,10 +74,10 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         }
         return 0;
     }
-    
+
     /**
      * Returns the triplet data
-     * 
+     *
      * @return the triplet data
      * @throws IOException throws an I/O exception if one occurred
      */
@@ -88,10 +89,10 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         }
         return this.tripletData;
     }
-    
+
     /**
      * Writes any triplet data
-     * 
+     *
      * @param os The stream to write to
      * @throws IOException The stream to write to
      */
@@ -100,12 +101,12 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
             os.write(tripletData);
         } else if (triplets != null) {
             writeObjects(triplets, os);
-        }        
+        }
     }
 
     /**
      * Helper method to write the start of the Object.
-     * 
+     *
      * @param os The stream to write to
      * @throws IOException throws an I/O exception if one occurred
      */
@@ -115,7 +116,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Helper method to write the end of the Object.
-     * 
+     *
      * @param os The stream to write to
      * @throws IOException an I/O exception if one occurred
      */
@@ -124,21 +125,16 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Helper method to write the contents of the Object.
-     * 
+     *
      * @param os The stream to write to
      * @throws IOException throws an I/O exception if one occurred
      */
     protected void writeContent(OutputStream os) throws IOException {
         writeTriplets(os);
     }
-    
-    /**
-     * Accessor method to write the AFP datastream for this structure field object
-     * 
-     * @param os The stream to write to
-     * @throws IOException in the event that an I/O exception occurred
-     */
-    public void write(OutputStream os) throws IOException {
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
         writeStart(os);
         writeContent(os);
         writeEnd(os);
@@ -146,7 +142,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Returns the first matching triplet found in the structured field triplet list
-     *  
+     *
      * @param tripletId the triplet identifier
      */
     private Triplet getTriplet(byte tripletId) {
@@ -159,20 +155,20 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         }
         return null;
     }
-    
+
     /**
      * Returns true of this structured field has the given triplet
-     * 
+     *
      * @param tripletId the triplet identifier
      * @return true if the structured field has the given triplet
      */
-    private boolean hasTriplet(byte tripletId) {
+    public boolean hasTriplet(byte tripletId) {
         return getTriplet(tripletId) != null;
     }
 
     /**
      * Adds a triplet to this structured object
-     * 
+     *
      * @param triplet the triplet to add
      */
     private void addTriplet(Triplet triplet) {
@@ -181,10 +177,10 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Adds a list of triplets to the triplets contained within this structured field
-     * 
+     *
      * @param tripletCollection a collection of triplets
      */
-    private void addTriplets(Collection/*<Triplet>*/ tripletCollection) {
+    public void addTriplets(Collection/*<Triplet>*/ tripletCollection) {
         if (tripletCollection != null) {
             getTriplets().addAll(tripletCollection);
         }
@@ -197,10 +193,10 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         }
         return triplets;
     }
-        
+
     /**
      * Sets the fully qualified name of this resource
-     * 
+     *
      * @param fqnType the fully qualified name type of this resource
      * @param fqnFormat the fully qualified name format of this resource
      * @param fqName the fully qualified name of this resource
@@ -219,10 +215,10 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
         log.warn(this + " has no fully qualified name");
         return null;
     }
-    
+
     /**
      * Sets the objects classification
-     * 
+     *
      * @param objectClass the classification of the object
      * @param objectType the MOD:CA registry object type entry for the given
      *        object/component type of the object
@@ -235,18 +231,18 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Sets the objects classification with the default structure flags
-     * 
+     *
      * @param objectClass the classification of the object
      * @param objectType the MOD:CA registry object type entry for the given
      *        object/component type of the object
      */
     public void setObjectClassification(byte objectClass, Registry.ObjectType objectType) {
-        setObjectClassification(objectClass, objectType, StrucFlgs.getDefault());
+        setObjectClassification(objectClass, objectType, StrucFlgs.DEFAULT);
     }
-        
+
     /**
      * Sets the extent of an object area in the X and Y directions
-     * 
+     *
      * @param x the x direction extent
      * @param y the y direction extent
      */
@@ -256,7 +252,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Sets the measurement units used to specify the units of measure
-     * 
+     *
      * @param xRes units per base on the x-axis
      * @param yRes units per base on the y-axis
      */
@@ -266,16 +262,16 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
 
     /**
      * Sets the mapping option
-     * 
+     *
      * @param optionValue the mapping option value
      */
     public void setMappingOption(byte optionValue) {
         addTriplet(new MappingOptionTriplet(optionValue));
     }
-    
+
     /**
      * Sets a comment on this resource
-     * 
+     *
      * @param comment a comment string
      */
     public void setComment(String comment) {
@@ -283,6 +279,51 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
             addTriplet(new Triplet(Triplet.COMMENT, comment));
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage());
+        }
+    }
+
+    /**
+     * Writes data chunks to a given outputstream
+     *
+     * @param data the data
+     * @param dataHeader the header data
+     * @param lengthOffset offset of length field in data chunk
+     * @param maxChunkLength the maximum chunk length
+     * @param os the outputstream to write to
+     * @throws IOException thrown if an I/O exception of some sort has occurred.
+     */
+    protected static void writeChunksToStream(byte[] data, byte[] dataHeader,
+            int lengthOffset, int maxChunkLength, OutputStream os) throws IOException {
+        int dataLength = data.length;
+        int numFullChunks = dataLength / maxChunkLength;
+        int lastChunkLength = dataLength % maxChunkLength;
+
+        int headerLen = dataHeader.length - lengthOffset;
+        // length field is just before data so do not include in data length
+        if (headerLen == 2) {
+            headerLen = 0;
+        }
+
+        byte[] len;
+        int off = 0;
+        if (numFullChunks > 0) {
+            // write out full data chunks
+            len = BinaryUtils.convert(headerLen + maxChunkLength, 2);
+            dataHeader[lengthOffset] = len[0]; // Length byte 1
+            dataHeader[lengthOffset + 1] = len[1]; // Length byte 2
+            for (int i = 0; i < numFullChunks; i++, off += maxChunkLength) {
+                os.write(dataHeader);
+                os.write(data, off, maxChunkLength);
+            }
+        }
+
+        if (lastChunkLength > 0) {
+            // write last data chunk
+            len = BinaryUtils.convert(headerLen + lastChunkLength, 2);
+            dataHeader[lengthOffset] = len[0]; // Length byte 1
+            dataHeader[lengthOffset + 1] = len[1]; // Length byte 2
+            os.write(dataHeader);
+            os.write(data, off, lastChunkLength);
         }
     }
 }

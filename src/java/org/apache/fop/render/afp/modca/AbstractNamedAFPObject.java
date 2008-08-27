@@ -45,24 +45,34 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
      * name parameter which should be 8 characters long.
-     * 
+     *
      * @param name the object name
      */
     protected AbstractNamedAFPObject(String name) {
         this.name = name;
     }
-    
+
+    /**
+     * Returns the name length
+     *
+     * @return the name length
+     */
+    protected int getNameLength() {
+        return DEFAULT_NAME_LENGTH;
+    }
+
     /**
      * Returns the name as a byte array in EBCIDIC encoding
-     * 
+     *
      * @return the name as a byte array in EBCIDIC encoding
      */
     protected byte[] getNameBytes() {
-        if (name.length() < DEFAULT_NAME_LENGTH) {
-            name = (name + "       ").substring(0, DEFAULT_NAME_LENGTH);
-        } else if (name.length() > DEFAULT_NAME_LENGTH) {
-            log.warn("Constructor:: name truncated to " + DEFAULT_NAME_LENGTH + " chars" + name);
-            name = name.substring(0, DEFAULT_NAME_LENGTH);
+        int nameLen = getNameLength();
+        if (name.length() < nameLen) {
+            name = (name + "       ").substring(0, nameLen);
+        } else if (name.length() > nameLen) {
+            log.warn("Constructor:: name truncated to " + nameLen + " chars" + name);
+            name = name.substring(0, nameLen);
         }
         byte[] nameBytes = null;
         try {
@@ -85,7 +95,7 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
 
     /**
      * Returns the name of this object
-     * 
+     *
      * @return the name of this object
      */
     public String getName() {

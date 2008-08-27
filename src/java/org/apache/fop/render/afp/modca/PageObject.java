@@ -22,8 +22,11 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.modca.resource.ResourceManager;
-import org.apache.fop.render.afp.tools.StringUtils;
+import org.apache.fop.render.afp.ioca.ImageCellPosition;
+import org.apache.fop.render.afp.ioca.ImageInputDescriptor;
+import org.apache.fop.render.afp.ioca.ImageOutputControl;
+import org.apache.fop.render.afp.ioca.ImageRasterData;
+import org.apache.fop.render.afp.ioca.ImageRasterPattern;
 
 /**
  * Pages contain the data objects that comprise a presentation document. Each
@@ -50,8 +53,8 @@ public class PageObject extends AbstractResourceGroupContainer {
     /**
      * Construct a new page object for the specified name argument, the page
      * name should be an 8 character identifier.
-     * 
-     * @param resourceManager the resource manager 
+     *
+     * @param factory the resource manager
      *
      * @param name
      *            the name of the page.
@@ -61,15 +64,15 @@ public class PageObject extends AbstractResourceGroupContainer {
      *            the height of the page.
      * @param rotation
      *            the rotation of the page.
-     * @param widthResolution
+     * @param widthRes
      *            the width resolution of the page.
-     * @param heightResolution
+     * @param heightRes
      *            the height resolution of the page.
      */
-    public PageObject(ResourceManager resourceManager,
+    public PageObject(Factory factory,
             String name, int width, int height, int rotation,
-            int widthResolution, int heightResolution) {
-        super(resourceManager, name, width, height, rotation, widthResolution, heightResolution);
+            int widthRes, int heightRes) {
+        super(factory, name, width, height, rotation, widthRes, heightRes);
     }
 
     /**
@@ -147,11 +150,8 @@ public class PageObject extends AbstractResourceGroupContainer {
 
         int grayscale = Math.round((shade / 255) * 16);
 
-        String imageName = "IMG"
-            + StringUtils.lpad(String.valueOf(getResourceCount() + 1),
-            '0', 5);
+        IMImageObject imImageObject = factory.createIMImageObject();
 
-        IMImageObject imImageObject = new IMImageObject(imageName);
         ImageOutputControl imageOutputControl = new ImageOutputControl(0, 0);
         ImageInputDescriptor imageInputDescriptor = new ImageInputDescriptor();
         ImageCellPosition imageCellPosition = new ImageCellPosition(xCoord, yCoord);
@@ -161,8 +161,8 @@ public class PageObject extends AbstractResourceGroupContainer {
         imageCellPosition.setYSize(8);
 
         //defining this as a resource
-        ImageRasterData imageRasterData = new ImageRasterData(
-                ImageRasterPattern.getRasterData(grayscale));
+        byte[] rasterData = ImageRasterPattern.getRasterData(grayscale);
+        ImageRasterData imageRasterData = factory.createImageRasterData(rasterData);
 
         imImageObject.setImageOutputControl(imageOutputControl);
         imImageObject.setImageInputDescriptor(imageInputDescriptor);
@@ -184,7 +184,17 @@ public class PageObject extends AbstractResourceGroupContainer {
         copySF(data, Type.END, Category.PAGE);
         os.write(data);
     }
-    
+
+    /**
+     * Adds an AFP object reference to this page
+     *
+     * @param obj an AFP object
+     */
+    public void addObject(Object obj) {
+        endPresentationObject();
+        super.addObject(obj);
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return this.getName();

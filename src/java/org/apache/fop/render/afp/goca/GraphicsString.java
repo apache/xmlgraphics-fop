@@ -35,17 +35,19 @@ public class GraphicsString extends AbstractPreparedAFPObject {
 
     /** drawn from the current position */
     private boolean fromCurrentPosition = false;
-    
+
     /** the string to draw */
     private String str = null;
-    
+
     /** x coordinate */
     private int x;
-    
+
     /** y coordinate */
     private int y;
 
     /**
+     * Constructor
+     *
      * @param str the character string
      */
     public GraphicsString(String str) {
@@ -55,6 +57,8 @@ public class GraphicsString extends AbstractPreparedAFPObject {
     }
 
     /**
+     * Constructor
+     *
      * @param str the character string
      * @param x the x coordinate
      * @param y the y coordinate
@@ -65,10 +69,8 @@ public class GraphicsString extends AbstractPreparedAFPObject {
         this.y = y;
         prepareData();
     }
-    
-    /**
-     * {@inheritDoc} 
-     */
+
+    /** {@inheritDoc} */
     protected void prepareData() {
         int maxStrLen = MAX_STR_LEN - (fromCurrentPosition ? 0 : 4);
         if (str.length() > maxStrLen) {
@@ -89,7 +91,7 @@ public class GraphicsString extends AbstractPreparedAFPObject {
             System.arraycopy(strData, 0, data, 2, strData.length);
         } else {
             len += 4; // x/y coordinates
-            byte[] osx = BinaryUtils.convert(x, 2);   
+            byte[] osx = BinaryUtils.convert(x, 2);
             byte[] osy = BinaryUtils.convert(y, 2);
             data = new byte[len + 2];
             data[0] = (byte)0xC3;
@@ -101,16 +103,14 @@ public class GraphicsString extends AbstractPreparedAFPObject {
             System.arraycopy(strData, 0, data, 6, strData.length);
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     public String toString() {
-        String string = "GraphicsString(str='" + str + "'";
+        String string = "GraphicsString{str='" + str + "'";
         if (!fromCurrentPosition) {
             string += ",x=" + x + ",y=" + y;
         }
-        string += ")";
+        string += "}";
         return string;
     }
 }

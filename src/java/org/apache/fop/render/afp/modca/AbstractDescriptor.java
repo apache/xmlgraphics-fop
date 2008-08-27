@@ -33,9 +33,15 @@ public abstract class AbstractDescriptor extends AbstractStructuredAFPObject {
     protected int heightRes = 0;
 
     /**
+     * Default constructor
+     */
+    public AbstractDescriptor() {
+    }
+
+    /**
      * Constructor a PresentationTextDescriptor for the specified
      * width and height.
-     * 
+     *
      * @param width The width of the page.
      * @param height The height of the page.
      * @param widthRes The width resolution of the page.
@@ -46,5 +52,13 @@ public abstract class AbstractDescriptor extends AbstractStructuredAFPObject {
         this.height = height;
         this.widthRes = widthRes;
         this.heightRes = heightRes;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "width=" + width
+        + ", height=" + height
+        + ", widthRes=" + widthRes
+        + ", heightRes=" + heightRes;
     }
 }

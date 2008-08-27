@@ -17,10 +17,12 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.ioca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.fop.render.afp.modca.AbstractAFPObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -42,22 +44,22 @@ public class ImageCellPosition extends AbstractAFPObject {
     /**
      * Size of image cell in X direction
      */
-    private byte[] xSize = new byte[] {(byte)0xFF, (byte)0xFF};
+    private final byte[] xSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
      * Size of image cell in Y direction
      */
-    private byte[] ySize = new byte[] {(byte)0xFF, (byte)0xFF};
+    private final byte[] ySize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
      * Size of fill rectangle in X direction
      */
-    private byte[] xFillSize = new byte[] {(byte)0xFF, (byte)0xFF};
+    private final byte[] xFillSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
      * Size of fill rectangle in Y direction
      */
-    private byte[] yFillSize = new byte[] {(byte)0xFF, (byte)0xFF};
+    private final byte[] yFillSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
      * Constructor for the ImageCellPosition
@@ -70,10 +72,10 @@ public class ImageCellPosition extends AbstractAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[21];
         copySF(data, Type.POSITION, Category.IM_IMAGE);
-        
+
         data[1] = 0x00; // length
         data[2] = 0x14;
 
@@ -113,6 +115,7 @@ public class ImageCellPosition extends AbstractAFPObject {
      * of this image cell. A value of X'FFFF' indicates that the
      * default extent specified in bytes 28 and 29 of the Image
      * Input Descriptor (IID) is to be used.
+     *
      * @param xcSize The size to set.
      */
     public void setXSize(int xcSize) {
@@ -129,6 +132,7 @@ public class ImageCellPosition extends AbstractAFPObject {
      * be used as the fill rectangle X-extent. The fill rectangle is
      * filled in the X direction by repeating the image cell in the
      * X direction. The image cell can be truncated to fit the rectangle.
+     *
      * @param size The size to set.
      */
     public void setXFillSize(int size) {
@@ -142,6 +146,7 @@ public class ImageCellPosition extends AbstractAFPObject {
      * of this image cell. A value of X'FFFF' indicates that the
      * default extent specified in bytes 30 and 31 of the Image
      * Input Descriptor (IID) is to be used.
+     *
      * @param size The size to set.
      */
     public void setYSize(int size) {
@@ -158,6 +163,7 @@ public class ImageCellPosition extends AbstractAFPObject {
      * be used as the fill rectangle Y-extent. The fill rectangle is
      * filled in the Y direction by repeating the image cell in the
      * Y direction. The image cell can be truncated to fit the rectangle.
+     *
      * @param size The size to set.
      */
     public void setYFillSize(int size) {

@@ -82,7 +82,7 @@ public class MapPageOverlay extends AbstractAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         int oLayCount = getOverlays().size();
         int recordlength = oLayCount * 18;
 

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,15 +22,14 @@ package org.apache.fop.render.afp.modca;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
-import org.apache.fop.render.afp.ObjectAreaInfo;
+import org.apache.fop.render.afp.AFPDataObjectInfo;
+import org.apache.fop.render.afp.AFPObjectAreaInfo;
 import org.apache.fop.render.afp.goca.GraphicsBox;
 import org.apache.fop.render.afp.goca.GraphicsData;
 import org.apache.fop.render.afp.goca.GraphicsFillet;
 import org.apache.fop.render.afp.goca.GraphicsFullArc;
-import org.apache.fop.render.afp.goca.GraphicsImageBegin;
-import org.apache.fop.render.afp.goca.GraphicsImageData;
-import org.apache.fop.render.afp.goca.GraphicsImageEnd;
 import org.apache.fop.render.afp.goca.GraphicsLine;
 import org.apache.fop.render.afp.goca.GraphicsSetArcParameters;
 import org.apache.fop.render.afp.goca.GraphicsSetCharacterSet;
@@ -43,52 +42,43 @@ import org.apache.fop.render.afp.goca.GraphicsString;
 
 /**
  * Top-level GOCA graphics object.
- * 
+ *
  * Acts as container and factory of all other graphic objects
  */
 public class GraphicsObject extends AbstractDataObject {
-        
+
     /** The graphics data */
     private GraphicsData graphicsData = null;
 
+    /** list of objects contained within this container */
+    protected List/*<PreparedAFPObject>*/ objects
+        = new java.util.ArrayList/*<PreparedAFPObject>*/();
+
     /**
      * Default constructor
-     * 
+     *
+     * @param factory the object factory
      * @param name the name of graphics object
      */
-    public GraphicsObject(String name) {
-        super(name);
+    public GraphicsObject(Factory factory, String name) {
+        super(factory, name);
     }
 
     /** {@inheritDoc} */
-    public void setViewport(ObjectAreaInfo objectAreaInfo) {
-        super.setViewport(objectAreaInfo);
-        getObjectEnvironmentGroup().setGraphicsData(
-                objectAreaInfo.getWidthRes(),
-                objectAreaInfo.getHeightRes(),
-                0,
-                objectAreaInfo.getX() + objectAreaInfo.getWidth(),
-                0,
-                objectAreaInfo.getY() + objectAreaInfo.getHeight());        
-    }
+    public void setViewport(AFPDataObjectInfo dataObjectInfo) {
+        super.setViewport(dataObjectInfo);
 
-    /** {@inheritDoc} */
-    protected byte getCategoryCode() {
-        return (byte)0xBB;
-    }
+        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+        GraphicsDataDescriptor graphicsDataDescriptor
+            = factory.createGraphicsDataDescriptor(
+                    0,
+                    objectAreaInfo.getWidth(),
+                    0,
+                    objectAreaInfo.getHeight(),
+                    objectAreaInfo.getWidthRes(),
+                    objectAreaInfo.getHeightRes());
 
-    /** {@inheritDoc} */
-    protected void writeStart(OutputStream os) throws IOException {
-        byte[] data = new byte[17];
-        copySF(data, Type.BEGIN, Category.GRAPHICS);
-        os.write(data);
-    }
-
-    /** {@inheritDoc} */
-    protected void writeEnd(OutputStream os) throws IOException {
-        byte[] data = new byte[17];
-        copySF(data, Type.END, Category.GRAPHICS);
-        os.write(data);
+        getObjectEnvironmentGroup().setDataDescriptor(graphicsDataDescriptor);
     }
 
     /** {@inheritDoc} */
@@ -101,10 +91,10 @@ public class GraphicsObject extends AbstractDataObject {
         graphicsData.addObject(drawingOrder);
         return drawingOrder;
     }
-    
+
     /**
      * Gets the current graphics data, creating a new one if necessary
-     * 
+     *
      * @return the current graphics data
      */
     private GraphicsData getData() {
@@ -113,21 +103,21 @@ public class GraphicsObject extends AbstractDataObject {
         }
         return this.graphicsData;
     }
-    
+
     /**
      * Creates a new graphics data
-     * 
+     *
      * @return a newly created graphics data
      */
     private GraphicsData newData() {
-        this.graphicsData = new GraphicsData();            
-        super.addObject(graphicsData);
+        this.graphicsData = factory.createGraphicsData();
+        objects.add(graphicsData);
         return graphicsData;
     }
-    
+
     /**
      * Sets the current color
-     * 
+     *
      * @param col the active color to use
      */
     public void setColor(Color col) {
@@ -136,7 +126,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Sets the current position
-     * 
+     *
      * @param coords the x and y coordinates of the current position
      */
     public void setCurrentPosition(int[] coords) {
@@ -145,7 +135,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Sets the line width
-     * 
+     *
      * @param multiplier the line width multiplier
      */
     public void setLineWidth(int multiplier) {
@@ -155,17 +145,17 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Sets the line type
-     * 
+     *
      * @param type the line type
      */
     public void setLineType(byte type) {
         GraphicsSetLineType lt = new GraphicsSetLineType(type);
         addObject(lt);
-    }    
+    }
 
     /**
      * Sets whether to fill the next shape
-     * 
+     *
      * @param fill whether to fill the next shape
      */
     public void setFill(boolean fill) {
@@ -175,10 +165,10 @@ public class GraphicsObject extends AbstractDataObject {
         );
         addObject(pat);
     }
-    
+
     /**
      * Sets the character set to use
-     * 
+     *
      * @param fontReference the character set (font) reference
      */
     public void setCharacterSet(int fontReference) {
@@ -187,7 +177,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds a line at the given x/y coordinates
-     * 
+     *
      * @param coords the x/y coordinates (can be a series)
      */
     public void addLine(int[] coords) {
@@ -196,7 +186,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds a box at the given coordinates
-     * 
+     *
      * @param coords the x/y coordinates
      */
     public void addBox(int[] coords) {
@@ -205,7 +195,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds a fillet (curve) at the given coordinates
-     * 
+     *
      * @param coords the x/y coordinates
      */
     public void addFillet(int[] coords) {
@@ -214,7 +204,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Sets the arc parameters
-     *  
+     *
      * @param xmaj the maximum value of the x coordinate
      * @param ymin the minimum value of the y coordinate
      * @param xmin the minimum value of the x coordinate
@@ -226,7 +216,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /**
      * Adds an arc
-     * 
+     *
      * @param x the x coordinate
      * @param y the y coordinate
      * @param mh the integer portion of the multiplier
@@ -236,28 +226,22 @@ public class GraphicsObject extends AbstractDataObject {
         addObject(new GraphicsFullArc(x, y, mh, mhr));
     }
 
-    /**
-     * Adds an image
-     * 
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the image width
-     * @param height the image height
-     * @param imgData the image data
-     */
-    public void addImage(int x, int y, int width, int height, byte[] imgData) {
-        addObject(new GraphicsImageBegin(x, y, width, height));
-        for (int startIndex = 0;
-            startIndex <= imgData.length;
-            startIndex += GraphicsImageData.MAX_DATA_LEN) {
-            addObject(new GraphicsImageData(imgData, startIndex));
-        }
-        addObject(new GraphicsImageEnd());
-    }
+//    /**
+//     * Adds an image
+//     *
+//     * @param x the x coordinate
+//     * @param y the y coordinate
+//     * @param width the image width
+//     * @param height the image height
+//     * @param imgData the image data
+//     */
+//    public void addImage(int x, int y, int width, int height, byte[] imgData) {
+//        addObject(new GraphicsImage(x, y, width, height, imgData));
+//    }
 
     /**
      * Adds a string
-     * 
+     *
      * @param str the string
      * @param x the x coordinate
      * @param y the y coordinate
@@ -265,7 +249,7 @@ public class GraphicsObject extends AbstractDataObject {
     public void addString(String str, int x, int y) {
         addObject(new GraphicsString(str, x, y));
     }
-    
+
     /**
      * Begins a graphics area (start of fill)
      */
@@ -284,7 +268,7 @@ public class GraphicsObject extends AbstractDataObject {
             graphicsData.endArea();
         }
     }
-        
+
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsObject: " + getName();
@@ -295,5 +279,25 @@ public class GraphicsObject extends AbstractDataObject {
      */
     public void newSegment() {
         getData().newSegment();
+    }
+
+    /** {@inheritDoc} */
+    protected void writeStart(OutputStream os) throws IOException {
+        byte[] data = new byte[17];
+        copySF(data, Type.BEGIN, Category.GRAPHICS);
+        os.write(data);
+    }
+
+    /** {@inheritDoc} */
+    protected void writeContent(OutputStream os) throws IOException {
+        super.writeContent(os);
+        super.writeObjects(objects, os);
+    }
+
+    /** {@inheritDoc} */
+    protected void writeEnd(OutputStream os) throws IOException {
+        byte[] data = new byte[17];
+        copySF(data, Type.END, Category.GRAPHICS);
+        os.write(data);
     }
 }

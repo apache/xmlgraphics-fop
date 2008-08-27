@@ -30,15 +30,15 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class ObjectAreaPosition extends AbstractAFPObject {
 
-    private int x;
-    private int y;
-    private int rotation;
+    private final int x;
+    private final int y;
+    private final int rotation;
     private int xOffset;
     private int yOffset;
-    
+
     /**
      * Construct an object area position for the specified object y, y position.
-     * 
+     *
      * @param x The x coordinate.
      * @param y The y coordinate.
      * @param rotation The coordinate system rotation (must be 0, 90, 180, 270).
@@ -50,14 +50,14 @@ public class ObjectAreaPosition extends AbstractAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[33];
         copySF(data, Type.POSITION, Category.OBJECT_AREA);
 
         byte[] len = BinaryUtils.convert(32, 2);
         data[1] = len[0]; // Length
         data[2] = len[1];
-            
+
         data[9] = 0x01; // OAPosID = 1
         data[10] = 0x17; // RGLength = 23
 
@@ -70,10 +70,10 @@ public class ObjectAreaPosition extends AbstractAFPObject {
         data[14] = ycoord[0]; // YoaOSet
         data[15] = ycoord[1];
         data[16] = ycoord[2];
-        
+
         byte xorient = (byte)(rotation / 2);
         data[17] = xorient; // XoaOrent
-        
+
         byte yorient = (byte)(rotation / 2 + 45);
         data[19] = yorient; // YoaOrent
 
@@ -89,12 +89,23 @@ public class ObjectAreaPosition extends AbstractAFPObject {
 
         data[28] = 0x00; // XocaOrent
         data[29] = 0x00;
-        
+
         data[30] = 0x2D; // YocaOrent
         data[31] = 0x00;
 
         data[32] = 0x01; // RefCSys
-        
+
         os.write(data);
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "ObjectAreaPosition{"
+            + "x=" + x
+            + ", y=" + y
+            + ", rotation=" + rotation
+            + ", rotation=" + rotation
+            + ", xOffset=" + xOffset
+            + ", yOffset=" + yOffset;
     }
 }

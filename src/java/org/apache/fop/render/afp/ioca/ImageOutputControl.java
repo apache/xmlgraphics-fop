@@ -17,10 +17,12 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.ioca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.fop.render.afp.modca.AbstractAFPObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -72,7 +74,7 @@ public class ImageOutputControl extends AbstractAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
 
         byte[] data = new byte[33];
 

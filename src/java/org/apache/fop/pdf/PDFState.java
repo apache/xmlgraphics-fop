@@ -25,6 +25,8 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 
+import org.apache.fop.render.AbstractState;
+
 /**
  * This keeps information about the current state when writing to pdf.
  * It allows for creating new graphics states with the q operator.
@@ -44,6 +46,8 @@ import java.awt.geom.GeneralPath;
  */
 public class PDFState extends org.apache.fop.render.AbstractState {
 
+    private static final long serialVersionUID = 5384726143906371279L;
+
     /**
      * PDF State for storing graphics state.
      */
@@ -58,7 +62,7 @@ public class PDFState extends org.apache.fop.render.AbstractState {
      * @return true if the new paint changes the current paint
      */
     public boolean setPaint(Paint p) {
-        Paint paint = ((PDFData)getData()).paint; 
+        Paint paint = ((PDFData)getData()).paint;
         if (paint == null) {
             if (p != null) {
                 ((PDFData)getData()).paint = p;
@@ -84,7 +88,7 @@ public class PDFState extends org.apache.fop.render.AbstractState {
      * @return true if the clip will change the current clip.
      */
     public boolean checkClip(Shape cl) {
-        Shape clip = ((PDFData)getData()).clip; 
+        Shape clip = ((PDFData)getData()).clip;
         if (clip == null) {
             if (cl != null) {
                 return true;
@@ -104,7 +108,7 @@ public class PDFState extends org.apache.fop.render.AbstractState {
      * @param cl the new clip in the current state
      */
     public void setClip(Shape cl) {
-        Shape clip = ((PDFData)getData()).clip; 
+        Shape clip = ((PDFData)getData()).clip;
         if (clip != null) {
             Area newClip = new Area(clip);
             newClip.intersect(new Area(cl));
@@ -138,9 +142,9 @@ public class PDFState extends org.apache.fop.render.AbstractState {
         PDFGState state;
         PDFGState newState = new PDFGState();
         newState.addValues(defaultState);
-        for (Iterator iter = getStateStack().iterator(); iter.hasNext();) {
-            PDFData d = (PDFData)iter.next();
-            state = d.gstate;
+        for (Iterator it = getStateStack().iterator(); it.hasNext();) {
+            PDFData data = (PDFData)it.next();
+            state = data.gstate;
             if (state != null) {
                 newState.addValues(state);
             }
@@ -149,6 +153,16 @@ public class PDFState extends org.apache.fop.render.AbstractState {
             newState.addValues(((PDFData)getData()).gstate);
         }
         return newState;
+    }
+
+    /** {@inheritDoc} */
+    protected AbstractData instantiateData() {
+        return new PDFData();
+    }
+
+    /** {@inheritDoc} */
+    protected AbstractState instantiateState() {
+        return new PDFState();
     }
 
     private class PDFData extends org.apache.fop.render.AbstractState.AbstractData {
@@ -164,9 +178,9 @@ public class PDFState extends org.apache.fop.render.AbstractState {
         private int dashOffset = 0;
         private Shape clip = null;
         private PDFGState gstate = null;
-        
+
         /** {@inheritDoc} */
-        public Object clone() throws CloneNotSupportedException {
+        public Object clone() {
             PDFData obj = (PDFData)super.clone();
             obj.paint = this.paint;
             obj.backPaint = this.paint;
@@ -194,9 +208,5 @@ public class PDFState extends org.apache.fop.render.AbstractState {
         }
     }
 
-    /** {@inheritDoc} */
-    protected AbstractData instantiateData() {
-        return new PDFData();
-    }
 }
 

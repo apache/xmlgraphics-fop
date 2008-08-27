@@ -23,7 +23,7 @@ package org.apache.fop.render.afp;
  * A common class used to convey locations,
  * dimensions and resolutions of data objects.
  */
-public class ObjectAreaInfo {
+public class AFPObjectAreaInfo {
     private int x;
     private int y;
     private int width;
@@ -31,10 +31,12 @@ public class ObjectAreaInfo {
     private int widthRes;
     private int heightRes;
     private int rotation = 0;
+    private int offsetX;
+    private int offsetY;
 
     /**
      * Sets the x position of the data object
-     * 
+     *
      * @param x the x position of the data object
      */
     public void setX(int x) {
@@ -43,7 +45,7 @@ public class ObjectAreaInfo {
 
     /**
      * Sets the y position of the data object
-     * 
+     *
      * @param y the y position of the data object
      */
     public void setY(int y) {
@@ -52,7 +54,7 @@ public class ObjectAreaInfo {
 
     /**
      * Sets the data object width
-     * 
+     *
      * @param width the width of the data object
      */
     public void setWidth(int width) {
@@ -61,7 +63,7 @@ public class ObjectAreaInfo {
 
     /**
      * Sets the data object height
-     * 
+     *
      * @param height the height of the data object
      */
     public void setHeight(int height) {
@@ -70,7 +72,7 @@ public class ObjectAreaInfo {
 
     /**
      * Sets the width resolution
-     * 
+     *
      * @param widthRes the width resolution
      */
     public void setWidthRes(int widthRes) {
@@ -79,7 +81,7 @@ public class ObjectAreaInfo {
 
     /**
      * Sets the height resolution
-     * 
+     *
      * @param heightRes the height resolution
      */
     public void setHeightRes(int heightRes) {
@@ -88,7 +90,7 @@ public class ObjectAreaInfo {
 
     /**
      * Returns the x coordinate of this data object
-     * 
+     *
      * @return the x coordinate of this data object
      */
     public int getX() {
@@ -97,7 +99,7 @@ public class ObjectAreaInfo {
 
     /**
      * Returns the y coordinate of this data object
-     * 
+     *
      * @return the y coordinate of this data object
      */
     public int getY() {
@@ -106,7 +108,7 @@ public class ObjectAreaInfo {
 
     /**
      * Returns the width of this data object
-     * 
+     *
      * @return the width of this data object
      */
     public int getWidth() {
@@ -115,7 +117,7 @@ public class ObjectAreaInfo {
 
     /**
      * Returns the height of this data object
-     * 
+     *
      * @return the height of this data object
      */
     public int getHeight() {
@@ -124,7 +126,7 @@ public class ObjectAreaInfo {
 
     /**
      * Returns the width resolution of this data object
-     * 
+     *
      * @return the width resolution of this data object
      */
     public int getWidthRes() {
@@ -133,7 +135,7 @@ public class ObjectAreaInfo {
 
     /**
      * Returns the height resolution of this data object
-     * 
+     *
      * @return the height resolution of this data object
      */
     public int getHeightRes() {
@@ -142,7 +144,7 @@ public class ObjectAreaInfo {
 
     /**
      * Returns the rotation of this data object
-     * 
+     *
      * @return the rotation of this data object
      */
     public int getRotation() {
@@ -151,7 +153,7 @@ public class ObjectAreaInfo {
 
     /**
      * Sets the data object rotation
-     * 
+     *
      * @param rotation the data object rotation
      */
     public void setRotation(int rotation) {
@@ -168,4 +170,21 @@ public class ObjectAreaInfo {
         + ", heightRes=" + heightRes
         + ", rotation=" + rotation;
     }
+
+//    public int getOffsetX() {
+//        return offsetX;
+//    }
+//
+//    public int getOffsetY() {
+//        return offsetY;
+//    }
+//
+//    public void setOffsetX(int afpx) {
+//        this.offsetX = afpx;
+//    }
+//
+//    public void setOffsetY(int afpy) {
+//        this.offsetY = afpy;
+//    }
+
 }

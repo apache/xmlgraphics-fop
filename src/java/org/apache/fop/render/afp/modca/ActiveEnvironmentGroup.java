@@ -40,65 +40,43 @@ import org.apache.fop.render.afp.fonts.AFPFont;
  */
 public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
 
-    /**
-     * Default name for the active environment group
-     */
-    private static final String DEFAULT_NAME = "AEG00001";
+    /** The collection of MapCodedFont objects */
+    private List/*<MapCodedFonts>*/ mapCodedFonts = null;
 
-    /**
-     * The collection of MapCodedFont objects
-     */
-    private List mapCodedFonts = null;
+    /** the collection of MapDataResource objects */
+    private final List mapDataResources = null;
 
-    /**
-     * The collection of MapDataResource objects
-     */
-    private List mapDataResources = null;
-
-    /**
-     * The Object Area Descriptor for the active environment group
-     */
+    /** the Object Area Descriptor for the active environment group */
     private ObjectAreaDescriptor objectAreaDescriptor = null;
 
-    /**
-     * The Object Area Position for the active environment group
-     */
+    /** the Object Area Position for the active environment group */
     private ObjectAreaPosition objectAreaPosition = null;
 
-    /**
-     * The PresentationTextDescriptor for the active environment group
-     */
+    /** the PresentationTextDescriptor for the active environment group */
     private PresentationTextDescriptor presentationTextDataDescriptor = null;
 
-    /**
-     * The PageDescriptor for the active environment group
-     */
+    /** the PageDescriptor for the active environment group */
     private PageDescriptor pageDescriptor = null;
 
-    /**
-     * Default constructor for the ActiveEnvironmentGroup.
-     * 
-     * @param width the page width
-     * @param height the page height
-     * @param widthRes the page width resolution
-     * @param heightRes the page height resolution
-     */
-    public ActiveEnvironmentGroup(int width, int height, int widthRes, int heightRes) {
-        this(DEFAULT_NAME, width, height, widthRes, heightRes);
-    }
+    /** the resource manager */
+    private final Factory factory;
 
     /**
      * Constructor for the ActiveEnvironmentGroup, this takes a
      * name parameter which must be 8 characters long.
-     * 
+     *
+     * @param factory the object factory
      * @param name the active environment group name
      * @param width the page width
      * @param height the page height
      * @param widthRes the page width resolution
      * @param heightRes the page height resolution
      */
-    public ActiveEnvironmentGroup(String name, int width, int height, int widthRes, int heightRes) {
+    public ActiveEnvironmentGroup(Factory factory,
+            String name, int width, int height, int widthRes, int heightRes) {
         super(name);
+
+        this.factory = factory;
 
         // Create PageDescriptor
         pageDescriptor = new PageDescriptor(width, height, widthRes, heightRes);
@@ -114,7 +92,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
 
     /**
      * Set the position of the object area
-     * 
+     *
      * @param x the x offset
      * @param y the y offset
      * @param rotation the rotation
@@ -127,7 +105,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * Accessor method to obtain the PageDescriptor object of the
      * active environment group.
-     * 
+     *
      * @return the page descriptor object
      */
     public PageDescriptor getPageDescriptor() {
@@ -137,7 +115,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * Accessor method to obtain the PresentationTextDataDescriptor object of
      * the active environment group.
-     * 
+     *
      * @return the presentation text descriptor
      */
     public PresentationTextDescriptor getPresentationTextDataDescriptor() {
@@ -147,20 +125,20 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     /** {@inheritDoc} */
     public void writeContent(OutputStream os) throws IOException {
         super.writeTriplets(os);
-        
+
         writeObjects(mapCodedFonts, os);
         writeObjects(mapDataResources, os);
         writeObjects(mapPageOverlays, os);
-        
+
         if (pageDescriptor != null) {
-            pageDescriptor.write(os);            
+            pageDescriptor.writeToStream(os);
         }
         if (objectAreaDescriptor != null && objectAreaPosition != null) {
-            objectAreaDescriptor.write(os);
-            objectAreaPosition.write(os);
+            objectAreaDescriptor.writeToStream(os);
+            objectAreaPosition.writeToStream(os);
         }
         if (presentationTextDataDescriptor != null) {
-            presentationTextDataDescriptor.write(os);
+            presentationTextDataDescriptor.writeToStream(os);
         }
     }
 
@@ -185,16 +163,9 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         return mapCodedFonts;
     }
 
-//    private List getMapDataResources() {
-//        if (mapDataResources == null) {
-//            mapDataResources = new java.util.ArrayList();
-//        }
-//        return mapDataResources;
-//    }
-
     /**
      * Method to create a map coded font object
-     * 
+     *
      * @param fontRef the font number used as the resource identifier
      * @param font the font
      * @param size the point size of the font
@@ -203,14 +174,14 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     public void createFont(int fontRef, AFPFont font, int size, int orientation) {
         MapCodedFont mcf = getCurrentMapCodedFont();
         if (mcf == null) {
-            mcf = new MapCodedFont();
+            mcf = factory.createMapCodedFont();
             getMapCodedFonts().add(mcf);
         }
 
         try {
             mcf.addFont(fontRef, font, size, orientation);
         } catch (MaximumSizeExceededException msee) {
-            mcf = new MapCodedFont();
+            mcf = factory.createMapCodedFont();
             getMapCodedFonts().add(mcf);
 
             try {
@@ -225,7 +196,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     /**
      * Getter method for the most recent MapCodedFont added to the
      * Active Environment Group (returns null if no MapCodedFonts exist)
-     * 
+     *
      * @return the most recent Map Coded Font.
      */
     private MapCodedFont getCurrentMapCodedFont() {
@@ -236,7 +207,14 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
             return null;
         }
     }
-    
+
+//  private List getMapDataResources() {
+//  if (mapDataResources == null) {
+//      mapDataResources = new java.util.ArrayList();
+//  }
+//  return mapDataResources;
+//}
+
 //    /**
 //     * Method to create a map data resource object
 //     * @param dataObjectAccessor a data object accessor

@@ -15,35 +15,36 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
 package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
- * ImageDataDescriptor
+ * Container data descriptor (to maintain compatibility with pre-year 2000 applications)
  */
-public class ImageDataDescriptor extends AbstractDescriptor {
+public class ContainerDataDescriptor extends AbstractDescriptor {
 
     /**
-     * Constructor for a ImageDataDescriptor for the specified
-     * resolution, width and height.
+     * Main constructor
      *
-     * @param width The width of the image.
-     * @param height The height of the height.
-     * @param widthRes The horizontal resolution of the image.
-     * @param heightRes The vertical resolution of the image.
+     * @param width the container data width
+     * @param height  the container data height
+     * @param widthRes the container width resolution
+     * @param heightRes the container height resolution
      */
-    public ImageDataDescriptor(int width, int height, int widthRes, int heightRes) {
+    public ContainerDataDescriptor(int width, int height, int widthRes,
+            int heightRes) {
         super(width, height, widthRes, heightRes);
     }
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
-        byte[] data = new byte[22];
+        byte[] data = new byte[21];
         copySF(data, Type.DESCRIPTOR, Category.IMAGE);
 
         // SF length
@@ -51,27 +52,30 @@ public class ImageDataDescriptor extends AbstractDescriptor {
         data[1] = len[0];
         data[2] = len[1];
 
-        byte[] x = BinaryUtils.convert(widthRes, 2);
-        data[10] = x[0];
-        data[11] = x[1];
+        data[9] = 0x00; // XocBase = 10 inches
+        data[10] = 0x00; // YocBase = 10 inches
 
-        byte[] y = BinaryUtils.convert(heightRes, 2);
-        data[12] = y[0];
-        data[13] = y[1];
+        // XocUnits
+        byte[] xdpi = BinaryUtils.convert(widthRes * 10, 2);
+        data[11] = xdpi[0];
+        data[12] = xdpi[1];
 
-        byte[] w = BinaryUtils.convert(width, 2);
-        data[14] = w[0];
-        data[15] = w[1];
+        // YocUnits
+        byte[] ydpi = BinaryUtils.convert(heightRes * 10, 2);
+        data[13] = ydpi[0];
+        data[14] = ydpi[1];
 
-        byte[] h = BinaryUtils.convert(height, 2);
-        data[16] = h[0];
-        data[17] = h[1];
+        // XocSize
+        byte[] x = BinaryUtils.convert(width, 3);
+        data[15] = x[0];
+        data[16] = x[1];
+        data[17] = x[2];
 
-        data[18] = (byte)0xF7; // ID = Set IOCA Function Set
-        data[19] = 0x02; // Length
-        data[20] = 0x01; // Category = Function set identifier
-        data[21] = 0x0B; // FCNSET = IOCA FS 11
-
-        os.write(data);
+        // YocSize
+        byte[] y = BinaryUtils.convert(height, 3);
+        data[18] = y[0];
+        data[19] = y[1];
+        data[20] = y[2];
     }
+
 }

@@ -21,15 +21,11 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.render.afp.LineDataInfo;
 import org.apache.fop.render.afp.TextDataInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
-import org.apache.fop.render.afp.modca.resource.ResourceManager;
-import org.apache.fop.render.afp.modca.resource.ResourceStore;
-import org.apache.fop.render.afp.modca.resource.StoreInfo;
 
 /**
  * Pages contain the data objects that comprise a presentation document. Each
@@ -53,9 +49,6 @@ import org.apache.fop.render.afp.modca.resource.StoreInfo;
  */
 public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
-    /** The resource manager */
-    protected ResourceManager resourceManager;
-
     /** The active environment group for the page */
     protected ActiveEnvironmentGroup activeEnvironmentGroup = null;
 
@@ -66,10 +59,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     protected List/*<TagLogicalElement>*/ tagLogicalElements = null;
 
     /** The list of the include page segments */
-    protected List/*<IncludePageSegment>*/ includePageSegments = null;
+    protected List/*<IncludePageSegment>*/ includePageSegments
+        = new java.util.ArrayList/*<IncludePageSegment>*/();
 
     /** The list of objects within this resource container */
-    protected List/*<AbstractStructuredAFPObject>*/ objects = null;
+    protected List/*<AbstractStructuredAFPObject>*/ objects = new java.util.ArrayList();
 
     /** The page width */
     private int width;
@@ -81,7 +75,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     protected int rotation = 0;
 
     /** The page state */
-    private boolean complete = false;
+    protected boolean complete = false;
 
     /** The width resolution */
     private int widthRes;
@@ -89,27 +83,35 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     /** The height resolution */
     private int heightRes;
 
-    /** Default constructor */
-    public AbstractPageObject() {
+    /** the object factory */
+    protected final Factory factory;
+
+    /**
+     * Default constructor
+     *
+     * @param factory the object factory
+     */
+    public AbstractPageObject(Factory factory) {
+        this.factory = factory;
     }
 
     /**
      * Main constructor
-     * 
-     * @param resourceManager the resource manager 
+     *
+     * @param factory the object factory
      * @param name the name of this page object
      */
-    public AbstractPageObject(ResourceManager resourceManager, String name) {
+    public AbstractPageObject(Factory factory, String name) {
         super(name);
-        this.resourceManager = resourceManager;
+        this.factory = factory;
     }
 
     /**
      * Construct a new page object for the specified name argument, the page
      * name should be an 8 character identifier.
-     * 
-     * @param resourceManager the resource manager
      *
+     * @param factory
+     *            the object factory.
      * @param name
      *            the name of the page.
      * @param width
@@ -123,10 +125,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      * @param heightRes
      *            the height resolution of the page.
      */
-    public AbstractPageObject(ResourceManager resourceManager,
+    public AbstractPageObject(Factory factory,
             String name, int width, int height, int rotation,
             int widthRes, int heightRes) {
-        this(resourceManager, name);
+        super(name);
+        this.factory = factory;
         this.width = width;
         this.height = height;
         this.rotation = rotation;
@@ -153,7 +156,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     /**
      * Helper method to create a line on the current page, this method delegates
      * to the presentation text object in order to construct the line.
-     * 
+     *
      * @param lineDataInfo the line data information.
      */
     public void createLine(LineDataInfo lineDataInfo) {
@@ -182,28 +185,32 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
         complete = true;
     }
 
-    private void endPresentationObject() {
+    /**
+     * Ends the presentation text object
+     */
+    protected void endPresentationObject() {
         if (currentPresentationTextObject != null) {
             currentPresentationTextObject.endControlSequence();
             currentPresentationTextObject = null;
         }
     }
-        
+
     /**
      * Helper method to create a presentation text object
      * on the current page and to return the object.
-     * 
+     *
      * @return the presentation text object
      */
     private PresentationTextObject getPresentationTextObject() {
         if (currentPresentationTextObject == null) {
-            PresentationTextObject presentationTextObject = new PresentationTextObject();
+            PresentationTextObject presentationTextObject
+                = factory.createPresentationTextObject();
             addObject(presentationTextObject);
             this.currentPresentationTextObject = presentationTextObject;
         }
         return currentPresentationTextObject;
     }
-    
+
     /**
      * Creates a TagLogicalElement on the page.
      *
@@ -234,16 +241,13 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      *
      * @param name
      *            the name of the page segment
-     * @param xCoor
+     * @param x
      *            the x coordinate of the page segment.
-     * @param yCoor
+     * @param y
      *            the y coordinate of the page segment.
      */
-    public void createIncludePageSegment(String name, int xCoor, int yCoor) {
-        IncludePageSegment ips = new IncludePageSegment(name, xCoor, yCoor);
-        if (includePageSegments == null) {
-            includePageSegments = new java.util.ArrayList/*<IncludePageSegment>*/();
-        }
+    public void createIncludePageSegment(String name, int x, int y) {
+        IncludePageSegment ips = factory.createIncludePageSegment(name, x, y);
         includePageSegments.add(ips);
     }
 
@@ -257,8 +261,8 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
             /**
              * Every page object must have an ActiveEnvironmentGroup
              */
-            this.activeEnvironmentGroup = new ActiveEnvironmentGroup(
-                    width, height, widthRes, heightRes);
+            this.activeEnvironmentGroup
+                = factory.createActiveEnvironmentGroup(width, height, widthRes, heightRes);
 
             if (rotation != 0) {
                 switch (rotation) {
@@ -280,7 +284,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Returns an indication if the page is complete
-     * 
+     *
      * @return whether this page is complete
      */
     public boolean isComplete() {
@@ -289,7 +293,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Returns the height of the page
-     * 
+     *
      * @return the height of the page
      */
     public int getHeight() {
@@ -298,7 +302,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Returns the width of the page
-     * 
+     *
      * @return the width of the page
      */
     public int getWidth() {
@@ -307,48 +311,30 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
 
     /**
      * Returns the rotation of the page
-     * 
+     *
      * @return the rotation of the page
      */
     public int getRotation() {
         return rotation;
     }
-    
+
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (this instanceof PageObject || this instanceof Overlay) {
-            getActiveEnvironmentGroup().write(os);
+            getActiveEnvironmentGroup().writeToStream(os);
         }
         writeObjects(this.includePageSegments, os);
         writeObjects(this.tagLogicalElements, os);
-        
-        // Write objects from cache
-        Iterator it = objects.iterator();
-        if (it.hasNext()) {
-            ResourceStore store = resourceManager.getStore();
-            do {
-                Object obj = it.next();
-                if (obj instanceof Writable) {
-                    Writable writableObject = (Writable)obj;
-                    writableObject.write(os);
-                } else if (obj instanceof StoreInfo) {
-                    StoreInfo storeInfo = (StoreInfo)obj;
-                    store.writeToStream(storeInfo, os);
-                }
-            } while (it.hasNext());
-        }
+        writeObjects(this.objects, os);
     }
-    
+
     /**
      * Adds an AFP object reference to this page
-     * 
+     *
      * @param obj an AFP object
      */
-    protected void addObject(Object obj) {
-        if (objects == null) {
-            this.objects = new java.util.ArrayList();
-        }
+    public void addObject(Object obj) {
         objects.add(obj);
     }
 

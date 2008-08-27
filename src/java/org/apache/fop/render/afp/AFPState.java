@@ -23,11 +23,14 @@ import java.awt.geom.AffineTransform;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.render.AbstractState;
 
 /**
  * This keeps information about the current state when writing to an AFP datastream.
  */
-public class AFPState extends org.apache.fop.render.AbstractState {
+public class AFPState extends org.apache.fop.render.AbstractState implements Cloneable {
+
+    private static final long serialVersionUID = 8206711712452344473L;
 
     private static Log log = LogFactory.getLog("org.apache.fop.render.afp.AFPState");
 
@@ -38,7 +41,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     private int landscapeRotation = 270;
 
     /** Flag to the set the output object type for images */
-    private boolean colorImages = false;
+    private boolean colorImages = true;
 
     /** Default value for image depth */
     private int bitsPerPixel = 8;
@@ -48,6 +51,9 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /** The current page */
     private AFPPageState pageState = new AFPPageState();
+
+    /** A unit converter */
+    private final transient AFPUnitConverter unitConv = new AFPUnitConverter(this);
 
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
@@ -70,7 +76,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Returns the rotation to be used for portrait pages
-     * 
+     *
      * @return the rotation to be used for portrait pages
      */
     protected int getPortraitRotation() {
@@ -97,7 +103,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Returns the landscape rotation
-     * 
+     *
      * @return the landscape rotation
      */
     protected int getLandscapeRotation() {
@@ -126,7 +132,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Returns the number of bits per pixel
-     * 
+     *
      * @return the number of bits per pixel
      */
     public int getBitsPerPixel() {
@@ -145,7 +151,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Returns true if color images are to be used
-     * 
+     *
      * @return true if color images are to be used
      */
     protected boolean isColorImages() {
@@ -179,9 +185,14 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         return new AFPData();
     }
 
+    /** {@inheritDoc} */
+    protected AbstractState instantiateState() {
+        return new AFPState();
+    }
+
     /**
      * Returns the state of the current page
-     * 
+     *
      * @return the state of the current page
      */
     protected AFPPageState getPageState() {
@@ -190,7 +201,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets if the current painted shape is to be filled
-     * 
+     *
      * @param fill true if the current painted shape is to be filled
      * @return true if the fill value has changed
      */
@@ -204,7 +215,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Gets the current page fonts
-     * 
+     *
      * @return the current page fonts
      */
     protected AFPPageFonts getPageFonts() {
@@ -213,7 +224,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Increments and returns the page font count
-     * 
+     *
      * @return the page font count
      */
     public int incrementPageFontCount() {
@@ -222,7 +233,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets the page width
-     * 
+     *
      * @param pageWidth the page width
      */
     public void setPageWidth(int pageWidth) {
@@ -231,7 +242,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Returns the page width
-     * 
+     *
      * @return the page width
      */
     public int getPageWidth() {
@@ -240,7 +251,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets the page height
-     * 
+     *
      * @param pageHeight the page height
      */
     public void setPageHeight(int pageHeight) {
@@ -249,7 +260,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Returns the page height
-     * 
+     *
      * @return the page height
      */
     public int getPageHeight() {
@@ -258,7 +269,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Sets the uri of the current image
-     * 
+     *
      * @param uri the uri of the current image
      */
     protected void setImageUri(String uri) {
@@ -267,7 +278,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Gets the uri of the current image
-     * 
+     *
      * @return the uri of the current image
      */
     public String getImageUri() {
@@ -276,7 +287,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
     /**
      * Returns the current orientation
-     * 
+     *
      * @return the current orientation
      */
     public int getOrientation() {
@@ -295,21 +306,43 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         return orientation;
     }
 
+    /**
+     * Returns the unit converter
+     *
+     * @return the unit converter
+     */
+    public AFPUnitConverter getUnitConverter() {
+        return this.unitConv;
+    }
+
+    /** {@inheritDoc} */
+    public Object clone() {
+        AFPState state = (AFPState)super.clone();
+        state.pageState = (AFPPageState)this.pageState.clone();
+        state.portraitRotation = this.portraitRotation;
+        state.landscapeRotation = this.landscapeRotation;
+        state.bitsPerPixel = this.bitsPerPixel;
+        state.colorImages = this.colorImages;
+        state.resolution = this.resolution;
+        return state;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
-        return "AFPState{portraitRotation=" + portraitRotation
+        return "AFPState{" + "portraitRotation=" + portraitRotation
         + ", landscapeRotation=" + landscapeRotation
         + ", colorImages=" + colorImages
         + ", bitsPerPixel=" + bitsPerPixel
         + ", resolution=" + resolution
         + ", pageState=" + pageState
+        + super.toString()
         + "}";
     }
 
     /**
      * Page level state data
      */
-    private class AFPPageState {
+    private class AFPPageState implements Cloneable {
         /** The current page width */
         private int width = 0;
 
@@ -324,7 +357,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Returns the page width
-         * 
+         *
          * @return the page width
          */
         protected int getWidth() {
@@ -333,7 +366,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Sets the page width
-         * 
+         *
          * @param width the page width
          */
         protected void setWidth(int width) {
@@ -342,7 +375,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Returns the page height
-         * 
+         *
          * @return the page height
          */
         protected int getHeight() {
@@ -351,7 +384,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Sets the page height
-         * 
+         *
          * @param height the page height
          */
         protected void setHeight(int height) {
@@ -360,7 +393,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Returns the page fonts
-         * 
+         *
          * @return the page fonts
          */
         protected AFPPageFonts getFonts() {
@@ -369,7 +402,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Sets the current page fonts
-         * 
+         *
          * @param fonts the current page fonts
          */
         protected void setFonts(AFPPageFonts fonts) {
@@ -378,11 +411,21 @@ public class AFPState extends org.apache.fop.render.AbstractState {
 
         /**
          * Increments and returns the current page font count
-         * 
+         *
          * @return increment and return the current page font count
          */
         protected int incrementFontCount() {
             return ++fontCount;
+        }
+
+        /** {@inheritDoc} */
+        public Object clone() {
+            AFPPageState state = new AFPPageState();
+            state.fonts = new AFPPageFonts(this.fonts);
+            state.height = this.height;
+            state.width = this.width;
+            state.fontCount = this.fontCount;
+            return state;
         }
 
         /** {@inheritDoc} */
@@ -396,7 +439,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
     }
 
     /**
-     * Block level data
+     * Block level state data
      */
     private class AFPData extends org.apache.fop.render.AbstractState.AbstractData {
         private static final long serialVersionUID = -1789481244175275686L;
@@ -407,7 +450,7 @@ public class AFPState extends org.apache.fop.render.AbstractState {
         private String imageUri = null;
 
         /** {@inheritDoc} */
-        public Object clone() throws CloneNotSupportedException {
+        public Object clone() {
             AFPData obj = (AFPData)super.clone();
             obj.filled = this.filled;
             obj.imageUri = this.imageUri;

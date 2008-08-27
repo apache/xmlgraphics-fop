@@ -17,10 +17,12 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.ioca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.fop.render.afp.modca.AbstractAFPObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -37,11 +39,11 @@ public class ImageInputDescriptor extends AbstractAFPObject {
 
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
 
         byte[] data = new byte[45];
         copySF(data, Type.DESCRIPTOR, Category.IM_IMAGE);
-        
+
         data[1] = 0x00; // length
         data[2] = 0x2C;
 
@@ -126,7 +128,7 @@ public class ImageInputDescriptor extends AbstractAFPObject {
     /**
      * Sets the resolution information for the raster image
      * the default value is a resolution of 240 dpi.
-     * 
+     *
      * @param resolution The resolution value
      */
     public void setResolution(int resolution) {

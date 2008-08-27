@@ -23,11 +23,12 @@ import org.apache.fop.render.afp.modca.AbstractPreparedAFPObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
- * Sets the current character set (font) to be used for following graphics strings 
+ * Sets the current character set (font) to be used for following graphics strings
  */
 public class GraphicsSetCharacterSet extends AbstractPreparedAFPObject {
+
     /** font character set reference */
-    private int fontReference;
+    private final int fontReference;
 
     /**
      * @param fontReference character set font reference
@@ -37,9 +38,7 @@ public class GraphicsSetCharacterSet extends AbstractPreparedAFPObject {
         prepareData();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void prepareData() {
         super.data = new byte[] {
             0x38, // GSCS order code
@@ -47,9 +46,7 @@ public class GraphicsSetCharacterSet extends AbstractPreparedAFPObject {
         };
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetCharacterSet(" + fontReference + ")";
     }

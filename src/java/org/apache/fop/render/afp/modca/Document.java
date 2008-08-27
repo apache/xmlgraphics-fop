@@ -21,19 +21,19 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 
-import org.apache.fop.render.afp.modca.resource.ResourceManager;
+import org.apache.fop.util.store.Streamable;
 
 /**
  * The document is the highest level of the MO:DCA data-stream document
- * component hierarchy. Documents can be made up of pages, and the pages,
- * which are at the intermediate level, can be made up of objects. Objects
- * are at the lowest level, and can be bar codes, graphics, images, and
- * presentation text.
+ * component hierarchy. Documents can be made up of pages, and the pages, which
+ * are at the intermediate level, can be made up of objects. Objects are at the
+ * lowest level, and can be bar codes, graphics, images, and presentation text.
  *
- * At each level of the hierarchy certain sets of MO:DCA data structures,
- * called structured fields, are permissible. The document, pages and objects
- * are bounded by structured fields that define their beginnings and their ends.
+ * At each level of the hierarchy certain sets of MO:DCA data structures, called
+ * structured fields, are permissible. The document, pages and objects are
+ * bounded by structured fields that define their beginnings and their ends.
  * These structured fields, called begin-end pairs, provide an envelope for the
  * data-stream components. This feature enables a processor of the data stream
  * that is not fully compliant with the architecture to bypass those objects
@@ -41,42 +41,32 @@ import org.apache.fop.render.afp.modca.resource.ResourceManager;
  * abilities.
  *
  * A presentation document is one that has been formatted and is intended for
- * presentation, usually on a printer or display device. A data stream containing
- * a presentation document should produce the same document content in the
- * same format on different printers or display devices dependent, however,
- * on the capabilities of each of the printers or display devices. A presentation
- * document can reference resources that are to be included as part of the
- * document to be presented.
+ * presentation, usually on a printer or display device. A data stream
+ * containing a presentation document should produce the same document content
+ * in the same format on different printers or display devices dependent,
+ * however, on the capabilities of each of the printers or display devices. A
+ * presentation document can reference resources that are to be included as part
+ * of the document to be presented.
  *
  */
-public final class Document extends AbstractResourceEnvironmentGroupContainer {
+public final class Document extends AbstractResourceEnvironmentGroupContainer implements Streamable {
 
-    /**
-     * Static default generated name reference
-     */
-    private static final String DEFAULT_NAME = "DOC00001";
-    
-    /**
-     * The document completion state
-     */
+    /** The document started state */
+    private boolean started = false;
+
+    /** The document completion state */
     private boolean complete = false;
 
     /**
-     * Default constructor for the document object.
-     * @param resourceManager the resource manager
-     */
-    public Document(ResourceManager resourceManager) {
-        this(resourceManager, DEFAULT_NAME);
-    }
-
-    /**
      * Constructor for the document object.
-     * 
-     * @param resourceManager the resource manager
-     * @param name the name of the document
+     *
+     * @param factory
+     *            the object factory
+     * @param name
+     *            the name of the document
      */
-    public Document(ResourceManager resourceManager, String name) {
-        super(resourceManager, name);
+    public Document(Factory factory, String name) {
+        super(factory, name);
     }
 
     /**
@@ -88,23 +78,11 @@ public final class Document extends AbstractResourceEnvironmentGroupContainer {
 
     /**
      * Returns an indication if the page group is complete
-     * 
+     *
      * @return whether or not this page group is complete
      */
     public boolean isComplete() {
         return complete;
-    }
-
-    /**
-     * Accessor method to write the AFP datastream for document.
-     * 
-     * @param os The stream to write to
-     * @throws java.io.IOException thrown if an I/O exception of some sort has occurred
-     */
-    public void write(OutputStream os) throws IOException {
-        if (isComplete()) {
-            super.write(os);
-        }
     }
 
     /** {@inheritDoc} */
@@ -120,9 +98,33 @@ public final class Document extends AbstractResourceEnvironmentGroupContainer {
         copySF(data, Type.END, Category.DOCUMENT);
         os.write(data);
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return this.name;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        if (!started) {
+            writeStart(os);
+            started = true;
+        }
+
+        Iterator it = objects.iterator();
+        while (it.hasNext()) {
+            AbstractAFPObject ao = (AbstractAFPObject)it.next();
+            if (ao instanceof PageGroup && ((PageGroup)ao).isComplete()
+                    || ao instanceof PageObject && ((PageObject)ao).isComplete()) {
+                ao.writeToStream(os);
+                it.remove();
+            } else {
+                break;
+            }
+        }
+
+        if (complete) {
+            writeEnd(os);
+        }
     }
 }

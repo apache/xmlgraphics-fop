@@ -87,7 +87,7 @@ public class IncludePageOverlay extends AbstractNamedAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[25]; //(9 +16)
         copySF(data, Type.INCLUDE, Category.PAGE_OVERLAY);
 

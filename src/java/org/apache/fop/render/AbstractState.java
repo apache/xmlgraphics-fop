@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,24 +29,31 @@ import java.util.Stack;
 /**
  * A base class which holds information about the current rendering state.
  */
-public abstract class AbstractState {
-    
+public abstract class AbstractState implements Cloneable, Serializable {
+
     /** current state data */
     private AbstractData currentData = null;
-    
+
     /** the state stack */
-    private Stack/*<AbstractData>*/ stateStack = null;
+    private StateStack stateStack = null;
 
     /**
      * Instantiates a new state data object
-     * 
+     *
      * @return a new state data object
      */
     protected abstract AbstractData instantiateData();
-    
+
+    /**
+     * Instantiates a new state object
+     *
+     * @return a new state object
+     */
+    protected abstract AbstractState instantiateState();
+
     /**
      * Returns the currently valid state
-     * 
+     *
      * @return the currently valid state
      */
     public AbstractData getData() {
@@ -73,7 +80,7 @@ public abstract class AbstractState {
 
     /**
      * Get the color.
-     * 
+     *
      * @return the color
      */
     public Color getColor() {
@@ -85,7 +92,7 @@ public abstract class AbstractState {
 
     /**
      * Get the background color.
-     * 
+     *
      * @return the background color
      */
     public Color getBackColor() {
@@ -112,7 +119,7 @@ public abstract class AbstractState {
 
     /**
      * Set the current font name
-     * 
+     *
      * @param internalFontName the internal font name
      * @return true if the font name has changed
      */
@@ -126,16 +133,16 @@ public abstract class AbstractState {
 
     /**
      * Gets the current font name
-     * 
+     *
      * @return the current font name
      */
     public String getFontName() {
         return getData().fontName;
     }
-    
+
     /**
      * Gets the current font size
-     * 
+     *
      * @return the current font size
      */
     public int getFontSize() {
@@ -159,7 +166,7 @@ public abstract class AbstractState {
 
     /**
      * Set the current line width.
-     * 
+     *
      * @param width the line width in points
      * @return true if the line width has changed
      */
@@ -173,7 +180,7 @@ public abstract class AbstractState {
 
     /**
      * Returns the current line width
-     * 
+     *
      * @return the current line width
      */
     public float getLineWidth() {
@@ -182,7 +189,7 @@ public abstract class AbstractState {
 
     /**
      * Sets the dash array (line type) for the current basic stroke
-     * 
+     *
      * @param dash the line dash array
      * @return true if the dash array has changed
      */
@@ -240,10 +247,10 @@ public abstract class AbstractState {
            return (AffineTransform) baseData.getTransform().clone();
        }
     }
-    
+
     /**
      * Concatenates the given AffineTransform to the current one.
-     * 
+     *
      * @param tf the transform to concatenate to the current level transform
      */
     public void concatenate(AffineTransform tf) {
@@ -263,20 +270,15 @@ public abstract class AbstractState {
      * so that the state is known when popped.
      */
     public void push() {
-        AbstractData copy;
-        try {
-            copy = (AbstractData)getData().clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        AbstractData copy = (AbstractData)getData().clone();
         getStateStack().push(copy);
     }
-    
+
     /**
      * Pop the state from the stack and set current values to popped state.
      * This should be called when a Q operator is used so
      * the state is restored to the correct values.
-     * 
+     *
      * @return the restored state, null if the stack is empty
      */
     public AbstractData pop() {
@@ -290,7 +292,7 @@ public abstract class AbstractState {
 
     /**
      * Clears the state stack
-     */    
+     */
     public void clear() {
         getStateStack().clear();
         currentData = null;
@@ -298,24 +300,32 @@ public abstract class AbstractState {
 
     /**
      * Return the state stack
-     * 
+     *
      * @return the state stack
      */
     protected Stack/*<AbstractData>*/ getStateStack() {
         if (stateStack == null) {
-            stateStack = new java.util.Stack/*<AbstractData>*/();
+            stateStack = new StateStack();
         }
         return stateStack;
     }
 
     /** {@inheritDoc} */
+    public Object clone() {
+        AbstractState state = instantiateState();
+        state.stateStack = new StateStack(this.stateStack);
+        state.currentData = (AbstractData)this.currentData.clone();
+        return state;
+    }
+
+    /** {@inheritDoc} */
     public String toString() {
-        return "stateStack=" + stateStack
+        return ", stateStack=" + stateStack
         + ", currentData=" + currentData;
     }
 
     /**
-     * A base state data holding object 
+     * A base state data holding object
      */
     public abstract class AbstractData implements Cloneable, Serializable {
 
@@ -345,7 +355,7 @@ public abstract class AbstractState {
          * a new viewport. Note that all concatenation operations are logged
          * so they can be replayed if necessary (ex. for block-containers with
          * "fixed" positioning.
-         * 
+         *
          * @param at Transformation to perform
          */
         public void concatenate(AffineTransform at) {
@@ -354,7 +364,7 @@ public abstract class AbstractState {
 
         /**
          * Get the current AffineTransform.
-         * 
+         *
          * @return the current transform
          */
         public AffineTransform getTransform() {
@@ -368,22 +378,23 @@ public abstract class AbstractState {
          * Resets the current AffineTransform.
          */
         public void resetTransform() {
-            transform = new AffineTransform();
+            transform = getBaseTransform();
+//            transform = new AffineTransform();
         }
 
         /** {@inheritDoc} */
-        public Object clone() throws CloneNotSupportedException {
-            AbstractData obj = instantiateData();
-            obj.color = this.color;
-            obj.backColor = this.backColor;
-            obj.fontName = this.fontName;
-            obj.fontSize = this.fontSize;
-            obj.lineWidth = this.lineWidth;
-            obj.dashArray = this.dashArray;
-            obj.transform = new AffineTransform(this.transform);
-            return obj;
+        public Object clone() {
+            AbstractData data = instantiateData();
+            data.color = this.color;
+            data.backColor = this.backColor;
+            data.fontName = this.fontName;
+            data.fontSize = this.fontSize;
+            data.lineWidth = this.lineWidth;
+            data.dashArray = this.dashArray;
+            data.transform = new AffineTransform(this.transform);
+            return data;
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             return "color=" + color

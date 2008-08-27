@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,59 +27,64 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
 /**
  * GOCA Graphics Data Descriptor
  */
-public class GraphicsDataDescriptor extends AbstractAFPObject {
+public class GraphicsDataDescriptor extends AbstractDescriptor {
 
-    private int xlwind;
-    private int xrwind;
-    private int ybwind;
-    private int ytwind;
-    private int xresol;
-    private int yresol;
-    
+    private final int xlwind;
+
+    private final int xrwind;
+
+    private final int ybwind;
+
+    private final int ytwind;
+
     /**
      * Main constructor
-     * @param xresol the x resolution of the graphics window
-     * @param yresol the y resolution of the graphics window
-     * @param xlwind the left edge of the graphics window 
-     * @param xrwind the right edge of the graphics window
-     * @param ybwind the top edge of the graphics window
-     * @param ytwind the bottom edge of the graphics window
+     *
+     * @param xlwind
+     *            the left edge of the graphics window
+     * @param xrwind
+     *            the right edge of the graphics window
+     * @param ybwind
+     *            the top edge of the graphics window
+     * @param ytwind
+     *            the bottom edge of the graphics window
+     * @param widthRes
+     *            the width resolution of the graphics window
+     * @param heightRes
+     *            the height resolution of the graphics window
      */
-    protected GraphicsDataDescriptor(int xresol, int yresol,
-            int xlwind, int xrwind, int ybwind, int ytwind) {
-        this.xresol = xresol;
-        this.yresol = yresol;
+    protected GraphicsDataDescriptor(int xlwind, int xrwind, int ybwind,
+            int ytwind, int widthRes, int heightRes) {
         this.xlwind = xlwind;
         this.xrwind = xrwind;
         this.ybwind = ybwind;
         this.ytwind = ytwind;
-    }    
+        super.widthRes = widthRes;
+        super.heightRes = heightRes;
+    }
 
-    private static final int ABS = 2;
-    private static final int IMGRES = 8;
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] headerData = new byte[9];
+        copySF(headerData, Type.DESCRIPTOR, Category.GRAPHICS);
+        byte[] drawingOrderSubsetData = getDrawingOrderSubset();
+        byte[] windowSpecificationData = getWindowSpecification();
+        byte[] len = BinaryUtils.convert(
+                8 + drawingOrderSubsetData.length + windowSpecificationData.length, 2);
+        headerData[1] = len[0];
+        headerData[2] = len[1];
+        os.write(headerData);
+        os.write(drawingOrderSubsetData);
+        os.write(windowSpecificationData);
+    }
 
     /**
-     * {@inheritDoc}
+     * Returns the drawing order subset data
+     *
+     * @return the drawing order subset data
      */
-    public void write(OutputStream os) throws IOException {
-        byte[] xreswind = BinaryUtils.convert(xresol * 10, 2);
-        byte[] yreswind = BinaryUtils.convert(yresol * 10, 2);
-        byte[] xlcoord = BinaryUtils.convert(xlwind, 2);
-        byte[] xrcoord = BinaryUtils.convert(xrwind, 2);
-        byte[] xbcoord = BinaryUtils.convert(ybwind, 2);
-        byte[] ytcoord = BinaryUtils.convert(ytwind, 2);
-        byte[] imxyres = xreswind;      
-        byte[] data = new byte[] {
-            0x5A,
-            0x00,
-            0x25,
-            (byte) 0xD3,
-            (byte) 0xA6,
-            (byte) 0xBB,
-            0x00, // Flags
-            0x00, // Reserved
-            0x00, // Reserved
-            
+    private byte[] getDrawingOrderSubset() {
+        final byte[] data = new byte[] {
             // Drawing order subset
             (byte) 0xF7,
             7, // LENGTH
@@ -89,21 +94,41 @@ public class GraphicsDataDescriptor extends AbstractAFPObject {
             0x02, // SUBLEV
             0x00, // VERSION 0
             0x01, // LENGTH (of following field)
-            0x00,  // GEOM
+            0x00 // GEOM
+        };
+        return data;
+    }
 
-            // Window specification
-            (byte) 0xF6,
-            18, // LENGTH
+    private static final int ABS = 2;
+    private static final int IMGRES = 8;
+
+    /**
+     * Returns the window specification data
+     *
+     * @return the window specification data
+     */
+    private byte[] getWindowSpecification() {
+        byte[] xlcoord = BinaryUtils.convert(xlwind, 2);
+        byte[] xrcoord = BinaryUtils.convert(xrwind, 2);
+        byte[] xbcoord = BinaryUtils.convert(ybwind, 2);
+        byte[] ytcoord = BinaryUtils.convert(ytwind, 2);
+        byte[] xResol = BinaryUtils.convert(widthRes * 10, 2);
+        byte[] yResol = BinaryUtils.convert(heightRes * 10, 2);
+        byte[] imxyres = xResol;
+
+        final byte[] data = new byte[] {
+        // Window specification
+            (byte) 0xF6, 18, // LENGTH
             (ABS + IMGRES), // FLAGS (ABS)
             0x00, // reserved (must be zero)
             0x00, // CFORMAT (coordinate format - 16bit high byte first signed)
             0x00, // UBASE (unit base - ten inches)
-            xreswind[0], // XRESOL
-            xreswind[1], 
-            yreswind[0], // YRESOL
-            yreswind[1], 
+            xResol[0], // XRESOL
+            xResol[1],
+            yResol[0], // YRESOL
+            yResol[1],
             imxyres[0], // IMXYRES (Number of image points per ten inches
-            imxyres[1], //          in X and Y directions)
+            imxyres[1], // in X and Y directions)
             xlcoord[0], // XLWIND
             xlcoord[1],
             xrcoord[0], // XRWIND
@@ -113,6 +138,6 @@ public class GraphicsDataDescriptor extends AbstractAFPObject {
             ytcoord[0], // YTWIND
             ytcoord[1]
         };
-        os.write(data);    
+        return data;
     }
 }

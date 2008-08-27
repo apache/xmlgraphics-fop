@@ -17,10 +17,14 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.ioca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.fop.render.afp.modca.AbstractAFPObject;
+import org.apache.fop.render.afp.modca.AbstractAFPObject.Category;
+import org.apache.fop.render.afp.modca.AbstractAFPObject.Type;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -48,7 +52,7 @@ public class ImageRasterData extends AbstractAFPObject {
     /**
      * The image raster data
      */
-    private byte[] rasterData;
+    private final byte[] rasterData;
 
     /**
      * Constructor for the image raster data object
@@ -59,16 +63,15 @@ public class ImageRasterData extends AbstractAFPObject {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[9];
         copySF(data, Type.DATA, Category.IM_IMAGE);
-        
         // The size of the structured field
         byte[] len = BinaryUtils.convert(rasterData.length + 8, 2);
         data[1] = len[0];
         data[2] = len[1];
-
         os.write(data);
+
         os.write(rasterData);
     }
 }

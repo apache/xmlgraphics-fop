@@ -19,48 +19,56 @@
 
 package org.apache.fop.render.afp.goca;
 
-import org.apache.fop.render.afp.modca.AbstractPreparedAFPObject;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.fop.render.afp.modca.AbstractStructuredAFPObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
- * A GOCA graphics begin image object
+ * A GOCA Image
  */
-public final class GraphicsImageBegin extends AbstractPreparedAFPObject {
+public class GraphicsImage extends AbstractStructuredAFPObject {
+
     /** x coordinate */
-    private int x;
+    private final int x;
 
     /** y coordinate */
-    private int y;
+    private final int y;
 
     /** width */
-    private int width;
+    private final int width;
 
     /** height */
-    private int height;
+    private final int height;
+
+    /** image data */
+    private final byte[] imageData;
 
     /**
+     * Main constructor
+     *
      * @param x the x coordinate of the image
      * @param y the y coordinate of the image
      * @param width the image width
      * @param height the image height
+     * @param imageData the image data
      */
-    public GraphicsImageBegin(int x, int y, int width, int height) {
+    public GraphicsImage(int x, int y, int width, int height, byte[] imageData) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        prepareData();
+        this.imageData = imageData;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected void prepareData() {
+    /** {@inheritDoc} */
+    protected void writeStart(OutputStream os) throws IOException {
         byte[] xcoord = BinaryUtils.convert(x, 2);
         byte[] ycoord = BinaryUtils.convert(y, 2);
         byte[] w = BinaryUtils.convert(width, 2);
         byte[] h = BinaryUtils.convert(height, 2);
-        super.data = new byte[] {
+        byte[] data = new byte[] {
             (byte) 0xD1, // GBIMG order code
             (byte) 0x0A, // LENGTH
             xcoord[0],
@@ -74,13 +82,36 @@ public final class GraphicsImageBegin extends AbstractPreparedAFPObject {
             h[0], // HEIGHT
             h[1] //
         };
+        os.write(data);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** the maximum image data length */
+    public static final short MAX_DATA_LEN = 255;
+
+    /** {@inheritDoc} */
+    protected void writeContent(OutputStream os) throws IOException {
+        byte[] dataHeader = new byte[] {
+            (byte) 0x92 // GIMD
+        };
+        final int lengthOffset = 1;
+        writeChunksToStream(imageData, dataHeader, lengthOffset, MAX_DATA_LEN, os);
+    }
+
+    /** {@inheritDoc} */
+    protected void writeEnd(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
+            (byte) 0x93, // GEIMG order code
+            0x00 // LENGTH
+        };
+        os.write(data);
+    }
+
+    /** {@inheritDoc} */
     public String toString() {
-        return "GraphicsImageBegin(x=" + x + ",y=" + y
-            + ",width=" + width + ",height=" + height + ")";
+        return "GraphicsImage{x=" + x
+            + ", y=" + y
+            + ", width=" + width
+            + ", height=" + height
+        + "}";
     }
 }

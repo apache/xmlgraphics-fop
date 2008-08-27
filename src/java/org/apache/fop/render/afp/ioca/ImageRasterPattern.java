@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.ioca;
 
 /**
  * Raster data is a grid of cells covering an area of interest.

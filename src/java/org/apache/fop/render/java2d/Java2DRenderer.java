@@ -135,7 +135,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /** The current state, holds a Graphics2D and its context */
     protected Java2DGraphicsState state;
 
-    private Stack stateStack = new Stack();
+    private final Stack stateStack = new Stack();
 
     /** true if the renderer has finished rendering all the pages */
     private boolean renderingDone;
@@ -873,6 +873,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         drawImage(url, pos);
     }
 
+    private static final ImageFlavor[] FLAVOURS = new ImageFlavor[]
+                                                  {ImageFlavor.GRAPHICS2D,
+                                                      ImageFlavor.BUFFERED_IMAGE,
+                                                      ImageFlavor.RENDERED_IMAGE,
+                                                      ImageFlavor.XML_DOM};
+
     /** {@inheritDoc} */
     protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
 
@@ -885,14 +891,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         try {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
             info = manager.getImageInfo(uri, sessionContext);
-            final ImageFlavor[] flavors = new ImageFlavor[]
-                {ImageFlavor.GRAPHICS2D,
-                    ImageFlavor.BUFFERED_IMAGE,
-                    ImageFlavor.RENDERED_IMAGE,
-                    ImageFlavor.XML_DOM};
             Map hints = ImageUtil.getDefaultHints(sessionContext);
             org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
-                    info, flavors, hints, sessionContext);
+                    info, FLAVOURS, hints, sessionContext);
             if (img instanceof ImageGraphics2D) {
                 ImageGraphics2D imageG2D = (ImageGraphics2D)img;
                 int width = (int)pos.getWidth();

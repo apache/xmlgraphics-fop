@@ -25,6 +25,8 @@ package org.apache.fop.render.afp.goca;
 public class GraphicsSetArcParameters extends AbstractGraphicsCoord {
 
     /**
+     * Constructor
+     *
      * @param xmaj x coordinate of the major axis point
      * @param ymin y coordinate of the minor axis point
      * @param xmin x coordinate of the minor axis point
@@ -34,20 +36,16 @@ public class GraphicsSetArcParameters extends AbstractGraphicsCoord {
         super(xmaj, ymin, xmin, ymaj);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected byte getOrderCode() {
         return 0x22;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     public String toString() {
-        return getName() + "(xmaj=" + coords[0]
+        return getName() + "{xmaj=" + coords[0]
             + ",ymin=" + coords[1]
             + ",xmin=" + coords[2]
-            + ",ymaj=" + coords[3] + ")";
+            + ",ymaj=" + coords[3] + "}";
     }
 }

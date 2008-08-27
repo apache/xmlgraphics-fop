@@ -35,8 +35,8 @@ public interface AFPRendererContextConstants extends RendererContextConstants {
     /** The font information for the AFP renderer. */
     String AFP_FONT_INFO = "afpFontInfo";
 
-    /** The afp datastream */
-    String AFP_DATASTREAM = "afpDataStream";
+    /** The afp resource manager */
+    String AFP_RESOURCE_MANAGER = "afpResourceManager";
 
     /** The afp state */
     String AFP_STATE = "afpPageState";

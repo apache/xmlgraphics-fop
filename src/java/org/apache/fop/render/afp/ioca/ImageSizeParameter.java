@@ -17,10 +17,12 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp.modca;
+package org.apache.fop.render.afp.ioca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.fop.render.afp.modca.AbstractAFPObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -28,28 +30,29 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class ImageSizeParameter extends AbstractAFPObject {
 
-    private int hRes = 0;
-    private int vRes = 0;
     private int hSize = 0;
     private int vSize = 0;
+    private int hRes = 0;
+    private int vRes = 0;
 
     /**
      * Constructor for a ImageSizeParameter for the specified
      * resolution, hsize and vsize.
-     * @param hresol The horizontal resolution of the image.
-     * @param vresol The vertical resolution of the image.
+     *
      * @param hsize The horizontal size of the image.
      * @param vsize The vertical size of the image.
+     * @param hresol The horizontal resolution of the image.
+     * @param vresol The vertical resolution of the image.
      */
-    public ImageSizeParameter(int hresol, int vresol, int hsize, int vsize) {
-        this.hRes = hresol;
-        this.vRes = vresol;
+    public ImageSizeParameter(int hsize, int vsize, int hresol, int vresol) {
         this.hSize = hsize;
         this.vSize = vsize;
+        this.hRes = hresol;
+        this.vRes = vresol;
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[] {
             (byte)0x94, // ID = Image Size Parameter
             0x09, // Length

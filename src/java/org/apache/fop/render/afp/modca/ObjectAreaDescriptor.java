@@ -19,14 +19,14 @@
 
 package org.apache.fop.render.afp.modca;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.modca.triplets.DescriptorPositionTriplet;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.render.afp.modca.triplets.PresentationSpaceResetMixingTriplet;
+import org.apache.fop.render.afp.modca.triplets.Triplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -38,11 +38,11 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
     /**
      * Construct an object area descriptor for the specified object width
      * and object height.
-     * 
-     * @param width The page width.
-     * @param height The page height.
-     * @param widthRes The page width resolution.
-     * @param heightRes The page height resolution.
+     *
+     * @param width the object width.
+     * @param height the object height.
+     * @param widthRes the object width resolution.
+     * @param heightRes the object height resolution.
      */
     public ObjectAreaDescriptor(int width, int height, int widthRes, int heightRes) {
         super(width, height, widthRes, heightRes);
@@ -51,20 +51,24 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
     /** {@inheritDoc} */
     protected byte[] getTripletData() throws IOException {
         if (tripletData == null) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
             // Specifies the associated ObjectAreaPosition structured field
             final byte oapId = 0x01;
-            new DescriptorPositionTriplet(oapId).write(bos);
+            Triplet triplet = new Triplet(Triplet.DESCRIPTOR_POSITION, oapId);
+            triplet.writeToStream(baos);
 
-            new MeasurementUnitsTriplet(widthRes, heightRes).write(bos);
+            triplet = new MeasurementUnitsTriplet(widthRes, heightRes);
+            triplet.writeToStream(baos);
 
-            new ObjectAreaSizeTriplet(width, height).write(bos);
-            
-            new PresentationSpaceResetMixingTriplet(
-                    PresentationSpaceResetMixingTriplet.NOT_RESET).write(bos);
-            
-            this.tripletData = bos.toByteArray();
+            triplet = new ObjectAreaSizeTriplet(width, height);
+            triplet.writeToStream(baos);
+
+            triplet = new PresentationSpaceResetMixingTriplet(
+                    PresentationSpaceResetMixingTriplet.NOT_RESET);
+            triplet.writeToStream(baos);
+
+            this.tripletData = baos.toByteArray();
         }
         return this.tripletData;
     }

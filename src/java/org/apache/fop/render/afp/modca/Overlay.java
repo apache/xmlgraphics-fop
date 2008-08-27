@@ -22,7 +22,6 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.modca.resource.ResourceManager;
 
 /**
  * An overlay is a MO:DCA-P resource object.
@@ -31,14 +30,14 @@ import org.apache.fop.render.afp.modca.resource.ResourceManager;
  * carried in a resource group. An overlay is similar to a page in
  * that it defines its own environment and carries the same data objects.
  */
-public class Overlay extends AbstractPageObject {
+public class Overlay extends PageObject {
 
     /**
      * Construct a new overlay object for the specified name argument, the overlay
      * name should be an 8 character identifier.
-     * 
-     * @param resourceManager the resource manager
      *
+     * @param factory
+     *            the resource manager of the page.
      * @param name
      *            the name of the page.
      * @param width
@@ -52,10 +51,10 @@ public class Overlay extends AbstractPageObject {
      * @param heightResolution
      *            the height resolution of the page.
      */
-    public Overlay(ResourceManager resourceManager,
+    public Overlay(Factory factory,
             String name, int width, int height, int rotation,
             int widthResolution, int heightResolution) {
-        super(resourceManager, name, width, height, rotation, widthResolution, heightResolution);
+        super(factory, name, width, height, rotation, widthResolution, heightResolution);
     }
 
     /** {@inheritDoc} */

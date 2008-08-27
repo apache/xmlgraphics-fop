@@ -30,6 +30,7 @@ public class GraphicsSetLineWidth extends AbstractPreparedAFPObject {
 
     /**
      * Main constructor
+     *
      * @param multiplier the line width multiplier
      */
     public GraphicsSetLineWidth(int multiplier) {
@@ -37,20 +38,16 @@ public class GraphicsSetLineWidth extends AbstractPreparedAFPObject {
         prepareData();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void prepareData() {
         super.data = new byte[] {
            0x19, // GSLW order code
            (byte)multiplier // MH (line-width)
         };
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     public String toString() {
-        return "GraphicsSetLineWidth(multiplier=" + multiplier + ")";
+        return "GraphicsSetLineWidth{multiplier=" + multiplier + "}";
     }
 }

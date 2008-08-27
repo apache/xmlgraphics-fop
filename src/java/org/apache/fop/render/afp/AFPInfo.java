@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@ package org.apache.fop.render.afp;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.render.afp.modca.AFPDataStream;
 
 /**
  * AFP information structure for drawing the XML document.
@@ -45,18 +44,18 @@ public final class AFPInfo {
     /** see AFP_FONT_INFO */
     private FontInfo fontInfo;
 
-    /** See AFP_DATASTREAM */
-    private AFPDataStream afpDataStream;
-
     /** See AFP_STATE */
-    private AFPState afpState;
+    private AFPState state;
+
+    /** See AFP_RESOURCE_MANAGER */
+    private AFPResourceManager resourceManager;
 
     /** true if SVG should be rendered as a bitmap instead of natively */
-    public boolean paintAsBitmap;
-    
+    private boolean paintAsBitmap;
+
     /**
      * Returns the width.
-     * 
+     *
      * @return the width
      */
     public int getWidth() {
@@ -65,7 +64,7 @@ public final class AFPInfo {
 
     /**
      * Sets the width.
-     * 
+     *
      * @param width The pageWidth to set
      */
     public void setWidth(int width) {
@@ -74,7 +73,7 @@ public final class AFPInfo {
 
     /**
      * Returns the height.
-     * 
+     *
      * @return the height
      */
     public int getHeight() {
@@ -83,7 +82,7 @@ public final class AFPInfo {
 
     /**
      * Sets the height.
-     * 
+     *
      * @param height The height to set
      */
     public void setHeight(int height) {
@@ -92,7 +91,7 @@ public final class AFPInfo {
 
     /**
      * Returns the handler configuration
-     * 
+     *
      * @return the handler configuration
      */
     public Configuration getHandlerConfiguration() {
@@ -101,16 +100,16 @@ public final class AFPInfo {
 
     /**
      * Sets the handler configuration
-     * 
+     *
      * @param cfg the handler configuration
      */
     public void setHandlerConfiguration(Configuration cfg) {
         this.cfg = cfg;
     }
-    
+
     /**
      * Return the font info
-     * 
+     *
      * @return the font info
      */
     public FontInfo getFontInfo() {
@@ -119,25 +118,25 @@ public final class AFPInfo {
 
     /**
      * Returns the current AFP state
-     * 
+     *
      * @return the current AFP state
      */
     public AFPState getState() {
-        return this.afpState;
+        return this.state;
     }
 
     /**
-     * Returns the AFPDataStream the afp datastream
-     * 
-     * @return the AFPDataStream the afp datastream
+     * Returns the AFPResourceManager
+     *
+     * @return the AFPResourceManager
      */
-    public AFPDataStream getAFPDataStream() {
-        return this.afpDataStream;
+    public AFPResourceManager getAFPResourceManager() {
+        return this.resourceManager;
     }
-    
+
     /**
      * Returns true if supports color
-     * 
+     *
      * @return true if supports color
      */
     public boolean isColorSupported() {
@@ -146,7 +145,7 @@ public final class AFPInfo {
 
     /**
      * Returns the current x position coordinate
-     * 
+     *
      * @return the current x position coordinate
      */
     protected int getX() {
@@ -155,7 +154,7 @@ public final class AFPInfo {
 
     /**
      * Returns the current y position coordinate
-     * 
+     *
      * @return the current y position coordinate
      */
     protected int getY() {
@@ -164,7 +163,7 @@ public final class AFPInfo {
 
     /**
      * Returns the resolution
-     * 
+     *
      * @return the resolution
      */
     protected int getResolution() {
@@ -181,7 +180,7 @@ public final class AFPInfo {
 
     /**
      * Sets the current x position coordinate
-     * 
+     *
      * @param x the current x position coordinate
      */
     protected void setX(int x) {
@@ -190,7 +189,7 @@ public final class AFPInfo {
 
     /**
      * Sets the current y position coordinate
-     * 
+     *
      * @param y the current y position coordinate
      */
     protected void setY(int y) {
@@ -199,7 +198,7 @@ public final class AFPInfo {
 
     /**
      * Sets the current font info
-     * 
+     *
      * @param fontInfo the current font info
      */
     protected void setFontInfo(FontInfo fontInfo) {
@@ -208,32 +207,52 @@ public final class AFPInfo {
 
     /**
      * Sets the AFP state
-     * 
+     *
      * @param state the AFP state
      */
     public void setState(AFPState state) {
-        this.afpState = state;
-    }
-    
-    /**
-     * Sets the AFP datastream
-     * 
-     * @param dataStream the AFP datastream
-     */
-    public void setAFPDataStream(AFPDataStream dataStream) {
-        this.afpDataStream = dataStream;
+        this.state = state;
     }
 
-    
+    /**
+     * Sets the AFPResourceManager
+     *
+     * @param resourceManager the AFPResourceManager
+     */
+    public void setResourceManager(AFPResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
+    }
+
+    /**
+     * Sets true if SVG should be rendered as a bitmap instead of natively
+     *
+     * @param b boolean value
+     */
+    public void setPaintAsBitmap(boolean b) {
+        this.paintAsBitmap = b;
+    }
+
+    /**
+     * Returns true if SVG should be rendered as a bitmap instead of natively
+     *
+     * @return true if SVG should be rendered as a bitmap instead of natively
+     */
+    public boolean paintAsBitmap() {
+        return this.paintAsBitmap;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
-        return "width=" + width
-            + ",height=" + height
-            + ",x=" + x
-            + ",y=" + y
-            + ",cfg=" + cfg
-            + ",fontInfo=" + fontInfo
-            + ",afpDatastream=" + afpDataStream
-            + ",afpState=" + afpState;
+        return "AFPInfo{width=" + width
+            + ", height=" + height
+            + ", x=" + x
+            + ", y=" + y
+            + ", cfg=" + cfg
+            + ", fontInfo=" + fontInfo
+            + ", resourceManager=" + resourceManager
+            + ", state=" + state
+            + ", paintAsBitmap=" + paintAsBitmap
+        + "}";
     }
+
 }

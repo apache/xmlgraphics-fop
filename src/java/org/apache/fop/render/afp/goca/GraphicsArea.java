@@ -29,44 +29,39 @@ import org.apache.fop.render.afp.modca.AbstractPreparedObjectContainer;
  */
 public final class GraphicsArea extends AbstractPreparedObjectContainer {
 
+    private static final int RES1 = 1;
+    private static final int BOUNDARY = 2;
+    private static final int NO_BOUNDARY = 0;
+
     /** draw boundary lines around this area */
     private boolean drawBoundary = false;
-    
+
     /**
      * Sets whether boundary lines are drawn
+     *
      * @param drawBoundaryLines whether boundary lines are drawn
      */
     public void setDrawBoundaryLines(boolean drawBoundaryLines) {
         this.drawBoundary = drawBoundaryLines;
     }
-    
-    private static final int RES1 = 1;
-    private static final int BOUNDARY = 2;        
-    private static final int NO_BOUNDARY = 0;
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     public int getDataLength() {
         // start len + end len + data len
         return 4 + super.getDataLength();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
         byte[] data = new byte[] {
             (byte)0x68, // GBAR order code
-            (byte)(RES1 + (drawBoundary ? BOUNDARY : NO_BOUNDARY)) 
+            (byte)(RES1 + (drawBoundary ? BOUNDARY : NO_BOUNDARY))
         };
         os.write(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] endData = new byte[] {
             (byte)0x60, // GEAR order code
@@ -75,10 +70,8 @@ public final class GraphicsArea extends AbstractPreparedObjectContainer {
         os.write(endData);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
-        return "GraphicsArea";
+        return "GraphicsArea{drawBoundary=" + drawBoundary + "}";
     }
 }

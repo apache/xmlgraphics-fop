@@ -27,16 +27,17 @@ package org.apache.fop.render.afp.goca;
 public class GraphicsLine extends AbstractGraphicsCoord {
 
     /**
+     * Constructor
+     *
      * @param coords the x/y coordinates for this object
      */
     public GraphicsLine(int[] coords) {
         super(coords);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected byte getOrderCode() {
-        return (byte)0xC1;                
+        return (byte)0xC1;
     }
+
 }

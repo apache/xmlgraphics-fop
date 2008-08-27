@@ -62,7 +62,7 @@ public class PresentationTextDescriptor extends AbstractDescriptor {
     }
 
     /** {@inheritDoc} */
-    public void write(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[23];
         
         copySF(data, Type.MIGRATION, Category.PRESENTATION_TEXT);

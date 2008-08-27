@@ -22,6 +22,11 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.ioca.ImageCellPosition;
+import org.apache.fop.render.afp.ioca.ImageInputDescriptor;
+import org.apache.fop.render.afp.ioca.ImageOutputControl;
+import org.apache.fop.render.afp.ioca.ImageRasterData;
+
 /**
  * An IM image data object specifies the contents of a raster image and
  * its placement on a page, overlay, or page segment. An IM image can be
@@ -60,7 +65,7 @@ public class IMImageObject extends AbstractNamedAFPObject {
     /**
      * Constructor for the image object with the specified name,
      * the name must be a fixed length of eight characters.
-     * 
+     *
      * @param name The name of the image.
      */
     public IMImageObject(String name) {
@@ -69,7 +74,7 @@ public class IMImageObject extends AbstractNamedAFPObject {
 
     /**
      * Sets the ImageOutputControl.
-     * 
+     *
      * @param imageOutputControl The imageOutputControl to set
      */
     public void setImageOutputControl(ImageOutputControl imageOutputControl) {
@@ -78,7 +83,7 @@ public class IMImageObject extends AbstractNamedAFPObject {
 
     /**
      * Sets the ImageCellPosition.
-     * 
+     *
      * @param imageCellPosition The imageCellPosition to set
      */
     public void setImageCellPosition(ImageCellPosition imageCellPosition) {
@@ -87,7 +92,7 @@ public class IMImageObject extends AbstractNamedAFPObject {
 
     /**
      * Sets the ImageInputDescriptor.
-     * 
+     *
      * @param imageInputDescriptor The imageInputDescriptor to set
      */
     public void setImageInputDescriptor(ImageInputDescriptor imageInputDescriptor) {
@@ -96,7 +101,7 @@ public class IMImageObject extends AbstractNamedAFPObject {
 
     /**
      * Sets the ImageRastorData.
-     * 
+     *
      * @param imageRasterData The imageRasterData to set
      */
     public void setImageRasterData(ImageRasterData imageRasterData) {
@@ -107,16 +112,16 @@ public class IMImageObject extends AbstractNamedAFPObject {
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         if (imageOutputControl != null) {
-            imageOutputControl.write(os);
+            imageOutputControl.writeToStream(os);
         }
         if (imageInputDescriptor != null) {
-            imageInputDescriptor.write(os);
+            imageInputDescriptor.writeToStream(os);
         }
         if (imageCellPosition != null) {
-            imageCellPosition.write(os);
+            imageCellPosition.writeToStream(os);
         }
         if (imageRasterData != null) {
-            imageRasterData.write(os);
+            imageRasterData.writeToStream(os);
         }
     }
 

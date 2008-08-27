@@ -22,8 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.ObjectAreaInfo;
-
+import org.apache.fop.render.afp.AFPObjectAreaInfo;
 
 /**
  * An Object Environment Group (OEG) may be associated with an object and is contained
@@ -38,87 +37,39 @@ import org.apache.fop.render.afp.ObjectAreaInfo;
  */
 public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
-    /**
-     * Default name for the object environment group
-     */
-    private static final String DEFAULT_NAME = "OEG00001";
+    private final Factory factory;
 
-    /**
-     * The ObjectAreaDescriptor for the object environment group
-     */
+    /** the ObjectAreaDescriptor for the object environment group */
     private ObjectAreaDescriptor objectAreaDescriptor = null;
 
-    /**
-     * The ObjectAreaPosition for the object environment group
-     */
+    /** the ObjectAreaPosition for the object environment group */
     private ObjectAreaPosition objectAreaPosition = null;
 
-    /**
-     * The ImageDataDescriptor for the object environment group
-     */
-    private ImageDataDescriptor imageDataDescriptor = null;
-
-    /**
-     * The GraphicsDataDescriptor for the object environment group
-     */
-    private GraphicsDataDescriptor graphicsDataDescriptor = null;
-
-    /**
-     * Default constructor for the ObjectEnvironmentGroup.
-     */
-    public ObjectEnvironmentGroup() {
-        this(DEFAULT_NAME);
-    }
+    /** the DataDescritpor for the object environment group */
+    private AbstractDescriptor dataDescriptor;
 
     /**
      * Constructor for the ObjectEnvironmentGroup, this takes a
      * name parameter which must be 8 characters long.
-     * 
+     *
+     * @param factory the object factory
      * @param name the object environment group name
      */
-    public ObjectEnvironmentGroup(String name) {
+    public ObjectEnvironmentGroup(Factory factory, String name) {
         super(name);
+        this.factory = factory;
     }
 
     /**
      * Sets the object area parameters.
-     * 
+     *
      * @param info the object area info
      */
-    public void setObjectArea(ObjectAreaInfo info) {
-        this.objectAreaDescriptor = new ObjectAreaDescriptor(
-                info.getWidth(), info.getHeight(),
-                info.getWidthRes(), info.getHeightRes());
-        this.objectAreaPosition = new ObjectAreaPosition(
+    public void setObjectArea(AFPObjectAreaInfo info) {
+        this.objectAreaDescriptor = factory.createObjectAreaDescriptor(
+                info.getWidth(), info.getHeight(), info.getWidthRes(), info.getHeightRes());
+        this.objectAreaPosition = factory.createObjectAreaPosition(
                 info.getX(), info.getY(), info.getRotation());
-    }
-
-    /**
-     * Set the dimensions of the image.
-     * 
-     * @param xresol the x resolution of the image
-     * @param yresol the y resolution of the image
-     * @param width the image width
-     * @param height the image height
-     */
-    public void setImageData(int xresol, int yresol, int width, int height) {
-        this.imageDataDescriptor = new ImageDataDescriptor(xresol, yresol,  width, height);
-    }
-
-    /**
-     * Set the graphics data descriptor.
-     * 
-     * @param xresol the x resolution of the graphics window
-     * @param yresol the y resolution of the graphics window
-     * @param xlwind the left edge of the graphics window 
-     * @param xrwind the right edge of the graphics window
-     * @param ybwind the top edge of the graphics window
-     * @param ytwind the bottom edge of the graphics window
-     */
-    public void setGraphicsData(int xresol, int yresol,
-            int xlwind, int xrwind, int ybwind, int ytwind) {
-        this.graphicsDataDescriptor = new GraphicsDataDescriptor(xresol, yresol,
-                xlwind, xrwind, ybwind, ytwind);
     }
 
     /** {@inheritDoc} */
@@ -127,27 +78,37 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
         copySF(data, Type.BEGIN, Category.OBJECT_ENVIRONMENT_GROUP);
         os.write(data);
     }
-    
+
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
-        
-        objectAreaDescriptor.write(os);
-        objectAreaPosition.write(os);
 
-        if (imageDataDescriptor != null) {
-            imageDataDescriptor.write(os);
+        if (objectAreaDescriptor != null) {
+            objectAreaDescriptor.writeToStream(os);
         }
 
-        if (graphicsDataDescriptor != null) {
-            graphicsDataDescriptor.write(os);
+        if (objectAreaPosition != null) {
+            objectAreaPosition.writeToStream(os);
+        }
+
+        if (dataDescriptor != null) {
+            dataDescriptor.writeToStream(os);
         }
     }
-    
+
     /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.END, Category.OBJECT_ENVIRONMENT_GROUP);
         os.write(data);
+    }
+
+    /**
+     * Sets the data descriptor
+     *
+     * @param dataDescriptor the data descriptor
+     */
+    public void setDataDescriptor(AbstractDescriptor dataDescriptor) {
+        this.dataDescriptor = dataDescriptor;
     }
 }

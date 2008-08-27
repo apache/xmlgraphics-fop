@@ -66,7 +66,7 @@ public class GraphicsSetPatternSymbol extends AbstractPreparedAFPObject {
 
     /** diagonal lines, top left to bottom right 2 */
     public static final byte DIAGONAL_LINES_TLBR_2 = 0x0E;
-    
+
     /** no fill */
     public static final byte NO_FILL = 0x0F;
 
@@ -75,12 +75,13 @@ public class GraphicsSetPatternSymbol extends AbstractPreparedAFPObject {
 
     /** blank (same as no fill) */
     public static final byte BLANK = 0x40; // processed same as NO_FILL
-    
+
     /** the graphics pattern symbol to use */
-    private byte symbol;
+    private final byte symbol;
 
     /**
      * Main constructor
+     *
      * @param symb the pattern symbol to use
      */
     public GraphicsSetPatternSymbol(byte symb) {
@@ -88,19 +89,15 @@ public class GraphicsSetPatternSymbol extends AbstractPreparedAFPObject {
         prepareData();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void prepareData() {
         super.data = new byte[] {
             0x28, // GSPT order code
             symbol
         };
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetPatternSymbol(fill="
             + (symbol == SOLID_FILL ? true : false)  + ")";
