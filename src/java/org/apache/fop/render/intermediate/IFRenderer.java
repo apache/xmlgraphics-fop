@@ -924,7 +924,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             if (adjust != 0) {
                 int idx = text.length();
                 if (idx > dx.length - 1) {
-                    int[] newDX = new int[dx.length + INITIAL_BUFFER_SIZE];
+                    int newSize = Math.max(dx.length, idx + 1) + INITIAL_BUFFER_SIZE;
+                    int[] newDX = new int[newSize];
                     System.arraycopy(dx, 0, newDX, 0, dx.length);
                     dx = newDX;
                 }
