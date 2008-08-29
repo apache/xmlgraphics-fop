@@ -53,6 +53,10 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="JM" type="add">
+        Added missing generation of areas for empty grid units in tables with collapsing border
+        model.
+      </action>
       <action context="Code" dev="JM" type="fix" importance="high">
         Fixed memory leak in property cache (not cleaning stale PropertyCache$CacheEntry instances).
       </action>
