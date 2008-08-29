@@ -53,6 +53,10 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="45667">
+        Quick-fix to avoid a possible NullPointerException when using
+        empty inlines and hyphenation.
+      </action>
       <action context="Layout" dev="JM" type="add">
         Added missing generation of areas for empty grid units in tables with collapsing border
         model.
