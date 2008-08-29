@@ -132,14 +132,14 @@ public class ImageObject extends AbstractDataObject {
         super.writeContent(os);
 
         if (imageSegment != null) {
+            final byte[] dataHeader = new byte[9];
+            copySF(dataHeader, SF_CLASS, Type.DATA, Category.IMAGE);
+            final int lengthOffset = 1;
+
             // TODO save memory!
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             imageSegment.writeToStream(baos);
             byte[] data = baos.toByteArray();
-
-            final byte[] dataHeader = new byte[9];
-            copySF(dataHeader, SF_CLASS, Type.DATA, Category.IMAGE);
-            final int lengthOffset = 1;
             writeChunksToStream(data, dataHeader, lengthOffset, MAX_DATA_LEN, os);
         }
     }

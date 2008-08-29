@@ -24,30 +24,35 @@ package org.apache.fop.render.afp;
  */
 public class AFPResourceLevel {
 
+    /** directly in page **/
+    public static final int INLINE = 0;
+
     /** page level **/
-    public static final int PAGE = 0;
+    public static final int PAGE = 1;
 
     /** page group level **/
-    public static final int PAGE_GROUP = 1;
+    public static final int PAGE_GROUP = 2;
 
     /** document level **/
-    public static final int DOCUMENT = 2;
+    public static final int DOCUMENT = 3;
 
     /** print file level **/
-    public static final int PRINT_FILE = 3;
+    public static final int PRINT_FILE = 4;
 
     /** external level **/
-    public static final int EXTERNAL = 4;
+    public static final int EXTERNAL = 5;
 
+    private static final String NAME_INLINE = "inline";
     private static final String NAME_PAGE = "page";
     private static final String NAME_PAGE_GROUP = "page-group";
     private static final String NAME_DOCUMENT = "document";
     private static final String NAME_PRINT_FILE = "print-file";
     private static final String NAME_EXTERNAL = "external";
 
-    private static final String[] NAMES
-        = new String[] {NAME_PAGE, NAME_PAGE_GROUP, NAME_DOCUMENT, NAME_PRINT_FILE, NAME_EXTERNAL};
-
+    private static final String[] NAMES = new String[] {
+        NAME_INLINE, NAME_PAGE, NAME_PAGE_GROUP,
+        NAME_DOCUMENT, NAME_PRINT_FILE, NAME_EXTERNAL
+    };
 
 
     /** where the resource will reside in the AFP output */
@@ -96,57 +101,57 @@ public class AFPResourceLevel {
     }
 
     /**
-     * Returns true if this is a page level
+     * Returns true if this is at page level
      *
-     * @return true if this is a page level
+     * @return true if this is at page level
      */
     public boolean isPage() {
        return level == PAGE;
     }
 
     /**
-     * Returns true if this is page group level
+     * Returns true if this is at page group level
      *
-     * @return true if this is page group level
+     * @return true if this is at page group level
      */
     public boolean isPageGroup() {
         return level == PAGE_GROUP;
     }
 
     /**
-     * Returns true if this is document level
+     * Returns true if this is at document level
      *
-     * @return true if this is document level
+     * @return true if this is at document level
      */
     public boolean isDocument() {
         return level == DOCUMENT;
     }
 
     /**
-     * Returns true if this is external level
+     * Returns true if this is at external level
      *
-     * @return true if this is external level
+     * @return true if this is at external level
      */
     public boolean isExternal() {
         return level == EXTERNAL;
     }
 
     /**
-     * Returns true if this is print-file level
+     * Returns true if this is at print-file level
      *
-     * @return true if this is print-file level
+     * @return true if this is at print-file level
      */
     public boolean isPrintFile() {
         return level == PRINT_FILE;
     }
 
     /**
-     * Returns true if this resource level is inlined
+     * Returns true if this resource level is inline
      *
-     * @return true if this resource level is inlined
+     * @return true if this resource level is inline
      */
-    public boolean isInlined() {
-        return isPage() || isPageGroup() || isDocument();
+    public boolean isInline() {
+        return level == INLINE;
     }
 
     /**

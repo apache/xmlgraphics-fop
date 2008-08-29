@@ -37,6 +37,7 @@ import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
+import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.xmlgraphics.util.QName;
@@ -90,6 +91,9 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         return afpi;
     }
 
+    private static final int X = 0;
+    private static final int Y = 1;
+
     /**
      * Render the SVG document.
      *
@@ -124,32 +128,13 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
         AFPUnitConverter unitConv = state.getUnitConverter();
 
-//        RendererContextWrapper rctx = RendererContext.wrapRendererContext(context);
-//        int currx = rctx.getCurrentXPosition();
-//        int curry = rctx.getCurrentYPosition();
-//        int afpx = Math.round(unitConv.mpt2units(currx));
-//        int afpy = Math.round(unitConv.mpt2units(curry));
-//        objectAreaInfo.setOffsetX(afpx);
-//        objectAreaInfo.setOffsetY(afpy);
-
-        AffineTransform at = state.getData().getTransform();
-        float transX = (float)at.getTranslateX();
-        float transY = (float)at.getTranslateY();
-//        int afpx = Math.round(unitConv.mpt2units(currx));
-//        objectAreaInfo.setX(afpx);
-//        int afpy = Math.round(unitConv.mpt2units(curry));
-//        objectAreaInfo.setY(afpy);
-//        objectAreaInfo.setX(coords[0]);
-//        objectAreaInfo.setY(coords[1]);
-        objectAreaInfo.setX(Math.round(transX));
-        objectAreaInfo.setY(Math.round(transY));
-
-//        AffineTransform at = currentState.getData().getTransform();
-//        int x = (int)Math.round(at.getTranslateX());
-//        objectAreaInfo.setX(x);
-//
-//        int y = (int)Math.round(at.getTranslateY());
-//        objectAreaInfo.setY(y);
+        RendererContextWrapper rctx = RendererContext.wrapRendererContext(context);
+        int currx = rctx.getCurrentXPosition();
+        int curry = rctx.getCurrentYPosition();
+        float[] srcPts = {currx, curry};
+        int[] coords = unitConv.mpts2units(srcPts);
+        objectAreaInfo.setX(coords[X]);
+        objectAreaInfo.setY(coords[Y]);
 
         int resolution = afpInfo.getResolution();
         objectAreaInfo.setWidthRes(resolution);

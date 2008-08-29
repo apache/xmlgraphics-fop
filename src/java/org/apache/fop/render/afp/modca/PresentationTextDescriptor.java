@@ -50,21 +50,21 @@ public class PresentationTextDescriptor extends AbstractDescriptor {
     /**
      * Constructor a PresentationTextDescriptor for the specified
      * width and height.
-     * 
+     *
      * @param width The width of the page.
      * @param height The height of the page.
-     * @param widthResolution The width resolution of the page.
-     * @param heightResolution The height resolution of the page.
+     * @param widthRes The width resolution of the page.
+     * @param heightRes The height resolution of the page.
      */
     public PresentationTextDescriptor(int width, int height,
-            int widthResolution, int heightResolution) {
-        super(width, height, widthResolution, heightResolution);
+            int widthRes, int heightRes) {
+        super(width, height, widthRes, heightRes);
     }
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[23];
-        
+
         copySF(data, Type.MIGRATION, Category.PRESENTATION_TEXT);
 
         data[1] = 0x00; // length

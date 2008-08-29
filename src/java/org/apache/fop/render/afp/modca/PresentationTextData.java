@@ -25,7 +25,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.render.afp.LineDataInfo;
-import org.apache.fop.render.afp.TextDataInfo;
+import org.apache.fop.render.afp.AFPTextDataInfo;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -272,7 +272,7 @@ public class PresentationTextData extends AbstractAFPObject {
      * @throws MaximumSizeExceededException
      *             thrown if the maximum number of text data is exceeded
      */
-    public void createTextData(TextDataInfo textDataInfo)
+    public void createTextData(AFPTextDataInfo textDataInfo)
             throws MaximumSizeExceededException {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();

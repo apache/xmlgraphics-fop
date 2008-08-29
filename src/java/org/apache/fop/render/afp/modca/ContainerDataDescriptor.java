@@ -45,15 +45,18 @@ public class ContainerDataDescriptor extends AbstractDescriptor {
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[21];
-        copySF(data, Type.DESCRIPTOR, Category.IMAGE);
+        copySF(data, Type.DESCRIPTOR, Category.OBJECT_CONTAINER);
 
         // SF length
         byte[] len = BinaryUtils.convert(data.length - 1, 2);
         data[1] = len[0];
         data[2] = len[1];
 
-        data[9] = 0x00; // XocBase = 10 inches
-        data[10] = 0x00; // YocBase = 10 inches
+        // XocBase = 10 inches
+        data[9] = 0x00;
+
+        // YocBase = 10 inches
+        data[10] = 0x00;
 
         // XocUnits
         byte[] xdpi = BinaryUtils.convert(widthRes * 10, 2);
@@ -66,16 +69,16 @@ public class ContainerDataDescriptor extends AbstractDescriptor {
         data[14] = ydpi[1];
 
         // XocSize
-        byte[] x = BinaryUtils.convert(width, 3);
-        data[15] = x[0];
-        data[16] = x[1];
-        data[17] = x[2];
+        byte[] xsize = BinaryUtils.convert(width, 3);
+        data[15] = xsize[0];
+        data[16] = xsize[1];
+        data[17] = xsize[2];
 
         // YocSize
-        byte[] y = BinaryUtils.convert(height, 3);
-        data[18] = y[0];
-        data[19] = y[1];
-        data[20] = y[2];
+        byte[] ysize = BinaryUtils.convert(height, 3);
+        data[18] = ysize[0];
+        data[19] = ysize[1];
+        data[20] = ysize[2];
     }
 
 }

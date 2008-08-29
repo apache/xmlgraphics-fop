@@ -24,6 +24,8 @@ import java.io.OutputStream;
 
 import org.apache.fop.render.afp.AFPDataObjectInfo;
 import org.apache.fop.render.afp.AFPObjectAreaInfo;
+import org.apache.fop.render.afp.AFPResourceInfo;
+import org.apache.fop.render.afp.AFPResourceLevel;
 
 /**
  * Abstract base class used by the ImageObject and GraphicsObject which both
@@ -55,8 +57,14 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject {
      *            the object area info
      */
     public void setViewport(AFPDataObjectInfo dataObjectInfo) {
-        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-        getObjectEnvironmentGroup().setObjectArea(objectAreaInfo);
+        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        AFPResourceLevel resourceLevel = resourceInfo.getLevel();
+
+        // only need to set OAD and OAP inlined (pre-2000 apps)
+        if (resourceLevel.isInline()) {
+            AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+            getObjectEnvironmentGroup().setObjectArea(objectAreaInfo);
+        }
     }
 
     /**
@@ -64,7 +72,7 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject {
      *
      * @return the object environment group
      */
-    protected ObjectEnvironmentGroup getObjectEnvironmentGroup() {
+    public ObjectEnvironmentGroup getObjectEnvironmentGroup() {
         if (objectEnvironmentGroup == null) {
             this.objectEnvironmentGroup = factory.createObjectEnvironmentGroup();
         }
@@ -73,9 +81,10 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject {
 
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
-        super.writeContent(os);
+        super.writeContent(os); // write triplets
         if (objectEnvironmentGroup != null) {
             objectEnvironmentGroup.writeToStream(os);
         }
     }
+
 }

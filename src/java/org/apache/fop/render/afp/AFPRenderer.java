@@ -411,8 +411,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, FLAVORS, hints, sessionContext);
 
-                if (/*img instanceof ImageRawJPEG || */img instanceof ImageRawStream
-                        || img instanceof ImageRendered) {
+                if (img instanceof ImageRendered || img instanceof ImageRawStream) {
                     AFPImageObjectInfo imageObjectInfo
                         = getImageObjectInfo(uri, info, pos, origin, img);
                     resourceManager.createObject(imageObjectInfo);
@@ -525,21 +524,24 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         } else {
             imageObjectInfo.setBuffered(false);
 
-//            int resolution = state.getResolution();
-//            objectAreaInfo.setWidthRes(resolution);
-//            objectAreaInfo.setHeightRes(resolution);
-
             ImageRawStream rawStream = (ImageRawStream) img;
+            if (img instanceof ImageRawCCITTFax) {
+                ImageRawCCITTFax ccitt = (ImageRawCCITTFax) img;
+                imageObjectInfo.setCompression(ccitt.getCompression());
 
-            int xresol = (int) (rawStream.getSize().getDpiHorizontal() * 10);
-            objectAreaInfo.setWidthRes(xresol);
+                int xresol = (int) (rawStream.getSize().getDpiHorizontal() * 10);
+                objectAreaInfo.setWidthRes(xresol);
 
-            int yresol = (int) (rawStream.getSize().getDpiVertical() * 10);
-            objectAreaInfo.setHeightRes(yresol);
+                int yresol = (int) (rawStream.getSize().getDpiVertical() * 10);
+                objectAreaInfo.setHeightRes(yresol);
+            } else {
+                int resolution = state.getResolution();
+                objectAreaInfo.setWidthRes(resolution);
+                objectAreaInfo.setHeightRes(resolution);
+            }
 
             InputStream inputStream = rawStream.createInputStream();
-            byte[] buf = IOUtils.toByteArray(inputStream);
-            imageObjectInfo.setData(buf);
+            imageObjectInfo.setInputStream(inputStream);
 
             int dataHeight = rawStream.getSize().getHeightPx();
             imageObjectInfo.setDataHeight(dataHeight);
@@ -547,10 +549,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             int dataWidth = rawStream.getSize().getWidthPx();
             imageObjectInfo.setDataWidth(dataWidth);
 
-            if (img instanceof ImageRawCCITTFax) {
-                ImageRawCCITTFax ccitt = (ImageRawCCITTFax) img;
-                imageObjectInfo.setCompression(ccitt.getCompression());
-            }
         }
         return imageObjectInfo;
     }
@@ -635,7 +633,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void renderText(TextArea text) {
-//        log.debug(text.getText());
         renderInlineAreaBackAndBorders(text);
 
         String name = getInternalFontNameForArea(text);
@@ -700,7 +697,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         int interCharacterAdjustment
             = Math.round(unitConv.mpt2units(text.getTextLetterSpaceAdjust()));
 
-        TextDataInfo textDataInfo = new TextDataInfo();
+        AFPTextDataInfo textDataInfo = new AFPTextDataInfo();
         textDataInfo.setFontReference(fontReference);
         textDataInfo.setX(coords[X]);
         textDataInfo.setY(coords[Y]);

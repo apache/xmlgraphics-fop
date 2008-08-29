@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.fop.render.afp.LineDataInfo;
-import org.apache.fop.render.afp.TextDataInfo;
+import org.apache.fop.render.afp.AFPTextDataInfo;
 
 /**
  * The Presentation Text object is the data object used in document processing
@@ -69,7 +69,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param textDataInfo
      *            The afp text data
      */
-    public void createTextData(TextDataInfo textDataInfo) {
+    public void createTextData(AFPTextDataInfo textDataInfo) {
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }

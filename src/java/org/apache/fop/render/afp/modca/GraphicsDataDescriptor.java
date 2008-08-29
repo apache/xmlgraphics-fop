@@ -67,12 +67,17 @@ public class GraphicsDataDescriptor extends AbstractDescriptor {
     public void writeToStream(OutputStream os) throws IOException {
         byte[] headerData = new byte[9];
         copySF(headerData, Type.DESCRIPTOR, Category.GRAPHICS);
+
         byte[] drawingOrderSubsetData = getDrawingOrderSubset();
+
         byte[] windowSpecificationData = getWindowSpecification();
-        byte[] len = BinaryUtils.convert(
-                8 + drawingOrderSubsetData.length + windowSpecificationData.length, 2);
+
+        byte[] len = BinaryUtils.convert(headerData.length
+                + drawingOrderSubsetData.length
+                + windowSpecificationData.length - 1, 2);
         headerData[1] = len[0];
         headerData[2] = len[1];
+
         os.write(headerData);
         os.write(drawingOrderSubsetData);
         os.write(windowSpecificationData);
@@ -116,19 +121,23 @@ public class GraphicsDataDescriptor extends AbstractDescriptor {
         byte[] yResol = BinaryUtils.convert(heightRes * 10, 2);
         byte[] imxyres = xResol;
 
-        final byte[] data = new byte[] {
         // Window specification
-            (byte) 0xF6, 18, // LENGTH
+        final byte[] data = new byte[] {
+            (byte) 0xF6,
+            18, // LENGTH
             (ABS + IMGRES), // FLAGS (ABS)
             0x00, // reserved (must be zero)
             0x00, // CFORMAT (coordinate format - 16bit high byte first signed)
             0x00, // UBASE (unit base - ten inches)
+
             xResol[0], // XRESOL
             xResol[1],
             yResol[0], // YRESOL
             yResol[1],
+
             imxyres[0], // IMXYRES (Number of image points per ten inches
             imxyres[1], // in X and Y directions)
+
             xlcoord[0], // XLWIND
             xlcoord[1],
             xrcoord[0], // XRWIND

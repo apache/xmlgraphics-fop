@@ -51,6 +51,15 @@ public class ResourceObject extends AbstractPreparedAFPObject {
         this.namedObject = obj;
     }
 
+    /**
+     * Returns the data object referenced by this resource object
+     *
+     * @return the data object referenced by this resource object
+     */
+    public AbstractNamedAFPObject getDataObject() {
+        return namedObject;
+    }
+
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
@@ -109,7 +118,9 @@ public class ResourceObject extends AbstractPreparedAFPObject {
     public static final byte TYPE_IMAGE = 0x06;
 
 //    private static final byte FONT_CHARACTER_SET = 0x40;
+
 //    private static final byte CODE_PAGE = 0x41;
+
 //    private static final byte CODED_FONT = 0x42;
 
     /** object container type */
@@ -125,6 +136,7 @@ public class ResourceObject extends AbstractPreparedAFPObject {
     public static final byte TYPE_OVERLAY_OBJECT = (byte) 0xFC;
 
 //    private static final byte PAGEDEF = (byte) 0xFD;
+
 //    private static final byte FORMDEF = (byte) 0xFE;
 
     private class ResourceObjectTypeTriplet extends Triplet {
@@ -134,8 +146,7 @@ public class ResourceObject extends AbstractPreparedAFPObject {
         /**
          * Main constructor
          *
-         * @param type
-         *            the resource objec type
+         * @param type the resource object type
          */
         public ResourceObjectTypeTriplet(byte type) {
             super(RESOURCE_OBJECT,

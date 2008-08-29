@@ -36,11 +36,11 @@ public class PageDescriptor extends AbstractDescriptor {
      *
      * @param width The page width.
      * @param height The page height.
-     * @param widthResolution The page width resolution
-     * @param heightResolution The page height resolution
+     * @param widthRes The page width resolution
+     * @param heightRes The page height resolution
      */
-    public PageDescriptor(int width, int height, int widthResolution, int heightResolution) {
-        super(width, height, widthResolution, heightResolution);
+    public PageDescriptor(int width, int height, int widthRes, int heightRes) {
+        super(width, height, widthRes, heightRes);
     }
 
     /** {@inheritDoc} */

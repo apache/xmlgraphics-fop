@@ -17,42 +17,23 @@
 
 /* $Id: $ */
 
-package org.apache.fop.render.afp.modca;
-
-import java.io.IOException;
-import java.io.OutputStream;
+package org.apache.fop.render.afp.modca.triplets;
 
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
- * The Map Data Resource structured field specifies resources that are
- * required for presentation.
+ * The Object Byte Extent triplet is used to specify the number of bytes contained in an object
  */
-public class MapDataResource extends AbstractStructuredAFPObject {
+public class ObjectByteExtentTriplet extends Triplet {
 
     /**
      * Main constructor
+     *
+     * @param byteExt the number of bytes contained in the object
      */
-    public MapDataResource() {
-    }
-
-    /** {@inheritDoc} */
-    public void writeToStream(OutputStream os) throws IOException {
-        super.writeStart(os);
-        byte[] data = new byte[11];
-        copySF(data, Type.MAP, Category.DATA_RESOURCE);
-
-        int tripletDataLen = getTripletDataLength();
-
-        byte[] len = BinaryUtils.convert(10 + tripletDataLen, 2);
-        data[1] = len[0];
-        data[2] = len[1];
-
-        len = BinaryUtils.convert(2 + tripletDataLen, 2);
-        data[9] = len[0];
-        data[10] = len[1];
-
-        os.write(data);
-        os.write(tripletData);
+    public ObjectByteExtentTriplet(int byteExt) {
+        super(OBJECT_BYTE_EXTENT);
+        byte[] data = BinaryUtils.convert(byteExt, 4);
+        super.setData(data);
     }
 }

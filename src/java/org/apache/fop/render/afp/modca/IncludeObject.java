@@ -22,6 +22,7 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -258,5 +259,14 @@ public class IncludeObject extends AbstractNamedAFPObject {
     /** {@inheritDoc} */
     public String toString() {
         return "IOB: " + this.getName();
+    }
+
+    /**
+     * Sets the mapping option
+     *
+     * @param optionValue the mapping option value
+     */
+    public void setMappingOption(byte optionValue) {
+        addTriplet(new MappingOptionTriplet(optionValue));
     }
 }

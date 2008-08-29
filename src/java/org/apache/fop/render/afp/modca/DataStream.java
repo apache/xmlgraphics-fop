@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.AFPFontAttributes;
 import org.apache.fop.render.afp.AFPResourceLevel;
 import org.apache.fop.render.afp.LineDataInfo;
-import org.apache.fop.render.afp.TextDataInfo;
+import org.apache.fop.render.afp.AFPTextDataInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 
@@ -357,7 +357,7 @@ public class DataStream {
      * @param textDataInfo
      *            the afp text data
      */
-    public void createText(TextDataInfo textDataInfo) {
+    public void createText(AFPTextDataInfo textDataInfo) {
         textDataInfo.setOrientation(orientation);
         currentPage.createText(textDataInfo);
     }

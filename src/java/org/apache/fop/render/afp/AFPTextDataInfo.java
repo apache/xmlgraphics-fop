@@ -24,7 +24,7 @@ import java.awt.Color;
 /**
  * Text data information
  */
-public class TextDataInfo {
+public class AFPTextDataInfo {
 
     private int fontReference;
     

@@ -140,6 +140,7 @@ public class AFPResourceManager {
                 throw new IllegalArgumentException("Unknown data object type: " + dataObjectInfo);
             }
 
+            // set data object viewport (i.e. position, rotation, dimension, resolution)
             if (namedObj instanceof AbstractDataObject) {
                 AbstractDataObject dataObj = (AbstractDataObject)namedObj;
                 dataObj.setViewport(dataObjectInfo);
@@ -148,17 +149,22 @@ public class AFPResourceManager {
             AFPResourceLevel resourceLevel = resourceInfo.getLevel();
 
             Registry.ObjectType objectType = dataObjectInfo.getObjectType();
-            boolean canInclude = (namedObj instanceof ImageObject
+
+            ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
+
+            boolean canInclude = (resourceGroup != null) && (namedObj instanceof ImageObject
                     || objectType != null && objectType.isIncludable());
+
             if (canInclude) {
+
                 // if it is to reside within a resource group at print-file or external level
                 if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
+
                     // wrap newly created data object in a resource object
                     namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
                 }
 
                 // add data object into its resource group destination
-                ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
                 resourceGroup.addObject(namedObj);
 
                 // add an include to the current page
@@ -170,11 +176,11 @@ public class AFPResourceManager {
                 // record name of data object for the resource
                 includeNameMap.put(resourceInfo, namedObj.getName());
             } else {
-                // add data object directly into the current page
+                // not to be included so inline data object directly into the current page
                 dataStream.getCurrentPage().addObject(namedObj);
             }
         } else {
-            // existing resource so reference by adding an include to the current page
+            // an existing data resource so reference it by adding an include to the current page
             IncludeObject includeObject
                 = dataObjectFactory.createInclude(includeName, dataObjectInfo);
             dataStream.getCurrentPage().addObject(includeObject);

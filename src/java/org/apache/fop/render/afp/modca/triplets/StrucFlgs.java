@@ -25,29 +25,29 @@ package org.apache.fop.render.afp.modca.triplets;
  */
 public class StrucFlgs {
 
-//    private static final int OBJECT_DATA_NOT_CARRIED_IN_OBJECT_CONTAINER = 1;
-//    private static final int OBJECT_DATA_OBJECT_CONTAINER_STRUCTURE_UNKNOWN = 2;
-//    private static final int OBJECT_DATA_CARRIED_IN_OBJECT_CONTAINER = 3;
-//
-//    private static final int OBJECT_CONTAINER_NOT_INCLUDE_OBJECT_ENVIRONMENT_GROUP = 4;
-//    private static final int OBJECT_CONTAINER_OBJECT_ENVIRONMENT_GROUP_CONTAINMENT_UNKNOWN = 8;
-//    private static final int OBJECT_CONTAINER_INCLUDES_OBJECT_ENVIRONMENT_GROUP = 12;
-//
-//    private static final int OBJECT_CONTAINER_DATA_NOT_CARRIED_IN_OBJECT_DATA = 16;
-//    private static final int OBJECT_CONTAINER_DATA_OBJECT_DATA_CONTAINMENT_UNKNOWN = 32;
-//    private static final int OBJECT_CONTAINER_DATA_CARRIES_OBJECT_DATA = 48;
+    private static final int OBJECT_DATA_NOT_CARRIED_IN_OBJECT_CONTAINER = 1;
+    private static final int OBJECT_DATA_OBJECT_CONTAINER_STRUCTURE_UNKNOWN = 2;
+    private static final int OBJECT_DATA_CARRIED_IN_OBJECT_CONTAINER = 3;
 
-    private static final int OBJECT_DATA_NOT_CARRIED_IN_OBJECT_CONTAINER = 48;
-    private static final int OBJECT_DATA_OBJECT_CONTAINER_STRUCTURE_UNKNOWN = 32;
-    private static final int OBJECT_DATA_CARRIED_IN_OBJECT_CONTAINER = 16;
-
-    private static final int OBJECT_CONTAINER_NOT_INCLUDE_OBJECT_ENVIRONMENT_GROUP = 12;
+    private static final int OBJECT_CONTAINER_NOT_INCLUDE_OBJECT_ENVIRONMENT_GROUP = 4;
     private static final int OBJECT_CONTAINER_OBJECT_ENVIRONMENT_GROUP_CONTAINMENT_UNKNOWN = 8;
-    private static final int OBJECT_CONTAINER_INCLUDES_OBJECT_ENVIRONMENT_GROUP = 4;
+    private static final int OBJECT_CONTAINER_INCLUDES_OBJECT_ENVIRONMENT_GROUP = 12;
 
-    private static final int OBJECT_CONTAINER_DATA_NOT_CARRIED_IN_OBJECT_DATA = 3;
-    private static final int OBJECT_CONTAINER_DATA_OBJECT_DATA_CONTAINMENT_UNKNOWN = 2;
-    private static final int OBJECT_CONTAINER_DATA_CARRIES_OBJECT_DATA = 1;
+    private static final int OBJECT_CONTAINER_DATA_NOT_CARRIED_IN_OBJECT_DATA = 16;
+    private static final int OBJECT_CONTAINER_DATA_OBJECT_DATA_CONTAINMENT_UNKNOWN = 32;
+    private static final int OBJECT_CONTAINER_DATA_CARRIES_OBJECT_DATA = 48;
+
+//    private static final int OBJECT_DATA_NOT_CARRIED_IN_OBJECT_CONTAINER = 48;
+//    private static final int OBJECT_DATA_OBJECT_CONTAINER_STRUCTURE_UNKNOWN = 32;
+//    private static final int OBJECT_DATA_CARRIED_IN_OBJECT_CONTAINER = 16;
+//
+//    private static final int OBJECT_CONTAINER_NOT_INCLUDE_OBJECT_ENVIRONMENT_GROUP = 12;
+//    private static final int OBJECT_CONTAINER_OBJECT_ENVIRONMENT_GROUP_CONTAINMENT_UNKNOWN = 8;
+//    private static final int OBJECT_CONTAINER_INCLUDES_OBJECT_ENVIRONMENT_GROUP = 4;
+//
+//    private static final int OBJECT_CONTAINER_DATA_NOT_CARRIED_IN_OBJECT_DATA = 3;
+//    private static final int OBJECT_CONTAINER_DATA_OBJECT_DATA_CONTAINMENT_UNKNOWN = 2;
+//    private static final int OBJECT_CONTAINER_DATA_CARRIES_OBJECT_DATA = 1;
 
     /**
      * the default structured flags setting

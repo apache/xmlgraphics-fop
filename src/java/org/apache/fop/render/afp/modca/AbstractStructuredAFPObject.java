@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
@@ -28,7 +29,6 @@ import java.util.List;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
-import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
@@ -171,7 +171,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
      *
      * @param triplet the triplet to add
      */
-    private void addTriplet(Triplet triplet) {
+    protected void addTriplet(Triplet triplet) {
         getTriplets().add(triplet);
     }
 
@@ -261,15 +261,6 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
 
     /**
-     * Sets the mapping option
-     *
-     * @param optionValue the mapping option value
-     */
-    public void setMappingOption(byte optionValue) {
-        addTriplet(new MappingOptionTriplet(optionValue));
-    }
-
-    /**
      * Sets a comment on this resource
      *
      * @param comment a comment string
@@ -283,9 +274,39 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
     }
 
     /**
+     * Reads data chunks from an inputstream
+     * and then formats them with a structured header to a given outputstream
+     *
+     * @param dataHeader the header data
+     * @param lengthOffset offset of length field in data chunk
+     * @param maxChunkLength the maximum chunk length
+     * @param inputStream the inputstream to read from
+     * @param outputStream the outputstream to write to
+     * @throws IOException thrown if an I/O exception of some sort has occurred.
+     */
+    protected static void copyChunks(byte[] dataHeader, int lengthOffset,
+            int maxChunkLength, InputStream inputStream, OutputStream outputStream)
+    throws IOException {
+        int headerLen = dataHeader.length - lengthOffset;
+        // length field is just before data so do not include in data length
+        if (headerLen == 2) {
+            headerLen = 0;
+        }
+        byte[] data = new byte[maxChunkLength];
+        int numBytesRead = 0;
+        while ((numBytesRead = inputStream.read(data, 0, maxChunkLength)) > 0) {
+            byte[] len = BinaryUtils.convert(headerLen + numBytesRead, 2);
+            dataHeader[lengthOffset] = len[0]; // Length byte 1
+            dataHeader[lengthOffset + 1] = len[1]; // Length byte 2
+            outputStream.write(dataHeader);
+            outputStream.write(data, 0, numBytesRead);
+        }
+    }
+
+    /**
      * Writes data chunks to a given outputstream
      *
-     * @param data the data
+     * @param data the data byte array
      * @param dataHeader the header data
      * @param lengthOffset offset of length field in data chunk
      * @param maxChunkLength the maximum chunk length

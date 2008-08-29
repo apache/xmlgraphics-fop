@@ -325,13 +325,13 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
     /** {@inheritDoc} */
     public void draw(Shape shape) {
-        log.debug("draw() shape=" + shape);
+//        log.debug("draw() shape=" + shape);
         doDrawing(shape, false);
     }
 
     /** {@inheritDoc} */
     public void fill(Shape shape) {
-        log.debug("fill() shape=" + shape);
+//        log.debug("fill() shape=" + shape);
         doDrawing(shape, true);
     }
 
@@ -446,10 +446,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
 
-//        float[] srcPts = new float[] {x, y};
-//        int[] coords = unitConv.mpts2units(srcPts);
-//        objectAreaInfo.setX(coords[X]);
-//        objectAreaInfo.setY(coords[Y]);
         AffineTransform at = gc.getTransform();
         float[] srcPts = new float[] {x, y};
         float[] dstPts = new float[2];

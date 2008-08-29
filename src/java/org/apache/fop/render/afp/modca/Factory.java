@@ -472,17 +472,49 @@ public class Factory {
     /**
      * Creates a new MO:DCA {@link ContainerDataDescriptor}
      *
-     * @param width the container data width
-     * @param height the container data height
+     * @param dataWidth the container data width
+     * @param dataHeight the container data height
      * @param widthRes the container data width resolution
      * @param heightRes the container data height resolution
      * @return a new {@link ContainerDataDescriptor}
      */
     public ContainerDataDescriptor createContainerDataDescriptor(
-            int width, int height, int widthRes, int heightRes) {
+            int dataWidth, int dataHeight, int widthRes, int heightRes) {
         ContainerDataDescriptor containerDataDescriptor
-            = new ContainerDataDescriptor(width, height, widthRes, heightRes);
+            = new ContainerDataDescriptor(dataWidth, dataHeight, widthRes, heightRes);
         return containerDataDescriptor;
+    }
+
+    /**
+     * Creates a new MO:DCA {@link MapContainerData}
+     *
+     * @param optionValue the option value
+     * @return a new {@link MapContainerData}
+     */
+    public MapContainerData createMapContainerData(byte optionValue) {
+        MapContainerData mapContainerData = new MapContainerData(optionValue);
+        return mapContainerData;
+    }
+
+    /**
+     * Creates a new MO:DCA {@link MapDataResource}
+     *
+     * @return a new {@link MapDataResource}
+     */
+    public MapDataResource createMapDataResource() {
+        MapDataResource mapDataResource = new MapDataResource();
+        return mapDataResource;
+    }
+
+    /**
+     * Creates a new MO:DCA {@link PresentationEnvironmentControl}
+     *
+     * @return a new {@link PresentationEnvironmentControl}
+     */
+    public PresentationEnvironmentControl createPresentationEnvironmentControl() {
+        PresentationEnvironmentControl presentationEnvironmentControl
+            = new PresentationEnvironmentControl();
+        return presentationEnvironmentControl;
     }
 
     /**
@@ -506,7 +538,6 @@ public class Factory {
         ImageContent imageContent = new ImageContent();
         return imageContent;
     }
-
 
     /**
      * Creates a new IOCA {@link ImageRasterData}

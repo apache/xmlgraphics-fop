@@ -35,7 +35,11 @@ public abstract class AFPDataObjectInfo {
     /** resource info */
     private AFPResourceInfo resourceInfo;
 
-    private byte[] data;
+    /** the data object width */
+    private int dataWidth;
+
+    /** the data object height */
+    private int dataHeight;
 
     /**
      * Default constructor
@@ -85,6 +89,8 @@ public abstract class AFPDataObjectInfo {
     /** {@inheritDoc} */
     public String toString() {
         return "mimeType=" + getMimeType()
+            + ", dataWidth=" + dataWidth
+            + ", dataHeight=" + dataHeight
             + (objectAreaInfo != null ? ", objectAreaInfo=" + objectAreaInfo : "")
             + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "");
     }
@@ -108,21 +114,39 @@ public abstract class AFPDataObjectInfo {
     }
 
     /**
-     * Sets the object data
+     * Returns the image data width
      *
-     * @param data a data byte array
+     * @return the image data width
      */
-    public void setData(byte[] data) {
-        this.data = data;
+    public int getDataWidth() {
+        return dataWidth;
     }
 
     /**
-     * Returns the object data
+     * Sets the image data width
      *
-     * @return the object data as byte array
+     * @param imageDataWidth the image data width
      */
-    public byte[] getData() {
-        return this.data;
+    public void setDataWidth(int imageDataWidth) {
+        this.dataWidth = imageDataWidth;
+    }
+
+    /**
+     * Returns the image data height
+     *
+     * @return the image data height
+     */
+    public int getDataHeight() {
+        return dataHeight;
+    }
+
+    /**
+     * Sets the image data height
+     *
+     * @param imageDataHeight the image data height
+     */
+    public void setDataHeight(int imageDataHeight) {
+        this.dataHeight = imageDataHeight;
     }
 
     /**
