@@ -406,7 +406,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
         if (forcedBreakAfterLast != null) {
             forcedBreakAfterLast.clearPendingMarks();
-            wrapPositionElement(forcedBreakAfterLast, returnList, false);
+            returnList.add(forcedBreakAfterLast);
         }
 
         context.updateKeepWithNextPending(getKeepWithNextStrength());
@@ -1043,7 +1043,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
         return breakBefore;
     }
-    
+
     /**
      * Creates Knuth elements for break-after and adds them to the return list.
      * @param returnList return list to add the additional elements to
