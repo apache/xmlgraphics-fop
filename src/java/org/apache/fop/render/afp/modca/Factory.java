@@ -518,6 +518,27 @@ public class Factory {
     }
 
     /**
+     * Creates a new MO:DCA {@link InvokeMediumMap}
+     *
+     * @param name the object name
+     * @return a new {@link InvokeMediumMap}
+     */
+    public InvokeMediumMap createInvokeMediumMap(String name) {
+        InvokeMediumMap invokeMediumMap = new InvokeMediumMap(name);
+        return invokeMediumMap;
+    }
+
+    /**
+     * Creates a new MO:DCA {@link ResourceEnvironmentGroup}
+     *
+     * @return a new {@link ResourceEnvironmentGroup}
+     */
+    public ResourceEnvironmentGroup createResourceEnvironmentGroup() {
+        ResourceEnvironmentGroup resourceEnvironmentGroup = new ResourceEnvironmentGroup();
+        return resourceEnvironmentGroup;
+    }
+
+    /**
      * Creates a new IOCA {@link ImageSegment}
      *
      * @return a new {@link ImageSegment}

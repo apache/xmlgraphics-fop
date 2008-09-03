@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.afp;
 
-import java.io.InputStream;
 
 /**
  * A list of parameters associated with an image
@@ -34,17 +33,8 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
     /** compression type if any */
     private int compression = -1;
 
-    /** the image mimetype */
-    private String mimeType;
-
-    /** is this a buffered image? */
-    private boolean buffered;
-
     /** the object data in a byte array */
     private byte[] data;
-
-    /** the object data in an inputstream */
-    private InputStream inputStream;
 
     /**
      * Default constructor
@@ -69,15 +59,6 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
      */
     public void setColor(boolean color) {
         this.color = color;
-    }
-
-    /**
-     * Sets the image mime type
-     *
-     * @param mimeType the image mime type
-     */
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
     }
 
     /**
@@ -125,29 +106,6 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
         this.compression = compression;
     }
 
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    /**
-     * Sets whether or not this is info about a buffered image
-     *
-     * @param buffered true if this is info about a buffered image
-     */
-    public void setBuffered(boolean buffered) {
-        this.buffered = buffered;
-    }
-
-    /**
-     * Returns true if this image info is about a buffered image
-     *
-     * @return true if this image info is about a buffered image
-     */
-    public boolean isBuffered() {
-        return this.buffered;
-    }
-
     /**
      * Sets the object data
      *
@@ -166,30 +124,10 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
         return this.data;
     }
 
-    /**
-     * Sets the object data inputstream
-     *
-     * @param inputStream the object data inputstream
-     */
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
-
-    /**
-     * Returns the object data inputstream
-     *
-     * @return the object data inputstream
-     */
-    public InputStream getInputStream() {
-        return this.inputStream;
-    }
-
     /** {@inheritDoc} */
     public String toString() {
         return "AFPImageObjectInfo{" + super.toString()
-            + ", mimeType=" + mimeType
-            + ", buffered=" + buffered
-            + ", compression=" + compression
+            + "compression=" + compression
             + ", color=" + color
             + ", bitsPerPixel=" + bitsPerPixel
             + "}";

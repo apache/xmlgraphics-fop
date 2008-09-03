@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.render.afp.AFPDataObjectInfo;
 import org.apache.fop.render.afp.AFPObjectAreaInfo;
 import org.apache.fop.render.afp.AFPResourceInfo;
@@ -80,6 +81,7 @@ public class ObjectContainer extends AbstractDataObject {
         final int lengthOffset = 1;
 
         copyChunks(dataHeader, lengthOffset, MAX_DATA_LEN, inputStream, os);
+        IOUtils.closeQuietly(inputStream);
     }
 
     /** {@inheritDoc} */

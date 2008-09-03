@@ -28,6 +28,9 @@ import org.apache.xmlgraphics.util.MimeConstants;
  */
 public final class Registry {
     /** IOB supported object types */
+    private static final byte COMPID_IOCA_FS10 = 5;
+    private static final byte COMPID_IOCA_FS11 = 11;
+    private static final byte COMPID_IOCA_FS45 = 12;
     private static final byte COMPID_EPS = 13;
     private static final byte COMPID_TIFF = 14;
     private static final byte COMPID_GIF = 22;
@@ -68,6 +71,36 @@ public final class Registry {
      * Initializes the mimetype map
      */
     private void init() {
+        mimeObjectTypeMap.put(
+                MimeConstants.MIME_AFP_IOCA_FS10,
+                new ObjectType(
+                        COMPID_IOCA_FS10,
+                        new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x05},
+                        "IOCA FS10",
+                        true,
+                        MimeConstants.MIME_AFP_IOCA_FS10
+                )
+        );
+        mimeObjectTypeMap.put(
+                MimeConstants.MIME_AFP_IOCA_FS11,
+                new ObjectType(
+                        COMPID_IOCA_FS11,
+                        new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x11},
+                        "IOCA FS11",
+                        true,
+                        MimeConstants.MIME_AFP_IOCA_FS11
+                )
+        );
+        mimeObjectTypeMap.put(
+                MimeConstants.MIME_AFP_IOCA_FS45,
+                new ObjectType(
+                        COMPID_IOCA_FS45,
+                        new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x12},
+                        "IOCA FS45",
+                        true,
+                        MimeConstants.MIME_AFP_IOCA_FS45
+                )
+        );
         mimeObjectTypeMap.put(
                 MimeConstants.MIME_EPS,
                 new ObjectType(

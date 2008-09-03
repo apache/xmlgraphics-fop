@@ -22,7 +22,7 @@ package org.apache.fop.render.afp.modca.triplets;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.fop.render.afp.AFPConstants;
-import org.apache.fop.render.afp.modca.Registry;
+import org.apache.fop.render.afp.modca.Registry.ObjectType;
 import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
@@ -67,17 +67,16 @@ public class ObjectClassificationTriplet extends Triplet {
     /**
      * Main constructor
      *
-     * @param objectClass
-     *             the object class type
-     * @param objectType
-     *             the object type registry entry
-     * @param strucFlgs
-     *             the structured flags pertaining to this object classification triplet
+     * @param objectClass the object class type
+     * @param objectType the object type registry entry
+     * @param dataInContainer whether the data resides in the container
+     * @param containerHasOEG whether the container has an object environment group
+     * @param dataInOCD whether the data resides in a object container data structured field
      */
-    public ObjectClassificationTriplet(byte objectClass, Registry.ObjectType objectType,
-            StrucFlgs strucFlgs) {
+    public ObjectClassificationTriplet(byte objectClass, ObjectType objectType,
+            boolean dataInContainer, boolean containerHasOEG, boolean dataInOCD) {
         // no object level or company name specified
-        this(objectClass, objectType, strucFlgs, null, null);
+        this(objectClass, objectType, dataInContainer, containerHasOEG, dataInOCD, null, null);
     }
 
 
@@ -88,19 +87,17 @@ public class ObjectClassificationTriplet extends Triplet {
     /**
      * Fully parameterized constructor
      *
-     * @param objectClass
-     *             the object class type
-     * @param objectType
-     *             the object type registry entry
-     * @param strucFlgs
-     *             the structured flags pertaining to this object classification triplet
-     * @param objLev
-     *             the release level or version number of the object type
-     * @param compName
-     *             the name of the company or organization that owns the object definition
+     * @param objectClass the object class type
+     * @param objectType the object type registry entry
+     * @param dataInContainer whether the data resides in the container
+     * @param containerHasOEG whether the container has an object environment group
+     * @param dataInOCD whether the data resides in a object container data structured field
+     * @param objLev the release level or version number of the object type
+     * @param compName the name of the company or organization that owns the object definition
      */
-    public ObjectClassificationTriplet(byte objectClass, Registry.ObjectType objectType,
-            StrucFlgs strucFlgs, String objLev, String compName) {
+    public ObjectClassificationTriplet(byte objectClass, ObjectType objectType,
+            boolean dataInContainer, boolean containerHasOEG, boolean dataInOCD,
+            String objLev, String compName) {
         super(OBJECT_CLASSIFICATION);
 
         if (objectType == null) {
@@ -112,9 +109,11 @@ public class ObjectClassificationTriplet extends Triplet {
         data[1] = objectClass; // ObjClass
         data[2] = 0x00; // reserved (must be zero)
         data[3] = 0x00; // reserved (must be zero)
+
         // StrucFlgs - Information on the structure of the object container
-        data[4] = strucFlgs.getValue();
-        data[5] = 0x00; // StrucFlgs
+        byte[] strucFlgs = getStrucFlgs(dataInContainer, containerHasOEG, dataInOCD);
+        data[4] = strucFlgs[0];
+        data[5] = strucFlgs[1];
 
         byte[] oid = objectType.getOID();
         // RegObjId - MOD:CA-registered ASN.1 OID for object type (8-23)
@@ -153,4 +152,37 @@ public class ObjectClassificationTriplet extends Triplet {
         super.setData(data);
     }
 
+    /**
+     * Returns the structured field flags
+     *
+     * @param dataInContainer true if the object data in carried in the object container
+     * @param containerHasOEG true if the object container has an object environment group
+     * @param dataInOCD true if the object container data carries the object data
+     *
+     * @return the byte value of this structure
+     */
+    public byte[] getStrucFlgs(boolean dataInContainer, boolean containerHasOEG,
+            boolean dataInOCD) {
+        byte[] strucFlgs = new byte[2];
+        // Object Container (BOC/EOC)
+        if (dataInContainer) {
+            strucFlgs[0] |= 3 << 6;
+        } else {
+            strucFlgs[0] |= 1 << 6;
+        }
+        // Object Environment Group (OEG)
+        if (containerHasOEG) {
+            strucFlgs[0] |= 3 << 4;
+        } else {
+            strucFlgs[0] |= 1 << 4;
+        }
+        // Object Container Data (OCD) structured fields
+        if (dataInOCD) {
+            strucFlgs[0] |= 3 << 2;
+        } else {
+            strucFlgs[0] |= 1 << 2;
+        }
+        strucFlgs[1] = 0x00;
+        return strucFlgs;
+    }
 }

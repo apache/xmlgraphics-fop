@@ -59,8 +59,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     protected List/*<TagLogicalElement>*/ tagLogicalElements = null;
 
     /** The list of the include page segments */
-    protected List/*<IncludePageSegment>*/ includePageSegments
-        = new java.util.ArrayList/*<IncludePageSegment>*/();
+    protected List/*<IncludePageSegment>*/ includePageSegments = null;
 
     /** The list of objects within this resource container */
     protected List/*<AbstractStructuredAFPObject>*/ objects = new java.util.ArrayList();
@@ -248,7 +247,19 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      */
     public void createIncludePageSegment(String name, int x, int y) {
         IncludePageSegment ips = factory.createIncludePageSegment(name, x, y);
-        includePageSegments.add(ips);
+        getIncludePageSegments().add(ips);
+    }
+
+    /**
+     * Returns the include page segments list
+     *
+     * @return the include page segments list
+     */
+    private List getIncludePageSegments() {
+        if (this.includePageSegments == null) {
+            this.includePageSegments = new java.util.ArrayList/*<IncludePageSegment>*/();
+        }
+        return this.includePageSegments;
     }
 
     /**
@@ -321,11 +332,6 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
-        if (this instanceof PageObject || this instanceof Overlay) {
-            getActiveEnvironmentGroup().writeToStream(os);
-        }
-        writeObjects(this.includePageSegments, os);
-        writeObjects(this.tagLogicalElements, os);
         writeObjects(this.objects, os);
     }
 

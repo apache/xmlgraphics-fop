@@ -29,7 +29,6 @@ import org.apache.fop.render.afp.modca.AbstractDataObject;
 import org.apache.fop.render.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.render.afp.modca.DataStream;
 import org.apache.fop.render.afp.modca.Factory;
-import org.apache.fop.render.afp.modca.ImageObject;
 import org.apache.fop.render.afp.modca.IncludeObject;
 import org.apache.fop.render.afp.modca.Registry;
 import org.apache.fop.render.afp.modca.ResourceGroup;
@@ -131,13 +130,20 @@ public class AFPResourceManager {
         String includeName = (String)includeNameMap.get(resourceInfo);
         if (includeName == null) {
 
+            boolean canInclude = false;
+            Registry.ObjectType objectType = null;
+
             // new resource so create
             if (dataObjectInfo instanceof AFPImageObjectInfo) {
-                namedObj = dataObjectFactory.createImage((AFPImageObjectInfo)dataObjectInfo);
+                AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)dataObjectInfo;
+                namedObj = dataObjectFactory.createImage(imageObjectInfo);
+                canInclude = true;
             } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {
                 namedObj = dataObjectFactory.createGraphic((AFPGraphicsObjectInfo)dataObjectInfo);
             } else {
-                throw new IllegalArgumentException("Unknown data object type: " + dataObjectInfo);
+                namedObj = dataObjectFactory.createObjectContainer(dataObjectInfo);
+                objectType = dataObjectInfo.getObjectType();
+                canInclude = objectType != null && objectType.isIncludable();
             }
 
             // set data object viewport (i.e. position, rotation, dimension, resolution)
@@ -147,19 +153,12 @@ public class AFPResourceManager {
             }
 
             AFPResourceLevel resourceLevel = resourceInfo.getLevel();
-
-            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
-
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
-
-            boolean canInclude = (resourceGroup != null) && (namedObj instanceof ImageObject
-                    || objectType != null && objectType.isIncludable());
+            canInclude &= resourceGroup != null;
 
             if (canInclude) {
-
                 // if it is to reside within a resource group at print-file or external level
                 if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
-
                     // wrap newly created data object in a resource object
                     namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
                 }

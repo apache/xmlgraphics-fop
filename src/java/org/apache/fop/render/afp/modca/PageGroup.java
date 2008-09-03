@@ -21,7 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -37,9 +36,6 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
 
     /** The tag logical elements contained within this group */
     private List tagLogicalElements = null;
-
-    /** the page group started state */
-    private boolean started = false;
 
     /**
      * Constructor for the PageGroup.
@@ -98,29 +94,6 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
         byte[] data = new byte[17];
         copySF(data, Type.END, Category.PAGE_GROUP);
         os.write(data);
-    }
-
-    /** {@inheritDoc} */
-    public void writeToStream(OutputStream os) throws IOException {
-        if (!started) {
-            writeStart(os);
-            started = true;
-        }
-
-        Iterator it = objects.iterator();
-        while (it.hasNext()) {
-            AbstractAFPObject ao = (AbstractAFPObject)it.next();
-            if (ao instanceof PageObject && ((PageObject)ao).isComplete()) {
-                ao.writeToStream(os);
-                it.remove();
-            } else {
-                break;
-            }
-        }
-
-        if (complete) {
-            writeEnd(os);
-        }
     }
 
     /** {@inheritDoc} */

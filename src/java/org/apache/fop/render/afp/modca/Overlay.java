@@ -65,6 +65,18 @@ public class Overlay extends PageObject {
     }
 
     /** {@inheritDoc} */
+    protected void writeContent(OutputStream os) throws IOException {
+        super.writeContent(os);
+
+        getActiveEnvironmentGroup().writeToStream(os);
+
+        writeObjects(includePageSegments, os);
+        writeObjects(tagLogicalElements, os);
+        writeObjects(objects, os);
+    }
+
+
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.END, Category.OVERLAY);

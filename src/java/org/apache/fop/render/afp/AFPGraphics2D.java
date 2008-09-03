@@ -47,6 +47,7 @@ import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.afp.goca.GraphicsSetLineType;
 import org.apache.fop.render.afp.modca.GraphicsObject;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -424,6 +425,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         ImageRendered imgRend = new ImageRendered(imageInfo, buf, null);
         RenderedImage ri = imgRend.getRenderedImage();
 
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             // Serialize image
@@ -438,10 +440,8 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         // create image object parameters
         AFPImageObjectInfo imageObjectInfo = new AFPImageObjectInfo();
-        imageObjectInfo.setBuffered(true);
         if (imageInfo != null) {
             imageObjectInfo.setUri(imageInfo.getOriginalURI());
-            imageObjectInfo.setMimeType(imageInfo.getMimeType());
         }
 
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
@@ -465,7 +465,11 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         imageObjectInfo.setData(baos.toByteArray());
         imageObjectInfo.setDataHeight(ri.getHeight());
         imageObjectInfo.setDataWidth(ri.getWidth());
-        imageObjectInfo.setColor(state.isColorImages());
+        boolean colorImages = state.isColorImages();
+        imageObjectInfo.setColor(colorImages);
+        imageObjectInfo.setMimeType(colorImages
+                    ? MimeConstants.MIME_AFP_IOCA_FS45
+                            : MimeConstants.MIME_AFP_IOCA_FS10);
         imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
 
         AFPResourceManager resourceManager = info.getAFPResourceManager();

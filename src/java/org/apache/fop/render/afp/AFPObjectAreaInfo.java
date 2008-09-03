@@ -31,8 +31,6 @@ public class AFPObjectAreaInfo {
     private int widthRes;
     private int heightRes;
     private int rotation = 0;
-    private int offsetX;
-    private int offsetY;
 
     /**
      * Sets the x position of the data object
@@ -170,21 +168,5 @@ public class AFPObjectAreaInfo {
         + ", heightRes=" + heightRes
         + ", rotation=" + rotation;
     }
-
-//    public int getOffsetX() {
-//        return offsetX;
-//    }
-//
-//    public int getOffsetY() {
-//        return offsetY;
-//    }
-//
-//    public void setOffsetX(int afpx) {
-//        this.offsetX = afpx;
-//    }
-//
-//    public void setOffsetY(int afpy) {
-//        this.offsetY = afpy;
-//    }
 
 }

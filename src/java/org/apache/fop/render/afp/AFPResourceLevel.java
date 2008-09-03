@@ -50,8 +50,7 @@ public class AFPResourceLevel {
     private static final String NAME_EXTERNAL = "external";
 
     private static final String[] NAMES = new String[] {
-        NAME_INLINE, NAME_PAGE, NAME_PAGE_GROUP,
-        NAME_DOCUMENT, NAME_PRINT_FILE, NAME_EXTERNAL
+        NAME_INLINE, NAME_PAGE, NAME_PAGE_GROUP, NAME_DOCUMENT, NAME_PRINT_FILE, NAME_EXTERNAL
     };
 
 

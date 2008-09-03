@@ -35,7 +35,6 @@ import org.apache.fop.render.afp.modca.DataStream;
 import org.apache.fop.render.afp.modca.Factory;
 import org.apache.fop.render.afp.modca.ResourceGroup;
 import org.apache.fop.render.afp.modca.StreamedResourceGroup;
-import org.apache.fop.render.afp.Streamable;
 
 /**
  * Manages the streaming of the AFP output
@@ -148,6 +147,7 @@ public class AFPStreamer implements Streamable {
         } else {
             // resource group in afp document datastream
             resourceGroup = dataStream.getResourceGroup(level);
+
         }
         return resourceGroup;
     }

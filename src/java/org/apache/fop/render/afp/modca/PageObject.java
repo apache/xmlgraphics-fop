@@ -179,6 +179,17 @@ public class PageObject extends AbstractResourceGroupContainer {
     }
 
     /** {@inheritDoc} */
+    protected void writeContent(OutputStream os) throws IOException {
+        super.writeContent(os);
+
+        getActiveEnvironmentGroup().writeToStream(os);
+
+        writeObjects(includePageSegments, os);
+        writeObjects(tagLogicalElements, os);
+        writeObjects(objects, os);
+    }
+
+    /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.END, Category.PAGE);
@@ -198,5 +209,10 @@ public class PageObject extends AbstractResourceGroupContainer {
     /** {@inheritDoc} */
     public String toString() {
         return this.getName();
+    }
+
+    /** {@inheritDoc} */
+    protected boolean canWrite(AbstractAFPObject ao) {
+        return true;
     }
 }

@@ -71,7 +71,8 @@ public abstract class AbstractResourceEnvironmentGroupContainer
      *            the name of the media map
      */
     public void createInvokeMediumMap(String name) {
-        addObject(new InvokeMediumMap(name));
+        InvokeMediumMap invokeMediumMap = factory.createInvokeMediumMap(name);
+        addObject(invokeMediumMap);
     }
 
     /** {@inheritDoc} */
@@ -89,7 +90,7 @@ public abstract class AbstractResourceEnvironmentGroupContainer
      */
     protected ResourceEnvironmentGroup getResourceEnvironmentGroup() {
         if (resourceEnvironmentGroup == null) {
-            this.resourceEnvironmentGroup = new ResourceEnvironmentGroup();
+            this.resourceEnvironmentGroup = factory.createResourceEnvironmentGroup();
         }
         return this.resourceEnvironmentGroup;
     }

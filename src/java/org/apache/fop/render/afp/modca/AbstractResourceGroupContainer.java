@@ -21,15 +21,23 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.apache.fop.render.afp.Streamable;
 
 
 /**
  * An abstract container of resource objects
  */
-public abstract class AbstractResourceGroupContainer extends AbstractPageObject {
+public abstract class AbstractResourceGroupContainer extends AbstractPageObject
+implements Streamable {
+
+    /** The container started state */
+    protected boolean started = false;
 
     /** the resource group object */
-    private ResourceGroup resourceGroup = null;
+    protected ResourceGroup resourceGroup = null;
 
     /**
      * Default constructor
@@ -107,11 +115,52 @@ public abstract class AbstractResourceGroupContainer extends AbstractPageObject 
         return resourceGroup;
     }
 
+//    /** {@inheritDoc} */
+//    protected void writeContent(OutputStream os) throws IOException {
+//        if (resourceGroup != null) {
+//            resourceGroup.writeToStream(os);
+//        }
+//        super.writeContent(os);
+//    }
+
     /** {@inheritDoc} */
-    protected void writeContent(OutputStream os) throws IOException {
-        if (resourceGroup != null) {
-            resourceGroup.writeToStream(os);
+    public void writeToStream(OutputStream os) throws IOException {
+        if (!started) {
+            writeStart(os);
+            started = true;
         }
-        super.writeContent(os);
+
+        writeContent(os);
+
+        if (complete) {
+            writeEnd(os);
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os)
+    throws IOException {
+        if (objects != null && objects.size() > 0) {
+            Iterator it = objects.iterator();
+            while (it.hasNext()) {
+                AbstractAFPObject ao = (AbstractAFPObject)it.next();
+                if (canWrite(ao)) {
+                    ao.writeToStream(os);
+                    it.remove();
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns true if this object can be written
+     *
+     * @param obj an AFP object
+     * @return true if this object can be written
+     */
+    protected boolean canWrite(AbstractAFPObject obj) {
+        return obj instanceof AbstractPageObject && ((AbstractPageObject)obj).isComplete();
     }
 }

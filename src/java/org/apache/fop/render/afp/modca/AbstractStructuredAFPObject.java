@@ -28,11 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.fop.render.afp.modca.Registry.ObjectType;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
-import org.apache.fop.render.afp.modca.triplets.StrucFlgs;
 import org.apache.fop.render.afp.modca.triplets.Triplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -222,22 +222,16 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
      * @param objectClass the classification of the object
      * @param objectType the MOD:CA registry object type entry for the given
      *        object/component type of the object
-     * @param strucFlgs information on the structure of the object and its container
+     * @param dataInContainer whether the data resides in the container
+     * @param containerHasOEG whether the container has an object environment group
+     * @param dataInOCD whether the data resides in a object container data structured field
      */
-    public void setObjectClassification(byte objectClass, Registry.ObjectType objectType,
-            StrucFlgs strucFlgs) {
-        addTriplet(new ObjectClassificationTriplet(objectClass, objectType, strucFlgs));
-    }
-
-    /**
-     * Sets the objects classification with the default structure flags
-     *
-     * @param objectClass the classification of the object
-     * @param objectType the MOD:CA registry object type entry for the given
-     *        object/component type of the object
-     */
-    public void setObjectClassification(byte objectClass, Registry.ObjectType objectType) {
-        setObjectClassification(objectClass, objectType, StrucFlgs.DEFAULT);
+    public void setObjectClassification(
+            byte objectClass, ObjectType objectType,
+            boolean dataInContainer, boolean containerHasOEG, boolean dataInOCD) {
+        addTriplet(
+                new ObjectClassificationTriplet(
+                        objectClass, objectType, dataInContainer, containerHasOEG, dataInOCD));
     }
 
     /**

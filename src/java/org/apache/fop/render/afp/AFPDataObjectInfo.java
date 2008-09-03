@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.afp;
 
+import java.io.InputStream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.modca.Registry;
@@ -26,7 +28,7 @@ import org.apache.fop.render.afp.modca.Registry;
 /**
  * A list of parameters associated with an AFP data objects
  */
-public abstract class AFPDataObjectInfo {
+public class AFPDataObjectInfo {
     private static final Log log = LogFactory.getLog("org.apache.fop.afp");
 
     /** the object area info */
@@ -41,10 +43,43 @@ public abstract class AFPDataObjectInfo {
     /** the data object height */
     private int dataHeight;
 
+    /** the object data in an inputstream */
+    private InputStream inputStream;
+
+    /** the object registry mimetype */
+    private String mimeType;
+
     /**
      * Default constructor
      */
     public AFPDataObjectInfo() {
+    }
+
+    /**
+     * Sets the image mime type
+     *
+     * @param mimeType the image mime type
+     */
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    /**
+     * Returns the mime type of this data object
+     *
+     * @return the mime type of this data object
+     */
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    /**
+     * Convenience method to return the object type
+     *
+     * @return the object type
+     */
+    public Registry.ObjectType getObjectType() {
+        return Registry.getInstance().getObjectType(getMimeType());
     }
 
     /**
@@ -88,7 +123,8 @@ public abstract class AFPDataObjectInfo {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "mimeType=" + getMimeType()
+        return "AFPDataObjectInfo{"
+            + "mimeType=" + mimeType
             + ", dataWidth=" + dataWidth
             + ", dataHeight=" + dataHeight
             + (objectAreaInfo != null ? ", objectAreaInfo=" + objectAreaInfo : "")
@@ -150,18 +186,21 @@ public abstract class AFPDataObjectInfo {
     }
 
     /**
-     * Returns the mime type of this data object
+     * Sets the object data inputstream
      *
-     * @return the mime type of this data object
+     * @param inputStream the object data inputstream
      */
-    public abstract String getMimeType();
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
 
     /**
-     * Convenience method to return the object type
+     * Returns the object data inputstream
      *
-     * @return the object type
+     * @return the object data inputstream
      */
-    public Registry.ObjectType getObjectType() {
-        return Registry.getInstance().getObjectType(getMimeType());
+    public InputStream getInputStream() {
+        return this.inputStream;
     }
+
 }

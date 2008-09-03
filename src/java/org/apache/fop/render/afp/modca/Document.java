@@ -21,9 +21,6 @@ package org.apache.fop.render.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
-
-import org.apache.fop.render.afp.Streamable;
 
 /**
  * The document is the highest level of the MO:DCA data-stream document
@@ -49,13 +46,7 @@ import org.apache.fop.render.afp.Streamable;
  * of the document to be presented.
  *
  */
-public final class Document extends AbstractResourceEnvironmentGroupContainer implements Streamable {
-
-    /** The document started state */
-    private boolean started = false;
-
-    /** The document completion state */
-    private boolean complete = false;
+public final class Document extends AbstractResourceEnvironmentGroupContainer {
 
     /**
      * Constructor for the document object.
@@ -104,27 +95,4 @@ public final class Document extends AbstractResourceEnvironmentGroupContainer im
         return this.name;
     }
 
-    /** {@inheritDoc} */
-    public void writeToStream(OutputStream os) throws IOException {
-        if (!started) {
-            writeStart(os);
-            started = true;
-        }
-
-        Iterator it = objects.iterator();
-        while (it.hasNext()) {
-            AbstractAFPObject ao = (AbstractAFPObject)it.next();
-            if (ao instanceof PageGroup && ((PageGroup)ao).isComplete()
-                    || ao instanceof PageObject && ((PageObject)ao).isComplete()) {
-                ao.writeToStream(os);
-                it.remove();
-            } else {
-                break;
-            }
-        }
-
-        if (complete) {
-            writeEnd(os);
-        }
-    }
 }

@@ -27,13 +27,11 @@ import org.apache.fop.render.afp.modca.Factory;
 import org.apache.fop.render.afp.modca.GraphicsObject;
 import org.apache.fop.render.afp.modca.ImageObject;
 import org.apache.fop.render.afp.modca.IncludeObject;
-import org.apache.fop.render.afp.modca.MapDataResource;
 import org.apache.fop.render.afp.modca.ObjectContainer;
 import org.apache.fop.render.afp.modca.Overlay;
 import org.apache.fop.render.afp.modca.PageSegment;
 import org.apache.fop.render.afp.modca.Registry;
 import org.apache.fop.render.afp.modca.ResourceObject;
-import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
@@ -55,58 +53,64 @@ public class AFPDataObjectFactory {
     }
 
     /**
-     * Creates an IOCA ImageObject or an ObjectContainer as appropriate.
+     * Creates and configures an ObjectContainer.
+     *
+     * @param dataObjectInfo the object container info
+     * @return a newly created Object Container
+     */
+    public ObjectContainer createObjectContainer(AFPDataObjectInfo dataObjectInfo) {
+        ObjectContainer objectContainer = factory.createObjectContainer();
+
+        // set object classification
+        Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        AFPResourceLevel resourceLevel = resourceInfo.getLevel();
+        final boolean dataInContainer = true;
+        final boolean containerHasOEG = resourceLevel.isInline();
+        final boolean dataInOCD = true;
+        objectContainer.setObjectClassification(
+                ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
+                objectType, dataInContainer, containerHasOEG, dataInOCD);
+
+        objectContainer.setInputStream(dataObjectInfo.getInputStream());
+        return objectContainer;
+    }
+
+    /**
+     * Creates and configures an IOCA Image Object.
      *
      * @param imageObjectInfo the image object info
-     * @return a newly created image object
+     * @return a newly created IOCA Image Object
      */
-    public AbstractDataObject createImage(AFPImageObjectInfo imageObjectInfo) {
-        AbstractDataObject dataObj = null;
-        // A known object type so place in an object container
-        if (imageObjectInfo.isBuffered()) {
-            // IOCA bitmap image
-            ImageObject imageObj = factory.createImageObject();
-            if (imageObjectInfo.hasCompression()) {
-                int compression = imageObjectInfo.getCompression();
-                switch (compression) {
-                case TIFFImage.COMP_FAX_G3_1D:
-                    imageObj.setEncoding(ImageContent.COMPID_G3_MH);
-                    break;
-                case TIFFImage.COMP_FAX_G3_2D:
-                    imageObj.setEncoding(ImageContent.COMPID_G3_MR);
-                    break;
-                case TIFFImage.COMP_FAX_G4_2D:
-                    imageObj.setEncoding(ImageContent.COMPID_G3_MMR);
-                    break;
-                default:
-                    throw new IllegalStateException(
-                            "Invalid compression scheme: " + compression);
-                }
+    public ImageObject createImage(AFPImageObjectInfo imageObjectInfo) {
+        // IOCA bitmap image
+        ImageObject imageObj = factory.createImageObject();
+        if (imageObjectInfo.hasCompression()) {
+            int compression = imageObjectInfo.getCompression();
+            switch (compression) {
+            case TIFFImage.COMP_FAX_G3_1D:
+                imageObj.setEncoding(ImageContent.COMPID_G3_MH);
+                break;
+            case TIFFImage.COMP_FAX_G3_2D:
+                imageObj.setEncoding(ImageContent.COMPID_G3_MR);
+                break;
+            case TIFFImage.COMP_FAX_G4_2D:
+                imageObj.setEncoding(ImageContent.COMPID_G3_MMR);
+                break;
+            default:
+                throw new IllegalStateException(
+                        "Invalid compression scheme: " + compression);
             }
-
-            if (imageObjectInfo.isColor()) {
-                imageObj.setIDESize((byte) 24);
-            } else {
-                imageObj.setIDESize((byte) imageObjectInfo.getBitsPerPixel());
-            }
-            imageObj.setData(imageObjectInfo.getData());
-
-            dataObj = imageObj;
-
-        } else {
-            ObjectContainer objectContainer = factory.createObjectContainer();
-
-            Registry.ObjectType objectType = imageObjectInfo.getObjectType();
-
-            objectContainer.setObjectClassification(
-                    ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
-                    objectType);
-
-            objectContainer.setInputStream(imageObjectInfo.getInputStream());
-
-            dataObj = objectContainer;
         }
-        return dataObj;
+
+        if (imageObjectInfo.isColor()) {
+            imageObj.setIDESize((byte) 24);
+        } else {
+            imageObj.setIDESize((byte) imageObjectInfo.getBitsPerPixel());
+        }
+        imageObj.setData(imageObjectInfo.getData());
+
+        return imageObj;
     }
 
     /**
@@ -139,14 +143,17 @@ public class AFPDataObjectFactory {
             includeObj.setObjectType(IncludeObject.TYPE_GRAPHIC);
         } else {
             includeObj.setObjectType(IncludeObject.TYPE_OTHER);
-        }
-
-        Registry.ObjectType objectType = dataObjectInfo.getObjectType();
-        if (objectType != null) {
-            includeObj.setObjectClassification(
-               // object scope not defined
-               ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
-               objectType);
+            Registry.ObjectType objectType = dataObjectInfo.getObjectType();
+            if (objectType != null) {
+                // set object classification
+                final boolean dataInContainer = true;
+                final boolean containerHasOEG = false; // environment parameters set in include
+                final boolean dataInOCD = true;
+                includeObj.setObjectClassification(
+                   // object scope not defined
+                   ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
+                   objectType, dataInContainer, containerHasOEG, dataInOCD);
+            }
         }
 
         AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
@@ -194,18 +201,22 @@ public class AFPDataObjectFactory {
             AbstractDataObject dataObj = (AbstractDataObject)namedObj;
 
             // other type by default
-            byte fqnType = FullyQualifiedNameTriplet.TYPE_OTHER_OBJECT_DATA_REF;
+//            byte fqnType = FullyQualifiedNameTriplet.TYPE_OTHER_OBJECT_DATA_REF;
             if (namedObj instanceof ObjectContainer) {
                 resourceObj.setType(ResourceObject.TYPE_OBJECT_CONTAINER);
 
+                // set object classification
+                final boolean dataInContainer = true;
+                final boolean containerHasOEG = false; // must be included
+                final boolean dataInOCD = true;
                 // mandatory triplet for object container
                 resourceObj.setObjectClassification(
                     ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
-                    objectType);
+                    objectType, dataInContainer, containerHasOEG, dataInOCD);
             } else if (namedObj instanceof ImageObject) {
                 resourceObj.setType(ResourceObject.TYPE_IMAGE);
                 // ioca image type
-                fqnType = FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF;
+//                fqnType = FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF;
             } else if (namedObj instanceof GraphicsObject) {
                 resourceObj.setType(ResourceObject.TYPE_GRAPHIC);
             } else {
@@ -214,12 +225,12 @@ public class AFPDataObjectFactory {
             }
 
             // set the map data resource
-            MapDataResource mapDataResource = factory.createMapDataResource();
-            mapDataResource.setFullyQualifiedName(
-                 fqnType,
-                 FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-                 resourceObj.getName());
-            dataObj.getObjectEnvironmentGroup().setMapDataResource(mapDataResource);
+//            MapDataResource mapDataResource = factory.createMapDataResource();
+//            mapDataResource.setFullyQualifiedName(
+//                 fqnType,
+//                 FullyQualifiedNameTriplet.FORMAT_CHARSTR,
+//                 resourceObj.getName());
+//            dataObj.getObjectEnvironmentGroup().setMapDataResource(mapDataResource);
 
         } else {
             throw new UnsupportedOperationException(

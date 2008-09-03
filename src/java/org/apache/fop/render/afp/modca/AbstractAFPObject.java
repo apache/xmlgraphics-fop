@@ -88,11 +88,13 @@ public abstract class AbstractAFPObject implements Streamable {
      */
     protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os)
         throws IOException {
-        if (objects != null) {
-            for (Iterator it = objects.iterator(); it.hasNext();) {
+        if (objects != null && objects.size() > 0) {
+            Iterator it = objects.iterator();
+            while (it.hasNext()) {
                 Object object = it.next();
                 if (object instanceof Streamable) {
                     ((Streamable)object).writeToStream(os);
+                    it.remove(); // once written, immediately remove the object
                 }
             }
         }

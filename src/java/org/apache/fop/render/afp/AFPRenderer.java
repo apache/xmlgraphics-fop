@@ -27,15 +27,12 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -70,9 +67,6 @@ import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
@@ -160,6 +154,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** the afp datastream */
     private DataStream dataStream;
 
+    /** data object information factory */
+    private final AFPDataObjectInfoFactory dataObjectInfoFactory;
+
+
     /**
      * Constructor for AFPRenderer.
      */
@@ -167,6 +165,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         super();
         this.resourceManager = new AFPResourceManager();
         this.state = new AFPState();
+        this.dataObjectInfoFactory = new AFPDataObjectInfoFactory(state);
         this.unitConv = state.getUnitConverter();
     }
 
@@ -378,9 +377,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
-        ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.GRAPHICS2D,
-        ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE,
-        ImageFlavor.XML_DOM, /*ImageFlavor.RAW_EPS*/ };
+        ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.RAW_EPS,
+        ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE,
+        ImageFlavor.XML_DOM };
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
@@ -396,11 +395,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         if (name != null) {
             dataStream.createIncludePageSegment(name, coords[X], coords[Y]);
         } else {
-            Point origin = new Point(currentIPPosition, currentBPPosition);
-
             ImageManager manager = userAgent.getFactory().getImageManager();
             ImageInfo info = null;
-            InputStream in = null;
             try {
                 ImageSessionContext sessionContext = userAgent
                         .getImageSessionContext();
@@ -411,10 +407,21 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, FLAVORS, hints, sessionContext);
 
-                if (img instanceof ImageRendered || img instanceof ImageRawStream) {
-                    AFPImageObjectInfo imageObjectInfo
-                        = getImageObjectInfo(uri, info, pos, origin, img);
-                    resourceManager.createObject(imageObjectInfo);
+                Point origin = new Point(currentIPPosition, currentBPPosition);
+                AFPAbstractImageFactory factory = dataObjectInfoFactory.getFactory(img);
+                if (factory != null) {
+                    AFPImageInfo afpImageInfo
+                    = new AFPImageInfo(uri, pos, origin, info, img, foreignAttributes);
+                    AFPDataObjectInfo dataObjectInfo = null;
+                    try {
+                        dataObjectInfo = factory.create(afpImageInfo);
+                    } catch (IOException ioe) {
+                        ResourceEventProducer eventProducer
+                            = ResourceEventProducer.Provider.get(userAgent.getEventBroadcaster());
+                        eventProducer.imageWritingError(this, ioe);
+                        throw ioe;
+                    }
+                    resourceManager.createObject(dataObjectInfo);
                 } else if (img instanceof ImageGraphics2D) { // ...and process the image
                     ImageGraphics2D imageG2D = (ImageGraphics2D) img;
                     RendererContext rendererContext = createRendererContext(
@@ -446,111 +453,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         .get(userAgent.getEventBroadcaster());
                 eventProducer.imageIOError(this, (info != null ? info.toString()
                         : uri), ioe, null);
-            } finally {
-                if (in != null) {
-                    IOUtils.closeQuietly(in);
-                }
             }
         }
-    }
-
-    /**
-     * Gets the AFP image object information for a given image
-     *
-     * @param uri the image uri
-     * @param info the image info
-     * @param pos the image content area
-     * @param origin the current position
-     * @param img the image
-     * @return an image object info
-     * @throws IOException thrown if an I/O exception of some sort has occurred
-     */
-    private AFPImageObjectInfo getImageObjectInfo(String uri, ImageInfo info, Rectangle2D pos,
-            Point origin, org.apache.xmlgraphics.image.loader.Image img) throws IOException {
-        AFPImageObjectInfo imageObjectInfo = new AFPImageObjectInfo();
-        imageObjectInfo.setUri(uri);
-        imageObjectInfo.setColor(state.isColorImages());
-        imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
-        imageObjectInfo.setMimeType(info.getMimeType());
-
-        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
-
-        float srcX = origin.x + (float)pos.getX();
-        float srcY = origin.y + (float)pos.getY();
-        int[] coords = unitConv.mpts2units(new float[] {srcX, srcY});
-        objectAreaInfo.setX(coords[X]);
-        objectAreaInfo.setY(coords[Y]);
-
-        int width = Math.round(unitConv.mpt2units((float)pos.getWidth()));
-        objectAreaInfo.setWidth(width);
-
-        int height = Math.round(unitConv.mpt2units((float)pos.getHeight()));
-        objectAreaInfo.setHeight(height);
-
-        String mimeType = info.getMimeType();
-        if (mimeType != null) {
-            imageObjectInfo.setMimeType(mimeType);
-        }
-        imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
-
-        if (img instanceof ImageRendered) {
-            imageObjectInfo.setBuffered(true);
-
-            ImageRendered imageRendered = (ImageRendered) img;
-            RenderedImage renderedImage = imageRendered.getRenderedImage();
-
-            ByteArrayOutputStream baout = new ByteArrayOutputStream();
-            try {
-                // Serialize image
-                // TODO Eventually, this should be changed not to buffer as
-                // this
-                // increases the
-                // memory consumption (see PostScript output)
-                ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baout);
-            } catch (IOException ioe) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider
-                        .get(userAgent.getEventBroadcaster());
-                eventProducer.imageWritingError(this, ioe);
-                throw ioe;
-            }
-            imageObjectInfo.setData(baout.toByteArray());
-
-            int resolution = state.getResolution();
-            objectAreaInfo.setWidthRes(resolution);
-            objectAreaInfo.setHeightRes(resolution);
-
-            imageObjectInfo.setDataHeight(renderedImage.getHeight());
-            imageObjectInfo.setDataWidth(renderedImage.getWidth());
-        } else {
-            imageObjectInfo.setBuffered(false);
-
-            ImageRawStream rawStream = (ImageRawStream) img;
-            if (img instanceof ImageRawCCITTFax) {
-                ImageRawCCITTFax ccitt = (ImageRawCCITTFax) img;
-                imageObjectInfo.setCompression(ccitt.getCompression());
-
-                int xresol = (int) (rawStream.getSize().getDpiHorizontal() * 10);
-                objectAreaInfo.setWidthRes(xresol);
-
-                int yresol = (int) (rawStream.getSize().getDpiVertical() * 10);
-                objectAreaInfo.setHeightRes(yresol);
-            } else {
-                int resolution = state.getResolution();
-                objectAreaInfo.setWidthRes(resolution);
-                objectAreaInfo.setHeightRes(resolution);
-            }
-
-            InputStream inputStream = rawStream.createInputStream();
-            imageObjectInfo.setInputStream(inputStream);
-
-            int dataHeight = rawStream.getSize().getHeightPx();
-            imageObjectInfo.setDataHeight(dataHeight);
-
-            int dataWidth = rawStream.getSize().getWidthPx();
-            imageObjectInfo.setDataWidth(dataWidth);
-
-        }
-        return imageObjectInfo;
     }
 
     /**
