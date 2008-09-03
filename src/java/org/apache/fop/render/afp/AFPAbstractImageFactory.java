@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -53,11 +53,11 @@ public abstract class AFPAbstractImageFactory {
      */
     public AFPDataObjectInfo create(AFPImageInfo afpImageInfo) throws IOException {
         AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
-        dataObjectInfo.setUri(afpImageInfo.uri);
 
         // set resource information
         AFPResourceInfo resourceInfo
         = foreignAttributeReader.getResourceInfo(afpImageInfo.foreignAttributes);
+        resourceInfo.setUri(afpImageInfo.uri);
         dataObjectInfo.setResourceInfo(resourceInfo);
 
         // set object area
