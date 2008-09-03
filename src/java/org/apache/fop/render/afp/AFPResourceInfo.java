@@ -27,13 +27,13 @@ public class AFPResourceInfo {
         = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
 
     /** the uri of this resource */
-    private String uri;
+    private String uri = null;
 
     /** the reference name of this resource */
     private String name = null;
 
     /** the resource levek of this resource */
-    private AFPResourceLevel level = null;
+    private AFPResourceLevel level = DEFAULT_LEVEL;
 
     /**
      * Sets the data object uri
