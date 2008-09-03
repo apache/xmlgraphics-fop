@@ -376,13 +376,14 @@
         Additionally, there are certain settings that control how the renderer handles various elements.
       </p>
 <source><![CDATA[<renderer mime="application/x-afp">
-  <images mode="b+w" bits-per-pixel="8"/>
+  <images mode="b+w" bits-per-pixel="8" native="true"/>
   <renderer-resolution>240</renderer-resolution>
+  
+  <!-- a default external resource group file -->
   <resource-group-file>resources.afp</resource-group-file>
-  <goca-enabled/>
 </renderer>]]></source>
       <p>
-        The default value for the "images mode" setting is "b+w" (black and white).  When the setting is "color" a "bits-per-pixel" setting can be provided 
+        The default value for the "images mode" setting is "b+w" (black and white).  When the setting is "color" a "bits-per-pixel" setting can be provided.  When the setting "native" is set to true, images (TIFF, JPEG and Encapsulated Postscript) will be placed in the datastream in their native form using a MO:DCA Object Container.
       </p>
       <p>
         The default value for the "renderer-resolution" is 240 dpi. 
@@ -393,7 +394,7 @@
       </p>
  -->
       <p>
-        By default if there is no configuration definition for "resource-group-file" all resources will be placed inline within the containing page. 
+        By default if there is no configuration definition for "resource-group-file", external resources will be placed in a file called resources.afp. 
       </p>
     </section>
   </section>
