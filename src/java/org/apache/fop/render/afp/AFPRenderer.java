@@ -617,8 +617,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         super.renderText(text);
 
-        //TODO fix text decoration
-        renderTextDecoration(font, fontSize, text, coords[Y], coords[X]);
+        renderTextDecoration(font, fontSize, text, y, x);
     }
 
     /**
