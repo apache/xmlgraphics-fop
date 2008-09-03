@@ -180,7 +180,7 @@ public class PageObject extends AbstractResourceGroupContainer {
 
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
-        super.writeContent(os);
+        writeTriplets(os);
 
         getActiveEnvironmentGroup().writeToStream(os);
 
