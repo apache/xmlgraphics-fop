@@ -26,7 +26,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 /**
  * An CITT fax image configurator
  */
-public class AFPRawCCITTFaxFactory extends AFPAbstractImageFactory {
+public class AFPRawCCITTFaxFactory extends AFPDataObjectInfoFactory {
 
     /**
      * Main constructor

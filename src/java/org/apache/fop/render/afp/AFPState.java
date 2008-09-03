@@ -34,26 +34,30 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
 
     private static Log log = LogFactory.getLog("org.apache.fop.render.afp.AFPState");
 
-    /** The portrait rotation */
+    /** the portrait rotation */
     private int portraitRotation = 0;
 
-    /** The landscape rotation */
+    /** the landscape rotation */
     private int landscapeRotation = 270;
 
-    /** Flag to the set the output object type for images */
+    /** color image support */
     private boolean colorImages = true;
 
-    /** Default value for image depth */
+    /** images are supported in this AFP environment */
+    private boolean nativeImages;
+
+    /** default value for image depth */
     private int bitsPerPixel = 8;
 
-    /** The output resolution */
+    /** the output resolution */
     private int resolution = 240; // 240 dpi
 
-    /** The current page */
+    /** the current page */
     private AFPPageState pageState = new AFPPageState();
 
-    /** A unit converter */
+    /** a unit converter */
     private final transient AFPUnitConverter unitConv = new AFPUnitConverter(this);
+
 
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
@@ -156,6 +160,24 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
      */
     protected boolean isColorImages() {
         return this.colorImages;
+    }
+
+    /**
+     * Sets whether images are natively supported or not in the AFP environment
+     *
+     * @param nativeImages true if images are natively supported in this AFP environment
+     */
+    public void setNativeImages(boolean nativeImages) {
+        this.nativeImages = nativeImages;
+    }
+
+    /**
+     * Returns true if images are supported natively in this AFP environment
+     *
+     * @return true if images are supported natively in this AFP environment
+     */
+    protected boolean isNativeImages() {
+        return this.nativeImages;
     }
 
     /**

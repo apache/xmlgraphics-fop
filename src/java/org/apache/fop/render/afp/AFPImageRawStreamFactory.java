@@ -27,7 +27,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 /**
  * A raw stream image configurator
  */
-public class AFPImageRawStreamFactory extends AFPAbstractImageFactory {
+public class AFPImageRawStreamFactory extends AFPDataObjectInfoFactory {
 
     /**
      * Main constructor

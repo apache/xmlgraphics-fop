@@ -155,7 +155,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     private DataStream dataStream;
 
     /** data object information factory */
-    private final AFPDataObjectInfoFactory dataObjectInfoFactory;
+    private final AFPDataObjectInfoProvider dataObjectInfoProvider;
 
 
     /**
@@ -165,7 +165,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         super();
         this.resourceManager = new AFPResourceManager();
         this.state = new AFPState();
-        this.dataObjectInfoFactory = new AFPDataObjectInfoFactory(state);
+        this.dataObjectInfoProvider = new AFPDataObjectInfoProvider(state);
         this.unitConv = state.getUnitConverter();
     }
 
@@ -376,8 +376,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         return context;
     }
 
-    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
+    private static final ImageFlavor[] NATIVE_FLAVORS = new ImageFlavor[] {
+        /*ImageFlavor.RAW_PNG, */ // PNG not natively supported in AFP
         ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.RAW_EPS,
+        ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE,
+        ImageFlavor.XML_DOM };
+
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE,
         ImageFlavor.XML_DOM };
 
@@ -404,11 +409,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
                 // Only now fully load/prepare the image
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
+
+                ImageFlavor[] flavors = state.isNativeImages() ? NATIVE_FLAVORS : FLAVORS;
                 org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
-                        info, FLAVORS, hints, sessionContext);
+                        info, flavors, hints, sessionContext);
 
                 Point origin = new Point(currentIPPosition, currentBPPosition);
-                AFPAbstractImageFactory factory = dataObjectInfoFactory.getFactory(img);
+                AFPDataObjectInfoFactory factory = dataObjectInfoProvider.getFactory(img);
                 if (factory != null) {
                     AFPImageInfo afpImageInfo
                     = new AFPImageInfo(uri, pos, origin, info, img, foreignAttributes);
@@ -563,7 +570,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         // Try and get the encoding to use for the font
         String encoding = null;
-
         try {
             encoding = font.getCharacterSet(fontSize).getEncoding();
         } catch (Throwable ex) {
@@ -750,6 +756,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void setColorImages(boolean colorImages) {
         state.setColorImages(colorImages);
+    }
+
+    /**
+     * Sets whether images are supported natively or not
+     *
+     * @param nativeImages
+     *            native image support
+     */
+    public void setNativeImages(boolean nativeImages) {
+        state.setNativeImages(nativeImages);
     }
 
     /**

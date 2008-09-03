@@ -28,10 +28,10 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 
 /**
- * AFP image configurator
+ * AFP data object info factory provider
  */
-public class AFPDataObjectInfoFactory {
-    private final Map dataObjectInfoFactoryMap = new java.util.HashMap();
+public class AFPDataObjectInfoProvider {
+    private final Map factoryMap = new java.util.HashMap();
     private final AFPState state;
 
     /**
@@ -39,7 +39,7 @@ public class AFPDataObjectInfoFactory {
      *
      * @param state the AFP state
      */
-    public AFPDataObjectInfoFactory(AFPState state) {
+    public AFPDataObjectInfoProvider(AFPState state) {
         this.state = state;
         init();
     }
@@ -48,11 +48,11 @@ public class AFPDataObjectInfoFactory {
      * Initialises the configurators
      */
     private void init() {
-        dataObjectInfoFactoryMap.put(
+        factoryMap.put(
                 ImageRendered.class, new AFPImageRenderedFactory(state));
-        dataObjectInfoFactoryMap.put(
+        factoryMap.put(
                 ImageRawCCITTFax.class, new AFPRawCCITTFaxFactory(state));
-        dataObjectInfoFactoryMap.put(
+        factoryMap.put(
                 ImageRawStream.class, new AFPImageRawStreamFactory(state));
     };
 
@@ -62,17 +62,16 @@ public class AFPDataObjectInfoFactory {
      * @param img the image
      * @return the image configurator for the image
      */
-    public AFPAbstractImageFactory getFactory(Image img) {
+    public AFPDataObjectInfoFactory getFactory(Image img) {
         Class clazz = img.getClass();
-        AFPAbstractImageFactory configurator
-            = (AFPAbstractImageFactory)dataObjectInfoFactoryMap.get(clazz);
+        AFPDataObjectInfoFactory configurator = (AFPDataObjectInfoFactory)factoryMap.get(clazz);
         // not directly matched so try to map ancestor
         if (configurator == null) {
-            Iterator it = dataObjectInfoFactoryMap.keySet().iterator();
+            Iterator it = factoryMap.keySet().iterator();
             while (it.hasNext()) {
                 Class imageClass = (Class)it.next();
                 if (imageClass.isInstance(img)) {
-                    return (AFPAbstractImageFactory)dataObjectInfoFactoryMap.get(imageClass);
+                    return (AFPDataObjectInfoFactory)factoryMap.get(imageClass);
                 }
             }
         }

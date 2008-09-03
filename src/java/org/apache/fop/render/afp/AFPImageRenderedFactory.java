@@ -30,7 +30,7 @@ import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 /**
  * A buffered image configurator
  */
-public class AFPImageRenderedFactory extends AFPAbstractImageFactory {
+public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
 
     /**
      * Main constructor

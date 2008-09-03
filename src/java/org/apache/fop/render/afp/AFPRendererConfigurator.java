@@ -239,6 +239,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
             } else {
                 afpRenderer.setColorImages(true);
             }
+            afpRenderer.setNativeImages(imagesCfg.getAttributeAsBoolean("native", false));
 
             // renderer resolution
             Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
