@@ -32,7 +32,7 @@ public class AFPResourceInfo {
     /** the reference name of this resource */
     private String name = null;
 
-    /** the resource levek of this resource */
+    /** the resource level of this resource */
     private AFPResourceLevel level = DEFAULT_LEVEL;
 
     /**
