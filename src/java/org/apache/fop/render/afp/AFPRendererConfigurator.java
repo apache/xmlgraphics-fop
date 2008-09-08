@@ -235,10 +235,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
             // image information
             Configuration imagesCfg = cfg.getChild("images");
             if (!"color".equalsIgnoreCase(imagesCfg.getAttribute("mode", "b+w"))) {
+                afpRenderer.setColorImages(false);
                 afpRenderer.setBitsPerPixel(imagesCfg.getAttributeAsInteger("bits-per-pixel", 8));
             } else {
                 afpRenderer.setColorImages(true);
             }
+            // images are embedded directly without conversion to bitmapped IOCA
             afpRenderer.setNativeImages(imagesCfg.getAttributeAsBoolean("native", false));
 
             // renderer resolution

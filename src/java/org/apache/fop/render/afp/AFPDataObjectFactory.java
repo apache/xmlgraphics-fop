@@ -120,7 +120,7 @@ public class AFPDataObjectFactory {
      * @return a new graphics object
      */
     public GraphicsObject createGraphic(AFPGraphicsObjectInfo graphicsObjectInfo) {
-        GraphicsObject graphicsObj = factory.createGraphic();
+        GraphicsObject graphicsObj = factory.createGraphicsObject();
         // paint the graphic using batik
         graphicsObjectInfo.getPainter().paint(graphicsObj);
         return graphicsObj;
@@ -129,20 +129,25 @@ public class AFPDataObjectFactory {
     /**
      * Creates and returns a new include object.
      *
-     * @param name the name of this include object
+     * @param includeName the include name
      * @param dataObjectInfo a data object info
      *
      * @return a new include object
      */
-    public IncludeObject createInclude(String name, AFPDataObjectInfo dataObjectInfo) {
-        IncludeObject includeObj = factory.createInclude(name);
+    public IncludeObject createInclude(String includeName, AFPDataObjectInfo dataObjectInfo) {
+        IncludeObject includeObj = factory.createInclude(includeName);
 
         if (dataObjectInfo instanceof AFPImageObjectInfo) {
+            // IOCA image object
             includeObj.setObjectType(IncludeObject.TYPE_IMAGE);
         } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {
+            // graphics object
             includeObj.setObjectType(IncludeObject.TYPE_GRAPHIC);
         } else {
+            // object container
             includeObj.setObjectType(IncludeObject.TYPE_OTHER);
+
+            // set mandatory object classification
             Registry.ObjectType objectType = dataObjectInfo.getObjectType();
             if (objectType != null) {
                 // set object classification
@@ -153,17 +158,22 @@ public class AFPDataObjectFactory {
                    // object scope not defined
                    ObjectClassificationTriplet.CLASS_TIME_VARIANT_PRESENTATION_OBJECT,
                    objectType, dataInContainer, containerHasOEG, dataInOCD);
+            } else {
+                throw new IllegalStateException(
+                        "Failed to set Object Classification Triplet on Object Container.");
             }
         }
 
         AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
 
-        includeObj.setObjectArea(objectAreaInfo.getX(), objectAreaInfo.getY());
+        int xOffset = objectAreaInfo.getX();
+        int yOffset = objectAreaInfo.getY();
+        includeObj.setObjectAreaOffset(xOffset, yOffset);
 
         includeObj.setObjectAreaSize(
                 objectAreaInfo.getWidth(), objectAreaInfo.getHeight());
 
-        includeObj.setOrientation(objectAreaInfo.getRotation());
+        includeObj.setObjectAreaOrientation(objectAreaInfo.getRotation());
 
         includeObj.setMeasurementUnits(
                 objectAreaInfo.getWidthRes(), objectAreaInfo.getHeightRes());
@@ -199,9 +209,6 @@ public class AFPDataObjectFactory {
             resourceObj.setType(ResourceObject.TYPE_OVERLAY_OBJECT);
         } else if (namedObj instanceof AbstractDataObject) {
             AbstractDataObject dataObj = (AbstractDataObject)namedObj;
-
-            // other type by default
-//            byte fqnType = FullyQualifiedNameTriplet.TYPE_OTHER_OBJECT_DATA_REF;
             if (namedObj instanceof ObjectContainer) {
                 resourceObj.setType(ResourceObject.TYPE_OBJECT_CONTAINER);
 
@@ -214,24 +221,14 @@ public class AFPDataObjectFactory {
                     ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
                     objectType, dataInContainer, containerHasOEG, dataInOCD);
             } else if (namedObj instanceof ImageObject) {
-                resourceObj.setType(ResourceObject.TYPE_IMAGE);
                 // ioca image type
-//                fqnType = FullyQualifiedNameTriplet.TYPE_BEGIN_RESOURCE_OBJECT_REF;
+                resourceObj.setType(ResourceObject.TYPE_IMAGE);
             } else if (namedObj instanceof GraphicsObject) {
                 resourceObj.setType(ResourceObject.TYPE_GRAPHIC);
             } else {
                 throw new UnsupportedOperationException(
                         "Unsupported resource object for data object type " + dataObj);
             }
-
-            // set the map data resource
-//            MapDataResource mapDataResource = factory.createMapDataResource();
-//            mapDataResource.setFullyQualifiedName(
-//                 fqnType,
-//                 FullyQualifiedNameTriplet.FORMAT_CHARSTR,
-//                 resourceObj.getName());
-//            dataObj.getObjectEnvironmentGroup().setMapDataResource(mapDataResource);
-
         } else {
             throw new UnsupportedOperationException(
               "Unsupported resource object type " + namedObj);

@@ -426,6 +426,9 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         RenderedImage ri = imgRend.getRenderedImage();
 
 
+
+
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             // Serialize image
@@ -465,11 +468,11 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         imageObjectInfo.setData(baos.toByteArray());
         imageObjectInfo.setDataHeight(ri.getHeight());
         imageObjectInfo.setDataWidth(ri.getWidth());
+
         boolean colorImages = state.isColorImages();
         imageObjectInfo.setColor(colorImages);
-        imageObjectInfo.setMimeType(colorImages
-                    ? MimeConstants.MIME_AFP_IOCA_FS45
-                            : MimeConstants.MIME_AFP_IOCA_FS10);
+
+        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
         imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
 
         AFPResourceManager resourceManager = info.getAFPResourceManager();

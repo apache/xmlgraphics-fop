@@ -27,6 +27,7 @@ import org.apache.fop.render.afp.goca.GraphicsData;
 import org.apache.fop.render.afp.ioca.ImageContent;
 import org.apache.fop.render.afp.ioca.ImageRasterData;
 import org.apache.fop.render.afp.ioca.ImageSegment;
+import org.apache.fop.render.afp.ioca.ImageSizeParameter;
 import org.apache.fop.render.afp.tools.StringUtils;
 
 /**
@@ -147,7 +148,7 @@ public class Factory {
      *
      * @return a new {@link GraphicsObject}
      */
-    public GraphicsObject createGraphic() {
+    public GraphicsObject createGraphicsObject() {
         String name = GRAPHIC_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++graphicCount), '0', 5);
         GraphicsObject graphicsObj = new GraphicsObject(this, name);
@@ -390,7 +391,7 @@ public class Factory {
     public ObjectEnvironmentGroup createObjectEnvironmentGroup() {
         String oegName = OBJECT_ENVIRONMENT_GROUP_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++objectEnvironmentGroupCount), '0', 5);
-        ObjectEnvironmentGroup objectEnvironmentGroup = new ObjectEnvironmentGroup(this, oegName);
+        ObjectEnvironmentGroup objectEnvironmentGroup = new ObjectEnvironmentGroup(oegName);
         return objectEnvironmentGroup;
     }
 
@@ -507,6 +508,19 @@ public class Factory {
     }
 
     /**
+     * Creates a new PTOCA {@link PresentationTextDescriptor}
+     *
+     * @return a new {@link PresentationTextDescriptor}
+     */
+    public PresentationTextDescriptor createPresentationTextDataDescriptor(
+            int width, int height, int widthRes, int heightRes) {
+        PresentationTextDescriptor presentationTextDescriptor
+            = new PresentationTextDescriptor(width, height,
+                widthRes, heightRes);
+        return presentationTextDescriptor;
+    }
+
+    /**
      * Creates a new MO:DCA {@link PresentationEnvironmentControl}
      *
      * @return a new {@link PresentationEnvironmentControl}
@@ -569,6 +583,22 @@ public class Factory {
     public ImageRasterData createImageRasterData(byte[] rasterData) {
         ImageRasterData imageRasterData = new ImageRasterData(rasterData);
         return imageRasterData;
+    }
+
+    /**
+     * Creates an new IOCA {@link ImageSizeParameter}.
+     *
+     * @param hsize The horizontal size of the image.
+     * @param vsize The vertical size of the image.
+     * @param hresol The horizontal resolution of the image.
+     * @param vresol The vertical resolution of the image.
+     * @return a new {@link ImageSizeParameter}
+     */
+    public ImageSizeParameter createImageSizeParameter(int hsize, int vsize,
+            int hresol, int vresol) {
+        ImageSizeParameter imageSizeParameter
+            = new ImageSizeParameter(hsize, vsize, hresol, vresol);
+        return imageSizeParameter;
     }
 
 }

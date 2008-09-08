@@ -54,8 +54,8 @@ public class AFPResourceManager {
     private int instreamObjectCount = 0;
 
     /** a mapping of resourceInfo --> include name */
-    private final Map/*<ResourceInfo,String>*/ includeNameMap
-        = new java.util.HashMap()/*<ResourceInfo,String>*/;
+    private final Map/*<AFPResourceInfo,String>*/ includeNameMap
+        = new java.util.HashMap()/*<AFPResourceInfo,String>*/;
 
     /**
      * Main constructor
@@ -127,23 +127,22 @@ public class AFPResourceManager {
         }
 
         // try and find an include name for the same resource
-        String includeName = (String)includeNameMap.get(resourceInfo);
-        if (includeName == null) {
+        String objectName = (String)includeNameMap.get(resourceInfo);
+        if (objectName == null) {
 
-            boolean canInclude = false;
+            boolean useInclude = true;
             Registry.ObjectType objectType = null;
 
             // new resource so create
             if (dataObjectInfo instanceof AFPImageObjectInfo) {
                 AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)dataObjectInfo;
                 namedObj = dataObjectFactory.createImage(imageObjectInfo);
-                canInclude = true;
             } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {
                 namedObj = dataObjectFactory.createGraphic((AFPGraphicsObjectInfo)dataObjectInfo);
             } else {
                 namedObj = dataObjectFactory.createObjectContainer(dataObjectInfo);
                 objectType = dataObjectInfo.getObjectType();
-                canInclude = objectType != null && objectType.isIncludable();
+                useInclude = objectType != null && objectType.isIncludable();
             }
 
             // set data object viewport (i.e. position, rotation, dimension, resolution)
@@ -154,9 +153,8 @@ public class AFPResourceManager {
 
             AFPResourceLevel resourceLevel = resourceInfo.getLevel();
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
-            canInclude &= resourceGroup != null;
-
-            if (canInclude) {
+            useInclude &= resourceGroup != null;
+            if (useInclude) {
                 // if it is to reside within a resource group at print-file or external level
                 if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
                     // wrap newly created data object in a resource object
@@ -166,14 +164,16 @@ public class AFPResourceManager {
                 // add data object into its resource group destination
                 resourceGroup.addObject(namedObj);
 
-                // add an include to the current page
-                includeName = namedObj.getName();
+                // create the include object
+                objectName = namedObj.getName();
                 IncludeObject includeObject
-                    = dataObjectFactory.createInclude(includeName, dataObjectInfo);
+                    = dataObjectFactory.createInclude(objectName, dataObjectInfo);
+
+                // add an include to the current page
                 dataStream.getCurrentPage().addObject(includeObject);
 
                 // record name of data object for the resource
-                includeNameMap.put(resourceInfo, namedObj.getName());
+                includeNameMap.put(resourceInfo, objectName);
             } else {
                 // not to be included so inline data object directly into the current page
                 dataStream.getCurrentPage().addObject(namedObj);
@@ -181,7 +181,7 @@ public class AFPResourceManager {
         } else {
             // an existing data resource so reference it by adding an include to the current page
             IncludeObject includeObject
-                = dataObjectFactory.createInclude(includeName, dataObjectInfo);
+                = dataObjectFactory.createInclude(objectName, dataObjectInfo);
             dataStream.getCurrentPage().addObject(includeObject);
         }
     }

@@ -59,9 +59,15 @@ public class AFPGraphicsObjectPainter {
      * @param graphicsObj the graphics object
      */
     public void paint(GraphicsObject graphicsObj) {
-        log.debug("Generating SVG");
+        log.debug("Painting SVG using GOCA " + graphicsObj.getName());
+
+        // set the graphics object
         graphics2D.setGraphicsObject(graphicsObj);
+
+        // tell batik to paint the graphics object
         root.paint(graphics2D);
+
+        // dispose of the graphics 2d implementation
         graphics2D.dispose();
     }
 }

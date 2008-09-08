@@ -69,15 +69,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
 
     /** {@inheritDoc} */
     public int getDataLength() {
-        int dataLen = 14 + super.getDataLength();
-        if (previous == null) {
-            GraphicsChainedSegment current = this.next;
-            while (current != null) {
-                dataLen += current.getDataLength();
-                current = current.next;
-            }
-        }
-        return dataLen;
+        return 14 + super.getDataLength();
     }
 
     private static final byte APPEND_NEW_SEGMENT = 0;
@@ -94,26 +86,23 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
-        int len = super.getDataLength();
-        byte[] segLen = BinaryUtils.convert(len, 2);
 
+        byte[] data = new byte[14];
+        data[0] = 0x70; // BEGIN_SEGMENT
+        data[1] = 0x0C; // Length of following parameters
+
+        // segment name
         byte[] nameBytes = getNameBytes();
-        byte[] data = new byte[] {
-            0x70, // BEGIN_SEGMENT
-            0x0C, // Length of following parameters
-            nameBytes[0],
-            nameBytes[1],
-            nameBytes[2],
-            nameBytes[3],
-            0x00, // FLAG1 (ignored)
-            APPEND_NEW_SEGMENT,
-            segLen[0], // SEGL
-            segLen[1],
-            0x00,
-            0x00,
-            0x00,
-            0x00
-        };
+        System.arraycopy(nameBytes, 0, data, 2, NAME_LENGTH);
+
+        data[6] = 0x00; // FLAG1 (ignored)
+        data[7] = APPEND_NEW_SEGMENT;
+
+        int dataLength = super.getDataLength();
+        byte[] len = BinaryUtils.convert(dataLength, 2);
+        data[8] = len[0]; // SEGL
+        data[9] = len[1];
+
         // P/S NAME (predecessor name)
         if (previous != null) {
             nameBytes = previous.getNameBytes();
@@ -126,12 +115,10 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
     protected void writeEnd(OutputStream os) throws IOException {
         // I am the first segment in the chain so write out the rest
         if (previous == null) {
-            GraphicsChainedSegment current = this.next;
-            while (current != null) {
-                current.writeToStream(os);
-                current = current.next;
+            for (GraphicsChainedSegment segment = next; segment != null; segment = segment.next) {
+                segment.writeToStream(os);
             }
-        }
+        } // else nothing todo
     }
 
     /** Begins a graphics area (start of fill) */
@@ -146,13 +133,12 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
     }
 
     /** {@inheritDoc} */
-    public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
+    public void addObject(PreparedAFPObject drawingOrder) {
         if (currentArea != null) {
             currentArea.addObject(drawingOrder);
         } else {
             super.addObject(drawingOrder);
         }
-        return drawingOrder;
     }
 
     /** {@inheritDoc} */

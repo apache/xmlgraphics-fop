@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp;
 
 
+
 /**
  * A list of parameters associated with an image
  */

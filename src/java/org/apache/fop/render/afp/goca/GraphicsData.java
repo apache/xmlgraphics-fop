@@ -43,25 +43,6 @@ public final class GraphicsData extends AbstractPreparedObjectContainer {
         return 8 + super.getDataLength();
     }
 
-    /** {@inheritDoc} */
-    protected void writeStart(OutputStream os) throws IOException {
-        super.writeStart(os);
-        int l = getDataLength();
-        byte[] len = BinaryUtils.convert(l, 2);
-        byte[] data = new byte[] {
-            0x5A, // Structured field identifier
-            len[0], // Length byte 1
-            len[1], // Length byte 2
-            (byte) 0xD3, // Structured field id byte 1
-            (byte) 0xEE, // Structured field id byte 2
-            (byte) 0xBB, // Structured field id byte 3
-            0x00, // Flags
-            0x00, // Reserved
-            0x00  // Reserved
-        };
-        os.write(data);
-    }
-
     /**
      * Begins a graphics area (start of fill)
      */
@@ -116,14 +97,28 @@ public final class GraphicsData extends AbstractPreparedObjectContainer {
     }
 
     /** {@inheritDoc} */
-    public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
+    public void addObject(PreparedAFPObject drawingOrder) {
         if (currentSegment == null
             || (currentSegment.getDataLength() + drawingOrder.getDataLength())
             >= GraphicsChainedSegment.MAX_DATA_LEN) {
             newSegment();
         }
         currentSegment.addObject(drawingOrder);
-        return drawingOrder;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = new byte[9];
+        copySF(data, SF_CLASS, Type.DATA, Category.GRAPHICS);
+        int dataLength = getDataLength();
+        byte[] len = BinaryUtils.convert(dataLength, 2);
+        data[1] = len[0]; // Length byte 1
+        data[2] = len[1]; // Length byte 2
+        os.write(data);
+
+        // get first segment in chain and write (including all its connected segments)
+        GraphicsChainedSegment firstSegment = (GraphicsChainedSegment)objects.get(0);
+        firstSegment.writeToStream(os);
     }
 
     /** {@inheritDoc} */

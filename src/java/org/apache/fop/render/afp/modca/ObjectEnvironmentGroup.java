@@ -22,7 +22,6 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.render.afp.AFPObjectAreaInfo;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -37,8 +36,6 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  * more default values are to be used.
  */
 public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
-
-    private final Factory factory;
 
     /** the PresentationEnvironmentControl for the object environment group */
     private PresentationEnvironmentControl presentationEnvironmentControl = null;
@@ -62,24 +59,28 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
      * Constructor for the ObjectEnvironmentGroup, this takes a
      * name parameter which must be 8 characters long.
      *
-     * @param factory the object factory
      * @param name the object environment group name
      */
-    public ObjectEnvironmentGroup(Factory factory, String name) {
+    public ObjectEnvironmentGroup(String name) {
         super(name);
-        this.factory = factory;
     }
 
     /**
-     * Sets the object area parameters.
+     * Sets the Object Area Descriptor
      *
-     * @param info the object area info
+     * @param objectAreaDescriptor the object area descriptor
      */
-    public void setObjectArea(AFPObjectAreaInfo info) {
-        this.objectAreaDescriptor = factory.createObjectAreaDescriptor(
-                info.getWidth(), info.getHeight(), info.getWidthRes(), info.getHeightRes());
-        this.objectAreaPosition = factory.createObjectAreaPosition(
-                info.getX(), info.getY(), info.getRotation());
+    public void setObjectAreaDescriptor(ObjectAreaDescriptor objectAreaDescriptor) {
+        this.objectAreaDescriptor = objectAreaDescriptor;
+    }
+
+    /**
+     * Sets the Object Area Position
+     *
+     * @param objectAreaPosition the object area position
+     */
+    public void setObjectAreaPosition(ObjectAreaPosition objectAreaPosition) {
+        this.objectAreaPosition = objectAreaPosition;
     }
 
     /** {@inheritDoc} */
@@ -87,7 +88,8 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
         byte[] data = new byte[17];
         copySF(data, Type.BEGIN, Category.OBJECT_ENVIRONMENT_GROUP);
 
-        int sfLen = data.length + getTripletDataLength() - 1;
+        int tripletDataLength = getTripletDataLength();
+        int sfLen = data.length + tripletDataLength - 1;
         byte[] len = BinaryUtils.convert(sfLen, 2);
         data[1] = len[0];
         data[2] = len[1];
@@ -167,4 +169,5 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
     public void setMapContainerData(MapContainerData mapContainerData) {
         this.mapContainerData = mapContainerData;
     }
+
 }

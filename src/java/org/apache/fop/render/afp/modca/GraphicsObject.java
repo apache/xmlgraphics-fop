@@ -48,7 +48,7 @@ import org.apache.fop.render.afp.goca.GraphicsString;
 public class GraphicsObject extends AbstractDataObject {
 
     /** The graphics data */
-    private GraphicsData graphicsData = null;
+    private GraphicsData currentGraphicsData = null;
 
     /** list of objects contained within this container */
     protected List/*<PreparedAFPObject>*/ objects
@@ -69,27 +69,26 @@ public class GraphicsObject extends AbstractDataObject {
         super.setViewport(dataObjectInfo);
 
         AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-        GraphicsDataDescriptor graphicsDataDescriptor
-            = factory.createGraphicsDataDescriptor(
-                    0,
-                    objectAreaInfo.getWidth(),
-                    0,
-                    objectAreaInfo.getHeight(),
-                    objectAreaInfo.getWidthRes(),
-                    objectAreaInfo.getHeightRes());
+        int width = objectAreaInfo.getWidth();
+        int height = objectAreaInfo.getHeight();
+        int widthRes = objectAreaInfo.getWidthRes();
+        int heightRes = objectAreaInfo.getHeightRes();
+        final int leftEdge = 0;
+        final int topEdge = 0;
+        GraphicsDataDescriptor graphicsDataDescriptor = factory.createGraphicsDataDescriptor(
+                    leftEdge, width, topEdge, height, widthRes, heightRes);
 
         getObjectEnvironmentGroup().setDataDescriptor(graphicsDataDescriptor);
     }
 
     /** {@inheritDoc} */
-    public PreparedAFPObject addObject(PreparedAFPObject drawingOrder) {
-        if (graphicsData == null
-                || (graphicsData.getDataLength() + drawingOrder.getDataLength())
+    public void addObject(PreparedAFPObject drawingOrder) {
+        if (currentGraphicsData == null
+                || (currentGraphicsData.getDataLength() + drawingOrder.getDataLength())
                 >= GraphicsData.MAX_DATA_LEN) {
             newData();
         }
-        graphicsData.addObject(drawingOrder);
-        return drawingOrder;
+        currentGraphicsData.addObject(drawingOrder);
     }
 
     /**
@@ -98,10 +97,10 @@ public class GraphicsObject extends AbstractDataObject {
      * @return the current graphics data
      */
     private GraphicsData getData() {
-        if (this.graphicsData == null) {
+        if (this.currentGraphicsData == null) {
             return newData();
         }
-        return this.graphicsData;
+        return this.currentGraphicsData;
     }
 
     /**
@@ -110,18 +109,18 @@ public class GraphicsObject extends AbstractDataObject {
      * @return a newly created graphics data
      */
     private GraphicsData newData() {
-        this.graphicsData = factory.createGraphicsData();
-        objects.add(graphicsData);
-        return graphicsData;
+        this.currentGraphicsData = factory.createGraphicsData();
+        objects.add(currentGraphicsData);
+        return currentGraphicsData;
     }
 
     /**
      * Sets the current color
      *
-     * @param col the active color to use
+     * @param color the active color to use
      */
-    public void setColor(Color col) {
-        addObject(new GraphicsSetProcessColor(col));
+    public void setColor(Color color) {
+        addObject(new GraphicsSetProcessColor(color));
     }
 
     /**
@@ -139,8 +138,8 @@ public class GraphicsObject extends AbstractDataObject {
      * @param multiplier the line width multiplier
      */
     public void setLineWidth(int multiplier) {
-        GraphicsSetLineWidth lw = new GraphicsSetLineWidth(multiplier);
-        addObject(lw);
+        GraphicsSetLineWidth graphicsSetLineWidth = new GraphicsSetLineWidth(multiplier);
+        addObject(graphicsSetLineWidth);
     }
 
     /**
@@ -149,8 +148,8 @@ public class GraphicsObject extends AbstractDataObject {
      * @param type the line type
      */
     public void setLineType(byte type) {
-        GraphicsSetLineType lt = new GraphicsSetLineType(type);
-        addObject(lt);
+        GraphicsSetLineType graphicsSetLineType = new GraphicsSetLineType(type);
+        addObject(graphicsSetLineType);
     }
 
     /**
@@ -159,11 +158,11 @@ public class GraphicsObject extends AbstractDataObject {
      * @param fill whether to fill the next shape
      */
     public void setFill(boolean fill) {
-        GraphicsSetPatternSymbol pat = new GraphicsSetPatternSymbol(
+        GraphicsSetPatternSymbol graphicsSetPattern = new GraphicsSetPatternSymbol(
                 fill ? GraphicsSetPatternSymbol.SOLID_FILL
                      : GraphicsSetPatternSymbol.NO_FILL
         );
-        addObject(pat);
+        addObject(graphicsSetPattern);
     }
 
     /**
@@ -254,18 +253,18 @@ public class GraphicsObject extends AbstractDataObject {
      * Begins a graphics area (start of fill)
      */
     public void beginArea() {
-        if (graphicsData == null) {
+        if (currentGraphicsData == null) {
             newData();
         }
-        graphicsData.beginArea();
+        currentGraphicsData.beginArea();
     }
 
     /**
      * Ends a graphics area (end of fill)
      */
     public void endArea() {
-        if (graphicsData != null) {
-            graphicsData.endArea();
+        if (currentGraphicsData != null) {
+            currentGraphicsData.endArea();
         }
     }
 

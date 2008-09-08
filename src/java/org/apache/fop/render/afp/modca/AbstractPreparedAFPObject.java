@@ -22,7 +22,6 @@ package org.apache.fop.render.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 /**
  * A base class that carries out early preparation of structured field data
  * for the AFP object (so the data length can be pre-calculated)
@@ -41,7 +40,7 @@ implements PreparedAFPObject {
 
     /**
      * Named constructor
-     * 
+     *
      * @param name the name of this AFP object
      */
     public AbstractPreparedAFPObject(String name) {
@@ -57,13 +56,17 @@ implements PreparedAFPObject {
     }
 
     /**
+     * Return the start data length of this structured field
+     *
      * @return the start data length of this structured field
      */
     protected int getStartDataLength() {
         return 0;
     }
-    
+
     /**
+     * Return the data length of the structured field data of this AFP object
+     *
      * @return the data length of the structured field data of this AFP object
      */
     public int getDataLength() {
@@ -72,17 +75,19 @@ implements PreparedAFPObject {
         }
         return 0;
     }
-    
+
     /**
+     * Return the structured field length
+     *
      * @return the structured field length
      */
     protected int getLength() {
         return getStartDataLength() + getTripletDataLength() + getDataLength();
     }
-    
+
     /**
      * Sets the data
-     * 
+     *
      * @param data the data
      */
     protected void setData(byte[] data) {

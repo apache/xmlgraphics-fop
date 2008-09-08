@@ -41,7 +41,8 @@ import org.apache.fop.render.afp.fonts.AFPFont;
 public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
 
     /** The collection of MapCodedFont objects */
-    private List/*<MapCodedFonts>*/ mapCodedFonts = null;
+    private final List/*<MapCodedFonts>*/ mapCodedFonts
+        = new java.util.ArrayList/*<MapCodedFonts>*/();
 
     /** the collection of MapDataResource objects */
     private final List mapDataResources = null;
@@ -79,15 +80,17 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         this.factory = factory;
 
         // Create PageDescriptor
-        pageDescriptor = new PageDescriptor(width, height, widthRes, heightRes);
+        this.pageDescriptor
+            = factory.createPageDescriptor(width, height, widthRes, heightRes);
 
         // Create ObjectAreaDescriptor
-        objectAreaDescriptor = new ObjectAreaDescriptor(width, height,
-                widthRes, heightRes);
+        this.objectAreaDescriptor
+            = factory.createObjectAreaDescriptor(width, height, widthRes, heightRes);
 
         // Create PresentationTextDataDescriptor
-        presentationTextDataDescriptor = new PresentationTextDescriptor(width, height,
-                    widthRes, heightRes);
+        this.presentationTextDataDescriptor
+            = factory.createPresentationTextDataDescriptor(width, height,
+                widthRes, heightRes);
     }
 
     /**
@@ -97,9 +100,8 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
      * @param y the y offset
      * @param rotation the rotation
      */
-    public void setPosition(int x, int y, int rotation) {
-        // Create ObjectAreaPosition
-        objectAreaPosition = new ObjectAreaPosition(x, y, rotation);
+    public void setObjectAreaPosition(int x, int y, int rotation) {
+        this.objectAreaPosition = factory.createObjectAreaPosition(x, y, rotation);
     }
 
     /**
@@ -156,13 +158,6 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         os.write(data);
     }
 
-    private List getMapCodedFonts() {
-        if (mapCodedFonts == null) {
-            mapCodedFonts = new java.util.ArrayList();
-        }
-        return mapCodedFonts;
-    }
-
     /**
      * Method to create a map coded font object
      *
@@ -172,20 +167,20 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
      * @param orientation the orientation of the font (e.g. 0, 90, 180, 270)
      */
     public void createFont(int fontRef, AFPFont font, int size, int orientation) {
-        MapCodedFont mcf = getCurrentMapCodedFont();
-        if (mcf == null) {
-            mcf = factory.createMapCodedFont();
-            getMapCodedFonts().add(mcf);
+        MapCodedFont mapCodedFont = getCurrentMapCodedFont();
+        if (mapCodedFont == null) {
+            mapCodedFont = factory.createMapCodedFont();
+            mapCodedFonts.add(mapCodedFont);
         }
 
         try {
-            mcf.addFont(fontRef, font, size, orientation);
+            mapCodedFont.addFont(fontRef, font, size, orientation);
         } catch (MaximumSizeExceededException msee) {
-            mcf = factory.createMapCodedFont();
-            getMapCodedFonts().add(mcf);
+            mapCodedFont = factory.createMapCodedFont();
+            mapCodedFonts.add(mapCodedFont);
 
             try {
-                mcf.addFont(fontRef, font, size, orientation);
+                mapCodedFont.addFont(fontRef, font, size, orientation);
             } catch (MaximumSizeExceededException ex) {
                 // Should never happen (but log just in case)
                 log.error("createFont():: resulted in a MaximumSizeExceededException");
@@ -200,7 +195,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
      * @return the most recent Map Coded Font.
      */
     private MapCodedFont getCurrentMapCodedFont() {
-        int size = getMapCodedFonts().size();
+        int size = mapCodedFonts.size();
         if (size > 0) {
             return (MapCodedFont)mapCodedFonts.get(size - 1);
         } else {

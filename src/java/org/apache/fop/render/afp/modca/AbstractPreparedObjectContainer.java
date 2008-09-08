@@ -31,7 +31,8 @@ public abstract class AbstractPreparedObjectContainer extends AbstractNamedAFPOb
 implements PreparedAFPObject {
 
     /** list of objects contained within this container */
-    protected List/*<PreparedAFPObject>*/ objects = null;
+    protected List/*<PreparedAFPObject>*/ objects
+        = new java.util.ArrayList/*<PreparedAFPObject>*/();
 
     /**
      * Default constructor
@@ -50,25 +51,16 @@ implements PreparedAFPObject {
 
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
-        super.writeObjects(objects, os);
-    }
-
-    private List/*<PreparedAFPObject>*/ getObjects() {
-        if (objects == null) {
-            this.objects = new java.util.ArrayList/*<PreparedAFPObject>*/();
-        }
-        return this.objects;
+        writeObjects(objects, os);
     }
 
     /**
      * Adds a given prepared object to this container
      *
      * @param preparedObject the prepared object
-     * @return the drawingOrder if it was added, null otherwise
      */
-    public PreparedAFPObject addObject(PreparedAFPObject preparedObject) {
-        getObjects().add(preparedObject);
-        return preparedObject;
+    public void addObject(PreparedAFPObject preparedObject) {
+        objects.add(preparedObject);
     }
 
     /**
@@ -79,13 +71,12 @@ implements PreparedAFPObject {
      */
     public int getDataLength() {
         int dataLen = 0;
-        if (objects != null) {
-            Iterator it = objects.iterator();
-            while (it.hasNext()) {
-                Object obj = it.next();
-                if (obj instanceof PreparedAFPObject) {
-                    dataLen += ((PreparedAFPObject)obj).getDataLength();
-                }
+        Iterator it = objects.iterator();
+        while (it.hasNext()) {
+            Object obj = it.next();
+            if (obj instanceof PreparedAFPObject) {
+                PreparedAFPObject prepObj = (PreparedAFPObject)obj;
+                dataLen += prepObj.getDataLength();
             }
         }
         return dataLen;

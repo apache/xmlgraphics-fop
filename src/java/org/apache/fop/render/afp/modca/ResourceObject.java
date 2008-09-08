@@ -68,7 +68,8 @@ public class ResourceObject extends AbstractPreparedAFPObject {
         copySF(data, Type.BEGIN, Category.NAME_RESOURCE);
 
         // Set the total record length
-        byte[] len = BinaryUtils.convert(18 + getTripletDataLength(), 2);
+        int tripletDataLength = getTripletDataLength();
+        byte[] len = BinaryUtils.convert(18 + tripletDataLength, 2);
         data[1] = len[0]; // Length byte 1
         data[2] = len[1]; // Length byte 2
 
@@ -112,16 +113,19 @@ public class ResourceObject extends AbstractPreparedAFPObject {
     public static final byte TYPE_GRAPHIC = 0x03;
 
     /** barcode object type */
-    public static final byte BARCODE = 0x05;
+    public static final byte TYPE_BARCODE = 0x05;
 
     /** image object type */
     public static final byte TYPE_IMAGE = 0x06;
 
-//    private static final byte FONT_CHARACTER_SET = 0x40;
+    /** font character set type */
+    public static final byte TYPE_FONT_CHARACTER_SET = 0x40;
 
-//    private static final byte CODE_PAGE = 0x41;
+    /** code page type */
+    public static final byte TYPE_CODE_PAGE = 0x41;
 
-//    private static final byte CODED_FONT = 0x42;
+    /** coded font type */
+    public static final byte TYPE_CODED_FONT = 0x42;
 
     /** object container type */
     public static final byte TYPE_OBJECT_CONTAINER = (byte) 0x92;
@@ -135,10 +139,14 @@ public class ResourceObject extends AbstractPreparedAFPObject {
     /** overlay object type */
     public static final byte TYPE_OVERLAY_OBJECT = (byte) 0xFC;
 
-//    private static final byte PAGEDEF = (byte) 0xFD;
+    /** page def type */
+    public static final byte TYPE_PAGEDEF = (byte) 0xFD;
 
-//    private static final byte FORMDEF = (byte) 0xFE;
+    /** form def type */
+    public static final byte TYPE_FORMDEF = (byte) 0xFE;
 
+
+    /** resource object type triplet */
     private class ResourceObjectTypeTriplet extends Triplet {
 
         private static final byte RESOURCE_OBJECT = 0x21;
@@ -146,12 +154,12 @@ public class ResourceObject extends AbstractPreparedAFPObject {
         /**
          * Main constructor
          *
-         * @param type the resource object type
+         * @param objectType the resource object type
          */
-        public ResourceObjectTypeTriplet(byte type) {
+        public ResourceObjectTypeTriplet(byte objectType) {
             super(RESOURCE_OBJECT,
                 new byte[] {
-                    type,
+                    objectType,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Constant Data
                 }
             );

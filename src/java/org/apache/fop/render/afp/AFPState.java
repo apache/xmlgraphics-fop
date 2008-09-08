@@ -41,7 +41,7 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
     private int landscapeRotation = 270;
 
     /** color image support */
-    private boolean colorImages = true;
+    private boolean colorImages = false;
 
     /** images are supported in this AFP environment */
     private boolean nativeImages;

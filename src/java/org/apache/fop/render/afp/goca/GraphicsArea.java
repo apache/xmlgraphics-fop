@@ -53,7 +53,6 @@ public final class GraphicsArea extends AbstractPreparedObjectContainer {
 
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
-        super.writeStart(os);
         byte[] data = new byte[] {
             (byte)0x68, // GBAR order code
             (byte)(RES1 + (drawBoundary ? BOUNDARY : NO_BOUNDARY))

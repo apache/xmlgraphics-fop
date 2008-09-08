@@ -278,13 +278,13 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
             if (rotation != 0) {
                 switch (rotation) {
                     case 90:
-                        activeEnvironmentGroup.setPosition(width, 0, rotation);
+                        activeEnvironmentGroup.setObjectAreaPosition(width, 0, rotation);
                         break;
                     case 180:
-                        activeEnvironmentGroup.setPosition(width, height, rotation);
+                        activeEnvironmentGroup.setObjectAreaPosition(width, height, rotation);
                         break;
                     case 270:
-                        activeEnvironmentGroup.setPosition(0, height, rotation);
+                        activeEnvironmentGroup.setObjectAreaPosition(0, height, rotation);
                         break;
                     default:
                 }

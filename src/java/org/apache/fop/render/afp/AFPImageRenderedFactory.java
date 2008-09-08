@@ -46,28 +46,39 @@ public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
         AFPImageObjectInfo imageObjectInfo
             = (AFPImageObjectInfo)super.create(afpImageInfo);
 
-        ImageRendered imageRendered = (ImageRendered) afpImageInfo.img;
-        RenderedImage renderedImage = imageRendered.getRenderedImage();
-
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baout);
-
-        imageObjectInfo.setData(baout.toByteArray());
-
-        int resolution = state.getResolution();
+        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
 
         AFPObjectAreaInfo objectAreaInfo = imageObjectInfo.getObjectAreaInfo();
+        int resolution = state.getResolution();
         objectAreaInfo.setWidthRes(resolution);
         objectAreaInfo.setHeightRes(resolution);
 
-        imageObjectInfo.setDataHeight(renderedImage.getHeight());
-        imageObjectInfo.setDataWidth(renderedImage.getWidth());
+        ImageRendered imageRendered = (ImageRendered) afpImageInfo.img;
+        RenderedImage renderedImage = imageRendered.getRenderedImage();
+
+        int dataHeight = renderedImage.getHeight();
+        imageObjectInfo.setDataHeight(dataHeight);
+
+        int dataWidth = renderedImage.getWidth();
+        imageObjectInfo.setDataWidth(dataWidth);
+
+        ByteArrayOutputStream baout = new ByteArrayOutputStream();
+        ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baout);
+        byte[] imageData = baout.toByteArray();
 
         boolean colorImages = state.isColorImages();
         imageObjectInfo.setColor(colorImages);
-        imageObjectInfo.setMimeType(colorImages
-                ? MimeConstants.MIME_AFP_IOCA_FS45
-                        : MimeConstants.MIME_AFP_IOCA_FS10);
+
+        // convert to grayscale
+        if (!colorImages) {
+            baout.reset();
+            int bitsPerPixel = state.getBitsPerPixel();
+            imageObjectInfo.setBitsPerPixel(bitsPerPixel);
+            ImageEncodingHelper.encodeRGBAsGrayScale(
+                  imageData, dataWidth, dataHeight, bitsPerPixel, baout);
+            imageData = baout.toByteArray();
+        }
+        imageObjectInfo.setData(imageData);
 
         return imageObjectInfo;
     }

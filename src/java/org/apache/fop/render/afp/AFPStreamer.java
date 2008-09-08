@@ -117,6 +117,9 @@ public class AFPStreamer implements Streamable {
      */
     public ResourceGroup getResourceGroup(AFPResourceLevel level) {
         ResourceGroup resourceGroup = null;
+        if (level.isInline()) { // no resource group for inline level
+            return null;
+        }
         if (level.isExternal()) {
             String filePath = level.getExternalFilePath();
             if (filePath == null) {
@@ -147,7 +150,6 @@ public class AFPStreamer implements Streamable {
         } else {
             // resource group in afp document datastream
             resourceGroup = dataStream.getResourceGroup(level);
-
         }
         return resourceGroup;
     }

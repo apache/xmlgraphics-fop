@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
+import org.apache.fop.render.afp.modca.triplets.MeasurementUnitsTriplet;
+import org.apache.fop.render.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -71,29 +73,29 @@ public class IncludeObject extends AbstractNamedAFPObject {
     private byte objectType = TYPE_OTHER;
 
     /**
-     * The orientation on the include object
-     */
-    private int orientation = 0;
-
-    /**
      * The X-axis origin of the object area
      */
-    private int xOffset = 0;
+    private int xoaOset = 0;
 
     /**
      * The Y-axis origin of the object area
      */
-    private int yOffset = 0;
+    private int yoaOset = 0;
+
+    /**
+     * The orientation on the include object
+     */
+    private int oaOrent = 0;
 
     /**
      * The X-axis origin defined in the object
      */
-    private int xContentOffset = 0;
+    private int xocaOset = -1;
 
     /**
      * The Y-axis origin defined in the object
      */
-    private int yContentOffset = 0;
+    private int yocaOset = -1;
 
     /**
      * Constructor for the include object with the specified name, the name must
@@ -112,10 +114,10 @@ public class IncludeObject extends AbstractNamedAFPObject {
      * @param orientation
      *            The orientation (0,90, 180, 270)
      */
-    public void setOrientation(int orientation) {
+    public void setObjectAreaOrientation(int orientation) {
         if (orientation == 0 || orientation == 90 || orientation == 180
             || orientation == 270) {
-            this.orientation = orientation;
+            this.oaOrent = orientation;
         } else {
             throw new IllegalArgumentException(
                 "The orientation must be one of the values 0, 90, 180, 270");
@@ -128,20 +130,22 @@ public class IncludeObject extends AbstractNamedAFPObject {
      * @param x the X-axis origin of the object area
      * @param y the Y-axis origin of the object area
      */
-    public void setObjectArea(int x, int y) {
-        this.xOffset = x;
-        this.yOffset = y;
+    public void setObjectAreaOffset(int x, int y) {
+        this.xoaOset = x;
+        this.yoaOset = y;
     }
 
     /**
      * Sets the x and y offset of the content area to the object area
+     * used in conjunction with the {@link MappingOptionTriplet.POSITION} and
+     * {@link MappingOptionTriplet.POSITION_AND_TRIM}.
      *
      * @param x the X-axis origin defined in the object
      * @param y the Y-axis origin defined in the object
      */
-    public void setContentArea(int x, int y) {
-        this.xContentOffset = x;
-        this.yContentOffset = y;
+    public void setContentAreaOffset(int x, int y) {
+        this.xocaOset = x;
+        this.yocaOset = y;
     }
 
     /**
@@ -159,7 +163,8 @@ public class IncludeObject extends AbstractNamedAFPObject {
         super.copySF(data, Type.INCLUDE, Category.DATA_RESOURCE);
 
         // Set the total record length
-        byte[] len = BinaryUtils.convert(35 + getTripletDataLength(), 2); //Ignore first byte
+        int tripletDataLength = getTripletDataLength();
+        byte[] len = BinaryUtils.convert(35 + tripletDataLength, 2); //Ignore first byte
         data[1] = len[0];
         data[2] = len[1];
 
@@ -167,8 +172,8 @@ public class IncludeObject extends AbstractNamedAFPObject {
         data[18] = objectType;
 
         //XoaOset (object area)
-        if (xOffset >= -1) {
-            byte[] x = BinaryUtils.convert(xOffset, 3);
+        if (xoaOset > -1) {
+            byte[] x = BinaryUtils.convert(xoaOset, 3);
             data[19] = x[0];
             data[20] = x[1];
             data[21] = x[2];
@@ -179,8 +184,8 @@ public class IncludeObject extends AbstractNamedAFPObject {
         }
 
         // YoaOset (object area)
-        if (yOffset > -1) {
-            byte[] y = BinaryUtils.convert(yOffset, 3);
+        if (yoaOset > -1) {
+            byte[] y = BinaryUtils.convert(yoaOset, 3);
             data[22] = y[0];
             data[23] = y[1];
             data[24] = y[2];
@@ -191,7 +196,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
         }
 
         // XoaOrent/YoaOrent
-        switch (orientation) {
+        switch (oaOrent) {
             case -1: // use x/y axis orientation defined in object
                 data[25] = (byte)0xFF; // x axis rotation
                 data[26] = (byte)0xFF; //
@@ -216,7 +221,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
                 data[27] = 0x00;
                 data[28] = 0x00;
                 break;
-            default:
+            default: // 0 degrees
                 data[25] = 0x00;
                 data[26] = 0x00;
                 data[27] = 0x2D;
@@ -225,11 +230,11 @@ public class IncludeObject extends AbstractNamedAFPObject {
         }
 
         // XocaOset (object content)
-        if (xContentOffset > -1) {
-            byte[] y = BinaryUtils.convert(xContentOffset, 3);
-            data[29] = y[0];
-            data[30] = y[1];
-            data[31] = y[2];
+        if (xocaOset > -1) {
+            byte[] x = BinaryUtils.convert(xocaOset, 3);
+            data[29] = x[0];
+            data[30] = x[1];
+            data[31] = x[2];
         } else {
             data[29] = (byte)0xFF;
             data[30] = (byte)0xFF;
@@ -237,8 +242,8 @@ public class IncludeObject extends AbstractNamedAFPObject {
         }
 
         // YocaOset (object content)
-        if (yContentOffset > -1) {
-            byte[] y = BinaryUtils.convert(yContentOffset, 3);
+        if (yocaOset > -1) {
+            byte[] y = BinaryUtils.convert(yocaOset, 3);
             data[32] = y[0];
             data[33] = y[1];
             data[34] = y[2];
@@ -247,18 +252,44 @@ public class IncludeObject extends AbstractNamedAFPObject {
             data[33] = (byte)0xFF;
             data[34] = (byte)0xFF;
         }
-        data[35] = 0x01;
+        // RefCSys (Reference coordinate system)
+        data[35] = 0x01; // Page or overlay coordinate system
 
         // Write structured field data
         os.write(data);
 
         // Write triplet for FQN internal/external object reference
-        os.write(tripletData);
+        if (tripletData != null) {
+            os.write(tripletData);
+        }
+    }
+
+    private String getObjectTypeName() {
+        String objectTypeName = null;
+        if (objectType == TYPE_PAGE_SEGMENT) {
+            objectTypeName = "page segment";
+        } else if (objectType == TYPE_OTHER) {
+            objectTypeName = "other";
+        } else if (objectType == TYPE_GRAPHIC) {
+            objectTypeName = "graphic";
+        } else if (objectType == TYPE_BARCODE) {
+            objectTypeName = "barcode";
+        } else if (objectType == TYPE_IMAGE) {
+            objectTypeName = "image";
+        }
+        return objectTypeName;
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return "IOB: " + this.getName();
+        return "IncludeObject{name=" + this.getName()
+            + ", objectType=" + getObjectTypeName()
+            + ", xoaOset=" + xoaOset
+            + ", yoaOset=" + yoaOset
+            + ", oaOrent" + oaOrent
+            + ", xocaOset=" + xocaOset
+            + ", yocaOset=" + yocaOset
+            + "}";
     }
 
     /**
@@ -269,4 +300,25 @@ public class IncludeObject extends AbstractNamedAFPObject {
     public void setMappingOption(byte optionValue) {
         addTriplet(new MappingOptionTriplet(optionValue));
     }
+
+    /**
+     * Sets the extent of an object area in the X and Y directions
+     *
+     * @param x the x direction extent
+     * @param y the y direction extent
+     */
+    public void setObjectAreaSize(int x, int y) {
+        addTriplet(new ObjectAreaSizeTriplet(x, y));
+    }
+
+    /**
+     * Sets the measurement units used to specify the units of measure
+     *
+     * @param xRes units per base on the x-axis
+     * @param yRes units per base on the y-axis
+     */
+    public void setMeasurementUnits(int xRes, int yRes) {
+        addTriplet(new MeasurementUnitsTriplet(xRes, xRes));
+    }
+
 }

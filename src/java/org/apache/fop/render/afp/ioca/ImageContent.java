@@ -89,16 +89,12 @@ public class ImageContent extends AbstractStructuredAFPObject {
     }
 
     /**
-     * Sets the image size parameters
-     * resolution, hsize and vsize.
+     * Sets the image size parameter
      *
-     * @param hsize The horizontal size of the image.
-     * @param vsize The vertival size of the image.
-     * @param hresol The horizontal resolution of the image.
-     * @param vresol The vertical resolution of the image.
+     * @param imageSizeParameter the image size parameter.
      */
-    public void setImageSize(int hsize, int vsize, int hresol, int vresol) {
-        imageSizeParameter = new ImageSizeParameter(hsize, vsize, hresol, vresol);
+    public void setImageSizeParameter(ImageSizeParameter imageSizeParameter) {
+        this.imageSizeParameter = imageSizeParameter;
     }
 
     /**

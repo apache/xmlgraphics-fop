@@ -57,14 +57,31 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject {
      *            the object area info
      */
     public void setViewport(AFPDataObjectInfo dataObjectInfo) {
+        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+
+        // object area descriptor
+        int width = objectAreaInfo.getWidth();
+        int height = objectAreaInfo.getHeight();
+        int widthRes = objectAreaInfo.getWidthRes();
+        int heightRes = objectAreaInfo.getHeightRes();
+        ObjectAreaDescriptor objectAreaDescriptor
+            = factory.createObjectAreaDescriptor(width, height, widthRes, heightRes);
+        getObjectEnvironmentGroup().setObjectAreaDescriptor(objectAreaDescriptor);
+
+        // object area position
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         AFPResourceLevel resourceLevel = resourceInfo.getLevel();
-
-        // only need to set OAD and OAP inlined (pre-2000 apps)
+        ObjectAreaPosition objectAreaPosition = null;
         if (resourceLevel.isInline()) {
-            AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-            getObjectEnvironmentGroup().setObjectArea(objectAreaInfo);
+            int x = objectAreaInfo.getX();
+            int y = objectAreaInfo.getY();
+            int rotation = objectAreaInfo.getRotation();
+            objectAreaPosition = factory.createObjectAreaPosition(x, y, rotation);
+        } else {
+            // positional values are specified in the oaOffset of the include object
+            objectAreaPosition = factory.createObjectAreaPosition(0, 0, 0);
         }
+        getObjectEnvironmentGroup().setObjectAreaPosition(objectAreaPosition);
     }
 
     /**

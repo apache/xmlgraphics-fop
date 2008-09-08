@@ -49,12 +49,6 @@ public class ObjectContainer extends AbstractDataObject {
      */
     public ObjectContainer(Factory factory, String name) {
         super(factory, name);
-
-//        PresentationEnvironmentControl presentationEnvironmentControl
-//            = factory.createPresentationEnvironmentControl();
-//        getObjectEnvironmentGroup().setPresentationEnvironmentControl(
-//                presentationEnvironmentControl);
-
     }
 
     /** {@inheritDoc} */
@@ -93,23 +87,24 @@ public class ObjectContainer extends AbstractDataObject {
 
     /** {@inheritDoc} */
     public void setViewport(AFPDataObjectInfo dataObjectInfo) {
-        super.setViewport(dataObjectInfo);
-
-        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         AFPResourceLevel resourceLevel = resourceInfo.getLevel();
 
-        // only need to set MCD and CDD when OC is inljned (pre-2000 apps)
+        // only need to set MCD and CDD when OC when is inlined (pre-2000 apps)
         if (resourceLevel.isInline()) {
+            super.setViewport(dataObjectInfo);
+
             MapContainerData mapContainerData
             = factory.createMapContainerData(MappingOptionTriplet.SCALE_TO_FIT);
             getObjectEnvironmentGroup().setMapContainerData(mapContainerData);
 
             int dataWidth = dataObjectInfo.getDataWidth();
             int dataHeight = dataObjectInfo.getDataHeight();
+
+            AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
             int widthRes = objectAreaInfo.getWidthRes();
             int heightRes = objectAreaInfo.getHeightRes();
+
             ContainerDataDescriptor containerDataDescriptor
                 = factory.createContainerDataDescriptor(
                         dataWidth, dataHeight, widthRes, heightRes);

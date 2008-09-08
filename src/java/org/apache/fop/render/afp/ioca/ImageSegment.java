@@ -67,12 +67,14 @@ public class ImageSegment extends AbstractNamedAFPObject {
      * Sets the image size parameters resolution, hsize and vsize.
      *
      * @param hsize The horizontal size of the image.
-     * @param vsize The vertival size of the image.
+     * @param vsize The vertical size of the image.
      * @param hresol The horizontal resolution of the image.
      * @param vresol The vertical resolution of the image.
      */
     public void setImageSize(int hsize, int vsize, int hresol, int vresol) {
-        getImageContent().setImageSize(hsize, vsize, hresol, vresol);
+        ImageSizeParameter imageSizeParameter
+            = factory.createImageSizeParameter(hsize, vsize, hresol, vresol);
+        getImageContent().setImageSizeParameter(imageSizeParameter);
     }
 
     /**

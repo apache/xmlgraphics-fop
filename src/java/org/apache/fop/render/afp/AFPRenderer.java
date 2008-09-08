@@ -805,6 +805,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         return this.state;
     }
 
+    /**
+     * Sets the default resource group file path
+     * @param filePath the default resource group file path
+     */
+    public void setDefaultResourceGroupFilePath(String filePath) {
+        resourceManager.setDefaultResourceGroupFilePath(filePath);
+    }
+
     // TODO: remove this and use the superclass implementation
     /** {@inheritDoc} */
     protected void renderReferenceArea(Block block) {
@@ -839,14 +847,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         // stacked and relative blocks effect stacking
         currentIPPosition = saveIP;
         currentBPPosition = saveBP;
-    }
-
-    /**
-     * Sets the default resource group file path
-     * @param filePath the default resource group file path
-     */
-    public void setDefaultResourceGroupFilePath(String filePath) {
-        resourceManager.setDefaultResourceGroupFilePath(filePath);
     }
 
 }

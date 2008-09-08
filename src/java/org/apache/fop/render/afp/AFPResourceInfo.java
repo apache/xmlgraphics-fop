@@ -94,9 +94,11 @@ public class AFPResourceInfo {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "AFPResourceInfo(uri=" + uri
+        return "AFPResourceInfo{uri=" + uri
             + (name != null ? ", name=" + name : "")
-            + (level != null ? ", level=" + level : "") + ")";
+            + (level != null ? ", level=" + level : "")
+            + "}";
+
     }
 
     /** {@inheritDoc} */
