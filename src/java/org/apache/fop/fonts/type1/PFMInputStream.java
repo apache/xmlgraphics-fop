@@ -100,12 +100,12 @@ public class PFMInputStream extends java.io.FilterInputStream {
         StringBuffer buf = new StringBuffer();
 
         int ch = reader.read();
-        while (ch != 0) {
+        while (ch > 0) {
             buf.append((char)ch);
             ch = reader.read();
-            if (ch == -1) {
-                throw new EOFException("Unexpected end of stream reached");
-            }
+        }
+        if (ch == -1) {
+            throw new EOFException("Unexpected end of stream reached");
         }
         return buf.toString();
     }
