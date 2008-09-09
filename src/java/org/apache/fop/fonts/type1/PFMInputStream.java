@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.type1;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.DataInputStream;
@@ -30,7 +31,7 @@ import java.io.InputStreamReader;
  */
 public class PFMInputStream extends java.io.FilterInputStream {
 
-    private DataInputStream datain;
+    private final DataInputStream datain;
 
     /**
      * Constructs a PFMInputStream based on an InputStream representing the
@@ -97,10 +98,14 @@ public class PFMInputStream extends java.io.FilterInputStream {
     public String readString() throws IOException {
         InputStreamReader reader = new InputStreamReader(in, "ISO-8859-1");
         StringBuffer buf = new StringBuffer();
+
         int ch = reader.read();
         while (ch != 0) {
             buf.append((char)ch);
             ch = reader.read();
+            if (ch == -1) {
+                throw new EOFException("Unexpected end of stream reached");
+            }
         }
         return buf.toString();
     }
