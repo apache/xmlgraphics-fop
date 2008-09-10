@@ -53,6 +53,10 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="45734">
+        Fix for PFMReader after bug #43089 changed the behavior of PFMFile. Fixes baseline
+        problems when Type 1 fonts are used in conjunction with XML font metric files.
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="45616" due-to="Pavel Kysilka">
         Fix for table handling in RTF output, so the output works with OpenOffice and AbiWord, too.
       </action>
