@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="45616" due-to="Pavel Kysilka">
+        Fix for table handling in RTF output, so the output works with OpenOffice and AbiWord, too.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="45667">
         Quick-fix to avoid a possible NullPointerException when using
         empty inlines and hyphenation.
