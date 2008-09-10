@@ -53,7 +53,7 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
-      <action context="Fonts" dev="JM" type="fix" fixes-bug="45734">
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="45734" due-to="J. Frantzius">
         Fix for PFMReader after bug #43089 changed the behavior of PFMFile. Fixes baseline
         problems when Type 1 fonts are used in conjunction with XML font metric files.
       </action>
