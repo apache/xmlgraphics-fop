@@ -163,6 +163,11 @@ public class PDFFilterList {
      * @param type which filter list to modify
      */
     public void addDefaultFilters(Map filters, String type) {
+        if (METADATA_FILTER.equals(type)) {
+            //XMP metadata should not be embedded in clear-text
+            addFilter(new NullFilter());
+            return;
+        }
         List filterset = null;
         if (filters != null) {
             filterset = (List)filters.get(type);
@@ -171,10 +176,7 @@ public class PDFFilterList {
             }
         }
         if (filterset == null || filterset.size() == 0) {
-            if (METADATA_FILTER.equals(type)) {
-                //XMP metadata should not be embedded in clear-text
-                addFilter(new NullFilter());
-            } else if (JPEG_FILTER.equals(type)) {
+            if (JPEG_FILTER.equals(type)) {
                 //JPEG is already well compressed
                 addFilter(new NullFilter());
             } else if (TIFF_FILTER.equals(type)) {
