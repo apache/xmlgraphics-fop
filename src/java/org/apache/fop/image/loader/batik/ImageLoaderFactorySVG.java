@@ -20,6 +20,7 @@
 package org.apache.fop.image.loader.batik;
 
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.XMLNamespaceEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageLoaderFactory;
 import org.apache.xmlgraphics.image.loader.spi.ImageLoader;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -30,7 +31,7 @@ import org.apache.xmlgraphics.util.MimeConstants;
 public class ImageLoaderFactorySVG extends AbstractImageLoaderFactory {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
-        ImageFlavor.XML_DOM};
+        XMLNamespaceEnabledImageFlavor.SVG_DOM};
 
     private static final String[] MIMES = new String[] {
         MimeConstants.MIME_SVG};
