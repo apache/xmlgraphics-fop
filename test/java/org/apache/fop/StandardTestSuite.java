@@ -23,6 +23,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.apache.fop.fonts.TrueTypeAnsiTestCase;
+import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
+import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
 import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
@@ -50,6 +52,8 @@ public class StandardTestSuite {
         suite.addTest(new TestSuite(PDFsRGBSettingsTestCase.class));
         suite.addTest(new TestSuite(TrueTypeAnsiTestCase.class));
         suite.addTest(RichTextFormatTestSuite.suite());
+        suite.addTest(new TestSuite(ImageLoaderTestCase.class));
+        suite.addTest(new TestSuite(ImagePreloaderTestCase.class));
         //$JUnit-END$
         return suite;
     }

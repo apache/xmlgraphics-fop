@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.XMLNamespaceEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageLoader;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -45,7 +45,7 @@ public class ImageLoaderSVG extends AbstractImageLoader {
      * @param targetFlavor the target flavor
      */
     public ImageLoaderSVG(ImageFlavor targetFlavor) {
-        if (!(ImageFlavor.XML_DOM.equals(targetFlavor))) {
+        if (!(XMLNamespaceEnabledImageFlavor.SVG_DOM.equals(targetFlavor))) {
             throw new IllegalArgumentException("Unsupported target ImageFlavor: " + targetFlavor);
         }
         this.targetFlavor = targetFlavor;
