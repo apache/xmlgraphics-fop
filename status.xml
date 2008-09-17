@@ -53,6 +53,10 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="45795">
+        PDF Output: Added support for handling 16-bit alpha channel. They are currently
+        converted to 8 bits.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         PDF Output: Made sure the XMP Metadata stream is never compressed.
       </action>
