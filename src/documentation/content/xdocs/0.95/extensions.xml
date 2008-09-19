@@ -48,7 +48,7 @@
         <p>
           By convention, FO extensions in FOP use the "fox" namespace prefix.
           To use any of the FO extensions, add a namespace entry for 
-          <code>http://xml.apache.org/fop/extensions</code> to the root element:
+          <code>http://xmlgraphics.apache.org/fop/extensions</code> to the root element:
         </p>
         <source><![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
                xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">]]></source>
