@@ -234,13 +234,13 @@ public class PageProvider implements Constants {
             indexOfCachedLastPage = (isLastPage ? intIndex : -1);
         }
         if (replace) {
-            disardCacheStartingWith(intIndex);
+            discardCacheStartingWith(intIndex);
             page = cacheNextPage(index, isBlank, isLastPage);
         }
         return page;
     }
 
-    private void disardCacheStartingWith(int index) {
+    private void discardCacheStartingWith(int index) {
         while (index < cachedPages.size()) {
             this.cachedPages.remove(cachedPages.size() - 1);
             if (!pageSeq.goToPreviousSimplePageMaster()) {
@@ -251,8 +251,9 @@ public class PageProvider implements Constants {
 
     private Page cacheNextPage(int index, boolean isBlank, boolean isLastPage) {
         String pageNumberString = pageSeq.makeFormattedPageNumber(index);
+        boolean isFirstPage = (startPageOfPageSequence == index);
         SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
-                index, (startPageOfPageSequence == index), isLastPage, false, isBlank);
+                index, isFirstPage, isLastPage, isBlank);
 
         Region body = spm.getRegion(FO_REGION_BODY);
         if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {

@@ -177,7 +177,6 @@ public class PageSequenceMaster extends FObj {
      * @param isOddPage True if the next page number is odd
      * @param isFirstPage True if the next page is the first
      * @param isLastPage True if the next page is the last
-     * @param isOnlyPage True if the next page is the only page
      * @param isBlankPage True if the next page is blank
      * @return the requested page master
      * @throws PageProductionException if there's a problem determining the next page master
@@ -185,7 +184,6 @@ public class PageSequenceMaster extends FObj {
     public SimplePageMaster getNextSimplePageMaster(boolean isOddPage,
                                                     boolean isFirstPage,
                                                     boolean isLastPage,
-                                                    boolean isOnlyPage,
                                                     boolean isBlankPage)
                                                       throws PageProductionException {
         if (currentSubSequence == null) {
@@ -198,7 +196,7 @@ public class PageSequenceMaster extends FObj {
             }
         }
         String pageMasterName = currentSubSequence
-            .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isOnlyPage, isBlankPage);
+            .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isBlankPage);
         boolean canRecover = true;
         while (pageMasterName == null) {
             SubSequenceSpecifier nextSubSequence = getNextSubSequence();
@@ -213,7 +211,7 @@ public class PageSequenceMaster extends FObj {
                 currentSubSequence = nextSubSequence;
             }
             pageMasterName = currentSubSequence
-                .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isOnlyPage, isBlankPage);
+                .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isBlankPage);
         }
         SimplePageMaster pageMaster = this.layoutMasterSet
             .getSimplePageMaster(pageMasterName);
