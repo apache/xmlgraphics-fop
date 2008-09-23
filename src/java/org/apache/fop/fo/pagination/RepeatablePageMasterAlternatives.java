@@ -117,7 +117,6 @@ public class RepeatablePageMasterAlternatives extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
-                                        boolean isOnlyPage,
                                         boolean isBlankPage) {
         if (getMaximumRepeats() != INFINITE) {
             if (numberConsumed < getMaximumRepeats()) {
@@ -132,7 +131,7 @@ public class RepeatablePageMasterAlternatives extends FObj
         for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
             ConditionalPageMasterReference cpmr
                 = (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
-            if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isOnlyPage, isBlankPage)) {
+            if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isBlankPage)) {
                 return cpmr.getMasterReference();
             }
         }

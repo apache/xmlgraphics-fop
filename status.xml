@@ -53,6 +53,11 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="40798">
+        Bugzilla 40798: A conditional-page-master-reference with page-position="last" qualifies
+        for a first page, if it is also the last. Additionally: also added support for
+        page-position="only".
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="45842" due-to="Carsten Siedentop">
         Make fop.bat and fop.cmd use the %FOP_OPTS% environment variable.
       </action>
