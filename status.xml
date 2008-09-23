@@ -53,6 +53,10 @@
   
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="JM" type="add">
+        Added missing support for Next Line (NEL, 0x0085)
+        and Line Separator (LS, 0x2028) characters.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed text stroking in SVG when the stroke-width is zero.
       </action>

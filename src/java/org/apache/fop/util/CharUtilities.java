@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -123,7 +123,7 @@ public class CharUtilities {
      * @return true if the character has a fixed-width
      */
     public static boolean isFixedWidthSpace(char c) {
-        return (c >= '\u2000' && c <= '\u200B') 
+        return (c >= '\u2000' && c <= '\u200B')
                 || c == '\u3000';
 //      c == '\u2000'                   // en quad
 //      c == '\u2001'                   // em quad
@@ -167,7 +167,7 @@ public class CharUtilities {
             (c == '\u0020'    // normal space
             || c == NBSPACE); // no-break space
     }
-    
+
     /**
      * Determines if the character represents any kind of space.
      * @param c character to check
@@ -177,7 +177,7 @@ public class CharUtilities {
         boolean ret = (isBreakableSpace(c) || isNonBreakableSpace(c));
         return ret;
     }
-    
+
     /**
      * Indicates whether a character is classified as "Alphabetic" by the Unicode standard.
      * @param ch the character
@@ -201,6 +201,21 @@ public class CharUtilities {
             return false;
         }
     }
-    
+
+    /**
+     * Indicates whether the given character is a line break character as in the
+     * "BK" line breaking class (see UAX #14).
+     * @param ch the character
+     * @return true if the character is in the "BK" line breaking class
+     */
+    public static boolean isLineBreakCharacter(char ch) {
+        return ch == '\n'
+            || (ch == '\u0085') //NEXT LINE (NEL)
+            || (ch == '\u2028'); //LINE SEPARATOR (SP)
+        //maybe also: PARAGRAPH SEPARATOR (PS)
+        //FORM FEED (FF, 000C) and LINE TABULATION (VT, 000B) are in the "BK" class
+        //but are no valid XML characters and therefore left out here.
+    }
+
 }
 
