@@ -222,7 +222,7 @@ public class RTFHandler extends FOEventHandler {
                     PageSequenceMaster master
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
                     this.pagemaster = master.getNextSimplePageMaster(
-                            false, false, false, false, false);
+                            false, false, false, false);
                 }
             }
 

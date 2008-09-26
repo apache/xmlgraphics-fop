@@ -53,6 +53,28 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="40798">
+        Bugzilla 40798: A conditional-page-master-reference with page-position="last" qualifies
+        for a first page, if it is also the last. Additionally: also added support for
+        page-position="only".
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="45842" due-to="Carsten Siedentop">
+        Make fop.bat and fop.cmd use the %FOP_OPTS% environment variable.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="45795">
+        PDF Output: Added support for handling 16-bit alpha channel. They are currently
+        converted to 8 bits.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        PDF Output: Made sure the XMP Metadata stream is never compressed.
+      </action>
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="45734" due-to="J. Frantzius">
+        Fix for PFMReader after bug #43089 changed the behavior of PFMFile. Fixes baseline
+        problems when Type 1 fonts are used in conjunction with XML font metric files.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="45616" due-to="Pavel Kysilka">
+        Fix for table handling in RTF output, so the output works with OpenOffice and AbiWord, too.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="45667">
         Quick-fix to avoid a possible NullPointerException when using
         empty inlines and hyphenation.

@@ -32,18 +32,17 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.apache.fop.svg.SimpleSVGUserAgent;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
+import org.apache.xmlgraphics.image.loader.XMLNamespaceEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageConverter;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.util.UnitConv;
-
-import org.apache.fop.svg.SimpleSVGUserAgent;
 
 /**
  * This ImageConverter converts SVG images to Java2D.
@@ -132,7 +131,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
 
     /** {@inheritDoc} */
     public ImageFlavor getSourceFlavor() {
-        return ImageFlavor.XML_DOM;
+        return XMLNamespaceEnabledImageFlavor.SVG_DOM;
     }
 
     /** {@inheritDoc} */

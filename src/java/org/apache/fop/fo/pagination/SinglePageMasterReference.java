@@ -86,8 +86,7 @@ public class SinglePageMasterReference extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
-                                        boolean isOnlyPage,
-                                        boolean isEmptyPage) {
+                                        boolean isBlankPage) {
         if (this.state == FIRST) {
             this.state = DONE;
             return masterReference;
@@ -100,8 +99,6 @@ public class SinglePageMasterReference extends FObj
     public void reset() {
         this.state = FIRST;
     }
-
-
 
     /** {@inheritDoc} */
     public boolean goToPrevious() {

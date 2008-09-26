@@ -228,6 +228,7 @@ public class XMLWhiteSpaceHandler {
                     nestedBlockStack.pop();
                 }
                 charIter = null;
+                firstWhiteSpaceInSeq = null;
             }
         }
     }
