@@ -22,38 +22,38 @@ package org.apache.fop.render.intermediate;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
- * Base class for factory classes which instantiate {@code IFPainter}s and provide information
- * about them.
+ * Base class for factory classes which instantiate {@code IFDocumentHandler}s and provide
+ * information about them.
  */
-public abstract class AbstractIFPainterMaker {
+public abstract class AbstractIFDocumentHandlerMaker {
 
     /**
-     * Instantiates a new {@code IFPainter}.
+     * Instantiates a new {@code IFDocumentHandler}.
      * @param userAgent the user agent
-     * @return the newly instantiated painter
+     * @return the newly instantiated document handler
      */
-    public abstract IFPainter makePainter(FOUserAgent userAgent);
+    public abstract IFDocumentHandler makeIFDocumentHandler(FOUserAgent userAgent);
 
     /**
-     * @return Indicates whether this painter requires an OutputStream to work with.
+     * @return Indicates whether this document handler requires an OutputStream to work with.
      */
     public abstract boolean needsOutputStream();
 
     /**
-     * @return an array of MIME types the painter supports.
+     * @return an array of MIME types the document handler supports.
      */
     public abstract String[] getSupportedMimeTypes();
 
     /**
      * Returns a configurator object that can be used to
-     * configure the painter.
+     * configure the document handler.
      * @param userAgent the user agent
-     * @return a configurator object that can be used to configure the painter
+     * @return a configurator object that can be used to configure the document handler
      */
-    public abstract IFPainterConfigurator getConfigurator(FOUserAgent userAgent);
+    public abstract IFDocumentHandlerConfigurator getConfigurator(FOUserAgent userAgent);
 
     /**
-     * Indicates whether a specific MIME type is supported by this painter.
+     * Indicates whether a specific MIME type is supported by this document handler.
      * @param mimeType the MIME type (ex. "application/pdf")
      * @return true if the MIME type is supported
      */

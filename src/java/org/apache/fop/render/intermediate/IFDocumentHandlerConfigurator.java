@@ -20,23 +20,26 @@
 package org.apache.fop.render.intermediate;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fonts.FontInfo;
 
 /**
- * This interface is implemented by classes that configure an {@code IFPainter} instance.
+ * This interface is implemented by classes that configure an {@code IFDocumentHandler} instance.
  */
-public interface IFPainterConfigurator {
+public interface IFDocumentHandlerConfigurator {
 
     /**
-     * Configures a painter.
-     * @param painter the painter instance
+     * Configures a intermediate format document handler.
+     * @param documentHandler the document handler instance
      * @throws FOPException if an error occurs while configuring the object
      */
-    void configure(IFPainter painter) throws FOPException;
+    void configure(IFDocumentHandler documentHandler) throws FOPException;
 
     /**
-     * Sets up the {@code FontInfo} object for the IFPainter.
-     * @param painter the painter instance
+     * Sets up the {@code FontInfo} object for the IFDocumentHandler.
+     * @param documentHandler the document handler instance
+     * @param fontInfo the font info object to set up
      * @throws FOPException if an error occurs while configuring the object
      */
-    void setupFontInfo(IFPainter painter) throws FOPException;
+    void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo) throws FOPException;
+
 }

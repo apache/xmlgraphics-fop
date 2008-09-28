@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * A collection of utility method for XML handling.
@@ -144,6 +145,29 @@ public class XMLUtil implements XMLConstants {
         } else {
             return ConversionUtils.toIntArray(s.trim(), "\\s");
         }
+    }
+
+    /**
+     * Adds an attribute to a given {@code AttributesImpl} instance.
+     * @param atts the attributes collection
+     * @param attribute the attribute to add
+     * @param value the attribute's CDATA value
+     */
+    public static void addAttribute(AttributesImpl atts,
+            org.apache.xmlgraphics.util.QName attribute, String value) {
+        atts.addAttribute(attribute.getNamespaceURI(),
+                attribute.getLocalName(), attribute.getQName(), XMLUtil.CDATA, value);
+    }
+
+    /**
+     * Adds an attribute to a given {@code AttributesImpl} instance. The attribute will be
+     * added in the default namespace.
+     * @param atts the attributes collection
+     * @param localName the local name of the attribute
+     * @param value the attribute's CDATA value
+     */
+    public static void addAttribute(AttributesImpl atts, String localName, String value) {
+        atts.addAttribute("", localName, localName, XMLUtil.CDATA, value);
     }
 
 }

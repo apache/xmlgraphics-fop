@@ -17,25 +17,25 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pcl;
+package org.apache.fop.render.svg;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
-import org.apache.fop.render.intermediate.IFPainter;
-import org.apache.fop.render.intermediate.IFPainterConfigurator;
+import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
- * Painter factory for PCL output.
+ * Document handler factory for SVG Print output.
  */
-public class PCLPainterMaker extends AbstractIFPainterMaker {
+public class SVGPrintDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
-    //TODO Revert to normal MIME after stabilization!
-    private static final String[] MIMES = new String[] {MimeConstants.MIME_PCL + ";mode=painter"};
+    private static final String[] MIMES = new String[] {SVGConstants.MIME_SVG_PRINT};
 
     /** {@inheritDoc} */
-    public IFPainter makePainter(FOUserAgent ua) {
-        return new PCLPainter();
+    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
+        SVGPrintDocumentHandler handler = new SVGPrintDocumentHandler();
+        handler.setUserAgent(ua);
+        return handler;
     }
 
     /** {@inheritDoc} */
@@ -48,8 +48,9 @@ public class PCLPainterMaker extends AbstractIFPainterMaker {
         return MIMES;
     }
 
-    public IFPainterConfigurator getConfigurator(FOUserAgent userAgent) {
-        return null; //new PDFRendererConfigurator(userAgent);
+    /** {@inheritDoc} */
+    public IFDocumentHandlerConfigurator getConfigurator(FOUserAgent userAgent) {
+        return null;
     }
 
 }

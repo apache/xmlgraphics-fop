@@ -28,16 +28,18 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.render.intermediate.IFConstants;
 import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.util.XMLUtil;
 
 /**
- * IFPainter implementation that writes SVG Print.
+ * {@code IFDocumentHandler} implementation that writes SVG Print.
  */
-public class SVGPrintPainter extends AbstractSVGPainter {
+public class SVGPrintDocumentHandler extends AbstractSVGDocumentHandler {
 
     /**
      * Default constructor.
      */
-    public SVGPrintPainter() {
+    public SVGPrintDocumentHandler() {
         //nop
     }
 
@@ -47,7 +49,7 @@ public class SVGPrintPainter extends AbstractSVGPainter {
      * @param result the JAXP Result object to receive the generated content
      * @throws IFException if an error occurs setting up the output
      */
-    public SVGPrintPainter(Result result) throws IFException {
+    public SVGPrintDocumentHandler(Result result) throws IFException {
         setResult(result);
     }
 
@@ -69,8 +71,8 @@ public class SVGPrintPainter extends AbstractSVGPainter {
             handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
             handler.startPrefixMapping("if", IFConstants.NAMESPACE);
             AttributesImpl atts = new AttributesImpl();
-            atts.addAttribute("", "version", "version", CDATA, "1.2"); //SVG Print is SVG 1.2
-            startElement("svg", atts);
+            XMLUtil.addAttribute(atts, "version", "1.2"); //SVG Print is SVG 1.2
+            handler.startElement("svg", atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
         }
@@ -79,7 +81,7 @@ public class SVGPrintPainter extends AbstractSVGPainter {
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
         try {
-            endElement("svg");
+            handler.endElement("svg");
             handler.endDocument();
         } catch (SAXException e) {
             throw new IFException("SAX error in endDocument()", e);
@@ -93,7 +95,7 @@ public class SVGPrintPainter extends AbstractSVGPainter {
             if (id != null) {
                 atts.addAttribute(XML_NAMESPACE, "id", "xml:id", CDATA, id);
             }
-            startElement("pageSet", atts);
+            handler.startElement("pageSet", atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageSequence()", e);
         }
@@ -102,7 +104,7 @@ public class SVGPrintPainter extends AbstractSVGPainter {
     /** {@inheritDoc} */
     public void endPageSequence() throws IFException {
         try {
-            endElement("pageSet");
+            handler.endElement("pageSet");
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageSequence()", e);
         }
@@ -113,8 +115,8 @@ public class SVGPrintPainter extends AbstractSVGPainter {
         try {
             AttributesImpl atts = new AttributesImpl();
             /*
-            atts.addAttribute("", "index", "index", CDATA, Integer.toString(index));
-            atts.addAttribute("", "name", "name", CDATA, name);
+            XMLUtil.addAttribute(atts, "index", Integer.toString(index));
+            XMLUtil.addAttribute(atts, "name", name);
             */
             //NOTE: SVG Print doesn't support individual page sizes for each page
             atts.addAttribute(IFConstants.NAMESPACE, "width", "if:width",
@@ -123,7 +125,7 @@ public class SVGPrintPainter extends AbstractSVGPainter {
                     CDATA, Integer.toString(size.height));
             atts.addAttribute(IFConstants.NAMESPACE, "viewBox", "if:viewBox", CDATA,
                     "0 0 " + Integer.toString(size.width) + " " + Integer.toString(size.height));
-            startElement("page", atts);
+            handler.startElement("page", atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPage()", e);
         }
@@ -138,23 +140,22 @@ public class SVGPrintPainter extends AbstractSVGPainter {
     }
 
     /** {@inheritDoc} */
-    public void startPageContent() throws IFException {
-        super.startPageContent();
+    public IFPainter startPageContent() throws IFException {
         try {
-            startElement("g");
+            handler.startElement("g");
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageContent()", e);
         }
+        return new SVGPainter(this, handler);
     }
 
     /** {@inheritDoc} */
     public void endPageContent() throws IFException {
         try {
-            endElement("g");
+            handler.endElement("g");
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageContent()", e);
         }
-        super.endPageContent();
     }
 
     /** {@inheritDoc} */
@@ -168,7 +169,7 @@ public class SVGPrintPainter extends AbstractSVGPainter {
     /** {@inheritDoc} */
     public void endPage() throws IFException {
         try {
-            endElement("page");
+            handler.endElement("page");
         } catch (SAXException e) {
             throw new IFException("SAX error in endPage()", e);
         }

@@ -56,6 +56,27 @@ public class DelegatingContentHandler
     }
 
     /**
+     * Convenience constructor. If the given handler also implements any of the EntityResolver,
+     * DTDHandler, LexicalHandler or ErrorHandler interfaces, these are set automatically.
+     * @param handler the content handler to delegate to
+     */
+    public DelegatingContentHandler(ContentHandler handler) {
+        setDelegateContentHandler(handler);
+        if (handler instanceof EntityResolver) {
+            setDelegateEntityResolver((EntityResolver)handler);
+        }
+        if (handler instanceof DTDHandler) {
+            setDelegateDTDHandler((DTDHandler)handler);
+        }
+        if (handler instanceof LexicalHandler) {
+            setDelegateLexicalHandler((LexicalHandler)handler);
+        }
+        if (handler instanceof ErrorHandler) {
+            setDelegateErrorHandler((ErrorHandler)handler);
+        }
+    }
+
+    /**
      * @return the delegate that all ContentHandler events are forwarded to
      */
     public ContentHandler getDelegateContentHandler() {

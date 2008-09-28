@@ -193,8 +193,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
     public boolean isCompatible(RenderingContext targetContext, Image image) {
         return (image == null
                 || (image instanceof ImageXMLDOM
-                        && image.getFlavor().isCompatible(BatikImageFlavors.SVG_DOM))
-                && targetContext instanceof PDFRenderingContext);
+                        && image.getFlavor().isCompatible(BatikImageFlavors.SVG_DOM)))
+                && targetContext instanceof PDFRenderingContext;
     }
 
 }

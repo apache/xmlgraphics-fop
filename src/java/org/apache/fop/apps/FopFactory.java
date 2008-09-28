@@ -47,6 +47,7 @@ import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
+import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
 import org.apache.fop.util.ColorSpaceCache;
@@ -68,6 +69,9 @@ public class FopFactory implements ImageContext {
 
     /** Registry for XML handlers */
     private XMLHandlerRegistry xmlHandlers;
+
+    /** Registry for image handlers */
+    private ImageHandlerRegistry imageHandlers;
 
     /** The registry for ElementMapping instances */
     private ElementMappingRegistry elementMappingRegistry;
@@ -156,6 +160,7 @@ public class FopFactory implements ImageContext {
         this.imageManager = new ImageManager(this);
         this.rendererFactory = new RendererFactory();
         this.xmlHandlers = new XMLHandlerRegistry();
+        this.imageHandlers = new ImageHandlerRegistry();
         this.ignoredNamespaces = new java.util.HashSet();
     }
 
@@ -274,6 +279,11 @@ public class FopFactory implements ImageContext {
     /** @return the XML handler registry */
     public XMLHandlerRegistry getXMLHandlerRegistry() {
         return this.xmlHandlers;
+    }
+
+    /** @return the image handler registry */
+    public ImageHandlerRegistry getImageHandlerRegistry() {
+        return this.imageHandlers;
     }
 
     /** @return the element mapping registry */

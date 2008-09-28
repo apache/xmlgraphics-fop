@@ -17,23 +17,27 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.svg;
+package org.apache.fop.render.pcl;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
-import org.apache.fop.render.intermediate.IFPainter;
-import org.apache.fop.render.intermediate.IFPainterConfigurator;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
- * Painter factory for SVG output.
+ * Document handler factory for PCL output.
  */
-public class SVGPainterMaker extends AbstractIFPainterMaker {
+public class PCLDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
-    private static final String[] MIMES = new String[] {SVGConstants.MIME_TYPE};
+    //TODO Revert to normal MIME after stabilization!
+    private static final String[] MIMES = new String[] {MimeConstants.MIME_PCL + ";mode=painter"};
 
     /** {@inheritDoc} */
-    public IFPainter makePainter(FOUserAgent ua) {
-        return new SVGPainter();
+    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
+        PCLDocumentHandler handler = new PCLDocumentHandler();
+        handler.setUserAgent(ua);
+        return handler;
     }
 
     /** {@inheritDoc} */
@@ -47,8 +51,7 @@ public class SVGPainterMaker extends AbstractIFPainterMaker {
     }
 
     /** {@inheritDoc} */
-    public IFPainterConfigurator getConfigurator(FOUserAgent userAgent) {
-        // TODO Auto-generated method stub
+    public IFDocumentHandlerConfigurator getConfigurator(FOUserAgent userAgent) {
         return null;
     }
 

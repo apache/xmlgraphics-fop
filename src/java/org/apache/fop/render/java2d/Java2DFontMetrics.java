@@ -21,12 +21,14 @@ package org.apache.fop.render.java2d;
 
 // Java
 import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.font.LineMetrics;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.Map;
 
 /**
@@ -108,6 +110,20 @@ public class Java2DFontMetrics {
      * Temp graphics object needed to get the font metrics
      */
     private Graphics2D graphics;
+
+    /**
+     * Creates a Graphics2D object for the sole purpose of getting font metrics.
+     * @return a Graphics2D object
+     */
+    public static Graphics2D createFontMetricsGraphics2D() {
+        BufferedImage fontImage = new BufferedImage(100, 100,
+                BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = fontImage.createGraphics();
+        //The next line is important to get accurate font metrics!
+        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        return graphics2D;
+    }
 
     /**
      * Constructs a new Font-metrics.

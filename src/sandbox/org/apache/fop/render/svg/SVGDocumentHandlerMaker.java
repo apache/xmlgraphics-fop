@@ -20,20 +20,22 @@
 package org.apache.fop.render.svg;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
-import org.apache.fop.render.intermediate.IFPainter;
-import org.apache.fop.render.intermediate.IFPainterConfigurator;
+import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
- * Painter factory for SVG Print output.
+ * Document handler factory for SVG output.
  */
-public class SVGPrintPainterMaker extends AbstractIFPainterMaker {
+public class SVGDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
-    private static final String[] MIMES = new String[] {SVGConstants.MIME_SVG_PRINT};
+    private static final String[] MIMES = new String[] {SVGConstants.MIME_TYPE};
 
     /** {@inheritDoc} */
-    public IFPainter makePainter(FOUserAgent ua) {
-        return new SVGPrintPainter();
+    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
+        SVGDocumentHandler handler = new SVGDocumentHandler();
+        handler.setUserAgent(ua);
+        return handler;
     }
 
     /** {@inheritDoc} */
@@ -47,8 +49,7 @@ public class SVGPrintPainterMaker extends AbstractIFPainterMaker {
     }
 
     /** {@inheritDoc} */
-    public IFPainterConfigurator getConfigurator(FOUserAgent userAgent) {
-        // TODO Auto-generated method stub
+    public IFDocumentHandlerConfigurator getConfigurator(FOUserAgent userAgent) {
         return null;
     }
 
