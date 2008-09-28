@@ -114,7 +114,7 @@ public abstract class AbstractRenderer
     private Set warnedXMLHandlers;
 
     /** {@inheritDoc} */
-    public abstract void setupFontInfo(FontInfo fontInfo);
+    public abstract void setupFontInfo(FontInfo fontInfo) throws FOPException;
 
     /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {

@@ -74,16 +74,16 @@ public class IFParser implements IFConstants {
     /**
      * Parses an intermediate file and paints it.
      * @param src the Source instance pointing to the intermediate file
-     * @param painter the intermediate format painter used to process the IF events
+     * @param documentHandler the intermediate format document handler used to process the IF events
      * @param userAgent the user agent
      * @throws TransformerException if an error occurs while parsing the area tree XML
      */
-    public void parse(Source src, IFPainter painter, FOUserAgent userAgent)
+    public void parse(Source src, IFDocumentHandler documentHandler, FOUserAgent userAgent)
             throws TransformerException {
         Transformer transformer = tFactory.newTransformer();
         transformer.setErrorListener(new DefaultErrorListener(log));
 
-        SAXResult res = new SAXResult(getContentHandler(painter, userAgent));
+        SAXResult res = new SAXResult(getContentHandler(documentHandler, userAgent));
 
         transformer.transform(src, res);
     }
@@ -91,20 +91,22 @@ public class IFParser implements IFConstants {
     /**
      * Creates a new ContentHandler instance that you can send the area tree XML to. The parsed
      * pages are added to the AreaTreeModel instance you pass in as a parameter.
-     * @param painter the intermediate format painter used to process the IF events
+     * @param documentHandler the intermediate format document handler used to process the IF events
      * @param userAgent the user agent
      * @return the ContentHandler instance to receive the SAX stream from the area tree XML
      */
-    public ContentHandler getContentHandler(IFPainter painter, FOUserAgent userAgent) {
+    public ContentHandler getContentHandler(IFDocumentHandler documentHandler,
+                    FOUserAgent userAgent) {
         ElementMappingRegistry elementMappingRegistry
             = userAgent.getFactory().getElementMappingRegistry();
-        return new Handler(painter, userAgent, elementMappingRegistry);
+        return new Handler(documentHandler, userAgent, elementMappingRegistry);
     }
 
     private static class Handler extends DefaultHandler {
 
         private Map elementHandlers = new java.util.HashMap();
 
+        private IFDocumentHandler documentHandler;
         private IFPainter painter;
         private FOUserAgent userAgent;
         private ElementMappingRegistry elementMappingRegistry;
@@ -120,9 +122,9 @@ public class IFParser implements IFConstants {
         private boolean inForeignObject;
         private Document foreignObject;
 
-        public Handler(IFPainter painter, FOUserAgent userAgent,
+        public Handler(IFDocumentHandler documentHandler, FOUserAgent userAgent,
                 ElementMappingRegistry elementMappingRegistry) {
-            this.painter = painter;
+            this.documentHandler = documentHandler;
             this.userAgent = userAgent;
             this.elementMappingRegistry = elementMappingRegistry;
             elementHandlers.put(EL_DOCUMENT, new DocumentHandler());
@@ -279,11 +281,11 @@ public class IFParser implements IFConstants {
         private class DocumentHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
-                painter.startDocument();
+                documentHandler.startDocument();
             }
 
             public void endElement() throws IFException {
-                painter.endDocument();
+                documentHandler.endDocument();
             }
 
         }
@@ -291,11 +293,11 @@ public class IFParser implements IFConstants {
         private class DocumentHeaderHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
-                painter.startDocumentHeader();
+                documentHandler.startDocumentHeader();
             }
 
             public void endElement() throws IFException {
-                painter.endDocumentHeader();
+                documentHandler.endDocumentHeader();
             }
 
         }
@@ -303,11 +305,11 @@ public class IFParser implements IFConstants {
         private class DocumentTrailerHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
-                painter.startDocumentTrailer();
+                documentHandler.startDocumentTrailer();
             }
 
             public void endElement() throws IFException {
-                painter.endDocumentTrailer();
+                documentHandler.endDocumentTrailer();
             }
 
         }
@@ -316,11 +318,11 @@ public class IFParser implements IFConstants {
 
             public void startElement(Attributes attributes) throws IFException {
                 String id = attributes.getValue("id");
-                painter.startPageSequence(id);
+                documentHandler.startPageSequence(id);
             }
 
             public void endElement() throws IFException {
-                painter.endPageSequence();
+                documentHandler.endPageSequence();
             }
 
         }
@@ -332,11 +334,11 @@ public class IFParser implements IFConstants {
                 String name = attributes.getValue("name");
                 int width = Integer.parseInt(attributes.getValue("width"));
                 int height = Integer.parseInt(attributes.getValue("height"));
-                painter.startPage(index, name, new Dimension(width, height));
+                documentHandler.startPage(index, name, new Dimension(width, height));
             }
 
             public void endElement() throws IFException {
-                painter.endPage();
+                documentHandler.endPage();
             }
 
         }
@@ -344,11 +346,11 @@ public class IFParser implements IFConstants {
         private class PageHeaderHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
-                painter.startPageHeader();
+                documentHandler.startPageHeader();
             }
 
             public void endElement() throws IFException {
-                painter.endPageHeader();
+                documentHandler.endPageHeader();
             }
 
         }
@@ -356,11 +358,12 @@ public class IFParser implements IFConstants {
         private class PageContentHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
-                painter.startPageContent();
+                painter = documentHandler.startPageContent();
             }
 
             public void endElement() throws IFException {
-                painter.endPageContent();
+                painter = null;
+                documentHandler.endPageContent();
             }
 
         }
@@ -368,11 +371,11 @@ public class IFParser implements IFConstants {
         private class PageTrailerHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
-                painter.startPageTrailer();
+                documentHandler.startPageTrailer();
             }
 
             public void endElement() throws IFException {
-                painter.endPageTrailer();
+                documentHandler.endPageTrailer();
             }
 
         }
@@ -553,14 +556,6 @@ public class IFParser implements IFConstants {
 
         // ====================================================================
 
-
-        private void assertObjectOfClass(Object obj, Class clazz) {
-            if (!clazz.isInstance(obj)) {
-                throw new IllegalStateException("Object is not an instance of "
-                        + clazz.getName() + " but of " + obj.getClass().getName());
-            }
-        }
-
         /**
          * Handles objects created by "sub-parsers" that implement the ObjectSource interface.
          * An example of object handled here are ExtensionAttachments.
@@ -569,7 +564,7 @@ public class IFParser implements IFConstants {
          */
         protected void handleExternallyGeneratedObject(Object obj) throws SAXException {
             try {
-                painter.handleExtensionObject(obj);
+                documentHandler.handleExtensionObject(obj);
             } catch (IFException ife) {
                 handleIFException(ife);
             }

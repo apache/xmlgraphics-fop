@@ -17,39 +17,45 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pdf;
+package org.apache.fop.render.java2d;
+
+import java.awt.Graphics2D;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
-import org.apache.fop.render.intermediate.IFPainter;
-import org.apache.fop.render.intermediate.IFPainterConfigurator;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.AbstractRenderingContext;
 
 /**
- * Painter factory for PDF output.
+ * Rendering context for PDF production.
  */
-public class PDFPainterMaker extends AbstractIFPainterMaker {
+public class Java2DRenderingContext extends AbstractRenderingContext {
 
-    //TODO Revert to normal MIME after stabilization!
-    private static final String[] MIMES = new String[] {MimeConstants.MIME_PDF + ";mode=painter"};
+    private FontInfo fontInfo;
+    private Graphics2D g2d;
 
-    /** {@inheritDoc} */
-    public IFPainter makePainter(FOUserAgent ua) {
-        return new PDFPainter();
+    /**
+     * Main constructor.
+     * @param userAgent the user agent
+     * @param g2d the target Graphics2D instance
+     * @param fontInfo the font list
+     */
+    public Java2DRenderingContext(FOUserAgent userAgent, Graphics2D g2d, FontInfo fontInfo) {
+        super(userAgent);
+        this.g2d = g2d;
+        this.fontInfo = fontInfo;
     }
 
     /** {@inheritDoc} */
-    public boolean needsOutputStream() {
-        return true;
+    public String getMimeType() {
+        return null; //not applicable
     }
 
-    /** {@inheritDoc} */
-    public String[] getSupportedMimeTypes() {
-        return MIMES;
-    }
-
-    public IFPainterConfigurator getConfigurator(FOUserAgent userAgent) {
-        return new PDFRendererConfigurator(userAgent);
+    /**
+     * Returns the target Graphics2D object.
+     * @return the Graphics2D object
+     */
+    public Graphics2D getGraphics2D() {
+        return this.g2d;
     }
 
 }

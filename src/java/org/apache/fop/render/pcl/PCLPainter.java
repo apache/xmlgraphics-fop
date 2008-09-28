@@ -38,12 +38,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RenderingContext;
-import org.apache.fop.render.intermediate.AbstractBinaryWritingIFPainter;
+import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
@@ -52,18 +51,17 @@ import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.UnitConv;
 
 /**
- * IFPainter implementation that produces PCL.
+ * {@code IFPainter} implementation that produces PCL 5.
  */
-public class PCLPainter extends AbstractBinaryWritingIFPainter implements PCLConstants {
+public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PCLPainter.class);
 
+    private PCLDocumentHandler parent;
+
     /** Holds the intermediate format state */
     protected IFState state;
-
-    /** Utility class for handling all sorts of peripheral tasks around PCL generation. */
-    protected PCLRenderingUtil pclUtil;
 
     /** The PCL generator */
     private PCLGenerator gen;
@@ -75,35 +73,24 @@ public class PCLPainter extends AbstractBinaryWritingIFPainter implements PCLCon
     private Stack graphicContextStack = new Stack();
     private GraphicContext graphicContext = new GraphicContext();
 
-    /** contains the pageWith of the last printed page */
-    private long pageWidth = 0;
-    /** contains the pageHeight of the last printed page */
-    private long pageHeight = 0;
-
     /**
-     * Default constructor.
+     * Main constructor.
+     * @param parent the parent document handler
      */
-    public PCLPainter() {
+    public PCLPainter(PCLDocumentHandler parent, PCLPageDefinition pageDefinition) {
+        this.parent = parent;
+        this.gen = parent.getPCLGenerator();
+        this.state = IFState.create();
+        this.currentPageDefinition = pageDefinition;
     }
 
     /** {@inheritDoc} */
-    public boolean supportsPagesOutOfOrder() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return MimeConstants.MIME_PCL;
-    }
-
-    /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent ua) {
-        super.setUserAgent(ua);
-        this.pclUtil = new PCLRenderingUtil(ua);
+    public FOUserAgent getUserAgent() {
+        return this.parent.getUserAgent();
     }
 
     PCLRenderingUtil getPCLUtil() {
-        return this.pclUtil;
+        return this.parent.getPCLUtil();
     }
 
     /** @return the target resolution */
@@ -117,116 +104,6 @@ public class PCLPainter extends AbstractBinaryWritingIFPainter implements PCLCon
     }
 
     //----------------------------------------------------------------------------------------------
-
-    /** {@inheritDoc} */
-    public void startDocument() throws IFException {
-        try {
-            if (getUserAgent() == null) {
-                throw new IllegalStateException(
-                        "User agent must be set before starting PDF generation");
-            }
-            if (this.outputStream == null) {
-                throw new IllegalStateException("OutputStream hasn't been set through setResult()");
-            }
-            log.debug("Rendering areas to PCL...");
-            this.gen = new PCLGenerator(this.outputStream, getResolution());
-
-            if (!pclUtil.isPJLDisabled()) {
-                gen.universalEndOfLanguage();
-                gen.writeText("@PJL COMMENT Produced by " + getUserAgent().getProducer() + "\n");
-                if (getUserAgent().getTitle() != null) {
-                    gen.writeText("@PJL JOB NAME = \"" + getUserAgent().getTitle() + "\"\n");
-                }
-                gen.writeText("@PJL SET RESOLUTION = " + getResolution() + "\n");
-                gen.writeText("@PJL ENTER LANGUAGE = PCL\n");
-            }
-            gen.resetPrinter();
-            gen.setUnitOfMeasure(getResolution());
-            gen.setRasterGraphicsResolution(getResolution());
-        } catch (IOException e) {
-            throw new IFException("I/O error in startDocument()", e);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void endDocumentHeader() throws IFException {
-    }
-
-    /** {@inheritDoc} */
-    public void endDocument() throws IFException {
-        try {
-            gen.separateJobs();
-            gen.resetPrinter();
-            if (!pclUtil.isPJLDisabled()) {
-                gen.universalEndOfLanguage();
-            }
-        } catch (IOException ioe) {
-            throw new IFException("I/O error in endDocument()", ioe);
-        }
-        super.endDocument();
-    }
-
-    /** {@inheritDoc} */
-    public void startPageSequence(String id) throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void endPageSequence() throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void startPage(int index, String name, Dimension size) throws IFException {
-        saveGraphicsState();
-
-        try {
-            //TODO Add support for paper-source and duplex-mode
-            /*
-            //Paper source
-            String paperSource = page.getForeignAttributeValue(
-                    new QName(PCLElementMapping.NAMESPACE, null, "paper-source"));
-            if (paperSource != null) {
-                gen.selectPaperSource(Integer.parseInt(paperSource));
-            }
-
-            // Is Page duplex?
-            String pageDuplex = page.getForeignAttributeValue(
-                    new QName(PCLElementMapping.NAMESPACE, null, "duplex-mode"));
-            if (pageDuplex != null) {
-                gen.selectDuplexMode(Integer.parseInt(pageDuplex));
-            }*/
-
-            //Page size
-            final long pagewidth = size.width;
-            final long pageheight = size.height;
-            selectPageFormat(pagewidth, pageheight);
-        } catch (IOException ioe) {
-            throw new IFException("I/O error in startPage()", ioe);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void startPageContent() throws IFException {
-        this.state = IFState.create();
-    }
-
-    /** {@inheritDoc} */
-    public void endPageContent() throws IFException {
-        assert this.state.pop() == null;
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void endPage() throws IFException {
-        try {
-            //Eject page
-            gen.formFeed();
-            restoreGraphicsState();
-        } catch (IOException ioe) {
-            throw new IFException("I/O error in endPage()", ioe);
-        }
-    }
 
     /** {@inheritDoc} */
     public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
@@ -377,8 +254,8 @@ public class PCLPainter extends AbstractBinaryWritingIFPainter implements PCLCon
                     state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
             //TODO Ignored: state.getFontVariant()
             //TODO Opportunity for font caching if font state is more heavily used
-            String fontKey = fontInfo.getInternalFontKey(triplet);
-            boolean pclFont = pclUtil.isAllTextAsBitmaps()
+            String fontKey = parent.getFontInfo().getInternalFontKey(triplet);
+            boolean pclFont = getPCLUtil().isAllTextAsBitmaps()
                         ? false
                         : setFont(fontKey, state.getFontSize(), text);
             if (true || pclFont) {
@@ -403,7 +280,7 @@ public class PCLPainter extends AbstractBinaryWritingIFPainter implements PCLCon
         setCursorPos(x, y);
 
         float fontSize = state.getFontSize() / 1000f;
-        Font font = fontInfo.getFontInstance(triplet, state.getFontSize());
+        Font font = parent.getFontInfo().getFontInstance(triplet, state.getFontSize());
         int l = text.length();
         int dxl = (dx != null ? dx.length : 0);
 
@@ -512,16 +389,6 @@ public class PCLPainter extends AbstractBinaryWritingIFPainter implements PCLCon
         }
     }
 
-    /** {@inheritDoc} */
-    public void handleExtensionObject(Object extension) throws IFException {
-        if (false) {
-            //TODO Handle extensions
-        } else {
-            log.debug("Ignored extension object: "
-                    + extension + " (" + extension.getClass().getName() + ")");
-        }
-    }
-
     //----------------------------------------------------------------------------------------------
 
     /** Saves the current graphics state on the stack. */
@@ -610,37 +477,6 @@ public class PCLPainter extends AbstractBinaryWritingIFPainter implements PCLCon
     void setCursorPos(int x, int y) throws IOException {
         Point2D transPoint = transformedPoint(x, y);
         gen.setCursorPos(transPoint.getX(), transPoint.getY());
-    }
-
-    private void selectPageFormat(long pagewidth, long pageheight) throws IOException {
-        //Only set the page format if it changes (otherwise duplex printing won't work)
-        if ((pagewidth != this.pageWidth) || (pageheight != this.pageHeight))  {
-            this.pageWidth = pagewidth;
-            this.pageHeight = pageheight;
-
-            this.currentPageDefinition = PCLPageDefinition.getPageDefinition(
-                    pagewidth, pageheight, 1000);
-
-            if (this.currentPageDefinition == null) {
-                this.currentPageDefinition = PCLPageDefinition.getDefaultPageDefinition();
-                log.warn("Paper type could not be determined. Falling back to: "
-                        + this.currentPageDefinition.getName());
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("page size: " + currentPageDefinition.getPhysicalPageSize());
-                log.debug("logical page: " + currentPageDefinition.getLogicalPageRect());
-            }
-
-            if (this.currentPageDefinition.isLandscapeFormat()) {
-                gen.writeCommand("&l1O"); //Landscape Orientation
-            } else {
-                gen.writeCommand("&l0O"); //Portrait Orientation
-            }
-            gen.selectPageSize(this.currentPageDefinition.getSelector());
-
-            gen.clearHorizontalMargins();
-            gen.setTopMargin(0);
-        }
     }
 
     /**

@@ -40,6 +40,7 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
@@ -56,12 +57,6 @@ public abstract class AbstractIFPainter implements IFPainter {
     /** non-URI that can be used in feedback messages that an image is an instream-object */
     protected static final String INSTREAM_OBJECT_URI = "(instream-object)";
 
-    private FOUserAgent userAgent;
-
-    /** Image handler registry */
-    protected ImageHandlerRegistry imageHandlerRegistry = new ImageHandlerRegistry();
-    //TODO Move reference to FOPFactory to the user has a chance to add his own implementations
-    //and so the lookup process isn't redone for each painter instance.
 
     /**
      * Default constructor.
@@ -69,60 +64,18 @@ public abstract class AbstractIFPainter implements IFPainter {
     public AbstractIFPainter() {
     }
 
-    /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent ua) {
-        if (this.userAgent != null) {
-            throw new IllegalStateException("The user agent was already set");
-        }
-        this.userAgent = ua;
-    }
-
     /**
      * Returns the user agent.
      * @return the user agent
      */
-    protected FOUserAgent getUserAgent() {
-        return this.userAgent;
-    }
+    protected abstract FOUserAgent getUserAgent();
 
-    /** {@inheritDoc} */
-    public void startDocumentHeader() throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void endDocumentHeader() throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void startDocumentTrailer() throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void endDocumentTrailer() throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void startPageHeader() throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void endPageHeader() throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void startPageTrailer() throws IFException {
-        //nop
-    }
-
-    /** {@inheritDoc} */
-    public void endPageTrailer() throws IFException {
-        //nop
+    /**
+     * Returns the FOP factory.
+     * @return the FOP factory.
+     */
+    protected FopFactory getFopFactory() {
+        return getUserAgent().getFactory();
     }
 
     private AffineTransform combine(AffineTransform[] transforms) {
@@ -159,8 +112,9 @@ public abstract class AbstractIFPainter implements IFPainter {
      */
     protected void drawImageUsingImageHandler(ImageInfo info, Rectangle rect)
                     throws ImageException, IOException {
-        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageManager manager = getFopFactory().getImageManager();
         ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+        ImageHandlerRegistry imageHandlerRegistry = getFopFactory().getImageHandlerRegistry();
 
         //Load and convert the image to a supported format
         RenderingContext context = createRenderingContext();
@@ -197,7 +151,7 @@ public abstract class AbstractIFPainter implements IFPainter {
      * @param rect the rectangle in which to paint the image
      */
     protected void drawImageUsingURI(String uri, Rectangle rect) {
-        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageManager manager = getFopFactory().getImageManager();
         ImageInfo info = null;
         try {
             ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
@@ -225,7 +179,7 @@ public abstract class AbstractIFPainter implements IFPainter {
      * @param rect the rectangle in which to paint the image
      */
     protected void drawImageUsingDocument(Document doc, Rectangle rect) {
-        ImageManager manager = getUserAgent().getFactory().getImageManager();
+        ImageManager manager = getFopFactory().getImageManager();
         ImageInfo info = null;
         try {
             info = manager.preloadImage(null, new DOMSource(doc));

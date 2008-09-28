@@ -109,7 +109,7 @@ public class IFGraphicContext extends GraphicContext {
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer("group: ");
-            AbstractXMLWritingIFPainter.toString(getTransforms(), sb);
+            IFUtil.toString(getTransforms(), sb);
             return sb.toString();
         }
 
@@ -149,7 +149,7 @@ public class IFGraphicContext extends GraphicContext {
         /** {@inheritDoc} */
         public String toString() {
             StringBuffer sb = new StringBuffer("viewport: ");
-            AbstractXMLWritingIFPainter.toString(getTransforms(), sb);
+            IFUtil.toString(getTransforms(), sb);
             sb.append(", ").append(getSize());
             if (getClipRect() != null) {
                 sb.append(", ").append(getClipRect());

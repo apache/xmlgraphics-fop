@@ -36,6 +36,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
@@ -46,7 +47,9 @@ import org.apache.fop.util.XMLUtil;
 /**
  * IFPainter implementation that serializes the intermediate format to XML.
  */
-public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConstants {
+public class IFSerializer extends AbstractXMLWritingIFDocumentHandler implements IFConstants, IFPainter {
+
+    private IFDocumentHandler mimicHandler;
 
     /**
      * Default constructor.
@@ -72,12 +75,48 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     }
 
     /** {@inheritDoc} */
+    public IFDocumentHandlerConfigurator getConfigurator() {
+        if (this.mimicHandler != null) {
+            return getMimickedDocumentHandler().getConfigurator();
+        } else {
+            return new IFSerializerConfiguration(getUserAgent());
+        }
+    }
+
+    public void mimicDocumentHandler(IFDocumentHandler targetHandler) {
+        this.mimicHandler = targetHandler;
+    }
+
+    public IFDocumentHandler getMimickedDocumentHandler() {
+        return this.mimicHandler;
+    }
+
+    /** {@inheritDoc} */
+    public FontInfo getFontInfo() {
+        if (this.mimicHandler != null) {
+            return this.mimicHandler.getFontInfo();
+        } else {
+            return null;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void setFontInfo(FontInfo fontInfo) {
+        //nop, not used
+    }
+
+    /** {@inheritDoc} */
+    public void setDefaultFontInfo(FontInfo fontInfo) {
+        //nop, not used
+    }
+
+    /** {@inheritDoc} */
     public void startDocument() throws IFException {
         try {
             handler.startDocument();
             handler.startPrefixMapping("", NAMESPACE);
             handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
-            startElement(EL_DOCUMENT);
+            handler.startElement(EL_DOCUMENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
         }
@@ -86,7 +125,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void startDocumentHeader() throws IFException {
         try {
-            startElement(EL_HEADER);
+            handler.startElement(EL_HEADER);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocumentHeader()", e);
         }
@@ -95,7 +134,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endDocumentHeader() throws IFException {
         try {
-            endElement(EL_HEADER);
+            handler.endElement(EL_HEADER);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocumentHeader()", e);
         }
@@ -104,7 +143,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void startDocumentTrailer() throws IFException {
         try {
-            startElement(EL_TRAILER);
+            handler.startElement(EL_TRAILER);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocumentTrailer()", e);
         }
@@ -113,16 +152,16 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endDocumentTrailer() throws IFException {
         try {
-            endElement(EL_TRAILER);
+            handler.endElement(EL_TRAILER);
         } catch (SAXException e) {
-            throw new IFException("SAX error in startDocumentTrailer()", e);
+            throw new IFException("SAX error in endDocumentTrailer()", e);
         }
     }
 
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
         try {
-            endElement(EL_DOCUMENT);
+            handler.endElement(EL_DOCUMENT);
             handler.endDocument();
         } catch (SAXException e) {
             throw new IFException("SAX error in endDocument()", e);
@@ -136,7 +175,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             if (id != null) {
                 atts.addAttribute(XML_NAMESPACE, "id", "xml:id", XMLUtil.CDATA, id);
             }
-            startElement(EL_PAGE_SEQUENCE, atts);
+            handler.startElement(EL_PAGE_SEQUENCE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageSequence()", e);
         }
@@ -145,7 +184,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endPageSequence() throws IFException {
         try {
-            endElement(EL_PAGE_SEQUENCE);
+            handler.endElement(EL_PAGE_SEQUENCE);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageSequence()", e);
         }
@@ -159,7 +198,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             addAttribute(atts, "name", name);
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
-            startElement(EL_PAGE, atts);
+            handler.startElement(EL_PAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPage()", e);
         }
@@ -168,7 +207,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void startPageHeader() throws IFException {
         try {
-            startElement(EL_PAGE_HEADER);
+            handler.startElement(EL_PAGE_HEADER);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageHeader()", e);
         }
@@ -177,16 +216,17 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endPageHeader() throws IFException {
         try {
-            endElement(EL_PAGE_HEADER);
+            handler.endElement(EL_PAGE_HEADER);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageHeader()", e);
         }
     }
 
     /** {@inheritDoc} */
-    public void startPageContent() throws IFException {
+    public IFPainter startPageContent() throws IFException {
         try {
-            startElement(EL_PAGE_CONTENT);
+            handler.startElement(EL_PAGE_CONTENT);
+            return this;
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageContent()", e);
         }
@@ -195,7 +235,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endPageContent() throws IFException {
         try {
-            endElement(EL_PAGE_CONTENT);
+            handler.endElement(EL_PAGE_CONTENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageContent()", e);
         }
@@ -204,7 +244,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void startPageTrailer() throws IFException {
         try {
-            startElement(EL_PAGE_TRAILER);
+            handler.startElement(EL_PAGE_TRAILER);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageTrailer()", e);
         }
@@ -213,7 +253,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endPageTrailer() throws IFException {
         try {
-            endElement(EL_PAGE_TRAILER);
+            handler.endElement(EL_PAGE_TRAILER);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageTrailer()", e);
         }
@@ -222,22 +262,24 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endPage() throws IFException {
         try {
-            endElement(EL_PAGE);
+            handler.endElement(EL_PAGE);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPage()", e);
         }
     }
 
+    //---=== IFPainter ===---
+
     /** {@inheritDoc} */
     public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
-        startViewport(toString(transform), size, clipRect);
+        startViewport(IFUtil.toString(transform), size, clipRect);
     }
 
     /** {@inheritDoc} */
     public void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect)
             throws IFException {
-        startViewport(toString(transforms), size, clipRect);
+        startViewport(IFUtil.toString(transforms), size, clipRect);
     }
 
     private void startViewport(String transform, Dimension size, Rectangle clipRect)
@@ -250,9 +292,9 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
             if (clipRect != null) {
-                addAttribute(atts, "clip-rect", toString(clipRect));
+                addAttribute(atts, "clip-rect", IFUtil.toString(clipRect));
             }
-            startElement(EL_VIEWPORT, atts);
+            handler.startElement(EL_VIEWPORT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startViewport()", e);
         }
@@ -261,7 +303,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endViewport() throws IFException {
         try {
-            endElement(EL_VIEWPORT);
+            handler.endElement(EL_VIEWPORT);
         } catch (SAXException e) {
             throw new IFException("SAX error in endViewport()", e);
         }
@@ -269,12 +311,12 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
 
     /** {@inheritDoc} */
     public void startGroup(AffineTransform[] transforms) throws IFException {
-        startGroup(toString(transforms));
+        startGroup(IFUtil.toString(transforms));
     }
 
     /** {@inheritDoc} */
     public void startGroup(AffineTransform transform) throws IFException {
-        startGroup(toString(transform));
+        startGroup(IFUtil.toString(transform));
     }
 
     private void startGroup(String transform) throws IFException {
@@ -283,7 +325,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             if (transform != null && transform.length() > 0) {
                 addAttribute(atts, "transform", transform);
             }
-            startElement(EL_GROUP, atts);
+            handler.startElement(EL_GROUP, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
         }
@@ -292,7 +334,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     public void endGroup() throws IFException {
         try {
-            endElement(EL_GROUP);
+            handler.endElement(EL_GROUP);
         } catch (SAXException e) {
             throw new IFException("SAX error in endGroup()", e);
         }
@@ -314,7 +356,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
                     addAttribute(atts, (QName)entry.getKey(), entry.getValue().toString());
                 }
             }
-            element(EL_IMAGE, atts);
+            handler.element(EL_IMAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
         }
@@ -335,9 +377,9 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
                     addAttribute(atts, (QName)entry.getKey(), entry.getValue().toString());
                 }
             }
-            startElement(EL_IMAGE, atts);
+            handler.startElement(EL_IMAGE, atts);
             new DOM2SAX(handler).writeDocument(doc, true);
-            endElement(EL_IMAGE);
+            handler.endElement(EL_IMAGE);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
         }
@@ -359,7 +401,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             addAttribute(atts, "y", Integer.toString(rect.y));
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
-            element(EL_CLIP_RECT, atts);
+            handler.element(EL_CLIP_RECT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in clipRect()", e);
         }
@@ -377,7 +419,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addAttribute(atts, "fill", toString(fill));
-            element(EL_RECT, atts);
+            handler.element(EL_RECT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in fillRect()", e);
         }
@@ -407,7 +449,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             if (end != null) {
                 addAttribute(atts, "end", end.toString());
             }
-            element(EL_BORDER_RECT, atts);
+            handler.element(EL_BORDER_RECT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in drawBorderRect()", e);
         }
@@ -425,7 +467,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             addAttribute(atts, "stroke-width", Integer.toString(width));
             addAttribute(atts, "color", Integer.toString(width));
             addAttribute(atts, "style", style.getName());
-            element(EL_LINE, atts);
+            handler.element(EL_LINE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in drawLine()", e);
         }
@@ -438,15 +480,15 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             addAttribute(atts, "x", Integer.toString(x));
             addAttribute(atts, "y", Integer.toString(y));
             if (dx != null) {
-                addAttribute(atts, "dx", toString(dx));
+                addAttribute(atts, "dx", IFUtil.toString(dx));
             }
             if (dy != null) {
-                addAttribute(atts, "dy", toString(dy));
+                addAttribute(atts, "dy", IFUtil.toString(dy));
             }
-            startElement(EL_TEXT, atts);
+            handler.startElement(EL_TEXT, atts);
             char[] chars = text.toCharArray();
             handler.characters(chars, 0, chars.length);
-            endElement(EL_TEXT);
+            handler.endElement(EL_TEXT);
         } catch (SAXException e) {
             throw new IFException("SAX error in setFont()", e);
         }
@@ -475,7 +517,7 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
             if (color != null) {
                 addAttribute(atts, "color", toString(color));
             }
-            element(EL_FONT, atts);
+            handler.element(EL_FONT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in setFont()", e);
         }
@@ -499,6 +541,15 @@ public class IFSerializer extends AbstractXMLWritingIFPainter implements IFConst
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
         throw new IllegalStateException("Should never be called!");
+    }
+
+    private void addAttribute(AttributesImpl atts,
+            org.apache.xmlgraphics.util.QName attribute, String value) {
+        XMLUtil.addAttribute(atts, attribute, value);
+    }
+
+    private void addAttribute(AttributesImpl atts, String localName, String value) {
+        XMLUtil.addAttribute(atts, localName, value);
     }
 
 }

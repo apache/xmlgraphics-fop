@@ -34,9 +34,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.render.intermediate.AbstractIFPainterMaker;
-import org.apache.fop.render.intermediate.IFPainter;
-import org.apache.fop.render.intermediate.IFPainterConfigurator;
+import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFRenderer;
 
 /**
@@ -49,7 +48,7 @@ public class RendererFactory {
 
     private Map rendererMakerMapping = new java.util.HashMap();
     private Map eventHandlerMakerMapping = new java.util.HashMap();
-    private Map painterMakerMapping = new java.util.HashMap();
+    private Map documentHandlerMakerMapping = new java.util.HashMap();
 
     /**
      * Main constructor.
@@ -57,7 +56,7 @@ public class RendererFactory {
     public RendererFactory() {
         discoverRenderers();
         discoverFOEventHandlers();
-        discoverPainters();
+        discoverDocumentHandlers();
     }
 
     /**
@@ -95,19 +94,19 @@ public class RendererFactory {
     }
 
     /**
-     * Add a new painter maker. If another maker has already been registered for a
+     * Add a new document handler maker. If another maker has already been registered for a
      * particular MIME type, this call overwrites the existing one.
-     * @param maker the painter maker
+     * @param maker the intermediate format document handler maker
      */
-    public void addPainterMaker(AbstractIFPainterMaker maker) {
+    public void addDocumentHandlerMaker(AbstractIFDocumentHandlerMaker maker) {
         String[] mimes = maker.getSupportedMimeTypes();
         for (int i = 0; i < mimes.length; i++) {
             //This overrides any renderer previously set for a MIME type
-            if (painterMakerMapping.get(mimes[i]) != null) {
-                log.trace("Overriding painter for " + mimes[i]
+            if (documentHandlerMakerMapping.get(mimes[i]) != null) {
+                log.trace("Overriding document handler for " + mimes[i]
                         + " with " + maker.getClass().getName());
             }
-            painterMakerMapping.put(mimes[i], maker);
+            documentHandlerMakerMapping.put(mimes[i], maker);
         }
     }
 
@@ -164,15 +163,15 @@ public class RendererFactory {
     }
 
     /**
-     * Add a new painter maker. If another maker has already been registered for a
+     * Add a new document handler maker. If another maker has already been registered for a
      * particular MIME type, this call overwrites the existing one.
-     * @param className the fully qualified class name of the painter maker
+     * @param className the fully qualified class name of the document handler maker
      */
-    public void addPainterMaker(String className) {
+    public void addDocumentHandlerMaker(String className) {
         try {
-            AbstractIFPainterMaker makerInstance
-                = (AbstractIFPainterMaker)Class.forName(className).newInstance();
-            addPainterMaker(makerInstance);
+            AbstractIFDocumentHandlerMaker makerInstance
+                = (AbstractIFDocumentHandlerMaker)Class.forName(className).newInstance();
+            addDocumentHandlerMaker(makerInstance);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
                                                + className);
@@ -185,7 +184,7 @@ public class RendererFactory {
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(className
                                                + " is not an "
-                                               + AbstractIFPainterMaker.class.getName());
+                                               + AbstractIFDocumentHandlerMaker.class.getName());
         }
     }
 
@@ -216,9 +215,9 @@ public class RendererFactory {
      * @param mime the requested output format
      * @return the requested RendererMaker or null if none is available
      */
-    public AbstractIFPainterMaker getPainterMaker(String mime) {
-        AbstractIFPainterMaker maker
-            = (AbstractIFPainterMaker)painterMakerMapping.get(mime);
+    public AbstractIFDocumentHandlerMaker getDocumentHandlerMaker(String mime) {
+        AbstractIFDocumentHandlerMaker maker
+            = (AbstractIFDocumentHandlerMaker)documentHandlerMakerMapping.get(mime);
         return maker;
     }
 
@@ -244,12 +243,14 @@ public class RendererFactory {
                 }
                 return rend;
             } else {
-                AbstractIFPainterMaker painterMaker = getPainterMaker(outputFormat);
-                if (painterMaker != null) {
+                AbstractIFDocumentHandlerMaker documentHandlerMaker
+                    = getDocumentHandlerMaker(outputFormat);
+                if (documentHandlerMaker != null) {
                     IFRenderer rend = new IFRenderer();
                     rend.setUserAgent(userAgent);
-                    IFPainter painter = createPainter(userAgent, outputFormat);
-                    rend.setPainter(painter);
+                    IFDocumentHandler documentHandler = createDocumentHandler(
+                            userAgent, outputFormat);
+                    rend.setDocumentHandler(documentHandler);
                     return rend;
                 } else {
                     throw new UnsupportedOperationException(
@@ -278,19 +279,20 @@ public class RendererFactory {
                 return maker.makeFOEventHandler(userAgent, out);
             } else {
                 AbstractRendererMaker rendMaker = getRendererMaker(outputFormat);
-                AbstractIFPainterMaker painterMaker = null;
+                AbstractIFDocumentHandlerMaker documentHandlerMaker = null;
                 boolean outputStreamMissing = (userAgent.getRendererOverride() == null);
                 if (rendMaker == null) {
-                    painterMaker = getPainterMaker(outputFormat);
-                    if (painterMaker != null) {
-                        outputStreamMissing &= (out == null) && (painterMaker.needsOutputStream());
+                    documentHandlerMaker = getDocumentHandlerMaker(outputFormat);
+                    if (documentHandlerMaker != null) {
+                        outputStreamMissing &= (out == null)
+                                && (documentHandlerMaker.needsOutputStream());
                     }
                 } else {
                     outputStreamMissing &= (out == null) && (rendMaker.needsOutputStream());
                 }
                 if (userAgent.getRendererOverride() != null
                         || rendMaker != null
-                        || painterMaker != null) {
+                        || documentHandlerMaker != null) {
                     if (outputStreamMissing) {
                         throw new FOPException(
                             "OutputStream has not been set");
@@ -308,32 +310,26 @@ public class RendererFactory {
     }
 
     /**
-     * Creates a {@code IFPainter} object based on render-type desired
+     * Creates a {@code IFDocumentHandler} object based on the desired output format.
      * @param userAgent the user agent for access to configuration
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @return the new {@code IFPainter} instance
-     * @throws FOPException if the painter cannot be properly constructed
+     * @return the new {@code IFDocumentHandler} instance
+     * @throws FOPException if the document handler cannot be properly constructed
      */
-    public IFPainter createPainter(FOUserAgent userAgent, String outputFormat)
+    public IFDocumentHandler createDocumentHandler(FOUserAgent userAgent, String outputFormat)
                     throws FOPException {
         /*
-        if (userAgent.getIFPainterOverride() != null) {
-            return userAgent.getIFPainterOverride();
+        if (userAgent.getIFDocumentHandlerOverride() != null) {
+            return userAgent.getIFDocumentHandlerOverride();
         } else {
         */
-            AbstractIFPainterMaker maker = getPainterMaker(outputFormat);
+            AbstractIFDocumentHandlerMaker maker = getDocumentHandlerMaker(outputFormat);
             if (maker == null) {
                 throw new UnsupportedOperationException(
-                        "No renderer for the requested format available: " + outputFormat);
+                    "No IF document handler for the requested format available: " + outputFormat);
             }
-            IFPainter painter = maker.makePainter(userAgent);
-            painter.setUserAgent(userAgent);
-            IFPainterConfigurator configurator = maker.getConfigurator(userAgent);
-            if (configurator != null) {
-                configurator.configure(painter);
-                configurator.setupFontInfo(painter);
-            }
-            return painter;
+            IFDocumentHandler documentHandler = maker.makeIFDocumentHandler(userAgent);
+            return documentHandler;
         //}
     }
 
@@ -350,7 +346,7 @@ public class RendererFactory {
         while (iter.hasNext()) {
             lst.add(((String)iter.next()));
         }
-        iter = this.painterMakerMapping.keySet().iterator();
+        iter = this.documentHandlerMakerMapping.keySet().iterator();
         while (iter.hasNext()) {
             lst.add(((String)iter.next()));
         }
@@ -409,24 +405,23 @@ public class RendererFactory {
     }
 
     /**
-     * Discovers {@code IFPainter} implementations through the classpath and dynamically
+     * Discovers {@code IFDocumentHandler} implementations through the classpath and dynamically
      * registers them.
      */
-    private void discoverPainters() {
+    private void discoverDocumentHandlers() {
         // add mappings from available services
-        Iterator providers
-            = Service.providers(IFPainter.class);
+        Iterator providers = Service.providers(IFDocumentHandler.class);
         if (providers != null) {
             while (providers.hasNext()) {
-                AbstractIFPainterMaker maker = (AbstractIFPainterMaker)providers.next();
+                AbstractIFDocumentHandlerMaker maker = (AbstractIFDocumentHandlerMaker)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dynamically adding maker for IFPainter: "
+                        log.debug("Dynamically adding maker for IFDocumentHandler: "
                                 + maker.getClass().getName());
                     }
-                    addPainterMaker(maker);
+                    addDocumentHandlerMaker(maker);
                 } catch (IllegalArgumentException e) {
-                    log.error("Error while adding maker for IFPainter", e);
+                    log.error("Error while adding maker for IFDocumentHandler", e);
                 }
 
             }

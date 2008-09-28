@@ -115,7 +115,7 @@ public class IFTester {
             IFSerializer serializer = new IFSerializer();
             DOMResult result = new DOMResult();
             serializer.setResult(result);
-            ifRenderer.setPainter(serializer);
+            ifRenderer.setDocumentHandler(serializer);
 
             ua.setRendererOverride(ifRenderer);
             FontInfo fontInfo = new FontInfo();

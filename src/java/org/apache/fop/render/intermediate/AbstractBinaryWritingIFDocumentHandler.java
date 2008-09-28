@@ -37,9 +37,9 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.base14.Base14FontCollection;
 
 /**
- * Abstract base class for binary-writing IFPainter implementations.
+ * Abstract base class for binary-writing {@code IFDocumentHandler} implementations.
  */
-public abstract class AbstractBinaryWritingIFPainter extends AbstractIFPainter {
+public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFDocumentHandler {
 
     /** The output stream to write the document to */
     protected OutputStream outputStream;
@@ -83,10 +83,7 @@ public abstract class AbstractBinaryWritingIFPainter extends AbstractIFPainter {
         }
     }
 
-    /**
-     * Returns the {@code FontInfo} object.
-     * @return the font info
-     */
+    /** {@inheritDoc} */
     public FontInfo getFontInfo() {
         return this.fontInfo;
     }
@@ -97,13 +94,13 @@ public abstract class AbstractBinaryWritingIFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void setDefaultFontInfo() {
+    public void setDefaultFontInfo(FontInfo fontInfo) {
         FontManager fontManager = getUserAgent().getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled())
         };
 
-        FontInfo fi = new FontInfo();
+        FontInfo fi = (fontInfo != null ? fontInfo : new FontInfo());
         fi.setEventListener(new FontEventAdapter(getUserAgent().getEventBroadcaster()));
         fontManager.setup(fi, fontCollections);
         setFontInfo(fi);

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.CustomFontCollection;
@@ -75,12 +76,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
         return this.embedFontInfoList;
     }
 
-    /**
-     * Set up the font info
-     *
-     * @param inFontInfo  font info to set up
-     */
-    public void setupFontInfo(FontInfo inFontInfo) {
+    /** {@inheritDoc} */
+    public void setupFontInfo(FontInfo inFontInfo) throws FOPException {
         this.fontInfo = inFontInfo;
         FontManager fontManager = userAgent.getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {

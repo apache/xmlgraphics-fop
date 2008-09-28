@@ -35,8 +35,8 @@ import org.w3c.dom.Document;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFParser;
 import org.apache.fop.render.intermediate.IFRenderer;
 import org.apache.fop.render.intermediate.IFSerializer;
@@ -82,20 +82,20 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
         FOUserAgent userAgent = createUserAgent();
 
         //Create an instance of the target renderer so the XMLRenderer can use its font setup
-        Renderer targetRenderer = userAgent.getRendererFactory().createRenderer(
+        IFDocumentHandler targetHandler = userAgent.getRendererFactory().createDocumentHandler(
                 userAgent, getTargetMIME());
-
-        //Setup renderer
-        IFRenderer renderer = new IFRenderer();
-        renderer.setUserAgent(userAgent);
-        renderer.mimicRenderer(targetRenderer);
 
         //Setup painter
         IFSerializer serializer = new IFSerializer();
         serializer.setUserAgent(userAgent);
+        serializer.mimicDocumentHandler(targetHandler);
         serializer.setResult(domResult);
 
-        renderer.setPainter(serializer);
+        //Setup renderer
+        IFRenderer renderer = new IFRenderer();
+        renderer.setUserAgent(userAgent);
+
+        renderer.setDocumentHandler(serializer);
         userAgent.setRendererOverride(renderer);
 
         Fop fop = fopFactory.newFop(userAgent);
@@ -111,11 +111,11 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
 
         FOUserAgent userAgent = createUserAgent();
 
-        IFPainter painter = userAgent.getRendererFactory().createPainter(
+        IFDocumentHandler documentHandler = userAgent.getRendererFactory().createDocumentHandler(
                 userAgent, getTargetMIME());
-        painter.setResult(new StreamResult(out));
-        painter.setDefaultFontInfo();
-        parser.parse(src, painter, userAgent);
+        documentHandler.setResult(new StreamResult(out));
+        documentHandler.setDefaultFontInfo(new FontInfo());
+        parser.parse(src, documentHandler, userAgent);
     }
 
     /** {@inheritDoc} */

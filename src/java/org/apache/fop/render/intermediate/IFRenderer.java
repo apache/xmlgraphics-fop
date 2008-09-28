@@ -107,6 +107,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** XML MIME type */
     public static final String IF_MIME_TYPE = MimeConstants.MIME_FOP_IF;
 
+    private IFDocumentHandler documentHandler;
     private IFPainter painter;
 
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
@@ -157,30 +158,25 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Sets the {@code IFPainter} to be used by the {@code IFRenderer}.
-     * @param painter the {@code IFPainter}
+     * Sets the {@code IFDocumentHandler} to be used by the {@code IFRenderer}.
+     * @param documentHandler the {@code IFDocumentHandler}
      */
-    public void setPainter(IFPainter painter) {
-        this.painter = painter;
-    }
-
-    /**
-     * Call this method to make the XMLRenderer mimic a different renderer by using its font
-     * setup. This is useful when working with the intermediate format parser.
-     * @param renderer the renderer to mimic
-     */
-    public void mimicRenderer(Renderer renderer) {
-        this.mimic = renderer;
+    public void setDocumentHandler(IFDocumentHandler documentHandler) {
+        this.documentHandler = documentHandler;
     }
 
     /** {@inheritDoc} */
-    public void setupFontInfo(FontInfo inFontInfo) {
-        if (mimic != null) {
-            mimic.setupFontInfo(inFontInfo);
-            this.fontInfo = inFontInfo;
-        } else {
-            super.setupFontInfo(inFontInfo);
+    public void setupFontInfo(FontInfo inFontInfo) throws FOPException {
+        if (this.documentHandler == null) {
+            this.documentHandler = createDefaultDocumentHandler();
         }
+        IFDocumentHandlerConfigurator configurator = this.documentHandler.getConfigurator();
+        if (configurator != null) {
+            configurator.setupFontInfo(documentHandler, inFontInfo);
+        } else {
+            this.documentHandler.setDefaultFontInfo(inFontInfo);
+        }
+        this.fontInfo = inFontInfo;
     }
 
     private void handleIFException(IFException ife) {
@@ -200,11 +196,13 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Creates a default {@code IFPainter} when none has been set.
-     * @return the default IFPainter
+     * Creates a default {@code IFDocumentHandler} when none has been set.
+     * @return the default IFDocumentHandler
      */
-    protected IFPainter createDefaultPainter() {
-        return new IFSerializer();
+    protected IFDocumentHandler createDefaultDocumentHandler() {
+        IFSerializer serializer = new IFSerializer();
+        serializer.setUserAgent(getUserAgent());
+        return serializer;
     }
 
     /** {@inheritDoc} */
@@ -217,20 +215,18 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                     result.setSystemId(
                             getUserAgent().getOutputFile().toURI().toURL().toExternalForm());
                 }
-                if (this.painter == null) {
-                    this.painter = new IFSerializer();
-                    this.painter.setUserAgent(getUserAgent());
+                if (this.documentHandler == null) {
+                    this.documentHandler = createDefaultDocumentHandler();
                 }
-                this.painter.setFontInfo(fontInfo);
-                this.painter.setResult(result);
+                this.documentHandler.setResult(result);
             }
             super.startRenderer(null);
             if (log.isDebugEnabled()) {
-                log.debug("Rendering areas via painter ("
-                        + this.painter.getClass().getName() + ")...");
+                log.debug("Rendering areas via IF document handler ("
+                        + this.documentHandler.getClass().getName() + ")...");
             }
-            painter.startDocument();
-            painter.startDocumentHeader();
+            documentHandler.startDocument();
+            documentHandler.startDocumentHeader();
         } catch (IFException e) {
             handleIFExceptionWithIOException(e);
         }
@@ -240,16 +236,16 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     public void stopRenderer() throws IOException {
         try {
             if (this.inPageSequence) {
-                painter.endPageSequence();
+                documentHandler.endPageSequence();
                 this.inPageSequence = false;
             }
-            painter.startDocumentTrailer();
+            documentHandler.startDocumentTrailer();
             finishOpenGoTos();
             if (this.bookmarkTree != null) {
-                painter.handleExtensionObject(this.bookmarkTree);
+                documentHandler.handleExtensionObject(this.bookmarkTree);
             }
-            painter.endDocumentTrailer();
-            painter.endDocument();
+            documentHandler.endDocumentTrailer();
+            documentHandler.endDocument();
         } catch (IFException e) {
             handleIFExceptionWithIOException(e);
         }
@@ -285,7 +281,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             GoToXYAction action = getGoToActionForID(targetID, pv.getPageIndex());
             NamedDestination namedDestination = new NamedDestination(targetID, action);
             try {
-                painter.handleExtensionObject(namedDestination);
+                documentHandler.handleExtensionObject(namedDestination);
             } catch (IFException ife) {
                 handleIFException(ife);
             }
@@ -444,16 +440,16 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     public void startPageSequence(PageSequence pageSequence) {
         try {
             if (this.inPageSequence) {
-                painter.endPageSequence();
+                documentHandler.endPageSequence();
             } else {
                 if (this.documentMetadata == null) {
                     this.documentMetadata = createDefaultDocumentMetadata();
                 }
-                painter.handleExtensionObject(this.documentMetadata);
-                painter.endDocumentHeader();
+                documentHandler.handleExtensionObject(this.documentMetadata);
+                documentHandler.endDocumentHeader();
                 this.inPageSequence = true;
             }
-            painter.startPageSequence(null);
+            documentHandler.startPageSequence(null);
         } catch (IFException e) {
             handleIFException(e);
         }
@@ -496,17 +492,18 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             Dimension dim = new Dimension(
                     (int)Math.ceil(viewArea.getWidth()),
                     (int)Math.ceil(viewArea.getHeight()));
-            painter.startPage(page.getPageIndex(), page.getPageNumberString(), dim);
-            painter.startPageHeader();
+            documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(), dim);
+            documentHandler.startPageHeader();
             //TODO Handle page header
-            painter.endPageHeader();
-            painter.startPageContent();
+            documentHandler.endPageHeader();
+            this.painter = documentHandler.startPageContent();
             super.renderPage(page);
-            painter.endPageContent();
-            painter.startPageTrailer();
+            this.painter = null;
+            documentHandler.endPageContent();
+            documentHandler.startPageTrailer();
             //TODO Handle page trailer
-            painter.endPageTrailer();
-            painter.endPage();
+            documentHandler.endPageTrailer();
+            documentHandler.endPage();
         } catch (IFException e) {
             handleIFException(e);
         }
