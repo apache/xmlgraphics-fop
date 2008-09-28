@@ -26,8 +26,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Iterator;
 
 /**  A cell in an RTF table, container for paragraphs, lists, etc.
@@ -237,12 +237,12 @@ public class RtfTableCell
             // Reach the column index in table context corresponding to the current column cell
             // id is the index of the current cell (it begins at 1)
             // getColumnIndex() is the index of the current column in table context (it begins at 0)
-            //  => so we must widthdraw 1 when comparing these two variables.
+            //  => so we must withdraw 1 when comparing these two variables.
             while ((this.id - 1) != tableColumnsInfo.getColumnIndex()) {
                tableColumnsInfo.selectNextColumn();
             }
 
-            // We widthdraw one cell because the first cell is already created
+            // We withdraw one cell because the first cell is already created
             // (it's the current cell) !
             int i = nbMergedCells - 1;
             while (i > 0) {
@@ -255,20 +255,17 @@ public class RtfTableCell
         final int xPos = offset + iCurrentWidth;
 
         //these lines added by Chris Scott, Westinghouse
-        //some attributes need to be writting before opening block
+        //some attributes need to be written before opening block
         if (setCenter) {
-            writeControlWord("qc");
+            writeControlWord("trqc");
         } else if (setRight) {
-            writeControlWord("qr");
+            writeControlWord("trqr");
         } else {
-            writeControlWord("ql");
+            writeControlWord("trql");
         }
         writeAttributes (attrib, ITableAttributes.CELL_VERT_ALIGN);
 
         writeControlWord("cellx" + xPos);
-
-        //TODO Why is this here, right after an alignment command is written (see above)?
-        writeControlWord("ql");
 
         return xPos;
 

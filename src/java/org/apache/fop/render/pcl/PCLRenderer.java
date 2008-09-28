@@ -96,7 +96,7 @@ import org.apache.fop.render.java2d.InstalledFontCollection;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.util.UnitConv;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /* Note:
  * There are some commonalities with AbstractPathOrientedRenderer but it's not possible
@@ -122,7 +122,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
     protected PCLGenerator gen;
     private boolean ioTrouble = false;
 
-    private Stack graphicContextStack = new Stack();
+    private final Stack graphicContextStack = new Stack();
     private GraphicContext graphicContext = new GraphicContext();
 
     private PCLPageDefinition currentPageDefinition;
@@ -147,7 +147,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      * This can be used to work around problems with Apache Batik, for example, but setting
      * this to true will increase memory consumption.
      */
-    private boolean useColorCanvas = false;
+    private final boolean useColorCanvas = false;
 
     /**
      * Controls whether the generation of PJL commands gets disabled.
@@ -239,7 +239,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
     /** @return the target resolution */
     protected int getResolution() {
-        int resolution = (int)Math.round(userAgent.getTargetResolution());
+        int resolution = Math.round(userAgent.getTargetResolution());
         if (resolution <= 300) {
             return 300;
         } else {
@@ -928,8 +928,8 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
         //This is the content-rect
-        float width = (float)bv.getIPD() / 1000f;
-        float height = (float)bv.getBPD() / 1000f;
+        float width = bv.getIPD() / 1000f;
+        float height = bv.getBPD() / 1000f;
 
 
         if (bv.getPositioning() == Block.ABSOLUTE
@@ -951,7 +951,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
             saveGraphicsState();
             //Viewport position
-            concatenateTransformationMatrix(mptToPt(positionTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(positionTransform));
 
             //Background and borders
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
@@ -961,7 +961,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
             //Shift to content rectangle after border painting
             AffineTransform contentRectTransform = new AffineTransform();
             contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
-            concatenateTransformationMatrix(mptToPt(contentRectTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(contentRectTransform));
 
             //Clipping
             if (bv.getClip()) {
@@ -971,7 +971,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
             saveGraphicsState();
             //Set up coordinate system for content rectangle
             AffineTransform contentTransform = ctm.toAffineTransform();
-            concatenateTransformationMatrix(mptToPt(contentTransform));
+            concatenateTransformationMatrix(UnitConv.mptToPt(contentTransform));
 
             currentIPPosition = 0;
             currentBPPosition = 0;
@@ -1017,7 +1017,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
 
-            currentBPPosition += (int)(bv.getAllocBPD());
+            currentBPPosition += (bv.getAllocBPD());
         }
         //currentFontName = saveFontName;
     }
@@ -1041,7 +1041,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
         if (!at.isIdentity()) {
             saveGraphicsState();
-            concatenateTransformationMatrix(mptToPt(at));
+            concatenateTransformationMatrix(UnitConv.mptToPt(at));
         }
 
         currentIPPosition = 0;
@@ -1079,7 +1079,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
         if (!at.isIdentity()) {
             saveGraphicsState();
-            concatenateTransformationMatrix(mptToPt(at));
+            concatenateTransformationMatrix(UnitConv.mptToPt(at));
         }
 
         currentIPPosition = 0;
@@ -1102,7 +1102,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         if (!at.isIdentity()) {
-            graphicContext.transform(ptToMpt(at));
+            graphicContext.transform(UnitConv.ptToMpt(at));
             changePrintDirection();
         }
     }
@@ -1416,13 +1416,13 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
                  borderRect.width,
                  borderRect.height);
         final Rectangle paintRect = new Rectangle(
-                (int)Math.round(borderRect.x * 1000f),
-                (int)Math.round(borderRect.y * 1000f),
+                Math.round(borderRect.x * 1000f),
+                Math.round(borderRect.y * 1000f),
                 (int)Math.floor(borderRect.width * 1000f) + 1,
                 (int)Math.floor(borderRect.height * 1000f) + 1);
         //Add one pixel wide safety margin around the paint area
         int pixelWidth = (int)Math.round(UnitConv.in2mpt(1) / userAgent.getTargetResolution());
-        final int xoffset = (int)Math.round(-effBorderRect.x * 1000f) + pixelWidth;
+        final int xoffset = Math.round(-effBorderRect.x * 1000f) + pixelWidth;
         final int yoffset = pixelWidth;
         paintRect.x += xoffset;
         paintRect.y += yoffset;

@@ -15,94 +15,114 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: $ */
 
 package org.apache.fop.util;
 
+import java.awt.geom.AffineTransform;
+
 /**
  * Utility class for unit conversions.
+ * @deprecated use org.apache.xmlgraphics.util.UnitConv instead.
  */
 public final class UnitConv {
 
-    /** conversion factory from millimeters to inches. */
-    public static final float IN2MM = 25.4f;
+    /**
+     * conversion factory from millimeters to inches.
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2MM instead.
+     */
+    public static final float IN2MM = org.apache.xmlgraphics.util.UnitConv.IN2MM;
 
-    /** conversion factory from centimeters to inches. */
-    public static final float IN2CM = 2.54f;
+    /**
+     * conversion factory from centimeters to inches.
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2CM instead.
+     */
+    public static final float IN2CM = org.apache.xmlgraphics.util.UnitConv.IN2CM;
 
-    /** conversion factory from inches to points. */
-    public static final int IN2PT = 72;
+    /**
+     * conversion factory from inches to points.
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2PT instead.
+     */
+    public static final int IN2PT = org.apache.xmlgraphics.util.UnitConv.IN2PT;
 
     /**
      * Converts millimeters (mm) to points (pt)
      * @param mm the value in mm
      * @return the value in pt
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.mm2pt(mm) instead.
      */
     public static double mm2pt(double mm) {
-        return mm * IN2PT / IN2MM;
+        return org.apache.xmlgraphics.util.UnitConv.mm2pt(mm);
     }
 
     /**
      * Converts millimeters (mm) to millipoints (mpt)
      * @param mm the value in mm
      * @return the value in mpt
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.mm2mpt(mm) instead.
      */
     public static double mm2mpt(double mm) {
-        return mm * 1000 * IN2PT / IN2MM;
+        return org.apache.xmlgraphics.util.UnitConv.mm2mpt(mm);
     }
 
     /**
      * Converts points (pt) to millimeters (mm)
      * @param pt the value in pt
      * @return the value in mm
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.pt2mm(pt) instead.
      */
     public static double pt2mm(double pt) {
-        return pt * IN2MM / IN2PT;
+        return org.apache.xmlgraphics.util.UnitConv.pt2mm(pt);
     }
 
     /**
      * Converts millimeters (mm) to inches (in)
      * @param mm the value in mm
      * @return the value in inches
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.pt2mm(pt) instead.
      */
     public static double mm2in(double mm) {
-        return mm / IN2MM;
+        return org.apache.xmlgraphics.util.UnitConv.mm2in(mm);
     }
 
     /**
      * Converts inches (in) to millimeters (mm)
      * @param in the value in inches
      * @return the value in mm
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.in2mm(in) instead.
      */
     public static double in2mm(double in) {
-        return in * IN2MM;
+        return org.apache.xmlgraphics.util.UnitConv.in2mm(in);
     }
 
     /**
      * Converts inches (in) to millipoints (mpt)
      * @param in the value in inches
      * @return the value in mpt
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.in2mpt(in) instead.
      */
     public static double in2mpt(double in) {
-        return in * IN2PT * 1000;
+        return org.apache.xmlgraphics.util.UnitConv.in2mpt(in);
     }
 
     /**
      * Converts inches (in) to points (pt)
      * @param in the value in inches
      * @return the value in pt
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.in2pt(in) instead.
      */
     public static double in2pt(double in) {
-        return in * IN2PT;
+        return org.apache.xmlgraphics.util.UnitConv.in2pt(in);
     }
 
     /**
      * Converts millipoints (mpt) to inches (in)
      * @param mpt the value in mpt
      * @return the value in inches
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.mpt2in(mpt) instead.
      */
     public static double mpt2in(double mpt) {
-        return mpt / IN2PT / 1000;
+        return org.apache.xmlgraphics.util.UnitConv.mpt2in(mpt);
     }
 
     /**
@@ -110,9 +130,10 @@ public final class UnitConv {
      * @param mm the value in mm
      * @param resolution the resolution in dpi (dots per inch)
      * @return the value in pixels
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.mm2px(mm, resolution) instead.
      */
     public static double mm2px(double mm, int resolution) {
-        return mm2in(mm) * resolution;
+        return org.apache.xmlgraphics.util.UnitConv.mm2px(mm, resolution);
     }
 
     /**
@@ -120,9 +141,30 @@ public final class UnitConv {
      * @param mpt the value in mpt
      * @param resolution the resolution in dpi (dots per inch)
      * @return the value in pixels
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.mpt2px(mpt, resolution) instead.
      */
     public static double mpt2px(double mpt, int resolution) {
-        return mpt2in(mpt) * resolution;
+        return org.apache.xmlgraphics.util.UnitConv.mpt2px(mpt, resolution);
+    }
+
+    /**
+     * Converts a millipoint-based transformation matrix to points.
+     * @param at a millipoint-based transformation matrix
+     * @return a point-based transformation matrix
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.mptToPt(at) instead.
+     */
+    public static AffineTransform mptToPt(AffineTransform at) {
+        return org.apache.xmlgraphics.util.UnitConv.mptToPt(at);
+    }
+
+    /**
+     * Converts a point-based transformation matrix to millipoints.
+     * @param at a point-based transformation matrix
+     * @return a millipoint-based transformation matrix
+     * @deprecated use org.apache.xmlgraphics.util.UnitConv.ptToMpt(at) instead.
+     */
+    public static AffineTransform ptToMpt(AffineTransform at) {
+        return org.apache.xmlgraphics.util.UnitConv.ptToMpt(at);
     }
 
 }

@@ -27,13 +27,19 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Block;
+import org.apache.fop.area.Trait;
 import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
+import org.apache.fop.fo.flow.table.EmptyGridUnit;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
+import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
@@ -202,10 +208,16 @@ class RowPainter {
         recordRowOffset(currentRow.getIndex(), currentRowOffset);
 
         // Need to compute the actual row height first
+        // and determine border behaviour for empty cells
+        boolean firstCellPart = true;
+        boolean lastCellPart = true;
         int actualRowHeight = 0;
         for (int i = 0; i < colCount; i++) {
             GridUnit currentGU = currentRow.getGridUnit(i);
-            if (!currentGU.isEmpty() && currentGU.getColSpanIndex() == 0
+            if (currentGU.isEmpty()) {
+                continue;
+            }
+            if (currentGU.getColSpanIndex() == 0
                     && (lastInPart || currentGU.isLastGridUnitRowSpan())
                     && firstCellParts[i] != null) {
                 // TODO
@@ -225,21 +237,53 @@ class RowPainter {
                 actualRowHeight = Math.max(actualRowHeight, cellOffset + cellHeight
                         - currentRowOffset);
             }
+
+            if (firstCellParts[i] != null && !firstCellParts[i].isFirstPart()) {
+                firstCellPart = false;
+            }
+            if (lastCellParts[i] != null && !lastCellParts[i].isLastPart()) {
+                lastCellPart = false;
+            }
         }
 
         // Then add areas for cells finishing on the current row
         for (int i = 0; i < colCount; i++) {
             GridUnit currentGU = currentRow.getGridUnit(i);
-            if (currentGU.isEmpty()) {
-                // TODO remove once missing cells are properly implemented (i.e., replaced
-                // by an fo:table-cell element containing an empty fo:block)
+            if (currentGU.isEmpty() && !tclm.isSeparateBorderModel()) {
+                int borderBeforeWhich;
+                if (firstCellPart) {
+                    if (firstCellOnPage[i]) {
+                        borderBeforeWhich = ConditionalBorder.LEADING_TRAILING;
+                    } else {
+                        borderBeforeWhich = ConditionalBorder.NORMAL;
+                    }
+                } else {
+                    borderBeforeWhich = ConditionalBorder.REST;
+                }
+                int borderAfterWhich;
+                if (lastCellPart) {
+                    if (lastInPart) {
+                        borderAfterWhich = ConditionalBorder.LEADING_TRAILING;
+                    } else {
+                        borderAfterWhich = ConditionalBorder.NORMAL;
+                    }
+                } else {
+                    borderAfterWhich = ConditionalBorder.REST;
+                }
+                addAreaForEmptyGridUnit((EmptyGridUnit)currentGU,
+                        currentRow.getIndex(), i,
+                        actualRowHeight,
+                        borderBeforeWhich, borderAfterWhich,
+                        lastOnPage);
+
                 firstCellOnPage[i] = false;
             } else if (currentGU.getColSpanIndex() == 0
                     && (lastInPart || currentGU.isLastGridUnitRowSpan())
                     && firstCellParts[i] != null) {
                 assert firstCellParts[i].pgu == currentGU.getPrimary();
+
                 int borderBeforeWhich;
-                if (firstCellParts[i].start == 0) {
+                if (firstCellParts[i].isFirstPart()) {
                     if (firstCellOnPage[i]) {
                         borderBeforeWhich = ConditionalBorder.LEADING_TRAILING;
                     } else {
@@ -259,6 +303,7 @@ class RowPainter {
                 } else {
                     borderAfterWhich = ConditionalBorder.REST;
                 }
+
                 addAreasForCell(firstCellParts[i].pgu,
                         firstCellParts[i].start, lastCellParts[i].end,
                         actualRowHeight, borderBeforeWhich, borderAfterWhich,
@@ -387,6 +432,56 @@ class RowPainter {
                 startRowIndex == firstRowOnPageIndex, lastOnPage, this, firstRowHeight);
     }
 
+    private void addAreaForEmptyGridUnit(EmptyGridUnit gu, int rowIndex, int colIndex,
+            int actualRowHeight,
+            int borderBeforeWhich, int borderAfterWhich, boolean lastOnPage) {
+
+        //get effective borders
+        BorderInfo borderBefore = gu.getBorderBefore(borderBeforeWhich);
+        BorderInfo borderAfter = gu.getBorderAfter(borderAfterWhich);
+        BorderInfo borderStart = gu.getBorderStart();
+        BorderInfo borderEnd = gu.getBorderEnd();
+        if (borderBefore.getRetainedWidth() == 0
+                && borderAfter.getRetainedWidth() == 0
+                && borderStart.getRetainedWidth() == 0
+                && borderEnd.getRetainedWidth() == 0) {
+            return; //no borders, no area necessary
+        }
+
+        TableLayoutManager tableLM = tclm.getTableLM();
+        Table table = tableLM.getTable();
+        TableColumn col = tclm.getColumns().getColumn(colIndex + 1);
+
+        //position information
+        boolean firstOnPage = (rowIndex == firstRowOnPageIndex);
+        boolean inFirstColumn = (colIndex == 0);
+        boolean inLastColumn = (colIndex == table.getNumberOfColumns() - 1);
+
+        //determine the block area's size
+        int ipd = col.getColumnWidth().getValue(tableLM);
+        ipd -= (borderStart.getRetainedWidth() + borderEnd.getRetainedWidth()) / 2;
+        int bpd = actualRowHeight;
+        bpd -= (borderBefore.getRetainedWidth() + borderAfter.getRetainedWidth()) / 2;
+
+        //generate the block area
+        Block block = new Block();
+        block.setPositioning(Block.ABSOLUTE);
+        block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+        block.setIPD(ipd);
+        block.setBPD(bpd);
+        block.setXOffset(tclm.getXOffsetOfGridUnit(colIndex)
+                + (borderStart.getRetainedWidth() / 2));
+        block.setYOffset(getRowOffset(rowIndex)
+                - (borderBefore.getRetainedWidth() / 2));
+        boolean[] outer = new boolean[] {firstOnPage, lastOnPage, inFirstColumn,
+                inLastColumn};
+        TraitSetter.addCollapsingBorders(block,
+                borderBefore,
+                borderAfter,
+                borderStart,
+                borderEnd, outer);
+        tableLM.addChildArea(block);
+    }
 
     /**
      * Registers the given area, that will be used to render the part of

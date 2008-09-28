@@ -88,6 +88,7 @@ import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.modca.AFPDataStream;
 import org.apache.fop.render.afp.modca.ImageObject;
 import org.apache.fop.render.afp.modca.PageObject;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -850,8 +851,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             {
                 float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
                 if (horz) {
-                    Color uppercol = lightenColor(col, -colFactor);
-                    Color lowercol = lightenColor(col, colFactor);
+                    Color uppercol = ColorUtil.lightenColor(col, -colFactor);
+                    Color lowercol = ColorUtil.lightenColor(col, colFactor);
                     float h3 = h / 3;
                     float ym1 = y1;
                     afpDataStream.createLine(
@@ -879,8 +880,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         lowercol
                     );
                 } else {
-                    Color leftcol = lightenColor(col, -colFactor);
-                    Color rightcol = lightenColor(col, colFactor);
+                    Color leftcol = ColorUtil.lightenColor(col, -colFactor);
+                    Color rightcol = ColorUtil.lightenColor(col, colFactor);
                     float w3 = w / 3;
                     float xm1 = x1 + (w3 / 2);
                     afpDataStream.createLine(

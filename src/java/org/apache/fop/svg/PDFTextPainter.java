@@ -147,7 +147,9 @@ public class PDFTextPainter extends StrokingTextPainter {
 
             textUtil.beginTextObject();
             textUtil.setFonts(fonts);
-            textUtil.setTextRenderingMode(tpi.fillPaint != null, tpi.strokePaint != null, false);
+            boolean stroke = (tpi.strokePaint != null)
+                && (tpi.strokeStroke != null);
+            textUtil.setTextRenderingMode(tpi.fillPaint != null, stroke, false);
 
             AffineTransform localTransform = new AffineTransform();
             Point2D prevPos = null;

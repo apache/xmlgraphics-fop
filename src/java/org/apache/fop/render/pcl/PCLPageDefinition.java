@@ -24,7 +24,7 @@ import java.awt.Rectangle;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.fop.util.UnitConv;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * This class represents a page format with PCL-specific properties.
@@ -34,11 +34,11 @@ public class PCLPageDefinition {
     private static List pageDefinitions;
     private static PCLPageDefinition defaultPageDefinition;
 
-    private String name;
-    private int selector;
-    private Dimension physicalPageSize;
-    private Rectangle logicalPageRect;
-    private boolean landscape;
+    private final String name;
+    private final int selector;
+    private final Dimension physicalPageSize;
+    private final Rectangle logicalPageRect;
+    private final boolean landscape;
 
     static {
         createPageDefinitions();

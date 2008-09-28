@@ -90,7 +90,6 @@ public class RepeatablePageMasterReference extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
-                                        boolean isOnlyPage,
                                         boolean isEmptyPage) {
         if (getMaximumRepeats() != INFINITE) {
             if (numberConsumed < getMaximumRepeats()) {

@@ -42,9 +42,9 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 
-import org.apache.fop.util.UnitConv;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * Graphics2D implementation implementing PCL and HP GL/2.
@@ -55,7 +55,7 @@ public class PCLGraphics2D extends AbstractGraphics2D {
     /** The PCL generator */
     protected PCLGenerator gen;
 
-    private boolean failOnUnsupportedFeature = true;
+    private final boolean failOnUnsupportedFeature = true;
     private boolean clippingDisabled = false;
 
     /**

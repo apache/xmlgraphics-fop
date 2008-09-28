@@ -34,6 +34,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -51,28 +52,48 @@ public class MemoryEater {
     private FopFactory fopFactory = FopFactory.newInstance();
     private Templates replicatorTemplates;
 
+    private Stats stats;
+
     public MemoryEater() throws TransformerConfigurationException, MalformedURLException {
         File xsltFile = new File("test/xsl/fo-replicator.xsl");
         Source xslt = new StreamSource(xsltFile);
         replicatorTemplates = tFactory.newTemplates(xslt);
     }
 
-    private void eatMemory(File foFile, int replicatorRepeats) throws Exception {
+    private void eatMemory(File foFile, int runRepeats, int replicatorRepeats) throws Exception {
+        stats = new Stats();
+        for (int i = 0; i < runRepeats; i++) {
+            eatMemory(i, foFile, replicatorRepeats);
+            stats.progress(i, runRepeats);
+        }
+        stats.dumpFinalStats();
+        System.out.println(stats.getGoogleChartURL());
+    }
+
+    private void eatMemory(int callIndex, File foFile, int replicatorRepeats) throws Exception {
         Source src = new StreamSource(foFile);
 
         Transformer transformer = replicatorTemplates.newTransformer();
         transformer.setParameter("repeats", new Integer(replicatorRepeats));
 
         OutputStream out = new NullOutputStream(); //write to /dev/nul
-        FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        userAgent.setBaseURL(foFile.getParentFile().toURL().toExternalForm());
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
-        Result res = new SAXResult(fop.getDefaultHandler());
+        try {
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
+            userAgent.setBaseURL(foFile.getParentFile().toURL().toExternalForm());
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
+            Result res = new SAXResult(fop.getDefaultHandler());
 
-        transformer.transform(src, res);
+            transformer.transform(src, res);
 
-        System.out.println("Generated " + fop.getResults().getPageCount() + " pages.");
-
+            stats.notifyPagesProduced(fop.getResults().getPageCount());
+            if (callIndex == 0) {
+                System.out.println(foFile.getName() + " generates "
+                        + fop.getResults().getPageCount() + " pages.");
+            }
+            stats.checkStats();
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
     }
 
     private static void prompt() throws IOException {
@@ -108,9 +129,7 @@ public class MemoryEater {
             long start = System.currentTimeMillis();
 
             MemoryEater app = new MemoryEater();
-            for (int i = 0; i < runRepeats; i++) {
-                app.eatMemory(testFile, replicatorRepeats);
-            }
+            app.eatMemory(testFile, runRepeats, replicatorRepeats);
 
             long duration = System.currentTimeMillis() - start;
             System.out.println("Success! Job took " + duration + " ms");
