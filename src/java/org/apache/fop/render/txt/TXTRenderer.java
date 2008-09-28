@@ -37,6 +37,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.txt.border.AbstractBorderElement;
 import org.apache.fop.render.txt.border.BorderManager;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * Renderer that renders areas to plain text.
@@ -85,10 +86,10 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      * Every line except the last line on a page (which will end with
      * pageEnding) will be terminated with this string.
      */
-    private String lineEnding = "\r\n";
+    private final String lineEnding = "\r\n";
 
     /** Every page except the last one will end with this string. */
-    private String pageEnding = "\f";
+    private final String pageEnding = "\f";
 
     /** Equals true, if current page is first. */
     private boolean firstPage = false;
@@ -100,7 +101,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     private char fillChar;
 
     /** Saves current coordinate transformation. */
-    private TXTState currentState = new TXTState();
+    private final TXTState currentState = new TXTState();
 
     private String encoding;
 
@@ -570,7 +571,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
-        currentState.push(new CTM(ptToMpt(at)));
+        currentState.push(new CTM(UnitConv.ptToMpt(at)));
     }
 
 }

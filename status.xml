@@ -53,6 +53,46 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="40798">
+        Bugzilla 40798: A conditional-page-master-reference with page-position="last" qualifies
+        for a first page, if it is also the last. Additionally: also added support for
+        page-position="only".
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="45842" due-to="Carsten Siedentop">
+        Make fop.bat and fop.cmd use the %FOP_OPTS% environment variable.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="45795">
+        PDF Output: Added support for handling 16-bit alpha channel. They are currently
+        converted to 8 bits.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        PDF Output: Made sure the XMP Metadata stream is never compressed.
+      </action>
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="45734" due-to="J. Frantzius">
+        Fix for PFMReader after bug #43089 changed the behavior of PFMFile. Fixes baseline
+        problems when Type 1 fonts are used in conjunction with XML font metric files.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="45616" due-to="Pavel Kysilka">
+        Fix for table handling in RTF output, so the output works with OpenOffice and AbiWord, too.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="45667">
+        Quick-fix to avoid a possible NullPointerException when using
+        empty inlines and hyphenation.
+      </action>
+      <action context="Layout" dev="JM" type="add">
+        Added missing generation of areas for empty grid units in tables with collapsing border
+        model.
+      </action>
+      <action context="Code" dev="JM" type="fix" importance="high">
+        Fixed memory leak in property cache (not cleaning stale PropertyCache$CacheEntry instances).
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed text stroking in SVG when the stroke-width is zero.
+      </action>
+      <action context="Layout" dev="JM" type="fix">
+        Fixed the source for a division by zero when the content of an fo:leader with
+        leader-pattern="use-content" collapses to zero width during layout.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed border trait parsing for the area tree XML when CMYK or ICC colors were used.
       </action>
@@ -128,7 +168,7 @@
         Fixed a ClassCastException when using an fo:wrapper as a child
         of an fo:block-container.
       </action>
-      <action context="Fonts" dev="AC" type="add">
+      <action context="Fonts" dev="AC" type="add" importance="high">
         Add support for font substitution.
       </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="43650">
@@ -151,7 +191,7 @@
         Add partial support for the "show-destination" property on fo:basic-link
         (PDF output only; see limitations on the compliance page)
       </action>
-      <action context="Layout" dev="JM" type="add">
+      <action context="Layout" dev="JM" type="add" importance="high">
         Added minimal support for integer keep values on the various keep properties on block-level
         FOs. For now, all integer values are treated the same (i.e. without strength distinction).
         Using integers allows to avoid overflows that can happen when "always" is used extensively.
@@ -179,7 +219,7 @@
         When a JPEG image is embedded, an optionally embedded color profile is filtered out
         as it's already embedded separately in the PDF file.
       </action>
-      <action context="Fonts" dev="JM" type="add">
+      <action context="Fonts" dev="JM" type="add" importance="high">
         Added support for addressing all glyphs available in a Type 1 font, not just the ones
         in the font's primary encoding.
       </action>
@@ -678,7 +718,7 @@
       <action context="Code" dev="JM" type="fix">
         AFP Renderer: Bugfix for 1 bit images where the width is not a multiple of 8.
       </action>
-      <action context="Code" dev="MM" type="add">
+      <action context="Code" dev="MM" type="add" importance="high">
         Support for keep-together.within-line="always".
       </action>
       <action context="Code" dev="MM" type="fix">

@@ -93,6 +93,7 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * Renderer that renders areas to PDF.

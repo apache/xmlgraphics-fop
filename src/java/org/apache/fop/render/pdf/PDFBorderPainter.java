@@ -27,9 +27,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * PDF-specific implementation of the {@code BorderPainter}.
@@ -150,8 +150,8 @@ public class PDFBorderPainter extends BorderPainter {
                 float colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
                 generator.add("[] 0 d ");
                 if (horz) {
-                    Color uppercol = PrintRenderer.lightenColor(col, -colFactor);
-                    Color lowercol = PrintRenderer.lightenColor(col, colFactor);
+                    Color uppercol = ColorUtil.lightenColor(col, -colFactor);
+                    Color lowercol = ColorUtil.lightenColor(col, colFactor);
                     float h3 = h / 3;
                     generator.add(format(h3) + " w\n");
                     float ym1 = y1 + (h3 / 2);
@@ -165,8 +165,8 @@ public class PDFBorderPainter extends BorderPainter {
                     generator.add(format(x1) + " " + format(ym1 + h3 + h3) + " m "
                                         + format(x2) + " " + format(ym1 + h3 + h3) + " l S\n");
                 } else {
-                    Color leftcol = PrintRenderer.lightenColor(col, -colFactor);
-                    Color rightcol = PrintRenderer.lightenColor(col, colFactor);
+                    Color leftcol = ColorUtil.lightenColor(col, -colFactor);
+                    Color rightcol = ColorUtil.lightenColor(col, colFactor);
                     float w3 = w / 3;
                     generator.add(format(w3) + " w\n");
                     float xm1 = x1 + (w3 / 2);
@@ -189,14 +189,14 @@ public class PDFBorderPainter extends BorderPainter {
                 generator.add("[] 0 d ");
                 Color c = col;
                 if (horz) {
-                    c = PrintRenderer.lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                    c = ColorUtil.lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
                     generator.add(format(h) + " w\n");
                     float ym1 = y1 + (h / 2);
                     generator.setColor(c, false);
                     generator.add(format(x1) + " " + format(ym1) + " m "
                             + format(x2) + " " + format(ym1) + " l S\n");
                 } else {
-                    c = PrintRenderer.lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                    c = ColorUtil.lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
                     generator.add(format(w) + " w\n");
                     float xm1 = x1 + (w / 2);
                     generator.setColor(c, false);
@@ -254,7 +254,7 @@ public class PDFBorderPainter extends BorderPainter {
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
-            generator.setColor(PrintRenderer.lightenColor(color, 0.6f), true);
+            generator.setColor(ColorUtil.lightenColor(color, 0.6f), true);
             generator.add(format(start.x) + " " + format(starty) + " m\n");
             generator.add(format(end.x) + " " + format(starty) + " l\n");
             generator.add(format(end.x) + " " + format(starty + 2 * half) + " l\n");

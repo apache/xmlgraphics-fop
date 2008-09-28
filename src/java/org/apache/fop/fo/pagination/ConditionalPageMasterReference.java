@@ -94,61 +94,33 @@ public class ConditionalPageMasterReference extends FObj {
      * @param isFirstPage True if page is first page
      * @param isLastPage True if page is last page
      * @param isBlankPage True if page is blank
-     * @param isOnlyPage True if page is the only page
      * @return True if the conditions for this reference are met
      */
     protected boolean isValid(boolean isOddPage,
                               boolean isFirstPage,
                               boolean isLastPage,
-                              boolean isOnlyPage,
                               boolean isBlankPage) {
-        // page-position
-        if (isOnlyPage) {
-            if (pagePosition != EN_ONLY) {
-                return false;
-            }
-        } else if (isFirstPage) {
-            if (pagePosition == EN_REST) {
-                return false;
-            } else if (pagePosition == EN_LAST) {
-                return false;
-            }
-        } else if (isLastPage) {
-            if (pagePosition == EN_REST) {
-                return false;
-            } else if (pagePosition == EN_FIRST) {
-                return false;
-            }
-        } else {
-            if (pagePosition == EN_FIRST) {
-                return false;
-            } else if (pagePosition == EN_LAST) {
-                return false;
-            }
-        }
 
-        // odd-or-even
-        if (isOddPage) {
-            if (oddOrEven == EN_EVEN) {
-              return false;
-            }
-        } else {
-            if (oddOrEven == EN_ODD) {
-              return false;
-            }
-        }
+        return (
+            // page-position
+            (pagePosition == EN_ANY
+                || (pagePosition == EN_FIRST && isFirstPage)
+                || (pagePosition == EN_LAST && isLastPage)
+                || (pagePosition == EN_ONLY && (isFirstPage && isLastPage))
+                || (pagePosition == EN_REST && !(isFirstPage || isLastPage))
+                )
+            // odd-or-even
+            && (oddOrEven == EN_ANY
+                || (oddOrEven == EN_ODD && isOddPage)
+                || (oddOrEven == EN_EVEN && !isOddPage)
+                )
+            // blank-or-not-blank
+            && (blankOrNotBlank == EN_ANY
+                || (blankOrNotBlank == EN_BLANK && isBlankPage)
+                || (blankOrNotBlank == EN_NOT_BLANK && !isBlankPage)
+                ));
 
-        // blank-or-not-blank
-        if (isBlankPage) {
-            if (blankOrNotBlank == EN_NOT_BLANK) {
-                return false;
-            }
-        } else {
-            if (blankOrNotBlank == EN_BLANK) {
-                return false;
-            }
-        }
-        return true;
+
     }
 
     /**

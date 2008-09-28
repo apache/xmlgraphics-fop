@@ -48,6 +48,9 @@ public class AlphaRasterImage implements PDFImage {
      */
     public AlphaRasterImage(String k, Raster alpha) {
         this.key = k;
+        //Enable the commented line below if 16-bit alpha channels are desired.
+        //Otherwise, we compress the alpha channel to 8 bit which should be sufficient.
+        //this.bitsPerComponent = alpha.getSampleModel().getSampleSize(0);
         this.bitsPerComponent = 8;
         this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_GRAY);
         if (alpha == null) {
@@ -146,6 +149,18 @@ public class AlphaRasterImage implements PDFImage {
             byte[] line = new byte[nbands * w];
             for (int y = 0; y < h; y++) {
                 alpha.getDataElements(0, y, w, 1, line);
+                out.write(line);
+            }
+        } else if (dataType == DataBuffer.TYPE_USHORT) {
+            short[] sline = new short[nbands * w];
+            byte[] line = new byte[nbands * w];
+            for (int y = 0; y < h; y++) {
+                alpha.getDataElements(0, y, w, 1, sline);
+                for (int i = 0; i < w; i++) {
+                    //this compresses a 16-bit alpha channel to 8 bits!
+                    //we probably don't ever need a 16-bit channel
+                    line[i] = (byte)(sline[i] >> 8);
+                }
                 out.write(line);
             }
         } else if (dataType == DataBuffer.TYPE_INT) {

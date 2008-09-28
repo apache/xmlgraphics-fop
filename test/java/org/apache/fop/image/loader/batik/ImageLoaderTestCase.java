@@ -19,20 +19,22 @@
 
 package org.apache.fop.image.loader.batik;
 
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.XMLNamespaceEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
-
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
 
 /**
  * Tests for bundled ImageLoader implementations.
@@ -59,10 +61,10 @@ public class ImageLoaderTestCase extends TestCase {
         ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
 
-        Image img = manager.getImage(info, ImageFlavor.XML_DOM,
+        Image img = manager.getImage(info, XMLNamespaceEnabledImageFlavor.SVG_DOM,
                 userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
-        assertEquals(ImageFlavor.XML_DOM, img.getFlavor());
+        assertEquals(XMLNamespaceEnabledImageFlavor.SVG_DOM, img.getFlavor());
         ImageXMLDOM imgDom = (ImageXMLDOM)img;
         assertNotNull(imgDom.getDocument());
         assertEquals("http://www.w3.org/2000/svg", imgDom.getRootNamespace());
@@ -101,10 +103,10 @@ public class ImageLoaderTestCase extends TestCase {
         ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
         assertNotNull("ImageInfo must not be null", info);
 
-        Image img = manager.getImage(info, ImageFlavor.XML_DOM,
+        Image img = manager.getImage(info, XMLNamespaceEnabledImageFlavor.SVG_DOM,
                 userAgent.getImageSessionContext());
         assertNotNull("Image must not be null", img);
-        assertEquals(ImageFlavor.XML_DOM, img.getFlavor());
+        assertEquals(XMLNamespaceEnabledImageFlavor.SVG_DOM, img.getFlavor());
         ImageXMLDOM imgDom = (ImageXMLDOM)img;
         assertNotNull(imgDom.getDocument());
         assertEquals("http://www.w3.org/2000/svg", imgDom.getRootNamespace());
@@ -160,4 +162,58 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(612000, info.getSize().getHeightMpt());
     }
 
+    public void testSVGWithReferences() throws Exception {
+        String uri = "test/resources/fop/svg/images.svg";
+        FopFactory ff = FopFactory.newInstance();
+        FOUserAgent userAgent = ff.newFOUserAgent();
+
+        ImageManager manager = ff.getImageManager();
+        ImageInfo info = manager.preloadImage(uri, userAgent.getImageSessionContext());
+        assertNotNull("ImageInfo must not be null", info);
+
+        Image img = manager.getImage(info, XMLNamespaceEnabledImageFlavor.SVG_DOM,
+                userAgent.getImageSessionContext());
+        assertNotNull("Image must not be null", img);
+        assertEquals(XMLNamespaceEnabledImageFlavor.SVG_DOM, img.getFlavor());
+        ImageXMLDOM imgDom = (ImageXMLDOM)img;
+        assertNotNull(imgDom.getDocument());
+        assertEquals("http://www.w3.org/2000/svg", imgDom.getRootNamespace());
+        info = imgDom.getInfo(); //Switch to the ImageInfo returned by the image
+        assertEquals(400000, info.getSize().getWidthMpt());
+        assertEquals(400000, info.getSize().getHeightMpt());
+        assertEquals(400, info.getSize().getWidthPx());
+        assertEquals(400, info.getSize().getHeightPx());
+
+        img = manager.getImage(info, ImageFlavor.RENDERED_IMAGE,
+                    userAgent.getImageSessionContext());
+        assertNotNull("Image must not be null", img);
+        assertEquals(ImageFlavor.RENDERED_IMAGE, img.getFlavor());
+        ImageRendered imgRed = (ImageRendered)img;
+        RenderedImage renImg = imgRed.getRenderedImage();
+        assertNotNull(renImg);
+        if (DEBUG_TARGET_DIR != null) {
+            ImageWriterUtil.saveAsPNG(renImg,
+                    (int)userAgent.getTargetResolution(),
+                    new File(DEBUG_TARGET_DIR, "images.svg.png"));
+        }
+        assertEquals(400, renImg.getWidth());
+        assertEquals(400, renImg.getHeight());
+        info = imgRed.getInfo(); //Switch to the ImageInfo returned by the image
+        assertEquals(400000, info.getSize().getWidthMpt());
+        assertEquals(400000, info.getSize().getHeightMpt());
+        Raster raster = renImg.getData();
+        // This pixel is white
+        int[] pixel1 = raster.getPixel(1, 1, (int[] )null);
+        // This pixel is from the embedded JPG and is not white
+        int[] pixel80 = raster.getPixel(80, 80, (int[]) null);
+        assertEquals(pixel1.length, pixel80.length);
+        boolean same = true;
+        for (int i = 0; i < pixel1.length; i++) {
+            same &= (pixel1[i] == pixel80[i]);
+        }
+        assertFalse("Embedding JPG into SVG failed", same);
+    }
+
+
+    
 }

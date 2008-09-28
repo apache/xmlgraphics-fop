@@ -334,7 +334,8 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                     fromIndex = oldListIterator.previousIndex();
                 } else if (currLM == prevLM) {
                     bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex, oldList.size()))
+                        = (prevLM != null)
+                            && prevLM.applyChanges(oldList.subList(fromIndex, oldList.size()))
                             || bSomethingChanged;
                 } else {
                     bSomethingChanged

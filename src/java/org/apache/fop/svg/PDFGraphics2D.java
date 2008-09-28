@@ -285,7 +285,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
     /**
      * Get the string containing all the commands written into this
-     * Grpahics.
+     * Graphics.
      * @return the string containing the PDF markup
      */
     public String getString() {
@@ -294,7 +294,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
     /**
      * Get the string buffer from the currentStream, containing all
-     * the commands written into this Grpahics so far.
+     * the commands written into this Graphics so far.
      * @return the StringBuffer containing the PDF markup
      */
     public StringBuffer getBuffer() {
@@ -876,7 +876,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (paint instanceof RadialGradientPaint) {
             RadialGradientPaint rgp = (RadialGradientPaint)paint;
 
-            // There is essentially no way to support repeate
+            // There is essentially no way to support repeats
             // in PDF for radial gradients (the one option would
             // be to 'grow' the outer circle until it fully covered
             // the bounds and then grow the stops accordingly, the

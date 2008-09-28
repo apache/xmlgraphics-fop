@@ -983,10 +983,17 @@ public class TTFFile {
     /**
      * Read the "OS/2" table
      */
-    private final void readOS2(FontFileReader in) throws IOException {
+    private void readOS2(FontFileReader in) throws IOException {
         // Check if font is embeddable
-        if (dirTabs.get("OS/2") != null) {
-            seekTab(in, "OS/2", 2 * 2);
+        TTFDirTabEntry os2Entry = (TTFDirTabEntry)dirTabs.get("OS/2");
+        if (os2Entry != null) {
+            seekTab(in, "OS/2", 0);
+            int version = in.readTTFUShort();
+            if (log.isDebugEnabled()) {
+                log.debug("OS/2 table: version=" + version
+                        + ", offset=" + os2Entry.getOffset() + ", len=" + os2Entry.getLength());
+            }
+            in.skip(2); //xAvgCharWidth
             this.usWeightClass = in.readTTFUShort();
 
             // usWidthClass
@@ -1005,22 +1012,30 @@ public class TTFFile {
             in.skip(3 * 2);
             int v;
             os2Ascender = in.readTTFShort(); //sTypoAscender
-            log.debug("sTypoAscender: " + os2Ascender
-                        + " " + convertTTFUnit2PDFUnit(os2Ascender));
             os2Descender = in.readTTFShort(); //sTypoDescender
-            log.debug("sTypoDescender: " + os2Descender
-                        + " " + convertTTFUnit2PDFUnit(os2Descender));
             v = in.readTTFShort(); //sTypoLineGap
-            log.debug("sTypoLineGap: " + v);
             v = in.readTTFUShort(); //usWinAscent
-            log.debug("usWinAscent: " + v  + " " + convertTTFUnit2PDFUnit(v));
             v = in.readTTFUShort(); //usWinDescent
-            log.debug("usWinDescent: " + v + " " + convertTTFUnit2PDFUnit(v));
-            in.skip(2 * 4);
-            this.os2xHeight = in.readTTFShort(); //sxHeight
-            log.debug("sxHeight: " + this.os2xHeight);
-            this.os2CapHeight = in.readTTFShort(); //sCapHeight
-            log.debug("sCapHeight: " + this.os2CapHeight);
+            if (log.isDebugEnabled()) {
+                log.debug("sTypoAscender: " + os2Ascender
+                        + " " + convertTTFUnit2PDFUnit(os2Ascender));
+                log.debug("sTypoDescender: " + os2Descender
+                        + " " + convertTTFUnit2PDFUnit(os2Descender));
+                log.debug("sTypoLineGap: " + v);
+                log.debug("usWinAscent: " + v  + " " + convertTTFUnit2PDFUnit(v));
+                log.debug("usWinDescent: " + v + " " + convertTTFUnit2PDFUnit(v));
+            }
+
+            //version 1 OS/2 table might end here
+            if (os2Entry.getLength() >= 78 + (2 * 4) + (2 * 2)) {
+                in.skip(2 * 4);
+                this.os2xHeight = in.readTTFShort(); //sxHeight
+                this.os2CapHeight = in.readTTFShort(); //sCapHeight
+                if (log.isDebugEnabled()) {
+                    log.debug("sxHeight: " + this.os2xHeight);
+                    log.debug("sCapHeight: " + this.os2CapHeight);
+                }
+            }
 
         } else {
             isEmbeddable = true;

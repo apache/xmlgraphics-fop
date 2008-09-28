@@ -127,19 +127,19 @@ public class PageSequence extends AbstractPageSequence {
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if (localName.equals("title")) {
+            if ("title".equals(localName)) {
                 if (titleFO != null) {
                     tooManyNodesError(loc, "fo:title");
-                } else if (flowMap.size() > 0) {
+                } else if (!flowMap.isEmpty()) {
                     nodesOutOfOrderError(loc, "fo:title", "fo:static-content");
                 } else if (mainFlow != null) {
                     nodesOutOfOrderError(loc, "fo:title", "fo:flow");
                 }
-            } else if (localName.equals("static-content")) {
+            } else if ("static-content".equals(localName)) {
                 if (mainFlow != null) {
                     nodesOutOfOrderError(loc, "fo:static-content", "fo:flow");
                 }
-            } else if (localName.equals("flow")) {
+            } else if ("flow".equals(localName)) {
                 if (mainFlow != null) {
                     tooManyNodesError(loc, "fo:flow");
                 }
@@ -157,15 +157,20 @@ public class PageSequence extends AbstractPageSequence {
     public void addChildNode(FONode child) throws FOPException {
         int childId = child.getNameId();
 
-        if (childId == FO_TITLE) {
-            this.titleFO = (Title) child;
-        } else if (childId == FO_FLOW) {
-            this.mainFlow = (Flow) child;
+        switch (childId) {
+        case FO_TITLE:
+            this.titleFO = (Title)child;
+            break;
+        case FO_FLOW:
+            this.mainFlow = (Flow)child;
             addFlow(mainFlow);
-        } else if (childId == FO_STATIC_CONTENT) {
-            addFlow((StaticContent) child);
-            String flowName = ((StaticContent) child).getFlowName();
-            flowMap.put(flowName, child);
+            break;
+        case FO_STATIC_CONTENT:
+            addFlow((StaticContent)child);
+            flowMap.put(((StaticContent)child).getFlowName(), child);
+            break;
+        default:
+            assert false;
         }
     }
 
@@ -245,17 +250,14 @@ public class PageSequence extends AbstractPageSequence {
      *      page sequence
      * @param isLastPage indicator whether this page is the last page of the
      *      page sequence
-     * @param isOnlyPage indicator whether this page is the only page of the
-     *      page sequence
      * @param isBlank indicator whether the page will be blank
      * @return the SimplePageMaster to use for this page
      * @throws PageProductionException if there's a problem determining the page master
      */
     public SimplePageMaster getNextSimplePageMaster(int page,
-            boolean isFirstPage,
-            boolean isLastPage,
-            boolean isOnlyPage,
-            boolean isBlank) throws PageProductionException {
+                                                    boolean isFirstPage,
+                                                    boolean isLastPage,
+                                                    boolean isBlank) throws PageProductionException {
 
         if (pageSequenceMaster == null) {
             return simplePageMaster;
@@ -266,11 +268,10 @@ public class PageSequence extends AbstractPageSequence {
                     + " isOdd=" + isOddPage
                     + " isFirst=" + isFirstPage
                     + " isLast=" + isLastPage
-                    + " isOnly=" + isOnlyPage
                     + " isBlank=" + isBlank + ")");
         }
         return pageSequenceMaster.getNextSimplePageMaster(isOddPage,
-            isFirstPage, isLastPage, isOnlyPage, isBlank);
+            isFirstPage, isLastPage, isBlank);
     }
 
     /**
@@ -278,29 +279,17 @@ public class PageSequence extends AbstractPageSequence {
      * @return true if there is a previous item, false if the current one was the first one.
      */
     public boolean goToPreviousSimplePageMaster() {
-        if (pageSequenceMaster == null) {
-            return true;
-        } else {
-            return pageSequenceMaster.goToPreviousSimplePageMaster();
-        }
+        return pageSequenceMaster == null || pageSequenceMaster.goToPreviousSimplePageMaster();
     }
 
     /** @return true if the page-sequence has a page-master with page-position="last" */
     public boolean hasPagePositionLast() {
-        if (pageSequenceMaster == null) {
-            return false;
-        } else {
-            return pageSequenceMaster.hasPagePositionLast();
-        }
+        return pageSequenceMaster != null && pageSequenceMaster.hasPagePositionLast();
     }
 
     /** @return true if the page-sequence has a page-master with page-position="only" */
     public boolean hasPagePositionOnly() {
-        if (pageSequenceMaster == null) {
-            return false;
-        } else {
-            return pageSequenceMaster.hasPagePositionOnly();
-        }
+        return pageSequenceMaster != null && pageSequenceMaster.hasPagePositionOnly();
     }
 
     /**

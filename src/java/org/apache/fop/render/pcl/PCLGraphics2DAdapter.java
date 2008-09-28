@@ -34,7 +34,7 @@ import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.util.UnitConv;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * Graphics2DAdapter implementation for PCL and HP GL/2.
@@ -111,7 +111,7 @@ public class PCLGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
         if (!painted) {
             //Fallback solution: Paint to a BufferedImage
-            int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
+            int resolution = Math.round(context.getUserAgent().getTargetResolution());
             BufferedImage bi = paintToBufferedImage(painter, pclContext,
                     resolution, !pclContext.isColorCanvas(), false);
 

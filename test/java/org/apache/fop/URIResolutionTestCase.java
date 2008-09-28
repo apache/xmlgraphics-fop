@@ -66,6 +66,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     /** @see junit.framework.TestCase#TestCase(String) */
     public URIResolutionTestCase(String name) {
         super(name);
+        backupDir.mkdirs();
     }
 
     /**

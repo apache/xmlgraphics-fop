@@ -370,8 +370,10 @@ public abstract class PropertyList {
 
         if (attributeValue != null) {
 
-            if (attributeName.startsWith("xmlns:")) {
-                //Ignore namespace declarations
+            if (attributeName.startsWith("xmlns:")
+                    || "xmlns".equals(attributeName)) {
+                //Ignore namespace declarations if the XML parser/XSLT processor
+                //reports them as 'regular' attributes
                 return;
             }
 
@@ -519,7 +521,7 @@ public abstract class PropertyList {
     }
 
     /**
-     * @param propID ID of property
+     * @param propId ID of property
      * @return new Property object
      * @throws PropertyException if there's a problem while processing the property
      */
@@ -637,7 +639,6 @@ public abstract class PropertyList {
     public CommonAbsolutePosition getAbsolutePositionProps() throws PropertyException {
         return new CommonAbsolutePosition(this);
     }
-
 
     /**
      * Constructs a CommonFont object.
