@@ -37,6 +37,8 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
     private final AFPRenderer renderer;
 
+    private final AFPGraphics2D g2d;
+
     /**
      * Main constructor
      *
@@ -44,6 +46,18 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
      */
     public AFPGraphics2DAdapter(AFPRenderer renderer) {
         this.renderer = renderer;
+
+        final boolean textAsShapes = false;
+        this.g2d = new AFPGraphics2D(textAsShapes);
+    }
+
+    /**
+     * Returns the AFP graphics 2D implementation
+     *
+     * @return the AFP graphics 2D implementation
+     */
+    protected AFPGraphics2D getGraphics2D() {
+        return g2d;
     }
 
     /** {@inheritDoc} */
@@ -54,8 +68,6 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
         // get the 'width' and 'height' attributes of the SVG document
         Dimension dim = painter.getImageSize();
 
-        final boolean textAsShapes = false;
-        AFPGraphics2D g2d = new AFPGraphics2D(textAsShapes);
 
         AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(context);
         g2d.setAFPInfo(afpInfo);
@@ -90,7 +102,6 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
                 at.scale(scale, scale);
             }
 
-
             AffineTransform trans = state.getData().getTransform();
             trans.concatenate(at);
 
@@ -101,8 +112,15 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
 //            at = state.getData().getTransform();
             g2d.drawImage(bi, trans, null);
         } else {
+            AFPGraphicsObjectInfo graphicsObjectInfo = new AFPGraphicsObjectInfo();
+            graphicsObjectInfo.setPainter(painter);
+            graphicsObjectInfo.setGraphics2D(g2d);
+
             Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
-            painter.paint(g2d, area);
+            graphicsObjectInfo.setArea(area);
+            AFPResourceManager resourceManager = (AFPResourceManager)context.getProperty(
+                    AFPRendererContextConstants.AFP_RESOURCE_MANAGER);
+            resourceManager.createObject(graphicsObjectInfo);
         }
 
         renderer.restoreGraphicsState();

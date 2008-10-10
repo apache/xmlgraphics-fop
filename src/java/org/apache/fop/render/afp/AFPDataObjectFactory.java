@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
+
+import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.render.afp.ioca.ImageContent;
 import org.apache.fop.render.afp.modca.AbstractDataObject;
@@ -35,6 +37,7 @@ import org.apache.fop.render.afp.modca.ResourceObject;
 import org.apache.fop.render.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.render.afp.modca.triplets.ObjectClassificationTriplet;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 /**
  * Factory for high level data objects (Image/Graphics etc)
@@ -121,8 +124,11 @@ public class AFPDataObjectFactory {
      */
     public GraphicsObject createGraphic(AFPGraphicsObjectInfo graphicsObjectInfo) {
         GraphicsObject graphicsObj = factory.createGraphicsObject();
-        // paint the graphic using batik
-        graphicsObjectInfo.getPainter().paint(graphicsObj);
+        AFPGraphics2D g2d = graphicsObjectInfo.getGraphics2D();
+        g2d.setGraphicsObject(graphicsObj);
+        Graphics2DImagePainter painter = graphicsObjectInfo.getPainter();
+        Rectangle2D area = graphicsObjectInfo.getArea();
+        painter.paint(g2d, area);
         return graphicsObj;
     }
 
@@ -170,13 +176,16 @@ public class AFPDataObjectFactory {
         int yOffset = objectAreaInfo.getY();
         includeObj.setObjectAreaOffset(xOffset, yOffset);
 
-        includeObj.setObjectAreaSize(
-                objectAreaInfo.getWidth(), objectAreaInfo.getHeight());
+        int width = objectAreaInfo.getWidth();
+        int height = objectAreaInfo.getHeight();
+        includeObj.setObjectAreaSize(width, height);
 
-        includeObj.setObjectAreaOrientation(objectAreaInfo.getRotation());
+        int rotation = objectAreaInfo.getRotation();
+        includeObj.setObjectAreaOrientation(rotation);
 
-        includeObj.setMeasurementUnits(
-                objectAreaInfo.getWidthRes(), objectAreaInfo.getHeightRes());
+        int widthRes = objectAreaInfo.getWidthRes();
+        int heightRes = objectAreaInfo.getHeightRes();
+        includeObj.setMeasurementUnits(widthRes, heightRes);
 
         includeObj.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
 

@@ -42,59 +42,38 @@ import org.apache.fop.render.afp.tools.BinaryUtils;
  */
 public class IncludeObject extends AbstractNamedAFPObject {
 
-    /**
-     * the include object is of type page segment
-     */
+    /** the object referenced is of type page segment */
     public static final byte TYPE_PAGE_SEGMENT = (byte)0x5F;
 
-    /**
-     * the include object is of type other
-     */
+    /** the object referenced is of type other */
     public static final byte TYPE_OTHER = (byte)0x92;
 
-    /**
-     * the include object is of type graphic
-     */
+    /** the object referenced is of type graphic */
     public static final byte TYPE_GRAPHIC = (byte)0xBB;
 
-    /**
-     * the included object is of type barcode
-     */
+    /** the object referenced is of type barcode */
     public static final byte TYPE_BARCODE = (byte)0xEB;
 
-    /**
-     * the included object is of type image
-     */
+    /** the object referenced is of type image */
     public static final byte TYPE_IMAGE = (byte)0xFB;
 
-    /**
-     * The object type (default is other)
-     */
+
+    /** the object type referenced (default is other) */
     private byte objectType = TYPE_OTHER;
 
-    /**
-     * The X-axis origin of the object area
-     */
+    /** the X-axis origin of the object area */
     private int xoaOset = 0;
 
-    /**
-     * The Y-axis origin of the object area
-     */
+    /** the Y-axis origin of the object area */
     private int yoaOset = 0;
 
-    /**
-     * The orientation on the include object
-     */
+    /** the orientation of the referenced object */
     private int oaOrent = 0;
 
-    /**
-     * The X-axis origin defined in the object
-     */
+    /** the X-axis origin defined in the object */
     private int xocaOset = -1;
 
-    /**
-     * The Y-axis origin defined in the object
-     */
+    /** the Y-axis origin defined in the object */
     private int yocaOset = -1;
 
     /**

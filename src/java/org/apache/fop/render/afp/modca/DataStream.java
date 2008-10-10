@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp.modca;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -28,9 +29,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.afp.AFPFontAttributes;
+import org.apache.fop.render.afp.AFPLineDataInfo;
 import org.apache.fop.render.afp.AFPResourceLevel;
+import org.apache.fop.render.afp.AFPState;
 import org.apache.fop.render.afp.AFPTextDataInfo;
-import org.apache.fop.render.afp.LineDataInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.modca.triplets.FullyQualifiedNameTriplet;
 
@@ -76,14 +78,11 @@ public class DataStream {
     /** The current page */
     private AbstractPageObject currentPage = null;
 
-    /** The portrait rotation */
-    private int portraitRotation = 0;
-
-    /** The landscape rotation */
-    private int landscapeRotation = 270;
-
-    /** The rotation */
-    private int orientation;
+//    /** The portrait rotation */
+//    private int portraitRotation = 0;
+//
+//    /** The landscape rotation */
+//    private int landscapeRotation = 270;
 
     /** The MO:DCA interchange set in use (default to MO:DCA-P IS/2 set) */
     private InterchangeSet interchangeSet
@@ -93,13 +92,18 @@ public class DataStream {
 
     private OutputStream outputStream;
 
+    /** the afp state */
+    private final AFPState state;
+
     /**
      * Default constructor for the AFPDocumentStream.
      *
      * @param factory the resource factory
+     * @param state the afp state
      * @param outputStream the outputstream to write to
      */
-    public DataStream(Factory factory, OutputStream outputStream) {
+    public DataStream(Factory factory, AFPState state, OutputStream outputStream) {
+        this.state = state;
         this.factory = factory;
         this.outputStream = outputStream;
     }
@@ -294,31 +298,6 @@ public class DataStream {
     }
 
     /**
-     * Sets the offsets to be used for element positioning
-     *
-     * @param xOff
-     *            the offset in the x direction
-     * @param yOff
-     *            the offset in the y direction
-     * @param orientation
-     *            the rotation
-     * @deprecated offsets are no longer used, use setOrientation() for setting the orientation
-     */
-    public void setOffsets(int xOff, int yOff, int orientation) {
-        setOrientation(orientation);
-    }
-
-    /**
-     * Sets the orientation to be used for element positioning
-     *
-     * @param orientation
-     *            the orientation used for element positioning
-     */
-    public void setOrientation(int orientation) {
-        this.orientation = orientation;
-    }
-
-    /**
      * Creates the given page fonts in the current page
      *
      * @param pageFonts
@@ -351,6 +330,37 @@ public class DataStream {
     }
 
     /**
+     * Returns a point on the current page
+     *
+     * @param x the X-coordinate
+     * @param y the Y-coordinate
+     * @return a point on the current page
+     */
+    private Point getPoint(int x, int y) {
+        Point p = new Point();
+        int rotation = state.getRotation();
+        switch (rotation) {
+        case 90:
+            p.x = y;
+            p.y = currentPage.getWidth() - x;
+            break;
+        case 180:
+            p.x = currentPage.getWidth() - x;
+            p.y = currentPage.getHeight() - y;
+            break;
+        case 270:
+            p.x = currentPage.getHeight() - y;
+            p.y = x;
+            break;
+        default:
+            p.x = x;
+            p.y = y;
+            break;
+        }
+        return p;
+    }
+
+    /**
      * Helper method to create text on the current page, this method delegates
      * to the current presentation text object in order to construct the text.
      *
@@ -358,7 +368,13 @@ public class DataStream {
      *            the afp text data
      */
     public void createText(AFPTextDataInfo textDataInfo) {
-        textDataInfo.setOrientation(orientation);
+        int rotation = state.getRotation();
+        if (rotation != 0) {
+            textDataInfo.setRotation(rotation);
+            Point p = getPoint(textDataInfo.getX(), textDataInfo.getY());
+            textDataInfo.setX(p.x);
+            textDataInfo.setY(p.y);
+        }
         currentPage.createText(textDataInfo);
     }
 
@@ -367,8 +383,7 @@ public class DataStream {
      *
      * @param lineDataInfo the line data information.
      */
-    public void createLine(LineDataInfo lineDataInfo) {
-        lineDataInfo.setOrientation(orientation);
+    public void createLine(AFPLineDataInfo lineDataInfo) {
         currentPage.createLine(lineDataInfo);
     }
 
@@ -400,7 +415,7 @@ public class DataStream {
      *            the name of the static overlay
      */
     public void createIncludePageOverlay(String name) {
-        currentPageObject.createIncludePageOverlay(name, 0, 0, orientation);
+        currentPageObject.createIncludePageOverlay(name, 0, 0, state.getRotation());
         currentPageObject.getActiveEnvironmentGroup().createOverlay(name);
     }
 
@@ -427,6 +442,7 @@ public class DataStream {
     public void createIncludePageSegment(String name, int x, int y) {
         int xOrigin;
         int yOrigin;
+        int orientation = state.getRotation();
         switch (orientation) {
         case 90:
             xOrigin = currentPage.getWidth() - y;
@@ -548,38 +564,6 @@ public class DataStream {
     }
 
     /**
-     * Sets the rotation to be used for portrait pages, valid values are 0
-     * (default), 90, 180, 270.
-     *
-     * @param pageRotation the rotation in degrees.
-     */
-    public void setPortraitRotation(int pageRotation) {
-        if (pageRotation == 0 || pageRotation == 90 || pageRotation == 180
-                || pageRotation == 270) {
-            this.portraitRotation = pageRotation;
-        } else {
-            throw new IllegalArgumentException(
-                    "The portrait rotation must be one of the values 0, 90, 180, 270");
-        }
-    }
-
-    /**
-     * Sets the rotation to be used for landscape pages, valid values are 0, 90,
-     * 180, 270 (default).
-     *
-     * @param pageRotation the rotation in degrees.
-     */
-    public void setLandscapeRotation(int pageRotation) {
-        if (pageRotation == 0 || pageRotation == 90 || pageRotation == 180
-                || pageRotation == 270) {
-            this.landscapeRotation = pageRotation;
-        } else {
-            throw new IllegalArgumentException(
-                    "The landscape rotation must be one of the values 0, 90, 180, 270");
-        }
-    }
-
-    /**
      * Sets the MO:DCA interchange set to use
      *
      * @param interchangeSet the MO:DCA interchange set
@@ -613,6 +597,40 @@ public class DataStream {
             resourceGroup = currentPageObject.getResourceGroup();
         }
         return resourceGroup;
+    }
+
+    /**
+     * Sets the rotation to be used for portrait pages, valid values are 0
+     * (default), 90, 180, 270.
+     *
+     * @param pageRotation the rotation in degrees.
+     * @deprecated not used
+     */
+    public void setPortraitRotation(int pageRotation) {
+    }
+
+    /**
+     * Sets the rotation to be used for landscape pages, valid values are 0, 90,
+     * 180, 270 (default).
+     *
+     * @param pageRotation the rotation in degrees.
+     * @deprecated not used
+     */
+    public void setLandscapeRotation(int pageRotation) {
+    }
+
+    /**
+     * Sets the offsets to be used for element positioning
+     *
+     * @param xOff
+     *            the offset in the x direction
+     * @param yOff
+     *            the offset in the y direction
+     * @param orientation
+     *            the orientation
+     * @deprecated not used
+     */
+    public void setOffsets(int xOff, int yOff, int orientation) {
     }
 
 }

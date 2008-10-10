@@ -26,13 +26,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
 import org.apache.batik.parser.AWTTransformProducer;
-
-import org.apache.xmlgraphics.image.loader.ImageSize;
-import org.apache.xmlgraphics.util.QName;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -48,7 +42,10 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.traits.BorderProps;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.UnitConv;
+import org.w3c.dom.Document;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -282,12 +279,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsAfter the border specification on the after side
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
-     */    
+     */
     protected void drawBorders(Rectangle2D.Float borderRect,
             BorderProps bpsBefore, BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) {
         //TODO generalize each of the four conditions into using a parameterized drawBorder()
         boolean[] border = new boolean[] {
-                (bpsBefore != null), (bpsEnd != null), 
+                (bpsBefore != null), (bpsEnd != null),
                 (bpsAfter != null), (bpsStart != null)};
         float startx = borderRect.x;
         float starty = borderRect.y;
@@ -518,9 +515,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 positionTransform.concatenate(freeTransform);
             }
 
-            saveGraphicsState();
             //Viewport position
-            concatenateTransformationMatrix(UnitConv.mptToPt(positionTransform));
+            if (!positionTransform.isIdentity()) {
+                establishTransformationMatrix(positionTransform);
+            }
 
             //Background and borders
             float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
@@ -537,17 +535,23 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 clipRect(0f, 0f, width, height);
             }
 
-            saveGraphicsState();
             //Set up coordinate system for content rectangle
             AffineTransform contentTransform = ctm.toAffineTransform();
-            concatenateTransformationMatrix(UnitConv.mptToPt(contentTransform));
+            if (!contentTransform.isIdentity()) {
+                establishTransformationMatrix(contentTransform);
+            }
 
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
 
-            restoreGraphicsState();
-            restoreGraphicsState();
+            if (!positionTransform.isIdentity()) {
+                restoreGraphicsState();
+            }
+
+            if (!contentTransform.isIdentity()) {
+                restoreGraphicsState();
+            }
 
             if (breakOutList != null) {
                 restoreStateStackAfterBreakOut(breakOutList);
@@ -603,8 +607,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         at.translate(0, block.getSpaceBefore());
 
         if (!at.isIdentity()) {
-            saveGraphicsState();
-            concatenateTransformationMatrix(UnitConv.mptToPt(at));
+            establishTransformationMatrix(at);
         }
 
         currentIPPosition = 0;
@@ -636,8 +639,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         at.translate(currentIPPosition, currentBPPosition);
 
         if (!at.isIdentity()) {
-            saveGraphicsState();
-            concatenateTransformationMatrix(UnitConv.mptToPt(at));
+            establishTransformationMatrix(at);
         }
 
         currentIPPosition = 0;
@@ -847,6 +849,18 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         renderDocument(doc, ns, pos, fo.getForeignAttributes());
+    }
+
+    /**
+     * Establishes a new coordinate system with the given transformation matrix.
+     * The current graphics state is saved and the new coordinate system is concatenated.
+     * @param block
+     *
+     * @param at the transformation matrix
+     */
+    protected void establishTransformationMatrix(AffineTransform at) {
+        saveGraphicsState();
+        concatenateTransformationMatrix(UnitConv.mptToPt(at));
     }
 
 }

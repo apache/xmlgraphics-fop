@@ -85,8 +85,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     /** Current AFP state */
     private AFPState state = null;
 
-    private AFPUnitConverter unitConv;
-
     /**
      * Main constructor
      *
@@ -122,7 +120,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     public void setAFPInfo(AFPInfo afpInfo) {
         this.info = afpInfo;
         this.state = info.getState();
-        this.unitConv = state.getUnitConverter();
     }
 
     /**
@@ -400,6 +397,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
             ImageObserver observer) {
 
         // draw with AWT Graphics2D
+        AFPUnitConverter unitConv = state.getUnitConverter();
         int w = Math.round(unitConv.pt2units(width));
         int h = Math.round(unitConv.pt2units(height));
         Dimension size = new Dimension(w, h);
@@ -424,10 +422,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         ImageRendered imgRend = new ImageRendered(imageInfo, buf, null);
         RenderedImage ri = imgRend.getRenderedImage();
-
-
-
-
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -534,6 +528,15 @@ public class AFPGraphics2D extends AbstractGraphics2D {
      */
     public void setGraphicsObject(GraphicsObject obj) {
         this.graphicsObj = obj;
+    }
+
+    /**
+     * Sets the AFP state
+     *
+     * @param state the AFP state
+     */
+    protected void setState(AFPState state) {
+        this.state = state;
     }
 
 }

@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.afp;
 
-import java.awt.geom.AffineTransform;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.AbstractState;
@@ -44,7 +42,7 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
     private boolean colorImages = false;
 
     /** images are supported in this AFP environment */
-    private boolean nativeImages;
+    private boolean nativeImages = false;
 
     /** default value for image depth */
     private int bitsPerPixel = 8;
@@ -55,9 +53,11 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
     /** the current page */
     private AFPPageState pageState = new AFPPageState();
 
+//    /** reference orientation */
+//    private int orientation = 0;
+
     /** a unit converter */
     private final transient AFPUnitConverter unitConv = new AFPUnitConverter(this);
-
 
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
@@ -290,6 +290,15 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
     }
 
     /**
+     * Returns the page rotation
+     *
+     * @return the page rotation
+     */
+    public int getPageRotation() {
+        return pageState.getOrientation();
+    }
+
+    /**
      * Sets the uri of the current image
      *
      * @param uri the uri of the current image
@@ -308,24 +317,12 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
     }
 
     /**
-     * Returns the current orientation
+     * Returns the currently derived rotation
      *
-     * @return the current orientation
+     * @return the currently derived rotation
      */
-    public int getOrientation() {
-        AffineTransform at = getData().getTransform();
-        int orientation = 0;
-        if (at.getScaleX() == 0 && at.getScaleY() == 0
-                && at.getShearX() == 1 && at.getShearY() == -1) {
-            orientation = 90;
-        } else if (at.getScaleX() == -1 && at.getScaleY() == -1
-                && at.getShearX() == 0 && at.getShearY() == 0) {
-            orientation = 180;
-        } else if (at.getScaleX() == 0 && at.getScaleY() == 0
-                && at.getShearX() == -1 && at.getShearY() == 1) {
-            orientation = 270;
-        }
-        return orientation;
+    public int getRotation() {
+        return getData().getDerivedRotation();
     }
 
     /**
@@ -365,17 +362,20 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
      * Page level state data
      */
     private class AFPPageState implements Cloneable {
-        /** The current page width */
+        /** page width */
         private int width = 0;
 
-        /** The current page height */
+        /** page height */
         private int height = 0;
 
-        /** The current page fonts */
+        /** page fonts */
         private AFPPageFonts fonts = new AFPPageFonts();
 
-        /** The current page font count */
+        /** page font count */
         private int fontCount = 0;
+
+        /** page orientation */
+        private int orientation = 0;
 
         /**
          * Returns the page width
@@ -440,12 +440,31 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
             return ++fontCount;
         }
 
+        /**
+         * Returns the current page orientation
+         *
+         * @return the current page orientation
+         */
+        protected int getOrientation() {
+            return orientation;
+        }
+
+        /**
+         * Sets the current page orientation
+         *
+         * @param orientation the current page orientation
+         */
+        protected void setOrientation(int orientation) {
+            this.orientation = orientation;
+        }
+
         /** {@inheritDoc} */
         public Object clone() {
             AFPPageState state = new AFPPageState();
-            state.fonts = new AFPPageFonts(this.fonts);
-            state.height = this.height;
             state.width = this.width;
+            state.height = this.height;
+            state.orientation = this.orientation;
+            state.fonts = new AFPPageFonts(this.fonts);
             state.fontCount = this.fontCount;
             return state;
         }
@@ -454,6 +473,7 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
         public String toString() {
             return "AFPPageState{width=" + width
             + ", height=" + height
+            + ", orientation=" + orientation
             + ", fonts=" + fonts
             + ", fontCount=" + fontCount
             + "}";
@@ -487,4 +507,5 @@ public class AFPState extends org.apache.fop.render.AbstractState implements Clo
             + "}";
         }
     }
+
 }

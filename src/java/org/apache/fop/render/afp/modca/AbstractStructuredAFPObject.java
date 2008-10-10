@@ -84,6 +84,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             writeObjects(triplets, baos);
             this.tripletData = baos.toByteArray();
+            triplets = null; // gc
         }
         return this.tripletData;
     }
@@ -99,6 +100,7 @@ public abstract class AbstractStructuredAFPObject extends AbstractAFPObject {
             os.write(tripletData);
         } else if (triplets != null) {
             writeObjects(triplets, os);
+            triplets = null; // gc
         }
     }
 

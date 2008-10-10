@@ -62,17 +62,28 @@ public abstract class AFPDataObjectInfoFactory {
 
         // set object area
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
+
         float srcX = afpImageInfo.origin.x + (float)afpImageInfo.pos.getX();
         float srcY = afpImageInfo.origin.y + (float)afpImageInfo.pos.getY();
         AFPUnitConverter unitConv = state.getUnitConverter();
         int[] coords = unitConv.mpts2units(new float[] {srcX, srcY});
         objectAreaInfo.setX(coords[X]);
         objectAreaInfo.setY(coords[Y]);
+
         int width = Math.round(unitConv.mpt2units((float)afpImageInfo.pos.getWidth()));
         objectAreaInfo.setWidth(width);
+
         int height = Math.round(unitConv.mpt2units((float)afpImageInfo.pos.getHeight()));
         objectAreaInfo.setHeight(height);
+
+        int resolution = state.getResolution();
+        objectAreaInfo.setHeightRes(resolution);
+        objectAreaInfo.setWidthRes(resolution);
+
+        objectAreaInfo.setRotation(state.getRotation());
+
         dataObjectInfo.setObjectAreaInfo(objectAreaInfo);
+
         return dataObjectInfo;
     }
 

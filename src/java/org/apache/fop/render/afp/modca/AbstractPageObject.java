@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.fop.render.afp.LineDataInfo;
+import org.apache.fop.render.afp.AFPLineDataInfo;
 import org.apache.fop.render.afp.AFPTextDataInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
 
@@ -128,6 +128,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
             String name, int width, int height, int rotation,
             int widthRes, int heightRes) {
         super(name);
+
         this.factory = factory;
         this.width = width;
         this.height = height;
@@ -158,7 +159,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      *
      * @param lineDataInfo the line data information.
      */
-    public void createLine(LineDataInfo lineDataInfo) {
+    public void createLine(AFPLineDataInfo lineDataInfo) {
         getPresentationTextObject().createLineData(lineDataInfo);
     }
 
@@ -269,9 +270,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      */
     public ActiveEnvironmentGroup getActiveEnvironmentGroup() {
         if (activeEnvironmentGroup == null) {
-            /**
-             * Every page object must have an ActiveEnvironmentGroup
-             */
+            // every page object must have an ActiveEnvironmentGroup
             this.activeEnvironmentGroup
                 = factory.createActiveEnvironmentGroup(width, height, widthRes, heightRes);
 
@@ -343,5 +342,4 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     public void addObject(Object obj) {
         objects.add(obj);
     }
-
 }

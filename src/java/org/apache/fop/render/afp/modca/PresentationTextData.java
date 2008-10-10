@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.fop.render.afp.LineDataInfo;
+import org.apache.fop.render.afp.AFPLineDataInfo;
 import org.apache.fop.render.afp.AFPTextDataInfo;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
@@ -277,22 +277,25 @@ public class PresentationTextData extends AbstractAFPObject {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
 
-        if (currentOrientation != textDataInfo.getOrientation()) {
-            setTextOrientation(textDataInfo.getOrientation(), afpdata);
-            currentOrientation = textDataInfo.getOrientation();
+        int rotation = textDataInfo.getRotation();
+        if (currentOrientation != rotation) {
+            setTextOrientation(rotation, afpdata);
+            currentOrientation = rotation;
             currentX = -1;
             currentY = -1;
         }
 
-        // Avoid unnecessary specification of the Y co-ordinate
-        if (textDataInfo.getY() != currentY) {
-            absoluteMoveBaseline(textDataInfo.getY(), afpdata);
+        // Avoid unnecessary specification of the Y coordinate
+        int y = textDataInfo.getY();
+        if (currentY != y) {
+            absoluteMoveBaseline(y, afpdata);
             currentX = -1;
         }
 
-        // Avoid unnecessary specification of the X co-ordinate
-        if (textDataInfo.getX() != currentX) {
-            absoluteMoveInline(textDataInfo.getX(), afpdata);
+        // Avoid unnecessary specification of the X coordinate
+        int x = textDataInfo.getX();
+        if (currentX != x) {
+            absoluteMoveInline(x, afpdata);
         }
 
         // Avoid unnecessary specification of the variable space increment
@@ -362,43 +365,43 @@ public class PresentationTextData extends AbstractAFPObject {
      * @throws MaximumSizeExceededException
      *            thrown if the maximum number of line data has been exceeded
      */
-    public void createLineData(LineDataInfo lineDataInfo) throws MaximumSizeExceededException {
+    public void createLineData(AFPLineDataInfo lineDataInfo) throws MaximumSizeExceededException {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
 
-        int thickness = lineDataInfo.getThickness();
-        int orientation = lineDataInfo.getOrientation();
-        int x1 = lineDataInfo.getX1();
-        int y1 = lineDataInfo.getY1();
-        int x2 = lineDataInfo.getX2();
-        int y2 = lineDataInfo.getY2();
-        Color col = lineDataInfo.getColor();
-
+        int orientation = lineDataInfo.getRotation();
         if (currentOrientation != orientation) {
             setTextOrientation(orientation, afpdata);
             currentOrientation = orientation;
         }
 
         // Avoid unnecessary specification of the Y coordinate
+        int y1 = lineDataInfo.getY1();
         if (y1 != currentY) {
             absoluteMoveBaseline(y1, afpdata);
         }
 
         // Avoid unnecessary specification of the X coordinate
+        int x1 = lineDataInfo.getX1();
         if (x1 != currentX) {
             absoluteMoveInline(x1, afpdata);
         }
 
+        Color col = lineDataInfo.getColor();
         if (!col.equals(currentColor)) {
             setExtendedTextColor(col, afpdata);
             currentColor = col;
         }
 
+        int x2 = lineDataInfo.getX2();
+        int y2 = lineDataInfo.getY2();
+        int thickness = lineDataInfo.getThickness();
         if (y1 == y2) {
             drawIaxisRule(x2 - x1, thickness, afpdata);
         } else if (x1 == x2) {
             drawBaxisRule(y2 - y1, thickness, afpdata);
         } else {
+            log.error("Invalid axis rule unable to draw line");
             return;
         }
 
@@ -425,36 +428,36 @@ public class PresentationTextData extends AbstractAFPObject {
      *
      * @param orientation
      *            The text orientation (0, 90, 180, 270).
-     * @param afpdata
+     * @param os
      *            The output stream to which data should be written.
      */
     private void setTextOrientation(int orientation,
-            ByteArrayOutputStream afpdata) {
-        afpdata.write(new byte[] {0x06, (byte) 0xF7, }, 0, 2);
+            ByteArrayOutputStream os) {
+        os.write(new byte[] {0x06, (byte) 0xF7, }, 0, 2);
         switch (orientation) {
         case 90:
-            afpdata.write(0x2D);
-            afpdata.write(0x00);
-            afpdata.write(0x5A);
-            afpdata.write(0x00);
+            os.write(0x2D);
+            os.write(0x00);
+            os.write(0x5A);
+            os.write(0x00);
             break;
         case 180:
-            afpdata.write(0x5A);
-            afpdata.write(0x00);
-            afpdata.write(0x87);
-            afpdata.write(0x00);
+            os.write(0x5A);
+            os.write(0x00);
+            os.write(0x87);
+            os.write(0x00);
             break;
         case 270:
-            afpdata.write(0x87);
-            afpdata.write(0x00);
-            afpdata.write(0x00);
-            afpdata.write(0x00);
+            os.write(0x87);
+            os.write(0x00);
+            os.write(0x00);
+            os.write(0x00);
             break;
         default:
-            afpdata.write(0x00);
-            afpdata.write(0x00);
-            afpdata.write(0x2D);
-            afpdata.write(0x00);
+            os.write(0x00);
+            os.write(0x00);
+            os.write(0x2D);
+            os.write(0x00);
             break;
         }
     }
@@ -467,10 +470,10 @@ public class PresentationTextData extends AbstractAFPObject {
      *
      * @param col
      *            The color to be set.
-     * @param afpdata
+     * @param os
      *            The output stream to which data should be written.
      */
-    private void setExtendedTextColor(Color col, ByteArrayOutputStream afpdata) {
+    private void setExtendedTextColor(Color col, ByteArrayOutputStream os) {
         byte[] colorData = new byte[] {
             15, // Control sequence length
             (byte) 0x81, // Control sequence function type
@@ -489,7 +492,7 @@ public class PresentationTextData extends AbstractAFPObject {
             (byte) (col.getBlue()), // Blue intensity
         };
 
-        afpdata.write(colorData, 0, colorData.length);
+        os.write(colorData, 0, colorData.length);
     }
 
     /**
@@ -497,14 +500,14 @@ public class PresentationTextData extends AbstractAFPObject {
      *
      * @param incr
      *            The increment to be set.
-     * @param afpdata
+     * @param os
      *            The output stream to which data should be written.
      */
     private void setVariableSpaceCharacterIncrement(int incr,
-            ByteArrayOutputStream afpdata) {
+            ByteArrayOutputStream os) {
         byte[] b = BinaryUtils.convert(incr, 2);
 
-        afpdata.write(new byte[] {
+        os.write(new byte[] {
                 4, // Control sequence length
                 (byte) 0xC5, // Control sequence function type
                 b[0], b[1] },
@@ -516,12 +519,12 @@ public class PresentationTextData extends AbstractAFPObject {
      *
      * @param incr
      *            The increment to be set.
-     * @param afpdata
+     * @param os
      *            The output stream to which data should be written.
      */
-    private void setInterCharacterAdjustment(int incr, ByteArrayOutputStream afpdata) {
+    private void setInterCharacterAdjustment(int incr, ByteArrayOutputStream os) {
         byte[] b = BinaryUtils.convert(Math.abs(incr), 2);
-        afpdata.write(new byte[] {
+        os.write(new byte[] {
                 5, // Control sequence length
                 (byte) 0xC3, // Control sequence function type
                 b[0], b[1], (byte) (incr >= 0 ? 0 : 1) // Direction

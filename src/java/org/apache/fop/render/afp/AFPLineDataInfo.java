@@ -22,7 +22,7 @@ package org.apache.fop.render.afp;
 import java.awt.Color;
 
 /** Line data information */
-public class LineDataInfo {
+public class AFPLineDataInfo {
 
     /** the x1 coordinate */
     int x1;
@@ -42,13 +42,13 @@ public class LineDataInfo {
     /** the painting color */
     Color color;
 
-    /** the orientation */
-    int orientation;
+    /** the rotation */
+    int rotation = 0;
 
     /**
      * Default constructor
      */
-    public LineDataInfo() {
+    public AFPLineDataInfo() {
     }
 
     /**
@@ -160,32 +160,32 @@ public class LineDataInfo {
     }
 
     /**
-     * Returns line orientation
+     * Returns line rotation
      *
-     * @return the line orientation
+     * @return the line rotation
      */
-    public int getOrientation() {
-        return orientation;
+    public int getRotation() {
+        return rotation;
     }
 
     /**
-     * Sets the orientation
+     * Sets the line rotation
      *
-     * @param orientation the orientation
+     * @param rotation the line rotation
      */
-    public void setOrientation(int orientation) {
-        this.orientation = orientation;
+    public void setRotation(int rotation) {
+        this.rotation = rotation;
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return "LineDataInfo{x1=" + x1
+        return "AFPLineDataInfo{x1=" + x1
         + ", y1=" + y1
         + ", x2=" + x2
         + ", y2=" + y2
         + ", thickness=" + thickness
         + ", color=" + color
-        + ", orientation=" + orientation
+        + ", rotation=" + rotation
         + "}";
     }
 

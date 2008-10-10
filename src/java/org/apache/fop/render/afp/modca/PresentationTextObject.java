@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.fop.render.afp.LineDataInfo;
+import org.apache.fop.render.afp.AFPLineDataInfo;
 import org.apache.fop.render.afp.AFPTextDataInfo;
 
 /**
@@ -87,7 +87,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      *
      * @param lineDataInfo the line data information.
      */
-    public void createLineData(LineDataInfo lineDataInfo) {
+    public void createLineData(AFPLineDataInfo lineDataInfo) {
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }

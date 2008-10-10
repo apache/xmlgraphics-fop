@@ -36,7 +36,6 @@ import java.util.Map;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.area.Block;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentItem;
@@ -66,7 +65,6 @@ import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
@@ -186,15 +184,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
-        state.setColor(new Color(255, 255, 255));
-        resourceManager.setOutputStream(outputStream);
+        state.setColor(Color.WHITE);
+
+        resourceManager.createDataStream(state, outputStream);
 
         this.dataStream = resourceManager.getDataStream();
-        dataStream.setPortraitRotation(state.getPortraitRotation());
-        dataStream.setLandscapeRotation(state.getLandscapeRotation());
-        dataStream.startDocument();
-
         this.borderPainter = new AFPBorderPainter(state, dataStream);
+
+//        dataStream.setPortraitRotation(state.getPortraitRotation());
+//        dataStream.setLandscapeRotation(state.getLandscapeRotation());
+        dataStream.startDocument();
     }
 
     /** {@inheritDoc} */
@@ -220,7 +219,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void preparePage(PageViewport page) {
-        final int pageRotation = 0;
+        int pageRotation = state.getPageRotation();
         int pageWidth = state.getPageWidth();
         int pageHeight = state.getPageHeight();
         int resolution = state.getResolution();
@@ -298,12 +297,15 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
             int pageWidth
                 = Math.round(unitConv.mpt2units((float)bounds.getWidth()));
             state.setPageWidth(pageWidth);
+
             int pageHeight
                 = Math.round(unitConv.mpt2units((float)bounds.getHeight()));
             state.setPageHeight(pageHeight);
 
-            final int pageRotation = 0;
+            int pageRotation = state.getPageRotation();
+
             int resolution = state.getResolution();
+
             dataStream.startPage(pageWidth, pageHeight, pageRotation,
                     resolution, resolution);
 
@@ -419,6 +421,14 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 if (factory != null) {
                     AFPImageInfo afpImageInfo
                     = new AFPImageInfo(uri, pos, origin, info, img, foreignAttributes);
+                    if (factory instanceof AFPImageGraphics2DFactory) {
+                        RendererContext rendererContext = createRendererContext(
+                                x, y, posInt.width, posInt.height, foreignAttributes);
+                        afpImageInfo.setRendererContext(rendererContext);
+                        AFPGraphics2DAdapter g2dAdapter
+                            = (AFPGraphics2DAdapter)getGraphics2DAdapter();
+                        afpImageInfo.setGraphics2DAdapter(g2dAdapter);
+                    }
                     AFPDataObjectInfo dataObjectInfo = null;
                     try {
                         dataObjectInfo = factory.create(afpImageInfo);
@@ -429,14 +439,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                         throw ioe;
                     }
                     resourceManager.createObject(dataObjectInfo);
-                } else if (img instanceof ImageGraphics2D) { // ...and process the image
-                    ImageGraphics2D imageG2D = (ImageGraphics2D) img;
-                    RendererContext rendererContext = createRendererContext(
-                            x, y, posInt.width, posInt.height, foreignAttributes);
-                    getGraphics2DAdapter().paintImage(
-                            imageG2D.getGraphics2DImagePainter(), rendererContext,
-                            origin.x + posInt.x, origin.y + posInt.y, posInt.width,
-                            posInt.height);
                 } else if (img instanceof ImageXMLDOM) {
                     ImageXMLDOM imgXML = (ImageXMLDOM) img;
                     renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
@@ -546,27 +548,54 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
 
-        String name = getInternalFontNameForArea(text);
         int fontSize = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
         state.setFontSize(fontSize);
+
+        String name = getInternalFontNameForArea(text);
         AFPFont font = (AFPFont)fontInfo.getFonts().get(name);
 
         // Set letterSpacing
         // float ls = fs.getLetterSpacing() / this.currentFontSize;
 
         // Create an AFPFontAttributes object from the current font details
-        AFPFontAttributes afpFontAttributes
+        AFPFontAttributes fontAttributes
             = new AFPFontAttributes(name, font, fontSize);
 
         AFPPageFonts pageFonts = state.getPageFonts();
-        if (!pageFonts.containsKey(afpFontAttributes.getFontKey())) {
+        if (!pageFonts.containsKey(fontAttributes.getFontKey())) {
             // Font not found on current page, so add the new one
-            afpFontAttributes.setFontReference(state.incrementPageFontCount());
-            pageFonts.put(afpFontAttributes.getFontKey(), afpFontAttributes);
+            fontAttributes.setFontReference(state.incrementPageFontCount());
+            pageFonts.put(fontAttributes.getFontKey(), fontAttributes);
         } else {
             // Use the previously stored font attributes
-            afpFontAttributes = (AFPFontAttributes) pageFonts.get(afpFontAttributes.getFontKey());
+            fontAttributes = (AFPFontAttributes)pageFonts.get(fontAttributes.getFontKey());
         }
+
+        AFPTextDataInfo textDataInfo = new AFPTextDataInfo();
+
+        int fontReference = fontAttributes.getFontReference();
+        textDataInfo.setFontReference(fontReference);
+
+        int x = (currentIPPosition + text.getBorderAndPaddingWidthStart());
+        int y = (currentBPPosition + text.getOffset() + text.getBaselineOffset());
+
+        int[] coords = unitConv.mpts2units(new float[] {x, y} );
+        textDataInfo.setX(coords[X]);
+        textDataInfo.setY(coords[Y]);
+
+        Color color = (Color) text.getTrait(Trait.COLOR);
+        textDataInfo.setColor(color);
+
+        int variableSpaceCharacterIncrement = font.getWidth(' ', fontSize) / 1000
+            + text.getTextWordSpaceAdjust()
+            + text.getTextLetterSpaceAdjust();
+        variableSpaceCharacterIncrement
+            = Math.round(unitConv.mpt2units(variableSpaceCharacterIncrement));
+        textDataInfo.setVariableSpaceCharacterIncrement(variableSpaceCharacterIncrement);
+
+        int interCharacterAdjustment
+            = Math.round(unitConv.mpt2units(text.getTextLetterSpaceAdjust()));
+        textDataInfo.setInterCharacterAdjustment(interCharacterAdjustment);
 
         // Try and get the encoding to use for the font
         String encoding = null;
@@ -579,43 +608,17 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                     + encoding);
         }
 
+        String textString = text.getText();
         byte[] data = null;
         try {
-            String worddata = text.getText();
-            data = worddata.getBytes(encoding);
+            data = textString.getBytes(encoding);
+            textDataInfo.setData(data);
         } catch (UnsupportedEncodingException usee) {
-            log.error("renderText:: Font " + afpFontAttributes.getFontKey()
+            log.error("renderText:: Font " + fontAttributes.getFontKey()
                     + " caused UnsupportedEncodingException");
             return;
         }
 
-        int fontReference = afpFontAttributes.getFontReference();
-
-        int x = (currentIPPosition + text.getBorderAndPaddingWidthStart());
-        int y = (currentBPPosition + text.getOffset() + text.getBaselineOffset());
-        float[] srcPts = new float[] {x, y};
-        int[] coords = unitConv.mpts2units(srcPts);
-
-        Color color = (Color) text.getTrait(Trait.COLOR);
-
-        int variableSpaceCharacterIncrement = font.getWidth(' ', fontSize) / 1000
-          + text.getTextWordSpaceAdjust()
-          + text.getTextLetterSpaceAdjust();
-        variableSpaceCharacterIncrement
-            = Math.round(unitConv.mpt2units(variableSpaceCharacterIncrement));
-
-        int interCharacterAdjustment
-            = Math.round(unitConv.mpt2units(text.getTextLetterSpaceAdjust()));
-
-        AFPTextDataInfo textDataInfo = new AFPTextDataInfo();
-        textDataInfo.setFontReference(fontReference);
-        textDataInfo.setX(coords[X]);
-        textDataInfo.setY(coords[Y]);
-        textDataInfo.setColor(color);
-        textDataInfo.setVariableSpaceCharacterIncrement(variableSpaceCharacterIncrement);
-        textDataInfo.setInterCharacterAdjustment(interCharacterAdjustment);
-        textDataInfo.setData(data);
-        textDataInfo.setOrientation(state.getOrientation());
         dataStream.createText(textDataInfo);
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
@@ -769,11 +772,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Returns the AFPDataStream
+     * Returns the AFP DataStream
      *
-     * @return the AFPDataStream
+     * @return the AFP DataStream
      */
-    public DataStream getAFPDocumentStream() {
+    public DataStream getDataStream() {
         return this.dataStream;
     }
 
@@ -813,40 +816,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
     }
 
-    // TODO: remove this and use the superclass implementation
     /** {@inheritDoc} */
-    protected void renderReferenceArea(Block block) {
-        // save position and offset
-        int saveIP = currentIPPosition;
-        int saveBP = currentBPPosition;
-
-        //Establish a new coordinate system
-        AffineTransform at = new AffineTransform();
-        at.translate(currentIPPosition, currentBPPosition);
-        at.translate(block.getXOffset(), block.getYOffset());
-        at.translate(0, block.getSpaceBefore());
-
-        if (!at.isIdentity()) {
-            saveGraphicsState();
-            concatenateTransformationMatrix(at);
-        }
-
-        currentIPPosition = 0;
-        currentBPPosition = 0;
-        handleBlockTraits(block);
-
-        List children = block.getChildAreas();
-        if (children != null) {
-            renderBlocks(block, children);
-        }
-
-        if (!at.isIdentity()) {
-            restoreGraphicsState();
-        }
-
-        // stacked and relative blocks effect stacking
-        currentIPPosition = saveIP;
-        currentBPPosition = saveBP;
+    protected void establishTransformationMatrix(AffineTransform at) {
+        saveGraphicsState();
+        //state.resetTransform(); // reset to base transform (scale)
+        concatenateTransformationMatrix(at);
     }
 
 }

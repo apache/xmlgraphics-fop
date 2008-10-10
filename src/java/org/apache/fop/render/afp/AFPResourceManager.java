@@ -69,10 +69,11 @@ public class AFPResourceManager {
     /**
      * Sets the outputstream
      *
+     * @param state the afp state
      * @param outputStream the outputstream
      */
-    public void setOutputStream(OutputStream outputStream) {
-        this.dataStream = streamer.createDataStream();
+    public void createDataStream(AFPState state, OutputStream outputStream) {
+        this.dataStream = streamer.createDataStream(state);
         streamer.setOutputStream(outputStream);
     }
 
@@ -105,7 +106,7 @@ public class AFPResourceManager {
     }
 
     /**
-     * Creates and returns a new data object
+     * Creates a new data object in the AFP datastream
      *
      * @param dataObjectInfo the data object info
      *
@@ -119,17 +120,14 @@ public class AFPResourceManager {
         if (uri == null) {
             uri = "/";
         }
-        // if this is an instream data object adjust uri to ensure that it is
-        // unique
+        // if this is an instream data object adjust the uri to ensure that its unique
         if (uri.endsWith("/")) {
             uri += "#" + (++instreamObjectCount);
             resourceInfo.setUri(uri);
         }
 
-        // try and find an include name for the same resource
         String objectName = (String)includeNameMap.get(resourceInfo);
         if (objectName == null) {
-
             boolean useInclude = true;
             Registry.ObjectType objectType = null;
 
@@ -140,6 +138,7 @@ public class AFPResourceManager {
             } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {
                 namedObj = dataObjectFactory.createGraphic((AFPGraphicsObjectInfo)dataObjectInfo);
             } else {
+                // natively embedded object
                 namedObj = dataObjectFactory.createObjectContainer(dataObjectInfo);
                 objectType = dataObjectInfo.getObjectType();
                 useInclude = objectType != null && objectType.isIncludable();
@@ -172,7 +171,7 @@ public class AFPResourceManager {
                 // add an include to the current page
                 dataStream.getCurrentPage().addObject(includeObject);
 
-                // record name of data object for the resource
+                // record mapping of resource info to data object resource name
                 includeNameMap.put(resourceInfo, objectName);
             } else {
                 // not to be included so inline data object directly into the current page

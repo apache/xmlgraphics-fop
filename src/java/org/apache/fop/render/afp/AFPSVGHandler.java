@@ -126,12 +126,12 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         // set the data object parameters
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
 
-        AFPUnitConverter unitConv = state.getUnitConverter();
-
         RendererContextWrapper rctx = RendererContext.wrapRendererContext(context);
         int currx = rctx.getCurrentXPosition();
         int curry = rctx.getCurrentYPosition();
         float[] srcPts = {currx, curry};
+
+        AFPUnitConverter unitConv = state.getUnitConverter();
         int[] coords = unitConv.mpts2units(srcPts);
         objectAreaInfo.setX(coords[X]);
         objectAreaInfo.setY(coords[Y]);
@@ -146,18 +146,21 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         int height = Math.round(unitConv.mpt2units(afpInfo.getHeight()));
         objectAreaInfo.setHeight(height);
 
-        AFPDataObjectInfo dataObjectInfo = new AFPGraphicsObjectInfo();
-        dataObjectInfo.setUri(uri);
+        int rotation = state.getRotation();
+        objectAreaInfo.setRotation(rotation);
+
+        AFPGraphicsObjectInfo graphicsObjectInfo = new AFPGraphicsObjectInfo();
+        graphicsObjectInfo.setUri(uri);
 
         // Configure Graphics2D implementation
         final boolean textAsShapes = false;
-        AFPGraphics2D graphics = new AFPGraphics2D(textAsShapes);
-        graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
-        graphics.setAFPInfo(afpInfo);
+        AFPGraphics2D g2d = new AFPGraphics2D(textAsShapes);
+        g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+        g2d.setAFPInfo(afpInfo);
 
         // Configure GraphicsObjectPainter with the Graphics2D implementation
-        AFPGraphicsObjectPainter painter = new AFPGraphicsObjectPainter(graphics);
-        ((AFPGraphicsObjectInfo)dataObjectInfo).setPainter(painter);
+        AFPBatikGraphicsObjectPainter painter = new AFPBatikGraphicsObjectPainter(g2d);
+        (graphicsObjectInfo).setPainter(painter);
 
         boolean strokeText = false;
         Configuration cfg = afpInfo.getHandlerConfiguration();
@@ -172,8 +175,8 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
         //Controls whether text painted by Batik is generated using text or path operations
         if (!strokeText) {
-            afpTextHandler = new AFPTextHandler(graphics);
-            graphics.setCustomTextHandler(afpTextHandler);
+            afpTextHandler = new AFPTextHandler(g2d);
+            g2d.setCustomTextHandler(afpTextHandler);
             AFPTextPainter textPainter = new AFPTextPainter(afpTextHandler);
             ctx.setTextPainter(textPainter);
             AFPTextElementBridge tBridge = new AFPTextElementBridge(textPainter);
@@ -184,7 +187,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
             = (Map/*<QName, String>*/)context.getProperty(
                 RendererContextConstants.FOREIGN_ATTRIBUTES);
         AFPResourceInfo resourceInfo = foreignAttributeReader.getResourceInfo(foreignAttributes);
-        dataObjectInfo.setResourceInfo(resourceInfo);
+        graphicsObjectInfo.setResourceInfo(resourceInfo);
 
         // Build the SVG DOM and provide the painter with it
         GraphicsNode root;
@@ -214,15 +217,18 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         // for the SVG graphic in relation to the current coordinate system
         // (note: y axis is inverted)
         AffineTransform trans = new AffineTransform(scaleX, 0, 0, -scaleY, xOffset, yOffset);
-        graphics.setTransform(trans);
+        g2d.setTransform(trans);
+
+        // Set the afp graphics 2d implementation
+        graphicsObjectInfo.setGraphics2D(g2d);
 
         // Set the object area info
-        dataObjectInfo.setObjectAreaInfo(objectAreaInfo);
+        graphicsObjectInfo.setObjectAreaInfo(objectAreaInfo);
 
         AFPResourceManager resourceManager = afpInfo.getAFPResourceManager();
 
         // Create the graphics object
-        resourceManager.createObject(dataObjectInfo);
+        resourceManager.createObject(graphicsObjectInfo);
     }
 
     /** {@inheritDoc} */

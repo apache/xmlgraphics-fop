@@ -23,6 +23,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.render.afp.AFPState;
 import org.apache.fop.render.afp.goca.GraphicsData;
 import org.apache.fop.render.afp.ioca.ImageContent;
 import org.apache.fop.render.afp.ioca.ImageRasterData;
@@ -359,13 +360,14 @@ public class Factory {
     }
 
     /**
-     * Creates an {@link DataStream}
+     * Creates a new {@link DataStream}
      *
+     * @param state the afp state
      * @param outputStream an outputstream to write to
      * @return a new {@link DataStream}
      */
-    public DataStream createDataStream(OutputStream outputStream) {
-        DataStream dataStream = new DataStream(this, outputStream);
+    public DataStream createDataStream(AFPState state, OutputStream outputStream) {
+        DataStream dataStream = new DataStream(this, state, outputStream);
         return dataStream;
     }
 
@@ -424,9 +426,9 @@ public class Factory {
     /**
      * Creates a new {@link ObjectAreaPosition}
      *
-     * @param x The x coordinate.
-     * @param y The y coordinate.
-     * @param rotation The coordinate system rotation (must be 0, 90, 180, 270).
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param rotation the coordinate system rotation (must be 0, 90, 180, 270).
      * @return a new {@link ObjectAreaPosition}
      */
     public ObjectAreaPosition createObjectAreaPosition(int x, int y,

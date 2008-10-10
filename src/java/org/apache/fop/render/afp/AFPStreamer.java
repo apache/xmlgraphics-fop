@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -84,16 +84,17 @@ public class AFPStreamer implements Streamable {
 
     /**
      * Creates a new DataStream
+     * @param state the afp state
      *
      * @return a new {@link DataStream}
      */
-    public DataStream createDataStream() {
+    public DataStream createDataStream(AFPState state) {
         try {
             this.tempFile = File.createTempFile(AFPDATASTREAM_TEMP_FILE_PREFIX, null);
             this.documentFile = new RandomAccessFile(tempFile, "rw");
             this.documentOutputStream = new BufferedOutputStream(
                     new FileOutputStream(documentFile.getFD()));
-            this.dataStream = factory.createDataStream(documentOutputStream);
+            this.dataStream = factory.createDataStream(state, documentOutputStream);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -28,7 +28,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 /**
- * A buffered image configurator
+ * A buffered image data object info factory
  */
 public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
 

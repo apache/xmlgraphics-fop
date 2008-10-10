@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -35,12 +35,6 @@ public class AFPBorderPainter {
     /** Static logging instance */
     protected static Log log = LogFactory.getLog("org.apache.fop.render.afp");
 
-    private static final int X1 = 0;
-    private static final int Y1 = 1;
-    private static final int X2 = 2;
-    private static final int Y2 = 3;
-
-    private final AFPUnitConverter unitConv;
     private final DataStream dataStream;
     private final AFPState state;
 
@@ -52,176 +46,156 @@ public class AFPBorderPainter {
      */
     public AFPBorderPainter(AFPState state, DataStream dataStream) {
         this.state = state;
-        this.unitConv = state.getUnitConverter();
         this.dataStream = dataStream;
     }
 
     /** {@inheritDoc} */
     public void fillRect(float x, float y, float width, float height) {
+        int pageWidth = dataStream.getCurrentPage().getWidth();
+        int pageHeight = dataStream.getCurrentPage().getHeight();
+
+        AFPUnitConverter unitConv = state.getUnitConverter();
+        width = unitConv.pt2units(width);
+        height = unitConv.pt2units(height);
+        x = unitConv.pt2units(x);
+        y = unitConv.pt2units(y);
+
         AffineTransform at = state.getData().getTransform();
-        float transX = (float)at.getTranslateX();
-        float transY = (float)at.getTranslateY();
-        int x1 = Math.round(transX + unitConv.pt2units(x));
-        int y1 = Math.round(transY + unitConv.pt2units(y));
-        int x2 = Math.round(transX + unitConv.pt2units(x) + unitConv.pt2units(width));
-        LineDataInfo lineDataInfo = new LineDataInfo();
-        lineDataInfo.x1 = x1;
-        lineDataInfo.y1 = y1;
-        lineDataInfo.x2 = x2;
-        lineDataInfo.y2 = y1;
-        lineDataInfo.thickness = Math.round(unitConv.pt2units(height));
+
+        AFPLineDataInfo lineDataInfo = new AFPLineDataInfo();
         lineDataInfo.color = state.getColor();
+        lineDataInfo.rotation = state.getRotation();
+        lineDataInfo.thickness = Math.round(height);
+
+        switch (lineDataInfo.rotation) {
+        case 0:
+            lineDataInfo.x1 = Math.round((float)at.getTranslateX() + x);
+            lineDataInfo.y1 = lineDataInfo.y2 = Math.round((float)at.getTranslateY() + y);
+            lineDataInfo.x2 = Math.round((float)at.getTranslateX() + x + width);
+            break;
+        case 90:
+            lineDataInfo.x1 = Math.round((float)at.getTranslateY() + x);
+            lineDataInfo.y1 = lineDataInfo.y2
+                = pageWidth - Math.round((float)at.getTranslateX() + y);
+            lineDataInfo.x2 = Math.round(width + (float)at.getTranslateY() + x);
+            break;
+        case 180:
+            lineDataInfo.x1 = pageWidth - Math.round((float)at.getTranslateX() - x);
+            lineDataInfo.y1 = lineDataInfo.y2 = pageHeight - Math.round((float)at.getTranslateY() - x);
+            lineDataInfo.x2 = pageWidth - Math.round((float)at.getTranslateX() - x - width);
+            break;
+        case 270:
+            lineDataInfo.x1 = pageHeight - Math.round((float)at.getTranslateY() + y - x);
+            lineDataInfo.y1 = lineDataInfo.y2 = Math.round((float)at.getTranslateX() + y);
+            lineDataInfo.x2 = lineDataInfo.x1 + Math.round(width - x);
+            break;
+        }
         dataStream.createLine(lineDataInfo);
     }
 
     /** {@inheritDoc} */
     public void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, Color col) {
-        float[] srcPts = new float[] {x1 * 1000, y1 * 1000, x2 * 1000, y2 * 1000};
-        float[] dstPts = new float[srcPts.length];
-        int[] coords = unitConv.mpts2units(srcPts, dstPts);
-
-        float width = dstPts[X2] - dstPts[X1];
-        float height = dstPts[Y2] - dstPts[Y1];
-        if ((width < 0) || (height < 0)) {
+            boolean isHorizontal, boolean startOrBefore, int style, Color color) {
+        float w = x2 - x1;
+        float h = y2 - y1;
+        if ((w < 0) || (h < 0)) {
             log.error("Negative extent received. Border won't be painted.");
             return;
         }
 
-        LineDataInfo lineDataInfo = new LineDataInfo();
-        lineDataInfo.color = col;
+        int pageWidth = dataStream.getCurrentPage().getWidth();
+        int pageHeight = dataStream.getCurrentPage().getHeight();
+        AFPUnitConverter unitConv = state.getUnitConverter();
+        AffineTransform at = state.getData().getTransform();
 
+        x1 = unitConv.pt2units(x1);
+        y1 = unitConv.pt2units(y1);
+        x2 = unitConv.pt2units(x2);
+        y2 = unitConv.pt2units(y2);
+
+        switch (state.getRotation()) {
+        case 0:
+            x1 += at.getTranslateX();
+            y1 += at.getTranslateY();
+            x2 += at.getTranslateX();
+            y2 += at.getTranslateY();
+            break;
+        case 90:
+            x1 += at.getTranslateY();
+            y1 += (float) (pageWidth - at.getTranslateX());
+            x2 += at.getTranslateY();
+            y2 += (float) (pageWidth - at.getTranslateX());
+            break;
+        case 180:
+            x1 += (float) (pageWidth - at.getTranslateX());
+            y1 += (float) (pageHeight - at.getTranslateY());
+            x2 += (float) (pageWidth - at.getTranslateX());
+            y2 += (float) (pageHeight - at.getTranslateY());
+            break;
+        case 270:
+            x1 = (float) (pageHeight - at.getTranslateY());
+            y1 += (float) at.getTranslateX();
+            x2 += x1;
+            y2 += (float) at.getTranslateX();
+            break;
+        }
+
+        AFPLineDataInfo lineDataInfo = new AFPLineDataInfo();
+        lineDataInfo.setThickness(Math.round(y2 - y1));
+        lineDataInfo.setColor(color);
+        lineDataInfo.setRotation(state.getRotation());
+
+        lineDataInfo.x1 = Math.round(x1);
+        lineDataInfo.y1 = Math.round(y1);
+
+        // handle border-*-style
         switch (style) {
         case Constants.EN_DOUBLE:
-            lineDataInfo.x1 = coords[X1];
-            lineDataInfo.y1 = coords[Y1];
-            if (horz) {
-                float h3 = height / 3;
-                lineDataInfo.thickness = Math.round(h3);
-                lineDataInfo.x2 = coords[X2];
-                lineDataInfo.y2 = coords[Y1];
-                dataStream.createLine(lineDataInfo);
-                int ym2 = Math.round(dstPts[Y1] + h3 + h3);
-                lineDataInfo.y1 = ym2;
-                lineDataInfo.y2 = ym2;
-                dataStream.createLine(lineDataInfo);
-            } else {
-                float w3 = width / 3;
-                lineDataInfo.thickness = Math.round(w3);
-                lineDataInfo.x2 = coords[X1];
-                lineDataInfo.y2 = coords[Y2];
-                dataStream.createLine(lineDataInfo);
-                int xm2 = Math.round(dstPts[X1] + w3 + w3);
-                lineDataInfo.x1 = xm2;
-                lineDataInfo.x2 = xm2;
-                dataStream.createLine(lineDataInfo);
-            }
+            lineDataInfo.x2 = Math.round(x2);
+            lineDataInfo.y2 = lineDataInfo.y1;
+            dataStream.createLine(lineDataInfo);
+            float w3 = lineDataInfo.thickness / 3;
+            lineDataInfo.y1 += Math.round(w3 * 2);
+            dataStream.createLine(lineDataInfo);
             break;
-
         case Constants.EN_DASHED:
-            lineDataInfo.x1 = coords[X1];
-            if (horz) {
-                float w2 = 2 * height;
-                lineDataInfo.y1 = coords[Y1];
-                lineDataInfo.x2 = coords[X1] + Math.round(w2);
-                lineDataInfo.y2 = coords[Y1];
-                lineDataInfo.thickness = Math.round(height);
-                while (lineDataInfo.x1 + w2 < coords[X2]) {
-                    dataStream.createLine(lineDataInfo);
-                    lineDataInfo.x1 += 2 * w2;
-                }
-            } else {
-                float h2 = 2 * width;
-                lineDataInfo.y1 = coords[Y2];
-                lineDataInfo.x2 = coords[X1];
-                lineDataInfo.y2 = coords[Y1] + Math.round(h2);
-                lineDataInfo.thickness = Math.round(width);
-                while (lineDataInfo.y2 < coords[Y2]) {
-                    dataStream.createLine(lineDataInfo);
-                    lineDataInfo.y2 += 2 * h2;
-                }
-            }
-            break;
-
         case Constants.EN_DOTTED:
-            lineDataInfo.x1 = coords[X1];
-            lineDataInfo.y1 = coords[Y1];
-            if (horz) {
-                lineDataInfo.thickness = Math.round(height);
-                lineDataInfo.x2 = coords[X1] + lineDataInfo.thickness;
-                lineDataInfo.y2 = coords[Y1];
-                while (lineDataInfo.x2 < coords[X2]) {
-                    dataStream.createLine(lineDataInfo);
-                    coords[X1] += 2 * height;
-                    lineDataInfo.x1 = coords[X1];
-                    lineDataInfo.x2 = coords[X1] + lineDataInfo.thickness;
-                }
-            } else {
-                lineDataInfo.thickness = Math.round(width);
-                lineDataInfo.x2 = coords[X1];
-                lineDataInfo.y2 = coords[Y1] + lineDataInfo.thickness;
-                while (lineDataInfo.y2 < coords[Y2]) {
-                    dataStream.createLine(lineDataInfo);
-                    coords[Y1] += 2 * width;
-                    lineDataInfo.y1 = coords[Y1];
-                    lineDataInfo.y2 = coords[Y1] + lineDataInfo.thickness;
-                }
+            int factor = style == Constants.EN_DASHED ? 3 : 2;
+            int thick = lineDataInfo.thickness * factor;
+            lineDataInfo.x2 = lineDataInfo.x1 + thick;
+            lineDataInfo.y2 = lineDataInfo.y1;
+            int ex2 = Math.round(x2);
+            while (lineDataInfo.x1 + thick < ex2) {
+                dataStream.createLine(lineDataInfo);
+                lineDataInfo.x1 += 2 * thick;
+                lineDataInfo.x2 = lineDataInfo.x1 + thick;
             }
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
+            lineDataInfo.x2 = Math.round(x2);
             float colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
-            if (horz) {
-                lineDataInfo.x1 = coords[X1];
-                lineDataInfo.x2 = coords[X2];
-                float h3 = height / 3;
-                lineDataInfo.color = ColorUtil.lightenColor(col, -colFactor);
-                lineDataInfo.thickness = Math.round(h3);
-                lineDataInfo.y1 = lineDataInfo.y2 = coords[Y1];
-                dataStream.createLine(lineDataInfo);
-                lineDataInfo.color = col;
-                lineDataInfo.y1 = lineDataInfo.y2 = Math.round(dstPts[Y1] + h3);
-                dataStream.createLine(lineDataInfo);
-                lineDataInfo.color = ColorUtil.lightenColor(col, colFactor);
-                lineDataInfo.y1 = lineDataInfo.y2 = Math.round(dstPts[Y1] + h3 + h3);
-                dataStream.createLine(lineDataInfo);
-            } else {
-                lineDataInfo.y1 = coords[Y1];
-                lineDataInfo.y2 = coords[Y2];
-                float w3 = width / 3;
-                float xm1 = dstPts[X1] + (w3 / 2);
-                lineDataInfo.color = ColorUtil.lightenColor(col, -colFactor);
-                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1);
-                dataStream.createLine(lineDataInfo);
-                lineDataInfo.color = col;
-                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1 + w3);
-                dataStream.createLine(lineDataInfo);
-                lineDataInfo.color = ColorUtil.lightenColor(col, colFactor);
-                lineDataInfo.x1 = lineDataInfo.x2 = Math.round(xm1 + w3 + w3);
-                dataStream.createLine(lineDataInfo);
-            }
+            float h3 = (y2 - y1) / 3;
+            lineDataInfo.color = ColorUtil.lightenColor(color, -colFactor);
+            lineDataInfo.thickness = Math.round(h3);
+            lineDataInfo.y1 = lineDataInfo.y2 = Math.round(y1);
+            dataStream.createLine(lineDataInfo);
+            lineDataInfo.color = color;
+            lineDataInfo.y1 = lineDataInfo.y2 = Math.round(y1 + h3);
+            dataStream.createLine(lineDataInfo);
+            lineDataInfo.color = ColorUtil.lightenColor(color, colFactor);
+            lineDataInfo.y1 = lineDataInfo.y2 = Math.round(y1 + h3 + h3);
+            dataStream.createLine(lineDataInfo);
             break;
-
         case Constants.EN_HIDDEN:
             break;
-
         case Constants.EN_INSET:
         case Constants.EN_OUTSET:
+        case Constants.EN_SOLID:
         default:
-              lineDataInfo.x1 = coords[X1];
-              lineDataInfo.y1 = coords[Y1];
-              if (horz) {
-                  lineDataInfo.thickness = Math.round(height);
-                  lineDataInfo.x2 = coords[X2];
-                  lineDataInfo.y2 = coords[Y1];
-              } else {
-                  lineDataInfo.thickness = Math.round(width);
-                  lineDataInfo.x2 = coords[X1];
-                  lineDataInfo.y2 = coords[Y2];
-              }
-              lineDataInfo.x2 = (horz ? coords[X2] : coords[X1]);
-              lineDataInfo.y2 = (horz ? coords[Y1] : coords[Y2]);
-              dataStream.createLine(lineDataInfo);
+            lineDataInfo.x2 = Math.round(x2);
+            lineDataInfo.y2 = lineDataInfo.y1;
+            dataStream.createLine(lineDataInfo);
         }
     }
 

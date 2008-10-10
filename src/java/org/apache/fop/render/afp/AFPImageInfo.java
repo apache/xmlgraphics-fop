@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -23,6 +23,7 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
+import org.apache.fop.render.RendererContext;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 
@@ -49,6 +50,12 @@ public class AFPImageInfo {
     /** the image */
     protected final Image img;
 
+    /** the AFP graphics 2d adapter */
+    protected AFPGraphics2DAdapter g2dAdapter;
+
+    /** the renderer context */
+    protected RendererContext rendererContext;
+
     /**
      * Main constructor
      *
@@ -67,6 +74,24 @@ public class AFPImageInfo {
         this.info = info;
         this.img = img;
         this.foreignAttributes = foreignAttributes;
+    }
+
+    /**
+     * Sets the renderer context
+     *
+     * @param rendererContext the renderer context
+     */
+    public void setRendererContext(RendererContext rendererContext) {
+        this.rendererContext = rendererContext;
+    }
+
+    /**
+     * Sets the graphics 2d adapter
+     *
+     * @param adapter the graphics 2d adapter
+     */
+    public void setGraphics2DAdapter(AFPGraphics2DAdapter adapter) {
+        this.g2dAdapter = adapter;
     }
 
 }

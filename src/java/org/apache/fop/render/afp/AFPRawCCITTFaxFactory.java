@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 
 /**
- * An CITT fax image configurator
+ * An CITT fax image data object info factory
  */
 public class AFPRawCCITTFaxFactory extends AFPDataObjectInfoFactory {
 

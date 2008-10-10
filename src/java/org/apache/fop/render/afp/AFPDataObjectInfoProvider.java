@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
@@ -31,7 +32,8 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
  * AFP data object info factory provider
  */
 public class AFPDataObjectInfoProvider {
-    private final Map factoryMap = new java.util.HashMap();
+    private final Map/*<AbstractImage,AFPDataObjectInfoFactory>*/ factoryMap
+        = new java.util.HashMap/*<AbstractImage,AFPDataObjectInfoFactory>*/();
     private final AFPState state;
 
     /**
@@ -54,6 +56,8 @@ public class AFPDataObjectInfoProvider {
                 ImageRawCCITTFax.class, new AFPRawCCITTFaxFactory(state));
         factoryMap.put(
                 ImageRawStream.class, new AFPImageRawStreamFactory(state));
+        factoryMap.put(
+                ImageGraphics2D.class, new AFPImageGraphics2DFactory(state));
     };
 
     /**

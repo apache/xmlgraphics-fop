@@ -251,10 +251,10 @@ public abstract class AbstractState implements Cloneable, Serializable {
     /**
      * Concatenates the given AffineTransform to the current one.
      *
-     * @param tf the transform to concatenate to the current level transform
+     * @param at the transform to concatenate to the current level transform
      */
-    public void concatenate(AffineTransform tf) {
-        getData().concatenate(tf);
+    public void concatenate(AffineTransform at) {
+        getData().concatenate(at);
     }
 
     /**
@@ -380,6 +380,30 @@ public abstract class AbstractState implements Cloneable, Serializable {
         public void resetTransform() {
             transform = getBaseTransform();
 //            transform = new AffineTransform();
+        }
+
+        /**
+         * Returns the derived rotation from the current transform
+         *
+         * @return the derived rotation from the current transform
+         */
+        public int getDerivedRotation() {
+            AffineTransform at = getTransform();
+            double sx = at.getScaleX();
+            double sy = at.getScaleY();
+            double shx = at.getShearX();
+            double shy = at.getShearY();
+            int rotation = 0;
+            if (sx == 0 && sy == 0 && shx > 0 && shy < 0) {
+                rotation = 270;
+            } else if (sx < 0 && sy < 0 && shx == 0 && shy == 0) {
+                rotation = 180;
+            } else if (sx == 0 && sy == 0 && shx < 0 && shy > 0) {
+                rotation = 90;
+            } else {
+                rotation = 0;
+            }
+            return rotation;
         }
 
         /** {@inheritDoc} */

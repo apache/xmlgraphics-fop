@@ -128,7 +128,7 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
     /** {@inheritDoc} */
     public String toString() {
         return "AFPImageObjectInfo{" + super.toString()
-            + "compression=" + compression
+            + ", compression=" + compression
             + ", color=" + color
             + ", bitsPerPixel=" + bitsPerPixel
             + "}";

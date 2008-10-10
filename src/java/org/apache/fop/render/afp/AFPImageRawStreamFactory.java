@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp;
 
@@ -25,7 +25,7 @@ import java.io.InputStream;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 
 /**
- * A raw stream image configurator
+ * A raw stream image data object info factory
  */
 public class AFPImageRawStreamFactory extends AFPDataObjectInfoFactory {
 
