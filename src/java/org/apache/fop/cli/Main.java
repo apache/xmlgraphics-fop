@@ -139,7 +139,10 @@ public class Main {
     }
 
     /**
-     * Executes FOP with the given ClassLoader setup.
+     * Executes FOP with the given arguments. If no argument is provided, returns its
+     * version number as well as a short usage statement; if '-v' is provided, returns its
+     * version number alone; if '-h' is provided, returns its short help message.
+     *
      * @param args command-line arguments
      */
     public static void startFOP(String[] args) {
@@ -153,7 +156,7 @@ public class Main {
         try {
             options = new CommandLineOptions();
             if (!options.parse(args)) {
-                System.exit(1);
+                System.exit(0);
             }
 
             foUserAgent = options.getFOUserAgent();
