@@ -96,14 +96,16 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
             RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
             BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
 
+            AffineTransform trans = state.getData().getTransform();
             float scale = AFPRenderer.NORMAL_AFP_RESOLUTION
                             / context.getUserAgent().getTargetResolution();
             if (scale != 1) {
                 at.scale(scale, scale);
+                if (!at.isIdentity()) {
+                    trans.concatenate(at);
+                }
             }
 
-            AffineTransform trans = state.getData().getTransform();
-            trans.concatenate(at);
 
             // concatenate to transformation matrix
 //            state.concatenate(at);

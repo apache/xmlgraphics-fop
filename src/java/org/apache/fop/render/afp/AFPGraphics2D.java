@@ -468,8 +468,9 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
         imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
+        imageObjectInfo.setResourceInfo(info.getResourceInfo());
 
-        AFPResourceManager resourceManager = info.getAFPResourceManager();
+        AFPResourceManager resourceManager = info.getResourceManager();
         try {
             resourceManager.createObject(imageObjectInfo);
         } catch (IOException ioe) {

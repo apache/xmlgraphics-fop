@@ -39,7 +39,7 @@ public final class AFPInfo {
     private int y;
 
     /** see HANDLER_CONFIGURATION */
-    private Configuration cfg;
+    private Configuration handlerConfiguration;
 
     /** see AFP_FONT_INFO */
     private FontInfo fontInfo;
@@ -52,6 +52,9 @@ public final class AFPInfo {
 
     /** true if SVG should be rendered as a bitmap instead of natively */
     private boolean paintAsBitmap;
+
+    /** the resource information */
+    private AFPResourceInfo resourceInfo;
 
     /**
      * Returns the width.
@@ -95,7 +98,7 @@ public final class AFPInfo {
      * @return the handler configuration
      */
     public Configuration getHandlerConfiguration() {
-        return this.cfg;
+        return this.handlerConfiguration;
     }
 
     /**
@@ -104,7 +107,7 @@ public final class AFPInfo {
      * @param cfg the handler configuration
      */
     public void setHandlerConfiguration(Configuration cfg) {
-        this.cfg = cfg;
+        this.handlerConfiguration = cfg;
     }
 
     /**
@@ -130,7 +133,7 @@ public final class AFPInfo {
      *
      * @return the AFPResourceManager
      */
-    public AFPResourceManager getAFPResourceManager() {
+    public AFPResourceManager getResourceManager() {
         return this.resourceManager;
     }
 
@@ -241,17 +244,36 @@ public final class AFPInfo {
         return this.paintAsBitmap;
     }
 
+    /**
+     * Sets the resource information
+     *
+     * @param resourceInfo the resource information
+     */
+    public void setResourceInfo(AFPResourceInfo resourceInfo) {
+        this.resourceInfo = resourceInfo;
+    }
+
+    /**
+     * Returns the resource information
+     *
+     * @return the resource information
+     */
+    public AFPResourceInfo getResourceInfo() {
+        return resourceInfo;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "AFPInfo{width=" + width
             + ", height=" + height
             + ", x=" + x
             + ", y=" + y
-            + ", cfg=" + cfg
+            + ", cfg=" + handlerConfiguration
             + ", fontInfo=" + fontInfo
             + ", resourceManager=" + resourceManager
             + ", state=" + state
             + ", paintAsBitmap=" + paintAsBitmap
+            + ", resourceInfo=" + resourceInfo
         + "}";
     }
 

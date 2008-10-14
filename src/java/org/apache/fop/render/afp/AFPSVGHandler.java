@@ -82,11 +82,16 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         afpi.setResourceManager(((AFPResourceManager)context.getProperty(
                 AFPRendererContextConstants.AFP_RESOURCE_MANAGER)));
 
-        Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-        QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
-        if (foreign != null
-                && "bitmap".equalsIgnoreCase((String)foreign.get(qName))) {
-            afpi.setPaintAsBitmap(true);
+        Map foreignAttributes = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+        if (foreignAttributes != null) {
+            AFPForeignAttributeReader foreignAttributeReader = new AFPForeignAttributeReader();
+            AFPResourceInfo resourceInfo = foreignAttributeReader.getResourceInfo(foreignAttributes);
+            afpi.setResourceInfo(resourceInfo);
+
+            QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
+            if ("bitmap".equalsIgnoreCase((String)foreignAttributes.get(qName))) {
+                afpi.setPaintAsBitmap(true);
+            }
         }
         return afpi;
     }
@@ -225,7 +230,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         // Set the object area info
         graphicsObjectInfo.setObjectAreaInfo(objectAreaInfo);
 
-        AFPResourceManager resourceManager = afpInfo.getAFPResourceManager();
+        AFPResourceManager resourceManager = afpInfo.getResourceManager();
 
         // Create the graphics object
         resourceManager.createObject(graphicsObjectInfo);
