@@ -392,65 +392,67 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
     private static final int Y = 1;
 
-    /** {@inheritDoc} */
-    public boolean drawImage(Image img, int x, int y, int width, int height,
-            ImageObserver observer) {
-
-        // draw with AWT Graphics2D
-        AFPUnitConverter unitConv = state.getUnitConverter();
-        int w = Math.round(unitConv.pt2units(width));
-        int h = Math.round(unitConv.pt2units(height));
-        Dimension size = new Dimension(w, h);
-        BufferedImage buf = buildBufferedImage(size);
-
-        java.awt.Graphics2D g = buf.createGraphics();
-        g.setComposite(AlphaComposite.SrcOver);
-        g.setBackground(new Color(1, 1, 1, 0));
-        g.setPaint(new Color(1, 1, 1, 0));
-        g.fillRect(0, 0, w, h);
-        g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
-        g.setComposite(gc.getComposite());
-
-        if (!g.drawImage(img, 0, 0, buf.getWidth(), buf.getHeight(), observer)) {
-            return false;
-        }
-
-        ImageSize bufsize = new ImageSize(buf.getWidth(), buf.getHeight(), 72);
-
+    private AFPImageObjectInfo getImageObjectInfo(
+            RenderedImage img, int x, int y, int width, int height) throws IOException {
         ImageInfo imageInfo = new ImageInfo(null, "image/unknown");
-        imageInfo.setSize(bufsize);
+        ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
+        imageInfo.setSize(size);
 
-        ImageRendered imgRend = new ImageRendered(imageInfo, buf, null);
-        RenderedImage ri = imgRend.getRenderedImage();
+        ImageRendered imageRendered = new ImageRendered(imageInfo, img, null);
+        RenderedImage renderedImage = imageRendered.getRenderedImage();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            // Serialize image
-            // TODO Eventually, this should be changed not to buffer as this
-            // increases the
-            // memory consumption (see PostScript output)
-            ImageEncodingHelper.encodeRenderedImageAsRGB(ri, baos);
-        } catch (IOException ioe) {
-            handleIOException(ioe);
-            return false;
-        }
-
-        // create image object parameters
+        // create image object info
         AFPImageObjectInfo imageObjectInfo = new AFPImageObjectInfo();
+
+        int dataHeight = renderedImage.getHeight();
+        imageObjectInfo.setDataHeight(dataHeight);
+
+        int dataWidth = renderedImage.getWidth();
+        imageObjectInfo.setDataWidth(dataWidth);
+
+        boolean colorImages = true;//state.isColorImages();
+        imageObjectInfo.setColor(colorImages);
+
+        ByteArrayOutputStream boas = new ByteArrayOutputStream();
+        ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, boas);
+        byte[] imageData = boas.toByteArray();
+
+        // convert to grayscale
+        if (!colorImages) {
+            boas.reset();
+            int bitsPerPixel = state.getBitsPerPixel();
+            imageObjectInfo.setBitsPerPixel(bitsPerPixel);
+            ImageEncodingHelper.encodeRGBAsGrayScale(
+                  imageData, dataWidth, dataHeight, bitsPerPixel, boas);
+            imageData = boas.toByteArray();
+        }
+        imageObjectInfo.setData(imageData);
+
         if (imageInfo != null) {
             imageObjectInfo.setUri(imageInfo.getOriginalURI());
         }
 
+        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
+        imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
+        imageObjectInfo.setResourceInfo(info.getResourceInfo());
+
+
+        // create object area info
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
 
         AffineTransform at = gc.getTransform();
         float[] srcPts = new float[] {x, y};
-        float[] dstPts = new float[2];
+        float[] dstPts = new float[srcPts.length];
         at.transform(srcPts, 0, dstPts, 0, 1);
         objectAreaInfo.setX(Math.round(dstPts[X]));
         objectAreaInfo.setY(Math.round(dstPts[Y]));
 
+        AFPUnitConverter unitConv = state.getUnitConverter();
+
+        int w = Math.round(unitConv.pt2units(width));
         objectAreaInfo.setWidth(w);
+
+        int h = Math.round(unitConv.pt2units(height));
         objectAreaInfo.setHeight(h);
 
         int resolution = state.getResolution();
@@ -459,25 +461,50 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
 
-        imageObjectInfo.setData(baos.toByteArray());
-        imageObjectInfo.setDataHeight(ri.getHeight());
-        imageObjectInfo.setDataWidth(ri.getWidth());
+        return imageObjectInfo;
+    }
 
-        boolean colorImages = state.isColorImages();
-        imageObjectInfo.setColor(colorImages);
+    /** {@inheritDoc} */
+    public boolean drawImage(Image img, int x, int y, int width, int height,
+            ImageObserver observer) {
 
-        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
-        imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
-        imageObjectInfo.setResourceInfo(info.getResourceInfo());
+        // draw with AWT Graphics2D
+        Dimension size = new Dimension(width, height);
+        BufferedImage bufferedImage = buildBufferedImage(size);
 
-        AFPResourceManager resourceManager = info.getResourceManager();
-        try {
-            resourceManager.createObject(imageObjectInfo);
-        } catch (IOException ioe) {
-            log.error(ioe.getMessage());
+        java.awt.Graphics2D g2d = bufferedImage.createGraphics();
+        g2d.setComposite(AlphaComposite.SrcOver);
+
+        Color color = new Color(1, 1, 1, 0);
+        g2d.setBackground(color);
+        g2d.setPaint(color);
+
+        g2d.fillRect(0, 0, width, height);
+
+        int bufferedWidth = bufferedImage.getWidth();
+        int bufferedHeight = bufferedImage.getHeight();
+        Rectangle clipRect = new Rectangle(0, 0, bufferedWidth, bufferedHeight);
+        g2d.clip(clipRect);
+
+        g2d.setComposite(gc.getComposite());
+
+        if (!g2d.drawImage(img, 0, 0, bufferedWidth, bufferedHeight, observer)) {
             return false;
         }
-        return true;
+        g2d.dispose();
+
+        try {
+            // get image object info
+            AFPImageObjectInfo imageObjectInfo = getImageObjectInfo(bufferedImage, x, y, width, height);
+
+            // create image resource
+            AFPResourceManager resourceManager = info.getResourceManager();
+            resourceManager.createObject(imageObjectInfo);
+            return true;
+        } catch (IOException ioe) {
+            handleIOException(ioe);
+        }
+        return false;
     }
 
     /** {@inheritDoc} */

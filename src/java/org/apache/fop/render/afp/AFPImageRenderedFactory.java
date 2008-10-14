@@ -62,21 +62,21 @@ public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
         int dataWidth = renderedImage.getWidth();
         imageObjectInfo.setDataWidth(dataWidth);
 
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baout);
-        byte[] imageData = baout.toByteArray();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baos);
+        byte[] imageData = baos.toByteArray();
 
         boolean colorImages = state.isColorImages();
         imageObjectInfo.setColor(colorImages);
 
         // convert to grayscale
         if (!colorImages) {
-            baout.reset();
+            baos.reset();
             int bitsPerPixel = state.getBitsPerPixel();
             imageObjectInfo.setBitsPerPixel(bitsPerPixel);
             ImageEncodingHelper.encodeRGBAsGrayScale(
-                  imageData, dataWidth, dataHeight, bitsPerPixel, baout);
-            imageData = baout.toByteArray();
+                  imageData, dataWidth, dataHeight, bitsPerPixel, baos);
+            imageData = baos.toByteArray();
         }
         imageObjectInfo.setData(imageData);
 
