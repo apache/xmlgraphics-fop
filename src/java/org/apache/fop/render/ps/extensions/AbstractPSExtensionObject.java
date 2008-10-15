@@ -20,21 +20,20 @@
 package org.apache.fop.render.ps.extensions;
 
 // FOP
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * Base class for the PostScript-specific extension elements.
  */
 public abstract class AbstractPSExtensionObject extends FONode {
 
-    private PSSetupCode setupCode = new PSSetupCode();
+    private final PSSetupCode setupCode = new PSSetupCode();
 
     /**
      * Main constructor.
@@ -56,9 +55,10 @@ public abstract class AbstractPSExtensionObject extends FONode {
     /** {@inheritDoc} */
     protected void characters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) {
-        if (setupCode.getContent() != null) {
-            StringBuffer sb = new StringBuffer(setupCode.getContent());
-            sb.append(data, start, length - start);
+        String content = setupCode.getContent();
+        if (content != null) {
+            StringBuffer sb = new StringBuffer(content);
+            sb.append(data, start, length);
             setupCode.setContent(sb.toString());
         } else {
             setupCode.setContent(new String(data, start, length));

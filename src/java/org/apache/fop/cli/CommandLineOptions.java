@@ -23,17 +23,15 @@ package org.apache.fop.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.UIManager;
 
-import org.xml.sax.SAXException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -50,6 +48,7 @@ import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.CommandLineLogger;
+import org.xml.sax.SAXException;
 
 /**
  * Options parses the commandline arguments
@@ -134,7 +133,8 @@ public class CommandLineOptions {
     }
 
     /**
-     * Parse the command line arguments.
+     * Parses the command line arguments.
+     *
      * @param args the command line arguments.
      * @throws FOPException for general errors
      * @throws IOException if the the configuration file could not be loaded
@@ -165,10 +165,10 @@ public class CommandLineOptions {
                 return false;
             }
         } catch (FOPException e) {
-            printUsage();
+            printUsage(System.err);
             throw e;
         } catch (java.io.FileNotFoundException e) {
-            printUsage();
+            printUsage(System.err);
             throw e;
         }
 
@@ -228,12 +228,18 @@ public class CommandLineOptions {
     }
 
     /**
-     * parses the commandline arguments
-     * @return true if parse was successful and processing can continue, false
-     * if processing should stop
+     * Parses the command line arguments.
+     *
+     * @return true if processing can continue, false if it should stop (nothing to do)
      * @exception FOPException if there was an error in the format of the options
      */
     private boolean parseOptions(String[] args) throws FOPException {
+        // do not throw an exception for no args
+        if (args.length == 0) {
+            printVersion();
+            printUsage(System.out);
+            return false;
+        }
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
@@ -304,7 +310,8 @@ public class CommandLineOptions {
             } else if (args[i].equals("-at")) {
                 i = i + parseAreaTreeOption(args, i);
             } else if (args[i].equals("-v")) {
-                System.out.println("FOP Version " + Version.getVersion());
+                printVersion();
+                return false;
             } else if (args[i].equals("-param")) {
                   if (i + 2 < args.length) {
                       String name = args[++i];
@@ -330,8 +337,8 @@ public class CommandLineOptions {
             } else if (!isOption(args[i])) {
                 i = i + parseUnknownOption(args, i);
             } else {
-                printUsage();
-                return false;
+                printUsage(System.err);
+                System.exit(1);
             }
         }
         return true;
@@ -1029,12 +1036,19 @@ public class CommandLineOptions {
         }
     }
 
+    private static void printVersion() {
+        System.out.println("FOP Version " + Version.getVersion());
+    }
+
     /**
-     * shows the commandline syntax including a summary of all available options and some examples
+     * Shows the command line syntax including a summary of all available options and some
+     * examples.
+     *
+     * @param out the stream to which the message must be printed
      */
-    public static void printUsage() {
-        System.err.println(
-              "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] "
+    public static void printUsage(PrintStream out) {
+        out.println(
+              "\nUSAGE\nfop [options] [-fo|-xml] infile [-xsl file] "
                     + "[-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at [mime]|-print] <outfile>\n"
             + " [OPTIONS]  \n"
             + "  -d                debug mode   \n"
@@ -1095,15 +1109,15 @@ public class CommandLineOptions {
             + "                    XSL-FO file is saved and no rendering is performed. \n"
             + "                    (Only available if you use -xml and -xsl parameters)\n\n"
             + "\n"
-            + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
-            + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
-            + "  Fop -xml foo.xml -xsl foo.xsl -pdf foo.pdf\n"
-            + "  Fop -xml foo.xml -xsl foo.xsl -foout foo.fo\n"
-            + "  Fop -xml - -xsl foo.xsl -pdf -\n"
-            + "  Fop foo.fo -mif foo.mif\n"
-            + "  Fop foo.fo -rtf foo.rtf\n"
-            + "  Fop foo.fo -print\n"
-            + "  Fop foo.fo -awt\n");
+            + " [Examples]\n" + "  fop foo.fo foo.pdf \n"
+            + "  fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
+            + "  fop -xml foo.xml -xsl foo.xsl -pdf foo.pdf\n"
+            + "  fop -xml foo.xml -xsl foo.xsl -foout foo.fo\n"
+            + "  fop -xml - -xsl foo.xsl -pdf -\n"
+            + "  fop foo.fo -mif foo.mif\n"
+            + "  fop foo.fo -rtf foo.rtf\n"
+            + "  fop foo.fo -print\n"
+            + "  fop foo.fo -awt\n");
     }
 
     /**
@@ -1112,11 +1126,11 @@ public class CommandLineOptions {
     private void printUsagePrintOutput() {
         System.err.println("USAGE: -print [from[-to][,even|odd]] [-copies numCopies]\n\n"
            + "Example:\n"
-           + "all pages:                        Fop infile.fo -print\n"
-           + "all pages with two copies:        Fop infile.fo -print -copies 2\n"
-           + "all pages starting with page 7:   Fop infile.fo -print 7\n"
-           + "pages 2 to 3:                     Fop infile.fo -print 2-3\n"
-           + "only even page between 10 and 20: Fop infile.fo -print 10-20,even\n");
+           + "all pages:                        fop infile.fo -print\n"
+           + "all pages with two copies:        fop infile.fo -print -copies 2\n"
+           + "all pages starting with page 7:   fop infile.fo -print 7\n"
+           + "pages 2 to 3:                     fop infile.fo -print 2-3\n"
+           + "only even page between 10 and 20: fop infile.fo -print 10-20,even\n");
     }
 
     /**
