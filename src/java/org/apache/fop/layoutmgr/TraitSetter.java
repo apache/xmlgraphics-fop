@@ -393,12 +393,15 @@ public class TraitSetter {
                         int width = area.getIPD();
                         width += backProps.getPaddingStart(false, context);
                         width += backProps.getPaddingEnd(false, context);
-                        back.setHoriz(backProps.backgroundPositionHorizontal.getValue(
-                                new SimplePercentBaseContext(context,
-                                    LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
-                                    (width - back.getImageInfo().getSize().getWidthMpt())
-                                )
-                            ));
+                        int imageWidthMpt = back.getImageInfo().getSize().getWidthMpt();
+                        int lengthBaseValue = (width - imageWidthMpt);
+                        SimplePercentBaseContext simplePercentBaseContext
+                            = new SimplePercentBaseContext(context,
+                            LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
+                            lengthBaseValue);
+                        int horizontal = backProps.backgroundPositionHorizontal.getValue(
+                                simplePercentBaseContext);
+                        back.setHoriz(horizontal);
                     } else {
                         //TODO Area IPD has to be set for this to work
                         log.warn("Horizontal background image positioning ignored"
@@ -414,12 +417,15 @@ public class TraitSetter {
                         int height = area.getBPD();
                         height += backProps.getPaddingBefore(false, context);
                         height += backProps.getPaddingAfter(false, context);
-                        back.setVertical(backProps.backgroundPositionVertical.getValue(
-                                new SimplePercentBaseContext(context,
-                                     LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
-                                     (height - back.getImageInfo().getSize().getHeightMpt())
-                                )
-                            ));
+                        int imageHeightMpt = back.getImageInfo().getSize().getHeightMpt();
+                        int lengthBaseValue = (height - imageHeightMpt);
+                        SimplePercentBaseContext simplePercentBaseContext
+                            = new SimplePercentBaseContext(context,
+                                LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
+                                lengthBaseValue);
+                        int vertical = backProps.backgroundPositionVertical.getValue(
+                                simplePercentBaseContext);
+                        back.setVertical(vertical);
                     } else {
                         //TODO Area BPD has to be set for this to work
                         log.warn("Vertical background image positioning ignored"
