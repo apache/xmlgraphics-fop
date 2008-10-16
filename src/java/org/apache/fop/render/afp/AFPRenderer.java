@@ -772,15 +772,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Returns the AFP DataStream
-     *
-     * @return the AFP DataStream
-     */
-    public DataStream getDataStream() {
-        return this.dataStream;
-    }
-
-    /**
      * Sets the output/device resolution
      *
      * @param resolution
