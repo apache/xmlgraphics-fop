@@ -240,6 +240,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
             } else {
                 afpRenderer.setColorImages(true);
             }
+
             // images are embedded directly without conversion to bitmapped IOCA
             afpRenderer.setNativeImages(imagesCfg.getAttributeAsBoolean("native", false));
 

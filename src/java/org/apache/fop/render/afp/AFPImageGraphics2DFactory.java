@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.MimeConstants;
 
 
 /**
@@ -50,6 +51,10 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         AFPGraphicsObjectInfo graphicsObjectInfo
             = (AFPGraphicsObjectInfo)super.create(afpImageInfo);
 
+        // set mime type (unsupported by MOD:CA registry)
+        graphicsObjectInfo.setMimeType(MimeConstants.MIME_AFP_GOCA);
+
+        // set graphics 2d
         AFPGraphics2DAdapter g2dAdapter = afpImageInfo.g2dAdapter;
         AFPGraphics2D g2d = g2dAdapter.getGraphics2D();
         AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(afpImageInfo.rendererContext);
@@ -58,10 +63,12 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         g2d.setState(state);
         graphicsObjectInfo.setGraphics2D(g2d);
 
+        // set painter
         ImageGraphics2D imageG2D = (ImageGraphics2D)afpImageInfo.img;
         Graphics2DImagePainter painter = imageG2D.getGraphics2DImagePainter();
         graphicsObjectInfo.setPainter(painter);
 
+        // set object area
         AFPObjectAreaInfo objectAreaInfo = graphicsObjectInfo.getObjectAreaInfo();
         Rectangle area = new Rectangle(objectAreaInfo.getWidth(), objectAreaInfo.getHeight());
         graphicsObjectInfo.setArea(area);
