@@ -753,7 +753,7 @@ out = proc.getOutputStream();]]></source>
          <circle cx="6cm" cy="2cm" r="100" style="fill:green;" transform="translate(-70,150)"/>
         </g>
        </svg>
-      </fo:instream-foreign-object/>
+      </fo:instream-foreign-object>
      </fo:block>
 ]]></source>
         <p>The resource-level attribute where the resource object will reside in the AFP output datastream.
