@@ -621,10 +621,17 @@ out = proc.getOutputStream();]]></source>
 ]]></source>
       <p>This will put images as RGB images into the AFP output stream. The default setting is:</p>
       <source><![CDATA[
-      <images mode="b+w" bits-per-pixel="8" />
+      <images mode="b+w" bits-per-pixel="8" native="true"/>
 ]]></source>
-      <p>Only the values "color" and "b+w" are allowed for the mode attribute. The bits-per-pixel
-      attribute is ignored if mode is "color". For "b+w" mode is must be 1, 4, or 8.</p>
+      <p>Only the values "color" and "b+w" are allowed for the mode attribute.</p>
+      <p>The bits-per-pixel attribute is ignored if mode is "color". For "b+w" mode is must be 1, 4, or 8.</p>
+      <source><![CDATA[
+      <images native="true"/>
+]]></source>
+      <p>When the native attribute is specified and set to "true", all image resources will be natively injected
+      into the datastream using an object container rather than being converted into an IOCA FS45 image.
+      Support for native image formats (e.g. JPEG, GIF) is not always available on printer implementations
+      so by default this configuration option is set to "false".</p>
       </section>
       <section id="afp-resource-group-file">
       <title>Resource Group File</title>
