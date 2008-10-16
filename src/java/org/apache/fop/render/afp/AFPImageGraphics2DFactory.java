@@ -52,6 +52,8 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
 
         AFPGraphics2DAdapter g2dAdapter = afpImageInfo.g2dAdapter;
         AFPGraphics2D g2d = g2dAdapter.getGraphics2D();
+        AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(afpImageInfo.rendererContext);
+        g2d.setAFPInfo(afpInfo);
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         g2d.setState(state);
         graphicsObjectInfo.setGraphics2D(g2d);
