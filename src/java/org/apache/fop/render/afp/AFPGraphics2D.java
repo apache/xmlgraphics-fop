@@ -215,6 +215,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
             graphicsObj.beginArea();
         }
         AffineTransform trans = super.getTransform();
+
         PathIterator iter = shape.getPathIterator(trans);
         double[] vals = new double[6];
         int[] coords = null;
@@ -295,7 +296,8 @@ public class AFPGraphics2D extends AbstractGraphics2D {
             graphicsObj.addBox(coords);
         } else if (shape instanceof Ellipse2D) {
             Ellipse2D elip = (Ellipse2D) shape;
-            final double factor = info.getResolution() / 100f;
+            int resolution = info.getResolution();
+            final double factor =  resolution / 100f;
             graphicsObj.setArcParams(
                     (int)Math.round(elip.getWidth() * factor),
                     (int)Math.round(elip.getHeight() * factor),
@@ -404,13 +406,19 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         // create image object info
         AFPImageObjectInfo imageObjectInfo = new AFPImageObjectInfo();
 
+        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
+
+        imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
+
+        imageObjectInfo.setResourceInfo(info.getResourceInfo());
+
         int dataHeight = renderedImage.getHeight();
         imageObjectInfo.setDataHeight(dataHeight);
 
         int dataWidth = renderedImage.getWidth();
         imageObjectInfo.setDataWidth(dataWidth);
 
-        boolean colorImages = true;//state.isColorImages();
+        boolean colorImages = state.isColorImages();
         imageObjectInfo.setColor(colorImages);
 
         ByteArrayOutputStream boas = new ByteArrayOutputStream();
@@ -431,11 +439,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         if (imageInfo != null) {
             imageObjectInfo.setUri(imageInfo.getOriginalURI());
         }
-
-        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
-        imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
-        imageObjectInfo.setResourceInfo(info.getResourceInfo());
-
 
         // create object area info
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
@@ -488,21 +491,21 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         g2d.setComposite(gc.getComposite());
 
-        if (!g2d.drawImage(img, 0, 0, bufferedWidth, bufferedHeight, observer)) {
-            return false;
-        }
+        boolean drawn = g2d.drawImage(img, 0, 0, bufferedWidth, bufferedHeight, observer);
         g2d.dispose();
 
-        try {
-            // get image object info
-            AFPImageObjectInfo imageObjectInfo = getImageObjectInfo(bufferedImage, x, y, width, height);
+        if (drawn) {
+            try {
+                // get image object info
+                AFPImageObjectInfo imageObjectInfo = getImageObjectInfo(bufferedImage, x, y, width, height);
 
-            // create image resource
-            AFPResourceManager resourceManager = info.getResourceManager();
-            resourceManager.createObject(imageObjectInfo);
-            return true;
-        } catch (IOException ioe) {
-            handleIOException(ioe);
+                // create image resource
+                AFPResourceManager resourceManager = info.getResourceManager();
+                resourceManager.createObject(imageObjectInfo);
+                return true;
+            } catch (IOException ioe) {
+                handleIOException(ioe);
+            }
         }
         return false;
     }
