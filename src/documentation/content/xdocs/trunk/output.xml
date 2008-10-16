@@ -730,16 +730,22 @@ out = proc.getOutputStream();]]></source>
       <title>Foreign Attributes</title>
         <section id="afp-foreign-attributes-resource">
         <title>Resource</title>
-        <p>The resource foreign attributes provides the ability to control where data object resources (e.g. images) will reside in the AFP output. Example:</p>
+        <p>The resource foreign attributes provides the ability to name and control where data object resources (e.g. images)
+        will reside in the AFP output. Example:</p>
       <source><![CDATA[
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
      xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
      ...
      <block>
-      <fo:external-graphic width="2.0cm" content-width="2.0cm" height="1.8cm" content-height="1.8cm" src="examples/fo/graphics/xml_feather.gif" afp:resource-name="feather" afp:resource-level="external" afp:resource-group-file="resources.afp"/>
+      <fo:external-graphic width="2.0cm" content-width="2.0cm" height="1.8cm" content-height="1.8cm"
+        src="examples/fo/graphics/xml_feather.gif"
+        afp:resource-name="feather" afp:resource-level="external" afp:resource-group-file="resources.afp"/>
      </block>
 ]]></source>
-        <p>The resource-info extension can only occur as foreign attributes of &gt;fo:external-graphic/&lt; and &gt;instream-foreign-object/&lt;.</p>
+        <p>The resource-level attribute where the resource object will reside in the AFP output datastream.
+        The possible values for this are "inline", "print-file" and "external".
+        When "external" is used a resource-group-file attribute must also be specified.</p>
+        <p>The afp foreign attributes are only used in conjuntion with &lt;fo:external-graphic/&gt; and &lt;instream-foreign-object/&gt;.</p>
       </section>
     </section>
   </section>
