@@ -85,27 +85,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         }
 
         //Create the painter
-        Graphics2DImagePainter painter = new Graphics2DImagePainter() {
-
-            public void paint(Graphics2D g2d, Rectangle2D area) {
-                // If no viewbox is defined in the svg file, a viewbox of 100x100 is
-                // assumed, as defined in SVGUserAgent.getViewportSize()
-                float iw = (float) ctx.getDocumentSize().getWidth();
-                float ih = (float) ctx.getDocumentSize().getHeight();
-                float w = (float) area.getWidth();
-                float h = (float) area.getHeight();
-                g2d.translate(area.getX(), area.getY());
-                g2d.scale(w / iw, h / ih);
-
-                root.paint(g2d);
-            }
-
-            public Dimension getImageSize() {
-                return new Dimension(svg.getSize().getWidthMpt(), svg.getSize().getHeightMpt());
-            }
-
-        };
-
+        Graphics2DImagePainter painter = createPainter(svg, ctx, root);
         ImageGraphics2D g2dImage = new ImageGraphics2D(src.getInfo(), painter);
         return g2dImage;
     }
@@ -127,6 +107,72 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
             }
 
         };
+    }
+
+    /**
+     * A generic graphics 2D image painter implementation
+     */
+    protected class GenericGraphics2DImagePainter implements Graphics2DImagePainter {
+
+        private final ImageXMLDOM svg;
+        private final BridgeContext ctx;
+        private final GraphicsNode root;
+
+        /**
+         * Constructor
+         *
+         * @param svg the svg image dom
+         * @param ctx the bridge context
+         * @param root the graphics node root
+         */
+        public GenericGraphics2DImagePainter(ImageXMLDOM svg, BridgeContext ctx, GraphicsNode root) {
+            this.svg = svg;
+            this.ctx = ctx;
+            this.root = root;
+        }
+
+        protected void init(Graphics2D g2d, Rectangle2D area) {
+            // If no viewbox is defined in the svg file, a viewbox of 100x100 is
+            // assumed, as defined in SVGUserAgent.getViewportSize()
+            double tx = area.getX();
+            double ty = area.getY();
+            if (tx != 0 || ty != 0) {
+                g2d.translate(tx, ty);
+            }
+
+            float iw = (float) ctx.getDocumentSize().getWidth();
+            float ih = (float) ctx.getDocumentSize().getHeight();
+            float w = (float) area.getWidth();
+            float h = (float) area.getHeight();
+            float sx = w / iw;
+            float sy = h / ih;
+            if (sx != 1.0 || sy != 1.0) {
+                g2d.scale(sx, sy);
+            }
+        }
+
+        public void paint(Graphics2D g2d, Rectangle2D area) {
+            init(g2d, area);
+            root.paint(g2d);
+        }
+
+        public Dimension getImageSize() {
+            return new Dimension(svg.getSize().getWidthMpt(), svg.getSize().getHeightMpt());
+        }
+
+    }
+
+    /**
+     * Creates a Graphics 2D image painter
+     *
+     * @param svg the svg image dom
+     * @param ctx the bridge context
+     * @param root the graphics node root
+     * @return the newly created graphics 2d image painter
+     */
+    protected Graphics2DImagePainter createPainter(
+            final ImageXMLDOM svg, final BridgeContext ctx, final GraphicsNode root) {
+        return new GenericGraphics2DImagePainter(svg, ctx, root);
     }
 
     /** {@inheritDoc} */
