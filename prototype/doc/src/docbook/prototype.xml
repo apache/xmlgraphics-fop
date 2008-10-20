@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://docbook.org/xml/4.5/docbookx.dtd">
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<article lang="en">
+  <title>A New Generation Layout Engine</title>
+  <articleinfo>
+    <author>
+      <firstname>Vincent</firstname>
+      <surname>Hennebert</surname>
+    </author>
+    <date>October 2008</date>
+  </articleinfo>
+
+  <section id="introduction">
+    <title>Introduction</title>
+    <section>
+      <title>Current Approach</title>
+      <para>The layout engine currently implemented by Apache FOP has a major shortcoming: it’s not 
+        able to handle pages of differing widths. Its approach consists in two independent 
+        steps:</para>
+      <orderedlist>
+        <listitem>
+          <para>Paragraphs are broken into lines, taking the width of the first page of the page 
+            sequence as a basis. After a paragraph is handled, its best layout is retained and boxes 
+            are created for each line. The length of the box corresponds to the line height, which 
+            in common cases is the same for every line of the paragraph. Between each box, a penalty 
+            is inserted to allow breaking inside the paragraph, except for the first and last few 
+            lines (widows and orphans settings). See <xref 
+              linkend="fig_paragraph-knuth-elements"/>.</para>
+            <figure id="fig_paragraph-knuth-elements">
+              <title>A paragraph and the resulting Knuth elements</title>
+<literallayout class="monospaced">In  olden  times   when   wishing        box w=12
+still helped one, there  lived  a        box w=12, penalty w=0 p=0
+king  whose  daughters  were  all        box w=12, penalty w=0 p=0
+beautiful, but the  youngest  was   =&gt;   box w=12, penalty w=0 p=0
+so beautiful that the sun itself,        box w=12, penalty w=0 p=0
+which  has  seen  so  much,   was        box w=12, penalty w=0 p=0
+astonished whenever it  shone  in        box w=12
+her face.                                box w=12</literallayout>
+            </figure>
+        </listitem>
+        <listitem>
+          <para>Once all of the line-level breakings have been made, page-level breaking is 
+            performed. This is the very same as line-breaking, since there is a conceptual 
+            equivalence between words and lines, lines and pages, paragraphs and page sequences. 
+            Take the above paragraph, rotate it 90° clockwise, and then you get paragraphs, pages 
+            and sequences of pages (the first page being the rightmost one).</para>
+        </listitem>
+      </orderedlist>
+      <para>Obviously this approach doesn’t work anymore when pages don’t have the same width all 
+        over the page sequence. Even a slight change in the line width can lead to completely 
+        different choices of break points in the paragraph (see <xref 
+          linkend="fig_paragraph-different-page-width"/>).</para>
+        <figure id="fig_paragraph-different-page-width">
+          <title>The same paragraph on a slightly wider page. It occupies one less line!</title>
+          <titleabbrev>Same paragraph on slightly wider page.</titleabbrev>
+<literallayout class="monospaced">In olden times when  wishing  still
+helped  one,  there  lived  a  king
+whose daughters were all  beautiful,
+but the youngest was  so  beautiful
+that the sun itself, which has seen
+so much,  was  astonished  whenever
+it shone in her face.</literallayout>
+        </figure>
+    </section>
+    <section>
+      <title>What’s Wrong?</title>
+      <para>The assumption that all the pages of a same sequence will have the same width is 
+        definitely limited. In some cases the layout of the first page of a chapter is different 
+        from the remaining pages; document like brochures may have frames on some pages that contain 
+        text related to the main content (explanation of terms, illustrations, etc.), effectively 
+        reducing space for it. You can also switch between one-column or two-column layouts, 
+        portrait/landscape, etc.</para>
+      <para>The current approach is convenient because it allows to re-use the same analogy for 
+        pages as for lines. Basically this is Knuth’s brilliant idea of mapping the paragraph 
+        breaking problem to the search of a shortest path in a graph; i.e., mapping this problem to 
+        a well-known one, that is solvable in polynomial time using the dynamic programming 
+        approach. More precisely, Knuth’s decisive contribution consists in two parts:</para>
+      <itemizedlist>
+        <listitem>
+          <para>representing the content of a paragraph using a flexible and powerful 
+            box/glue/penalty model;</para>
+        </listitem>
+        <listitem>
+          <para>defining a cost function to minimize, whose solution can be found in the same way as 
+            a shortest path in a graph.</para>
+        </listitem>
+      </itemizedlist>
+      <para>This analogy works well for paragraphs, but two main difficulties appear when applying 
+        it to pages:</para>
+      <itemizedlist>
+        <listitem>
+          <para>how to deal with paragraphs? We need to know the width(s) of the page(s) they will 
+            by typesetted on before breaking them. That means that the list of boxes and penalties 
+            representing the lines like we saw above cannot be determined before we start page 
+            breaking. But if it’s not available, how to determine if the bottom of a page will be 
+            reached while we are inside a paragraph, and if we must consider to continue it on the 
+            next page?</para>
+        </listitem>
+        <listitem>
+          <para>tables introduce a new challenge, even if we consider the above issue solved: how to 
+            merge the flows of content for the different columns into just one sequence of boxes, 
+            glues and penalties? The issue comes from the fact that columns must be synchronized to 
+            a certain degree: a new row, for instance, must start at the same distance from the top 
+            of the page for each column. Yet it <emphasis>is</emphasis> possible to de-synchronize 
+            them while we are inside a row (<xref 
+              linkend="fig_table_synchronized-columns"/>).</para>
+          <figure id="fig_table_synchronized-columns">
+            <title>A table may look different when split over two pages.</title>
+            <mediaobject>
+              <imageobject>
+                <imagedata fileref="table_synchronized-columns"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </listitem>
+      </itemizedlist>
+      <para>So the biggest challenge of a new layout engine is to either extend Knuth’s analogy in 
+        some smart way to handle both line-breaking and page-breaking at the same time; or to find a 
+        new analogy that will, like for the shortest path in a graph, allow to elegantly map the 
+        problem to another well-known one that’s solvable in an acceptable amount of time.</para>
+      <para>Mixing line- and page-breaking is not that much more complicated; the analogy still 
+        works and it’s possible to use data structures that are similar to the plain 
+        paragraph-breaking problem. Tables are, however, rather challenging and it may well be that 
+        the box/glue/penalty model is not the right approach anymore, and that some other model must 
+        be found to accurately represent tables.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Breaking Tables Over Pages</title>
+    <section>
+      <title>Issues</title>
+      <para>Most of the time a table will contain some kind of tabular data, and will be composed of 
+        many single-line rows. Therefore it will either fit on one page, or the only way to break 
+        will be between rows, which is not a problem.</para>
+      <para>Sometimes, however, a table may contain more complex data, like an item reference in one 
+        column and a description in another one (see <xref linkend="fig_table_non-trivial"/>). 
+        Tables may also be used to achieve all sorts of layout effects; in that case a user may 
+        exploit corner cases of the specification and (ab)use them as tricks to obtain particular 
+        renderings. This makes it very difficult to imagine use cases in which a particular 
+        behaviour may turn out to be useful, hence what compromises are acceptable or not when 
+        introducing limitations in the implementation.</para>
+      <figure id="fig_table_non-trivial">
+        <title>A non-trivial table: page breaking may occur inside the cells</title>
+        <titleabbrev>Non-trivial table</titleabbrev>
+        <informaltable id="table_non-trivial">
+          <col width="20%"/>
+          <col width="80%"/>
+          <thead>
+            <tr>
+              <th>Item reference</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tr>
+            <td>#1234567</td>
+            <td>This item serves several purposes: one is to perform this task; another one is to 
+              perform that task; plus all the usages that customers will find and that were not 
+              primarily thought of.</td>
+          </tr>
+        </informaltable>
+      </figure>
+    </section>
+    <section>
+      <title>Beyond the Box/Glue/Penalty Model?</title>
+      <para>As said above the box/glue/penalty model shows its limits when it comes to implementing 
+        tables. Another representation may be necessary to deal with the certain degree of 
+        desynchronization that can happen between columns. Even if we consider that the lists of 
+        elements for the columns’ contents are available, there is no accurate way to merge them 
+        into one list: either the resulting elements will fail to represent all the flexibility 
+        offered by the column layouts; or the demerits won’t match the sum of the individual column 
+        demerits. Moreover, it’s not possible to represent the column desynchronization by using 
+        only one list of merged elements (see the <ulink 
+          url="http://wiki.apache.org/xmlgraphics-fop/TableLayout/KnownProblems/">wiki page</ulink> 
+        about known issues in the current approach). Several lists must be computed depending on the 
+        breaks chosen for the preceding pages, which is cumbersome.</para>
+      <para>Glues can be seen as springs that can be both compressed and stretched (in the general 
+        case). Only, instead of having a <ulink 
+          url="http://en.wikipedia.org/wiki/Spring_(device)">spring constant</ulink> 
+        <inlineequation><mathphrase>k</mathphrase></inlineequation>, where the force needed to 
+        compress (resp. extend) the spring is proportional to the amount of compression (resp. 
+        extension), the relation is more complex: the force is a polynomial function of the 
+        displacement. The value of the force actually is the demerits function defined by Knuth. It 
+        was designed in a way that small displacements would be considered as almost equivalent to 
+        the natural length, while big displacements would quickly become unacceptable; <xref 
+          linkend="fig_demerits"/> shows an example where the natural length is 10, and the content 
+        can be shrinked down to 8 and stretched up to 14.</para>
+      <figure id="fig_demerits">
+        <title>Demerits, functions of the size of the part (line, page, etc.)</title>
+        <titleabbrev>Demerits function</titleabbrev>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="demerits"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>However, the spring image still applies; we just have to imagine that it will be even 
+        more difficult than usual to compress/extend the spring to its maximum. Then we can see 
+        pages or tables as frames to which we attach springs representing the body or the columns. 
+        In the case of a table we can imagine to start with the first column, and successively 
+        attach a spring for every column. Depending on what the column contains we will have to 
+        compress or extend the spring, which will have an effect on the other columns as well as the 
+        possible text preceding the table on the page (see <xref linkend="fig_springs"/>).</para>
+      <figure id="fig_springs">
+        <title>Seeing content as springs</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="springs"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>By using this representation it is relatively easy to ‘feel’ what happens: the springs 
+        will adjust such that the total force applied on them and the frame will be minimal. From an 
+        analytical point of vue the adjustment ratio for every spring will be computed such that the 
+        sum of the demerits will be minimal. This is not easy with the demerits function as it is 
+        used currently, but it is possible to choose another function that will behave similarly to 
+        Knuth’s original one, yet will simplify the computation of the minimum.</para>
+      <para>The problem is that there may be many ways to break every column, corresponding to more 
+        or less content on the first page. In other words, there may be many different springs to 
+        play with for each column, and trying every combination of them obviously leads to 
+        combinatorial explosion. Some combinations are obviously non-sensical and should not even be 
+        tested; for example, when there is only one line of content in the first column, three lines 
+        in the second and it’s obvious that the first column may also be filled with three lines 
+        (see <xref linkend="fig_table_silly-combination"/>)</para>
+      <figure id="fig_table_silly-combination">
+        <title>An obviously wrong combination of table columns</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="table_silly-combination"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>A user’s reaction to such a combination is easily predictable… The problem is to detect 
+        that this combination is unacceptable and that a better one must be found. One could play 
+        with demerits, that is, count additional demerits for the empty space at the bottom of the 
+        first column on the first page, and the second column on the second page. That way a 
+        solution with less empty space would be preferred. But this won’t prevent the first one from 
+        being chosen if this leads to a better overall layout (more evenly filled pages, less widows 
+        and orphans, etc.). And even if the overall layout is better, the user is most likely to not 
+        notice it and complain about the awkward way the table was broken.</para>
+      <para>So such a combination must simply be forbidden, and not considered to make a feasible 
+        layout in any case. Now, it is likely that many combinations of the columns will be similar 
+        to that one, therefore not acceptable. It would be good if we could skip them all and 
+        consider only the combination of layouts that <emphasis>will</emphasis> lead to a feasible 
+        result. The number of combinations to consider should then become reasonable (see <xref 
+          linkend="fig_table_acceptable-combinations"/>).</para>
+      <figure id="fig_table_acceptable-combinations">
+        <title>Acceptable combinations of columns: three ways of breaking each column, leading to 
+          only three combinations</title>
+        <titleabbrev>Acceptable combinations of columns</titleabbrev>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="table_acceptable-combinations"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>All that said, and back to the title of this section, maybe that the box/glue/penalty 
+        model simply needs to be dropped, and that another model can be found that will be able to 
+        represent tables in an elegant way and allow to solve the problem easily. Needless to say 
+        that such a model has yet to be discovered…</para>
+    </section>
+    <section>
+      <title>Breaking Paragraphs Before Merging Columns</title>
+      <para>With the new approach it is possible to take into account several ways of typesetting a 
+        paragraph, differing by the number of lines that it occupies. For example, the optimal way 
+        will be five lines, but there are also a four-line possibility and a six-line possibility.  
+        In the four-line version spaces are likely to be shrinked a lot, while on the six-line they 
+        will be much stretched. While those possibilities look less good than the five-line version, 
+        they may be preferred in the final layout because they would allow to avoid a widow or 
+        orphan line somewhere else, leading to less global demerits; or even lead to a feasible 
+        global layout while the optimal version wouldn’t.</para>
+      <para>In practice, this is as if we were dealing with several lists of boxes, glues and 
+        penalties, one for each version of the paragraph (note that there is a <ulink 
+          url="http://wiki.apache.org/xmlgraphics-fop/WhitespaceManagement">wiki page</ulink> on a 
+        similar topic). This can be handled transparently by the breaking algorithm: new layouts 
+        will simply be added for each possibility (obviously the number of active nodes will be 
+        multiplied by the number of versions in which a paragraph can be typeset). The principle 
+        upon which the algorithm relies remains the same, that is: “the best way to end part (page) 
+        <inlineequation><mathphrase>n</mathphrase></inlineequation> on <emphasis>this</emphasis> 
+        element is by going <emphasis>that</emphasis> route”. Suppose there is an image after the 
+        paragraph (see <xref linkend="fig_paragraph_different-numbers-of-lines"/>); when considering 
+        a page break after the image, there will be (at least) three available layouts: one made of 
+        the four-line version of the paragraph, one made of the five-line version, and one of the 
+        six-line version. The best of them will be chosen; maybe that the four-line version leads to 
+        an unfinished page (there is not enough elasticity to stretch the content up to the end of 
+        the page); maybe the six-line version makes the content perfectly fit in the page (no 
+        shrinking or stretching). Then it would be chosen over the five-line version, because the 
+        absence of stretching at the page level would compensate for the sligthly sub-optimal layout 
+        of that paragraph.</para>
+      <figure id="fig_paragraph_different-numbers-of-lines">
+        <title>Three different paragraph layouts to consider</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="paragraph_different-numbers-of-lines"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>However, weird things may happen; for instance, let’s suppose we have a sequence of 
+        three paragraphs separated by elastic spaces. The first two paragraphs may be typeset on 
+        either four or five lines; the first space has a value of 1+1−1 (natural length 1, 
+        stretchable up to 2 and shrinkable down to 0); the second has a value of 1.5+0−1. Since the 
+        four-line versions are shorter this is possible to add the second space and one line of the 
+        third paragraph on the page. Let’s see what are the resulting min-opt-max:</para>
+      <literallayout class="monospaced">       5 lines:    4 lines:
+        5           4
+        1+1−1       1+1−1
+        5           4
+        1.5+0−1
+        1
+        ────────    ──────────
+Total:  11+1−1      11.5+1−2</literallayout>
+      <para>The two possibilities are overlapping, and would both fit in a page with a height of 12; 
+        how to order them? By the total optimum value? By the minimum value? This may be a problem 
+        for the merging algorithm.</para>
+      <para><emphasis>To be continued…</emphasis></para>
+    </section>
+  </section>
+
+</article>
+<!-- vim: set ai sw=2 fo+=aw tw=100: -->
