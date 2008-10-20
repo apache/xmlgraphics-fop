@@ -395,7 +395,7 @@ public class TraitSetter {
                         width += backProps.getPaddingStart(false, context);
                         width += backProps.getPaddingEnd(false, context);
                         int imageWidthMpt = back.getImageInfo().getSize().getWidthMpt();
-                        int lengthBaseValue = (width - imageWidthMpt);
+                        int lengthBaseValue = width - imageWidthMpt;
                         SimplePercentBaseContext simplePercentBaseContext
                             = new SimplePercentBaseContext(context,
                             LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
@@ -419,7 +419,7 @@ public class TraitSetter {
                         height += backProps.getPaddingBefore(false, context);
                         height += backProps.getPaddingAfter(false, context);
                         int imageHeightMpt = back.getImageInfo().getSize().getHeightMpt();
-                        int lengthBaseValue = (height - imageHeightMpt);
+                        int lengthBaseValue = height - imageHeightMpt;
                         SimplePercentBaseContext simplePercentBaseContext
                             = new SimplePercentBaseContext(context,
                                 LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
