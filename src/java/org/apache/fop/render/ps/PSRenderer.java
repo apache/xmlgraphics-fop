@@ -40,6 +40,36 @@ import javax.xml.transform.Source;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawEPS;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.image.loader.pipeline.ImageProviderPipeline;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.ImageEncoder;
+import org.apache.xmlgraphics.ps.PSDictionary;
+import org.apache.xmlgraphics.ps.PSDictionaryFormatException;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSImageUtils;
+import org.apache.xmlgraphics.ps.PSPageDeviceDictionary;
+import org.apache.xmlgraphics.ps.PSProcSets;
+import org.apache.xmlgraphics.ps.PSResource;
+import org.apache.xmlgraphics.ps.PSState;
+import org.apache.xmlgraphics.ps.dsc.DSCException;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
+import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
@@ -77,34 +107,6 @@ import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorUtil;
-import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawEPS;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
-import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
-import org.apache.xmlgraphics.image.loader.pipeline.ImageProviderPipeline;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
-import org.apache.xmlgraphics.ps.DSCConstants;
-import org.apache.xmlgraphics.ps.ImageEncoder;
-import org.apache.xmlgraphics.ps.PSDictionary;
-import org.apache.xmlgraphics.ps.PSDictionaryFormatException;
-import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSImageUtils;
-import org.apache.xmlgraphics.ps.PSPageDeviceDictionary;
-import org.apache.xmlgraphics.ps.PSProcSets;
-import org.apache.xmlgraphics.ps.PSResource;
-import org.apache.xmlgraphics.ps.PSState;
-import org.apache.xmlgraphics.ps.dsc.DSCException;
-import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
-import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
-import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 
 /**
  * Renderer that renders to PostScript.
@@ -1610,7 +1612,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      * {@inheritDoc}
      */
     public void renderImage(Image image, Rectangle2D pos) {
-        drawImage(image.getURL(), pos);
+        drawImage(image.getURL(), pos, image.getForeignAttributes());
     }
 
     /**
