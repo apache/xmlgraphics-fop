@@ -22,6 +22,7 @@ package org.apache.fop.render.ps;
 // Java
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.Map;
 
 import org.w3c.dom.Document;
 
@@ -39,6 +40,7 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
 
@@ -225,6 +227,23 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         int xOffset = psInfo.currentXPosition;
         int yOffset = psInfo.currentYPosition;
         PSGenerator gen = psInfo.psGenerator;
+
+        boolean paintAsBitmap = false;
+        if (context != null) {
+            Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+            paintAsBitmap = (foreign != null
+                   && "bitmap".equalsIgnoreCase((String)foreign.get(CONVERSION_MODE)));
+        }
+        if (paintAsBitmap) {
+            try {
+                super.renderSVGDocument(context, doc);
+            } catch (IOException ioe) {
+                SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                        context.getUserAgent().getEventBroadcaster());
+                eventProducer.svgRenderingError(this, ioe, getDocumentURI(doc));
+            }
+            return;
+        }
 
         //Controls whether text painted by Batik is generated using text or path operations
         boolean strokeText = false;
