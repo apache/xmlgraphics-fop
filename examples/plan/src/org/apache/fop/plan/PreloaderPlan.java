@@ -30,6 +30,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,7 +67,7 @@ public class PreloaderPlan extends AbstractImagePreloader {
         return info;
     }
 
-    private ImageInfo getImage(String uri, Source src, ImageContext context) {
+    private ImageInfo getImage(String uri, Source src, ImageContext context) throws IOException {
 
         InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
         try {
@@ -78,7 +79,14 @@ public class PreloaderPlan extends AbstractImagePreloader {
 
             //Have to render the plan to know its size
             PlanRenderer pr = new PlanRenderer();
-            Document svgDoc = pr.createSVGDocument((Document)res.getNode());
+            Document planDoc = (Document)res.getNode();
+            Element rootEl = planDoc.getDocumentElement();
+            if (!PlanElementMapping.NAMESPACE.equals(rootEl.getNamespaceURI())) {
+                in.reset();
+                return null;
+            }
+
+            Document svgDoc = pr.createSVGDocument(planDoc);
             float width = pr.getWidth();
             float height = pr.getHeight();
 
