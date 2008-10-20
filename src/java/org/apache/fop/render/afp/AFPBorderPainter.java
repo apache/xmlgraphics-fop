@@ -76,16 +76,16 @@ public class AFPBorderPainter {
         case 90:
             lineDataInfo.x1 = Math.round((float)at.getTranslateY() + x);
             lineDataInfo.y1 = lineDataInfo.y2
-                = pageWidth - Math.round((float)at.getTranslateX() + y);
+                = pageWidth - Math.round((float)at.getTranslateX()) + Math.round(y);
             lineDataInfo.x2 = Math.round(width + (float)at.getTranslateY() + x);
             break;
         case 180:
             lineDataInfo.x1 = pageWidth - Math.round((float)at.getTranslateX() - x);
-            lineDataInfo.y1 = lineDataInfo.y2 = pageHeight - Math.round((float)at.getTranslateY() - x);
+            lineDataInfo.y1 = lineDataInfo.y2 = pageHeight - Math.round((float)at.getTranslateY() - y);
             lineDataInfo.x2 = pageWidth - Math.round((float)at.getTranslateX() - x - width);
             break;
         case 270:
-            lineDataInfo.x1 = pageHeight - Math.round((float)at.getTranslateY() + y - x);
+            lineDataInfo.x1 = pageHeight - Math.round((float)at.getTranslateY() - x);
             lineDataInfo.y1 = lineDataInfo.y2 = Math.round((float)at.getTranslateX() + y);
             lineDataInfo.x2 = lineDataInfo.x1 + Math.round(width - x);
             break;
