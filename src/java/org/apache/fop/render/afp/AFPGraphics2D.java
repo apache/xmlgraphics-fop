@@ -33,7 +33,6 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -43,13 +42,10 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 
-import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.afp.goca.GraphicsSetLineType;
-import org.apache.fop.render.afp.modca.GraphicsObject;
+
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
@@ -58,6 +54,10 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.StrokingTextHandler;
 import org.apache.xmlgraphics.java2d.TextHandler;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
+
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.afp.goca.GraphicsSetLineType;
+import org.apache.fop.render.afp.modca.GraphicsObject;
 
 /**
  * This is a concrete implementation of <tt>AbstractGraphics2D</tt> (and
@@ -219,7 +219,49 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         PathIterator iter = shape.getPathIterator(trans);
         double[] vals = new double[6];
         int[] coords = null;
-        if (shape instanceof GeneralPath || shape instanceof ExtendedGeneralPath) {
+        if (shape instanceof Line2D) {
+            iter.currentSegment(vals);
+            coords = new int[4];
+            coords[0] = (int) Math.round(vals[0]); //x1
+            coords[1] = (int) Math.round(vals[1]); //y1
+            iter.next();
+            iter.currentSegment(vals);
+            coords[2] = (int) Math.round(vals[0]); //x2
+            coords[3] = (int) Math.round(vals[1]); //y2
+            graphicsObj.addLine(coords);
+        } else if (shape instanceof Rectangle2D) {
+            iter.currentSegment(vals);
+            coords = new int[4];
+            coords[2] = (int) Math.round(vals[0]); //x1
+            coords[3] = (int) Math.round(vals[1]); //y1
+            iter.next();
+            iter.next();
+            iter.currentSegment(vals);
+            coords[0] = (int) Math.round(vals[0]); //x2
+            coords[1] = (int) Math.round(vals[1]); //y2
+            graphicsObj.addBox(coords);
+        } else if (shape instanceof Ellipse2D) {
+            Ellipse2D elip = (Ellipse2D) shape;
+            int resolution = info.getResolution();
+            final double factor =  resolution / 100f;
+            graphicsObj.setArcParams(
+                    (int)Math.round(elip.getWidth() * factor),
+                    (int)Math.round(elip.getHeight() * factor),
+                    0,
+                    0
+            );
+            trans.transform(
+                    new double[] {elip.getCenterX(), elip.getCenterY()}, 0,
+                    vals, 0, 1);
+            final int mh = 1;
+            final int mhr = 0;
+            graphicsObj.addFullArc(
+                    (int)Math.round(vals[0]),
+                    (int)Math.round(vals[1]),
+                    mh,
+                    mhr
+            );
+        } else {
             // graphics segment opening coordinates (x,y)
             // current position coordinates (x,y)
             for (int[] openingCoords = new int[2], currCoords = new int[2];
@@ -273,50 +315,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                     currCoords[1] = coords[coords.length - 1];
                 }
             }
-        } else if (shape instanceof Line2D) {
-            iter.currentSegment(vals);
-            coords = new int[4];
-            coords[0] = (int) Math.round(vals[0]); //x1
-            coords[1] = (int) Math.round(vals[1]); //y1
-            iter.next();
-            iter.currentSegment(vals);
-            coords[2] = (int) Math.round(vals[0]); //x2
-            coords[3] = (int) Math.round(vals[1]); //y2
-            graphicsObj.addLine(coords);
-        } else if (shape instanceof Rectangle2D) {
-            iter.currentSegment(vals);
-            coords = new int[4];
-            coords[2] = (int) Math.round(vals[0]); //x1
-            coords[3] = (int) Math.round(vals[1]); //y1
-            iter.next();
-            iter.next();
-            iter.currentSegment(vals);
-            coords[0] = (int) Math.round(vals[0]); //x2
-            coords[1] = (int) Math.round(vals[1]); //y2
-            graphicsObj.addBox(coords);
-        } else if (shape instanceof Ellipse2D) {
-            Ellipse2D elip = (Ellipse2D) shape;
-            int resolution = info.getResolution();
-            final double factor =  resolution / 100f;
-            graphicsObj.setArcParams(
-                    (int)Math.round(elip.getWidth() * factor),
-                    (int)Math.round(elip.getHeight() * factor),
-                    0,
-                    0
-            );
-            trans.transform(
-                    new double[] {elip.getCenterX(), elip.getCenterY()}, 0,
-                    vals, 0, 1);
-            final int mh = 1;
-            final int mhr = 0;
-            graphicsObj.addFullArc(
-                    (int)Math.round(vals[0]),
-                    (int)Math.round(vals[1]),
-                    mh,
-                    mhr
-            );
-        } else {
-            log.error("Unrecognised shape: " + shape);
         }
         if (fill) {
             graphicsObj.endArea();
