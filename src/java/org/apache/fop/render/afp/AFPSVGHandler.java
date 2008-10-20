@@ -167,20 +167,12 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         AFPBatikGraphicsObjectPainter painter = new AFPBatikGraphicsObjectPainter(g2d);
         (graphicsObjectInfo).setPainter(painter);
 
-        boolean strokeText = false;
-        Configuration cfg = afpInfo.getHandlerConfiguration();
-        if (cfg != null) {
-            strokeText = cfg.getChild("stroke-text", true).getValueAsBoolean(strokeText);
-        }
+        // Controls whether text painted by Batik is generated using text or path operations
         SVGUserAgent svgUserAgent
             = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
-
         BridgeContext ctx = new BridgeContext(svgUserAgent);
-        AFPTextHandler afpTextHandler = null;
-
-        //Controls whether text painted by Batik is generated using text or path operations
-        if (!strokeText) {
-            afpTextHandler = new AFPTextHandler(g2d);
+        if (!afpInfo.strokeText()) {
+            AFPTextHandler afpTextHandler = new AFPTextHandler(g2d);
             g2d.setCustomTextHandler(afpTextHandler);
             AFPTextPainter textPainter = new AFPTextPainter(afpTextHandler);
             ctx.setTextPainter(textPainter);

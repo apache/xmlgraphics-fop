@@ -70,6 +70,19 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
     private static final Log log = LogFactory.getLog(AFPGraphics2D.class);
 
+    private static final int X = 0;
+
+    private static final int Y = 1;
+
+    private static final int X1 = 0;
+
+    private static final int Y1 = 1;
+
+    private static final int X2 = 2;
+
+    private static final int Y2 = 3;
+
+
     /** graphics object */
     private GraphicsObject graphicsObj = null;
 
@@ -204,12 +217,14 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         if (!fill) {
             graphicsObj.newSegment();
         }
-        Color col = getColor();
-        if (state.setColor(col)) {
-            graphicsObj.setColor(col);
+
+        Color color = getColor();
+        if (state.setColor(color)) {
+            graphicsObj.setColor(color);
         }
 
-        applyStroke(getStroke());
+        Stroke stroke = getStroke();
+        applyStroke(stroke);
 
         if (fill) {
             graphicsObj.beginArea();
@@ -217,47 +232,47 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         AffineTransform trans = super.getTransform();
 
         PathIterator iter = shape.getPathIterator(trans);
-        double[] vals = new double[6];
+        double[] dstPts = new double[6];
         int[] coords = null;
         if (shape instanceof Line2D) {
-            iter.currentSegment(vals);
+            iter.currentSegment(dstPts);
             coords = new int[4];
-            coords[0] = (int) Math.round(vals[0]); //x1
-            coords[1] = (int) Math.round(vals[1]); //y1
+            coords[X1] = (int) Math.round(dstPts[X]);
+            coords[Y1] = (int) Math.round(dstPts[Y]);
             iter.next();
-            iter.currentSegment(vals);
-            coords[2] = (int) Math.round(vals[0]); //x2
-            coords[3] = (int) Math.round(vals[1]); //y2
+            iter.currentSegment(dstPts);
+            coords[X2] = (int) Math.round(dstPts[X]);
+            coords[Y2] = (int) Math.round(dstPts[Y]);
             graphicsObj.addLine(coords);
         } else if (shape instanceof Rectangle2D) {
-            iter.currentSegment(vals);
+            iter.currentSegment(dstPts);
             coords = new int[4];
-            coords[2] = (int) Math.round(vals[0]); //x1
-            coords[3] = (int) Math.round(vals[1]); //y1
+            coords[X2] = (int) Math.round(dstPts[X]);
+            coords[Y2] = (int) Math.round(dstPts[Y]);
             iter.next();
             iter.next();
-            iter.currentSegment(vals);
-            coords[0] = (int) Math.round(vals[0]); //x2
-            coords[1] = (int) Math.round(vals[1]); //y2
+            iter.currentSegment(dstPts);
+            coords[X1] = (int) Math.round(dstPts[X]);
+            coords[Y1] = (int) Math.round(dstPts[Y]);
             graphicsObj.addBox(coords);
         } else if (shape instanceof Ellipse2D) {
             Ellipse2D elip = (Ellipse2D) shape;
-            int resolution = info.getResolution();
-            final double factor =  resolution / 100f;
+            double scale = trans.getScaleX();
+            double radiusWidth = elip.getWidth() / 2;
+            double radiusHeight = elip.getHeight() / 2;
             graphicsObj.setArcParams(
-                    (int)Math.round(elip.getWidth() * factor),
-                    (int)Math.round(elip.getHeight() * factor),
+                    (int)Math.round(radiusWidth * scale),
+                    (int)Math.round(radiusHeight * scale),
                     0,
                     0
             );
-            trans.transform(
-                    new double[] {elip.getCenterX(), elip.getCenterY()}, 0,
-                    vals, 0, 1);
+            double[] srcPts = new double[] {elip.getCenterX(), elip.getCenterY()};
+            trans.transform(srcPts, 0, dstPts, 0, 1);
             final int mh = 1;
             final int mhr = 0;
             graphicsObj.addFullArc(
-                    (int)Math.round(vals[0]),
-                    (int)Math.round(vals[1]),
+                    (int)Math.round(dstPts[X]),
+                    (int)Math.round(dstPts[Y]),
                     mh,
                     mhr
             );
@@ -268,10 +283,10 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                 !iter.isDone(); iter.next()) {
                 // round the coordinate values and combine with current position
                 // coordinates
-                int type = iter.currentSegment(vals);
+                int type = iter.currentSegment(dstPts);
                 if (type == PathIterator.SEG_MOVETO) {
-                    openingCoords[0] = currCoords[0] = (int)Math.round(vals[0]);
-                    openingCoords[1] = currCoords[1] = (int)Math.round(vals[1]);
+                    openingCoords[X] = currCoords[X] = (int)Math.round(dstPts[X]);
+                    openingCoords[Y] = currCoords[Y] = (int)Math.round(dstPts[Y]);
                 } else {
                     int numCoords;
                     if (type == PathIterator.SEG_LINETO) {
@@ -284,10 +299,10 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                         // close of the graphics segment
                         if (type == PathIterator.SEG_CLOSE) {
                             coords = new int[] {
-                                    coords[coords.length - 2],
-                                    coords[coords.length - 1],
-                                    openingCoords[0],
-                                    openingCoords[1]
+                                    coords[coords.length - 2], //prev X
+                                    coords[coords.length - 1], //prev Y
+                                    openingCoords[X],
+                                    openingCoords[Y]
                             };
                             graphicsObj.addLine(coords);
                         } else {
@@ -299,10 +314,10 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                     // combine current position coordinates with new graphics
                     // segment coordinates
                     coords = new int[numCoords + 2];
-                    coords[0] = currCoords[0];
-                    coords[1] = currCoords[1];
+                    coords[X] = currCoords[X];
+                    coords[Y] = currCoords[Y];
                     for (int i = 0; i < numCoords; i++) {
-                        coords[i + 2] = (int) Math.round(vals[i]);
+                        coords[i + 2] = (int) Math.round(dstPts[i]);
                     }
                     if (type == PathIterator.SEG_LINETO) {
                         graphicsObj.addLine(coords);
@@ -311,8 +326,8 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                         graphicsObj.addFillet(coords);
                     }
                     // update current position coordinates
-                    currCoords[0] = coords[coords.length - 2];
-                    currCoords[1] = coords[coords.length - 1];
+                    currCoords[X] = coords[coords.length - 2];
+                    currCoords[Y] = coords[coords.length - 1];
                 }
             }
         }
@@ -346,12 +361,12 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     }
 
     /** {@inheritDoc} */
-    public void drawString(String s, float x, float y) {
+    public void drawString(String str, float x, float y) {
         try {
             if (customTextHandler != null && !textAsShapes) {
-                customTextHandler.drawString(s, x, y);
+                customTextHandler.drawString(str, x, y);
             } else {
-                fallbackTextHandler.drawString(s, x, y);
+                fallbackTextHandler.drawString(str, x, y);
             }
         } catch (IOException ioe) {
             handleIOException(ioe);
@@ -387,10 +402,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         return new BufferedImage(size.width, size.height,
                                  BufferedImage.TYPE_INT_ARGB);
     }
-
-    private static final int X = 0;
-
-    private static final int Y = 1;
 
     private AFPImageObjectInfo getImageObjectInfo(
             RenderedImage img, int x, int y, int width, int height) throws IOException {

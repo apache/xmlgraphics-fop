@@ -28,7 +28,6 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.afp.fonts.AFPFont;
 import org.apache.fop.render.afp.modca.GraphicsObject;
-
 import org.apache.xmlgraphics.java2d.TextHandler;
 
 /**
@@ -41,12 +40,12 @@ public class AFPTextHandler implements TextHandler {
     private static Log log = LogFactory.getLog(AFPTextHandler.class);
 
     private AFPGraphics2D g2d = null;
-        
+
     /** Overriding FontState */
     protected Font overrideFont = null;
 
     /** current state */
-    private AFPState afpState = null;
+    private AFPState state = null;
 
     /**
      * Main constructor.
@@ -54,9 +53,9 @@ public class AFPTextHandler implements TextHandler {
      */
     public AFPTextHandler(AFPGraphics2D g2d) {
         this.g2d = g2d;
-        this.afpState = g2d.getAFPInfo().getState();
+        this.state = g2d.getAFPInfo().getState();
     }
-    
+
     /**
      * Return the font information associated with this object
      * @return the FontInfo object
@@ -64,25 +63,25 @@ public class AFPTextHandler implements TextHandler {
     public FontInfo getFontInfo() {
         return g2d.getAFPInfo().getFontInfo();
     }
-    
+
     /**
      * Add a text string to the current data object of the AFP datastream.
      * The text is painted using text operations.
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void drawString(String str, float x, float y) throws IOException {
         log.debug("drawString() str=" + str + ", x=" + x + ", y=" + y);
         GraphicsObject graphicsObj = g2d.getGraphicsObject();
         Color col = g2d.getColor();
-        if (afpState.setColor(col)) {
+        if (state.setColor(col)) {
             graphicsObj.setColor(col);
         }
         if (overrideFont != null) {
             FontInfo fontInfo = getFontInfo();
-            AFPPageFonts pageFonts = afpState.getPageFonts();
+            AFPPageFonts pageFonts = state.getPageFonts();
             String internalFontName = overrideFont.getFontName();
             int fontSize = overrideFont.getFontSize();
-            if (afpState.setFontName(internalFontName) || afpState.setFontSize(fontSize)) {
+            if (state.setFontName(internalFontName) || state.setFontSize(fontSize)) {
                 AFPFont font = (AFPFont)fontInfo.getFonts().get(internalFontName);
                 AFPFontAttributes afpFontAttributes = pageFonts.registerFont(
                         internalFontName,
@@ -90,17 +89,17 @@ public class AFPTextHandler implements TextHandler {
                         fontSize
                 );
                 int fontReference = afpFontAttributes.getFontReference();
-                graphicsObj.setCharacterSet(fontReference);                
+                graphicsObj.setCharacterSet(fontReference);
             }
         }
-        graphicsObj.addString(str, (int)Math.round(x), (int)Math.round(y));
+        graphicsObj.addString(str, Math.round(x), Math.round(y));
     }
-    
+
     /**
      * Sets the overriding font.
      * @param overrideFont Overriding Font to set
      */
     public void setOverrideFont(Font overrideFont) {
-        this.overrideFont = overrideFont;       
-    }    
+        this.overrideFont = overrideFont;
+    }
 }

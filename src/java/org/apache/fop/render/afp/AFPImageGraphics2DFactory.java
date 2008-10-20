@@ -19,11 +19,16 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.fop.image.loader.batik.GenericGraphics2DImagePainter;
+import org.apache.fop.svg.SVGUserAgent;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 
@@ -57,15 +62,41 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         // set graphics 2d
         AFPGraphics2DAdapter g2dAdapter = afpImageInfo.g2dAdapter;
         AFPGraphics2D g2d = g2dAdapter.getGraphics2D();
+        graphicsObjectInfo.setGraphics2D(g2d);
+
+        // set afp info
         AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(afpImageInfo.rendererContext);
         g2d.setAFPInfo(afpInfo);
+
+        // set to default graphic context
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+
+        // translate to current location
+        AffineTransform at = state.getData().getTransform();
+        g2d.translate(at.getTranslateX(), at.getTranslateY());
+
+        // set afp state
         g2d.setState(state);
-        graphicsObjectInfo.setGraphics2D(g2d);
+
+        // controls whether text painted by Batik is generated using text or path operations
+        SVGUserAgent svgUserAgent
+            = new SVGUserAgent(afpImageInfo.rendererContext.getUserAgent(), new AffineTransform());
+        BridgeContext ctx = new BridgeContext(svgUserAgent);
+        if (!afpInfo.strokeText()) {
+            AFPTextHandler textHandler = new AFPTextHandler(g2d);
+            g2d.setCustomTextHandler(textHandler);
+            AFPTextPainter textPainter = new AFPTextPainter(textHandler);
+            ctx.setTextPainter(textPainter);
+            AFPTextElementBridge textElementBridge = new AFPTextElementBridge(textPainter);
+            ctx.putBridge(textElementBridge);
+        }
 
         // set painter
         ImageGraphics2D imageG2D = (ImageGraphics2D)afpImageInfo.img;
-        Graphics2DImagePainter painter = imageG2D.getGraphics2DImagePainter();
+        GenericGraphics2DImagePainter painter
+            = (GenericGraphics2DImagePainter)imageG2D.getGraphics2DImagePainter();
+        painter = new AFPGraphics2DImagePainter(painter);
+        imageG2D.setGraphics2DImagePainter(painter);
         graphicsObjectInfo.setPainter(painter);
 
         // set object area
@@ -74,6 +105,37 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         graphicsObjectInfo.setArea(area);
 
         return graphicsObjectInfo;
+    }
+
+    private class AFPGraphics2DImagePainter extends GenericGraphics2DImagePainter {
+        /**
+         * Copy constructor
+         *
+         * @param painter a graphics 2D image painter
+         */
+        public AFPGraphics2DImagePainter(GenericGraphics2DImagePainter painter) {
+            super(painter.getImageXMLDOM(), painter.getBridgeContext(), painter.getRoot());
+        }
+
+        /** {@inheritDoc} */
+        protected void init(Graphics2D g2d, Rectangle2D area) {
+            double tx = area.getX();
+            double ty = area.getHeight() - area.getY();
+            if (tx != 0 || ty != 0) {
+                g2d.translate(tx, ty);
+            }
+
+            float iw = (float) ctx.getDocumentSize().getWidth();
+            float ih = (float) ctx.getDocumentSize().getHeight();
+            float w = (float) area.getWidth();
+            float h = (float) area.getHeight();
+            float sx = w / iw;
+            float sy = -(h / ih);
+            if (sx != 1.0 || sy != 1.0) {
+                g2d.scale(sx, sy);
+            }
+        }
+
     }
 
 }

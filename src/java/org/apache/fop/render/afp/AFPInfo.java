@@ -245,6 +245,19 @@ public final class AFPInfo {
     }
 
     /**
+     * Returns true if text should be stroked when painted
+     *
+     * @return true if text should be stroked when painted
+     */
+    public boolean strokeText() {
+        boolean strokeText = false;
+        if (handlerConfiguration != null) {
+            strokeText = handlerConfiguration.getChild("stroke-text", true).getValueAsBoolean(strokeText);
+        }
+        return strokeText;
+    }
+
+    /**
      * Sets the resource information
      *
      * @param resourceInfo the resource information

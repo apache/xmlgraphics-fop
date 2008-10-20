@@ -23,22 +23,21 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 
 import org.apache.fop.render.afp.modca.AbstractPreparedAFPObject;
-import org.apache.fop.render.afp.modca.GraphicsObject;
 
 /**
  * Sets the current processing color for the following GOCA structured fields
  */
 public class GraphicsSetProcessColor extends AbstractPreparedAFPObject {
     /** the color to set */
-    private final Color col;
+    private final Color color;
 
     /**
      * Main constructor
      *
-     * @param col the color to set
+     * @param color the color to set
      */
-    public GraphicsSetProcessColor(Color col) {
-        this.col = col;
+    public GraphicsSetProcessColor(Color color) {
+        this.color = color;
         prepareData();
     }
 
@@ -46,18 +45,18 @@ public class GraphicsSetProcessColor extends AbstractPreparedAFPObject {
     protected void prepareData() {
         // COLSPCE
         byte colspace;
-        int colSpaceType = col.getColorSpace().getType();
+        int colSpaceType = color.getColorSpace().getType();
         if (colSpaceType == ColorSpace.TYPE_CMYK) {
             colspace = 0x04;
         } else if (colSpaceType == ColorSpace.TYPE_RGB) {
             colspace = 0x01;
         } else {
-            GraphicsObject.log.error("unsupported colorspace " + colSpaceType);
+            log.error("unsupported colorspace " + colSpaceType);
             colspace = 0x01;
         }
 
         // COLSIZE(S)
-        float[] colcomp = col.getColorComponents(null);
+        float[] colcomp = color.getColorComponents(null);
         byte[] colsizes = new byte[] {0x00, 0x00, 0x00, 0x00};
         for (int i = 0; i < colcomp.length; i++) {
             colsizes[i] = (byte)8;
@@ -85,6 +84,6 @@ public class GraphicsSetProcessColor extends AbstractPreparedAFPObject {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "GraphicsSetProcessColor(col=" + col + ")";
+        return "GraphicsSetProcessColor(col=" + color + ")";
     }
 }

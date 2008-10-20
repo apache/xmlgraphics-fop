@@ -123,12 +123,17 @@ public class AFPDataObjectFactory {
      * @return a new graphics object
      */
     public GraphicsObject createGraphic(AFPGraphicsObjectInfo graphicsObjectInfo) {
+        // set newly created graphics object in g2d
         GraphicsObject graphicsObj = factory.createGraphicsObject();
         AFPGraphics2D g2d = graphicsObjectInfo.getGraphics2D();
         g2d.setGraphicsObject(graphicsObj);
+
+        // paint to graphics object
         Graphics2DImagePainter painter = graphicsObjectInfo.getPainter();
         Rectangle2D area = graphicsObjectInfo.getArea();
         painter.paint(g2d, area);
+
+        // return painted graphics object
         return graphicsObj;
     }
 
@@ -153,7 +158,7 @@ public class AFPDataObjectFactory {
             // object container
             includeObj.setObjectType(IncludeObject.TYPE_OTHER);
 
-            // set mandatory object classification
+            // set mandatory object classification (type other)
             Registry.ObjectType objectType = dataObjectInfo.getObjectType();
             if (objectType != null) {
                 // set object classification

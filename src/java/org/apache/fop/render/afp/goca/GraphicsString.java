@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.fop.render.afp.AFPConstants;
 import org.apache.fop.render.afp.modca.AbstractPreparedAFPObject;
-import org.apache.fop.render.afp.modca.GraphicsObject;
 import org.apache.fop.render.afp.tools.BinaryUtils;
 
 /**
@@ -81,7 +80,7 @@ public class GraphicsString extends AbstractPreparedAFPObject {
         try {
             strData = str.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException ex) {
-            GraphicsObject.log.error("unsupported encoding: " + ex.getMessage());
+            log.error("unsupported encoding: " + ex.getMessage());
         }
         int len = strData.length;
         if (fromCurrentPosition) {
