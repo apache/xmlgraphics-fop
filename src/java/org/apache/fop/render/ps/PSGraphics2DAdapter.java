@@ -22,20 +22,31 @@ package org.apache.fop.render.ps;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererContextConstants;
+import org.apache.fop.render.RendererContext.RendererContextWrapper;
+import org.apache.fop.render.pdf.PDFRenderer;
 
 /**
  * Graphics2DAdapter implementation for PostScript.
  */
 public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
+
+    /** Qualified name for the "conversion-mode" extension attribute. */
+    protected static final QName CONVERSION_MODE = new QName(
+            ExtensionElementMapping.URI, null, "conversion-mode");
 
     private PSGenerator gen;
     private boolean clip = true;
@@ -72,8 +83,15 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
         float imw = (float)dim.getWidth() / 1000f;
         float imh = (float)dim.getHeight() / 1000f;
 
-        float sx = fwidth / (float)imw;
-        float sy = fheight / (float)imh;
+        boolean paintAsBitmap = false;
+        if (context != null) {
+            Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+            paintAsBitmap = (foreign != null
+                   && "bitmap".equalsIgnoreCase((String)foreign.get(CONVERSION_MODE)));
+        }
+
+        float sx = paintAsBitmap ? 1.0f : (fwidth / (float)imw);
+        float sy = paintAsBitmap ? 1.0f : (fheight / (float)imh);
 
         gen.commentln("%FOPBeginGraphics2D");
         gen.saveGraphicsState();
@@ -96,8 +114,19 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
         // scale to viewbox
         transform.translate(fx, fy);
         gen.getCurrentState().concatMatrix(transform);
-        Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
-        painter.paint(graphics, area);
+        if (paintAsBitmap) {
+            //Fallback solution: Paint to a BufferedImage
+            int resolution = (int)Math.round(context.getUserAgent().getTargetResolution());
+            RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
+            BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
+
+            float scale = PDFRenderer.NORMAL_PDF_RESOLUTION
+                            / context.getUserAgent().getTargetResolution();
+            graphics.drawImage(bi, new AffineTransform(scale, 0, 0, scale, 0, 0), null);
+        } else {
+            Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
+            painter.paint(graphics, area);
+        }
 
         gen.restoreGraphicsState();
         gen.commentln("%FOPEndGraphics2D");

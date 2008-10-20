@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
@@ -45,8 +46,8 @@ public class ImageLoaderSVG extends AbstractImageLoader {
      * @param targetFlavor the target flavor
      */
     public ImageLoaderSVG(ImageFlavor targetFlavor) {
-        if (!(XMLNamespaceEnabledImageFlavor.SVG_DOM.equals(targetFlavor))) {
-            throw new IllegalArgumentException("Unsupported target ImageFlavor: " + targetFlavor);
+        if (!(XMLNamespaceEnabledImageFlavor.SVG_DOM.isCompatible(targetFlavor))) {
+            throw new IllegalArgumentException("Incompatible target ImageFlavor: " + targetFlavor);
         }
         this.targetFlavor = targetFlavor;
     }
