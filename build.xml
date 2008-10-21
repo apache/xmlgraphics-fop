@@ -459,6 +459,9 @@ list of possible build targets.
       </manifest>
     </jar>
   </target>
+  <!-- =================================================================== -->
+  <!-- Retroweaver                                                         -->
+  <!-- =================================================================== -->
   <target name="retro-unavail" unless="java14.rt.lib">
     <echo message="Please set the path to a JDK 1.4 installation in your build-local.properties" />
     <echo message="to allow for verification!" />

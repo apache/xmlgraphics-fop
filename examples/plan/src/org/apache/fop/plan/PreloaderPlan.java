@@ -30,6 +30,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,15 +77,15 @@ public class PreloaderPlan extends AbstractImagePreloader {
             DOMResult res = new DOMResult();
             transformer.transform(source, res);
 
+            //Have to render the plan to know its size
+            PlanRenderer pr = new PlanRenderer();
             Document planDoc = (Document)res.getNode();
-            if (!PlanElementMapping.NAMESPACE.equals(
-                    planDoc.getDocumentElement().getNamespaceURI())) {
+            Element rootEl = planDoc.getDocumentElement();
+            if (!PlanElementMapping.NAMESPACE.equals(rootEl.getNamespaceURI())) {
                 in.reset();
                 return null;
             }
 
-            //Have to render the plan to know its size
-            PlanRenderer pr = new PlanRenderer();
             Document svgDoc = pr.createSVGDocument(planDoc);
             float width = pr.getWidth();
             float height = pr.getHeight();
