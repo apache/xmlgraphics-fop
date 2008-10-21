@@ -59,6 +59,7 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.util.QName;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
@@ -74,6 +75,7 @@ import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
@@ -96,7 +98,6 @@ import org.apache.fop.render.java2d.InstalledFontCollection;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
-import org.apache.xmlgraphics.util.UnitConv;
 
 /* Note:
  * There are some commonalities with AbstractPathOrientedRenderer but it's not possible
@@ -1639,6 +1640,37 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
+    }
+
+    /** {@inheritDoc} */
+    public void renderLeader(Leader area) {
+        renderInlineAreaBackAndBorders(area);
+
+        saveGraphicsState();
+        int style = area.getRuleStyle();
+        float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
+        float starty = (currentBPPosition + area.getOffset()) / 1000f;
+        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
+                        + area.getIPD()) / 1000f;
+        float ruleThickness = area.getRuleThickness() / 1000f;
+        Color col = (Color)area.getTrait(Trait.COLOR);
+
+        switch (style) {
+            case EN_SOLID:
+            case EN_DASHED: //TODO Improve me and following (this is just a quick-fix ATM)
+            case EN_DOUBLE:
+            case EN_DOTTED:
+            case EN_GROOVE:
+            case EN_RIDGE:
+                updateFillColor(col);
+                fillRect(startx, starty, endx - startx, ruleThickness);
+                break;
+            default:
+                throw new UnsupportedOperationException("rule style not supported");
+        }
+
+        restoreGraphicsState();
+        super.renderLeader(area);
     }
 
     /**

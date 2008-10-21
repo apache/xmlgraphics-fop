@@ -35,7 +35,9 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
@@ -47,6 +49,10 @@ import org.apache.fop.svg.SVGUserAgent;
  * To use this class, subclass it and implement the missing methods (supportsRenderer, for example).
  */
 public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererContextConstants {
+
+    /** Qualified name for the "conversion-mode" extension attribute. */
+    protected static final QName CONVERSION_MODE = new QName(
+            ExtensionElementMapping.URI, null, "conversion-mode");
 
     /** {@inheritDoc} */
     public void handleXML(RendererContext context,

@@ -58,10 +58,10 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.ImageEncoder;
 import org.apache.xmlgraphics.ps.PSDictionary;
-import org.apache.xmlgraphics.ps.PSPageDeviceDictionary;
 import org.apache.xmlgraphics.ps.PSDictionaryFormatException;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSImageUtils;
+import org.apache.xmlgraphics.ps.PSPageDeviceDictionary;
 import org.apache.xmlgraphics.ps.PSProcSets;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.PSState;
@@ -143,7 +143,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     /** The application producing the PostScript */
     private int currentPageNumber = 0;
 
-    private boolean enableComments = true;
+    private final boolean enableComments = true;
     private boolean autoRotateLandscape = false;
     private int languageLevel = PSGenerator.DEFAULT_LANGUAGE_LEVEL;
 
@@ -589,12 +589,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     /** {@inheritDoc} */
     public void paintImage(RenderedImage image, RendererContext context,
             int x, int y, int width, int height) throws IOException {
-        float fx = (float)x / 1000f;
+        float fx = x / 1000f;
         x += currentIPPosition / 1000f;
-        float fy = (float)y / 1000f;
+        float fy = y / 1000f;
         y += currentBPPosition / 1000f;
-        float fw = (float)width / 1000f;
-        float fh = (float)height / 1000f;
+        float fw = width / 1000f;
+        float fh = height / 1000f;
         PSImageUtils.renderBitmapImage(image, fx, fy, fw, fh, gen);
     }
 
@@ -1235,6 +1235,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                     PSExtensionAttachment attachment = (PSExtensionAttachment)attObj;
                     if (attachment instanceof PSCommentBefore) {
                         gen.commentln("%" + attachment.getContent());
+                    } else if (attachment instanceof PSSetupCode) {
+                        gen.writeln(attachment.getContent());
                     }
                 }
             }
@@ -1610,7 +1612,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      * {@inheritDoc}
      */
     public void renderImage(Image image, Rectangle2D pos) {
-        drawImage(image.getURL(), pos);
+        drawImage(image.getURL(), pos, image.getForeignAttributes());
     }
 
     /**
