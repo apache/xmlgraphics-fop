@@ -484,11 +484,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         int saveBP = currentBPPosition;
 
         CTM ctm = bv.getCTM();
-        int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-        //This is the content-rect
-        float width = bv.getIPD() / 1000f;
-        float height = bv.getBPD() / 1000f;
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
@@ -503,6 +499,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
             AffineTransform positionTransform = new AffineTransform();
             positionTransform.translate(bv.getXOffset(), bv.getYOffset());
+
+            int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
 
             //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
             positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
@@ -520,15 +518,24 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 establishTransformationMatrix(positionTransform);
             }
 
+            //This is the content-rect
+            float width = bv.getIPD() / 1000f;
+            float height = bv.getBPD() / 1000f;
+
             //Background and borders
-            float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
-            float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
-            drawBackAndBorders(bv, 0, 0, width + bpwidth, height + bpheight);
+            float borderPaddingWidth
+                = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
+            float borderPaddingHeight
+                = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
+            drawBackAndBorders(bv, 0, 0, width + borderPaddingWidth, height + borderPaddingHeight);
 
             //Shift to content rectangle after border painting
             AffineTransform contentRectTransform = new AffineTransform();
             contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
-            concatenateTransformationMatrix(UnitConv.mptToPt(contentRectTransform));
+
+            if (!contentRectTransform.isIdentity()) {
+                establishTransformationMatrix(contentRectTransform);
+            }
 
             //Clipping
             if (bv.getClip()) {
@@ -545,11 +552,15 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             currentBPPosition = 0;
             renderBlocks(bv, children);
 
-            if (!positionTransform.isIdentity()) {
+            if (!contentTransform.isIdentity()) {
                 restoreGraphicsState();
             }
 
-            if (!contentTransform.isIdentity()) {
+            if (!contentRectTransform.isIdentity()) {
+                restoreGraphicsState();
+            }
+
+            if (!positionTransform.isIdentity()) {
                 restoreGraphicsState();
             }
 
