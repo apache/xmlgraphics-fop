@@ -26,23 +26,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
-import org.w3c.dom.Document;
-
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.apache.xmlgraphics.util.QName;
-
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.QName;
+import org.w3c.dom.Document;
 
 /**
  * Generic XML handler for SVG. Uses Apache Batik for SVG processing and simply paints to

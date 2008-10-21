@@ -78,9 +78,9 @@ public class AFPResourceManager {
     }
 
     /**
-     * Returns the AFPDocumentStream
+     * Returns the AFP DataStream
      *
-     * @return the AFPDocumentStream
+     * @return the AFP DataStream
      */
     public DataStream getDataStream() {
         return this.dataStream;
@@ -136,7 +136,8 @@ public class AFPResourceManager {
                 AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)dataObjectInfo;
                 namedObj = dataObjectFactory.createImage(imageObjectInfo);
             } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {
-                namedObj = dataObjectFactory.createGraphic((AFPGraphicsObjectInfo)dataObjectInfo);
+                AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo)dataObjectInfo;
+                namedObj = dataObjectFactory.createGraphic(graphicsObjectInfo);
             } else {
                 // natively embedded object
                 namedObj = dataObjectFactory.createObjectContainer(dataObjectInfo);
