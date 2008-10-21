@@ -36,6 +36,7 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFRenderer;
 
 /**
@@ -329,6 +330,10 @@ public class RendererFactory {
                     "No IF document handler for the requested format available: " + outputFormat);
             }
             IFDocumentHandler documentHandler = maker.makeIFDocumentHandler(userAgent);
+            IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
+            if (configurator != null) {
+                configurator.configure(documentHandler);
+            }
             return documentHandler;
         //}
     }
