@@ -51,10 +51,19 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         return new AFPGraphicsObjectInfo();
     }
 
+    private static final AFPResourceLevel inlineResourceLevel = new AFPResourceLevel(AFPResourceLevel.INLINE);
+
     /** {@inheritDoc} */
     public AFPDataObjectInfo create(AFPImageInfo afpImageInfo) throws IOException {
         AFPGraphicsObjectInfo graphicsObjectInfo
             = (AFPGraphicsObjectInfo)super.create(afpImageInfo);
+
+        AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();
+        // level not explicitly set/changed so default to inline for GOCA graphic objects
+        // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07) - hard copy works just fine)
+        if (!resourceInfo.levelChanged()) {
+            resourceInfo.setLevel(inlineResourceLevel);
+        }
 
         // set mime type (unsupported by MOD:CA registry)
         graphicsObjectInfo.setMimeType(MimeConstants.MIME_AFP_GOCA);

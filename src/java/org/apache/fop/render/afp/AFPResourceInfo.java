@@ -35,6 +35,9 @@ public class AFPResourceInfo {
     /** the resource level of this resource */
     private AFPResourceLevel level = DEFAULT_LEVEL;
 
+    /** true when the resource level was changed */
+    private boolean levelChanged = false;
+
     /**
      * Sets the data object uri
      *
@@ -90,6 +93,16 @@ public class AFPResourceInfo {
      */
     public void setLevel(AFPResourceLevel resourceLevel) {
         this.level = resourceLevel;
+        levelChanged = true;
+    }
+
+    /**
+     * Returns true when the resource level was set
+     *
+     * @return true when the resource level was set
+     */
+    public boolean levelChanged() {
+        return levelChanged;
     }
 
     /** {@inheritDoc} */

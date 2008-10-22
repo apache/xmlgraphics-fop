@@ -206,7 +206,8 @@ public class FontInfo {
     private FontTriplet fontLookup(String family, String style,
                              int weight, boolean substitutable) {
         if (log.isTraceEnabled()) {
-            log.trace("Font lookup: " + family + " " + style + " " + weight);
+            log.trace("Font lookup: " + family + " " + style + " " + weight
+                    + (substitutable ? " substitutable" : ""));
         }
 
         FontTriplet startKey = createFontKey(family, style, weight);
@@ -288,7 +289,7 @@ public class FontInfo {
         }
 
         // last resort: use default
-        if (internalFontKey == null) {
+        if (key == null && internalFontKey == null) {
             key = Font.DEFAULT_FONT;
             internalFontKey = getInternalFontKey(key);
         }
@@ -359,7 +360,7 @@ public class FontInfo {
 
     private List/*<FontTriplet>*/ fontLookup(String[] families, String style,
             int weight, boolean substitutable) {
-        List matchingTriplets = new java.util.ArrayList();
+        List/*<FontTriplet>*/ matchingTriplets = new java.util.ArrayList/*<FontTriplet>*/();
         FontTriplet triplet = null;
         for (int i = 0; i < families.length; i++) {
             triplet = fontLookup(families[i], style, weight, substitutable);
@@ -569,7 +570,7 @@ public class FontInfo {
         List/*<FontTriplet>*/ foundTriplets = new java.util.ArrayList();
         for (Iterator iter = triplets.entrySet().iterator(); iter.hasNext();) {
             Map.Entry tripletEntry = (Map.Entry) iter.next();
-            if (fontName.equals(((String)tripletEntry.getValue()))) {
+            if (fontName.equals((tripletEntry.getValue()))) {
                 foundTriplets.add(tripletEntry.getKey());
             }
         }
