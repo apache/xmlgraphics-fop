@@ -357,6 +357,13 @@ public class PresentationTextData extends AbstractAFPObject {
         baos.write(outputdata, 0, outputdata.length);
     }
 
+    private int ensurePositive(int value) {
+        if (value < 0) {
+            return 0;
+        }
+        return value;
+    }
+
     /**
      * Drawing of lines using the starting and ending coordinates, thickness and
      * colour arguments.
@@ -376,25 +383,25 @@ public class PresentationTextData extends AbstractAFPObject {
         }
 
         // Avoid unnecessary specification of the Y coordinate
-        int y1 = lineDataInfo.getY1();
+        int y1 = ensurePositive(lineDataInfo.getY1());
         if (y1 != currentY) {
             absoluteMoveBaseline(y1, afpdata);
         }
 
         // Avoid unnecessary specification of the X coordinate
-        int x1 = lineDataInfo.getX1();
+        int x1 = ensurePositive(lineDataInfo.getX1());
         if (x1 != currentX) {
             absoluteMoveInline(x1, afpdata);
         }
 
-        Color col = lineDataInfo.getColor();
-        if (!col.equals(currentColor)) {
-            setExtendedTextColor(col, afpdata);
-            currentColor = col;
+        Color color = lineDataInfo.getColor();
+        if (!color.equals(currentColor)) {
+            setExtendedTextColor(color, afpdata);
+            currentColor = color;
         }
 
-        int x2 = lineDataInfo.getX2();
-        int y2 = lineDataInfo.getY2();
+        int x2 = ensurePositive(lineDataInfo.getX2());
+        int y2 = ensurePositive(lineDataInfo.getY2());
         int thickness = lineDataInfo.getThickness();
         if (y1 == y2) {
             drawIaxisRule(x2 - x1, thickness, afpdata);
