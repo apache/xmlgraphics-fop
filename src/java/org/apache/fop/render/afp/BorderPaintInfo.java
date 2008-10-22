@@ -30,7 +30,6 @@ public class BorderPaintInfo implements PaintInfo {
     private final float x2;
     private final float y2;
     private final boolean isHorizontal;
-//    private final boolean startOrBefore;
     private final int style;
     private final Color color;
 
@@ -42,18 +41,16 @@ public class BorderPaintInfo implements PaintInfo {
      * @param x2 the x2 coordinate
      * @param y2 the y2 coordinate
      * @param isHorizontal true when the border line is horizontal
-     * @param startOrBefore true when is before
      * @param style the border style
      * @param color the border color
      */
     public BorderPaintInfo(float x1, float y1, float x2, float y2,
-            boolean isHorizontal, /*boolean startOrBefore,*/ int style, Color color) {
+            boolean isHorizontal, int style, Color color) {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
         this.isHorizontal = isHorizontal;
-//        this.startOrBefore = startOrBefore;
         this.style = style;
         this.color = color;
     }
@@ -103,15 +100,6 @@ public class BorderPaintInfo implements PaintInfo {
         return isHorizontal;
     }
 
-//    /**
-//     * Returns true when this is start
-//     *
-//     * @return true when this is start
-//     */
-//    public boolean isStartOrBefore() {
-//        return startOrBefore;
-//    }
-//
     /**
      * Returns the style
      *
