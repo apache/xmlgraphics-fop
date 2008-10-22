@@ -155,6 +155,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** data object information factory */
     private final AFPDataObjectInfoProvider dataObjectInfoProvider;
 
+    private AFPRectanglePainter rectanglePainter;
+
 
     /**
      * Constructor for AFPRenderer.
@@ -190,6 +192,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         this.dataStream = resourceManager.getDataStream();
         this.borderPainter = new AFPBorderPainter(state, dataStream);
+        this.rectanglePainter = new AFPRectanglePainter(state, dataStream);
 
 //        dataStream.setPortraitRotation(state.getPortraitRotation());
 //        dataStream.setLandscapeRotation(state.getLandscapeRotation());
@@ -288,7 +291,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         Rectangle2D bounds = pageViewport.getViewArea();
 
-        state.concatenate(getBaseTransform());
+        AffineTransform baseTransform = getBaseTransform();
+        state.concatenate(baseTransform);
 
         if (pages.containsKey(pageViewport)) {
             dataStream.restorePage(
@@ -354,14 +358,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void fillRect(float x, float y, float width, float height) {
-        borderPainter.fillRect(x, y, width, height);
+    public void drawBorderLine(float x1, float y1, float x2, float y2,
+            boolean horz, boolean startOrBefore, int style, Color col) {
+        BorderPaintInfo borderPaintInfo = new BorderPaintInfo(x1, y1, x2, y2, horz, style, col);
+        borderPainter.paint(borderPaintInfo);
     }
 
     /** {@inheritDoc} */
-    public void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, Color col) {
-        borderPainter.drawBorderLine(x1, y1, x2, y2, horz, startOrBefore, style, col);
+    public void fillRect(float x, float y, float width, float height) {
+        RectanglePaintInfo rectanglePaintInfo = new RectanglePaintInfo(x, y, width, height);
+        rectanglePainter.paint(rectanglePaintInfo);
     }
 
     /** {@inheritDoc} */
@@ -810,7 +816,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void establishTransformationMatrix(AffineTransform at) {
         saveGraphicsState();
-        //state.resetTransform(); // reset to base transform (scale)
         concatenateTransformationMatrix(at);
     }
 
