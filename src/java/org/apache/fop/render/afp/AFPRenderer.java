@@ -217,7 +217,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public boolean supportsOutOfOrder() {
-        return true;
+        return false;
     }
 
     /** {@inheritDoc} */
