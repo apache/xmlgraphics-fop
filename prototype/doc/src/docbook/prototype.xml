@@ -184,148 +184,153 @@ it shone in her face.</literallayout>
         how it behaves in tables.</para>
       <section>
         <title>The Spring Paradigm</title>
-      <para>Glues can be seen as springs that can be both compressed and stretched (in the general 
-        case). Only, instead of having a <ulink 
-          url="http://en.wikipedia.org/wiki/Spring_(device)">spring constant</ulink> 
-        <inlineequation><mathphrase>k</mathphrase></inlineequation>, where the force needed to 
-        compress (resp. extend) the spring is proportional to the amount of compression (resp. 
-        extension), the relation is more complex: the force is a polynomial function of the 
-        displacement. The value of the force actually is the demerits function defined by Knuth. It 
-        was designed in a way that small displacements would be considered as almost equivalent to 
-        the natural length, while big displacements would quickly become unacceptable; <xref 
-          linkend="fig_demerits"/> shows an example where the natural length is 10, and the content 
-        can be shrunk down to 8 and stretched up to 14.</para>
-      <figure id="fig_demerits">
-        <title>Demerits, functions of the size of the part (line, page, etc.)</title>
-        <titleabbrev>Demerits function</titleabbrev>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="demerits"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <para>The spring image still applies though; we just have to imagine that it will be even more 
-        difficult than usual to compress/extend the spring to its maximum. Then we can see pages or 
-        tables as frames to which we attach springs representing the region body or the columns. In 
-        the case of a table we can imagine to start with the first column, and successively attach a 
-        spring for every column. Depending on what the column contains we will have to compress or 
-        extend the spring, which will have an effect on the other columns as well as the possible 
-        text preceding the table on the page (see <xref linkend="fig_springs"/>).</para>
-      <figure id="fig_springs">
-        <title>Seeing content as springs</title>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="springs"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <para>By using this representation it is relatively easy to ‘feel’ what happens: the springs 
-        will adjust such that the total force applied on them and the frame will be minimal. From an 
-        analytical point of view the adjustment ratio for every spring will be computed such that 
-        the sum of the demerits will be minimal. This is not easy with the demerits function as it 
-        is used currently, but it is possible to choose another function that will behave similarly 
-        to Knuth’s original one, yet will simplify the computation of the minimum.</para>
-      </section>
+        <para>Glues can be seen as springs that can be both compressed and stretched (in the general 
+          case). Only, instead of having a <ulink 
+            url="http://en.wikipedia.org/wiki/Spring_(device)">spring constant</ulink> 
+          <inlineequation><mathphrase>k</mathphrase></inlineequation>, where the force needed to 
+          compress (resp. extend) the spring is proportional to the amount of compression (resp. 
+          extension), the relation is more complex: the force is a polynomial function of the 
+          displacement. The value of the force actually is the demerits function defined by Knuth. 
+          It was designed in a way that small displacements would be considered as almost equivalent 
+          to the natural length, while big displacements would quickly become unacceptable; <xref 
+            linkend="fig_demerits"/> shows an example where the natural length is 10, and the 
+          content can be shrunk down to 8 and stretched up to 14.</para>
+        <figure id="fig_demerits">
+          <title>Demerits, functions of the size of the part (line, page, etc.)</title>
+          <titleabbrev>Demerits function</titleabbrev>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="demerits"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para>The spring image still applies though; we just have to imagine that it will be even 
+          more difficult than usual to compress/extend the spring to its maximum. Then we can see 
+          pages or tables as frames to which we attach springs representing the region body or the 
+          columns. In the case of a table we can imagine to start with the first column, and 
+          successively attach a spring for every column. Depending on what the column contains we 
+          will have to compress or extend the spring, which will have an effect on the other columns 
+          as well as the possible text preceding the table on the page (see <xref 
+            linkend="fig_springs"/>).</para>
+        <figure id="fig_springs">
+          <title>Seeing content as springs</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="springs"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para>By using this representation it is relatively easy to ‘feel’ what happens: the springs 
+          will adjust such that the total force applied on them and the frame will be minimal. From 
+          an analytical point of view the adjustment ratio for every spring will be computed such 
+          that the sum of the demerits will be minimal. This is not easy with the demerits function 
+          as it is used currently, but it is possible to choose another function that will behave 
+          similarly to Knuth’s original one, yet will simplify the computation of the 
+          minimum.</para>
+        </section>
       <section>
         <title>Challenges</title>
-      <para>The problem is that there may be many ways to break every column, corresponding to more 
-        or less content on the first page. In other words, there may be many different springs to 
-        play with for each column, and trying every combination of them obviously leads to 
-        combinatorial explosion. Some combinations are obviously nonsensical and should not even be 
-        tested; for example, when there is only one line of content in the first column, three lines 
-        in the second and it’s obvious that the first column may also be filled with three lines 
-        (see <xref linkend="fig_table_silly-combination"/>).</para>
-      <figure id="fig_table_silly-combination">
-        <title>An obviously wrong combination of table columns</title>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="table_silly-combination"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <para>A user’s reaction to such a combination is easily predictable… The problem is to detect 
-        that this combination is unacceptable and that a better one must be found. One could play 
-        with demerits, that is, count additional demerits for the empty space at the bottom of the 
-        first column on the first page, and the second column on the second page. That way a 
-        solution with less empty space would be preferred. But this won’t prevent the first one from 
-        being chosen if this leads to a better overall layout (more evenly filled pages, less widows 
-        and orphans, etc.). And even if the overall layout is better, the user is most likely to not 
-        notice it and complain about the awkward way the table was broken.</para>
-      <para>So such a combination must simply be forbidden, and not considered to make a feasible 
-        layout in any case. Now, it is likely that many combinations of the columns will be similar 
-        to that one, therefore not acceptable. It would be good if we could skip them all and 
-        consider only the combination of layouts that <emphasis>will</emphasis> lead to a feasible 
-        result. The number of combinations to consider should then become reasonable (see <xref 
-          linkend="fig_table_acceptable-combinations"/>).</para>
-      <figure id="fig_table_acceptable-combinations">
-        <title>Acceptable combinations of columns: three ways of breaking each column, leading to 
-          only three combinations</title>
-        <titleabbrev>Acceptable combinations of columns</titleabbrev>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="table_acceptable-combinations"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <para>Another problem is to create a list of elements that will represent all the columns. In 
-        other words, replace a set of springs with a single one that will behave the same way. 
-        That’s probably not possible: either the resulting spring will fail to represent all the 
-        flexibility offered by the individual springs; or the demerits won’t match the sum of the 
-        individual column demerits. On top of that there is the desynchronization that can happen 
-        inside a row (see the <ulink 
-          url="http://wiki.apache.org/xmlgraphics-fop/TableLayout/KnownProblems/">wiki page</ulink> 
-        about known issues in the current approach). Several lists will probably have to be computed 
-        depending on the breaks chosen for the preceding pages.</para>
-      <para>So maybe that the box/glue/penalty model simply needs to be dropped, and that another 
-        model can be found that will be able to represent tables in an elegant way and allow to 
-        solve the problem easily. Needless to say that such a model has yet to be discovered…</para>
+        <para>The problem is that there may be many ways to break every column, corresponding to 
+          more or less content on the first page. In other words, there may be many different 
+          springs to play with for each column, and trying every combination of them obviously leads 
+          to combinatorial explosion. Some combinations are obviously nonsensical and should not 
+          even be tested; for example, when there is only one line of content in the first column, 
+          three lines in the second and it’s obvious that the first column may also be filled with 
+          three lines (see <xref linkend="fig_table_silly-combination"/>).</para>
+        <figure id="fig_table_silly-combination">
+          <title>An obviously wrong combination of table columns</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="table_silly-combination"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para>A user’s reaction to such a combination is easily predictable… The problem is to 
+          detect that this combination is unacceptable and that a better one must be found. One 
+          could play with demerits, that is, count additional demerits for the empty space at the 
+          bottom of the first column on the first page, and the second column on the second page. 
+          That way a solution with less empty space would be preferred. But this won’t prevent the 
+          first one from being chosen if this leads to a better overall layout (more evenly filled 
+          pages, less widows and orphans, etc.). And even if the overall layout is better, the user 
+          is most likely to not notice it and complain about the awkward way the table was 
+          broken.</para>
+        <para>So such a combination must simply be forbidden, and not considered to make a feasible 
+          layout in any case. Now, it is likely that many combinations of the columns will be 
+          similar to that one, therefore not acceptable. It would be good if we could skip them all 
+          and consider only the combination of layouts that <emphasis>will</emphasis> lead to a 
+          feasible result. The number of combinations to consider should then become reasonable (see 
+          <xref linkend="fig_table_acceptable-combinations"/>).</para>
+        <figure id="fig_table_acceptable-combinations">
+          <title>Acceptable combinations of columns: three ways of breaking each column, leading to 
+            only three combinations</title>
+          <titleabbrev>Acceptable combinations of columns</titleabbrev>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="table_acceptable-combinations"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para>Another problem is to create a list of elements that will represent all the columns. 
+          In other words, replace a set of springs with a single one that will behave the same way. 
+          That’s probably not possible: either the resulting spring will fail to represent all the 
+          flexibility offered by the individual springs; or the demerits won’t match the sum of the 
+          individual column demerits. On top of that there is the desynchronization that can happen 
+          inside a row (see the <ulink 
+            url="http://wiki.apache.org/xmlgraphics-fop/TableLayout/KnownProblems/">wiki 
+            page</ulink> about known issues in the current approach). Several lists will probably 
+          have to be computed depending on the breaks chosen for the preceding pages.</para>
+        <para>So maybe that the box/glue/penalty model simply needs to be dropped, and that another 
+          model can be found that will be able to represent tables in an elegant way and allow to 
+          solve the problem easily. Needless to say that such a model has yet to be 
+          discovered…</para>
       </section>
     </section>
     <section>
       <title>Breaking Paragraphs and Merging Columns</title>
       <section>
         <title>Multiple Layouts for a Paragraph</title>
-      <para>With the new approach it is possible to take into account several ways of typesetting a 
-        paragraph, differing by the number of lines that it occupies. For example, the optimal way 
-        will be five lines, but there are also a four-line possibility and a six-line possibility.  
-        In the four-line version spaces are likely to be shrunk a lot, while on the six-line they 
-        will be much stretched. While those possibilities look less good than the five-line version, 
-        they may be preferred in the final layout because they would allow to avoid a widow or 
-        orphan line somewhere else, leading to less global demerits; or even lead to a feasible 
-        global layout while the optimal version wouldn’t.</para>
-      <para>In practice, this is as if we were dealing with several lists of boxes, glues and 
-        penalties, one for each version of the paragraph (note that there is a <ulink 
-          url="http://wiki.apache.org/xmlgraphics-fop/WhitespaceManagement">wiki page</ulink> on a 
-        similar topic). This can be handled transparently by the breaking algorithm: new layouts 
-        will simply be added for each possibility (obviously the number of active nodes will be 
-        multiplied by the number of versions in which a paragraph can be typeset). The principle 
-        upon which the algorithm relies remains the same, that is: “the best way to end part (page) 
-        <inlineequation><mathphrase>n</mathphrase></inlineequation> on <emphasis>this</emphasis> 
-        element is by going <emphasis>that</emphasis> route”. Suppose there is an image after the 
-        paragraph (see <xref linkend="fig_paragraph_different-numbers-of-lines"/>); when considering 
-        a page break after the image, there will be (at least) three available layouts: one made of 
-        the four-line version of the paragraph, one made of the five-line version, and one of the 
-        six-line version. The best of them will be chosen; maybe that the four-line version leads to 
-        an unfinished page (there is not enough elasticity to stretch the content up to the end of 
-        the page); maybe the six-line version makes the content perfectly fit in the page (no 
-        shrinking or stretching). Then it would be chosen over the five-line version, because the 
-        absence of stretching at the page level would compensate for the slightly sub-optimal layout 
-        of that paragraph.</para>
-      <figure id="fig_paragraph_different-numbers-of-lines">
-        <title>Three different paragraph layouts to consider</title>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="paragraph_different-numbers-of-lines"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <para>However, weird things may happen; for instance, let’s suppose we have a sequence of 
-        three paragraphs separated by elastic spaces. The first two paragraphs may be typeset on 
-        either four or five lines; the first space has a value of 1+1−1 (natural length 1, 
-        stretchable up to 2 and shrinkable down to 0); the second has a value of 1.5+0−1. Since the 
-        four-line versions are shorter this is possible to add the second space and one line of the 
-        third paragraph on the page. Let’s see what are the resulting min-opt-max:</para>
-      <literallayout class="monospaced">       5 lines:    4 lines:
+        <para>With the new approach it is possible to take into account several ways of typesetting 
+          a paragraph, differing by the number of lines that it occupies. For example, the optimal 
+          way will be five lines, but there are also a four-line possibility and a six-line 
+          possibility.  In the four-line version spaces are likely to be shrunk a lot, while on the 
+          six-line they will be much stretched. While those possibilities look less good than the 
+          five-line version, they may be preferred in the final layout because they would allow to 
+          avoid a widow or orphan line somewhere else, leading to less global demerits; or even lead 
+          to a feasible global layout while the optimal version wouldn’t.</para>
+        <para>In practice, this is as if we were dealing with several lists of boxes, glues and 
+          penalties, one for each version of the paragraph (note that there is a <ulink 
+            url="http://wiki.apache.org/xmlgraphics-fop/WhitespaceManagement">wiki page</ulink> on a 
+          similar topic). This can be handled transparently by the breaking algorithm: new layouts 
+          will simply be added for each possibility (obviously the number of active nodes will be 
+          multiplied by the number of versions in which a paragraph can be typeset). The principle 
+          upon which the algorithm relies remains the same, that is: “the best way to end part 
+          (page) <inlineequation><mathphrase>n</mathphrase></inlineequation> on 
+          <emphasis>this</emphasis> element is by going <emphasis>that</emphasis> route”. Suppose 
+          there is an image after the paragraph (see <xref 
+            linkend="fig_paragraph_different-numbers-of-lines"/>); when considering a page break 
+          after the image, there will be (at least) three available layouts: one made of the 
+          four-line version of the paragraph, one made of the five-line version, and one of the 
+          six-line version. The best of them will be chosen; maybe that the four-line version leads 
+          to an unfinished page (there is not enough elasticity to stretch the content up to the end 
+          of the page); maybe the six-line version makes the content perfectly fit in the page (no 
+          shrinking or stretching). Then it would be chosen over the five-line version, because the 
+          absence of stretching at the page level would compensate for the slightly sub-optimal 
+          layout of that paragraph.</para>
+        <figure id="fig_paragraph_different-numbers-of-lines">
+          <title>Three different paragraph layouts to consider</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="paragraph_different-numbers-of-lines"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para>However, weird things may happen; for instance, let’s suppose we have a sequence of 
+          three paragraphs separated by elastic spaces. The first two paragraphs may be typeset on 
+          either four or five lines; the first space has a value of 1+1−1 (natural length 1, 
+          stretchable up to 2 and shrinkable down to 0); the second has a value of 1.5+0−1. Since 
+          the four-line versions are shorter this is possible to add the second space and one line 
+          of the third paragraph on the page. Let’s see what are the resulting min-opt-max:</para>
+        <literallayout class="monospaced">       5 lines:    4 lines:
         5           4
         1+1−1       1+1−1
         5           4
@@ -333,149 +338,149 @@ it shone in her face.</literallayout>
         1
        ────────    ──────────
 Total:  11+1−1      11.5+1−2</literallayout>
-      <para>The two possibilities are overlapping, and would both fit in a page with a height of 12; 
-        how to order them? By the total optimum value? By the minimum value? This may be a problem 
-        for the merging algorithm.</para>
-      <para>Maybe there’s a possibility to find a merging process for which this wouldn’t be a 
-        problem, but a simpler way to go is to simply disable this feature when we are inside 
-        tables, and always work with the optimal paragraph layout. Along with restriction 1 of 
-        Knuth’s algorithm (the value <inlineequation><mathphrase>total length − total 
-            shrink</mathphrase></inlineequation> increases when iterating over the elements) this 
-        gives a total ordering of the layouts. Then it’s probably possible to re-use the merging 
-        method currently used in FOP.</para>
+        <para>The two possibilities are overlapping, and would both fit in a page with a height of 
+          12; how to order them? By the total optimum value? By the minimum value? This may be a 
+          problem for the merging algorithm.</para>
+        <para>Maybe there’s a possibility to find a merging process for which this wouldn’t be a 
+          problem, but a simpler way to go is to simply disable this feature when we are inside 
+          tables, and always work with the optimal paragraph layout. Along with restriction 1 of 
+          Knuth’s algorithm (the value <inlineequation><mathphrase>total length − total 
+              shrink</mathphrase></inlineequation> increases when iterating over the elements) this 
+          gives a total ordering of the layouts. Then it’s probably possible to re-use the merging 
+          method currently used in FOP.</para>
       </section>
       <section>
         <title>Adapting the Current Merging Algorithm</title>
-      <para>As a short and simplified reminder, the merging algorithm works the following way:
-        <orderedlist>
-          <listitem>
-            <para>Compute the smallest step for every column (the length of the content before the 
-              first legal break).</para>
-          </listitem>
-          <listitem>
-            <para>Select the maximum of those steps (it has been agreed that every column should 
-              contain some content before a break).</para>
-          </listitem>
-          <listitem>
-            <para>In the other columns, progress along the legal breaks to get as near as this 
-              maximum step without overtaking it. That gives the first legal break in the 
-              row.</para>
-          </listitem>
-          <listitem>
-            <para>From there on, go to the smallest next legal break.</para>
-          </listitem>
-          <listitem>
-            <para>Select every column that has such a break; they make part of the next legal break 
-              inside the table.</para>
+        <para>As a short and simplified reminder, the merging algorithm works the following way:
+          <orderedlist>
+            <listitem>
+              <para>Compute the smallest step for every column (the length of the content before the 
+                first legal break).</para>
             </listitem>
-          <listitem>
-            <para>Go on like this, until the end of the row is reached…</para>
-          </listitem>
-        </orderedlist>
-      </para>
-      <para>Again, this approach works because the elements for the paragraphs are known in advance. 
-        Plus it doesn’t take elastic spaces into account; while this might look like a reasonable 
-        trade-off for tables, the same algorithm is also applied to lists where it becomes an 
-        annoying limitation.</para>
-      <para>When introducing elastic spaces, the legal breaks are no longer at a given length but 
-        may cover an interval. Then a layout from one column may be compatible with several layouts 
-        from another column. The difference will be in the amount of content after the break, which 
-        means that the row may end at different distances from the top of the following page (<xref 
-          linkend="fig_table_distances-from-top"/>). To respect the dynamic programming approach, 
-        all of the layouts must be kept, because the layout that will be part of the optimal 
-        solution may not be the optimal one at the table level (the optimal layout, in the 
-        <emphasis>table context</emphasis>, may not be part of the optimal solution, in the 
-        <emphasis>whole document context</emphasis>).</para>
-      <figure id="fig_table_distances-from-top">
-        <title>Combining one layout on the first column with two different layouts on the second 
-          one, making the table end at different positions</title>
-        <titleabbrev>Multiple column combinations leading to multiple table layouts</titleabbrev>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="table_distances-from-top"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <para>So two different sets will be available: layouts that will be said 
-        <emphasis>compatible</emphasis>; that is, it’s possible to play with their elastic spaces so 
-        that all of the columns reach the bottom of the page before the break; and the other ones, 
-        for which at least one column is <quote>underfull</quote>: either it doesn’t provide 
-        stretchability and its height is inferior to the height of the row, or it doesn’t have 
-        enough of stretchability to reach the bottom of the page. Compatible layouts are perfect; 
-        incompatible ones are ok, provided that this is not a situation like in <xref 
-          linkend="fig_table_silly-combination"/>, where a better alternative is available. Let’s 
-        call those latter <emphasis>unacceptable</emphasis>. The whole challenge is to make the 
-        difference between layouts that are incompatible but acceptable, and those that are both 
-        incompatible <emphasis>and</emphasis> unacceptable. Open question: if compatible layouts are 
-        available, should incompatible ones even be considered?</para>
-      <para>Since we want to keep only the best layout for a given paragraph, the column combination 
-        process can’t be started before the ends of the column contents are reached. Indeed, when we 
-        are in the middle of the paragraph, some of the currently active layouts may be specific to 
-        a non-optimal version of the paragraph. If they are selected as parts of a certain column 
-        combination, and then removed because they aren’t part of the optimal paragraph layout, that 
-        will invalidate the corresponding column combination.</para>
-      <para>So we would wait that the paragraphs are typeset before merging the columns. In fact, 
-        the column contents would be typeset separately up to the end, and then the merging process 
-        would be started. The process would be similar to the usual page-breaking mechanism: every 
-        column would be considered as a page from the point of view of the column content. Only, in 
-        the general case the first <quote>page</quote> would not have a set height, because of the 
-        content preceding the table that may have elastic spaces (see the springs from <xref 
-          linkend="fig_springs"/>). This is not really a problem, though, simply a generalization of  
-        the test: check that two intervals intersect instead of that a point belongs to an interval 
-        (actually a point may be seen as a singleton interval). Note that the point of view taken 
-        here is the opposite of the usual one: instead of testing if a layout fits in a page, i.e.,  
-        that it can be shrunk or stretched enough so that its actual dimension matches the page 
-        height, we check that the page height belongs to the interval [min, max] formed by the 
-        layout. In the end, this is the same test. In the generalized case the <quote>page</quote> 
-        height would be an interval instead of a single point.</para>
-      <para>Another modification is that underfull layouts must be considered: indeed, a column is 
-        allowed to be underfull if there’s another one that fills the page. The only thing to pay 
-        attention to is to not build a column combination out of underfull layouts only: at least 
-        one of them must be complete. Underfull layouts will therefore have to be properly 
-        flagged.</para>
-      <para>A potential issue with that approach is that too much work may be performed. In general 
-        several layouts will be available for every column, and it’s possible that some layouts will 
-        not be parts of any final combination. For example, if paragraphs in the first column have 
-        an orphan setting of 1, and 2 in all other columns. See <xref 
-          linkend="fig_table-unused-column-layout"/>: using the first possible layout for column 1 
-        will lead to an unacceptable combination.</para>
-      <figure id="fig_table-unused-column-layout">
-        <title>One of the layouts in the first column will never be used in any final 
-          combination</title>
-        <titleabbrev>Unused column layouts</titleabbrev>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="table_unused-column-layout"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <para>So it may be better to start the combining process as soon as possible, but as seen 
-        above paragraphs must be typeset first. Or maybe not? The problem was to define an ordering 
-        on the layouts. When a page break can occur in the middle of a paragraph, is it really a 
-        problem if that paragraph is not finished yet? As long as the previous paragraphs have their 
-        optimal layouts, the total order should be available. All that can happen inside the 
-        paragraph is that there may be a few lines more or less on the page; that means a few more 
-        boxes added to the set of layouts that’s available at the beginning of the paragraph. If 
-        that set was totally ordered, it should remain so when adding the boxes corresponding to the 
-        lines of the current paragraph. That said, it’s not totally clear what happens when not all 
-        the lines have the same height. Let’s imagine that a paragraph contains two inline images 
-        whose heights are 1.5 times the normal line height. Let’s assume there’s one layout in which 
-        both images are on the same line; and another one where spaces are slightly more shrunk so 
-        that the first image can be placed on the preceding line (<xref 
-          linkend="fig_paragraph-with-images"/>). The first layout will be 4.5 units high while the 
-        second one will be 5 units high. Maybe that won’t be a problem, but…</para>
-      <figure id="fig_paragraph-with-images">
-        <title>Layouts of a paragraph containing two inline images</title>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="paragraph-with-images"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <para>Another thing to keep in mind that may complicate things is that not all columns may end 
-        on the same page; some with fewer content may end on earlier pages. They must be considered 
-        in the combination, but they won’t participate in the computation of the resulting 
-        min-opt-max.</para>
+            <listitem>
+              <para>Select the maximum of those steps (it has been agreed that every column should 
+                contain some content before a break).</para>
+            </listitem>
+            <listitem>
+              <para>In the other columns, progress along the legal breaks to get as near as this 
+                maximum step without overtaking it. That gives the first legal break in the 
+                row.</para>
+            </listitem>
+            <listitem>
+              <para>From there on, go to the smallest next legal break.</para>
+            </listitem>
+            <listitem>
+              <para>Select every column that has such a break; they make part of the next legal 
+                break inside the table.</para>
+              </listitem>
+            <listitem>
+              <para>Go on like this, until the end of the row is reached…</para>
+            </listitem>
+          </orderedlist>
+        </para>
+        <para>Again, this approach works because the elements for the paragraphs are known in 
+          advance. Plus it doesn’t take elastic spaces into account; while this might look like a 
+          reasonable trade-off for tables, the same algorithm is also applied to lists where it 
+          becomes an annoying limitation.</para>
+        <para>When introducing elastic spaces, the legal breaks are no longer at a given length but 
+          may cover an interval. Then a layout from one column may be compatible with several 
+          layouts from another column. The difference will be in the amount of content after the 
+          break, which means that the row may end at different distances from the top of the 
+          following page (<xref linkend="fig_table_distances-from-top"/>). To respect the dynamic 
+          programming approach, all of the layouts must be kept, because the layout that will be 
+          part of the optimal solution may not be the optimal one at the table level (the optimal 
+          layout, in the <emphasis>table context</emphasis>, may not be part of the optimal 
+          solution, in the <emphasis>whole document context</emphasis>).</para>
+        <figure id="fig_table_distances-from-top">
+          <title>Combining one layout on the first column with two different layouts on the second 
+            one, making the table end at different positions</title>
+          <titleabbrev>Multiple column combinations leading to multiple table layouts</titleabbrev>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="table_distances-from-top"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para>So two different sets will be available: layouts that will be said 
+          <emphasis>compatible</emphasis>; that is, it’s possible to play with their elastic spaces 
+          so that all of the columns reach the bottom of the page before the break; and the other 
+          ones, for which at least one column is <quote>underfull</quote>: either it doesn’t provide 
+          stretchability and its height is inferior to the height of the row, or it doesn’t have 
+          enough of stretchability to reach the bottom of the page. Compatible layouts are perfect; 
+          incompatible ones are ok, provided that this is not a situation like in <xref 
+            linkend="fig_table_silly-combination"/>, where a better alternative is available. Let’s 
+          call those latter <emphasis>unacceptable</emphasis>. The whole challenge is to make the 
+          difference between layouts that are incompatible but acceptable, and those that are both 
+          incompatible <emphasis>and</emphasis> unacceptable. Open question: if compatible layouts 
+          are available, should incompatible ones even be considered?</para>
+        <para>Since we want to keep only the best layout for a given paragraph, the column 
+          combination process can’t be started before the ends of the column contents are reached. 
+          Indeed, when we are in the middle of the paragraph, some of the currently active layouts 
+          may be specific to a non-optimal version of the paragraph. If they are selected as parts 
+          of a certain column combination, and then removed because they aren’t part of the optimal 
+          paragraph layout, that will invalidate the corresponding column combination.</para>
+        <para>So we would wait that the paragraphs are typeset before merging the columns. In fact, 
+          the column contents would be typeset separately up to the end, and then the merging 
+          process would be started. The process would be similar to the usual page-breaking 
+          mechanism: every column would be considered as a page from the point of view of the column 
+          content. Only, in the general case the first <quote>page</quote> would not have a set 
+          height, because of the content preceding the table that may have elastic spaces (see the 
+          springs from <xref linkend="fig_springs"/>). This is not really a problem, though, simply 
+          a generalization of  the test: check that two intervals intersect instead of that a point 
+          belongs to an interval (actually a point may be seen as a singleton interval). Note that 
+          the point of view taken here is the opposite of the usual one: instead of testing if a 
+          layout fits in a page, i.e.,  that it can be shrunk or stretched enough so that its actual 
+          dimension matches the page height, we check that the page height belongs to the interval 
+          [min, max] formed by the layout. In the end, this is the same test. In the generalized 
+          case the <quote>page</quote> height would be an interval instead of a single point.</para>
+        <para>Another modification is that underfull layouts must be considered: indeed, a column is 
+          allowed to be underfull if there’s another one that fills the page. The only thing to pay 
+          attention to is to not build a column combination out of underfull layouts only: at least 
+          one of them must be complete. Underfull layouts will therefore have to be properly 
+          flagged.</para>
+        <para>A potential issue with that approach is that too much work may be performed. In 
+          general several layouts will be available for every column, and it’s possible that some 
+          layouts will not be parts of any final combination. For example, if paragraphs in the 
+          first column have an orphan setting of 1, and 2 in all other columns. See <xref 
+            linkend="fig_table-unused-column-layout"/>: using the first possible layout for column 1 
+          will lead to an unacceptable combination.</para>
+        <figure id="fig_table-unused-column-layout">
+          <title>One of the layouts in the first column will never be used in any final 
+            combination</title>
+          <titleabbrev>Unused column layouts</titleabbrev>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="table_unused-column-layout"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para>So it may be better to start the combining process as soon as possible, but as seen 
+          above paragraphs must be typeset first. Or maybe not? The problem was to define an 
+          ordering on the layouts. When a page break can occur in the middle of a paragraph, is it 
+          really a problem if that paragraph is not finished yet? As long as the previous paragraphs 
+          have their optimal layouts, the total order should be available. All that can happen 
+          inside the paragraph is that there may be a few lines more or less on the page; that means 
+          a few more boxes added to the set of layouts that’s available at the beginning of the 
+          paragraph. If that set was totally ordered, it should remain so when adding the boxes 
+          corresponding to the lines of the current paragraph. That said, it’s not totally clear 
+          what happens when not all the lines have the same height. Let’s imagine that a paragraph 
+          contains two inline images whose heights are 1.5 times the normal line height. Let’s 
+          assume there’s one layout in which both images are on the same line; and another one where 
+          spaces are slightly more shrunk so that the first image can be placed on the preceding 
+          line (<xref linkend="fig_paragraph-with-images"/>). The first layout will be 4.5 units 
+          high while the second one will be 5 units high. Maybe that won’t be a problem, but…</para>
+        <figure id="fig_paragraph-with-images">
+          <title>Layouts of a paragraph containing two inline images</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="paragraph-with-images"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para>Another thing to keep in mind that may complicate things is that not all columns may 
+          end on the same page; some with fewer content may end on earlier pages. They must be 
+          considered in the combination, but they won’t participate in the computation of the 
+          resulting min-opt-max.</para>
       </section>
     </section>
   </section>
