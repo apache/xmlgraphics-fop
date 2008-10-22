@@ -71,8 +71,10 @@ public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject
         if (name.length() < nameLen) {
             name = (name + "       ").substring(0, nameLen);
         } else if (name.length() > nameLen) {
-            log.warn("Constructor:: name truncated to " + nameLen + " chars" + name);
-            name = name.substring(0, nameLen);
+            String truncatedName = name.substring(0, nameLen);
+            log.warn("Constructor:: name '" + name + "'"
+                    + " truncated to " + nameLen + " chars"
+                    + " ('" + truncatedName + "')");
         }
         byte[] nameBytes = null;
         try {
