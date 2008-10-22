@@ -194,8 +194,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         this.borderPainter = new AFPBorderPainter(state, dataStream);
         this.rectanglePainter = new AFPRectanglePainter(state, dataStream);
 
-//        dataStream.setPortraitRotation(state.getPortraitRotation());
-//        dataStream.setLandscapeRotation(state.getLandscapeRotation());
         dataStream.startDocument();
     }
 
