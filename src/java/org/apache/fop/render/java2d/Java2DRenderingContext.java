@@ -26,7 +26,7 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.AbstractRenderingContext;
 
 /**
- * Rendering context for PDF production.
+ * Rendering context for Java2D painting.
  */
 public class Java2DRenderingContext extends AbstractRenderingContext {
 

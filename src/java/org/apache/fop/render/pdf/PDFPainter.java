@@ -62,9 +62,6 @@ public class PDFPainter extends AbstractIFPainter {
 
     private PDFDocumentHandler documentHandler;
 
-    /** Holds the intermediate format state */
-    protected IFState state;
-
     /** The current content generator */
     protected PDFContentGenerator generator;
 
@@ -322,29 +319,6 @@ public class PDFPainter extends AbstractIFPainter {
 
         }
         textutil.writeTJ();
-    }
-
-    /** {@inheritDoc} */
-    public void setFont(String family, String style, Integer weight, String variant, Integer size,
-            Color color) throws IFException {
-        if (family != null) {
-            state.setFontFamily(family);
-        }
-        if (style != null) {
-            state.setFontStyle(style);
-        }
-        if (weight != null) {
-            state.setFontWeight(weight.intValue());
-        }
-        if (variant != null) {
-            state.setFontVariant(variant);
-        }
-        if (size != null) {
-            state.setFontSize(size.intValue());
-        }
-        if (color != null) {
-            state.setTextColor(color);
-        }
     }
 
 }

@@ -78,7 +78,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return null; //No configurator, yet.
+        return new PCLRendererConfigurator(getUserAgent());
     }
 
     PCLRenderingUtil getPCLUtil() {

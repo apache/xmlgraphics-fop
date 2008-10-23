@@ -62,9 +62,6 @@ public class Java2DPainter extends AbstractIFPainter {
     /** The font information */
     protected FontInfo fontInfo;
 
-    /** Holds the intermediate format state */
-    protected IFState state;
-
     private Java2DBorderPainter borderPainter;
 
     /** The current state, holds a Graphics2D and its context */
@@ -78,9 +75,24 @@ public class Java2DPainter extends AbstractIFPainter {
      * @param fontInfo the font information
      */
     public Java2DPainter(Graphics2D g2d, FOUserAgent userAgent, FontInfo fontInfo) {
+        this(g2d, userAgent, fontInfo, null);
+    }
+
+    /**
+     * Special constructor for embedded use (when another painter uses Java2DPainter
+     * to convert part of a document into a bitmap, for example).
+     * @param g2d the target Graphics2D instance
+     * @param userAgent the user agent
+     * @param fontInfo the font information
+     */
+    public Java2DPainter(Graphics2D g2d, FOUserAgent userAgent, FontInfo fontInfo, IFState state) {
         super();
         this.userAgent = userAgent;
-        this.state = IFState.create();
+        if (state != null) {
+            this.state = state.push();
+        } else {
+            this.state = IFState.create();
+        }
         this.fontInfo = fontInfo;
         this.g2dState = new Java2DGraphicsState(g2d, fontInfo, g2d.getTransform());
         this.borderPainter = new Java2DBorderPainter(this);
@@ -226,31 +238,6 @@ public class Java2DPainter extends AbstractIFPainter {
         }
         g2d.drawGlyphVector(gv, x, y);
     }
-
-    /** {@inheritDoc} */
-    public void setFont(String family, String style, Integer weight, String variant, Integer size,
-            Color color) throws IFException {
-        if (family != null) {
-            state.setFontFamily(family);
-        }
-        if (style != null) {
-            state.setFontStyle(style);
-        }
-        if (weight != null) {
-            state.setFontWeight(weight.intValue());
-        }
-        if (variant != null) {
-            state.setFontVariant(variant);
-        }
-        if (size != null) {
-            state.setFontSize(size.intValue());
-        }
-        if (color != null) {
-            state.setTextColor(color);
-        }
-    }
-
-    //----------------------------------------------------------------------------------------------
 
     /** Saves the current graphics state on the stack. */
     protected void saveGraphicsState() {

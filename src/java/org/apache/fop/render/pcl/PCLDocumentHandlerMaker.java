@@ -52,7 +52,7 @@ public class PCLDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator(FOUserAgent userAgent) {
-        return null;
+        return new PCLRendererConfigurator(userAgent);
     }
 
 }

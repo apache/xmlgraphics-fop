@@ -21,11 +21,13 @@ package org.apache.fop.render.pcl;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Stack;
@@ -35,20 +37,26 @@ import org.w3c.dom.Document;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.java2d.FontMetricsMapper;
+import org.apache.fop.render.java2d.Java2DPainter;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.util.UnitConv;
 
 /**
  * {@code IFPainter} implementation that produces PCL 5.
@@ -58,10 +66,9 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     /** logging instance */
     private static Log log = LogFactory.getLog(PCLPainter.class);
 
-    private PCLDocumentHandler parent;
+    private final boolean DEBUG = false;
 
-    /** Holds the intermediate format state */
-    protected IFState state;
+    private PCLDocumentHandler parent;
 
     /** The PCL generator */
     private PCLGenerator gen;
@@ -142,56 +149,25 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
-        /*
-        PDFXObject xobject = pdfDoc.getXObject(uri);
-        if (xobject != null) {
-            placeImage(rect, xobject);
-            return;
-        }
-
-        drawImageUsingURI(uri, rect);
-
-        flushPDFDoc();
-        */
+        drawImageUsingURI(uri, rect/*, foreignAttributes*/);
     }
 
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
-        /*
         PCLRenderingContext pdfContext = new PCLRenderingContext(
-                getUserAgent(), generator, currentPage, getFontInfo());
-        return pdfContext;
-        */
-        return null;
-    }
+                getUserAgent(), this.gen, getPCLUtil()) {
 
-    /**
-     * Places a previously registered image at a certain place on the page.
-     * @param x X coordinate
-     * @param y Y coordinate
-     * @param w width for image
-     * @param h height for image
-     * @param xobj the image XObject
-     */
-    private void placeImage(Rectangle rect, PDFXObject xobj) {
-        /*
-        generator.saveGraphicsState();
-        generator.add(format(rect.width) + " 0 0 "
-                          + format(-rect.height) + " "
-                          + format(rect.x) + " "
-                          + format(rect.y + rect.height )
-                          + " cm " + xobj.getName() + " Do\n");
-        generator.restoreGraphicsState();
-        */
+            public Point2D transformedPoint(int x, int y) {
+                return PCLPainter.this.transformedPoint(x, y);
+            }
+
+        };
+        return pdfContext;
     }
 
     /** {@inheritDoc} */
     public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
-        /*
         drawImageUsingDocument(doc, rect);
-
-        flushPDFDoc();
-        */
     }
 
     /** {@inheritDoc} */
@@ -257,14 +233,21 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
             String fontKey = parent.getFontInfo().getInternalFontKey(triplet);
             boolean pclFont = getPCLUtil().isAllTextAsBitmaps()
                         ? false
-                        : setFont(fontKey, state.getFontSize(), text);
-            if (true || pclFont) {
+                        : HardcodedFonts.setFont(gen, fontKey, state.getFontSize(), text);
+            if (pclFont) {
                 drawTextNative(x, y, dx, text, triplet);
             } else {
                 drawTextAsBitmap(x, y, dx, dy, text, triplet);
+                if (DEBUG) {
+                    state.setTextColor(Color.GRAY);
+                    HardcodedFonts.setFont(gen, "F1", state.getFontSize(), text);
+                    drawTextNative(x, y, dx, text, triplet);
+                }
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
+        } catch (ImageException ime) {
+            throw new IFException("Image processing error in drawText()", ime);
         }
     }
 
@@ -319,77 +302,112 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     }
 
-    private void drawTextAsBitmap(int x, int y, int[] dx, int[] dy,
-            String text, FontTriplet triplet) throws IOException {
-        /*
+    private static final double SAFETY_MARGIN_FACTOR = 0.05;
+
+    private Rectangle getTextBoundingRect(int x, int y, int[] dx, int[] dy, String text,
+            Font font, FontMetricsMapper metrics) {
+        int maxAscent = metrics.getMaxAscent(font.getFontSize()) / 1000;
+        int descent = metrics.getDescender(font.getFontSize()) / 1000; //is negative
+        int safetyMargin = (int)(SAFETY_MARGIN_FACTOR * font.getFontSize());
+        Rectangle boundingRect = new Rectangle(
+                x, y - maxAscent - safetyMargin,
+                0, maxAscent - descent + 2 * safetyMargin);
+
+        int l = text.length();
+        int dxl = (dx != null ? dx.length : 0);
+
+        if (dx != null && dxl > 0 && dx[0] != 0) {
+            boundingRect.setLocation(boundingRect.x - (int)Math.ceil(dx[0] / 10f), boundingRect.y);
+        }
+        float width = 0.0f;
+        for (int i = 0; i < l; i++) {
+            char orgChar = text.charAt(i);
+            float glyphAdjust = 0;
+            int cw = font.getCharWidth(orgChar);
+
+            if (dx != null && i < dxl - 1) {
+                glyphAdjust += dx[i + 1];
+            }
+
+            width += cw - glyphAdjust;
+        }
+        int extraWidth = font.getFontSize() / 3;
+        boundingRect.setSize(
+                (int)Math.ceil(width) + extraWidth,
+                boundingRect.height);
+        return boundingRect;
+    }
+
+    private void drawTextAsBitmap(final int x, final int y, final int[] dx, final int[] dy,
+            final String text, FontTriplet triplet) throws IOException, ImageException {
         //Use Java2D to paint different fonts via bitmap
-        final Font font = getFontFromArea(text);
-        final int baseline = text.getBaselineOffset();
+        final Font font = parent.getFontInfo().getFontInstance(triplet, state.getFontSize());
+        //final Font font = getFontFromArea(text);
+        //final int baseline = text.getBaselineOffset();
 
         //for cursive fonts, so the text isn't clipped
-        int extraWidth = font.getFontSize() / 3;
-        final FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(
+        final FontMetricsMapper mapper = (FontMetricsMapper)parent.getFontInfo().getMetricsFor(
                 font.getFontName());
-        int maxAscent = mapper.getMaxAscent(font.getFontSize()) / 1000;
-        final int additionalBPD = maxAscent - baseline;
+        final int maxAscent = mapper.getMaxAscent(font.getFontSize()) / 1000;
+        final int ascent = mapper.getAscender(font.getFontSize()) / 1000;
+        final int descent = mapper.getDescender(font.getFontSize()) / 1000;
+        int safetyMargin = (int)(SAFETY_MARGIN_FACTOR * font.getFontSize());
+        final int baselineOffset = maxAscent + safetyMargin;
 
-        Graphics2DAdapter g2a = getGraphics2DAdapter();
-        final Rectangle paintRect = new Rectangle(
-                rx, currentBPPosition + text.getOffset() - additionalBPD,
-                text.getIPD() + extraWidth, text.getBPD() + additionalBPD);
-        RendererContext rc = createRendererContext(paintRect.x, paintRect.y,
-                paintRect.width, paintRect.height, null);
+        final Rectangle boundingRect = getTextBoundingRect(x, y, dx, dy, text, font, mapper);
+
         Map atts = new java.util.HashMap();
         atts.put(CONV_MODE, "bitmap");
         atts.put(SRC_TRANSPARENCY, "true");
-        rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
+        //rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
 
+        final Dimension dim = boundingRect.getSize();
         Graphics2DImagePainter painter = new Graphics2DImagePainter() {
 
             public void paint(Graphics2D g2d, Rectangle2D area) {
-                g2d.setFont(mapper.getFont(font.getFontSize()));
-                g2d.translate(0, baseline + additionalBPD);
-                g2d.scale(1000, 1000);
-                g2d.setColor(col);
-                Java2DRenderer.renderText(text, g2d, font);
-                renderTextDecoration(g2d, mapper, fontsize, text, 0, 0);
+                if (DEBUG) {
+                    g2d.setBackground(Color.LIGHT_GRAY);
+                    g2d.clearRect(0, 0, (int)area.getWidth(), (int)area.getHeight());
+                }
+                g2d.translate(0, -y + baselineOffset);
+
+                if (DEBUG) {
+                    Rectangle rect = new Rectangle(x, y - maxAscent, 3000, maxAscent);
+                    g2d.draw(rect);
+                    rect = new Rectangle(x, y - ascent, 2000, ascent);
+                    g2d.draw(rect);
+                    rect = new Rectangle(x, y, 1000, - descent);
+                    g2d.draw(rect);
+                }
+                Java2DPainter painter = new Java2DPainter(g2d,
+                        getUserAgent(), parent.getFontInfo(), state);
+                try {
+                    painter.drawText(x, y, dx, dy, text);
+                } catch (IFException e) {
+                    //This should never happen with the Java2DPainter
+                    throw new RuntimeException("Unexpected error while painting text", e);
+                }
             }
 
             public Dimension getImageSize() {
-                return paintRect.getSize();
+                return dim.getSize();
             }
 
         };
-        g2a.paintImage(painter, rc,
-                paintRect.x, paintRect.y, paintRect.width, paintRect.height);
-        currentIPPosition = saveIP + text.getAllocIPD();
-        */
-    }
+        ImageInfo info = new ImageInfo(null, null);
+        ImageSize size = new ImageSize();
+        size.setSizeInMillipoints(boundingRect.width, boundingRect.height);
+        info.setSize(size);
+        ImageGraphics2D img = new ImageGraphics2D(info, painter);
 
-    /** {@inheritDoc} */
-    public void setFont(String family, String style, Integer weight, String variant, Integer size,
-            Color color) throws IFException {
-        if (family != null) {
-            state.setFontFamily(family);
-        }
-        if (style != null) {
-            state.setFontStyle(style);
-        }
-        if (weight != null) {
-            state.setFontWeight(weight.intValue());
-        }
-        if (variant != null) {
-            state.setFontVariant(variant);
-        }
-        if (size != null) {
-            state.setFontSize(size.intValue());
-        }
-        if (color != null) {
-            state.setTextColor(color);
-        }
+        Rectangle rect = boundingRect;
+        Map hints = new java.util.HashMap();
+        hints.put(ImageProcessingHints.BITMAP_TYPE_INTENT,
+                ImageProcessingHints.BITMAP_TYPE_INTENT_GRAY);
+        PCLRenderingContext context = (PCLRenderingContext)createRenderingContext();
+        context.setSourceTransparencyEnabled(true);
+        drawImage(img, rect, context, true, hints);
     }
-
-    //----------------------------------------------------------------------------------------------
 
     /** Saves the current graphics state on the stack. */
     private void saveGraphicsState() {
@@ -410,52 +428,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     private Point2D transformedPoint(int x, int y) {
-        AffineTransform at = graphicContext.getTransform();
-        if (log.isTraceEnabled()) {
-            log.trace("Current transform: " + at);
-        }
-        Point2D.Float orgPoint = new Point2D.Float(x, y);
-        Point2D.Float transPoint = new Point2D.Float();
-        at.transform(orgPoint, transPoint);
-        //At this point we have the absolute position in FOP's coordinate system
-
-        //Now get PCL coordinates taking the current print direction and the logical page
-        //into account.
-        Dimension pageSize = currentPageDefinition.getPhysicalPageSize();
-        Rectangle logRect = currentPageDefinition.getLogicalPageRect();
-        switch (currentPrintDirection) {
-        case 0:
-            transPoint.x -= logRect.x;
-            transPoint.y -= logRect.y;
-            break;
-        case 90:
-            float ty = transPoint.x;
-            transPoint.x = pageSize.height - transPoint.y;
-            transPoint.y = ty;
-            transPoint.x -= logRect.y;
-            transPoint.y -= logRect.x;
-            break;
-        case 180:
-            transPoint.x = pageSize.width - transPoint.x;
-            transPoint.y = pageSize.height - transPoint.y;
-            transPoint.x -= pageSize.width - logRect.x - logRect.width;
-            transPoint.y -= pageSize.height - logRect.y - logRect.height;
-            //The next line is odd and is probably necessary due to the default value of the
-            //Text Length command: "1/2 inch less than maximum text length"
-            //I wonder why this isn't necessary for the 90 degree rotation. *shrug*
-            transPoint.y -= UnitConv.in2mpt(0.5);
-            break;
-        case 270:
-            float tx = transPoint.y;
-            transPoint.y = pageSize.width - transPoint.x;
-            transPoint.x = tx;
-            transPoint.x -= pageSize.height - logRect.y - logRect.height;
-            transPoint.y -= pageSize.width - logRect.x - logRect.width;
-            break;
-        default:
-            throw new IllegalStateException("Illegal print direction: " + currentPrintDirection);
-        }
-        return transPoint;
+        return PCLRenderingUtil.transformedPoint(x, y, graphicContext.getTransform(),
+                currentPageDefinition, currentPrintDirection);
     }
 
     private void changePrintDirection() throws IOException {
@@ -477,125 +451,6 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     void setCursorPos(int x, int y) throws IOException {
         Point2D transPoint = transformedPoint(x, y);
         gen.setCursorPos(transPoint.getX(), transPoint.getY());
-    }
-
-    /**
-     * Sets the current font (NOTE: Hard-coded font mappings ATM!)
-     * @param name the font name (internal F* names for now)
-     * @param size the font size (in millipoints)
-     * @param text the text to be rendered (used to determine if there are non-printable chars)
-     * @return true if the font can be mapped to PCL
-     * @throws IOException if an I/O problem occurs
-     */
-    public boolean setFont(String name, int size, String text) throws IOException {
-        byte[] encoded = text.getBytes("ISO-8859-1");
-        for (int i = 0, c = encoded.length; i < c; i++) {
-            if (encoded[i] == 0x3F && text.charAt(i) != '?') {
-                return false;
-            }
-        }
-        int fontcode = 0;
-        if (name.length() > 1 && name.charAt(0) == 'F') {
-            try {
-                fontcode = Integer.parseInt(name.substring(1));
-            } catch (Exception e) {
-                log.error(e);
-            }
-        }
-        //Note "(ON" selects ISO 8859-1 symbol set as used by PCLGenerator
-        String formattedSize = gen.formatDouble2(size / 1000.0);
-        switch (fontcode) {
-        case 1:     // F1 = Helvetica
-            // gen.writeCommand("(8U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b24580T");
-            // Arial is more common among PCL5 printers than Helvetica - so use Arial
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s0b16602T");
-            break;
-        case 2:     // F2 = Helvetica Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s0b16602T");
-            break;
-        case 3:     // F3 = Helvetica Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s3b16602T");
-            break;
-        case 4:     // F4 = Helvetica Bold Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s3b16602T");
-            break;
-        case 5:     // F5 = Times Roman
-            // gen.writeCommand("(8U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b25093T");
-            // Times New is more common among PCL5 printers than Times - so use Times New
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s0b16901T");
-            break;
-        case 6:     // F6 = Times Italic
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s0b16901T");
-            break;
-        case 7:     // F7 = Times Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s3b16901T");
-            break;
-        case 8:     // F8 = Times Bold Italic
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s3b16901T");
-            break;
-        case 9:     // F9 = Courier
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h0s0b4099T");
-            break;
-        case 10:    // F10 = Courier Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h1s0b4099T");
-            break;
-        case 11:    // F11 = Courier Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h0s3b4099T");
-            break;
-        case 12:    // F12 = Courier Bold Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h1s3b4099T");
-            break;
-        case 13:    // F13 = Symbol
-
-            return false;
-            //gen.writeCommand("(19M");
-            //gen.writeCommand("(s1p" + formattedSize + "v0s0b16686T");
-            // ECMA Latin 1 Symbol Set in Times Roman???
-            // gen.writeCommand("(9U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b25093T");
-            //break;
-        case 14:    // F14 = Zapf Dingbats
-
-            return false;
-            //gen.writeCommand("(14L");
-            //gen.writeCommand("(s1p" + formattedSize + "v0s0b45101T");
-            //break;
-        default:
-            //gen.writeCommand("(0N");
-            //gen.writeCommand("(s" + formattedSize + "V");
-            return false;
-        }
-        return true;
     }
 
 }
