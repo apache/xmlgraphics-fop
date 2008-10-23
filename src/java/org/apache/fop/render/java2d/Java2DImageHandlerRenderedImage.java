@@ -30,7 +30,6 @@ import java.io.IOException;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 
 import org.apache.fop.render.ImageHandler;
@@ -49,7 +48,7 @@ public class Java2DImageHandlerRenderedImage implements ImageHandler {
 
     /** {@inheritDoc} */
     public Class getSupportedImageClass() {
-        return ImageRawStream.class;
+        return ImageRendered.class;
     }
 
     /** {@inheritDoc} */

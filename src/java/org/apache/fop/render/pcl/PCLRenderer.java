@@ -26,13 +26,11 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -62,6 +60,7 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -95,6 +94,7 @@ import org.apache.fop.render.java2d.Base14FontCollection;
 import org.apache.fop.render.java2d.ConfiguredFontCollection;
 import org.apache.fop.render.java2d.FontMetricsMapper;
 import org.apache.fop.render.java2d.InstalledFontCollection;
+import org.apache.fop.render.java2d.Java2DFontMetrics;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
@@ -132,28 +132,10 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
     private java.awt.Color currentFillColor = null;
 
     /**
-     * Controls whether appearance is more important than speed. False can cause some FO feature
-     * to be ignored (like the advanced borders).
+     * Utility class which enables all sorts of features that are not directly connected to the
+     * normal rendering process.
      */
-    private boolean qualityBeforeSpeed = false;
-
-    /**
-     * Controls whether all text should be painted as text. This is a fallback setting in case
-     * the mixture of native and bitmapped text does not provide the necessary quality.
-     */
-    private boolean allTextAsBitmaps = false;
-
-    /**
-     * Controls whether an RGB canvas is used when converting Java2D graphics to bitmaps.
-     * This can be used to work around problems with Apache Batik, for example, but setting
-     * this to true will increase memory consumption.
-     */
-    private final boolean useColorCanvas = false;
-
-    /**
-     * Controls whether the generation of PJL commands gets disabled.
-     */
-    private boolean disabledPJL = false;
+    private PCLRenderingUtil pclUtil;
 
     /** contains the pageWith of the last printed page */
     private long pageWidth = 0;
@@ -166,13 +148,23 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
     public PCLRenderer() {
     }
 
+    /** {@inheritDoc} */
+    public void setUserAgent(FOUserAgent agent) {
+        super.setUserAgent(agent);
+        this.pclUtil = new PCLRenderingUtil(getUserAgent());
+    }
+
+    PCLRenderingUtil getPCLUtil() {
+        return this.pclUtil;
+    }
+
     /**
      * Configures the renderer to trade speed for quality if desired. One example here is the way
      * that borders are rendered.
      * @param qualityBeforeSpeed true if quality is more important than speed
      */
     public void setQualityBeforeSpeed(boolean qualityBeforeSpeed) {
-        this.qualityBeforeSpeed = qualityBeforeSpeed;
+        pclUtil.setQualityBeforeSpeed(qualityBeforeSpeed);
     }
 
     /**
@@ -180,7 +172,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      * @param disable true to disable PJL commands
      */
     public void setPJLDisabled(boolean disable) {
-        this.disabledPJL = disable;
+        pclUtil.setPJLDisabled(disable);
     }
 
     /**
@@ -188,7 +180,16 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      * @return true if PJL generation is disabled.
      */
     public boolean isPJLDisabled() {
-        return this.disabledPJL;
+        return pclUtil.isPJLDisabled();
+    }
+
+    /**
+     * Controls whether all text should be generated as bitmaps or only text for which there's
+     * no native font.
+     * @param allTextAsBitmaps true if all text should be painted as bitmaps
+     */
+    public void setAllTextAsBitmaps(boolean allTextAsBitmaps) {
+        pclUtil.setAllTextAsBitmaps(allTextAsBitmaps);
     }
 
     /**
@@ -199,12 +200,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         //The PCLRenderer uses the Java2D FontSetup which needs a special font setup
         //create a temp Image to test font metrics on
         fontInfo = inFontInfo;
-        BufferedImage fontImage = new BufferedImage(100, 100,
-                BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = fontImage.createGraphics();
-        //The next line is important to get accurate font metrics!
-        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
 
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(graphics2D),
@@ -246,125 +242,6 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         } else {
             return 600;
         }
-    }
-
-    /**
-     * Sets the current font (NOTE: Hard-coded font mappings ATM!)
-     * @param name the font name (internal F* names for now)
-     * @param size the font size
-     * @param text the text to be rendered (used to determine if there are non-printable chars)
-     * @return true if the font can be mapped to PCL
-     * @throws IOException if an I/O problem occurs
-     */
-    public boolean setFont(String name, float size, String text) throws IOException {
-        byte[] encoded = text.getBytes("ISO-8859-1");
-        for (int i = 0, c = encoded.length; i < c; i++) {
-            if (encoded[i] == 0x3F && text.charAt(i) != '?') {
-                return false;
-            }
-        }
-        int fontcode = 0;
-        if (name.length() > 1 && name.charAt(0) == 'F') {
-            try {
-                fontcode = Integer.parseInt(name.substring(1));
-            } catch (Exception e) {
-                log.error(e);
-            }
-        }
-        //Note "(ON" selects ISO 8859-1 symbol set as used by PCLGenerator
-        String formattedSize = gen.formatDouble2(size / 1000);
-        switch (fontcode) {
-        case 1:     // F1 = Helvetica
-            // gen.writeCommand("(8U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b24580T");
-            // Arial is more common among PCL5 printers than Helvetica - so use Arial
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s0b16602T");
-            break;
-        case 2:     // F2 = Helvetica Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s0b16602T");
-            break;
-        case 3:     // F3 = Helvetica Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s3b16602T");
-            break;
-        case 4:     // F4 = Helvetica Bold Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s3b16602T");
-            break;
-        case 5:     // F5 = Times Roman
-            // gen.writeCommand("(8U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b25093T");
-            // Times New is more common among PCL5 printers than Times - so use Times New
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s0b16901T");
-            break;
-        case 6:     // F6 = Times Italic
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s0b16901T");
-            break;
-        case 7:     // F7 = Times Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s3b16901T");
-            break;
-        case 8:     // F8 = Times Bold Italic
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s3b16901T");
-            break;
-        case 9:     // F9 = Courier
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h0s0b4099T");
-            break;
-        case 10:    // F10 = Courier Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h1s0b4099T");
-            break;
-        case 11:    // F11 = Courier Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h0s3b4099T");
-            break;
-        case 12:    // F12 = Courier Bold Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h1s3b4099T");
-            break;
-        case 13:    // F13 = Symbol
-
-            return false;
-            //gen.writeCommand("(19M");
-            //gen.writeCommand("(s1p" + formattedSize + "v0s0b16686T");
-            // ECMA Latin 1 Symbol Set in Times Roman???
-            // gen.writeCommand("(9U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b25093T");
-            //break;
-        case 14:    // F14 = Zapf Dingbats
-
-            return false;
-            //gen.writeCommand("(14L");
-            //gen.writeCommand("(s1p" + formattedSize + "v0s0b45101T");
-            //break;
-        default:
-            //gen.writeCommand("(0N");
-            //gen.writeCommand("(s" + formattedSize + "V");
-            return false;
-        }
-        return true;
     }
 
     /** {@inheritDoc} */
@@ -491,52 +368,8 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
     }
 
     private Point2D transformedPoint(int x, int y) {
-        AffineTransform at = graphicContext.getTransform();
-        if (log.isTraceEnabled()) {
-            log.trace("Current transform: " + at);
-        }
-        Point2D.Float orgPoint = new Point2D.Float(x, y);
-        Point2D.Float transPoint = new Point2D.Float();
-        at.transform(orgPoint, transPoint);
-        //At this point we have the absolute position in FOP's coordinate system
-
-        //Now get PCL coordinates taking the current print direction and the logical page
-        //into account.
-        Dimension pageSize = currentPageDefinition.getPhysicalPageSize();
-        Rectangle logRect = currentPageDefinition.getLogicalPageRect();
-        switch (currentPrintDirection) {
-        case 0:
-            transPoint.x -= logRect.x;
-            transPoint.y -= logRect.y;
-            break;
-        case 90:
-            float ty = transPoint.x;
-            transPoint.x = pageSize.height - transPoint.y;
-            transPoint.y = ty;
-            transPoint.x -= logRect.y;
-            transPoint.y -= logRect.x;
-            break;
-        case 180:
-            transPoint.x = pageSize.width - transPoint.x;
-            transPoint.y = pageSize.height - transPoint.y;
-            transPoint.x -= pageSize.width - logRect.x - logRect.width;
-            transPoint.y -= pageSize.height - logRect.y - logRect.height;
-            //The next line is odd and is probably necessary due to the default value of the
-            //Text Length command: "1/2 inch less than maximum text length"
-            //I wonder why this isn't necessary for the 90 degree rotation. *shrug*
-            transPoint.y -= UnitConv.in2mpt(0.5);
-            break;
-        case 270:
-            float tx = transPoint.y;
-            transPoint.y = pageSize.width - transPoint.x;
-            transPoint.x = tx;
-            transPoint.x -= pageSize.height - logRect.y - logRect.height;
-            transPoint.y -= pageSize.width - logRect.x - logRect.width;
-            break;
-        default:
-            throw new IllegalStateException("Illegal print direction: " + currentPrintDirection);
-        }
-        return transPoint;
+        return PCLRenderingUtil.transformedPoint(x, y, graphicContext.getTransform(),
+                currentPageDefinition, currentPrintDirection);
     }
 
     private void changePrintDirection() {
@@ -640,9 +473,9 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         try {
 
             final Color col = (Color)text.getTrait(Trait.COLOR);
-            boolean pclFont = allTextAsBitmaps
+            boolean pclFont = pclUtil.isAllTextAsBitmaps()
                     ? false
-                    : setFont(fontname, fontsize, text.getText());
+                    : HardcodedFonts.setFont(gen, fontname, fontsize, text.getText());
             if (pclFont) {
                 //this.currentFill = col;
                 if (col != null) {
@@ -1132,7 +965,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         RendererContext context = super.createRendererContext(
                 x, y, width, height, foreignAttributes);
         context.setProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS,
-                Boolean.valueOf(this.useColorCanvas));
+                Boolean.valueOf(pclUtil.isColorCanvasEnabled()));
         return context;
     }
 
@@ -1354,7 +1187,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         if (bpsBefore == null && bpsAfter == null && bpsStart == null && bpsEnd == null) {
             return; //no borders to paint
         }
-        if (qualityBeforeSpeed) {
+        if (pclUtil.isQualityBeforeSpeed()) {
             drawQualityBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
         } else {
             drawFastBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
@@ -1672,16 +1505,5 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         restoreGraphicsState();
         super.renderLeader(area);
     }
-
-    /**
-     * Controls whether all text should be generated as bitmaps or only text for which there's
-     * no native font.
-     * @param allTextAsBitmaps true if all text should be painted as bitmaps
-     */
-    public void setAllTextAsBitmaps(boolean allTextAsBitmaps) {
-        this.allTextAsBitmaps = allTextAsBitmaps;
-    }
-
-
 
 }

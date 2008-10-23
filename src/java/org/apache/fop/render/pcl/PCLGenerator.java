@@ -601,7 +601,7 @@ public class PCLGenerator {
      * @return true if it's a grayscale image
      */
     public static boolean isGrayscaleImage(RenderedImage img) {
-        return (img.getColorModel().getColorSpace().getNumComponents() == 1);
+        return (img.getColorModel().getNumColorComponents() == 1);
     }
 
     private MonochromeBitmapConverter createMonochromeBitmapConverter() {
@@ -751,6 +751,7 @@ public class PCLGenerator {
         Dimension orgDim = new Dimension(img.getWidth(), img.getHeight());
         Dimension effDim = getAdjustedDimension(orgDim, targetResolution, effResolution);
         boolean scaled = !orgDim.equals(effDim);
+        //ImageWriterUtil.saveAsPNG(img, new java.io.File("D:/text-0-org.png"));
 
         boolean monochrome = isMonochromeImage(img);
         if (!monochrome) {
@@ -770,6 +771,12 @@ public class PCLGenerator {
                 if (!isGrayscaleImage(img) || img.getColorModel().hasAlpha()) {
                     src = new BufferedImage(effDim.width, effDim.height,
                             BufferedImage.TYPE_BYTE_GRAY);
+                    Graphics2D g2d = src.createGraphics();
+                    try {
+                        clearBackground(g2d, effDim);
+                    } finally {
+                        g2d.dispose();
+                    }
                     ColorConvertOp op = new ColorConvertOp(
                             ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
                     op.filter((BufferedImage)img, src);
@@ -782,6 +789,8 @@ public class PCLGenerator {
                         BufferedImage.TYPE_BYTE_GRAY);
                 Graphics2D g2d = src.createGraphics();
                 try {
+                    clearBackground(g2d, effDim);
+
                     AffineTransform at = new AffineTransform();
                     double sx = effDim.getWidth() / orgDim.getWidth();
                     double sy = effDim.getHeight() / orgDim.getHeight();
@@ -822,6 +831,12 @@ public class PCLGenerator {
             selectCurrentPattern(0, 0); //Solid black
             paintMonochromeBitmap(effImg, effResolution);
         }
+    }
+
+    private void clearBackground(Graphics2D g2d, Dimension effDim) {
+        //white background
+        g2d.setBackground(Color.WHITE);
+        g2d.clearRect(0, 0, effDim.width, effDim.height);
     }
 
     /**

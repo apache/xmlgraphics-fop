@@ -68,9 +68,6 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     /** logging instance */
     private static Log log = LogFactory.getLog(SVGPainter.class);
 
-    /** Holds the intermediate format state */
-    protected IFState state;
-
     private AbstractSVGDocumentHandler parent;
 
     /** The SAX content handler that receives the generated XML events. */
@@ -347,29 +344,6 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
             handler.endElement("text");
         } catch (SAXException e) {
             throw new IFException("SAX error in setFont()", e);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void setFont(String family, String style, Integer weight, String variant, Integer size,
-            Color color) throws IFException {
-        if (family != null) {
-            state.setFontFamily(family);
-        }
-        if (style != null) {
-            state.setFontStyle(style);
-        }
-        if (weight != null) {
-            state.setFontWeight(weight.intValue());
-        }
-        if (variant != null) {
-            state.setFontVariant(variant);
-        }
-        if (size != null) {
-            state.setFontSize(size.intValue());
-        }
-        if (color != null) {
-            state.setTextColor(color);
         }
     }
 

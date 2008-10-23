@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.intermediate;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -33,6 +34,7 @@ import org.w3c.dom.Document;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
@@ -56,6 +58,9 @@ public abstract class AbstractIFPainter implements IFPainter {
 
     /** non-URI that can be used in feedback messages that an image is an instream-object */
     protected static final String INSTREAM_OBJECT_URI = "(instream-object)";
+
+    /** Holds the intermediate format state */
+    protected IFState state;
 
 
     /**
@@ -118,31 +123,84 @@ public abstract class AbstractIFPainter implements IFPainter {
 
         //Load and convert the image to a supported format
         RenderingContext context = createRenderingContext();
-        Map hints = ImageUtil.getDefaultHints(sessionContext);
+        Map hints = createDefaultImageProcessingHints(sessionContext);
         org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                     info, imageHandlerRegistry.getSupportedFlavors(context),
                     hints, sessionContext);
 
+        try {
+            drawImage(img, rect, context);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageWritingError(this, ioe);
+        }
+    }
+
+    /**
+     * Creates the default map of processing hints for the image loading framework.
+     * @param sessionContext the session context for access to resolution information
+     * @return the default processing hints
+     */
+    protected Map createDefaultImageProcessingHints(ImageSessionContext sessionContext) {
+        return ImageUtil.getDefaultHints(sessionContext);
+    }
+
+    /**
+     * Draws an image using a suitable image handler.
+     * @param image the image to be painted (it needs to of a supported image flavor)
+     * @param rect the rectangle in which to paint the image
+     * @param context a suitable rendering context
+     * @throws IOException in case of an I/O error while handling/writing the image
+     * @throws ImageException if an error occurs while converting the image to a suitable format
+     */
+    protected void drawImage(Image image, Rectangle rect,
+            RenderingContext context) throws IOException, ImageException {
+        drawImage(image, rect, context, false, null);
+    }
+
+    /**
+     * Draws an image using a suitable image handler.
+     * @param image the image to be painted (it needs to of a supported image flavor)
+     * @param rect the rectangle in which to paint the image
+     * @param context a suitable rendering context
+     * @param convert true to run the image through image conversion if that is necessary
+     * @param additionalHints additional image processing hints
+     * @throws IOException in case of an I/O error while handling/writing the image
+     * @throws ImageException if an error occurs while converting the image to a suitable format
+     */
+    protected void drawImage(Image image, Rectangle rect,
+            RenderingContext context, boolean convert, Map additionalHints)
+                    throws IOException, ImageException {
+        ImageManager manager = getFopFactory().getImageManager();
+        ImageHandlerRegistry imageHandlerRegistry = getFopFactory().getImageHandlerRegistry();
+
+        Image effImage;
+        if (convert) {
+            Map hints = createDefaultImageProcessingHints(getUserAgent().getImageSessionContext());
+            if (additionalHints != null) {
+                hints.putAll(additionalHints);
+            }
+            effImage = manager.convertImage(image,
+                    imageHandlerRegistry.getSupportedFlavors(context), hints);
+        } else {
+            effImage = image;
+        }
+
         //First check for a dynamically registered handler
-        ImageHandler handler = imageHandlerRegistry.getHandler(context, img);
+        ImageHandler handler = imageHandlerRegistry.getHandler(context, effImage);
         if (handler == null) {
             throw new UnsupportedOperationException(
                     "No ImageHandler available for image: "
-                        + info + " (" + img.getClass().getName() + ")");
+                        + effImage.getInfo() + " (" + effImage.getClass().getName() + ")");
         }
 
         if (log.isDebugEnabled()) {
             log.debug("Using ImageHandler: " + handler.getClass().getName());
         }
-        try {
-            //TODO foreign attributes
-            handler.handleImage(context, img, rect);
-        } catch (IOException ioe) {
-            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.imageWritingError(this, ioe);
-            return;
-        }
+
+        //TODO foreign attributes
+        handler.handleImage(context, effImage, rect);
     }
 
     /**
@@ -203,5 +261,27 @@ public abstract class AbstractIFPainter implements IFPainter {
         }
     }
 
+    /** {@inheritDoc} */
+    public void setFont(String family, String style, Integer weight, String variant, Integer size,
+            Color color) throws IFException {
+        if (family != null) {
+            state.setFontFamily(family);
+        }
+        if (style != null) {
+            state.setFontStyle(style);
+        }
+        if (weight != null) {
+            state.setFontWeight(weight.intValue());
+        }
+        if (variant != null) {
+            state.setFontVariant(variant);
+        }
+        if (size != null) {
+            state.setFontSize(size.intValue());
+        }
+        if (color != null) {
+            state.setTextColor(color);
+        }
+    }
 
 }
