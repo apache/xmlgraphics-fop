@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.afp.fonts;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -49,6 +50,15 @@ public class CharacterSet {
     /** Static logging instance */
     protected static final Log log = LogFactory.getLog(CharacterSet.class.getName());
 
+    /** default codepage */
+    protected static final String DEFAULT_CODEPAGE = "T1V10500";
+
+    /** default encoding */
+    protected static final String DEFAULT_ENCODING = "Cp500";
+
+    private static final int MAX_NAME_LEN = 8;
+
+
     /** The code page to which the character set relates */
     protected String codePage;
 
@@ -64,8 +74,8 @@ public class CharacterSet {
     /** Indicator as to whether to metrics have been loaded */
     private boolean isMetricsLoaded = false;
 
-    /** The current orientation (currently only 0 is suppoted by FOP) */
-    private String currentOrientation = "0";
+    /** The current orientation (currently only 0 is supported by FOP) */
+    private final String currentOrientation = "0";
 
     /** The collection of objects for each orientation */
     private Map characterSetOrientations = null;
@@ -79,27 +89,23 @@ public class CharacterSet {
      * @param name the character set name
      * @param path the path to the installed afp fonts
      */
-    public CharacterSet(
-        String codePage,
-        String encoding,
-        String name,
-        String path) {
-
-        if (name.length() > 8) {
-            String msg = "Character set name must be a maximum of 8 characters " + name;
+    public CharacterSet(String codePage, String encoding, String name, String path) {
+        if (name.length() > MAX_NAME_LEN) {
+            String msg = "Character set name '" + name + "' must be a maximum of "
+                + MAX_NAME_LEN + " characters";
             log.error("Constructor:: " + msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (name.length() < 8) {
-            this.name = StringUtils.rpad(name, ' ', 8);
+        if (name.length() < MAX_NAME_LEN) {
+            this.name = StringUtils.rpad(name, ' ', MAX_NAME_LEN);
         } else {
             this.name = name;
         }
-
         this.codePage = codePage;
         this.encoding = encoding;
         this.path = path;
+
         this.characterSetOrientations = new java.util.HashMap(4);
     }
 
@@ -121,7 +127,7 @@ public class CharacterSet {
      * a character rotation other than 0, ascender height loses its
      * meaning when the character is lying on its side or is upside down
      * with respect to normal viewing orientation. For the general case,
-     * Ascender Height is the character�s most positive y-axis value.
+     * Ascender Height is the characters most positive y-axis value.
      * For bounded character boxes, for a given character having an
      * ascender, ascender height and baseline offset are equal.
      *
@@ -157,9 +163,9 @@ public class CharacterSet {
     }
 
     /**
-     * The first character in the character set
+     * Returns the first character in the character set
      *
-     * @return the first character
+     * @return the first character in the character set
      */
     public int getFirstChar() {
         load();
@@ -169,7 +175,7 @@ public class CharacterSet {
     /**
      * Returns the last character in the character set
      *
-     * @return the last character
+     * @return the last character in the character set
      */
     public int getLastChar() {
         load();
@@ -197,6 +203,7 @@ public class CharacterSet {
 
     /**
      * XHeight refers to the height of the lower case letters above the baseline.
+     *
      * @return the typical height of characters
      */
     public int getXHeight() {
@@ -211,9 +218,9 @@ public class CharacterSet {
      * @param character the character from which the width will be calculated
      * @return the width of the character
      */
-    public int width(int character) {
+    public int getWidth(int character) {
         load();
-        return getCharacterSetOrientation().width(character);
+        return getCharacterSetOrientation().getWidth(character);
     }
 
     /**
@@ -223,24 +230,30 @@ public class CharacterSet {
     private void load() {
         if (!isMetricsLoaded) {
             AFPFontReader afpFontReader = new AFPFontReader();
-            afpFontReader.loadCharacterSetMetric(this);
-            isMetricsLoaded = true;
+            try {
+                afpFontReader.loadCharacterSetMetric(this);
+                isMetricsLoaded = true;
+            } catch (IOException e) {
+                String msg = "Failed to load the character set metrics for code page " + codePage;
+                log.error(msg);
+                throw new RuntimeException(e.getMessage());
+            }
         }
     }
 
     /**
      * Returns the AFP character set identifier
      *
-     * @return String
+     * @return the AFP character set identifier
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Returns the AFP character set identifier
+     * Returns the AFP character set identifier as a byte array
      *
-     * @return the AFP character set identifier
+     * @return the AFP character set identifier as a byte array
      */
     public byte[] getNameBytes() {
         byte[] nameBytes = null;
@@ -249,8 +262,7 @@ public class CharacterSet {
         } catch (UnsupportedEncodingException usee) {
             nameBytes = name.getBytes();
             log.warn(
-                "UnsupportedEncodingException translating the name "
-                + name);
+                "UnsupportedEncodingException translating the name " + name);
         }
         return nameBytes;
     }
@@ -281,16 +293,14 @@ public class CharacterSet {
      * implementation (whenever FOP implement the mechanism). This is also
      * the case for landscape prints which use an orientation of 270 degrees,
      * in 99.9% of cases the font metrics will be the same as the 0 degrees
-     * therefore the implementation currely will always use 0 degrees.
+     * therefore the implementation currently will always use 0 degrees.
      *
      * @return characterSetOrentation The current orientation metrics.
      */
     private CharacterSetOrientation getCharacterSetOrientation() {
-
         CharacterSetOrientation c
             = (CharacterSetOrientation) characterSetOrientations.get(currentOrientation);
         return c;
-
     }
 
     /**

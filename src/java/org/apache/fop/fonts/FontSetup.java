@@ -27,7 +27,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.CourierBold;
 import org.apache.fop.fonts.base14.CourierBoldOblique;
@@ -202,7 +201,7 @@ public class FontSetup {
 
         if (resolver == null) {
             //Ensure that we have minimal font resolution capabilities
-            resolver = createMinimalFontResolver1();
+            resolver = createMinimalFontResolver();
         }
 
         String internalName = null;
@@ -225,7 +224,7 @@ public class FontSetup {
     }
 
     /** @return a new FontResolver to be used by the font subsystem */
-    public static FontResolver createMinimalFontResolver1() {
+    public static FontResolver createMinimalFontResolver() {
         return new FontResolver() {
 
             /** {@inheritDoc} */

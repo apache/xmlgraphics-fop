@@ -136,7 +136,7 @@ public class OutlineFont extends AFPFont {
      * @return the width of the character for the specified point size
      */
     public int getWidth(int character, int size) {
-        return charSet.width(character) / 1000 * size;
+        return charSet.getWidth(character) / 1000 * size;
     }
 
     /**

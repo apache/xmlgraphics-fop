@@ -58,14 +58,14 @@ public class StructuredFieldReader {
      * parameter (this must be a valid MO:DCA structured field.
      * @param identifier the three byte identifier
      * @throws IOException if an I/O exception occurred
-     * @return the next structured field
+     * @return the next structured field or null when there are no more
      */
     public byte[] getNext(byte[] identifier) throws IOException {
 
         int bufferPointer = 0;
         byte[] bufferData = new byte[identifier.length + 2];
         for (int x = 0; x < identifier.length; x++) {
-            bufferData[x] = (byte) 0;
+            bufferData[x] = 0x00;
         }
 
         int c;
@@ -128,7 +128,6 @@ public class StructuredFieldReader {
 
         }
 
-        return new byte[] {
-        };
+        return null;
     }
 }
