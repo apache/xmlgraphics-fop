@@ -195,7 +195,7 @@ public class RasterFont extends AFPFont {
      * @return the width for the given point size
      */
     public int getWidth(int character, int size) {
-        return getCharacterSet(size).width(character);
+        return getCharacterSet(size).getWidth(character);
     }
 
     /**

@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.afp.fonts;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -217,9 +218,9 @@ public class CharacterSet {
      * @param character the character from which the width will be calculated
      * @return the width of the character
      */
-    public int width(int character) {
+    public int getWidth(int character) {
         load();
-        return getCharacterSetOrientation().width(character);
+        return getCharacterSetOrientation().getWidth(character);
     }
 
     /**
@@ -229,8 +230,14 @@ public class CharacterSet {
     private void load() {
         if (!isMetricsLoaded) {
             AFPFontReader afpFontReader = new AFPFontReader();
-            afpFontReader.loadCharacterSetMetric(this);
-            isMetricsLoaded = true;
+            try {
+                afpFontReader.loadCharacterSetMetric(this);
+                isMetricsLoaded = true;
+            } catch (IOException e) {
+                String msg = "Failed to load the character set metrics for code page " + codePage;
+                log.error(msg);
+                throw new RuntimeException(e.getMessage());
+            }
         }
     }
 
