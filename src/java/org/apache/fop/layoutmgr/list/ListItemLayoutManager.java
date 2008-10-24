@@ -26,6 +26,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
@@ -537,14 +538,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             label.addAreas(labelIter, lc);
         }
 
-        // reset the area bpd after adding the label areas and before adding the body areas
-        int savedBPD = 0;
-        if (labelFirstIndex <= labelLastIndex
-            && bodyFirstIndex <= bodyLastIndex) {
-            savedBPD = curBlockArea.getBPD();
-            curBlockArea.setBPD(0);
-        }
-
         // add body areas
         if (bodyFirstIndex <= bodyLastIndex) {
             KnuthPossPosIter bodyIter = new KnuthPossPosIter(bodyList,
@@ -559,9 +552,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         }
 
         // after adding body areas, set the maximum area bpd
-        if (curBlockArea.getBPD() < savedBPD) {
-            curBlockArea.setBPD(savedBPD);
+        int childCount = curBlockArea.getChildAreas().size();
+        assert childCount >= 1 && childCount <= 2;
+        int itemBPD = ((Block)curBlockArea.getChildAreas().get(0)).getAllocBPD();
+        if (childCount == 2) {
+            itemBPD = Math.max(itemBPD, ((Block)curBlockArea.getChildAreas().get(1)).getAllocBPD());
         }
+        curBlockArea.setBPD(itemBPD);
 
         addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
 

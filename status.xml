@@ -53,6 +53,10 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="JM" type="fix">
+        Fixed a problem where the BPD or a block area could be wrong if there is a nested,
+        absolutely positioned area (for example a block-container).
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="40798">
         Bugzilla 40798: A conditional-page-master-reference with page-position="last" qualifies
         for a first page, if it is also the last. Additionally: also added support for
