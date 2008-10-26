@@ -53,6 +53,11 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AD" type="add" fixes-bug="45113" due-to="Alexander Stamenov">
+        Added PDF /Launch action: references to URIs using the file:// protocol will now generate
+        a /Launch action as opposed to a more general /URI (which doesn't yield the expected result
+        for this protocol).
+      </action>
       <action context="Layout" dev="JM" type="fix">
         Fixed a problem where the BPD or a block area could be wrong if there is a nested,
         absolutely positioned area (for example a block-container).
