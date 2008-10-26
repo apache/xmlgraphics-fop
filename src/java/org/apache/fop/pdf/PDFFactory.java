@@ -1011,6 +1011,10 @@ public class PDFFactory {
         // HTTP URL?
         if (targetLo.startsWith("http://")) {
             return new PDFUri(target);
+        // Non PDF files. Try to /Launch them.
+        } else if (targetLo.startsWith("file://")) {
+            target = target.substring("file://".length());
+            return getLaunchAction(target);
         // Bare PDF file name?
         } else if (targetLo.endsWith(".pdf")) {
             return getGoToPDFAction(target, null, -1, newWindow);
@@ -1102,6 +1106,37 @@ public class PDFFactory {
             remote = oldremote;
         }
         return remote;
+    }
+
+    /**
+     * Creates and returns a launch pdf document action using
+     * <code>file</code> to create a file spcifiaciton for
+     * the document/file to be opened with an external application.
+     *
+     * @param file the pdf file name
+     * @return the pdf launch object
+     */
+    private PDFLaunch getLaunchAction(String file) {
+        getDocument().getProfile().verifyActionAllowed();
+
+        PDFFileSpec fileSpec = new PDFFileSpec(file);
+        PDFFileSpec oldSpec = getDocument().findFileSpec(fileSpec);
+
+        if (oldSpec == null) {
+            getDocument().registerObject(fileSpec);
+        } else {
+            fileSpec = oldSpec;
+        }
+        PDFLaunch launch = new PDFLaunch(fileSpec);
+        PDFLaunch oldLaunch = getDocument().findLaunch(launch);
+
+        if (oldLaunch == null) {
+            getDocument().registerObject(launch);
+        } else {
+            launch = oldLaunch;
+        }
+
+        return launch;
     }
 
     /**

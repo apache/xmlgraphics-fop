@@ -224,6 +224,11 @@ public class PDFDocument {
     protected List gotos = new java.util.ArrayList();
 
     /**
+     * List of PDFLaunch objects.
+     */
+    protected List launches = new java.util.ArrayList();
+
+    /**
      * The PDFDests object for the name dictionary.
      * Note: This object is not a list.
      */
@@ -486,6 +491,9 @@ public class PDFDocument {
         if (obj instanceof PDFPage) {
             this.pages.notifyKidRegistered((PDFPage)obj);
         }
+        if (obj instanceof PDFLaunch) {
+            this.launches.add(obj);
+        }
         if (obj instanceof PDFLink) {
             this.links.add(obj);
         }
@@ -657,6 +665,15 @@ public class PDFDocument {
     }
 
     /**
+     * Finds a launch.
+     * @param compare reference object to use as search template
+     * @return the launch if found, null otherwise
+     */
+    protected PDFLaunch findLaunch(PDFLaunch compare) {
+        return (PDFLaunch) findPDFObject(launches, compare);
+    }
+
+    /**
      * Looks for an existing GState to use
      * @param wanted requested features
      * @param current currently active features
@@ -703,7 +720,6 @@ public class PDFDocument {
      */
     public void setColorSpace(int theColorspace) {
         this.colorspace.setColorSpace(theColorspace);
-        return;
     }
 
     /**
@@ -1019,12 +1035,6 @@ public class PDFDocument {
           by the table's length */
         this.position += outputXref(stream);
 
-        // Determine existance of encryption dictionary
-        String encryptEntry = "";
-        if (this.encryption != null) {
-            encryptEntry = this.encryption.getTrailerEntry();
-        }
-
         /* construct the trailer */
         String pdf =
             "trailer\n"
@@ -1037,10 +1047,13 @@ public class PDFDocument {
                 + "\n"
                 + "/Info "
                 + this.info.referencePDF()
-                + "\n"
-                + getIDEntry()
-                + "\n"
-                + encryptEntry
+                + "\n";
+        if (this.encryption != null) {
+            pdf += this.encryption.getTrailerEntry();
+        } else {
+            pdf += getIDEntry();
+        }
+            pdf += "\n"
                 + ">>\n"
                 + "startxref\n"
                 + this.xref
