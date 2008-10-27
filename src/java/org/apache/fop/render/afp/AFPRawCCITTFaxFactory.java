@@ -21,6 +21,10 @@ package org.apache.fop.render.afp;
 
 import java.io.IOException;
 
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPImageObjectInfo;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPState;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 
 /**
@@ -38,10 +42,10 @@ public class AFPRawCCITTFaxFactory extends AFPDataObjectInfoFactory {
     }
 
     /** {@inheritDoc} */
-    public AFPDataObjectInfo create(AFPImageInfo afpImageInfo) throws IOException {
-        AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)super.create(afpImageInfo);
+    public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
+        AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)super.create(rendererImageInfo);
 
-        ImageRawCCITTFax ccitt = (ImageRawCCITTFax) afpImageInfo.img;
+        ImageRawCCITTFax ccitt = (ImageRawCCITTFax) rendererImageInfo.img;
         imageObjectInfo.setCompression(ccitt.getCompression());
 
         AFPObjectAreaInfo objectAreaInfo = imageObjectInfo.getObjectAreaInfo();

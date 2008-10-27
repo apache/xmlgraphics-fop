@@ -24,6 +24,11 @@ import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.fop.afp.fonts.AFPFontInfo;
+import org.apache.fop.afp.fonts.CharacterSet;
+import org.apache.fop.afp.fonts.FopCharacterSet;
+import org.apache.fop.afp.fonts.OutlineFont;
+import org.apache.fop.afp.fonts.RasterFont;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontTriplet;
@@ -31,11 +36,6 @@ import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.afp.fonts.AFPFontInfo;
-import org.apache.fop.render.afp.fonts.CharacterSet;
-import org.apache.fop.render.afp.fonts.FopCharacterSet;
-import org.apache.fop.render.afp.fonts.OutlineFont;
-import org.apache.fop.render.afp.fonts.RasterFont;
 import org.apache.fop.util.LogUtil;
 
 /**

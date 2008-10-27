@@ -22,6 +22,7 @@ package org.apache.fop.render.afp;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.fop.afp.AFPState;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;

@@ -24,6 +24,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.fop.afp.AFPAbstractGraphicsObjectPainter;
+import org.apache.fop.afp.AFPGraphics2D;
 
 /**
  * Paints SVG as a GOCA Graphics Object using Batik

@@ -1,0 +1,303 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* $Id$ */
+
+package org.apache.fop.afp.modca;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
+import org.apache.fop.afp.modca.triplets.MeasurementUnitsTriplet;
+import org.apache.fop.afp.modca.triplets.ObjectAreaSizeTriplet;
+import org.apache.fop.afp.util.BinaryUtils;
+
+/**
+ * An Include Object structured field references an object on a page or overlay.
+ * It optionally contains parameters that identify the object and that specify
+ * presentation parameters such as object position, size, orientation, mapping,
+ * and default color.
+ * <p>
+ * Where the presentation parameters conflict with parameters specified in the
+ * object's environment group (OEG), the parameters in the Include Object
+ * structured field override. If the referenced object is a page segment, the
+ * IOB parameters override the corresponding environment group parameters on all
+ * data objects in the page segment.
+ * </p>
+ */
+public class IncludeObject extends AbstractNamedAFPObject {
+
+    /** the object referenced is of type page segment */
+    public static final byte TYPE_PAGE_SEGMENT = (byte)0x5F;
+
+    /** the object referenced is of type other */
+    public static final byte TYPE_OTHER = (byte)0x92;
+
+    /** the object referenced is of type graphic */
+    public static final byte TYPE_GRAPHIC = (byte)0xBB;
+
+    /** the object referenced is of type barcode */
+    public static final byte TYPE_BARCODE = (byte)0xEB;
+
+    /** the object referenced is of type image */
+    public static final byte TYPE_IMAGE = (byte)0xFB;
+
+
+    /** the object type referenced (default is other) */
+    private byte objectType = TYPE_OTHER;
+
+    /** the X-axis origin of the object area */
+    private int xoaOset = 0;
+
+    /** the Y-axis origin of the object area */
+    private int yoaOset = 0;
+
+    /** the orientation of the referenced object */
+    private int oaOrent = 0;
+
+    /** the X-axis origin defined in the object */
+    private int xocaOset = -1;
+
+    /** the Y-axis origin defined in the object */
+    private int yocaOset = -1;
+
+    /**
+     * Constructor for the include object with the specified name, the name must
+     * be a fixed length of eight characters and is the name of the referenced
+     * object.
+     *
+     * @param name the name of this include object
+     */
+    public IncludeObject(String name) {
+        super(name);
+    }
+
+    /**
+     * Sets the orientation to use for the Include Object.
+     *
+     * @param orientation
+     *            The orientation (0,90, 180, 270)
+     */
+    public void setObjectAreaOrientation(int orientation) {
+        if (orientation == 0 || orientation == 90 || orientation == 180
+            || orientation == 270) {
+            this.oaOrent = orientation;
+        } else {
+            throw new IllegalArgumentException(
+                "The orientation must be one of the values 0, 90, 180, 270");
+        }
+    }
+
+    /**
+     * Sets the x and y offset to the origin in the object area
+     *
+     * @param x the X-axis origin of the object area
+     * @param y the Y-axis origin of the object area
+     */
+    public void setObjectAreaOffset(int x, int y) {
+        this.xoaOset = x;
+        this.yoaOset = y;
+    }
+
+    /**
+     * Sets the x and y offset of the content area to the object area
+     * used in conjunction with the {@link MappingOptionTriplet.POSITION} and
+     * {@link MappingOptionTriplet.POSITION_AND_TRIM}.
+     *
+     * @param x the X-axis origin defined in the object
+     * @param y the Y-axis origin defined in the object
+     */
+    public void setContentAreaOffset(int x, int y) {
+        this.xocaOset = x;
+        this.yocaOset = y;
+    }
+
+    /**
+     * Sets the data object type
+     *
+     * @param type the data object type
+     */
+    public void setObjectType(byte type) {
+        this.objectType = type;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = new byte[36];
+        super.copySF(data, Type.INCLUDE, Category.DATA_RESOURCE);
+
+        // Set the total record length
+        int tripletDataLength = getTripletDataLength();
+        byte[] len = BinaryUtils.convert(35 + tripletDataLength, 2); //Ignore first byte
+        data[1] = len[0];
+        data[2] = len[1];
+
+        data[17] = 0x00; // reserved
+        data[18] = objectType;
+
+        //XoaOset (object area)
+        if (xoaOset > -1) {
+            byte[] x = BinaryUtils.convert(xoaOset, 3);
+            data[19] = x[0];
+            data[20] = x[1];
+            data[21] = x[2];
+        } else {
+            data[19] = (byte)0xFF;
+            data[20] = (byte)0xFF;
+            data[21] = (byte)0xFF;
+        }
+
+        // YoaOset (object area)
+        if (yoaOset > -1) {
+            byte[] y = BinaryUtils.convert(yoaOset, 3);
+            data[22] = y[0];
+            data[23] = y[1];
+            data[24] = y[2];
+        } else {
+            data[22] = (byte)0xFF;
+            data[23] = (byte)0xFF;
+            data[24] = (byte)0xFF;
+        }
+
+        // XoaOrent/YoaOrent
+        switch (oaOrent) {
+            case -1: // use x/y axis orientation defined in object
+                data[25] = (byte)0xFF; // x axis rotation
+                data[26] = (byte)0xFF; //
+                data[27] = (byte)0xFF; // y axis rotation
+                data[28] = (byte)0xFF;
+                break;
+            case 90:
+                data[25] = 0x2D;
+                data[26] = 0x00;
+                data[27] = 0x5A;
+                data[28] = 0x00;
+                break;
+            case 180:
+                data[25] = 0x5A;
+                data[25] = 0x00;
+                data[27] = (byte)0x87;
+                data[28] = 0x00;
+                break;
+            case 270:
+                data[25] = (byte)0x87;
+                data[26] = 0x00;
+                data[27] = 0x00;
+                data[28] = 0x00;
+                break;
+            default: // 0 degrees
+                data[25] = 0x00;
+                data[26] = 0x00;
+                data[27] = 0x2D;
+                data[28] = 0x00;
+                break;
+        }
+
+        // XocaOset (object content)
+        if (xocaOset > -1) {
+            byte[] x = BinaryUtils.convert(xocaOset, 3);
+            data[29] = x[0];
+            data[30] = x[1];
+            data[31] = x[2];
+        } else {
+            data[29] = (byte)0xFF;
+            data[30] = (byte)0xFF;
+            data[31] = (byte)0xFF;
+        }
+
+        // YocaOset (object content)
+        if (yocaOset > -1) {
+            byte[] y = BinaryUtils.convert(yocaOset, 3);
+            data[32] = y[0];
+            data[33] = y[1];
+            data[34] = y[2];
+        } else {
+            data[32] = (byte)0xFF;
+            data[33] = (byte)0xFF;
+            data[34] = (byte)0xFF;
+        }
+        // RefCSys (Reference coordinate system)
+        data[35] = 0x01; // Page or overlay coordinate system
+
+        // Write structured field data
+        os.write(data);
+
+        // Write triplet for FQN internal/external object reference
+        if (tripletData != null) {
+            os.write(tripletData);
+        }
+    }
+
+    private String getObjectTypeName() {
+        String objectTypeName = null;
+        if (objectType == TYPE_PAGE_SEGMENT) {
+            objectTypeName = "page segment";
+        } else if (objectType == TYPE_OTHER) {
+            objectTypeName = "other";
+        } else if (objectType == TYPE_GRAPHIC) {
+            objectTypeName = "graphic";
+        } else if (objectType == TYPE_BARCODE) {
+            objectTypeName = "barcode";
+        } else if (objectType == TYPE_IMAGE) {
+            objectTypeName = "image";
+        }
+        return objectTypeName;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "IncludeObject{name=" + this.getName()
+            + ", objectType=" + getObjectTypeName()
+            + ", xoaOset=" + xoaOset
+            + ", yoaOset=" + yoaOset
+            + ", oaOrent" + oaOrent
+            + ", xocaOset=" + xocaOset
+            + ", yocaOset=" + yocaOset
+            + "}";
+    }
+
+    /**
+     * Sets the mapping option
+     *
+     * @param optionValue the mapping option value
+     */
+    public void setMappingOption(byte optionValue) {
+        addTriplet(new MappingOptionTriplet(optionValue));
+    }
+
+    /**
+     * Sets the extent of an object area in the X and Y directions
+     *
+     * @param x the x direction extent
+     * @param y the y direction extent
+     */
+    public void setObjectAreaSize(int x, int y) {
+        addTriplet(new ObjectAreaSizeTriplet(x, y));
+    }
+
+    /**
+     * Sets the measurement units used to specify the units of measure
+     *
+     * @param xRes units per base on the x-axis
+     * @param yRes units per base on the y-axis
+     */
+    public void setMeasurementUnits(int xRes, int yRes) {
+        addTriplet(new MeasurementUnitsTriplet(xRes, xRes));
+    }
+
+}

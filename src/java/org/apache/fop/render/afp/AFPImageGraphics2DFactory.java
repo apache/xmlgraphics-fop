@@ -26,7 +26,16 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPGraphics2D;
+import org.apache.fop.afp.AFPGraphicsObjectInfo;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceLevel;
+import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPTextHandler;
 import org.apache.fop.image.loader.batik.GenericGraphics2DImagePainter;
+import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -54,9 +63,9 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
     private static final AFPResourceLevel inlineResourceLevel = new AFPResourceLevel(AFPResourceLevel.INLINE);
 
     /** {@inheritDoc} */
-    public AFPDataObjectInfo create(AFPImageInfo afpImageInfo) throws IOException {
+    public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPGraphicsObjectInfo graphicsObjectInfo
-            = (AFPGraphicsObjectInfo)super.create(afpImageInfo);
+            = (AFPGraphicsObjectInfo)super.create(rendererImageInfo);
 
         AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();
         // level not explicitly set/changed so default to inline for GOCA graphic objects
@@ -69,13 +78,17 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         graphicsObjectInfo.setMimeType(MimeConstants.MIME_AFP_GOCA);
 
         // set graphics 2d
-        AFPGraphics2DAdapter g2dAdapter = afpImageInfo.g2dAdapter;
+        AFPGraphics2DAdapter g2dAdapter = rendererImageInfo.getGraphics2DAdapter();
         AFPGraphics2D g2d = g2dAdapter.getGraphics2D();
         graphicsObjectInfo.setGraphics2D(g2d);
 
-        // set afp info
-        AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(afpImageInfo.rendererContext);
-        g2d.setAFPInfo(afpInfo);
+        // set resource, state and font info
+        RendererContext rendererContext = rendererImageInfo.getRendererContext();
+        AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(rendererContext);
+        g2d.setResourceManager(afpInfo.getResourceManager());
+        g2d.setResourceInfo(afpInfo.getResourceInfo());
+        g2d.setState(afpInfo.getState());
+        g2d.setFontInfo(afpInfo.getFontInfo());
 
         // set to default graphic context
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
@@ -89,7 +102,7 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
 
         // controls whether text painted by Batik is generated using text or path operations
         SVGUserAgent svgUserAgent
-            = new SVGUserAgent(afpImageInfo.rendererContext.getUserAgent(), new AffineTransform());
+            = new SVGUserAgent(rendererContext.getUserAgent(), new AffineTransform());
         BridgeContext ctx = new BridgeContext(svgUserAgent);
         if (!afpInfo.strokeText()) {
             AFPTextHandler textHandler = new AFPTextHandler(g2d);
@@ -101,7 +114,7 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         }
 
         // set painter
-        ImageGraphics2D imageG2D = (ImageGraphics2D)afpImageInfo.img;
+        ImageGraphics2D imageG2D = (ImageGraphics2D)rendererImageInfo.getImage();
         GenericGraphics2DImagePainter painter
             = (GenericGraphics2DImagePainter)imageG2D.getGraphics2DImagePainter();
         painter = new AFPGraphics2DImagePainter(painter);

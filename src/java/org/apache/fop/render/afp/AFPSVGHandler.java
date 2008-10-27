@@ -32,6 +32,15 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.fop.afp.AFPForeignAttributeReader;
+import org.apache.fop.afp.AFPGraphics2D;
+import org.apache.fop.afp.AFPGraphicsObjectInfo;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPTextHandler;
+import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
@@ -109,7 +118,6 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
     protected void renderSVGDocument(final RendererContext context,
             final Document doc) throws IOException {
 
-        AFPRenderer renderer = (AFPRenderer)context.getRenderer();
         AFPInfo afpInfo = getAFPInfo(context);
 
         // fallback paint as bitmap
@@ -125,7 +133,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         }
 
         String uri = ((AbstractDocument)doc).getDocumentURI();
-        AFPState state = (AFPState)renderer.getState();
+        AFPState state = afpInfo.getState();
         state.setImageUri(uri);
 
         // set the data object parameters
@@ -160,8 +168,12 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         // Configure Graphics2D implementation
         final boolean textAsShapes = false;
         AFPGraphics2D g2d = new AFPGraphics2D(textAsShapes);
+
+        g2d.setResourceManager(afpInfo.getResourceManager());
+        g2d.setResourceInfo(afpInfo.getResourceInfo());
+        g2d.setState(afpInfo.getState());
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
-        g2d.setAFPInfo(afpInfo);
+        g2d.setFontInfo(afpInfo.getFontInfo());
 
         // Configure GraphicsObjectPainter with the Graphics2D implementation
         AFPBatikGraphicsObjectPainter painter = new AFPBatikGraphicsObjectPainter(g2d);
@@ -172,9 +184,9 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
             = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
         BridgeContext ctx = new BridgeContext(svgUserAgent);
         if (!afpInfo.strokeText()) {
-            AFPTextHandler afpTextHandler = new AFPTextHandler(g2d);
-            g2d.setCustomTextHandler(afpTextHandler);
-            AFPTextPainter textPainter = new AFPTextPainter(afpTextHandler);
+            AFPTextHandler textHandler = new AFPTextHandler(g2d);
+            g2d.setCustomTextHandler(textHandler);
+            AFPTextPainter textPainter = new AFPTextPainter(textHandler);
             ctx.setTextPainter(textPainter);
             AFPTextElementBridge tBridge = new AFPTextElementBridge(textPainter);
             ctx.putBridge(tBridge);

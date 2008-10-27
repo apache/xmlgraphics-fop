@@ -23,9 +23,13 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPImageObjectInfo;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPState;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
+import org.apache.xmlgraphics.util.MimeConstants;
 
 /**
  * A buffered image data object info factory
@@ -42,9 +46,9 @@ public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
     }
 
     /** {@inheritDoc} */
-    public AFPDataObjectInfo create(AFPImageInfo afpImageInfo) throws IOException {
+    public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPImageObjectInfo imageObjectInfo
-            = (AFPImageObjectInfo)super.create(afpImageInfo);
+            = (AFPImageObjectInfo)super.create(rendererImageInfo);
 
         imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
 
@@ -53,7 +57,7 @@ public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
         objectAreaInfo.setWidthRes(resolution);
         objectAreaInfo.setHeightRes(resolution);
 
-        ImageRendered imageRendered = (ImageRendered) afpImageInfo.img;
+        ImageRendered imageRendered = (ImageRendered) rendererImageInfo.img;
         RenderedImage renderedImage = imageRendered.getRenderedImage();
 
         int dataHeight = renderedImage.getHeight();

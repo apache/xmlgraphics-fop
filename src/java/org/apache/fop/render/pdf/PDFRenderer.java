@@ -50,6 +50,7 @@ import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
+import org.apache.fop.AbstractState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -112,7 +113,6 @@ import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
-import org.apache.fop.render.AbstractState;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.CharUtilities;

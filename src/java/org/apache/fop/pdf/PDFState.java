@@ -25,7 +25,7 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 
-import org.apache.fop.render.AbstractState;
+import org.apache.fop.AbstractState;
 
 /**
  * This keeps information about the current state when writing to pdf.
@@ -44,7 +44,7 @@ import org.apache.fop.render.AbstractState;
  * It is impossible to optimise the result without analysing the all
  * the possible combinations after completing.
  */
-public class PDFState extends org.apache.fop.render.AbstractState {
+public class PDFState extends org.apache.fop.AbstractState {
 
     private static final long serialVersionUID = 5384726143906371279L;
 
@@ -165,7 +165,7 @@ public class PDFState extends org.apache.fop.render.AbstractState {
         return new PDFState();
     }
 
-    private class PDFData extends org.apache.fop.render.AbstractState.AbstractData {
+    private class PDFData extends org.apache.fop.AbstractState.AbstractData {
 
         private static final long serialVersionUID = 3527950647293177764L;
 

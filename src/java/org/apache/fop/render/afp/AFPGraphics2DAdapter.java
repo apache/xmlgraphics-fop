@@ -25,6 +25,10 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import org.apache.fop.afp.AFPGraphics2D;
+import org.apache.fop.afp.AFPGraphicsObjectInfo;
+import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.AFPState;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
@@ -56,7 +60,7 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
      *
      * @return the AFP graphics 2D implementation
      */
-    protected AFPGraphics2D getGraphics2D() {
+    public AFPGraphics2D getGraphics2D() {
         return g2d;
     }
 
@@ -70,11 +74,12 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
 
         AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(context);
-        g2d.setAFPInfo(afpInfo);
+        g2d.setResourceManager(afpInfo.getResourceManager());
+        g2d.setResourceInfo(afpInfo.getResourceInfo());
+        g2d.setState(afpInfo.getState());
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
 //        // scale/convert to afp units
-        AFPState state = afpInfo.getState();
 //        AFPUnitConverter unitConv = state.getUnitConverter();
 //        float scale = unitConv.mpt2units(1);
 
@@ -96,6 +101,7 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
             RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
             BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
 
+            AFPState state = afpInfo.getState();
             AffineTransform trans = state.getData().getTransform();
             float scale = AFPRenderer.NORMAL_AFP_RESOLUTION
                             / context.getUserAgent().getTargetResolution();

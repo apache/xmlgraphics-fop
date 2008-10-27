@@ -33,6 +33,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.fop.AbstractState;
+import org.apache.fop.afp.AFPBorderPainter;
+import org.apache.fop.afp.AFPConstants;
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPPageFonts;
+import org.apache.fop.afp.AFPRectanglePainter;
+import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPTextDataInfo;
+import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.BorderPaintInfo;
+import org.apache.fop.afp.RectanglePaintInfo;
+import org.apache.fop.afp.fonts.AFPFont;
+import org.apache.fop.afp.fonts.AFPFontAttributes;
+import org.apache.fop.afp.fonts.AFPFontCollection;
+import org.apache.fop.afp.modca.DataStream;
+import org.apache.fop.afp.modca.PageObject;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -51,15 +68,10 @@ import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
-import org.apache.fop.render.AbstractState;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
-import org.apache.fop.render.afp.fonts.AFPFont;
-import org.apache.fop.render.afp.fonts.AFPFontCollection;
-import org.apache.fop.render.afp.modca.DataStream;
-import org.apache.fop.render.afp.modca.PageObject;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -423,8 +435,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 Point origin = new Point(currentIPPosition, currentBPPosition);
                 AFPDataObjectInfoFactory factory = dataObjectInfoProvider.getFactory(img);
                 if (factory != null) {
-                    AFPImageInfo afpImageInfo
-                    = new AFPImageInfo(uri, pos, origin, info, img, foreignAttributes);
+                    AFPRendererImageInfo afpImageInfo
+                    = new AFPRendererImageInfo(uri, pos, origin, info, img, foreignAttributes);
                     if (factory instanceof AFPImageGraphics2DFactory) {
                         RendererContext rendererContext = createRendererContext(
                                 x, y, posInt.width, posInt.height, foreignAttributes);

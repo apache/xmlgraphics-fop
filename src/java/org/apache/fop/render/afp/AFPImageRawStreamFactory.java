@@ -22,6 +22,10 @@ package org.apache.fop.render.afp;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPState;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 
 /**
@@ -39,13 +43,14 @@ public class AFPImageRawStreamFactory extends AFPDataObjectInfoFactory {
     }
 
     /** {@inheritDoc} */
-    public AFPDataObjectInfo create(AFPImageInfo afpImageInfo) throws IOException {
-        AFPDataObjectInfo dataObjectInfo = super.create(afpImageInfo);
-        String mimeType = afpImageInfo.info.getMimeType();
+    public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
+        AFPDataObjectInfo dataObjectInfo = super.create(rendererImageInfo);
+        ImageInfo imageInfo = rendererImageInfo.getImageInfo();
+        String mimeType = imageInfo.getMimeType();
         if (mimeType != null) {
             dataObjectInfo.setMimeType(mimeType);
         }
-        ImageRawStream rawStream = (ImageRawStream) afpImageInfo.img;
+        ImageRawStream rawStream = (ImageRawStream) rendererImageInfo.getImage();
         int resolution = state.getResolution();
 
         AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();

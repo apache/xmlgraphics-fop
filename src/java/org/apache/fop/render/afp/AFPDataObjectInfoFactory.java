@@ -19,7 +19,17 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPForeignAttributeReader;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPUnitConverter;
+
 
 /**
  * Abstract image configurator
@@ -47,33 +57,35 @@ public abstract class AFPDataObjectInfoFactory {
     /**
      * Configures the data object info
      *
-     * @param afpImageInfo the afp image info
+     * @param rendererImageInfo the afp image info
      * @return the data object info
      * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
-    public AFPDataObjectInfo create(AFPImageInfo afpImageInfo) throws IOException {
+    public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
 
         // set resource information
         AFPResourceInfo resourceInfo
-        = foreignAttributeReader.getResourceInfo(afpImageInfo.foreignAttributes);
-        resourceInfo.setUri(afpImageInfo.uri);
+        = foreignAttributeReader.getResourceInfo(rendererImageInfo.getForeignAttributes());
+        resourceInfo.setUri(rendererImageInfo.getURI());
         dataObjectInfo.setResourceInfo(resourceInfo);
 
         // set object area
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
 
-        float srcX = afpImageInfo.origin.x + (float)afpImageInfo.pos.getX();
-        float srcY = afpImageInfo.origin.y + (float)afpImageInfo.pos.getY();
+        Point origin = rendererImageInfo.getOrigin();
+        Rectangle2D position = rendererImageInfo.getPosition();
+        float srcX = origin.x + (float)position.getX();
+        float srcY = origin.y + (float)position.getY();
         AFPUnitConverter unitConv = state.getUnitConverter();
         int[] coords = unitConv.mpts2units(new float[] {srcX, srcY});
         objectAreaInfo.setX(coords[X]);
         objectAreaInfo.setY(coords[Y]);
 
-        int width = Math.round(unitConv.mpt2units((float)afpImageInfo.pos.getWidth()));
+        int width = Math.round(unitConv.mpt2units((float)position.getWidth()));
         objectAreaInfo.setWidth(width);
 
-        int height = Math.round(unitConv.mpt2units((float)afpImageInfo.pos.getHeight()));
+        int height = Math.round(unitConv.mpt2units((float)position.getHeight()));
         objectAreaInfo.setHeight(height);
 
         int resolution = state.getResolution();

@@ -21,6 +21,14 @@ package org.apache.fop.render.afp;
 
 import java.io.IOException;
 
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPForeignAttributeReader;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPUnitConverter;
+
+
 /**
  * Abstract image configurator
  */
@@ -51,7 +59,7 @@ public abstract class AFPAbstractImageFactory {
      * @return the data object info
      * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
-    public AFPDataObjectInfo create(AFPImageInfo afpImageInfo) throws IOException {
+    public AFPDataObjectInfo create(AFPRendererImageInfo afpImageInfo) throws IOException {
         AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
 
         // set resource information
