@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp;
+package org.apache.fop.afp;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
@@ -34,8 +34,6 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.afp.AFPGraphics2D;
-import org.apache.fop.afp.AFPTextHandler;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;

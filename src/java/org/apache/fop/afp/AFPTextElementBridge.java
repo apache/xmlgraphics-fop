@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp;
+package org.apache.fop.afp;
 
 import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.bridge.BridgeContext;
