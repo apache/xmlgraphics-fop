@@ -79,7 +79,7 @@ public class Block extends BlockParent {
      * @param autoHeight increase the height of the block.
      */
     public void addBlock(Block block, boolean autoHeight) {
-        if (autoHeight && allowBPDUpdate) {
+        if (autoHeight && allowBPDUpdate && block.isStacked()) {
             bpd += block.getAllocBPD();
         }
         addChildArea(block);
