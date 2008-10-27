@@ -53,6 +53,19 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AC" importance="high" type="add">
+        AFP Output: An AFPGraphics2D implementation which provides the ability to use Batik to drive the production of  AFP Graphics (GOCA) output from SVG.
+        Added SVG support for AFP (GOCA).
+      </action>
+      <action context="Renderers" dev="AC" importance="high" type="add">
+        AFP Output: Resource group leveling, external streaming and de-duplication of images and graphics using IncludeObject and ResourceGroup.
+      </action>
+      <action context="Renderers" dev="AC" importance="high" type="add">
+        AFP Output: Native image embedding support (e.g. JPEG, GIF, TIFF) using ObjectContainer and a MOD:CA Registry implementation.
+      </action>
+      <action context="Fonts" dev="AC" importance="high" type="fix">
+        AFP Output: More robust AFP font parsing, although it is still in need of some rework in the future.
+      </action>
       <action context="Renderers" dev="AD" type="add" fixes-bug="45113" due-to="Alexander Stamenov">
         Added PDF /Launch action: references to URIs using the file:// protocol will now generate
         a /Launch action as opposed to a more general /URI (which doesn't yield the expected result
@@ -142,13 +155,6 @@
         offer an implementation for addCharacters() should take care to make
         similar modifications in their code !!</em>
       </action>
-      <!-- change reverted, to be added back later
-      <action context="Renderers" dev="AC" importance="high" type="add">
-        Added SVG support for AFP (GOCA).
-      </action>
-      <action context="Renderers" dev="AC" importance="high" type="add">
-        Added de-duplication and externalization support for IOCA and GOCA data resource objects.
-      </action -->
       <action context="Renderers" dev="JM" type="add" fixes-bug="45115" due-to="Martin Edge">
         Added a PCL-specific extension attribute on simple-page-master for controlling
         the simplex/duplex mode.
