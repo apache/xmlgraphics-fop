@@ -331,13 +331,13 @@ it shone in her face.</literallayout>
           the four-line versions are shorter this is possible to add the second space and one line 
           of the third paragraph on the page. Let’s see what are the resulting min-opt-max:</para>
         <literallayout class="monospaced">       5 lines:    4 lines:
-        5           4
-        1+1−1       1+1−1
-        5           4
-        1.5+0−1
-        1
-       ────────    ──────────
-Total:  11+1−1      11.5+1−2</literallayout>
+         5          4
+         1+1−1      1  +1−1
+         5          4
+                    1.5+0−1
+                    1
+       ────────   ──────────
+Total:  11+1−1     11.5+1−2</literallayout>
         <para>The two possibilities are overlapping, and would both fit in a page with a height of 
           12; how to order them? By the total optimum value? By the minimum value? This may be a 
           problem for the merging algorithm.</para>
