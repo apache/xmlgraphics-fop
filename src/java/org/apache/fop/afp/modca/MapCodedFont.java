@@ -46,7 +46,8 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
     /**
      * The collection of map coded fonts (maximum of 254)
      */
-    private final List/*<FontDefinition>*/ fontList = new java.util.ArrayList();
+    private final List/*<FontDefinition>*/ fontList
+        = new java.util.ArrayList/*<FontDefinition>*/();
 
     /**
      * Constructor for the MapCodedFont
@@ -151,22 +152,22 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
     public void addFont(int fontReference, AFPFont font, int size, int orientation)
         throws MaximumSizeExceededException {
 
-        FontDefinition fd = new FontDefinition();
+        FontDefinition fontDefinition = new FontDefinition();
 
-        fd.fontReferenceKey = BinaryUtils.convert(fontReference)[0];
+        fontDefinition.fontReferenceKey = BinaryUtils.convert(fontReference)[0];
 
         switch (orientation) {
             case 90:
-                fd.orientation = 0x2D;
+                fontDefinition.orientation = 0x2D;
                 break;
             case 180:
-                fd.orientation = 0x5A;
+                fontDefinition.orientation = 0x5A;
                 break;
             case 270:
-                fd.orientation = (byte) 0x87;
+                fontDefinition.orientation = (byte) 0x87;
                 break;
             default:
-                fd.orientation = 0x00;
+                fontDefinition.orientation = 0x00;
                 break;
         }
 
@@ -181,21 +182,21 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
                     throw new FontRuntimeException(msg);
                 }
 
-                fd.characterSet = cs.getNameBytes();
+                fontDefinition.characterSet = cs.getNameBytes();
 
-                if (fd.characterSet.length != 8) {
+                if (fontDefinition.characterSet.length != 8) {
                     throw new IllegalArgumentException("The character set "
-                        + new String(fd.characterSet,
+                        + new String(fontDefinition.characterSet,
                         AFPConstants.EBCIDIC_ENCODING)
                         + " must have a fixed length of 8 characters.");
                 }
 
-                fd.codePage = cs.getCodePage().getBytes(
+                fontDefinition.codePage = cs.getCodePage().getBytes(
                     AFPConstants.EBCIDIC_ENCODING);
 
-                if (fd.codePage.length != 8) {
+                if (fontDefinition.codePage.length != 8) {
                     throw new IllegalArgumentException("The code page "
-                        + new String(fd.codePage,
+                        + new String(fontDefinition.codePage,
                         AFPConstants.EBCIDIC_ENCODING)
                         + " must have a fixed length of 8 characters.");
                 }
@@ -203,18 +204,18 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
             } else if (font instanceof OutlineFont) {
                 OutlineFont outline = (OutlineFont) font;
                 CharacterSet cs = outline.getCharacterSet();
-                fd.characterSet = cs.getNameBytes();
+                fontDefinition.characterSet = cs.getNameBytes();
 
                 // There are approximately 72 points to 1 inch or 20 1440ths per point.
 
-                fd.scale = ((size / 1000) * 20);
+                fontDefinition.scale = ((size / 1000) * 20);
 
-                fd.codePage = cs.getCodePage().getBytes(
+                fontDefinition.codePage = cs.getCodePage().getBytes(
                     AFPConstants.EBCIDIC_ENCODING);
 
-                if (fd.codePage.length != 8) {
+                if (fontDefinition.codePage.length != 8) {
                     throw new IllegalArgumentException("The code page "
-                        + new String(fd.codePage,
+                        + new String(fontDefinition.codePage,
                         AFPConstants.EBCIDIC_ENCODING)
                         + " must have a fixed length of 8 characters.");
                 }
@@ -229,7 +230,7 @@ public class MapCodedFont extends AbstractStructuredAFPObject {
                 // Throw an exception if the size is exceeded
                 throw new MaximumSizeExceededException();
             } else {
-                fontList.add(fd);
+                fontList.add(fontDefinition);
             }
 
         } catch (UnsupportedEncodingException ex) {
