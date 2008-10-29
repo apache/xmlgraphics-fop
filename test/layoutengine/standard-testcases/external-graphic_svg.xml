@@ -23,7 +23,8 @@
     </p>
   </info>
   <fo>
-    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="10in" page-height="15in">
           <fo:region-body/>
@@ -46,6 +47,11 @@
           <fo:block text-align="left">SVG external-graphic with an intrinsic size (16ptx16pt)</fo:block>
           <fo:block text-align="left">
             <fo:external-graphic src="../../resources/images/img-w-size.svg"/>EOG
+          </fo:block>
+          <fo:block text-align="left">SVG external-graphic with an intrinsic size and fox:conversion-mode="bitmap"</fo:block>
+          <fo:block text-align="left">
+            <fo:external-graphic src="../../resources/images/img-w-size.svg"
+              fox:conversion-mode="bitmap"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>
