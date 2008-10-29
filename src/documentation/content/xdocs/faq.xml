@@ -426,6 +426,28 @@ public class DefaultErrorListener implements ErrorListener {
 }]]></source>
       </answer>
     </faq>
+    <faq>
+      <question>The following message appears after recently upgrading FOP:
+        "I/O exception while reading font cache (org.apache.fop.fonts.EmbedFontInfo;
+        local class incompatible: stream classdesc serialVersionUID =
+        -9075848379822693399, local class serialVersionUID = 8755432068669997367).
+        Discarding font cache file."</question>
+      <answer>
+        <p>
+          This message is a warning that FOP failed to read from the Font cache. 
+          Which means any Font auto detection or Font directories will be re-scanned. 
+          So this failure doesn't break anything.
+        </p>
+        <p>
+           To avoid the warning you can simply delete the
+           old Font Cache file, which according to [1] lives in ${base}\conf\font.cache.
+           Or you can disable Font Caching altogether using the option "use-cache"
+        </p>
+        <p>
+          [1] http://xmlgraphics.apache.org/fop/0.94/configuration.html#general-elements
+        </p>
+      </answer>
+    </faq>
   </part>
   <part id="part-output">
     <title>Problems with FOP output</title>
