@@ -116,7 +116,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
      */
     protected Graphics2DImagePainter createPainter(
             final ImageXMLDOM svg, final BridgeContext ctx, final GraphicsNode root) {
-        return new GenericGraphics2DImagePainter(svg, ctx, root);
+        return new BatikGraphics2DImagePainter(svg, ctx, root);
     }
 
     /** {@inheritDoc} */

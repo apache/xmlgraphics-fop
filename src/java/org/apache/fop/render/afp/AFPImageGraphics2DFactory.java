@@ -36,7 +36,7 @@ import org.apache.fop.afp.AFPState;
 import org.apache.fop.afp.AFPTextElementBridge;
 import org.apache.fop.afp.AFPTextHandler;
 import org.apache.fop.afp.AFPTextPainter;
-import org.apache.fop.image.loader.batik.GenericGraphics2DImagePainter;
+import org.apache.fop.image.loader.batik.BatikGraphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
@@ -117,8 +117,8 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
 
         // set painter
         ImageGraphics2D imageG2D = (ImageGraphics2D)rendererImageInfo.getImage();
-        GenericGraphics2DImagePainter painter
-            = (GenericGraphics2DImagePainter)imageG2D.getGraphics2DImagePainter();
+        BatikGraphics2DImagePainter painter
+            = (BatikGraphics2DImagePainter)imageG2D.getGraphics2DImagePainter();
         painter = new AFPGraphics2DImagePainter(painter);
         imageG2D.setGraphics2DImagePainter(painter);
         graphicsObjectInfo.setPainter(painter);
@@ -131,13 +131,13 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         return graphicsObjectInfo;
     }
 
-    private class AFPGraphics2DImagePainter extends GenericGraphics2DImagePainter {
+    private class AFPGraphics2DImagePainter extends BatikGraphics2DImagePainter {
         /**
          * Copy constructor
          *
          * @param painter a graphics 2D image painter
          */
-        public AFPGraphics2DImagePainter(GenericGraphics2DImagePainter painter) {
+        public AFPGraphics2DImagePainter(BatikGraphics2DImagePainter painter) {
             super(painter.getImageXMLDOM(), painter.getBridgeContext(), painter.getRoot());
         }
 

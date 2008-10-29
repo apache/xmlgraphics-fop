@@ -12,7 +12,7 @@ import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 /**
  * A generic graphics 2D image painter implementation
  */
-public class GenericGraphics2DImagePainter implements Graphics2DImagePainter {
+public class BatikGraphics2DImagePainter implements Graphics2DImagePainter {
 
     protected final ImageXMLDOM svg;
     protected final BridgeContext ctx;
@@ -25,7 +25,7 @@ public class GenericGraphics2DImagePainter implements Graphics2DImagePainter {
      * @param ctx the bridge context
      * @param root the graphics node root
      */
-    public GenericGraphics2DImagePainter(ImageXMLDOM svg, BridgeContext ctx, GraphicsNode root) {
+    public BatikGraphics2DImagePainter(ImageXMLDOM svg, BridgeContext ctx, GraphicsNode root) {
         this.svg = svg;
         this.ctx = ctx;
         this.root = root;
