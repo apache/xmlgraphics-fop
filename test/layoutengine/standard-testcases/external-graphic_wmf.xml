@@ -23,7 +23,8 @@
     </p>
   </info>
   <fo>
-    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+          xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
           <fo:region-body/>
@@ -33,7 +34,12 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>WMF external-graphic</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/testChart.wmf" content-width="40%"/>EOG
+            <fo:external-graphic src="../../resources/images/testChart.wmf" content-width="25%"/>EOG
+          </fo:block>
+          <fo:block>
+            <!-- the same image but with conversion-mode="bitmap" -->
+            <fo:external-graphic src="../../resources/images/testChart.wmf" content-width="25%"
+              fox:conversion-mode="bitmap"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>
@@ -41,9 +47,12 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="316800" tolerance="10" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
-    <eval expected="316800" tolerance="10" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
-    <eval expected="244800" tolerance="10" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
-    <eval expected="244800" tolerance="10" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
+    <eval expected="198000" tolerance="10" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
+    <eval expected="198000" tolerance="10" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
+    <eval expected="153000" tolerance="10" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
+    <eval expected="153000" tolerance="10" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
+
+    <eval expected="198000" tolerance="10" xpath="//flow/block[3]/lineArea/viewport/@ipda"/>
+    <eval expected="153000" tolerance="10" xpath="//flow/block[3]/lineArea/viewport/@bpda"/>
   </checks>
 </testcase>
