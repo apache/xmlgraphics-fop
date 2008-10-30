@@ -66,7 +66,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     /** logging instance */
     private static Log log = LogFactory.getLog(PCLPainter.class);
 
-    private final boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     private PCLDocumentHandler parent;
 
@@ -173,10 +173,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     /** {@inheritDoc} */
     public void clipRect(Rectangle rect) throws IFException {
         //PCL cannot clip (only HP GL/2 can)
-        /*
-        generator.endTextObject();
-        generator.clipRect(rect);
-        */
+        //If you need clipping support, switch to RenderingMode.BITMAP.
     }
 
     /** {@inheritDoc} */
@@ -203,23 +200,97 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
+    public void drawBorderRect(final Rectangle rect,
+            final BorderProps before, final BorderProps after,
+            final BorderProps start, final BorderProps end) throws IFException {
+        if (getPCLUtil().getRenderingMode() == PCLRenderingMode.SPEED) {
+            super.drawBorderRect(rect, before, after, start, end);
+            return;
+        }
         if (before != null || after != null || start != null || end != null) {
-            /*
-            generator.endTextObject();
-            this.borderPainter.drawBorders(rect, before, after, start, end);
-            */
+            final Rectangle boundingBox = rect;
+            final Dimension dim = boundingBox.getSize();
+
+            Graphics2DImagePainter painter = new Graphics2DImagePainter() {
+
+                public void paint(Graphics2D g2d, Rectangle2D area) {
+                    g2d.translate(-rect.x, -rect.y);
+
+                    Java2DPainter painter = new Java2DPainter(g2d,
+                            getUserAgent(), parent.getFontInfo(), state);
+                    try {
+                        painter.drawBorderRect(rect, before, after, start, end);
+                    } catch (IFException e) {
+                        //This should never happen with the Java2DPainter
+                        throw new RuntimeException("Unexpected error while painting borders", e);
+                    }
+                }
+
+                public Dimension getImageSize() {
+                    return dim.getSize();
+                }
+
+            };
+            paintMarksAsBitmap(painter, boundingBox);
         }
     }
 
     /** {@inheritDoc} */
-    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+    public void drawLine(final Point start, final Point end,
+                final int width, final Color color, final RuleStyle style)
             throws IFException {
-        /*
-        generator.endTextObject();
-        this.borderPainter.drawLine(start, end, width, color, style);
-        */
+        if (getPCLUtil().getRenderingMode() == PCLRenderingMode.SPEED) {
+            super.drawLine(start, end, width, color, style);
+            return;
+        }
+        final Rectangle boundingBox = getLineBoundingBox(start, end, width);
+        final Dimension dim = boundingBox.getSize();
+
+        Graphics2DImagePainter painter = new Graphics2DImagePainter() {
+
+            public void paint(Graphics2D g2d, Rectangle2D area) {
+                g2d.translate(-boundingBox.x, -boundingBox.y);
+
+                Java2DPainter painter = new Java2DPainter(g2d,
+                        getUserAgent(), parent.getFontInfo(), state);
+                try {
+                    painter.drawLine(start, end, width, color, style);
+                } catch (IFException e) {
+                    //This should never happen with the Java2DPainter
+                    throw new RuntimeException("Unexpected error while painting a line", e);
+                }
+            }
+
+            public Dimension getImageSize() {
+                return dim.getSize();
+            }
+
+        };
+        paintMarksAsBitmap(painter, boundingBox);
+    }
+
+    private void paintMarksAsBitmap(Graphics2DImagePainter painter, Rectangle boundingBox)
+            throws IFException {
+        ImageInfo info = new ImageInfo(null, null);
+        ImageSize size = new ImageSize();
+        size.setSizeInMillipoints(boundingBox.width, boundingBox.height);
+        info.setSize(size);
+        ImageGraphics2D img = new ImageGraphics2D(info, painter);
+
+        Map hints = new java.util.HashMap();
+        hints.put(ImageProcessingHints.BITMAP_TYPE_INTENT,
+                ImageProcessingHints.BITMAP_TYPE_INTENT_GRAY);
+        PCLRenderingContext context = (PCLRenderingContext)createRenderingContext();
+        context.setSourceTransparencyEnabled(true);
+        try {
+            drawImage(img, boundingBox, context, true, hints);
+        } catch (IOException ioe) {
+            throw new IFException(
+                    "I/O error while painting marks using a bitmap", ioe);
+        } catch (ImageException ie) {
+            throw new IFException(
+                    "Error while painting marks using a bitmap", ie);
+        }
     }
 
     /** {@inheritDoc} */
@@ -246,8 +317,6 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
-        } catch (ImageException ime) {
-            throw new IFException("Image processing error in drawText()", ime);
         }
     }
 
@@ -304,7 +373,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     private static final double SAFETY_MARGIN_FACTOR = 0.05;
 
-    private Rectangle getTextBoundingRect(int x, int y, int[] dx, int[] dy, String text,
+    private Rectangle getTextBoundingBox(int x, int y, int[] dx, int[] dy, String text,
             Font font, FontMetricsMapper metrics) {
         int maxAscent = metrics.getMaxAscent(font.getFontSize()) / 1000;
         int descent = metrics.getDescender(font.getFontSize()) / 1000; //is negative
@@ -339,11 +408,9 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     private void drawTextAsBitmap(final int x, final int y, final int[] dx, final int[] dy,
-            final String text, FontTriplet triplet) throws IOException, ImageException {
+            final String text, FontTriplet triplet) throws IFException {
         //Use Java2D to paint different fonts via bitmap
         final Font font = parent.getFontInfo().getFontInstance(triplet, state.getFontSize());
-        //final Font font = getFontFromArea(text);
-        //final int baseline = text.getBaselineOffset();
 
         //for cursive fonts, so the text isn't clipped
         final FontMetricsMapper mapper = (FontMetricsMapper)parent.getFontInfo().getMetricsFor(
@@ -354,14 +421,9 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
         int safetyMargin = (int)(SAFETY_MARGIN_FACTOR * font.getFontSize());
         final int baselineOffset = maxAscent + safetyMargin;
 
-        final Rectangle boundingRect = getTextBoundingRect(x, y, dx, dy, text, font, mapper);
+        final Rectangle boundingBox = getTextBoundingBox(x, y, dx, dy, text, font, mapper);
+        final Dimension dim = boundingBox.getSize();
 
-        Map atts = new java.util.HashMap();
-        atts.put(CONV_MODE, "bitmap");
-        atts.put(SRC_TRANSPARENCY, "true");
-        //rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
-
-        final Dimension dim = boundingRect.getSize();
         Graphics2DImagePainter painter = new Graphics2DImagePainter() {
 
             public void paint(Graphics2D g2d, Rectangle2D area) {
@@ -394,19 +456,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
             }
 
         };
-        ImageInfo info = new ImageInfo(null, null);
-        ImageSize size = new ImageSize();
-        size.setSizeInMillipoints(boundingRect.width, boundingRect.height);
-        info.setSize(size);
-        ImageGraphics2D img = new ImageGraphics2D(info, painter);
-
-        Rectangle rect = boundingRect;
-        Map hints = new java.util.HashMap();
-        hints.put(ImageProcessingHints.BITMAP_TYPE_INTENT,
-                ImageProcessingHints.BITMAP_TYPE_INTENT_GRAY);
-        PCLRenderingContext context = (PCLRenderingContext)createRenderingContext();
-        context.setSourceTransparencyEnabled(true);
-        drawImage(img, rect, context, true, hints);
+        paintMarksAsBitmap(painter, boundingBox);
     }
 
     /** Saves the current graphics state on the stack. */

@@ -75,13 +75,11 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator
 
     private void configure(Configuration cfg, PCLRenderingUtil pclUtil) throws FOPException {
         String rendering = cfg.getChild("rendering").getValue(null);
-        if ("quality".equalsIgnoreCase(rendering)) {
-            pclUtil.setQualityBeforeSpeed(true);
-        } else if ("speed".equalsIgnoreCase(rendering)) {
-            pclUtil.setQualityBeforeSpeed(false);
-        } else if (rendering != null) {
+        try {
+            pclUtil.setRenderingMode(PCLRenderingMode.valueOf(rendering));
+        } catch (IllegalArgumentException e) {
             throw new FOPException(
-                    "Valid values for 'rendering' are 'quality' and 'speed'. Value found: "
+                "Valid values for 'rendering' are 'quality', 'speed' and 'bitmap'. Value found: "
                         + rendering);
         }
 
