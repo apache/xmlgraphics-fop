@@ -30,8 +30,10 @@ import java.awt.image.ByteLookupTable;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.awt.image.LookupOp;
+import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -604,6 +606,26 @@ public class PCLGenerator {
         return (img.getColorModel().getNumColorComponents() == 1);
     }
 
+    private static int jaiAvailable = -1; //no synchronization necessary, not critical
+
+    /**
+     * Indicates whether JAI is available. JAI has shown to be reliable when dithering a
+     * grayscale or color image to monochrome bitmaps (1-bit).
+     * @return true if JAI is available
+     */
+    public static boolean isJAIAvailable() {
+        if (jaiAvailable < 0) {
+            try {
+                String clName = "org.apache.fop.render.pcl.JAIMonochromeBitmapConverter";
+                Class.forName(clName);
+                jaiAvailable = 1;
+            } catch (ClassNotFoundException cnfe) {
+                jaiAvailable = 0;
+            }
+        }
+        return (jaiAvailable > 0);
+    }
+
     private MonochromeBitmapConverter createMonochromeBitmapConverter() {
         MonochromeBitmapConverter converter = null;
         try {
@@ -839,6 +861,16 @@ public class PCLGenerator {
         g2d.clearRect(0, 0, effDim.width, effDim.height);
     }
 
+    private int toGray(int rgb) {
+        // see http://www.jguru.com/faq/view.jsp?EID=221919
+        double greyVal = 0.072169d * (rgb & 0xff);
+        rgb >>= 8;
+        greyVal += 0.715160d * (rgb & 0xff);
+        rgb >>= 8;
+        greyVal += 0.212671d * (rgb & 0xff);
+        return (int)greyVal;
+    }
+
     /**
      * Paint a bitmap at the current cursor position. The bitmap must be a monochrome
      * (1-bit) bitmap image.
@@ -850,79 +882,159 @@ public class PCLGenerator {
         if (!isValidPCLResolution(resolution)) {
             throw new IllegalArgumentException("Invalid PCL resolution: " + resolution);
         }
-        setRasterGraphicsResolution(resolution);
-        writeCommand("*r0f" + img.getHeight() + "t" + img.getWidth() + "s1A");
-        Raster raster = img.getData();
         boolean monochrome = isMonochromeImage(img);
         if (!monochrome) {
             throw new IllegalArgumentException("img must be a monochrome image");
         }
 
-        int x = 0;
-        int y = 0;
-        int imgw = img.getWidth();
-        int imgh = img.getHeight();
-        int bytewidth = (imgw / 8);
-        if ((imgw % 8) != 0) {
-            bytewidth++;
-        }
-        byte ib;
-        byte[] rle = new byte[bytewidth * 2]; //compressed (RLE)
-        byte[] uncompressed = new byte[bytewidth]; //uncompressed
-        int lastcount = -1;
-        byte lastbyte = 0;
-        int rlewidth = 0;
+        setRasterGraphicsResolution(resolution);
+        writeCommand("*r0f" + img.getHeight() + "t" + img.getWidth() + "s1A");
+        Raster raster = img.getData();
 
+        Encoder encoder = new Encoder(img);
         // Transfer graphics data
-        for (y = 0; y < imgh; y++) {
-            ib = 0;
-            for (x = 0; x < imgw; x++) {
-                int sample = raster.getSample(x, y, 0);
-                //Set image bit for black
-                if ((sample == 0)) {
-                    ib |= (1 << (7 - (x % 8)));
-                }
-
-                //RLE encoding
-                if ((x % 8) == 7 || ((x + 1) == imgw)) {
-                    if (rlewidth < bytewidth) {
-                        if (lastcount >= 0) {
-                            if (ib == lastbyte) {
-                                lastcount++;
-                            } else {
-                                rle[rlewidth++] = (byte)(lastcount & 0xFF);
-                                rle[rlewidth++] = lastbyte;
-                                lastbyte = ib;
-                                lastcount = 0;
-                            }
+        int imgw = img.getWidth();
+        IndexColorModel cm = (IndexColorModel)img.getColorModel();
+        if (cm.getTransferType() == DataBuffer.TYPE_BYTE) {
+            DataBufferByte dataBuffer = (DataBufferByte)raster.getDataBuffer();
+            MultiPixelPackedSampleModel packedSampleModel = new MultiPixelPackedSampleModel(
+                    DataBuffer.TYPE_BYTE, img.getWidth(), img.getHeight(), 1);
+            if (img.getSampleModel().equals(packedSampleModel)
+                    && dataBuffer.getNumBanks() == 1) {
+                //Optimized packed encoding
+                byte[] buf = dataBuffer.getData();
+                int scanlineStride = packedSampleModel.getScanlineStride();
+                int idx = 0;
+                int c0 = toGray(cm.getRGB(0));
+                int c1 = toGray(cm.getRGB(1));
+                boolean zeroIsWhite = c0 > c1;
+                for (int y = 0, maxy = img.getHeight(); y < maxy; y++) {
+                    for (int x = 0, maxx = scanlineStride; x < maxx; x++) {
+                        if (zeroIsWhite) {
+                            encoder.add8Bits(buf[idx]);
                         } else {
-                            lastbyte = ib;
-                            lastcount = 0;
+                            encoder.add8Bits((byte)~buf[idx]);
                         }
-                        if (lastcount == 255 || ((x + 1) == imgw)) {
-                            rle[rlewidth++] = (byte)(lastcount & 0xFF);
-                            rle[rlewidth++] = lastbyte;
-                            lastbyte = 0;
-                            lastcount = -1;
-                        }
+                        idx++;
                     }
-                    uncompressed[x / 8] = ib;
-                    ib = 0;
+                    encoder.endLine();
+                }
+            } else {
+                //Optimized non-packed encoding
+                for (int y = 0, maxy = img.getHeight(); y < maxy; y++) {
+                    byte[] line = (byte[])raster.getDataElements(0, y, imgw, 1, null);
+                    for (int x = 0, maxx = imgw; x < maxx; x++) {
+                        encoder.addBit(line[x] == 0);
+                    }
+                    encoder.endLine();
                 }
             }
-            if (rlewidth < bytewidth) {
-                writeCommand("*b1m" + rlewidth + "W");
-                this.out.write(rle, 0, rlewidth);
-            } else {
-                writeCommand("*b0m" + bytewidth + "W");
-                this.out.write(uncompressed);
+        } else {
+            //Safe but slow fallback
+            for (int y = 0, maxy = img.getHeight(); y < maxy; y++) {
+                for (int x = 0, maxx = imgw; x < maxx; x++) {
+                    int sample = raster.getSample(x, y, 0);
+                    encoder.addBit(sample == 0);
+                }
+                encoder.endLine();
             }
-            lastcount = -1;
-            rlewidth = 0;
         }
 
         // End raster graphics
         writeCommand("*rB");
+    }
+
+    private class Encoder {
+
+        private int imgw;
+        private int bytewidth;
+        private byte[] rle; //compressed (RLE)
+        private byte[] uncompressed; //uncompressed
+        private int lastcount = -1;
+        private byte lastbyte = 0;
+        private int rlewidth = 0;
+        private byte ib = 0; //current image bits
+        private int x = 0;
+        private boolean zeroRow = true;
+
+        public Encoder(RenderedImage img) {
+            imgw = img.getWidth();
+            bytewidth = (imgw / 8);
+            if ((imgw % 8) != 0) {
+                bytewidth++;
+            }
+            rle = new byte[bytewidth * 2];
+            uncompressed = new byte[bytewidth];
+        }
+
+        public void addBit(boolean bit) {
+            //Set image bit for black
+            if (bit) {
+                ib |= 1;
+            }
+
+            //RLE encoding
+            if ((x % 8) == 7 || ((x + 1) == imgw)) {
+                finishedByte();
+            } else {
+                ib <<= 1;
+            }
+            x++;
+        }
+
+        public void add8Bits(byte b) {
+            ib = b;
+            finishedByte();
+            x += 8;
+        }
+
+        private void finishedByte() {
+            if (rlewidth < bytewidth) {
+                if (lastcount >= 0) {
+                    if (ib == lastbyte) {
+                        lastcount++;
+                    } else {
+                        rle[rlewidth++] = (byte)(lastcount & 0xFF);
+                        rle[rlewidth++] = lastbyte;
+                        lastbyte = ib;
+                        lastcount = 0;
+                    }
+                } else {
+                    lastbyte = ib;
+                    lastcount = 0;
+                }
+                if (lastcount == 255 || ((x + 1) == imgw)) {
+                    rle[rlewidth++] = (byte)(lastcount & 0xFF);
+                    rle[rlewidth++] = lastbyte;
+                    lastbyte = 0;
+                    lastcount = -1;
+                }
+            }
+            uncompressed[x / 8] = ib;
+            if (ib != 0) {
+                zeroRow = false;
+            }
+            ib = 0;
+        }
+
+        public void endLine() throws IOException {
+            if (zeroRow) {
+                writeCommand("*b1Y");
+            } else if (rlewidth < bytewidth) {
+                writeCommand("*b1m" + rlewidth + "W");
+                out.write(rle, 0, rlewidth);
+            } else {
+                writeCommand("*b0m" + bytewidth + "W");
+                out.write(uncompressed);
+            }
+            lastcount = -1;
+            rlewidth = 0;
+            ib = 0;
+            x = 0;
+            zeroRow = true;
+        }
+
+
     }
 
 }

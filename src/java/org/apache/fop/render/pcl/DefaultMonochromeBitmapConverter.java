@@ -32,9 +32,13 @@ import java.awt.image.RenderedImage;
 public class DefaultMonochromeBitmapConverter implements
         MonochromeBitmapConverter {
 
+    private boolean quality = false;
+
     /** {@inheritDoc} */
     public void setHint(String name, String value) {
-        //ignore, not supported
+        if ("quality".equalsIgnoreCase(name)) {
+            quality = "true".equalsIgnoreCase(value);
+        }
     }
 
     /** {@inheritDoc} */
@@ -42,8 +46,16 @@ public class DefaultMonochromeBitmapConverter implements
         BufferedImage buf = new BufferedImage(img.getWidth(), img.getHeight(),
                 BufferedImage.TYPE_BYTE_BINARY);
         RenderingHints hints = new RenderingHints(null);
-        //This hint doesn't seem to make a difference :-(
-        hints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+        //These hints don't seem to make a difference :-( Not seeing any dithering on Sun Java.
+        hints.put(RenderingHints.KEY_DITHERING,
+                RenderingHints.VALUE_DITHER_ENABLE);
+        if (quality) {
+            hints.put(RenderingHints.KEY_RENDERING,
+                    RenderingHints.VALUE_RENDER_QUALITY);
+            hints.put(RenderingHints.KEY_COLOR_RENDERING,
+                    RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        }
+
         ColorConvertOp op = new ColorConvertOp(
                 ColorSpace.getInstance(ColorSpace.CS_GRAY), hints);
         op.filter(img, buf);

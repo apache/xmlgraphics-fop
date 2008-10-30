@@ -21,6 +21,7 @@ package org.apache.fop.render.intermediate;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.FileNotFoundException;
@@ -47,6 +48,8 @@ import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.RuleStyle;
 
 /**
  * Abstract base class for IFPainter implementations.
@@ -195,8 +198,8 @@ public abstract class AbstractIFPainter implements IFPainter {
                         + effImage.getInfo() + " (" + effImage.getClass().getName() + ")");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Using ImageHandler: " + handler.getClass().getName());
+        if (log.isTraceEnabled()) {
+            log.trace("Using ImageHandler: " + handler.getClass().getName());
         }
 
         //TODO foreign attributes
@@ -258,6 +261,67 @@ public abstract class AbstractIFPainter implements IFPainter {
                     getUserAgent().getEventBroadcaster());
             eventProducer.imageIOError(this,
                     (info != null ? info.toString() : INSTREAM_OBJECT_URI), ioe, null);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
+            BorderProps start, BorderProps end) throws IFException {
+        if (before != null) {
+            Rectangle b = new Rectangle(
+                    rect.x, rect.y,
+                    rect.width, before.width);
+            fillRect(b, before.color);
+        }
+        if (end != null) {
+            Rectangle b = new Rectangle(
+                    rect.x + rect.width - end.width, rect.y,
+                    end.width, rect.height);
+            fillRect(b, end.color);
+        }
+        if (after != null) {
+            Rectangle b = new Rectangle(
+                    rect.x, rect.y + rect.height - after.width,
+                    rect.width, after.width);
+            fillRect(b, after.color);
+        }
+        if (start != null) {
+            Rectangle b = new Rectangle(
+                    rect.x, rect.y,
+                    start.width, rect.height);
+            fillRect(b, start.color);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+            throws IFException {
+        Rectangle rect = getLineBoundingBox(start, end, width);
+        fillRect(rect, color);
+    }
+
+    /**
+     * Calculates the bounding box for a line. Currently, only horizontal and vertical lines
+     * are needed and supported.
+     * @param start the starting point of the line (coordinates in mpt)
+     * @param end the ending point of the line (coordinates in mpt)
+     * @param width the line width (in mpt)
+     * @return the bounding box (coordinates in mpt)
+     */
+    protected Rectangle getLineBoundingBox(Point start, Point end, int width) {
+        if (start.y == end.y) {
+            int topy = start.y - width / 2;
+            return new Rectangle(
+                    start.x, topy,
+                    end.x - start.x, width);
+        } else if (start.x == end.y) {
+            int leftx = start.x - width / 2;
+            return new Rectangle(
+                    leftx, start.x,
+                    width, end.y - start.y);
+        } else {
+            throw new IllegalArgumentException(
+                    "Only horizontal or vertical lines are supported at the moment.");
         }
     }
 

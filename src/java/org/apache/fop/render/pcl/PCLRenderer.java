@@ -164,7 +164,8 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      * @param qualityBeforeSpeed true if quality is more important than speed
      */
     public void setQualityBeforeSpeed(boolean qualityBeforeSpeed) {
-        pclUtil.setQualityBeforeSpeed(qualityBeforeSpeed);
+        pclUtil.setRenderingMode(qualityBeforeSpeed
+                ? PCLRenderingMode.QUALITY : PCLRenderingMode.SPEED);
     }
 
     /**
@@ -1187,10 +1188,10 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         if (bpsBefore == null && bpsAfter == null && bpsStart == null && bpsEnd == null) {
             return; //no borders to paint
         }
-        if (pclUtil.isQualityBeforeSpeed()) {
-            drawQualityBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
-        } else {
+        if (PCLRenderingMode.SPEED == pclUtil.getRenderingMode()) {
             drawFastBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+        } else {
+            drawQualityBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
         }
     }
 

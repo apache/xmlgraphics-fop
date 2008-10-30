@@ -42,10 +42,10 @@ public class PCLRenderingUtil {
     private FOUserAgent userAgent;
 
     /**
-     * Controls whether appearance is more important than speed. False can cause some FO feature
+     * Controls whether appearance is more important than speed. "SPEED" can cause some FO feature
      * to be ignored (like the advanced borders).
      */
-    private boolean qualityBeforeSpeed = false;
+    private PCLRenderingMode renderingMode = PCLRenderingMode.SPEED;
 
     /**
      * Controls whether all text should be painted as text. This is a fallback setting in case
@@ -84,18 +84,18 @@ public class PCLRenderingUtil {
     /**
      * Configures the renderer to trade speed for quality if desired. One example here is the way
      * that borders are rendered.
-     * @param qualityBeforeSpeed true if quality is more important than speed
+     * @param mode one of the {@code PCLRenderingMode}.* constants
      */
-    public void setQualityBeforeSpeed(boolean qualityBeforeSpeed) {
-        this.qualityBeforeSpeed = qualityBeforeSpeed;
+    public void setRenderingMode(PCLRenderingMode mode) {
+        this.renderingMode = mode;
     }
 
     /**
-     * Indicates whether quality is more important than speed.
-     * @return true if quality is favored over speed
+     * Returns the selected rendering mode.
+     * @return the rendering mode
      */
-    public boolean isQualityBeforeSpeed() {
-        return this.qualityBeforeSpeed;
+    public PCLRenderingMode getRenderingMode() {
+        return this.renderingMode;
     }
 
     /**

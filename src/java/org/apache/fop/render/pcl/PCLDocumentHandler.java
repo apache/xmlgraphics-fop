@@ -19,18 +19,27 @@
 
 package org.apache.fop.render.pcl;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.render.java2d.Java2DPainter;
 
 /**
  * {@code IFDocumentHandler} implementation that produces PCL 5.
@@ -53,6 +62,10 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private long pageWidth = 0;
     /** contains the pageHeight of the last printed page */
     private long pageHeight = 0;
+
+    /** the current page image (only set when all-bitmap painting is activated) */
+    private BufferedImage currentImage;
+
 
     /**
      * Default constructor.
@@ -190,12 +203,74 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public IFPainter startPageContent() throws IFException {
-        return new PCLPainter(this, this.currentPageDefinition);
+        if (pclUtil.getRenderingMode() == PCLRenderingMode.BITMAP) {
+            return createAllBitmapPainter();
+        } else {
+            return new PCLPainter(this, this.currentPageDefinition);
+        }
+    }
+
+    private IFPainter createAllBitmapPainter() {
+        double scale = gen.getMaximumBitmapResolution()
+                / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
+        Rectangle printArea = this.currentPageDefinition.getLogicalPageRect();
+        int bitmapWidth = (int)Math.ceil(
+                UnitConv.mpt2px(printArea.width, gen.getMaximumBitmapResolution()));
+        int bitmapHeight = (int)Math.ceil(
+                UnitConv.mpt2px(printArea.height, gen.getMaximumBitmapResolution()));
+        this.currentImage = createBufferedImage(bitmapWidth, bitmapHeight);
+        Graphics2D graphics2D = this.currentImage.createGraphics();
+
+        if (!PCLGenerator.isJAIAvailable()) {
+            RenderingHints hints = new RenderingHints(null);
+            //These hints don't seem to make a difference :-( Not seeing any dithering on Sun Java.
+            hints.put(RenderingHints.KEY_DITHERING,
+                    RenderingHints.VALUE_DITHER_ENABLE);
+            graphics2D.addRenderingHints(hints);
+        }
+
+        //Ensure white page background
+        graphics2D.setBackground(Color.WHITE);
+        graphics2D.clearRect(0, 0, bitmapWidth, bitmapHeight);
+
+        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        graphics2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+                RenderingHints.VALUE_STROKE_PURE);
+        graphics2D.scale(scale / 1000f, scale / 1000f);
+        graphics2D.translate(-printArea.x, -printArea.y);
+
+        return new Java2DPainter(graphics2D, getUserAgent(), getFontInfo());
+    }
+
+    private BufferedImage createBufferedImage(int bitmapWidth, int bitmapHeight) {
+        int bitmapType;
+        if (PCLGenerator.isJAIAvailable()) {
+            //TYPE_BYTE_GRAY was used to work around the lack of dithering when using
+            //TYPE_BYTE_BINARY. Adding RenderingHints didn't help.
+            bitmapType = BufferedImage.TYPE_BYTE_GRAY;
+            //bitmapType = BufferedImage.TYPE_INT_RGB; //Use to enable Batik gradients
+        } else {
+            bitmapType = BufferedImage.TYPE_BYTE_BINARY;
+        }
+        return new BufferedImage(
+                bitmapWidth, bitmapHeight, bitmapType);
     }
 
     /** {@inheritDoc} */
     public void endPageContent() throws IFException {
-        //nop
+        if (this.currentImage != null) {
+            try {
+                //ImageWriterUtil.saveAsPNG(this.currentImage, new java.io.File("D:/page.png"));
+                Rectangle printArea = this.currentPageDefinition.getLogicalPageRect();
+                gen.setCursorPos(0, 0);
+                gen.paintBitmap(this.currentImage, printArea.getSize(), true);
+            } catch (IOException ioe) {
+                throw new IFException("I/O error while encoding page image", ioe);
+            } finally {
+                this.currentImage = null;
+            }
+        }
     }
 
     /** {@inheritDoc} */
