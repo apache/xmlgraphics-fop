@@ -486,14 +486,14 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         CTM ctm = bv.getCTM();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
 
-        if (bv.getPositioning() == Block.ABSOLUTE
-                || bv.getPositioning() == Block.FIXED) {
+        int positioning = bv.getPositioning();
+        if (positioning == Block.ABSOLUTE || positioning == Block.FIXED) {
 
             //For FIXED, we need to break out of the current viewports to the
             //one established by the page. We save the state stack for restoration
             //after the block-container has been painted. See below.
             List breakOutList = null;
-            if (bv.getPositioning() == Block.FIXED) {
+            if (positioning == Block.FIXED) {
                 breakOutList = breakOutOfStateStack();
             }
 
@@ -564,8 +564,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 restoreGraphicsState();
             }
 
-            if (breakOutList != null) {
-                restoreStateStackAfterBreakOut(breakOutList);
+            //For FIXED, we need to restore break out now we are done
+            if (positioning == Block.FIXED) {
+                if (breakOutList != null) {
+                    restoreStateStackAfterBreakOut(breakOutList);
+                }
             }
 
             currentIPPosition = saveIP;

@@ -169,7 +169,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     private AFPRectanglePainter rectanglePainter;
 
-
     /**
      * Constructor for AFPRenderer.
      */
@@ -509,28 +508,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     public void restoreStateStackAfterBreakOut(List breakOutList) {
         log.debug("Block.FIXED --> restoring context after break-out");
-        AbstractState.AbstractData data;
-        Iterator it = breakOutList.iterator();
-        while (it.hasNext()) {
-            data = (AbstractState.AbstractData)it.next();
-            saveGraphicsState();
-            concatenateTransformationMatrix(data.getTransform());
-        }
+        state.pushAll(breakOutList);
     }
 
     /** {@inheritDoc} */
     protected List breakOutOfStateStack() {
         log.debug("Block.FIXED --> break out");
-        List breakOutList = new java.util.ArrayList();
-        AbstractState.AbstractData data;
-        while (true) {
-            data = state.getData();
-            if (state.pop() == null) {
-                break;
-            }
-            breakOutList.add(0, data); //Insert because of stack-popping
-        }
-        return breakOutList;
+        return state.popAll();
     }
 
     /** {@inheritDoc} */

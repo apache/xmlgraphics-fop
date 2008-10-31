@@ -40,17 +40,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
-
-import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
-import org.apache.xmlgraphics.xmp.Metadata;
-import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
-import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
-
-import org.apache.fop.AbstractState;
+import org.apache.fop.AbstractData;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -118,6 +108,14 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorProfileUtil;
 import org.apache.fop.util.ColorUtil;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.xmp.Metadata;
+import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
+import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
 /**
  * Renderer that renders areas to PDF.
@@ -263,7 +261,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected Map filterMap;
 
     /** Image handler registry */
-    private PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
+    private final PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
 
     /**
      * create the PDF renderer
@@ -1095,8 +1093,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @return the saved state stack to recreate later
      */
     protected List breakOutOfStateStack() {
+//        return currentState.popAll();
         List breakOutList = new java.util.ArrayList();
-        AbstractState.AbstractData data;
+        AbstractData data;
         while (true) {
             data = currentState.getData();
             if (currentState.pop() == null) {
@@ -1117,10 +1116,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         comment("------ restoring context after break-out...");
-        AbstractState.AbstractData data;
+//        currentState.pushAll(breakOutList);
+        AbstractData data;
         Iterator i = breakOutList.iterator();
         while (i.hasNext()) {
-            data = (AbstractState.AbstractData)i.next();
+            data = (AbstractData)i.next();
             saveGraphicsState();
             AffineTransform at = data.getTransform();
             concatenateTransformationMatrix(at);
@@ -1609,7 +1609,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         endTextObject();
         putImage(url, pos, foreignAttributes);
     }
-     
+
     /**
      * Adds a PDF XObject (a bitmap or form) to the PDF that will later be referenced.
      * @param uri URL of the bitmap

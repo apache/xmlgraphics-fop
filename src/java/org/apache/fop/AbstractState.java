@@ -23,8 +23,8 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 
 
@@ -33,11 +33,13 @@ import java.util.Stack;
  */
 public abstract class AbstractState implements Cloneable, Serializable {
 
+    private static final long serialVersionUID = 5998356138437094188L;
+
     /** current state data */
-    private AbstractData currentData = null;
+    private AbstractData data = null;
 
     /** the state stack */
-    private StateStack stateStack = null;
+    private StateStack stateStack = new StateStack();
 
     /**
      * Instantiates a new state data object
@@ -59,10 +61,10 @@ public abstract class AbstractState implements Cloneable, Serializable {
      * @return the currently valid state
      */
     public AbstractData getData() {
-        if (currentData == null) {
-            currentData = instantiateData();
+        if (data == null) {
+            data = instantiateData();
         }
-        return currentData;
+        return data;
     }
 
     /**
@@ -212,7 +214,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
      */
     public AffineTransform getTransform() {
        AffineTransform at = new AffineTransform();
-       for (Iterator iter = getStateStack().iterator(); iter.hasNext();) {
+       for (Iterator iter = stateStack.iterator(); iter.hasNext();) {
            AbstractData data = (AbstractData)iter.next();
            AffineTransform stackTrans = data.getTransform();
            at.concatenate(stackTrans);
@@ -242,10 +244,10 @@ public abstract class AbstractState implements Cloneable, Serializable {
      * @return the base transform, or null if the state stack is empty
      */
     public AffineTransform getBaseTransform() {
-       if (getStateStack().isEmpty()) {
+       if (stateStack.isEmpty()) {
            return null;
        } else {
-           AbstractData baseData = (AbstractData)getStateStack().get(0);
+           AbstractData baseData = (AbstractData)stateStack.get(0);
            return (AffineTransform) baseData.getTransform().clone();
        }
     }
@@ -260,11 +262,19 @@ public abstract class AbstractState implements Cloneable, Serializable {
     }
 
     /**
-     * Resets the current AffineTransform.
+     * Resets the current AffineTransform to the Base AffineTransform.
      */
     public void resetTransform() {
-        getData().resetTransform();
+        getData().setTransform(getBaseTransform());
     }
+
+    /**
+     * Clears the current AffineTransform to the Identity AffineTransform
+     */
+    public void clearTransform() {
+        getData().clearTransform();
+    }
+
 
     /**
      * Push the current state onto the stack.
@@ -273,7 +283,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
      */
     public void push() {
         AbstractData copy = (AbstractData)getData().clone();
-        getStateStack().push(copy);
+        stateStack.push(copy);
     }
 
     /**
@@ -284,20 +294,62 @@ public abstract class AbstractState implements Cloneable, Serializable {
      * @return the restored state, null if the stack is empty
      */
     public AbstractData pop() {
-        if (!getStateStack().isEmpty()) {
-            this.currentData = (AbstractData)getStateStack().pop();
-            return this.currentData;
+        if (!stateStack.isEmpty()) {
+            setData((AbstractData)stateStack.pop());
+            return this.data;
         } else {
             return null;
         }
     }
 
     /**
+     * Pushes all state data in the given list to the stack
+     *
+     * @param dataList a state data list
+     */
+    public void pushAll(List/*<AbstractData>*/ dataList) {
+        Iterator it = dataList.iterator();
+        while (it.hasNext()) {
+            // save current data on stack
+            push();
+            setData((AbstractData)it.next());
+        }
+    }
+
+    /**
+     * Pops all state data from the stack
+     *
+     * @return a list of state data popped from the stack
+     */
+    public List/*<AbstractData>*/ popAll() {
+        List/*<AbstractData>*/ dataList = new java.util.ArrayList/*<AbstractData>*/();
+        AbstractData data;
+        while (true) {
+            data = getData();
+            if (pop() == null) {
+                break;
+            }
+            // insert because of stack-popping
+            dataList.add(0, data);
+        }
+        return dataList;
+    }
+
+    /**
+     * Sets the current state data
+     *
+     * @param currentData state data
+     */
+    protected void setData(AbstractData data) {
+        this.data = data;
+    }
+
+    /**
      * Clears the state stack
      */
     public void clear() {
-        getStateStack().clear();
-        currentData = null;
+        stateStack.clear();
+        setData(null);
     }
 
     /**
@@ -306,160 +358,20 @@ public abstract class AbstractState implements Cloneable, Serializable {
      * @return the state stack
      */
     protected Stack/*<AbstractData>*/ getStateStack() {
-        if (stateStack == null) {
-            stateStack = new StateStack();
-        }
-        return stateStack;
+        return this.stateStack;
     }
 
     /** {@inheritDoc} */
     public Object clone() {
         AbstractState state = instantiateState();
         state.stateStack = new StateStack(this.stateStack);
-        state.currentData = (AbstractData)this.currentData.clone();
+        state.data = (AbstractData)this.data.clone();
         return state;
     }
 
     /** {@inheritDoc} */
     public String toString() {
         return ", stateStack=" + stateStack
-        + ", currentData=" + currentData;
-    }
-
-    /**
-     * A base state data holding object
-     */
-    public abstract class AbstractData implements Cloneable, Serializable {
-
-        private static final long serialVersionUID = 5208418041189828624L;
-
-        /** The current color */
-        private Color color = null;
-
-        /** The current background color */
-        private Color backColor = null;
-
-        /** The current font name */
-        private String fontName = null;
-
-        /** The current font size */
-        private int fontSize = 0;
-
-        /** The current line width */
-        private float lineWidth = 0;
-
-        /** The dash array for the current basic stroke (line type) */
-        private float[] dashArray = null;
-
-        /** The current transform */
-        private AffineTransform transform = null;
-
-        /**
-         * Concatenate the given AffineTransform with the current thus creating
-         * a new viewport. Note that all concatenation operations are logged
-         * so they can be replayed if necessary (ex. for block-containers with
-         * "fixed" positioning.
-         *
-         * @param at Transformation to perform
-         */
-        public void concatenate(AffineTransform at) {
-            getTransform().concatenate(at);
-        }
-
-        /**
-         * Get the current AffineTransform.
-         *
-         * @return the current transform
-         */
-        public AffineTransform getTransform() {
-            if (transform == null) {
-                transform = new AffineTransform();
-            }
-            return transform;
-        }
-
-        /**
-         * Resets the current AffineTransform.
-         */
-        public void resetTransform() {
-            transform = getBaseTransform();
-//            transform = new AffineTransform();
-        }
-
-        /**
-         * Returns the derived rotation from the current transform
-         *
-         * @return the derived rotation from the current transform
-         */
-        public int getDerivedRotation() {
-            AffineTransform at = getTransform();
-            double sx = at.getScaleX();
-            double sy = at.getScaleY();
-            double shx = at.getShearX();
-            double shy = at.getShearY();
-            int rotation = 0;
-            if (sx == 0 && sy == 0 && shx > 0 && shy < 0) {
-                rotation = 270;
-            } else if (sx < 0 && sy < 0 && shx == 0 && shy == 0) {
-                rotation = 180;
-            } else if (sx == 0 && sy == 0 && shx < 0 && shy > 0) {
-                rotation = 90;
-            } else {
-                rotation = 0;
-            }
-            return rotation;
-        }
-
-        /** {@inheritDoc} */
-        public Object clone() {
-            AbstractData data = instantiateData();
-            data.color = this.color;
-            data.backColor = this.backColor;
-            data.fontName = this.fontName;
-            data.fontSize = this.fontSize;
-            data.lineWidth = this.lineWidth;
-            data.dashArray = this.dashArray;
-            data.transform = new AffineTransform(this.transform);
-            return data;
-        }
-
-        /** {@inheritDoc} */
-        public String toString() {
-            return "color=" + color
-                + ", backColor=" + backColor
-                + ", fontName=" + fontName
-                + ", fontSize=" + fontSize
-                + ", lineWidth=" + lineWidth
-                + ", dashArray=" + dashArray
-                + ", transform=" + transform;
-        }
-    }
-
-    /**
-     * No copy constructor for java.util.Stack so extended and implemented one.
-     */
-    private class StateStack extends java.util.Stack {
-
-        private static final long serialVersionUID = 4897178211223823041L;
-
-        /**
-         * Default constructor
-         */
-        public StateStack() {
-            super();
-        }
-
-        /**
-         * Copy constructor
-         *
-         * @param c initial contents of stack
-         */
-        public StateStack(Collection c) {
-            elementCount = c.size();
-            // 10% for growth
-            elementData = new Object[
-                          (int)Math.min((elementCount * 110L) / 100, Integer.MAX_VALUE)];
-            c.toArray(elementData);
-        }
+        + ", currentData=" + data;
     }
 }

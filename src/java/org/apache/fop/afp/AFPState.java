@@ -21,6 +21,7 @@ package org.apache.fop.afp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.AbstractData;
 import org.apache.fop.AbstractState;
 
 /**
@@ -483,7 +484,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
     /**
      * Block level state data
      */
-    private class AFPData extends org.apache.fop.AbstractState.AbstractData {
+    private class AFPData extends org.apache.fop.AbstractData {
         private static final long serialVersionUID = -1789481244175275686L;
 
         /** The current fill status */
@@ -505,6 +506,11 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
             + ", filled=" + filled
             + ", imageUri=" + imageUri
             + "}";
+        }
+
+        /** {@inheritDoc} */
+        protected AbstractData instantiate() {
+            return new AFPData();
         }
     }
 

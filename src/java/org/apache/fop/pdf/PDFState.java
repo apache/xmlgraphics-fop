@@ -19,12 +19,13 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Iterator;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
+import java.util.Iterator;
 
+import org.apache.fop.AbstractData;
 import org.apache.fop.AbstractState;
 
 /**
@@ -165,7 +166,19 @@ public class PDFState extends org.apache.fop.AbstractState {
         return new PDFState();
     }
 
-    private class PDFData extends org.apache.fop.AbstractState.AbstractData {
+    /**
+     * Push the current state onto the stack.
+     * This call should be used when the q operator is used
+     * so that the state is known when popped.
+     */
+    public void push() {
+        AbstractData data = getData();
+        AbstractData copy = (AbstractData)data.clone();
+        data.clearTransform();
+        getStateStack().add(copy);
+    }
+
+    private class PDFData extends org.apache.fop.AbstractData {
 
         private static final long serialVersionUID = 3527950647293177764L;
 
@@ -205,6 +218,11 @@ public class PDFState extends org.apache.fop.AbstractState {
                 + ", dashOffset=" + dashOffset
                 + ", clip=" + clip
                 + ", gstate=" + gstate;
+        }
+
+        /** {@inheritDoc} */
+        protected AbstractData instantiate() {
+            return new PDFData();
         }
     }
 
