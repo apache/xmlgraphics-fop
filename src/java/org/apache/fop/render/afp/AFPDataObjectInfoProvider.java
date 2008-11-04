@@ -22,7 +22,7 @@ package org.apache.fop.render.afp;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
@@ -33,16 +33,18 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
  * AFP data object info factory provider
  */
 public class AFPDataObjectInfoProvider {
+
     private final Map/*<AbstractImage,AFPDataObjectInfoFactory>*/ factoryMap
         = new java.util.HashMap/*<AbstractImage,AFPDataObjectInfoFactory>*/();
-    private final AFPState state;
+
+    private final AFPPaintingState state;
 
     /**
      * Main constructor
      *
-     * @param state the AFP state
+     * @param state the AFP painting state
      */
-    public AFPDataObjectInfoProvider(AFPState state) {
+    public AFPDataObjectInfoProvider(AFPPaintingState state) {
         this.state = state;
         init();
     }

@@ -135,6 +135,7 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
             RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
+
     /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,

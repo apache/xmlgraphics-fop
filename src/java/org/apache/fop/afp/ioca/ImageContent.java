@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import org.apache.fop.afp.modca.AbstractStructuredAFPObject;
 
 /**
+ * An IOCA Image Content
  */
 public class ImageContent extends AbstractStructuredAFPObject {
 

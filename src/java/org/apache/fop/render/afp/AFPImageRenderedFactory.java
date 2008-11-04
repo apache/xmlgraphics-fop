@@ -26,7 +26,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
-import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -39,9 +39,9 @@ public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
     /**
      * Main constructor
      *
-     * @param state the AFP state
+     * @param state the AFP painting state
      */
-    public AFPImageRenderedFactory(AFPState state) {
+    public AFPImageRenderedFactory(AFPPaintingState state) {
         super(state);
     }
 

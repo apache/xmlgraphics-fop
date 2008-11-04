@@ -19,10 +19,8 @@
 
 package org.apache.fop.render.afp;
 
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -30,16 +28,16 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceLevel;
-import org.apache.fop.afp.AFPState;
 import org.apache.fop.afp.AFPTextElementBridge;
 import org.apache.fop.afp.AFPTextHandler;
 import org.apache.fop.afp.AFPTextPainter;
-import org.apache.fop.image.loader.batik.BatikGraphics2DImagePainter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 
@@ -51,9 +49,9 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
     /**
      * Main constructor
      *
-     * @param state the afp state
+     * @param state the AFP painting state
      */
-    public AFPImageGraphics2DFactory(AFPState state) {
+    public AFPImageGraphics2DFactory(AFPPaintingState state) {
         super(state);
     }
 
@@ -61,8 +59,6 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPGraphicsObjectInfo();
     }
-
-    private static final AFPResourceLevel inlineResourceLevel = new AFPResourceLevel(AFPResourceLevel.INLINE);
 
     /** {@inheritDoc} */
     public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
@@ -73,7 +69,7 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         // level not explicitly set/changed so default to inline for GOCA graphic objects
         // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07) - hard copy works just fine)
         if (!resourceInfo.levelChanged()) {
-            resourceInfo.setLevel(inlineResourceLevel);
+            resourceInfo.setLevel(new AFPResourceLevel(AFPResourceLevel.INLINE));
         }
 
         // set mime type (unsupported by MOD:CA registry)
@@ -89,7 +85,7 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(rendererContext);
         g2d.setResourceManager(afpInfo.getResourceManager());
         g2d.setResourceInfo(afpInfo.getResourceInfo());
-        g2d.setState(afpInfo.getState());
+        g2d.setPaintingState(afpInfo.getPaintingState());
         g2d.setFontInfo(afpInfo.getFontInfo());
 
         // set to default graphic context
@@ -100,7 +96,7 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
         g2d.translate(at.getTranslateX(), at.getTranslateY());
 
         // set afp state
-        g2d.setState(state);
+        g2d.setPaintingState(state);
 
         // controls whether text painted by Batik is generated using text or path operations
         SVGUserAgent svgUserAgent
@@ -117,49 +113,23 @@ public class AFPImageGraphics2DFactory extends AFPDataObjectInfoFactory {
 
         // set painter
         ImageGraphics2D imageG2D = (ImageGraphics2D)rendererImageInfo.getImage();
-        BatikGraphics2DImagePainter painter
-            = (BatikGraphics2DImagePainter)imageG2D.getGraphics2DImagePainter();
-        painter = new AFPGraphics2DImagePainter(painter);
-        imageG2D.setGraphics2DImagePainter(painter);
+        Graphics2DImagePainter painter = imageG2D.getGraphics2DImagePainter();
         graphicsObjectInfo.setPainter(painter);
 
         // set object area
         AFPObjectAreaInfo objectAreaInfo = graphicsObjectInfo.getObjectAreaInfo();
-        Rectangle area = new Rectangle(objectAreaInfo.getWidth(), objectAreaInfo.getHeight());
+        int width = objectAreaInfo.getWidth();
+        int height = objectAreaInfo.getHeight();
+        Rectangle area = new Rectangle(width, height);
         graphicsObjectInfo.setArea(area);
 
+        // invert y-axis for GOCA
+        final int sx = 1;
+        final int sy = -1;
+        g2d.translate(0, height);
+        g2d.scale(sx, sy);
+
         return graphicsObjectInfo;
-    }
-
-    private class AFPGraphics2DImagePainter extends BatikGraphics2DImagePainter {
-        /**
-         * Copy constructor
-         *
-         * @param painter a graphics 2D image painter
-         */
-        public AFPGraphics2DImagePainter(BatikGraphics2DImagePainter painter) {
-            super(painter.getImageXMLDOM(), painter.getBridgeContext(), painter.getRoot());
-        }
-
-        /** {@inheritDoc} */
-        protected void init(Graphics2D g2d, Rectangle2D area) {
-            double tx = area.getX();
-            double ty = area.getHeight() - area.getY();
-            if (tx != 0 || ty != 0) {
-                g2d.translate(tx, ty);
-            }
-
-            float iw = (float) ctx.getDocumentSize().getWidth();
-            float ih = (float) ctx.getDocumentSize().getHeight();
-            float w = (float) area.getWidth();
-            float h = (float) area.getHeight();
-            float sx = w / iw;
-            float sy = -(h / ih);
-            if (sx != 1.0 || sy != 1.0) {
-                g2d.scale(sx, sy);
-            }
-        }
-
     }
 
 }

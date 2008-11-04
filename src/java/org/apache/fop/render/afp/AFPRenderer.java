@@ -33,14 +33,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.fop.AbstractState;
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPPageFonts;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPResourceManager;
-import org.apache.fop.afp.AFPState;
 import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.afp.BorderPaintInfo;
@@ -72,6 +71,7 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
+import org.apache.fop.util.AbstractPaintingState;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -146,8 +146,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** resource manager */
     private AFPResourceManager resourceManager;
 
-    /** drawing state */
-    private final AFPState state;
+    /** painting state */
+    private final AFPPaintingState paintingState;
 
     /** unit converter */
     private final AFPUnitConverter unitConv;
@@ -175,9 +175,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public AFPRenderer() {
         super();
         this.resourceManager = new AFPResourceManager();
-        this.state = new AFPState();
-        this.dataObjectInfoProvider = new AFPDataObjectInfoProvider(state);
-        this.unitConv = state.getUnitConverter();
+        this.paintingState = new AFPPaintingState();
+        this.dataObjectInfoProvider = new AFPDataObjectInfoProvider(paintingState);
+        this.unitConv = paintingState.getUnitConverter();
     }
 
     /** {@inheritDoc} */
@@ -197,13 +197,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
-        state.setColor(Color.WHITE);
+        paintingState.setColor(Color.WHITE);
 
-        resourceManager.createDataStream(state, outputStream);
+        resourceManager.createDataStream(paintingState, outputStream);
 
         this.dataStream = resourceManager.getDataStream();
-        this.borderPainter = new AFPBorderPainter(state, dataStream);
-        this.rectanglePainter = new AFPRectanglePainter(state, dataStream);
+        this.borderPainter = new AFPBorderPainter(paintingState, dataStream);
+        this.rectanglePainter = new AFPRectanglePainter(paintingState, dataStream);
 
         dataStream.startDocument();
     }
@@ -231,10 +231,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void preparePage(PageViewport page) {
-        int pageRotation = state.getPageRotation();
-        int pageWidth = state.getPageWidth();
-        int pageHeight = state.getPageHeight();
-        int resolution = state.getResolution();
+        int pageRotation = paintingState.getPageRotation();
+        int pageWidth = paintingState.getPageWidth();
+        int pageHeight = paintingState.getPageHeight();
+        int resolution = paintingState.getResolution();
         dataStream.startPage(pageWidth, pageHeight, pageRotation,
                 resolution, resolution);
 
@@ -278,7 +278,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         if (!at.isIdentity()) {
-            state.concatenate(at);
+            paintingState.concatenate(at);
         }
     }
 
@@ -296,12 +296,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void renderPage(PageViewport pageViewport) throws IOException, FOPException {
-        state.clear();
+        paintingState.clear();
 
         Rectangle2D bounds = pageViewport.getViewArea();
 
         AffineTransform baseTransform = getBaseTransform();
-        state.concatenate(baseTransform);
+        paintingState.concatenate(baseTransform);
 
         if (pages.containsKey(pageViewport)) {
             dataStream.restorePage(
@@ -309,15 +309,15 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         } else {
             int pageWidth
                 = Math.round(unitConv.mpt2units((float)bounds.getWidth()));
-            state.setPageWidth(pageWidth);
+            paintingState.setPageWidth(pageWidth);
 
             int pageHeight
                 = Math.round(unitConv.mpt2units((float)bounds.getHeight()));
-            state.setPageHeight(pageHeight);
+            paintingState.setPageHeight(pageHeight);
 
-            int pageRotation = state.getPageRotation();
+            int pageRotation = paintingState.getPageRotation();
 
-            int resolution = state.getResolution();
+            int resolution = paintingState.getResolution();
 
             dataStream.startPage(pageWidth, pageHeight, pageRotation,
                     resolution, resolution);
@@ -327,7 +327,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         super.renderPage(pageViewport);
 
-        AFPPageFonts pageFonts = state.getPageFonts();
+        AFPPageFonts pageFonts = paintingState.getPageFonts();
         if (pageFonts != null && !pageFonts.isEmpty()) {
             dataStream.addFontsToCurrentPage(pageFonts);
         }
@@ -389,24 +389,22 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 this.fontInfo);
         context.setProperty(AFPRendererContextConstants.AFP_RESOURCE_MANAGER,
                 this.resourceManager);
-        context.setProperty(AFPRendererContextConstants.AFP_STATE, state);
+        context.setProperty(AFPRendererContextConstants.AFP_PAINTING_STATE, paintingState);
         return context;
     }
 
     private static final ImageFlavor[] NATIVE_FLAVORS = new ImageFlavor[] {
         /*ImageFlavor.RAW_PNG, */ // PNG not natively supported in AFP
-        ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.RAW_EPS,
-        ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE,
-        ImageFlavor.XML_DOM };
+        ImageFlavor.XML_DOM, ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.RAW_EPS,
+        ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE };
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
-        ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE,
-        ImageFlavor.XML_DOM };
+        ImageFlavor.XML_DOM, ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE };
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         uri = URISpecification.getURL(uri);
-        state.setImageUri(uri);
+        paintingState.setImageUri(uri);
         Rectangle posInt = new Rectangle((int) pos.getX(), (int) pos.getY(),
                 (int) pos.getWidth(), (int) pos.getHeight());
         String name = (String)pageSegmentMap.get(uri);
@@ -427,7 +425,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 // Only now fully load/prepare the image
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
 
-                ImageFlavor[] flavors = state.isNativeImages() ? NATIVE_FLAVORS : FLAVORS;
+                ImageFlavor[] flavors = paintingState.isNativeImages() ? NATIVE_FLAVORS : FLAVORS;
                 org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, flavors, hints, sessionContext);
 
@@ -501,30 +499,30 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     public void updateColor(Color col, boolean fill) {
         if (fill) {
-            state.setColor(col);
+            paintingState.setColor(col);
         }
     }
 
     /** {@inheritDoc} */
     public void restoreStateStackAfterBreakOut(List breakOutList) {
         log.debug("Block.FIXED --> restoring context after break-out");
-        state.pushAll(breakOutList);
+        paintingState.pushAll(breakOutList);
     }
 
     /** {@inheritDoc} */
     protected List breakOutOfStateStack() {
         log.debug("Block.FIXED --> break out");
-        return state.popAll();
+        return paintingState.popAll();
     }
 
     /** {@inheritDoc} */
     public void saveGraphicsState() {
-        state.push();
+        paintingState.push();
     }
 
     /** {@inheritDoc} */
     public void restoreGraphicsState() {
-        state.pop();
+        paintingState.pop();
     }
 
     /** Indicates the beginning of a text object. */
@@ -549,7 +547,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         renderInlineAreaBackAndBorders(text);
 
         int fontSize = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
-        state.setFontSize(fontSize);
+        paintingState.setFontSize(fontSize);
 
         String name = getInternalFontNameForArea(text);
         AFPFont font = (AFPFont)fontInfo.getFonts().get(name);
@@ -561,10 +559,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         AFPFontAttributes fontAttributes
             = new AFPFontAttributes(name, font, fontSize);
 
-        AFPPageFonts pageFonts = state.getPageFonts();
+        AFPPageFonts pageFonts = paintingState.getPageFonts();
         if (!pageFonts.containsKey(fontAttributes.getFontKey())) {
             // Font not found on current page, so add the new one
-            fontAttributes.setFontReference(state.incrementPageFontCount());
+            fontAttributes.setFontReference(paintingState.incrementPageFontCount());
             pageFonts.put(fontAttributes.getFontKey(), fontAttributes);
         } else {
             // Use the previously stored font attributes
@@ -727,7 +725,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            The rotation in degrees.
      */
     public void setPortraitRotation(int rotation) {
-        state.setPortraitRotation(rotation);
+        paintingState.setPortraitRotation(rotation);
     }
 
     /**
@@ -738,7 +736,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            The rotation in degrees.
      */
     public void setLandscapeRotation(int rotation) {
-        state.setLandscapeRotation(rotation);
+        paintingState.setLandscapeRotation(rotation);
     }
 
     /**
@@ -748,7 +746,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            number of bits per pixel
      */
     public void setBitsPerPixel(int bitsPerPixel) {
-        state.setBitsPerPixel(bitsPerPixel);
+        paintingState.setBitsPerPixel(bitsPerPixel);
     }
 
     /**
@@ -758,7 +756,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            color image output
      */
     public void setColorImages(boolean colorImages) {
-        state.setColorImages(colorImages);
+        paintingState.setColorImages(colorImages);
     }
 
     /**
@@ -768,7 +766,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            native image support
      */
     public void setNativeImages(boolean nativeImages) {
-        state.setNativeImages(nativeImages);
+        paintingState.setNativeImages(nativeImages);
     }
 
     /**
@@ -778,7 +776,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *            the output resolution (dpi)
      */
     public void setResolution(int resolution) {
-        state.setResolution(resolution);
+        paintingState.setResolution(resolution);
     }
 
     /**
@@ -787,7 +785,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * @return the resolution in dpi
      */
     public int getResolution() {
-        return state.getResolution();
+        return paintingState.getResolution();
     }
 
     /**
@@ -795,8 +793,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      *
      * @return the current AFP state
      */
-    public AbstractState getState() {
-        return this.state;
+    public AbstractPaintingState getState() {
+        return this.paintingState;
     }
 
     /**

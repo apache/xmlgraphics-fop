@@ -29,7 +29,7 @@ public abstract class AbstractAFPPainter {
     protected static Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     protected final DataStream dataStream;
-    protected final AFPState state;
+    protected final AFPPaintingState state;
 
     /**
      * Main constructor
@@ -37,7 +37,7 @@ public abstract class AbstractAFPPainter {
      * @param state the afp state
      * @param dataStream the afp datastream
      */
-    public AbstractAFPPainter(AFPState state, DataStream dataStream) {
+    public AbstractAFPPainter(AFPPaintingState state, DataStream dataStream) {
         this.state = state;
         this.dataStream = dataStream;
     }

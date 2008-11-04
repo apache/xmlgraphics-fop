@@ -98,7 +98,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     private AFPResourceInfo resourceInfo = null;
 
     /** Current AFP state */
-    private AFPState state = null;
+    private AFPPaintingState state = null;
 
     /** The AFP FontInfo */
     private FontInfo fontInfo;
@@ -498,15 +498,15 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         g2d.fillRect(0, 0, width, height);
 
-        int bufferedWidth = bufferedImage.getWidth();
-        int bufferedHeight = bufferedImage.getHeight();
-        Rectangle clipRect = new Rectangle(0, 0, bufferedWidth, bufferedHeight);
+        int imageWidth = bufferedImage.getWidth();
+        int imageHeight = bufferedImage.getHeight();
+        Rectangle clipRect = new Rectangle(0, 0, imageWidth, imageHeight);
         g2d.clip(clipRect);
 
         g2d.setComposite(gc.getComposite());
 
-        boolean drawn = g2d.drawImage(img, 0, 0, bufferedWidth, bufferedHeight, observer);
-        g2d.dispose();
+        boolean drawn = g2d.drawImage(img, 0, 0, imageWidth, imageHeight, observer);
+        g2d.dispose(); //drawn so dispose immediately to free system resource
 
         if (drawn) {
             try {
@@ -575,11 +575,11 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     }
 
     /**
-     * Sets the AFP state
+     * Sets the AFP painting state
      *
-     * @param state the AFP state
+     * @param state the AFP painting state
      */
-    public void setState(AFPState state) {
+    public void setPaintingState(AFPPaintingState state) {
         this.state = state;
     }
 
@@ -588,7 +588,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
      *
      * @return the AFP state
      */
-    public AFPState getState() {
+    public AFPPaintingState getPaintingState() {
         return this.state;
     }
 

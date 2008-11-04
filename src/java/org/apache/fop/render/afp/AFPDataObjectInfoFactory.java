@@ -26,8 +26,8 @@ import java.io.IOException;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPForeignAttributeReader;
 import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
-import org.apache.fop.afp.AFPState;
 import org.apache.fop.afp.AFPUnitConverter;
 
 
@@ -38,8 +38,8 @@ public abstract class AFPDataObjectInfoFactory {
     private static final int X = 0;
     private static final int Y = 1;
 
-    /** the AFP state */
-    protected final AFPState state;
+    /** the AFP painting state */
+    protected final AFPPaintingState state;
 
     /** foreign attribute reader */
     private final AFPForeignAttributeReader foreignAttributeReader
@@ -50,7 +50,7 @@ public abstract class AFPDataObjectInfoFactory {
      *
      * @param state the AFP state
      */
-    public AFPDataObjectInfoFactory(AFPState state) {
+    public AFPDataObjectInfoFactory(AFPPaintingState state) {
         this.state = state;
     }
 

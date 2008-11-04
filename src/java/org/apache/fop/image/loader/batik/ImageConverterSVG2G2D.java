@@ -19,6 +19,7 @@
 
 package org.apache.fop.image.loader.batik;
 
+import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import org.apache.fop.svg.SimpleSVGUserAgent;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
 import org.apache.xmlgraphics.image.loader.XMLNamespaceEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageConverter;
@@ -82,8 +84,14 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         }
 
         //Create the painter
-        Graphics2DImagePainter painter = createPainter(svg, ctx, root);
-        ImageGraphics2D g2dImage = new ImageGraphics2D(src.getInfo(), painter);
+        int width = svg.getSize().getWidthMpt();
+        int height = svg.getSize().getHeightMpt();
+        Dimension imageSize = new Dimension(width, height);
+        Graphics2DImagePainter painter = createPainter(ctx, root, imageSize);
+
+        //Create g2d image
+        ImageInfo imageInfo = src.getInfo();
+        ImageGraphics2D g2dImage = new ImageGraphics2D(imageInfo, painter);
         return g2dImage;
     }
 
@@ -109,14 +117,14 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
     /**
      * Creates a Graphics 2D image painter
      *
-     * @param svg the svg image dom
      * @param ctx the bridge context
      * @param root the graphics node root
+     * @param imageSize the image size
      * @return the newly created graphics 2d image painter
      */
     protected Graphics2DImagePainter createPainter(
-            final ImageXMLDOM svg, final BridgeContext ctx, final GraphicsNode root) {
-        return new BatikGraphics2DImagePainter(svg, ctx, root);
+            BridgeContext ctx, GraphicsNode root, Dimension imageSize) {
+        return new Graphics2DImagePainterImpl(root, ctx, imageSize);
     }
 
     /** {@inheritDoc} */

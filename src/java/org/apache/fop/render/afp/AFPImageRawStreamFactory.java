@@ -24,7 +24,7 @@ import java.io.InputStream;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
-import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 
@@ -36,9 +36,9 @@ public class AFPImageRawStreamFactory extends AFPDataObjectInfoFactory {
     /**
      * Main constructor
      *
-     * @param state the AFP state
+     * @param state the AFP painting state
      */
-    public AFPImageRawStreamFactory(AFPState state) {
+    public AFPImageRawStreamFactory(AFPPaintingState state) {
         super(state);
     }
 

@@ -27,8 +27,9 @@ import java.io.IOException;
 
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
+import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
-import org.apache.fop.afp.AFPState;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
@@ -69,28 +70,32 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
             RendererContext context,
             int x, int y, int width, int height) throws IOException {
 
-        // get the 'width' and 'height' attributes of the SVG document
-        Dimension dim = painter.getImageSize();
-
-
         AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(context);
-        g2d.setResourceManager(afpInfo.getResourceManager());
-        g2d.setResourceInfo(afpInfo.getResourceInfo());
-        g2d.setState(afpInfo.getState());
-        g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
-//        // scale/convert to afp units
-//        AFPUnitConverter unitConv = state.getUnitConverter();
-//        float scale = unitConv.mpt2units(1);
+        // set resource manager
+        AFPResourceManager resourceManager = afpInfo.getResourceManager();
+        g2d.setResourceManager(resourceManager);
+
+        // set resource information
+        AFPResourceInfo resourceInfo = afpInfo.getResourceInfo();
+        g2d.setResourceInfo(resourceInfo);
+
+        // set painting state
+        AFPPaintingState paintingState = afpInfo.getPaintingState();
+        g2d.setPaintingState(paintingState);
+
+        // set graphic context
+        g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
         float fwidth = width / 1000f;
         float fheight = height / 1000f;
-        float imw = (float)dim.getWidth() / 1000f;
-        float imh = (float)dim.getHeight() / 1000f;
+
+        // get the 'width' and 'height' attributes of the SVG document
+        Dimension imageSize = painter.getImageSize();
+        float imw = (float)imageSize.getWidth() / 1000f;
+        float imh = (float)imageSize.getHeight() / 1000f;
         float sx = fwidth / imw;
         float sy = fheight / imh;
-//        float fx = x / 1000f;
-//        float fy = y / 1000f;
         AffineTransform at = new AffineTransform(sx, 0, 0, sy, x, y);
 
         renderer.saveGraphicsState();
@@ -99,26 +104,21 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
             //Fallback solution: Paint to a BufferedImage
             int resolution = Math.round(context.getUserAgent().getTargetResolution());
             RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
-            BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
+            BufferedImage bufferedImage = paintToBufferedImage(painter, ctx, resolution, false, false);
 
-            AFPState state = afpInfo.getState();
+            AFPPaintingState state = afpInfo.getPaintingState();
             AffineTransform trans = state.getData().getTransform();
             float scale = AFPRenderer.NORMAL_AFP_RESOLUTION
                             / context.getUserAgent().getTargetResolution();
             if (scale != 1) {
                 at.scale(scale, scale);
-                if (!at.isIdentity()) {
-                    trans.concatenate(at);
-                }
             }
 
+            if (!at.isIdentity()) {
+                trans.concatenate(at);
+            }
 
-            // concatenate to transformation matrix
-//            state.concatenate(at);
-
-            // draw image using current transformation matrix
-//            at = state.getData().getTransform();
-            g2d.drawImage(bi, trans, null);
+            g2d.drawImage(bufferedImage, trans, null);
         } else {
             AFPGraphicsObjectInfo graphicsObjectInfo = new AFPGraphicsObjectInfo();
             graphicsObjectInfo.setPainter(painter);
@@ -126,8 +126,6 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
             Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
             graphicsObjectInfo.setArea(area);
-            AFPResourceManager resourceManager = (AFPResourceManager)context.getProperty(
-                    AFPRendererContextConstants.AFP_RESOURCE_MANAGER);
             resourceManager.createObject(graphicsObjectInfo);
         }
 

@@ -29,14 +29,14 @@ import java.awt.geom.AffineTransform;
 public class AFPUnitConverter {
 
     /** the AFP state */
-    private final AFPState state;
+    private final AFPPaintingState state;
 
     /**
      * Unit converter
      *
-     * @param state the AFP state
+     * @param state the AFP painting state
      */
-    public AFPUnitConverter(AFPState state) {
+    public AFPUnitConverter(AFPPaintingState state) {
         this.state = state;
     }
 

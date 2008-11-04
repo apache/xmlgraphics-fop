@@ -71,7 +71,7 @@ public class AFPTextHandler implements TextHandler {
         GraphicsObject graphicsObj = g2d.getGraphicsObject();
         Color col = g2d.getColor();
 
-        AFPState state = g2d.getState();
+        AFPPaintingState state = g2d.getPaintingState();
         if (state.setColor(col)) {
             graphicsObj.setColor(col);
         }

@@ -68,10 +68,10 @@ public class AFPResourceManager {
     /**
      * Sets the outputstream
      *
-     * @param state the afp state
+     * @param state the AFP painting state
      * @param outputStream the outputstream
      */
-    public void createDataStream(AFPState state, OutputStream outputStream) {
+    public void createDataStream(AFPPaintingState state, OutputStream outputStream) {
         this.dataStream = streamer.createDataStream(state);
         streamer.setOutputStream(outputStream);
     }

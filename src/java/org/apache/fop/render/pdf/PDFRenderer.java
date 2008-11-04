@@ -40,7 +40,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.fop.AbstractData;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -95,9 +94,9 @@ import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFPageLabels;
+import org.apache.fop.pdf.PDFPaintingState;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXMode;
@@ -105,9 +104,11 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.util.AbstractPaintingState;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorProfileUtil;
 import org.apache.fop.util.ColorUtil;
+import org.apache.fop.util.AbstractPaintingState.AbstractData;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
@@ -249,8 +250,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** Optional URI to an output profile to be used. */
     protected String outputProfileURI;
 
-    /** drawing state */
-    protected PDFState currentState = null;
+    /** Painting state */
+    protected PDFPaintingState paintingState = null;
 
     /** Text generation utility holding the current font status */
     protected PDFTextUtil textutil;
@@ -518,7 +519,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         currentStream = null;
         currentContext = null;
         currentPage = null;
-        currentState = null;
+        paintingState = null;
         this.textutil = null;
 
         idPositions.clear();
@@ -639,7 +640,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void saveGraphicsState() {
         endTextObject();
-        currentState.push();
+        paintingState.push();
         currentStream.add("q\n");
     }
 
@@ -647,7 +648,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         endTextObject();
         currentStream.add("Q\n");
         if (popState) {
-            currentState.pop();
+            paintingState.pop();
         }
     }
 
@@ -782,11 +783,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             }
         };
 
-        currentState = new PDFState();
+        paintingState = new PDFPaintingState();
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFRenderer's
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 pageHeight / 1000f);
-        currentState.concatenate(basicPageTransform);
+        paintingState.concatenate(basicPageTransform);
         currentStream.add(CTMHelper.toPDFString(basicPageTransform, false) + " cm\n");
 
         super.renderPage(page);
@@ -806,7 +807,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
         saveGraphicsState();
         // Set the given CTM in the graphics state
-        currentState.concatenate(
+        paintingState.concatenate(
                 new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
         if (clippingRect != null) {
@@ -827,7 +828,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         if (!at.isIdentity()) {
-            currentState.concatenate(at);
+            paintingState.concatenate(at);
             currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
         }
     }
@@ -1017,7 +1018,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param width line width in points
      */
     private void updateLineWidth(float width) {
-        if (currentState.setLineWidth(width)) {
+        if (paintingState.setLineWidth(width)) {
             //Only write if value has changed WRT the current line width
             currentStream.add(format(width) + " w\n");
         }
@@ -1095,10 +1096,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     protected List breakOutOfStateStack() {
 //        return currentState.popAll();
         List breakOutList = new java.util.ArrayList();
-        AbstractData data;
+        AbstractPaintingState.AbstractData data;
         while (true) {
-            data = currentState.getData();
-            if (currentState.pop() == null) {
+            data = paintingState.getData();
+            if (paintingState.pop() == null) {
                 break;
             }
             if (breakOutList.size() == 0) {
@@ -1260,7 +1261,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected void saveAbsolutePosition(String id, int relativeIPP, int relativeBPP) {
         saveAbsolutePosition(id, currentPageRef,
-                             relativeIPP, relativeBPP, currentState.getTransform());
+                             relativeIPP, relativeBPP, paintingState.getTransform());
     }
 
     /**
@@ -1284,8 +1285,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 bpp += currentBPPosition;
             }
             AffineTransform tf = positioning == Block.FIXED
-                ? currentState.getBaseTransform()
-                : currentState.getTransform();
+                ? paintingState.getBaseTransform()
+                : paintingState.getTransform();
             saveAbsolutePosition(id, currentPageRef, ipp, bpp, tf);
         }
     }
@@ -1348,7 +1349,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             int bpp = currentBPPosition + ip.getOffset();
             ipRect = new Rectangle2D.Float(ipp / 1000f, bpp / 1000f,
                                            ip.getIPD() / 1000f, ip.getBPD() / 1000f);
-            AffineTransform transform = currentState.getTransform();
+            AffineTransform transform = paintingState.getTransform();
             ipRect = transform.createTransformedShape(ipRect).getBounds2D();
 
             factory = pdfDoc.getFactory();
@@ -1582,9 +1583,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
         boolean update = false;
         if (fill) {
-            update = currentState.setBackColor(col);
+            update = paintingState.setBackColor(col);
         } else {
-            update = currentState.setColor(col);
+            update = paintingState.setColor(col);
         }
 
         if (update) {
@@ -1725,7 +1726,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 x, y, width, height, foreignAttributes);
         context.setProperty(PDFRendererContextConstants.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFRendererContextConstants.OUTPUT_STREAM, ostream);
-        context.setProperty(PDFRendererContextConstants.PDF_STATE, currentState);
+        context.setProperty(PDFRendererContextConstants.PDF_PAINTING_STATE, paintingState);
         context.setProperty(PDFRendererContextConstants.PDF_PAGE, currentPage);
         context.setProperty(PDFRendererContextConstants.PDF_CONTEXT,
                     currentContext == null ? currentPage : currentContext);
@@ -1745,7 +1746,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public void renderLeader(Leader area) {
         renderInlineAreaBackAndBorders(area);
 
-        currentState.push();
+        paintingState.push();
         saveGraphicsState();
         int style = area.getRuleStyle();
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
@@ -1803,7 +1804,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
 
         restoreGraphicsState();
-        currentState.pop();
+        paintingState.pop();
         beginTextObject();
         super.renderLeader(area);
     }

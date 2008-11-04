@@ -83,11 +83,11 @@ public class AFPStreamer implements Streamable {
 
     /**
      * Creates a new DataStream
-     * @param state the afp state
      *
+     * @param state the AFP painting state
      * @return a new {@link DataStream}
      */
-    public DataStream createDataStream(AFPState state) {
+    public DataStream createDataStream(AFPPaintingState state) {
         try {
             this.tempFile = File.createTempFile(AFPDATASTREAM_TEMP_FILE_PREFIX, null);
             this.documentFile = new RandomAccessFile(tempFile, "rw");

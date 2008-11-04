@@ -20,9 +20,9 @@
 package org.apache.fop.render.afp;
 
 import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
-import org.apache.fop.afp.AFPState;
 import org.apache.fop.fonts.FontInfo;
 
 /**
@@ -48,7 +48,7 @@ public final class AFPInfo {
     private FontInfo fontInfo;
 
     /** See AFP_STATE */
-    private AFPState state;
+    private AFPPaintingState state;
 
     /** See AFP_RESOURCE_MANAGER */
     private AFPResourceManager resourceManager;
@@ -127,7 +127,7 @@ public final class AFPInfo {
      *
      * @return the current AFP state
      */
-    public AFPState getState() {
+    public AFPPaintingState getPaintingState() {
         return this.state;
     }
 
@@ -146,7 +146,7 @@ public final class AFPInfo {
      * @return true if supports color
      */
     public boolean isColorSupported() {
-        return getState().isColorImages();
+        return getPaintingState().isColorImages();
     }
 
     /**
@@ -173,7 +173,7 @@ public final class AFPInfo {
      * @return the resolution
      */
     protected int getResolution() {
-        return getState().getResolution();
+        return getPaintingState().getResolution();
     }
 
     /**
@@ -181,7 +181,7 @@ public final class AFPInfo {
      * @return the number of bits per pixel to use
      */
     protected int getBitsPerPixel() {
-        return getState().getBitsPerPixel();
+        return getPaintingState().getBitsPerPixel();
     }
 
     /**
@@ -216,7 +216,7 @@ public final class AFPInfo {
      *
      * @param state the AFP state
      */
-    public void setState(AFPState state) {
+    public void setPaintingState(AFPPaintingState state) {
         this.state = state;
     }
 

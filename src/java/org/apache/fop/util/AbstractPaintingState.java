@@ -17,12 +17,13 @@
 
 /* $Id$ */
 
-package org.apache.fop;
+package org.apache.fop.util;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -31,7 +32,7 @@ import java.util.Stack;
 /**
  * A base class which holds information about the current rendering state.
  */
-public abstract class AbstractState implements Cloneable, Serializable {
+public abstract class AbstractPaintingState implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 5998356138437094188L;
 
@@ -39,7 +40,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
     private AbstractData data = null;
 
     /** the state stack */
-    private StateStack stateStack = new StateStack();
+    private StateStack/*<AbstractData>*/ stateStack = new StateStack/*<AbstractData>*/();
 
     /**
      * Instantiates a new state data object
@@ -53,7 +54,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
      *
      * @return a new state object
      */
-    protected abstract AbstractState instantiateState();
+    protected abstract AbstractPaintingState instantiate();
 
     /**
      * Returns the currently valid state
@@ -277,7 +278,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
 
 
     /**
-     * Push the current state onto the stack.
+     * Push the current painting state onto the stack.
      * This call should be used when the Q operator is used
      * so that the state is known when popped.
      */
@@ -287,7 +288,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
     }
 
     /**
-     * Pop the state from the stack and set current values to popped state.
+     * Pop the painting state from the stack and set current values to popped state.
      * This should be called when a Q operator is used so
      * the state is restored to the correct values.
      *
@@ -303,7 +304,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
     }
 
     /**
-     * Pushes all state data in the given list to the stack
+     * Pushes all painting state data in the given list to the stack
      *
      * @param dataList a state data list
      */
@@ -317,7 +318,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
     }
 
     /**
-     * Pops all state data from the stack
+     * Pops all painting state data from the stack
      *
      * @return a list of state data popped from the stack
      */
@@ -363,7 +364,7 @@ public abstract class AbstractState implements Cloneable, Serializable {
 
     /** {@inheritDoc} */
     public Object clone() {
-        AbstractState state = instantiateState();
+        AbstractPaintingState state = instantiate();
         state.stateStack = new StateStack(this.stateStack);
         state.data = (AbstractData)this.data.clone();
         return state;
@@ -373,5 +374,157 @@ public abstract class AbstractState implements Cloneable, Serializable {
     public String toString() {
         return ", stateStack=" + stateStack
         + ", currentData=" + data;
+    }
+
+
+    /**
+     * A stack implementation which holds state objects
+     */
+    public class StateStack extends java.util.Stack {
+
+        private static final long serialVersionUID = 4897178211223823041L;
+
+        /**
+         * Default constructor
+         */
+        public StateStack() {
+            super();
+        }
+
+        /**
+         * Copy constructor
+         *
+         * @param c initial contents of stack
+         */
+        public StateStack(Collection c) {
+            elementCount = c.size();
+            // 10% for growth
+            elementData = new Object[
+                          (int)Math.min((elementCount * 110L) / 100, Integer.MAX_VALUE)];
+            c.toArray(elementData);
+        }
+    }
+
+
+    /**
+     * A base painting state data holding object
+     */
+    public abstract class AbstractData implements Cloneable, Serializable {
+
+        private static final long serialVersionUID = 5208418041189828624L;
+
+        /** The current color */
+        protected Color color = null;
+
+        /** The current background color */
+        protected Color backColor = null;
+
+        /** The current font name */
+        protected String fontName = null;
+
+        /** The current font size */
+        protected int fontSize = 0;
+
+        /** The current line width */
+        protected float lineWidth = 0;
+
+        /** The dash array for the current basic stroke (line type) */
+        protected float[] dashArray = null;
+
+        /** The current transform */
+        protected AffineTransform transform = null;
+
+        /**
+         * Returns a newly create data object
+         *
+         * @return a new data object
+         */
+        protected abstract AbstractData instantiate();
+
+        /**
+         * Concatenate the given AffineTransform with the current thus creating
+         * a new viewport. Note that all concatenation operations are logged
+         * so they can be replayed if necessary (ex. for block-containers with
+         * "fixed" positioning.
+         *
+         * @param at Transformation to perform
+         */
+        public void concatenate(AffineTransform at) {
+            getTransform().concatenate(at);
+        }
+
+        /**
+         * Get the current AffineTransform.
+         *
+         * @return the current transform
+         */
+        public AffineTransform getTransform() {
+            if (transform == null) {
+                transform = new AffineTransform();
+            }
+            return transform;
+        }
+
+        /**
+         * Sets the current AffineTransform.
+         */
+        public void setTransform(AffineTransform baseTransform) {
+            this.transform = baseTransform;
+        }
+
+        /**
+         * Resets the current AffineTransform.
+         */
+        public void clearTransform() {
+            transform = new AffineTransform();
+        }
+
+        /**
+         * Returns the derived rotation from the current transform
+         *
+         * @return the derived rotation from the current transform
+         */
+        public int getDerivedRotation() {
+            AffineTransform at = getTransform();
+            double sx = at.getScaleX();
+            double sy = at.getScaleY();
+            double shx = at.getShearX();
+            double shy = at.getShearY();
+            int rotation = 0;
+            if (sx == 0 && sy == 0 && shx > 0 && shy < 0) {
+                rotation = 270;
+            } else if (sx < 0 && sy < 0 && shx == 0 && shy == 0) {
+                rotation = 180;
+            } else if (sx == 0 && sy == 0 && shx < 0 && shy > 0) {
+                rotation = 90;
+            } else {
+                rotation = 0;
+            }
+            return rotation;
+        }
+
+        /** {@inheritDoc} */
+        public Object clone() {
+            AbstractData data = instantiate();
+            data.color = this.color;
+            data.backColor = this.backColor;
+            data.fontName = this.fontName;
+            data.fontSize = this.fontSize;
+            data.lineWidth = this.lineWidth;
+            data.dashArray = this.dashArray;
+            data.transform = new AffineTransform(this.transform);
+            return data;
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return "color=" + color
+                + ", backColor=" + backColor
+                + ", fontName=" + fontName
+                + ", fontSize=" + fontSize
+                + ", lineWidth=" + lineWidth
+                + ", dashArray=" + dashArray
+                + ", transform=" + transform;
+        }
     }
 }

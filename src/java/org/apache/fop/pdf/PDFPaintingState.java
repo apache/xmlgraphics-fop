@@ -25,11 +25,10 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.util.Iterator;
 
-import org.apache.fop.AbstractData;
-import org.apache.fop.AbstractState;
+import org.apache.fop.util.AbstractPaintingState;
 
 /**
- * This keeps information about the current state when writing to pdf.
+ * This keeps information about the current painting state when writing to pdf.
  * It allows for creating new graphics states with the q operator.
  * This class is only used to store the information about the state
  * the caller needs to handle the actual pdf operators.
@@ -45,14 +44,14 @@ import org.apache.fop.AbstractState;
  * It is impossible to optimise the result without analysing the all
  * the possible combinations after completing.
  */
-public class PDFState extends org.apache.fop.AbstractState {
+public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState {
 
     private static final long serialVersionUID = 5384726143906371279L;
 
     /**
      * PDF State for storing graphics state.
      */
-    public PDFState() {
+    public PDFPaintingState() {
     }
 
     /**
@@ -162,8 +161,8 @@ public class PDFState extends org.apache.fop.AbstractState {
     }
 
     /** {@inheritDoc} */
-    protected AbstractState instantiateState() {
-        return new PDFState();
+    protected AbstractPaintingState instantiate() {
+        return new PDFPaintingState();
     }
 
     /**
@@ -178,7 +177,7 @@ public class PDFState extends org.apache.fop.AbstractState {
         getStateStack().add(copy);
     }
 
-    private class PDFData extends org.apache.fop.AbstractData {
+    private class PDFData extends org.apache.fop.util.AbstractPaintingState.AbstractData {
 
         private static final long serialVersionUID = 3527950647293177764L;
 

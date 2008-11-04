@@ -55,7 +55,7 @@ public class AFPResourceLevel {
 
 
     /** where the resource will reside in the AFP output */
-    private int level = PRINT_FILE; // default is print-file level
+    private int level = PRINT_FILE; // default is print-file level (images)
 
     /** the external resource group file path */
     private String extFilePath = null;

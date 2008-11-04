@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
-import org.apache.fop.afp.AFPState;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 
 /**
@@ -35,9 +35,9 @@ public class AFPRawCCITTFaxFactory extends AFPDataObjectInfoFactory {
     /**
      * Main constructor
      *
-     * @param state the afp state
+     * @param state the AFP painting state
      */
-    public AFPRawCCITTFaxFactory(AFPState state) {
+    public AFPRawCCITTFaxFactory(AFPPaintingState state) {
         super(state);
     }
 

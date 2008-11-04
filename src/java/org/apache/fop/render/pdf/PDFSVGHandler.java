@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
@@ -35,16 +33,12 @@ import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.util.QName;
-
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFPaintingState;
 import org.apache.fop.pdf.PDFResourceContext;
-import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
@@ -55,6 +49,7 @@ import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.w3c.dom.Document;
 
 /**
  * PDF XML handler for SVG (uses Apache Batik).
@@ -78,7 +73,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         PDFInfo pdfi = new PDFInfo();
         pdfi.pdfDoc = (PDFDocument)context.getProperty(PDF_DOCUMENT);
         pdfi.outputStream = (OutputStream)context.getProperty(OUTPUT_STREAM);
-        pdfi.pdfState = (PDFState)context.getProperty(PDF_STATE);
+        pdfi.pdfPaintingState = (PDFPaintingState)context.getProperty(PDF_PAINTING_STATE);
         pdfi.pdfPage = (PDFPage)context.getProperty(PDF_PAGE);
         pdfi.pdfContext = (PDFResourceContext)context.getProperty(PDF_CONTEXT);
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
@@ -91,10 +86,9 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
         pdfi.cfg = (Configuration)context.getProperty(HANDLER_CONFIGURATION);
         Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-        
-        QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
+
         if (foreign != null
-                && "bitmap".equalsIgnoreCase((String)foreign.get(qName))) {
+                && BITMAP.equalsIgnoreCase((String)foreign.get(CONVERSION_MODE))) {
             pdfi.paintAsBitmap = true;
         }
         return pdfi;
@@ -109,7 +103,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         /** see OUTPUT_STREAM */
         public OutputStream outputStream;
         /** see PDF_STATE */
-        public PDFState pdfState;
+        public PDFPaintingState pdfPaintingState;
         /** see PDF_PAGE */
         public PDFPage pdfPage;
         /** see PDF_CONTEXT */
@@ -199,8 +193,8 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
-        float sx = pdfInfo.width / (float)w;
-        float sy = pdfInfo.height / (float)h;
+        float sx = pdfInfo.width / w;
+        float sy = pdfInfo.height / h;
 
         //Scaling and translation for the bounding box of the image
         AffineTransform scaling = new AffineTransform(
@@ -249,16 +243,16 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         pdfInfo.currentStream.add("%SVG start\n");
 
         //Save state and update coordinate system for the SVG image
-        pdfInfo.pdfState.push();
-        pdfInfo.pdfState.concatenate(imageTransform);
+        pdfInfo.pdfPaintingState.push();
+        pdfInfo.pdfPaintingState.concatenate(imageTransform);
 
         //Now that we have the complete transformation matrix for the image, we can update the
         //transformation matrix for the AElementBridge.
         PDFAElementBridge aBridge = (PDFAElementBridge)ctx.getBridge(
                 SVGDOMImplementation.SVG_NAMESPACE_URI, SVGConstants.SVG_A_TAG);
-        aBridge.getCurrentTransform().setTransform(pdfInfo.pdfState.getTransform());
+        aBridge.getCurrentTransform().setTransform(pdfInfo.pdfPaintingState.getTransform());
 
-        graphics.setPDFState(pdfInfo.pdfState);
+        graphics.setPaintingState(pdfInfo.pdfPaintingState);
         graphics.setOutputStream(pdfInfo.outputStream);
         try {
             root.paint(graphics);
@@ -268,7 +262,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }
-        pdfInfo.pdfState.pop();
+        pdfInfo.pdfPaintingState.pop();
         renderer.restoreGraphicsState();
         pdfInfo.currentStream.add("%SVG end\n");
     }

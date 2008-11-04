@@ -392,11 +392,11 @@ public class Factory {
     /**
      * Creates a new {@link DataStream}
      *
-     * @param state the afp state
+     * @param state the AFP painting state
      * @param outputStream an outputstream to write to
      * @return a new {@link DataStream}
      */
-    public DataStream createDataStream(AFPState state, OutputStream outputStream) {
+    public DataStream createDataStream(AFPPaintingState state, OutputStream outputStream) {
         DataStream dataStream = new DataStream(this, state, outputStream);
         return dataStream;
     }

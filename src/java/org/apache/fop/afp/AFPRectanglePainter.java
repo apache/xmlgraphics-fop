@@ -28,10 +28,10 @@ public class AFPRectanglePainter extends AbstractAFPPainter {
     /**
      * Main constructor
      *
-     * @param state the afp state
+     * @param state the AFP painting state
      * @param dataStream the afp datastream
      */
-    public AFPRectanglePainter(AFPState state, DataStream dataStream) {
+    public AFPRectanglePainter(AFPPaintingState state, DataStream dataStream) {
         super(state, dataStream);
     }
 

@@ -38,6 +38,6 @@ public interface AFPRendererContextConstants extends RendererContextConstants {
     /** The afp resource manager */
     String AFP_RESOURCE_MANAGER = "afpResourceManager";
 
-    /** The afp state */
-    String AFP_STATE = "afpPageState";
+    /** The afp painting state */
+    String AFP_PAINTING_STATE = "afpPaintingState";
 }

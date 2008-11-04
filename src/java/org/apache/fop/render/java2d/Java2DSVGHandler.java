@@ -23,22 +23,18 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.xmlgraphics.util.QName;
+import org.w3c.dom.Document;
 
 /**
  * Java2D XML handler for SVG (uses Apache Batik).
@@ -72,9 +68,8 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
         pdfi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
         Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-        QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
         if (foreign != null
-                && "bitmap".equalsIgnoreCase((String)foreign.get(qName))) {
+                && BITMAP.equalsIgnoreCase((String)foreign.get(CONVERSION_MODE))) {
             pdfi.paintAsBitmap = true;
         }
         return pdfi;

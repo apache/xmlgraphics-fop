@@ -21,13 +21,12 @@ package org.apache.fop.afp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.AbstractData;
-import org.apache.fop.AbstractState;
+import org.apache.fop.util.AbstractPaintingState;
 
 /**
- * This keeps information about the current state when writing to an AFP datastream.
+ * This keeps information about the current painting state when writing to an AFP datastream.
  */
-public class AFPState extends org.apache.fop.AbstractState implements Cloneable {
+public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState  implements Cloneable {
 
     private static final long serialVersionUID = 8206711712452344473L;
 
@@ -52,7 +51,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
     private int resolution = 240; // 240 dpi
 
     /** the current page */
-    private AFPPageState pageState = new AFPPageState();
+    private AFPPagePaintingState pagePaintingState = new AFPPagePaintingState();
 
 //    /** reference orientation */
 //    private int orientation = 0;
@@ -209,17 +208,17 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
     }
 
     /** {@inheritDoc} */
-    protected AbstractState instantiateState() {
-        return new AFPState();
+    protected AbstractPaintingState instantiate() {
+        return new AFPPaintingState();
     }
 
     /**
-     * Returns the state of the current page
+     * Returns the painting state of the current page
      *
-     * @return the state of the current page
+     * @return the painting state of the current page
      */
-    protected AFPPageState getPageState() {
-        return this.pageState;
+    protected AFPPagePaintingState getPagePaintingState() {
+        return this.pagePaintingState;
     }
 
     /**
@@ -242,7 +241,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
      * @return the current page fonts
      */
     public AFPPageFonts getPageFonts() {
-        return pageState.getFonts();
+        return pagePaintingState.getFonts();
     }
 
     /**
@@ -251,7 +250,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
      * @return the page font count
      */
     public int incrementPageFontCount() {
-        return pageState.incrementFontCount();
+        return pagePaintingState.incrementFontCount();
     }
 
     /**
@@ -260,7 +259,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
      * @param pageWidth the page width
      */
     public void setPageWidth(int pageWidth) {
-        pageState.setWidth(pageWidth);
+        pagePaintingState.setWidth(pageWidth);
     }
 
     /**
@@ -269,7 +268,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
      * @return the page width
      */
     public int getPageWidth() {
-        return pageState.getWidth();
+        return pagePaintingState.getWidth();
     }
 
     /**
@@ -278,7 +277,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
      * @param pageHeight the page height
      */
     public void setPageHeight(int pageHeight) {
-        pageState.setHeight(pageHeight);
+        pagePaintingState.setHeight(pageHeight);
     }
 
     /**
@@ -287,7 +286,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
      * @return the page height
      */
     public int getPageHeight() {
-        return pageState.getHeight();
+        return pagePaintingState.getHeight();
     }
 
     /**
@@ -296,7 +295,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
      * @return the page rotation
      */
     public int getPageRotation() {
-        return pageState.getOrientation();
+        return pagePaintingState.getOrientation();
     }
 
     /**
@@ -337,8 +336,8 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
 
     /** {@inheritDoc} */
     public Object clone() {
-        AFPState state = (AFPState)super.clone();
-        state.pageState = (AFPPageState)this.pageState.clone();
+        AFPPaintingState state = (AFPPaintingState)super.clone();
+        state.pagePaintingState = (AFPPagePaintingState)this.pagePaintingState.clone();
         state.portraitRotation = this.portraitRotation;
         state.landscapeRotation = this.landscapeRotation;
         state.bitsPerPixel = this.bitsPerPixel;
@@ -349,12 +348,12 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
 
     /** {@inheritDoc} */
     public String toString() {
-        return "AFPState{" + "portraitRotation=" + portraitRotation
+        return "AFPPaintingState{" + "portraitRotation=" + portraitRotation
         + ", landscapeRotation=" + landscapeRotation
         + ", colorImages=" + colorImages
         + ", bitsPerPixel=" + bitsPerPixel
         + ", resolution=" + resolution
-        + ", pageState=" + pageState
+        + ", pageState=" + pagePaintingState
         + super.toString()
         + "}";
     }
@@ -362,7 +361,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
     /**
      * Page level state data
      */
-    private class AFPPageState implements Cloneable {
+    private class AFPPagePaintingState implements Cloneable {
         /** page width */
         private int width = 0;
 
@@ -461,7 +460,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
 
         /** {@inheritDoc} */
         public Object clone() {
-            AFPPageState state = new AFPPageState();
+            AFPPagePaintingState state = new AFPPagePaintingState();
             state.width = this.width;
             state.height = this.height;
             state.orientation = this.orientation;
@@ -472,7 +471,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
 
         /** {@inheritDoc} */
         public String toString() {
-            return "AFPPageState{width=" + width
+            return "AFPPagePaintingState{width=" + width
             + ", height=" + height
             + ", orientation=" + orientation
             + ", fonts=" + fonts
@@ -484,7 +483,7 @@ public class AFPState extends org.apache.fop.AbstractState implements Cloneable 
     /**
      * Block level state data
      */
-    private class AFPData extends org.apache.fop.AbstractData {
+    private class AFPData extends org.apache.fop.util.AbstractPaintingState.AbstractData {
         private static final long serialVersionUID = -1789481244175275686L;
 
         /** The current fill status */

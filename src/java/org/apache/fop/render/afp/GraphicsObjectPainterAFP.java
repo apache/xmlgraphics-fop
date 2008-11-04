@@ -24,13 +24,20 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.fop.afp.AFPAbstractGraphicsObjectPainter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.AFPGraphics2D;
+import org.apache.fop.afp.modca.GraphicsObject;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 /**
  * Paints SVG as a GOCA Graphics Object using Batik
  */
-public class AFPBatikGraphicsObjectPainter extends AFPAbstractGraphicsObjectPainter {
+public class GraphicsObjectPainterAFP implements Graphics2DImagePainter {
+    /** Static logging instance */
+    protected static Log log = LogFactory.getLog(GraphicsObjectPainterAFP.class);
+
+    private final AFPGraphics2D graphics2D;
 
     /** the batik root node of the svg document */
     private GraphicsNode root;
@@ -40,8 +47,9 @@ public class AFPBatikGraphicsObjectPainter extends AFPAbstractGraphicsObjectPain
      *
      * @param graphics an AFP graphics 2D implementation
      */
-    public AFPBatikGraphicsObjectPainter(AFPGraphics2D graphics) {
-        super(graphics);
+    public GraphicsObjectPainterAFP(AFPGraphics2D graphics) {
+        final boolean textAsShapes = false;
+        this.graphics2D = new AFPGraphics2D(textAsShapes);
     }
 
     /**
@@ -67,6 +75,15 @@ public class AFPBatikGraphicsObjectPainter extends AFPAbstractGraphicsObjectPain
     /** {@inheritDoc} */
     public Dimension getImageSize() {
         return null;
+    }
+
+    /**
+     * Sets the GOCA Graphics Object
+     *
+     * @param graphicsObject the GOCA Graphics Object
+     */
+    public void setGraphicsObject(GraphicsObject graphicsObject) {
+        this.graphics2D.setGraphicsObject(graphicsObject);
     }
 
 }

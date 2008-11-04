@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp;
 
 // FOP
+import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
@@ -36,14 +37,16 @@ import org.apache.fop.afp.AFPForeignAttributeReader;
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.afp.AFPResourceManager;
-import org.apache.fop.afp.AFPState;
 import org.apache.fop.afp.AFPTextElementBridge;
 import org.apache.fop.afp.AFPTextHandler;
 import org.apache.fop.afp.AFPTextPainter;
 import org.apache.fop.afp.AFPUnitConverter;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.afp.Graphics2DImagePainterGOCA;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
@@ -51,7 +54,7 @@ import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.xmlgraphics.util.QName;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.w3c.dom.Document;
 
 /**
@@ -61,9 +64,7 @@ import org.w3c.dom.Document;
  */
 public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
-    /** foreign attribute reader */
-    private final AFPForeignAttributeReader foreignAttributeReader
-        = new AFPForeignAttributeReader();
+    private boolean paintAsBitmap = false;
 
     /** {@inheritDoc} */
     public void handleXML(RendererContext context,
@@ -88,21 +89,24 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         afpi.setHandlerConfiguration((Configuration)context.getProperty(HANDLER_CONFIGURATION));
         afpi.setFontInfo((org.apache.fop.fonts.FontInfo)context.getProperty(
                 AFPRendererContextConstants.AFP_FONT_INFO));
-        afpi.setState((AFPState)context.getProperty(
-                AFPRendererContextConstants.AFP_STATE));
+        afpi.setPaintingState((AFPPaintingState)context.getProperty(
+                AFPRendererContextConstants.AFP_PAINTING_STATE));
         afpi.setResourceManager(((AFPResourceManager)context.getProperty(
                 AFPRendererContextConstants.AFP_RESOURCE_MANAGER)));
 
         Map foreignAttributes = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
         if (foreignAttributes != null) {
+            String conversionMode = (String)foreignAttributes.get(CONVERSION_MODE);
+            boolean paintAsBitmap = BITMAP.equalsIgnoreCase(conversionMode);
+            afpi.setPaintAsBitmap(paintAsBitmap);
+
             AFPForeignAttributeReader foreignAttributeReader = new AFPForeignAttributeReader();
             AFPResourceInfo resourceInfo = foreignAttributeReader.getResourceInfo(foreignAttributes);
-            afpi.setResourceInfo(resourceInfo);
-
-            QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
-            if ("bitmap".equalsIgnoreCase((String)foreignAttributes.get(qName))) {
-                afpi.setPaintAsBitmap(true);
+            // default to inline level if painted as GOCA
+            if (!resourceInfo.levelChanged() && !paintAsBitmap) {
+                resourceInfo.setLevel(new AFPResourceLevel(AFPResourceLevel.INLINE));
             }
+            afpi.setResourceInfo(resourceInfo);
         }
         return afpi;
     }
@@ -122,8 +126,10 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
         AFPInfo afpInfo = getAFPInfo(context);
 
+        this.paintAsBitmap = afpInfo.paintAsBitmap();
+
         // fallback paint as bitmap
-        if (afpInfo.paintAsBitmap()) {
+        if (paintAsBitmap) {
             try {
                 super.renderSVGDocument(context, doc);
             } catch (IOException ioe) {
@@ -135,8 +141,8 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         }
 
         String uri = ((AbstractDocument)doc).getDocumentURI();
-        AFPState state = afpInfo.getState();
-        state.setImageUri(uri);
+        AFPPaintingState paintingState = afpInfo.getPaintingState();
+        paintingState.setImageUri(uri);
 
         // set the data object parameters
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
@@ -146,7 +152,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         int curry = rctx.getCurrentYPosition();
         float[] srcPts = {currx, curry};
 
-        AFPUnitConverter unitConv = state.getUnitConverter();
+        AFPUnitConverter unitConv = paintingState.getUnitConverter();
         int[] coords = unitConv.mpts2units(srcPts);
         objectAreaInfo.setX(coords[X]);
         objectAreaInfo.setY(coords[Y]);
@@ -161,7 +167,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         int height = Math.round(unitConv.mpt2units(afpInfo.getHeight()));
         objectAreaInfo.setHeight(height);
 
-        int rotation = state.getRotation();
+        int rotation = paintingState.getRotation();
         objectAreaInfo.setRotation(rotation);
 
         AFPGraphicsObjectInfo graphicsObjectInfo = new AFPGraphicsObjectInfo();
@@ -171,14 +177,22 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         final boolean textAsShapes = false;
         AFPGraphics2D g2d = new AFPGraphics2D(textAsShapes);
 
-        g2d.setResourceManager(afpInfo.getResourceManager());
-        g2d.setResourceInfo(afpInfo.getResourceInfo());
-        g2d.setState(afpInfo.getState());
+        g2d.setPaintingState(paintingState);
+
+        AFPResourceManager resourceManager = afpInfo.getResourceManager();
+        g2d.setResourceManager(resourceManager);
+
+        AFPResourceInfo resourceInfo = afpInfo.getResourceInfo();
+        g2d.setResourceInfo(resourceInfo);
+        graphicsObjectInfo.setResourceInfo(resourceInfo);
+
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
-        g2d.setFontInfo(afpInfo.getFontInfo());
+
+        FontInfo fontInfo = afpInfo.getFontInfo();
+        g2d.setFontInfo(fontInfo);
 
         // Configure GraphicsObjectPainter with the Graphics2D implementation
-        AFPBatikGraphicsObjectPainter painter = new AFPBatikGraphicsObjectPainter(g2d);
+        GraphicsObjectPainterAFP painter = new GraphicsObjectPainterAFP(g2d);
         (graphicsObjectInfo).setPainter(painter);
 
         // Controls whether text painted by Batik is generated using text or path operations
@@ -193,12 +207,6 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
             AFPTextElementBridge tBridge = new AFPTextElementBridge(textPainter);
             ctx.putBridge(tBridge);
         }
-
-        Map/*<QName, String>*/ foreignAttributes
-            = (Map/*<QName, String>*/)context.getProperty(
-                RendererContextConstants.FOREIGN_ATTRIBUTES);
-        AFPResourceInfo resourceInfo = foreignAttributeReader.getResourceInfo(foreignAttributes);
-        graphicsObjectInfo.setResourceInfo(resourceInfo);
 
         // Build the SVG DOM and provide the painter with it
         GraphicsNode root;
@@ -221,13 +229,12 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         double hx = (afpInfo.getHeight() / h);
         double scaleX = unitConv.pt2units((float)wx);
         double scaleY = unitConv.pt2units((float)hx);
-        double xOffset = unitConv.mpt2units(afpInfo.getX());
         double yOffset = unitConv.mpt2units(afpInfo.getHeight());
 
         // Transformation matrix that establishes the local coordinate system
         // for the SVG graphic in relation to the current coordinate system
         // (note: y axis is inverted)
-        AffineTransform trans = new AffineTransform(scaleX, 0, 0, -scaleY, xOffset, yOffset);
+        AffineTransform trans = new AffineTransform(scaleX, 0, 0, -scaleY, 0, yOffset);
         g2d.setTransform(trans);
 
         // Set the afp graphics 2d implementation
@@ -235,8 +242,6 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
         // Set the object area info
         graphicsObjectInfo.setObjectAreaInfo(objectAreaInfo);
-
-        AFPResourceManager resourceManager = afpInfo.getResourceManager();
 
         // Create the graphics object
         resourceManager.createObject(graphicsObjectInfo);
@@ -251,6 +256,26 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
     protected void updateRendererContext(RendererContext context) {
         //Work around a problem in Batik: Gradients cannot be done in ColorSpace.CS_GRAY
         context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE, Boolean.FALSE);
+    }
+
+    /** {@inheritDoc} */
+    protected Graphics2DImagePainter createPainter(BridgeContext ctx, GraphicsNode root, Dimension imageSize) {
+        Graphics2DImagePainter painter = null;
+        if (paintAsBitmap()) {
+            painter = super.createPainter(root, ctx, imageSize);
+        } else {
+            painter = new Graphics2DImagePainterGOCA(root, ctx, imageSize);
+        }
+        return painter;
+    }
+
+    /**
+     * Returns true if the SVG is to be painted as a bitmap
+     *
+     * @return true if the SVG is to be painted as a bitmap
+     */
+    private boolean paintAsBitmap() {
+        return paintAsBitmap;
     }
 
 }

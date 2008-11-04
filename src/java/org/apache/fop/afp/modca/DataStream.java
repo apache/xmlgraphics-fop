@@ -29,8 +29,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.AFPLineDataInfo;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceLevel;
-import org.apache.fop.afp.AFPState;
 import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.fonts.AFPFont;
@@ -83,17 +83,17 @@ public class DataStream {
 
     private OutputStream outputStream;
 
-    /** the afp state */
-    private final AFPState state;
+    /** the afp painting state */
+    private final AFPPaintingState state;
 
     /**
      * Default constructor for the AFPDocumentStream.
      *
      * @param factory the resource factory
-     * @param state the afp state
+     * @param state the AFP painting state
      * @param outputStream the outputstream to write to
      */
-    public DataStream(Factory factory, AFPState state, OutputStream outputStream) {
+    public DataStream(Factory factory, AFPPaintingState state, OutputStream outputStream) {
         this.state = state;
         this.factory = factory;
         this.outputStream = outputStream;

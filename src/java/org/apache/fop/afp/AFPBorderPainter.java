@@ -33,10 +33,10 @@ public class AFPBorderPainter extends AbstractAFPPainter {
     /**
      * Main constructor
      *
-     * @param state the unit converter
-     * @param dataStream the afp datastream
+     * @param state the AFP painting state converter
+     * @param dataStream the AFP datastream
      */
-    public AFPBorderPainter(AFPState state, DataStream dataStream) {
+    public AFPBorderPainter(AFPPaintingState state, DataStream dataStream) {
         super(state, dataStream);
     }
 
