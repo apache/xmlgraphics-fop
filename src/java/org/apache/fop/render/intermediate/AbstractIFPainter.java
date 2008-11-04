@@ -127,6 +127,7 @@ public abstract class AbstractIFPainter implements IFPainter {
         //Load and convert the image to a supported format
         RenderingContext context = createRenderingContext();
         Map hints = createDefaultImageProcessingHints(sessionContext);
+        context.putHints(hints);
         org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                     info, imageHandlerRegistry.getSupportedFlavors(context),
                     hints, sessionContext);
@@ -179,6 +180,7 @@ public abstract class AbstractIFPainter implements IFPainter {
         ImageHandlerRegistry imageHandlerRegistry = getFopFactory().getImageHandlerRegistry();
 
         Image effImage;
+        context.putHints(additionalHints);
         if (convert) {
             Map hints = createDefaultImageProcessingHints(getUserAgent().getImageSessionContext());
             if (additionalHints != null) {

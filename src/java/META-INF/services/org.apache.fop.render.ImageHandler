@@ -6,3 +6,4 @@ org.apache.fop.render.pdf.PDFImageHandlerSVG
 org.apache.fop.render.java2d.Java2DImageHandlerRenderedImage
 org.apache.fop.render.java2d.Java2DImageHandlerGraphics2D
 org.apache.fop.render.pcl.PCLImageHandlerRenderedImage
+org.apache.fop.render.pcl.PCLImageHandlerGraphics2D
