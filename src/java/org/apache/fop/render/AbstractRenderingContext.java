@@ -19,6 +19,9 @@
 
 package org.apache.fop.render;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -27,6 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
 public abstract class AbstractRenderingContext implements RenderingContext {
 
     private FOUserAgent userAgent;
+    private Map hints;
 
     /**
      * Main constructor.
@@ -45,5 +49,33 @@ public abstract class AbstractRenderingContext implements RenderingContext {
         return userAgent;
     }
 
+    /** {@inheritDoc} */
+    public void putHints(Map hints) {
+        if (hints == null) {
+            return;
+        }
+        if (this.hints == null) {
+            this.hints = new java.util.HashMap();
+        }
+        this.hints.putAll(hints);
+    }
+
+    /** {@inheritDoc} */
+    public Map getHints() {
+        if (this.hints == null) {
+            return Collections.EMPTY_MAP;
+        } else {
+            return Collections.unmodifiableMap(this.hints);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public Object getHint(Object key) {
+        if (this.hints == null) {
+            return null;
+        } else {
+            return this.hints.get(key);
+        }
+    }
 }
 

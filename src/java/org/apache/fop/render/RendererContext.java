@@ -29,7 +29,7 @@ import org.apache.fop.apps.FOUserAgent;
  * so that external handlers can get information to be able to render to the
  * render target.
  */
-public class RendererContext implements RenderingContext {
+public class RendererContext {
 
     private String mime;
     private AbstractRenderer renderer;

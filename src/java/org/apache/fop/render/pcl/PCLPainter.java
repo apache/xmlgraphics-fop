@@ -110,6 +110,10 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
         }
     }
 
+    private boolean isSpeedOptimized() {
+        return getPCLUtil().getRenderingMode() == PCLRenderingMode.SPEED;
+    }
+
     //----------------------------------------------------------------------------------------------
 
     /** {@inheritDoc} */
@@ -161,6 +165,10 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                 return PCLPainter.this.transformedPoint(x, y);
             }
 
+            public GraphicContext getGraphicContext() {
+                return PCLPainter.this.graphicContext;
+            }
+
         };
         return pdfContext;
     }
@@ -203,7 +211,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     public void drawBorderRect(final Rectangle rect,
             final BorderProps before, final BorderProps after,
             final BorderProps start, final BorderProps end) throws IFException {
-        if (getPCLUtil().getRenderingMode() == PCLRenderingMode.SPEED) {
+        if (isSpeedOptimized()) {
             super.drawBorderRect(rect, before, after, start, end);
             return;
         }
@@ -239,7 +247,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     public void drawLine(final Point start, final Point end,
                 final int width, final Color color, final RuleStyle style)
             throws IFException {
-        if (getPCLUtil().getRenderingMode() == PCLRenderingMode.SPEED) {
+        if (isSpeedOptimized()) {
             super.drawLine(start, end, width, color, style);
             return;
         }
@@ -278,8 +286,16 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
         ImageGraphics2D img = new ImageGraphics2D(info, painter);
 
         Map hints = new java.util.HashMap();
-        hints.put(ImageProcessingHints.BITMAP_TYPE_INTENT,
-                ImageProcessingHints.BITMAP_TYPE_INTENT_GRAY);
+        if (isSpeedOptimized()) {
+            //Gray text may not be painted in this case! We don't get dithering in Sun JREs.
+            //But this approach is about twice as fast as the grayscale image.
+            hints.put(ImageProcessingHints.BITMAP_TYPE_INTENT,
+                    ImageProcessingHints.BITMAP_TYPE_INTENT_MONO);
+        } else {
+            hints.put(ImageProcessingHints.BITMAP_TYPE_INTENT,
+                    ImageProcessingHints.BITMAP_TYPE_INTENT_GRAY);
+        }
+        hints.put(PCLConstants.CONV_MODE, "bitmap");
         PCLRenderingContext context = (PCLRenderingContext)createRenderingContext();
         context.setSourceTransparencyEnabled(true);
         try {

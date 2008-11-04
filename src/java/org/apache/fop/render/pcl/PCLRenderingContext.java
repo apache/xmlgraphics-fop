@@ -21,6 +21,7 @@ package org.apache.fop.render.pcl;
 
 import java.awt.geom.Point2D;
 
+import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -92,5 +93,11 @@ public abstract class PCLRenderingContext extends AbstractRenderingContext {
      * @return the transformed point in PCL coordinates
      */
     public abstract Point2D transformedPoint(int x, int y);
+
+    /**
+     * Returns the current {@code GraphicContext} instance.
+     * @return the graphic context
+     */
+    public abstract GraphicContext getGraphicContext();
 
 }

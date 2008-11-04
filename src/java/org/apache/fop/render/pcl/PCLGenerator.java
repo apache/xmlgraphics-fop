@@ -22,12 +22,10 @@ package org.apache.fop.render.pcl;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ByteLookupTable;
-import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -767,11 +765,20 @@ public class PCLGenerator {
      */
     public void paintBitmap(RenderedImage img, Dimension targetDim, boolean sourceTransparency)
                 throws IOException {
-        double targetResolution = img.getWidth() / UnitConv.mpt2in(targetDim.width);
+        double targetHResolution = img.getWidth() / UnitConv.mpt2in(targetDim.width);
+        double targetVResolution = img.getHeight() / UnitConv.mpt2in(targetDim.height);
+        double targetResolution = Math.max(targetHResolution, targetVResolution);
         int resolution = (int)Math.round(targetResolution);
         int effResolution = calculatePCLResolution(resolution, true);
         Dimension orgDim = new Dimension(img.getWidth(), img.getHeight());
-        Dimension effDim = getAdjustedDimension(orgDim, targetResolution, effResolution);
+        Dimension effDim;
+        if (targetResolution == effResolution) {
+            effDim = orgDim; //avoid scaling side-effects
+        } else {
+            effDim = new Dimension(
+                    (int)Math.ceil(UnitConv.mpt2px(targetDim.width, effResolution)),
+                    (int)Math.ceil(UnitConv.mpt2px(targetDim.height, effResolution)));
+        }
         boolean scaled = !orgDim.equals(effDim);
         //ImageWriterUtil.saveAsPNG(img, new java.io.File("D:/text-0-org.png"));
 
@@ -791,6 +798,7 @@ public class PCLGenerator {
             BufferedImage src = null;
             if (img instanceof BufferedImage && !scaled) {
                 if (!isGrayscaleImage(img) || img.getColorModel().hasAlpha()) {
+                    /* Disabled as this doesn't work reliably, use the fallback below
                     src = new BufferedImage(effDim.width, effDim.height,
                             BufferedImage.TYPE_BYTE_GRAY);
                     Graphics2D g2d = src.createGraphics();
@@ -802,6 +810,7 @@ public class PCLGenerator {
                     ColorConvertOp op = new ColorConvertOp(
                             ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
                     op.filter((BufferedImage)img, src);
+                    */
                 } else {
                     src = (BufferedImage)img;
                 }
@@ -1018,7 +1027,7 @@ public class PCLGenerator {
         }
 
         public void endLine() throws IOException {
-            if (zeroRow) {
+            if (zeroRow && PCLGenerator.this.currentSourceTransparency) {
                 writeCommand("*b1Y");
             } else if (rlewidth < bytewidth) {
                 writeCommand("*b1m" + rlewidth + "W");

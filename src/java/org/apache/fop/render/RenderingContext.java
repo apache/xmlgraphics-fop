@@ -19,6 +19,8 @@
 
 package org.apache.fop.render;
 
+import java.util.Map;
+
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -39,5 +41,11 @@ public interface RenderingContext {
      * @return the user agent
      */
     FOUserAgent getUserAgent();
+
+    void putHints(Map hints);
+
+    Map getHints();
+
+    Object getHint(Object key);
 
 }
