@@ -612,7 +612,7 @@ list of possible build targets.
       <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
       <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
       <include name="org/apache/fop/render/*RendererConfigurator**"/>
-      <include name="org/apache/fop/AbstractState**"/>
+      <include name="org/apache/fop/util/AbstractPaintingState**"/>
       <include name="org/apache/fop/pdf/**"/>
     </patternset>
 <!-- PS transcoder -->
