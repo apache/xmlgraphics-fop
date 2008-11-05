@@ -62,7 +62,6 @@ import org.apache.batik.gvt.PatternPaint;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
@@ -1454,19 +1453,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * Returns a suitable internal font given an AWT Font instance.
      * @param awtFont the AWT font
      * @return the internal Font
+     * @deprecated use FontInfo.getFontInstanceForAWTFont(java.awt.Font awtFont) instead
      */
     protected Font getInternalFontForAWTFont(java.awt.Font awtFont) {
-        Font fontState;
-        String n = awtFont.getFamily();
-        if (n.equals("sanserif")) {
-            n = "sans-serif";
-        }
-        float siz = awtFont.getSize2D();
-        String style = awtFont.isItalic() ? "italic" : "normal";
-        int weight = awtFont.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
-        FontTriplet triplet = fontInfo.fontLookup(n, style, weight);
-        fontState = fontInfo.getFontInstance(triplet, (int)(siz * 1000 + 0.5));
-        return fontState;
+        return fontInfo.getFontInstanceForAWTFont(awtFont);
     }
 
     /**
