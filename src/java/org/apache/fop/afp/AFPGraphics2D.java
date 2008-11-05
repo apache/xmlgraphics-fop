@@ -98,7 +98,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     private AFPResourceInfo resourceInfo = null;
 
     /** Current AFP state */
-    private AFPPaintingState state = null;
+    private AFPPaintingState paintingState = null;
 
     /** The AFP FontInfo */
     private FontInfo fontInfo;
@@ -128,7 +128,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         this.customTextHandler = g2d.customTextHandler;
         this.resourceManager = g2d.resourceManager;
         this.resourceInfo = g2d.resourceInfo;
-        this.state = g2d.state;
+        this.paintingState = g2d.paintingState;
     }
 
     /**
@@ -176,7 +176,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
             // set line type/style (note: this is an approximation at best!)
             float[] dashArray = basicStroke.getDashArray();
-            if (state.setDashArray(dashArray)) {
+            if (paintingState.setDashArray(dashArray)) {
                 byte type = GraphicsSetLineType.DEFAULT; // normally SOLID
                 if (dashArray != null) {
                     type = GraphicsSetLineType.DOTTED; // default to plain DOTTED if dashed line
@@ -224,7 +224,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         }
 
         Color color = getColor();
-        if (state.setColor(color)) {
+        if (paintingState.setColor(color)) {
             graphicsObj.setColor(color);
         }
 
@@ -422,7 +422,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
 
-        imageObjectInfo.setBitsPerPixel(state.getBitsPerPixel());
+        imageObjectInfo.setBitsPerPixel(paintingState.getBitsPerPixel());
 
         imageObjectInfo.setResourceInfo(resourceInfo);
 
@@ -432,7 +432,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         int dataWidth = renderedImage.getWidth();
         imageObjectInfo.setDataWidth(dataWidth);
 
-        boolean colorImages = state.isColorImages();
+        boolean colorImages = paintingState.isColorImages();
         imageObjectInfo.setColor(colorImages);
 
         ByteArrayOutputStream boas = new ByteArrayOutputStream();
@@ -442,7 +442,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         // convert to grayscale
         if (!colorImages) {
             boas.reset();
-            int bitsPerPixel = state.getBitsPerPixel();
+            int bitsPerPixel = paintingState.getBitsPerPixel();
             imageObjectInfo.setBitsPerPixel(bitsPerPixel);
             ImageEncodingHelper.encodeRGBAsGrayScale(
                   imageData, dataWidth, dataHeight, bitsPerPixel, boas);
@@ -464,7 +464,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         objectAreaInfo.setX(Math.round(dstPts[X]));
         objectAreaInfo.setY(Math.round(dstPts[Y]));
 
-        AFPUnitConverter unitConv = state.getUnitConverter();
+        AFPUnitConverter unitConv = paintingState.getUnitConverter();
 
         int w = Math.round(unitConv.pt2units(width));
         objectAreaInfo.setWidth(w);
@@ -472,7 +472,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         int h = Math.round(unitConv.pt2units(height));
         objectAreaInfo.setHeight(h);
 
-        int resolution = state.getResolution();
+        int resolution = paintingState.getResolution();
         objectAreaInfo.setWidthRes(resolution);
         objectAreaInfo.setHeightRes(resolution);
 
@@ -577,19 +577,19 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     /**
      * Sets the AFP painting state
      *
-     * @param state the AFP painting state
+     * @param paintingState the AFP painting state
      */
-    public void setPaintingState(AFPPaintingState state) {
-        this.state = state;
+    public void setPaintingState(AFPPaintingState paintingState) {
+        this.paintingState = paintingState;
     }
 
     /**
-     * Returns the AFP state
+     * Returns the AFP painting state
      *
-     * @return the AFP state
+     * @return the AFP painting state
      */
     public AFPPaintingState getPaintingState() {
-        return this.state;
+        return this.paintingState;
     }
 
     /**
