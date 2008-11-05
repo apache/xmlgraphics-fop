@@ -169,11 +169,12 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     protected void applyStroke(Stroke stroke) {
         if (stroke instanceof BasicStroke) {
             BasicStroke basicStroke = (BasicStroke) stroke;
+
+            // set line width
             float lineWidth = basicStroke.getLineWidth();
-            if (state.setLineWidth(lineWidth)) {
-                getGraphicsObject().setLineWidth(Math.round(lineWidth * 2));
-            }
-            // note: this is an approximation at best!
+            getGraphicsObject().setLineWidth(Math.round(lineWidth * 2));
+
+            // set line type/style (note: this is an approximation at best!)
             float[] dashArray = basicStroke.getDashArray();
             if (state.setDashArray(dashArray)) {
                 byte type = GraphicsSetLineType.DEFAULT; // normally SOLID
@@ -218,7 +219,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
      *            true if the shape is to be drawn filled
      */
     private void doDrawing(Shape shape, boolean fill) {
-        getGraphicsObject();
         if (!fill) {
             graphicsObj.newSegment();
         }
