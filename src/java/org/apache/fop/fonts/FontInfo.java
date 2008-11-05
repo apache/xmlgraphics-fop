@@ -318,6 +318,7 @@ public class FontInfo {
 
     /**
      * Retrieves a (possibly cached) Font instance based on a FontTriplet and a font size.
+     *
      * @param triplet the font triplet designating the requested font
      * @param fontSize the font size
      * @return the requested Font instance
@@ -339,6 +340,57 @@ public class FontInfo {
             sizes.put(size, font);
         }
         return font;
+    }
+
+    private List/*<FontTriplet>*/ getTripletsForName(String fontName) {
+        List/*<FontTriplet>*/ matchedTriplets = new java.util.ArrayList/*<FontTriplet>*/();
+        Iterator it = triplets.keySet().iterator();
+        while (it.hasNext()) {
+            FontTriplet triplet = (FontTriplet)it.next();
+            String tripletName = triplet.getName();
+            if (tripletName.toLowerCase().equals(fontName.toLowerCase())) {
+                matchedTriplets.add(triplet);
+            }
+        }
+        return matchedTriplets;
+    }
+
+    /**
+     * Returns a suitable internal font given an AWT Font instance.
+     *
+     * @param awtFont the AWT font
+     * @return a best matching internal Font
+     */
+    public Font getFontInstanceForAWTFont(java.awt.Font awtFont) {
+        String awtFontName = awtFont.getName();
+        String awtFontFamily = awtFont.getFamily();
+        String awtFontStyle = awtFont.isItalic() ? Font.STYLE_ITALIC : Font.STYLE_NORMAL;
+        int awtFontWeight = awtFont.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
+
+        FontTriplet matchedTriplet = null;
+        List/*<FontTriplet>*/ triplets = getTripletsForName(awtFontName);
+        if (!triplets.isEmpty()) {
+            Iterator it = triplets.iterator();
+            while (it.hasNext()) {
+                FontTriplet triplet = (FontTriplet)it.next();
+                boolean styleMatched = triplet.getStyle().equals(awtFontStyle);
+                boolean weightMatched = triplet.getWeight() == awtFontWeight;
+                if (styleMatched && weightMatched) {
+                    matchedTriplet = triplet;
+                    break;
+                }
+            }
+        }
+
+        // not matched on font name so do a lookup using family
+        if (matchedTriplet == null) {
+            if (awtFontFamily.equals("sanserif")) {
+                awtFontFamily = "sans-serif";
+            }
+            matchedTriplet = fontLookup(awtFontFamily, awtFontStyle, awtFontWeight);
+        }
+        float awtFontSize = awtFont.getSize2D();
+        return getFontInstance(matchedTriplet, (int)(awtFontSize * 1000 + 0.5));
     }
 
     /**

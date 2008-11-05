@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,33 +19,32 @@
 
 package org.apache.fop.afp;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
-import java.awt.font.TextAttribute;
-import java.awt.Shape;
-import java.awt.Paint;
-import java.awt.Color;
-import java.io.IOException;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
+import org.apache.batik.dom.svg.SVGOMTextElement;
+import org.apache.batik.gvt.TextNode;
+import org.apache.batik.gvt.TextPainter;
+import org.apache.batik.gvt.font.GVTFontFamily;
+import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
+import org.apache.batik.gvt.text.Mark;
+import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
-
-import org.apache.batik.dom.svg.SVGOMTextElement;
-import org.apache.batik.gvt.text.Mark;
-import org.apache.batik.gvt.TextPainter;
-import org.apache.batik.gvt.TextNode;
-import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
-import org.apache.batik.gvt.text.TextPaintInfo;
-import org.apache.batik.gvt.font.GVTFontFamily;
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
 
 /**
@@ -57,17 +56,17 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
  * into a simple drawString the StrokingTextPainter is used instead.
  */
 public class AFPTextPainter implements TextPainter {
-    
+
     /** the logger for this class */
     protected Log log = LogFactory.getLog(AFPTextPainter.class);
-    
-    private AFPTextHandler nativeTextHandler;
+
+    private final AFPTextHandler nativeTextHandler;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
      * Also used as a fallback to draw the string with strokes.
      */
-    protected static final TextPainter 
+    protected static final TextPainter
         PROXY_PAINTER = StrokingTextPainter.getInstance();
 
     /**
@@ -95,11 +94,11 @@ public class AFPTextPainter implements TextPainter {
             paintTextRuns(node.getTextRuns(), g2d, loc);
         }
     }
-    
+
     private boolean hasUnsupportedAttributes(TextNode node) {
         Iterator iter = node.getTextRuns().iterator();
         while (iter.hasNext()) {
-            StrokingTextPainter.TextRun 
+            StrokingTextPainter.TextRun
                     run = (StrokingTextPainter.TextRun)iter.next();
             AttributedCharacterIterator aci = run.getACI();
             boolean hasUnsupported = hasUnsupportedAttributes(aci);
@@ -111,24 +110,24 @@ public class AFPTextPainter implements TextPainter {
     }
 
     private boolean hasUnsupportedAttributes(AttributedCharacterIterator aci) {
-        boolean hasunsupported = false;
-        
+        boolean hasUnsupported = false;
+
         String text = getText(aci);
         Font font = makeFont(aci);
         if (hasUnsupportedGlyphs(text, font)) {
             log.trace("-> Unsupported glyphs found");
-            hasunsupported = true;
+            hasUnsupported = true;
         }
-        
+
         TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
             GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
-        if ((tpi != null) 
+        if ((tpi != null)
                 && ((tpi.strokeStroke != null && tpi.strokePaint != null)
                     || (tpi.strikethroughStroke != null)
                     || (tpi.underlineStroke != null)
                     || (tpi.overlineStroke != null))) {
                         log.trace("-> under/overlines etc. found");
-            hasunsupported = true;
+            hasUnsupported = true;
         }
 
         //Alpha is not supported
@@ -137,7 +136,7 @@ public class AFPTextPainter implements TextPainter {
             Color col = (Color)foreground;
             if (col.getAlpha() != 255) {
                 log.trace("-> transparency found");
-                hasunsupported = true;
+                hasUnsupported = true;
             }
         }
 
@@ -145,30 +144,30 @@ public class AFPTextPainter implements TextPainter {
                             GVTAttributedCharacterIterator.TextAttribute.LETTER_SPACING);
         if (letSpace != null) {
             log.trace("-> letter spacing found");
-            hasunsupported = true;
+            hasUnsupported = true;
         }
 
         Object wordSpace = aci.getAttribute(
                              GVTAttributedCharacterIterator.TextAttribute.WORD_SPACING);
         if (wordSpace != null) {
             log.trace("-> word spacing found");
-            hasunsupported = true;
+            hasUnsupported = true;
         }
-        
+
         Object lengthAdjust = aci.getAttribute(
                             GVTAttributedCharacterIterator.TextAttribute.LENGTH_ADJUST);
         if (lengthAdjust != null) {
             log.trace("-> length adjustments found");
-            hasunsupported = true;
+            hasUnsupported = true;
         }
 
         Object writeMod = aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE);
-        if (writeMod != null 
+        if (writeMod != null
             && !GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE_LTR.equals(
                   writeMod)) {
             log.trace("-> Unsupported writing modes found");
-            hasunsupported = true;
+            hasUnsupported = true;
         }
 
         Object vertOr = aci.getAttribute(
@@ -176,22 +175,22 @@ public class AFPTextPainter implements TextPainter {
         if (GVTAttributedCharacterIterator.TextAttribute.ORIENTATION_ANGLE.equals(
                   vertOr)) {
             log.trace("-> vertical orientation found");
-            hasunsupported = true;
+            hasUnsupported = true;
         }
-        
+
         Object rcDel = aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.TEXT_COMPOUND_DELIMITER);
         //Batik 1.6 returns null here which makes it impossible to determine whether this can
         //be painted or not, i.e. fall back to stroking. :-(
         if (rcDel != null && !(rcDel instanceof SVGOMTextElement)) {
             log.trace("-> spans found");
-            hasunsupported = true; //Filter spans
+            hasUnsupported = true; //Filter spans
         }
-        
-        if (hasunsupported) {
+
+        if (hasUnsupported) {
             log.trace("Unsupported attributes found in ACI, using StrokingTextPainter");
         }
-        return hasunsupported;
+        return hasUnsupported;
     }
 
     /**
@@ -204,7 +203,7 @@ public class AFPTextPainter implements TextPainter {
         Point2D currentloc = loc;
         Iterator i = textRuns.iterator();
         while (i.hasNext()) {
-            StrokingTextPainter.TextRun 
+            StrokingTextPainter.TextRun
                     run = (StrokingTextPainter.TextRun)i.next();
             currentloc = paintTextRun(run, g2d, currentloc);
         }
@@ -227,7 +226,7 @@ public class AFPTextPainter implements TextPainter {
         // font
         Font font = makeFont(aci);
         nativeTextHandler.setOverrideFont(font);
-        
+
         // color
         TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
@@ -240,7 +239,7 @@ public class AFPTextPainter implements TextPainter {
             g2d.setColor(col);
         }
         g2d.setPaint(foreground);
-        
+
         String txt = getText(aci);
         float advance = getStringWidth(txt, font);
         float tx = 0;
@@ -270,7 +269,7 @@ public class AFPTextPainter implements TextPainter {
         } finally {
             nativeTextHandler.setOverrideFont(null);
         }
-        loc.setLocation(loc.getX() + (double)advance, loc.getY());
+        loc.setLocation(loc.getX() + advance, loc.getY());
         return loc;
     }
 
@@ -304,25 +303,25 @@ public class AFPTextPainter implements TextPainter {
         }
         if (ypos != null) {
             loc.setLocation(loc.getX(), ypos.doubleValue());
-        } 
+        }
         if (dxpos != null) {
             loc.setLocation(loc.getX() + dxpos.doubleValue(), loc.getY());
-        } 
+        }
         if (dypos != null) {
             loc.setLocation(loc.getX(), loc.getY() + dypos.doubleValue());
-        } 
+        }
     }
 
     private String getStyle(AttributedCharacterIterator aci) {
         Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
         return ((posture != null) && (posture.floatValue() > 0.0))
-                       ? "italic" 
-                       : "normal";
+                       ? Font.STYLE_ITALIC
+                       : Font.STYLE_NORMAL;
     }
 
     private int getWeight(AttributedCharacterIterator aci) {
         Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
-        return ((taWeight != null) &&  (taWeight.floatValue() > 1.0)) 
+        return ((taWeight != null) &&  (taWeight.floatValue() > 1.0))
                        ? Font.WEIGHT_BOLD
                        : Font.WEIGHT_NORMAL;
     }
@@ -415,8 +414,8 @@ public class AFPTextPainter implements TextPainter {
      * @return the bounds of the text
      */
     public Rectangle2D getBounds2D(TextNode node) {
-        /* (todo) getBounds2D() is too slow 
-         * because it uses the StrokingTextPainter. We should implement this 
+        /* (todo) getBounds2D() is too slow
+         * because it uses the StrokingTextPainter. We should implement this
          * method ourselves. */
         return PROXY_PAINTER.getBounds2D(node);
     }
@@ -436,7 +435,7 @@ public class AFPTextPainter implements TextPainter {
 
     /**
      * Get the mark.
-     * This does nothing since the output is pdf and not interactive.
+     * This does nothing since the output is AFP and not interactive.
      * @param node the text node
      * @param pos the position
      * @param all select all
@@ -448,7 +447,7 @@ public class AFPTextPainter implements TextPainter {
 
     /**
      * Select at.
-     * This does nothing since the output is pdf and not interactive.
+     * This does nothing since the output is AFP and not interactive.
      * @param x the x position
      * @param y the y position
      * @param node the text node
@@ -460,7 +459,7 @@ public class AFPTextPainter implements TextPainter {
 
     /**
      * Select to.
-     * This does nothing since the output is pdf and not interactive.
+     * This does nothing since the output is AFP and not interactive.
      * @param x the x position
      * @param y the y position
      * @param beginMark the start mark
@@ -472,7 +471,7 @@ public class AFPTextPainter implements TextPainter {
 
     /**
      * Selec first.
-     * This does nothing since the output is pdf and not interactive.
+     * This does nothing since the output is AFP and not interactive.
      * @param node the text node
      * @return null
      */
@@ -482,7 +481,7 @@ public class AFPTextPainter implements TextPainter {
 
     /**
      * Select last.
-     * This does nothing since the output is pdf and not interactive.
+     * This does nothing since the output is AFP and not interactive.
      * @param node the text node
      * @return null
      */
@@ -492,7 +491,7 @@ public class AFPTextPainter implements TextPainter {
 
     /**
      * Get selected.
-     * This does nothing since the output is pdf and not interactive.
+     * This does nothing since the output is AFP and not interactive.
      * @param start the start mark
      * @param finish the finish mark
      * @return null
@@ -503,7 +502,7 @@ public class AFPTextPainter implements TextPainter {
 
     /**
      * Get the highlighted shape.
-     * This does nothing since the output is pdf and not interactive.
+     * This does nothing since the output is AFP and not interactive.
      * @param beginMark the start mark
      * @param endMark the end mark
      * @return null

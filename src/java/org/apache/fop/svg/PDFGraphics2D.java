@@ -1325,7 +1325,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (ovFontState == null) {
             java.awt.Font gFont = getFont();
             fontTransform = gFont.getTransform();
-            fontState = getInternalFontForAWTFont(gFont);
+            fontState = fontInfo.getFontInstanceForAWTFont(gFont);
         } else {
             fontState = fontInfo.getFontInstance(
                     ovFontState.getFontTriplet(), ovFontState.getFontSize());

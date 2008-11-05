@@ -51,6 +51,7 @@ public class AFPTextHandler implements TextHandler {
 
     /**
      * Main constructor.
+     *
      * @param g2d the AFPGraphics2D instance
      */
     public AFPTextHandler(AFPGraphics2D g2d) {
@@ -67,6 +68,27 @@ public class AFPTextHandler implements TextHandler {
     }
 
     /**
+     * Registers a page font
+     *
+     * @param internalFontName the internal font name
+     * @param fontSize the font size
+     * @return a font reference
+     */
+    private int registerPageFont(String internalFontName, int fontSize) {
+        FontInfo fontInfo = getFontInfo();
+        AFPFont afpFont = (AFPFont)fontInfo.getFonts().get(internalFontName);
+        AFPPaintingState paintingState = g2d.getPaintingState();
+        AFPPageFonts pageFonts = paintingState.getPageFonts();
+        // register if necessary
+        AFPFontAttributes afpFontAttributes = pageFonts.registerFont(
+                internalFontName,
+                afpFont,
+                fontSize
+        );
+        return afpFontAttributes.getFontReference();
+    }
+
+    /**
      * Add a text string to the current data object of the AFP datastream.
      * The text is painted using text operations.
      *
@@ -77,26 +99,28 @@ public class AFPTextHandler implements TextHandler {
         GraphicsObject graphicsObj = g2d.getGraphicsObject();
         Color color = g2d.getColor();
 
+        // set the color
         AFPPaintingState paintingState = g2d.getPaintingState();
         if (paintingState.setColor(color)) {
             graphicsObj.setColor(color);
         }
+
+        // set the character set
+        int fontReference = 0;
         if (overrideFont != null) {
-            FontInfo fontInfo = getFontInfo();
-            AFPPageFonts pageFonts = paintingState.getPageFonts();
             String internalFontName = overrideFont.getFontName();
             int fontSize = overrideFont.getFontSize();
-            if (paintingState.setFontName(internalFontName) || paintingState.setFontSize(fontSize)) {
-                AFPFont font = (AFPFont)fontInfo.getFonts().get(internalFontName);
-                AFPFontAttributes afpFontAttributes = pageFonts.registerFont(
-                        internalFontName,
-                        font,
-                        fontSize
-                );
-                int fontReference = afpFontAttributes.getFontReference();
-                graphicsObj.setCharacterSet(fontReference);
-            }
+            fontReference = registerPageFont(internalFontName, fontSize);
+        } else {
+            java.awt.Font awtFont = g2d.getFont();
+            AffineTransform fontTransform = awtFont.getTransform();
+            FontInfo fontInfo = getFontInfo();
+            Font fopFont = fontInfo.getFontInstanceForAWTFont(awtFont);
+            String internalFontName = fopFont.getFontName();
+            int fontSize = fopFont.getFontSize();
+            fontReference = registerPageFont(internalFontName, fontSize);
         }
+        graphicsObj.setCharacterSet(fontReference);
 
         // calculate x, y plotting coordinates from graphics context
         AffineTransform at = g2d.getTransform();
@@ -104,6 +128,7 @@ public class AFPTextHandler implements TextHandler {
         float[] dstPts = new float[srcPts.length];
         at.transform(srcPts, 0, dstPts, 0, 1);
 
+        // add the character string
         graphicsObj.addString(str, Math.round(dstPts[X]), Math.round(dstPts[Y]));
     }
 
