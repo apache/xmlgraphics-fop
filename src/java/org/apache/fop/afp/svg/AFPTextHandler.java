@@ -17,16 +17,18 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp;
+package org.apache.fop.afp.svg;
 
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.afp.AFPGraphics2D;
+import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.AFPFontAttributes;
+import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -40,9 +42,6 @@ public class AFPTextHandler implements TextHandler {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(AFPTextHandler.class);
-
-    private static final int X = 0;
-    private static final int Y = 1;
 
     private AFPGraphics2D g2d = null;
 
@@ -113,7 +112,7 @@ public class AFPTextHandler implements TextHandler {
             fontReference = registerPageFont(internalFontName, fontSize);
         } else {
             java.awt.Font awtFont = g2d.getFont();
-            AffineTransform fontTransform = awtFont.getTransform();
+//            AffineTransform fontTransform = awtFont.getTransform();
             FontInfo fontInfo = getFontInfo();
             Font fopFont = fontInfo.getFontInstanceForAWTFont(awtFont);
             String internalFontName = fopFont.getFontName();
@@ -122,14 +121,8 @@ public class AFPTextHandler implements TextHandler {
         }
         graphicsObj.setCharacterSet(fontReference);
 
-        // calculate x, y plotting coordinates from graphics context
-        AffineTransform at = g2d.getTransform();
-        float[] srcPts = new float[] { x, y };
-        float[] dstPts = new float[srcPts.length];
-        at.transform(srcPts, 0, dstPts, 0, 1);
-
         // add the character string
-        graphicsObj.addString(str, Math.round(dstPts[X]), Math.round(dstPts[Y]));
+        graphicsObj.addString(str, Math.round(x), Math.round(y));
     }
 
     /**

@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp;
 
 import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
@@ -47,17 +48,17 @@ public final class AFPInfo {
     /** see AFP_FONT_INFO */
     private FontInfo fontInfo;
 
-    /** See AFP_STATE */
-    private AFPPaintingState state;
+    /** See AFP_PAINTING_STATE */
+    private AFPPaintingState paintingState;
 
     /** See AFP_RESOURCE_MANAGER */
     private AFPResourceManager resourceManager;
 
+    /** See AFP_RESOURCE_INFO */
+    private AFPResourceInfo resourceInfo;
+
     /** true if SVG should be rendered as a bitmap instead of natively */
     private boolean paintAsBitmap;
-
-    /** the resource information */
-    private AFPResourceInfo resourceInfo;
 
     /**
      * Returns the width.
@@ -128,7 +129,7 @@ public final class AFPInfo {
      * @return the current AFP state
      */
     public AFPPaintingState getPaintingState() {
-        return this.state;
+        return this.paintingState;
     }
 
     /**
@@ -217,7 +218,7 @@ public final class AFPInfo {
      * @param state the AFP state
      */
     public void setPaintingState(AFPPaintingState state) {
-        this.state = state;
+        this.paintingState = state;
     }
 
     /**
@@ -278,6 +279,19 @@ public final class AFPInfo {
         return resourceInfo;
     }
 
+    /**
+     * Creates an AFPGraphics2D implementation
+     *
+     * @param textAsShapes true when text is painted as shapes
+     * @return a newly created AFPGraphics2D
+     */
+    public AFPGraphics2D createGraphics2D(boolean textAsShapes) {
+        AFPGraphics2D g2d = new AFPGraphics2D(
+                    textAsShapes, paintingState, resourceManager, resourceInfo, fontInfo);
+        g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+        return g2d;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "AFPInfo{width=" + width
@@ -287,7 +301,7 @@ public final class AFPInfo {
             + ", cfg=" + handlerConfiguration
             + ", fontInfo=" + fontInfo
             + ", resourceManager=" + resourceManager
-            + ", state=" + state
+            + ", paintingState=" + paintingState
             + ", paintAsBitmap=" + paintAsBitmap
             + ", resourceInfo=" + resourceInfo
         + "}";

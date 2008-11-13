@@ -17,13 +17,14 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp;
+package org.apache.fop.afp.svg;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.font.TextAttribute;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -80,6 +82,7 @@ public class AFPTextPainter implements TextPainter {
     /**
      * Paints the specified attributed character iterator using the
      * specified Graphics2D and context and font context.
+     *
      * @param node the TextNode to paint
      * @param g2d the Graphics2D to use
      */
@@ -87,10 +90,10 @@ public class AFPTextPainter implements TextPainter {
         Point2D loc = node.getLocation();
         log.debug("painting text node " + node);
         if (hasUnsupportedAttributes(node)) {
-            log.debug("hasunsuportedattributes");
+            log.debug("hasUnsuportedAttributes");
             PROXY_PAINTER.paint(node, g2d);
         } else {
-            log.debug("allattributessupported");
+            log.debug("allAttributesSupported");
             paintTextRuns(node.getTextRuns(), g2d, loc);
         }
     }
@@ -221,7 +224,8 @@ public class AFPTextPainter implements TextPainter {
         aci.first();
 
         updateLocationFromACI(aci, loc);
-        loc = g2d.getTransform().transform(loc, null);
+        AffineTransform at = g2d.getTransform();
+        loc = at.transform(loc, null);
 
         // font
         Font font = makeFont(aci);
@@ -240,6 +244,7 @@ public class AFPTextPainter implements TextPainter {
         }
         g2d.setPaint(foreground);
 
+        // text
         String txt = getText(aci);
         float advance = getStringWidth(txt, font);
         float tx = 0;
@@ -258,9 +263,11 @@ public class AFPTextPainter implements TextPainter {
         }
 
         // draw string
+        double x = loc.getX();
+        double y = loc.getY();
         try {
             try {
-                nativeTextHandler.drawString(txt, (float)(loc.getX() + tx), (float)(loc.getY()));
+                nativeTextHandler.drawString(txt, (float)x + tx, (float)y);
             } catch (IOException ioe) {
                 if (g2d instanceof AFPGraphics2D) {
                     ((AFPGraphics2D)g2d).handleIOException(ioe);
@@ -424,6 +431,7 @@ public class AFPTextPainter implements TextPainter {
      * Get the geometry bounds.
      * This uses the StrokingTextPainter to get the bounds
      * since in theory it should be the same.
+     *
      * @param node the text node
      * @return the bounds of the text
      */
@@ -436,6 +444,7 @@ public class AFPTextPainter implements TextPainter {
     /**
      * Get the mark.
      * This does nothing since the output is AFP and not interactive.
+     *
      * @param node the text node
      * @param pos the position
      * @param all select all
@@ -448,6 +457,7 @@ public class AFPTextPainter implements TextPainter {
     /**
      * Select at.
      * This does nothing since the output is AFP and not interactive.
+     *
      * @param x the x position
      * @param y the y position
      * @param node the text node
@@ -460,6 +470,7 @@ public class AFPTextPainter implements TextPainter {
     /**
      * Select to.
      * This does nothing since the output is AFP and not interactive.
+     *
      * @param x the x position
      * @param y the y position
      * @param beginMark the start mark
@@ -472,6 +483,7 @@ public class AFPTextPainter implements TextPainter {
     /**
      * Selec first.
      * This does nothing since the output is AFP and not interactive.
+     *
      * @param node the text node
      * @return null
      */
@@ -482,6 +494,7 @@ public class AFPTextPainter implements TextPainter {
     /**
      * Select last.
      * This does nothing since the output is AFP and not interactive.
+     *
      * @param node the text node
      * @return null
      */
@@ -492,6 +505,7 @@ public class AFPTextPainter implements TextPainter {
     /**
      * Get selected.
      * This does nothing since the output is AFP and not interactive.
+     *
      * @param start the start mark
      * @param finish the finish mark
      * @return null
@@ -503,6 +517,7 @@ public class AFPTextPainter implements TextPainter {
     /**
      * Get the highlighted shape.
      * This does nothing since the output is AFP and not interactive.
+     *
      * @param beginMark the start mark
      * @param endMark the end mark
      * @return null

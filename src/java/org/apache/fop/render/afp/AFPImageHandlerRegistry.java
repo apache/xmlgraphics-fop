@@ -17,30 +17,26 @@
 
 /* $Id$ */
 
-package org.apache.fop.svg;
+package org.apache.fop.render.afp;
 
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.fop.render.AbstractImageHandlerRegistry;
 
 /**
- * PDF Image Element Bridge class for the &lt;image> element when jpeg images.
- *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
+ * This class holds references to various image handlers used by the AFP renderer. It also
+ * supports automatic discovery of additional handlers available through
+ * the class path.
  */
-public class PDFImageElementBridge extends AbstractFOPImageElementBridge {
+public class AFPImageHandlerRegistry extends AbstractImageHandlerRegistry {
 
     /**
-     * Constructs a new bridge for the &lt;image> element.
+     * Main constructor
      */
-    public PDFImageElementBridge() { }
-
-    private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
-                                               {ImageFlavor.RAW_JPEG,
-                                                ImageFlavor.RAW_CCITTFAX,
-                                                ImageFlavor.GRAPHICS2D,
-                                                ImageFlavor.XML_DOM};
+    public AFPImageHandlerRegistry() {
+    }
 
     /** {@inheritDoc} */
-    protected ImageFlavor[] getSupportedFlavours() {
-        return supportedFlavors;
+    public Class getHandlerClass() {
+        return AFPImageHandler.class;
     }
+
 }

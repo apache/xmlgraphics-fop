@@ -19,28 +19,22 @@
 
 package org.apache.fop.svg;
 
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-
-/**
- * PDF Image Element Bridge class for the &lt;image> element when jpeg images.
- *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- */
-public class PDFImageElementBridge extends AbstractFOPImageElementBridge {
+public interface NativeImageHandler {
 
     /**
-     * Constructs a new bridge for the &lt;image> element.
+     * Add a natively handled image directly to the document.
+     * This is used by the ImageElementBridge to draw a natively handled image
+     * (like JPEG or CCITT images)
+     * directly into the document rather than converting the image into
+     * a bitmap and increasing the size.
+     *
+     * @param image the image to draw
+     * @param x the x position
+     * @param y the y position
+     * @param width the width to draw the image
+     * @param height the height to draw the image
      */
-    public PDFImageElementBridge() { }
+    void addNativeImage(org.apache.xmlgraphics.image.loader.Image image, float x, float y,
+                             float width, float height);
 
-    private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
-                                               {ImageFlavor.RAW_JPEG,
-                                                ImageFlavor.RAW_CCITTFAX,
-                                                ImageFlavor.GRAPHICS2D,
-                                                ImageFlavor.XML_DOM};
-
-    /** {@inheritDoc} */
-    protected ImageFlavor[] getSupportedFlavours() {
-        return supportedFlavors;
-    }
 }

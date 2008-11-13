@@ -29,10 +29,12 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.image.loader.batik.Graphics2DImagePainterImpl;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
+import org.apache.fop.render.afp.AFPGraphics2DAdapter;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
@@ -71,7 +73,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
      * @param imageSize the image size
      * @return a new graphics 2D image painter implementation
      */
-    protected Graphics2DImagePainter createPainter(
+    protected Graphics2DImagePainter createGraphics2DImagePainter(
             GraphicsNode root, BridgeContext ctx, Dimension imageSize) {
         return new Graphics2DImagePainterImpl(root, ctx, imageSize);
     }
@@ -85,20 +87,32 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
      * @return a built GVT root tree
      */
     protected GraphicsNode buildGraphicsNode(
-            RendererContext rendererContext, BridgeContext ctx, Document doc) {
+            FOUserAgent userAgent, BridgeContext ctx, Document doc) {
         GVTBuilder builder = new GVTBuilder();
         final GraphicsNode root;
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
             EventBroadcaster eventBroadcaster
-                = rendererContext.getUserAgent().getEventBroadcaster();
+                = userAgent.getEventBroadcaster();
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(eventBroadcaster);
             final String uri = getDocumentURI(doc);
             eventProducer.svgNotBuilt(this, e, uri);
             return null;
         }
         return root;
+    }
+
+    /**
+     * Returns the image size
+     * @param wrappedContext renderer context wrapper
+     *
+     * @return the image size
+     */
+    protected Dimension getImageSize(RendererContextWrapper wrappedContext) {
+        final int width = wrappedContext.getWidth();
+        final int height = wrappedContext.getHeight();
+        return new Dimension(width, height);
     }
 
     /**
@@ -113,23 +127,21 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
         updateRendererContext(rendererContext);
 
         //Prepare
-        SVGUserAgent svgUserAgent = new SVGUserAgent(
-                rendererContext.getUserAgent(), new AffineTransform());
+        FOUserAgent userAgent = rendererContext.getUserAgent();
+        SVGUserAgent svgUserAgent = new SVGUserAgent(userAgent, new AffineTransform());
+
+        //Create Batik BridgeContext
         final BridgeContext bridgeContext = new BridgeContext(svgUserAgent);
 
         //Build the GVT tree
-        final GraphicsNode root = buildGraphicsNode(rendererContext, bridgeContext, doc);
 
+        final GraphicsNode root = buildGraphicsNode(userAgent, bridgeContext, doc);
+
+        // Create Graphics2DImagePainter
         final RendererContextWrapper wrappedContext = RendererContext.wrapRendererContext(
                 rendererContext);
-
-        //Get Image Size
-        final int width = wrappedContext.getWidth();
-        final int height = wrappedContext.getHeight();
-        Dimension imageSize = new Dimension(width, height);
-
-        //Create the painter
-        final Graphics2DImagePainter painter = createPainter(root, bridgeContext, imageSize);
+        Dimension imageSize = getImageSize(wrappedContext);
+        final Graphics2DImagePainter painter = createGraphics2DImagePainter(root, bridgeContext, imageSize);
 
         //Let the painter paint the SVG on the Graphics2D instance
         Graphics2DAdapter g2dAdapter = rendererContext.getRenderer().getGraphics2DAdapter();
@@ -137,6 +149,8 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
         //Paint the image
         final int x = wrappedContext.getCurrentXPosition();
         final int y = wrappedContext.getCurrentYPosition();
+        final int width = wrappedContext.getWidth();
+        final int height = wrappedContext.getHeight();
         g2dAdapter.paintImage(painter, rendererContext, x, y, width, height);
     }
 

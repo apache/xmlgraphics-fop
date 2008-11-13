@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.modca.AbstractDataObject;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.afp.modca.DataStream;
@@ -36,9 +34,6 @@ import org.apache.fop.afp.modca.ResourceGroup;
  * Manages the creation and storage of document resources
  */
 public class AFPResourceManager {
-    /** Static logging instance */
-    private static final Log log = LogFactory.getLog(AFPResourceManager.class);
-
     /** The AFP datastream (document tree) */
     private DataStream dataStream;
 

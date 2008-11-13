@@ -54,8 +54,8 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
     protected BufferedImage paintToBufferedImage(
             org.apache.xmlgraphics.java2d.Graphics2DImagePainter painter,
              RendererContextWrapper context, int resolution, boolean gray, boolean withAlpha) {
-        int bmw = (int)Math.ceil(UnitConv.mpt2px(context.getWidth(), resolution));
-        int bmh = (int)Math.ceil(UnitConv.mpt2px(context.getHeight(), resolution));
+        int bmw = mpt2px(context.getWidth(), resolution);
+        int bmh = mpt2px(context.getHeight(), resolution);
         BufferedImage bi;
         if (gray) {
             if (withAlpha) {
@@ -100,6 +100,17 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
             g2d.dispose();
         }
         return bi;
+    }
+
+    /**
+     * Converts millipoints to pixels
+     *
+     * @param unit the unit to convert in mpts
+     * @param resolution the target resolution
+     * @return the converted unit in pixels
+     */
+    protected int mpt2px(int unit, int resolution) {
+        return (int)Math.ceil(UnitConv.mpt2px(unit, resolution));
     }
 
     private static BufferedImage createGrayBufferedImageWithAlpha(int width, int height) {

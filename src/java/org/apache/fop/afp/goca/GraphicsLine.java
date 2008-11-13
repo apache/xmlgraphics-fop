@@ -19,10 +19,9 @@
 
 package org.apache.fop.afp.goca;
 
-
 /**
  * A GOCA graphics straight line drawn from the
- * given position or current position.
+ * given position
  */
 public class GraphicsLine extends AbstractGraphicsCoord {
 

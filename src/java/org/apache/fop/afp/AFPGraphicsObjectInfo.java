@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp;
 
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
@@ -62,7 +63,10 @@ public class AFPGraphicsObjectInfo extends AFPDataObjectInfo {
      * @return the graphics area
      */
     public Rectangle2D getArea() {
-        return this.area;
+        AFPObjectAreaInfo objectAreaInfo = getObjectAreaInfo();
+        int width = objectAreaInfo.getWidth();
+        int height = objectAreaInfo.getHeight();
+        return new Rectangle(width, height);
     }
 
     /**

@@ -17,11 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp;
-
-import org.apache.fop.afp.fonts.AFPFont;
-import org.apache.fop.afp.fonts.AFPFontAttributes;
-
+package org.apache.fop.afp.fonts;
 
 /**
  * Holds the current page fonts

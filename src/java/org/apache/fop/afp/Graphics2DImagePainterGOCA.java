@@ -51,7 +51,7 @@ public class Graphics2DImagePainterGOCA extends Graphics2DImagePainterImpl {
             /** {@inheritdoc} */
             public void prepare(Graphics2D g2d, Rectangle2D area) {
                 double tx = area.getX();
-                double ty = area.getHeight() - area.getY();
+                double ty = area.getHeight() + area.getY();
                 if (tx != 0 || ty != 0) {
                     g2d.translate(tx, ty);
                 }

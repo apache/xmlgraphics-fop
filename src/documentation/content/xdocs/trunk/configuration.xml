@@ -383,7 +383,8 @@
   <resource-group-file>resources.afp</resource-group-file>
 </renderer>]]></source>
       <p>
-        The default value for the "images mode" setting is "b+w" (black and white).  When the setting is "color" a "bits-per-pixel" setting can be provided.  When the setting "native" is set to true, images (TIFF, JPEG and Encapsulated Postscript) will be placed in the datastream in their native form using a MO:DCA Object Container.
+        The default value for the images "mode" setting is "b+w" (black and white).  When the images "mode" setting is "b+w" a "bits-per-pixel" setting can be provided to aid the grayscale conversion process.  With this setting all images referenced in your source document are converted to an IOCA FS45 grayscale bitmap image form. 
+        When the setting is "color" all images are converted to an IOCA FS45 color bitmap image form.  When "native" setting is "true", all images encountered (TIFF, GIF, JPEG and Encapsulated Postscript etc.) will be embedded directly in the datastream in their native form using a MO:DCA Object Container.
       </p>
       <p>
         The default value for the "renderer-resolution" is 240 dpi. 

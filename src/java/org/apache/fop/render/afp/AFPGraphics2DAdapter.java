@@ -28,7 +28,6 @@ import java.io.IOException;
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
 import org.apache.fop.afp.AFPPaintingState;
-import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.RendererContext;
@@ -40,95 +39,67 @@ import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
  */
 public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
 
-    private final AFPRenderer renderer;
-
-    private final AFPGraphics2D g2d;
+    private final AFPPaintingState paintingState;
 
     /**
      * Main constructor
      *
-     * @param renderer the afp renderer
+     * @param paintingState the AFP painting state
      */
-    public AFPGraphics2DAdapter(AFPRenderer renderer) {
-        this.renderer = renderer;
-
-        final boolean textAsShapes = false;
-        this.g2d = new AFPGraphics2D(textAsShapes);
-    }
-
-    /**
-     * Returns the AFP graphics 2D implementation
-     *
-     * @return the AFP graphics 2D implementation
-     */
-    public AFPGraphics2D getGraphics2D() {
-        return g2d;
+    public AFPGraphics2DAdapter(AFPPaintingState paintingState) {
+        this.paintingState = paintingState;
     }
 
     /** {@inheritDoc} */
     public void paintImage(Graphics2DImagePainter painter,
-            RendererContext context,
+            RendererContext rendererContext,
             int x, int y, int width, int height) throws IOException {
 
-        AFPInfo afpInfo = AFPSVGHandler.getAFPInfo(context);
+        AFPRendererContext afpRendererContext = (AFPRendererContext)rendererContext;
+        AFPInfo afpInfo = afpRendererContext.getInfo();
 
-        // set resource manager
-        AFPResourceManager resourceManager = afpInfo.getResourceManager();
-        g2d.setResourceManager(resourceManager);
+        final boolean textAsShapes = false;
+        AFPGraphics2D g2d = afpInfo.createGraphics2D(textAsShapes);
 
-        // set resource information
-        AFPResourceInfo resourceInfo = afpInfo.getResourceInfo();
-        g2d.setResourceInfo(resourceInfo);
+        paintingState.push();
 
-        // set painting state
-        AFPPaintingState paintingState = afpInfo.getPaintingState();
-        g2d.setPaintingState(paintingState);
-
-        // set graphic context
-        g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
-
-        float fwidth = width / 1000f;
-        float fheight = height / 1000f;
-
-        // get the 'width' and 'height' attributes of the SVG document
-        Dimension imageSize = painter.getImageSize();
-        float imw = (float)imageSize.getWidth() / 1000f;
-        float imh = (float)imageSize.getHeight() / 1000f;
-        float sx = fwidth / imw;
-        float sy = fheight / imh;
-        AffineTransform at = new AffineTransform(sx, 0, 0, sy, x, y);
-
-        renderer.saveGraphicsState();
-
+        //Fallback solution: Paint to a BufferedImage
         if (afpInfo.paintAsBitmap()) {
-            //Fallback solution: Paint to a BufferedImage
-            int resolution = Math.round(context.getUserAgent().getTargetResolution());
-            RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
-            BufferedImage bufferedImage = paintToBufferedImage(painter, ctx, resolution, false, false);
 
-            AFPPaintingState state = afpInfo.getPaintingState();
-            AffineTransform trans = state.getData().getTransform();
-            float scale = AFPRenderer.NORMAL_AFP_RESOLUTION
-                            / context.getUserAgent().getTargetResolution();
-            if (scale != 1) {
-                at.scale(scale, scale);
-            }
+            // paint image
+            RendererContextWrapper rendererContextWrapper
+                = RendererContext.wrapRendererContext(rendererContext);
+            float targetResolution = rendererContext.getUserAgent().getTargetResolution();
+            int resolution = Math.round(targetResolution);
+            boolean colorImages = afpInfo.isColorSupported();
+            BufferedImage bufferedImage = paintToBufferedImage(
+                    painter, rendererContextWrapper, resolution, !colorImages, false);
 
-            if (!at.isIdentity()) {
-                trans.concatenate(at);
-            }
-
-            g2d.drawImage(bufferedImage, trans, null);
+            // draw image
+            AffineTransform at = paintingState.getData().getTransform();
+            at.translate(x, y);
+            g2d.drawImage(bufferedImage, at, null);
         } else {
             AFPGraphicsObjectInfo graphicsObjectInfo = new AFPGraphicsObjectInfo();
             graphicsObjectInfo.setPainter(painter);
             graphicsObjectInfo.setGraphics2D(g2d);
 
+            // get the 'width' and 'height' attributes of the SVG document
+            Dimension imageSize = painter.getImageSize();
+            float imw = (float)imageSize.getWidth() / 1000f;
+            float imh = (float)imageSize.getHeight() / 1000f;
+
             Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);
             graphicsObjectInfo.setArea(area);
+            AFPResourceManager resourceManager = afpInfo.getResourceManager();
             resourceManager.createObject(graphicsObjectInfo);
         }
 
-        renderer.restoreGraphicsState();
+        paintingState.pop();
+    }
+
+    /** {@inheritDoc} */
+    protected int mpt2px(int unit, int resolution) {
+        return Math.round(paintingState.getUnitConverter().mpt2units(unit));
     }
 }

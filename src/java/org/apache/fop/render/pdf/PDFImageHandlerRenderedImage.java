@@ -23,15 +23,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.apache.xmlgraphics.image.loader.Image;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
-
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RendererContext;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 
 /**
  * PDFImageHandler implementation which handles RenderedImage instances.
@@ -42,6 +41,11 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
         ImageFlavor.BUFFERED_IMAGE,
         ImageFlavor.RENDERED_IMAGE
     };
+
+    private static final Class[] CLASSES = new Class[] {
+        ImageRendered.class,
+    };
+
 
     /** {@inheritDoc} */
     public PDFXObject generateImage(RendererContext context, Image image,
@@ -72,8 +76,8 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class getSupportedImageClass() {
-        return ImageRendered.class;
+    public Class[] getSupportedImageClasses() {
+        return CLASSES;
     }
 
     /** {@inheritDoc} */

@@ -17,13 +17,15 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp;
+package org.apache.fop.render.afp;
 
 import java.io.File;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.xmlgraphics.util.QName;
 

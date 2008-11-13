@@ -30,8 +30,10 @@ import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.goca.GraphicsBox;
 import org.apache.fop.afp.goca.GraphicsData;
 import org.apache.fop.afp.goca.GraphicsFillet;
+import org.apache.fop.afp.goca.GraphicsFilletRelative;
 import org.apache.fop.afp.goca.GraphicsFullArc;
 import org.apache.fop.afp.goca.GraphicsLine;
+import org.apache.fop.afp.goca.GraphicsLineRelative;
 import org.apache.fop.afp.goca.GraphicsSetArcParameters;
 import org.apache.fop.afp.goca.GraphicsSetCharacterSet;
 import org.apache.fop.afp.goca.GraphicsSetCurrentPosition;
@@ -181,7 +183,21 @@ public class GraphicsObject extends AbstractDataObject {
      * @param coords the x/y coordinates (can be a series)
      */
     public void addLine(int[] coords) {
-        addObject(new GraphicsLine(coords));
+        addLine(coords, false);
+    }
+
+    /**
+     * Adds a line at the given x/y coordinates
+     *
+     * @param coords the x/y coordinates (can be a series)
+     * @param relative relative true for a line at current position (relative to)
+     */
+    public void addLine(int[] coords, boolean relative) {
+        if (relative) {
+            addObject(new GraphicsLineRelative(coords));
+        } else {
+            addObject(new GraphicsLine(coords));
+        }
     }
 
     /**
@@ -199,7 +215,21 @@ public class GraphicsObject extends AbstractDataObject {
      * @param coords the x/y coordinates
      */
     public void addFillet(int[] coords) {
-        addObject(new GraphicsFillet(coords));
+        addFillet(coords, false);
+    }
+
+    /**
+     * Adds a fillet (curve) at the given coordinates
+     *
+     * @param coords the x/y coordinates
+     * @param relative relative true for a fillet at current position (relative to)
+     */
+    public void addFillet(int[] coords, boolean relative) {
+        if (relative) {
+            addObject(new GraphicsFilletRelative(coords));
+        } else {
+            addObject(new GraphicsFillet(coords));
+        }
     }
 
     /**
@@ -300,4 +330,5 @@ public class GraphicsObject extends AbstractDataObject {
         copySF(data, Type.END, Category.GRAPHICS);
         os.write(data);
     }
+
 }

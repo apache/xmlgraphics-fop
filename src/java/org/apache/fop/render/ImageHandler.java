@@ -17,30 +17,30 @@
 
 /* $Id$ */
 
-package org.apache.fop.svg;
+package org.apache.fop.render;
 
+import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 
-/**
- * PDF Image Element Bridge class for the &lt;image> element when jpeg images.
- *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- */
-public class PDFImageElementBridge extends AbstractFOPImageElementBridge {
+public interface ImageHandler {
 
     /**
-     * Constructs a new bridge for the &lt;image> element.
+     * Returns the priority for this image handler. A lower value means higher priority. This
+     * information is used to build the ordered/prioritized list of supported ImageFlavors for
+     * the PDF renderer. The built-in handlers use priorities between 100 and 999.
+     * @return a positive integer (>0) indicating the priority
      */
-    public PDFImageElementBridge() { }
+    int getPriority();
 
-    private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
-                                               {ImageFlavor.RAW_JPEG,
-                                                ImageFlavor.RAW_CCITTFAX,
-                                                ImageFlavor.GRAPHICS2D,
-                                                ImageFlavor.XML_DOM};
+    /**
+     * Returns the {@link ImageFlavor}s supported by this instance
+     * @return the supported image flavors
+     */
+    ImageFlavor[] getSupportedImageFlavors();
 
-    /** {@inheritDoc} */
-    protected ImageFlavor[] getSupportedFlavours() {
-        return supportedFlavors;
-    }
+    /**
+     * Returns the {@link Image} subclasses supported by this instance.
+     * @return the Image types
+     */
+    Class[] getSupportedImageClasses();
 }

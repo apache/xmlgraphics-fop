@@ -23,12 +23,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
+import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.RendererContext;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
-
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.RendererContext;
 
 /**
  * PDFImageHandler implementation which handles Graphics2D images.
@@ -37,6 +36,10 @@ public class PDFImageHandlerGraphics2D implements PDFImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.GRAPHICS2D,
+    };
+
+    private static final Class[] CLASSES = new Class[] {
+        ImageGraphics2D.class,
     };
 
     /** {@inheritDoc} */
@@ -56,8 +59,8 @@ public class PDFImageHandlerGraphics2D implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class getSupportedImageClass() {
-        return ImageGraphics2D.class;
+    public Class[] getSupportedImageClasses() {
+        return CLASSES;
     }
 
     /** {@inheritDoc} */

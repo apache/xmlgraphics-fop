@@ -23,32 +23,24 @@ package org.apache.fop.afp.fonts;
  * This class encapsulates the font attributes that need to be included
  * in the AFP data stream. This class does not assist in converting the
  * font attributes to AFP code pages and character set values.
- *
  */
 public class AFPFontAttributes {
 
-    /**
-     * The font reference
-     */
+    /** the font reference */
     private int fontReference;
 
-    /**
-     * The font key
-     */
+    /** the font key */
     private final String fontKey;
 
-    /**
-     * The font
-     */
+    /** the font */
     private final AFPFont font;
 
-    /**
-     * The point size
-     */
+    /** the point size */
     private final int pointSize;
 
     /**
      * Constructor for the AFPFontAttributes
+     *
      * @param fontKey the font key
      * @param font the font
      * @param pointSize the point size
@@ -60,6 +52,8 @@ public class AFPFontAttributes {
     }
 
     /**
+     * Return the font
+     *
      * @return the font
      */
     public AFPFont getFont() {
@@ -67,6 +61,8 @@ public class AFPFontAttributes {
     }
 
     /**
+     * Return the FontKey attribute
+     *
      * @return the FontKey attribute
      */
     public String getFontKey() {
@@ -74,6 +70,8 @@ public class AFPFontAttributes {
     }
 
     /**
+     * Return the point size attribute
+     *
      * @return the point size attribute
      */
     public int getPointSize() {
@@ -81,6 +79,8 @@ public class AFPFontAttributes {
     }
 
     /**
+     * Return the FontReference attribute
+     *
      * @return the FontReference attribute
      */
     public int getFontReference() {
@@ -89,6 +89,7 @@ public class AFPFontAttributes {
 
     /**
      * Sets the FontReference attribute
+     *
      * @param fontReference the FontReference to set
      */
     public void setFontReference(int fontReference) {

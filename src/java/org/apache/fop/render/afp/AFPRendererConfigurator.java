@@ -213,6 +213,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         return fontList;
     }
 
+    /** images are converted to grayscale bitmapped IOCA */
+    private static final String IMAGES_MODE_GRAYSCALE = "b+w";
+
+    /** images are converted to color bitmapped IOCA */
+    private static final String IMAGES_MODE_COLOR = "color";
+
     /**
      * Configure the AFP renderer.
      *
@@ -234,15 +240,21 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
 
             // image information
             Configuration imagesCfg = cfg.getChild("images");
-            if (!"color".equalsIgnoreCase(imagesCfg.getAttribute("mode", "b+w"))) {
-                afpRenderer.setColorImages(false);
-                afpRenderer.setBitsPerPixel(imagesCfg.getAttributeAsInteger("bits-per-pixel", 8));
-            } else {
+
+            // default to grayscale images
+            String imagesMode = imagesCfg.getAttribute("mode", IMAGES_MODE_GRAYSCALE);
+            if (IMAGES_MODE_COLOR.equals(imagesMode)) {
                 afpRenderer.setColorImages(true);
+            } else {
+                afpRenderer.setColorImages(false);
+                // default to 8 bits per pixel
+                int bitsPerPixel = imagesCfg.getAttributeAsInteger("bits-per-pixel", 8);
+                afpRenderer.setBitsPerPixel(bitsPerPixel);
             }
 
-            // images are embedded directly without conversion to bitmapped IOCA
-            afpRenderer.setNativeImages(imagesCfg.getAttributeAsBoolean("native", false));
+            // native image support
+            boolean nativeImageSupport = imagesCfg.getAttributeAsBoolean("native", false);
+            afpRenderer.setNativeImagesSupported(nativeImageSupport);
 
             // renderer resolution
             Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
@@ -269,16 +281,6 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                                 + resourceGroupDest + "'");
                 }
             }
-
-            // TODO: provide support for different MO:DCA interchange sets
-            // the MO:DCA interchange set in use (defaults to MO:DCA-L)
-//            Configuration modcaCfg = cfg.getChild("modca", false);
-//            if (modcaCfg != null) {
-//                String interchangeSetString = cfg.getAttribute(
-//                        "interchange-set", InterchangeSet.MODCA_PRESENTATION_INTERCHANGE_SET_2);
-//                InterchangeSet interchangeSet = InterchangeSet.valueOf(interchangeSetString);
-//                afpRenderer.getAFPDataStream().setInterchangeSet(interchangeSet);
-//            }
         }
     }
 }

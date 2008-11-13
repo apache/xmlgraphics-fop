@@ -43,7 +43,6 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.text.TextSpanLayout;
-
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -63,8 +62,8 @@ public class PDFTextPainter extends StrokingTextPainter {
 
     private static final boolean DEBUG = false;
 
-    private boolean strokeText = false;
-    private FontInfo fontInfo;
+    private final boolean strokeText = false;
+    private final FontInfo fontInfo;
 
     /**
      * Create a new PDF text painter with the given font information.
@@ -280,7 +279,7 @@ public class PDFTextPainter extends StrokingTextPainter {
         Float fontSize = (Float) aci.getAttribute(TextAttribute.SIZE);
 
         String style = ((posture != null) && (posture.floatValue() > 0.0))
-                       ? "italic" : "normal";
+                       ? Font.STYLE_ITALIC : Font.STYLE_NORMAL;
         int weight = ((taWeight != null)
                        &&  (taWeight.floatValue() > 1.0)) ? Font.WEIGHT_BOLD
                        : Font.WEIGHT_NORMAL;

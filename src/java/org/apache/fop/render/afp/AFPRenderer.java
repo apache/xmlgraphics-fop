@@ -36,7 +36,6 @@ import java.util.Map;
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.AFPDataObjectInfo;
-import org.apache.fop.afp.AFPPageFonts;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPResourceManager;
@@ -47,6 +46,7 @@ import org.apache.fop.afp.RectanglePaintInfo;
 import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.AFPFontAttributes;
 import org.apache.fop.afp.fonts.AFPFontCollection;
+import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.modca.DataStream;
 import org.apache.fop.afp.modca.PageObject;
 import org.apache.fop.apps.FOPException;
@@ -77,7 +77,6 @@ import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
@@ -137,35 +136,33 @@ import org.apache.xmlgraphics.ps.ImageEncodingHelper;
  */
 public class AFPRenderer extends AbstractPathOrientedRenderer {
 
-    /** Normal PDF resolution (72dpi) */
-    public static final int NORMAL_AFP_RESOLUTION = 72;
-
     private static final int X = 0;
     private static final int Y = 1;
 
-    /** resource manager */
+    /** the resource manager */
     private AFPResourceManager resourceManager;
 
-    /** painting state */
+    /** the painting state */
     private final AFPPaintingState paintingState;
 
     /** unit converter */
     private final AFPUnitConverter unitConv;
 
-    /** line painter */
+    /** the line painter */
     private AFPBorderPainter borderPainter;
 
-    /** The map of page segments */
-    private final Map/*<String,String>*/pageSegmentMap = new java.util.HashMap/*<String,String>*/();
+    /** the map of page segments */
+    private final Map/*<String,String>*/pageSegmentMap
+        = new java.util.HashMap/*<String,String>*/();
 
-    /** The map of saved incomplete pages */
+    /** the map of saved incomplete pages */
     private final Map pages = new java.util.HashMap/*<PageViewport,PageObject>*/();
 
-    /** the afp datastream */
+    /** the AFP datastream */
     private DataStream dataStream;
 
-    /** data object information factory */
-    private final AFPDataObjectInfoProvider dataObjectInfoProvider;
+    /** the image handler registry */
+    private final AFPImageHandlerRegistry imageHandlerRegistry;
 
     private AFPRectanglePainter rectanglePainter;
 
@@ -176,7 +173,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         super();
         this.resourceManager = new AFPResourceManager();
         this.paintingState = new AFPPaintingState();
-        this.dataObjectInfoProvider = new AFPDataObjectInfoProvider(paintingState);
+        this.imageHandlerRegistry = new AFPImageHandlerRegistry();
         this.unitConv = paintingState.getUnitConverter();
     }
 
@@ -252,7 +249,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public Graphics2DAdapter getGraphics2DAdapter() {
-        return new AFPGraphics2DAdapter(this);
+        return new AFPGraphics2DAdapter(paintingState);
     }
 
     /** {@inheritDoc} */
@@ -380,6 +377,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
+    protected RendererContext instantiateRendererContext() {
+        return new AFPRendererContext(this, getMimeType());
+    }
+
+    /** {@inheritDoc} */
     protected RendererContext createRendererContext(int x, int y, int width,
             int height, Map foreignAttributes) {
         RendererContext context;
@@ -394,25 +396,34 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     private static final ImageFlavor[] NATIVE_FLAVORS = new ImageFlavor[] {
+        ImageFlavor.XML_DOM,
         /*ImageFlavor.RAW_PNG, */ // PNG not natively supported in AFP
-        ImageFlavor.XML_DOM, ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.RAW_EPS,
+        ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.RAW_EPS,
         ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE };
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
-        ImageFlavor.XML_DOM, ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE };
+        ImageFlavor.XML_DOM,
+        ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE };
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         uri = URISpecification.getURL(uri);
         paintingState.setImageUri(uri);
-        Rectangle posInt = new Rectangle((int) pos.getX(), (int) pos.getY(),
-                (int) pos.getWidth(), (int) pos.getHeight());
+
+        Point origin = new Point(currentIPPosition, currentBPPosition);
+        Rectangle posInt = new Rectangle(
+                (int)Math.round(pos.getX()),
+                (int)Math.round(pos.getY()),
+                (int)Math.round(pos.getWidth()),
+                (int)Math.round(pos.getHeight())
+        );
+        int x = origin.x + posInt.x;
+        int y = origin.y + posInt.y;
+
         String name = (String)pageSegmentMap.get(uri);
-        int x = currentIPPosition + posInt.x;
-        int y = currentBPPosition + posInt.y;
-        float[] srcPts = {x, y};
-        int[] coords = unitConv.mpts2units(srcPts);
         if (name != null) {
+            float[] srcPts = {x, y};
+            int[] coords = unitConv.mpts2units(srcPts);
             dataStream.createIncludePageSegment(name, coords[X], coords[Y]);
         } else {
             ImageManager manager = userAgent.getFactory().getImageManager();
@@ -425,41 +436,40 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
                 // Only now fully load/prepare the image
                 Map hints = ImageUtil.getDefaultHints(sessionContext);
 
-                ImageFlavor[] flavors = paintingState.isNativeImages() ? NATIVE_FLAVORS : FLAVORS;
+                boolean nativeImagesSupported = paintingState.isNativeImagesSupported();
+                ImageFlavor[] flavors = nativeImagesSupported ? NATIVE_FLAVORS : FLAVORS;
+
+                // Load image
                 org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
                         info, flavors, hints, sessionContext);
 
-                Point origin = new Point(currentIPPosition, currentBPPosition);
-                AFPDataObjectInfoFactory factory = dataObjectInfoProvider.getFactory(img);
-                if (factory != null) {
-                    AFPRendererImageInfo afpImageInfo
-                    = new AFPRendererImageInfo(uri, pos, origin, info, img, foreignAttributes);
-                    if (factory instanceof AFPImageGraphics2DFactory) {
-                        RendererContext rendererContext = createRendererContext(
-                                x, y, posInt.width, posInt.height, foreignAttributes);
-                        afpImageInfo.setRendererContext(rendererContext);
-                        AFPGraphics2DAdapter g2dAdapter
-                            = (AFPGraphics2DAdapter)getGraphics2DAdapter();
-                        afpImageInfo.setGraphics2DAdapter(g2dAdapter);
-                    }
+                // Handle image
+                AFPImageHandler imageHandler
+                    = (AFPImageHandler)imageHandlerRegistry.getHandler(img);
+                if (imageHandler != null) {
+                    RendererContext rendererContext = createRendererContext(
+                            x, y, posInt.width, posInt.height, foreignAttributes);
+                    AFPRendererImageInfo rendererImageInfo = new AFPRendererImageInfo(
+                            uri, pos, origin, info, img, rendererContext, foreignAttributes);
                     AFPDataObjectInfo dataObjectInfo = null;
                     try {
-                        dataObjectInfo = factory.create(afpImageInfo);
+                        dataObjectInfo = imageHandler.generateDataObjectInfo(rendererImageInfo);
+                        // Create image
+                        if (dataObjectInfo != null) {
+                            resourceManager.createObject(dataObjectInfo);
+                        }
                     } catch (IOException ioe) {
                         ResourceEventProducer eventProducer
                             = ResourceEventProducer.Provider.get(userAgent.getEventBroadcaster());
                         eventProducer.imageWritingError(this, ioe);
                         throw ioe;
                     }
-                    resourceManager.createObject(dataObjectInfo);
-                } else if (img instanceof ImageXMLDOM) {
-                    ImageXMLDOM imgXML = (ImageXMLDOM) img;
-                    renderDocument(imgXML.getDocument(), imgXML.getRootNamespace(),
-                            posInt, foreignAttributes);
                 } else {
                     throw new UnsupportedOperationException(
-                            "Unsupported image type: " + img);
+                            "No AFPImageHandler available for image: "
+                                + info + " (" + img.getClass().getName() + ")");
                 }
+
             } catch (ImageException ie) {
                 ResourceEventProducer eventProducer = ResourceEventProducer.Provider
                         .get(userAgent.getEventBroadcaster());
@@ -546,29 +556,17 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public void renderText(TextArea text) {
         renderInlineAreaBackAndBorders(text);
 
+        // set font size
         int fontSize = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
         paintingState.setFontSize(fontSize);
 
-        String name = getInternalFontNameForArea(text);
-        AFPFont font = (AFPFont)fontInfo.getFonts().get(name);
-
-        // Set letterSpacing
-        // float ls = fs.getLetterSpacing() / this.currentFontSize;
-
-        // Create an AFPFontAttributes object from the current font details
-        AFPFontAttributes fontAttributes
-            = new AFPFontAttributes(name, font, fontSize);
-
+        // register font as necessary
+        String internalFontName = getInternalFontNameForArea(text);
+        AFPFont font = (AFPFont)fontInfo.getFonts().get(internalFontName);
         AFPPageFonts pageFonts = paintingState.getPageFonts();
-        if (!pageFonts.containsKey(fontAttributes.getFontKey())) {
-            // Font not found on current page, so add the new one
-            fontAttributes.setFontReference(paintingState.incrementPageFontCount());
-            pageFonts.put(fontAttributes.getFontKey(), fontAttributes);
-        } else {
-            // Use the previously stored font attributes
-            fontAttributes = (AFPFontAttributes)pageFonts.get(fontAttributes.getFontKey());
-        }
+        AFPFontAttributes fontAttributes = pageFonts.registerFont(internalFontName, font, fontSize);
 
+        // create text data info
         AFPTextDataInfo textDataInfo = new AFPTextDataInfo();
 
         int fontReference = fontAttributes.getFontReference();
@@ -765,8 +763,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      * @param nativeImages
      *            native image support
      */
-    public void setNativeImages(boolean nativeImages) {
-        paintingState.setNativeImages(nativeImages);
+    public void setNativeImagesSupported(boolean nativeImages) {
+        paintingState.setNativeImagesSupported(nativeImages);
     }
 
     /**

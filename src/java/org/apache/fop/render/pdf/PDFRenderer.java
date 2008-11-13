@@ -1658,7 +1658,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                         info, imageHandlerRegistry.getSupportedFlavors(), hints, sessionContext);
 
             //First check for a dynamically registered handler
-            PDFImageHandler handler = imageHandlerRegistry.getHandler(img.getClass());
+            PDFImageHandler handler
+                = (PDFImageHandler)imageHandlerRegistry.getHandler(img.getClass());
             if (handler != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Using PDFImageHandler: " + handler.getClass().getName());

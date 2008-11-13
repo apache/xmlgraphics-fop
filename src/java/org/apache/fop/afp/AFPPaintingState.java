@@ -21,6 +21,7 @@ package org.apache.fop.afp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.util.AbstractPaintingState;
 
 /**
@@ -42,7 +43,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     private boolean colorImages = false;
 
     /** images are supported in this AFP environment */
-    private boolean nativeImages = false;
+    private boolean nativeImagesSupported = false;
 
     /** default value for image depth */
     private int bitsPerPixel = 8;
@@ -165,10 +166,10 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /**
      * Sets whether images are natively supported or not in the AFP environment
      *
-     * @param nativeImages true if images are natively supported in this AFP environment
+     * @param nativeImagesSupported true if images are natively supported in this AFP environment
      */
-    public void setNativeImages(boolean nativeImages) {
-        this.nativeImages = nativeImages;
+    public void setNativeImagesSupported(boolean nativeImagesSupported) {
+        this.nativeImagesSupported = nativeImagesSupported;
     }
 
     /**
@@ -176,8 +177,8 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
      *
      * @return true if images are supported natively in this AFP environment
      */
-    public boolean isNativeImages() {
-        return this.nativeImages;
+    public boolean isNativeImagesSupported() {
+        return this.nativeImagesSupported;
     }
 
     /**

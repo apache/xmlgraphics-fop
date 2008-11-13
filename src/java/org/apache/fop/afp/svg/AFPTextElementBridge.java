@@ -17,20 +17,26 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pdf;
+package org.apache.fop.afp.svg;
 
-import org.apache.fop.render.AbstractImageHandlerRegistry;
+import org.apache.batik.gvt.TextPainter;
+import org.apache.fop.svg.AbstractFOPTextElementBridge;
 
 /**
- * This class holds references to various image handlers used by the PDF renderer. It also
- * supports automatic discovery of additional handlers available through
- * the class path.
+ * Bridge class for the &lt;text> element.
+ * This bridge will use the direct text painter if the text
+ * for the element is simple.
  */
-public class PDFImageHandlerRegistry extends AbstractImageHandlerRegistry {
+public class AFPTextElementBridge extends AbstractFOPTextElementBridge {
 
-    /** {@inheritDoc} */
-    public Class getHandlerClass() {
-        return PDFImageHandler.class;
+    /**
+     * Constructs a new bridge for the &lt;text> element.
+     *
+     * @param textPainter the text painter to use
+     */
+    public AFPTextElementBridge(TextPainter textPainter) {
+        super(textPainter);
     }
 
 }
+

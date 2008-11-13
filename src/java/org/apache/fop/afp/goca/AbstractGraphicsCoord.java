@@ -73,7 +73,6 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
      * Returns the length of this order code (typically this is the same as the coordinate length)
      *
      * @return the length of this order code
-     *
      */
     protected int getLength() {
         return this.coords.length * 2;

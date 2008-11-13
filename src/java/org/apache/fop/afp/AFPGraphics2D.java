@@ -48,6 +48,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.svg.NativeImageHandler;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
@@ -65,7 +66,7 @@ import org.apache.xmlgraphics.util.MimeConstants;
  *
  * @see org.apache.xmlgraphics.java2d.AbstractGraphics2D
  */
-public class AFPGraphics2D extends AbstractGraphics2D {
+public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHandler {
 
     private static final Log log = LogFactory.getLog(AFPGraphics2D.class);
 
@@ -109,10 +110,19 @@ public class AFPGraphics2D extends AbstractGraphics2D {
      * @param textAsShapes
      *            if true, all text is turned into shapes in the convertion. No
      *            text is output.
-     *
+     * @param paintingState painting state
+     * @param resourceManager resource manager
+     * @param resourceInfo resource info
+     * @param fontInfo font info
      */
-    public AFPGraphics2D(boolean textAsShapes) {
+    public AFPGraphics2D(boolean textAsShapes, AFPPaintingState paintingState,
+            AFPResourceManager resourceManager, AFPResourceInfo resourceInfo,
+            FontInfo fontInfo) {
         super(textAsShapes);
+        this.paintingState = paintingState;
+        this.resourceManager = resourceManager;
+        this.resourceInfo = resourceInfo;
+        this.fontInfo = fontInfo;
     }
 
     /**
@@ -123,12 +133,14 @@ public class AFPGraphics2D extends AbstractGraphics2D {
      */
     public AFPGraphics2D(AFPGraphics2D g2d) {
         super(g2d);
+        this.paintingState = g2d.paintingState;
+        this.resourceManager = g2d.resourceManager;
+        this.resourceInfo = g2d.resourceInfo;
+        this.fontInfo = g2d.fontInfo;
+
         this.graphicsObj = g2d.graphicsObj;
         this.fallbackTextHandler = g2d.fallbackTextHandler;
         this.customTextHandler = g2d.customTextHandler;
-        this.resourceManager = g2d.resourceManager;
-        this.resourceInfo = g2d.resourceInfo;
-        this.paintingState = g2d.paintingState;
     }
 
     /**
@@ -282,16 +294,13 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                     mhr
             );
         } else {
-            // graphics segment opening coordinates (x,y)
-            // current position coordinates (x,y)
             for (int[] openingCoords = new int[2], currCoords = new int[2];
                 !iter.isDone(); iter.next()) {
-                // round the coordinate values and combine with current position
-                // coordinates
                 int type = iter.currentSegment(dstPts);
                 if (type == PathIterator.SEG_MOVETO) {
                     openingCoords[X] = currCoords[X] = (int)Math.round(dstPts[X]);
                     openingCoords[Y] = currCoords[Y] = (int)Math.round(dstPts[Y]);
+                    graphicsObj.setCurrentPosition(openingCoords);
                 } else {
                     int numCoords;
                     if (type == PathIterator.SEG_LINETO) {
@@ -303,32 +312,22 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                     } else {
                         // close of the graphics segment
                         if (type == PathIterator.SEG_CLOSE) {
-                            coords = new int[] {
-                                    coords[coords.length - 2], //prev X
-                                    coords[coords.length - 1], //prev Y
-                                    openingCoords[X],
-                                    openingCoords[Y]
-                            };
-                            graphicsObj.addLine(coords);
+                            graphicsObj.addLine(openingCoords, true);
                         } else {
                             log.debug("Unrecognised path iterator type: "
                                     + type);
                         }
                         continue;
                     }
-                    // combine current position coordinates with new graphics
-                    // segment coordinates
-                    coords = new int[numCoords + 2];
-                    coords[X] = currCoords[X];
-                    coords[Y] = currCoords[Y];
+                    coords = new int[numCoords];
                     for (int i = 0; i < numCoords; i++) {
-                        coords[i + 2] = (int) Math.round(dstPts[i]);
+                        coords[i] = (int) Math.round(dstPts[i]);
                     }
                     if (type == PathIterator.SEG_LINETO) {
-                        graphicsObj.addLine(coords);
+                        graphicsObj.addLine(coords, true);
                     } else if (type == PathIterator.SEG_QUADTO
                             || type == PathIterator.SEG_CUBICTO) {
-                        graphicsObj.addFillet(coords);
+                        graphicsObj.addFillet(coords, true);
                     }
                     // update current position coordinates
                     currCoords[X] = coords[coords.length - 2];
@@ -408,7 +407,7 @@ public class AFPGraphics2D extends AbstractGraphics2D {
                                  BufferedImage.TYPE_INT_ARGB);
     }
 
-    private AFPImageObjectInfo getImageObjectInfo(
+    private AFPImageObjectInfo createImageObjectInfo(
             RenderedImage img, int x, int y, int width, int height) throws IOException {
         ImageInfo imageInfo = new ImageInfo(null, "image/unknown");
         ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
@@ -422,7 +421,8 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
 
-        imageObjectInfo.setBitsPerPixel(paintingState.getBitsPerPixel());
+        int bitsPerPixel = paintingState.getBitsPerPixel();
+        imageObjectInfo.setBitsPerPixel(bitsPerPixel);
 
         imageObjectInfo.setResourceInfo(resourceInfo);
 
@@ -442,7 +442,6 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         // convert to grayscale
         if (!colorImages) {
             boas.reset();
-            int bitsPerPixel = paintingState.getBitsPerPixel();
             imageObjectInfo.setBitsPerPixel(bitsPerPixel);
             ImageEncodingHelper.encodeRGBAsGrayScale(
                   imageData, dataWidth, dataHeight, bitsPerPixel, boas);
@@ -456,21 +455,10 @@ public class AFPGraphics2D extends AbstractGraphics2D {
 
         // create object area info
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
-
-        AffineTransform at = gc.getTransform();
-        float[] srcPts = new float[] {x, y};
-        float[] dstPts = new float[srcPts.length];
-        at.transform(srcPts, 0, dstPts, 0, 1);
-        objectAreaInfo.setX(Math.round(dstPts[X]));
-        objectAreaInfo.setY(Math.round(dstPts[Y]));
-
-        AFPUnitConverter unitConv = paintingState.getUnitConverter();
-
-        int w = Math.round(unitConv.pt2units(width));
-        objectAreaInfo.setWidth(w);
-
-        int h = Math.round(unitConv.pt2units(height));
-        objectAreaInfo.setHeight(h);
+        objectAreaInfo.setX(x);
+        objectAreaInfo.setY(y);
+        objectAreaInfo.setWidth(width);
+        objectAreaInfo.setHeight(height);
 
         int resolution = paintingState.getResolution();
         objectAreaInfo.setWidthRes(resolution);
@@ -481,37 +469,62 @@ public class AFPGraphics2D extends AbstractGraphics2D {
         return imageObjectInfo;
     }
 
+    /**
+     * Draws an AWT image into a BufferedImage using an AWT Graphics2D implementation
+     *
+     * @param img the AWT image
+     * @param bufferedImage the AWT buffered image
+     * @param width the image width
+     * @param height the image height
+     * @param observer the image observer
+     * @return true if the image was drawn
+     */
+    private boolean drawBufferedImage(Image img, BufferedImage bufferedImage,
+            int width, int height, ImageObserver observer) {
+
+        java.awt.Graphics2D g2d = bufferedImage.createGraphics();
+        try {
+            g2d.setComposite(AlphaComposite.SrcOver);
+
+            Color color = new Color(1, 1, 1, 0);
+            g2d.setBackground(color);
+            g2d.setPaint(color);
+
+            g2d.fillRect(0, 0, width, height);
+
+            int imageWidth = bufferedImage.getWidth();
+            int imageHeight = bufferedImage.getHeight();
+            Rectangle clipRect = new Rectangle(0, 0, imageWidth, imageHeight);
+            g2d.clip(clipRect);
+
+            g2d.setComposite(gc.getComposite());
+
+            return g2d.drawImage(img, 0, 0, imageWidth, imageHeight, observer);
+        } finally {
+            g2d.dispose(); //drawn so dispose immediately to free system resource
+        }
+    }
+
     /** {@inheritDoc} */
     public boolean drawImage(Image img, int x, int y, int width, int height,
             ImageObserver observer) {
 
         // draw with AWT Graphics2D
-        Dimension size = new Dimension(width, height);
-        BufferedImage bufferedImage = buildBufferedImage(size);
+        Dimension imageSize = new Dimension(width, height);
+        BufferedImage bufferedImage = buildBufferedImage(imageSize);
 
-        java.awt.Graphics2D g2d = bufferedImage.createGraphics();
-        g2d.setComposite(AlphaComposite.SrcOver);
-
-        Color color = new Color(1, 1, 1, 0);
-        g2d.setBackground(color);
-        g2d.setPaint(color);
-
-        g2d.fillRect(0, 0, width, height);
-
-        int imageWidth = bufferedImage.getWidth();
-        int imageHeight = bufferedImage.getHeight();
-        Rectangle clipRect = new Rectangle(0, 0, imageWidth, imageHeight);
-        g2d.clip(clipRect);
-
-        g2d.setComposite(gc.getComposite());
-
-        boolean drawn = g2d.drawImage(img, 0, 0, imageWidth, imageHeight, observer);
-        g2d.dispose(); //drawn so dispose immediately to free system resource
-
+        boolean drawn = drawBufferedImage(img, bufferedImage, width, height, observer);
         if (drawn) {
+            AffineTransform at = gc.getTransform();
+            float[] srcPts = new float[] {x, y};
+            float[] dstPts = new float[srcPts.length];
+            at.transform(srcPts, 0, dstPts, 0, 1);
+            x = Math.round(dstPts[X]);
+            y = Math.round(dstPts[Y]);
             try {
                 // get image object info
-                AFPImageObjectInfo imageObjectInfo = getImageObjectInfo(bufferedImage, x, y, width, height);
+                AFPImageObjectInfo imageObjectInfo
+                    = createImageObjectInfo(bufferedImage, x, y, width, height);
 
                 // create image resource
                 resourceManager.createObject(imageObjectInfo);
@@ -524,24 +537,23 @@ public class AFPGraphics2D extends AbstractGraphics2D {
     }
 
     /** {@inheritDoc} */
-    public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
-        log.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
-    }
-
-    /** {@inheritDoc} */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        log.debug("drawRenderedImage() NYI: img=" + img + ", xform=" + xform);
-    }
+        int width = img.getWidth();
+        int height = img.getHeight();
 
-    /** {@inheritDoc} */
-    public FontMetrics getFontMetrics(Font f) {
-        log.debug("getFontMetrics() NYI: f=" + f);
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    public void setXORMode(Color col) {
-        log.debug("setXORMode() NYI: col=" + col);
+        AffineTransform at = paintingState.getData().getTransform();
+        AffineTransform gat = gc.getTransform();
+        int x = (int)Math.round(at.getTranslateX() + gat.getTranslateX());
+        int y = (int)Math.round(at.getTranslateY());
+        try {
+            // get image object info
+            AFPImageObjectInfo imageObjectInfo
+                = createImageObjectInfo(img, x, y, width, height);
+            // create image resource
+            resourceManager.createObject(imageObjectInfo);
+        } catch (IOException ioe) {
+            handleIOException(ioe);
+        }
     }
 
     /**
@@ -608,5 +620,28 @@ public class AFPGraphics2D extends AbstractGraphics2D {
      */
     public FontInfo getFontInfo() {
         return this.fontInfo;
+    }
+
+    /** {@inheritDoc} */
+    public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
+        log.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
+    }
+
+    /** {@inheritDoc} */
+    public FontMetrics getFontMetrics(Font f) {
+        log.debug("getFontMetrics() NYI: f=" + f);
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public void setXORMode(Color col) {
+        log.debug("setXORMode() NYI: col=" + col);
+    }
+
+    /** {@inheritDoc} */
+    public void addNativeImage(org.apache.xmlgraphics.image.loader.Image image,
+            float x, float y, float width, float height) {
+        log.debug("NYI: addNativeImage() "+ "image=" + image
+                + ",x=" + x + ",y=" + y + ",width=" + width + ",height=" + height);
     }
 }

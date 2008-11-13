@@ -19,40 +19,34 @@
 
 package org.apache.fop.render.ps;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-/* java.awt.Font is not imported to avoid confusion with
-   org.apache.fop.fonts.Font */
-
+import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
-import java.awt.font.TextAttribute;
-import java.awt.Shape;
-import java.awt.Paint;
-import java.awt.Stroke;
-import java.awt.Color;
-import java.io.IOException;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
+import org.apache.batik.dom.svg.SVGOMTextElement;
+import org.apache.batik.gvt.TextNode;
+import org.apache.batik.gvt.TextPainter;
+import org.apache.batik.gvt.font.GVTFontFamily;
+import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
+import org.apache.batik.gvt.text.Mark;
+import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
-
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
-import org.apache.xmlgraphics.java2d.TextHandler;
-
-import org.apache.batik.dom.svg.SVGOMTextElement;
-import org.apache.batik.gvt.text.Mark;
-import org.apache.batik.gvt.TextPainter;
-import org.apache.batik.gvt.TextNode;
-import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
-import org.apache.batik.gvt.text.TextPaintInfo;
-import org.apache.batik.gvt.font.GVTFontFamily;
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
 
 /**
@@ -74,8 +68,8 @@ public class PSTextPainter implements TextPainter {
     /** the logger for this class */
     protected Log log = LogFactory.getLog(PSTextPainter.class);
 
-    private NativeTextHandler nativeTextHandler;
-    private FontInfo fontInfo;
+    private final NativeTextHandler nativeTextHandler;
+    private final FontInfo fontInfo;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
@@ -317,7 +311,7 @@ public class PSTextPainter implements TextPainter {
         }
 
         drawPrimitiveString(g2d, loc, font, txt, tx);
-        loc.setLocation(loc.getX() + (double)advance, loc.getY());
+        loc.setLocation(loc.getX() + advance, loc.getY());
         return loc;
     }
 
@@ -422,7 +416,7 @@ public class PSTextPainter implements TextPainter {
             fStyle |= java.awt.Font.ITALIC;
         }
         return new java.awt.Font(font.getFontName(), fStyle,
-                             (int)(font.getFontSize() / 1000));
+                             (font.getFontSize() / 1000));
     }
 
     private float getStringWidth(String str, Font font) {

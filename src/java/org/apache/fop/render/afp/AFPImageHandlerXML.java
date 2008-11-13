@@ -17,15 +17,16 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pdf;
+package org.apache.fop.render.afp;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererContextConstants;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
@@ -34,7 +35,7 @@ import org.w3c.dom.Document;
 /**
  * PDFImageHandler implementation which handles XML-based images.
  */
-public class PDFImageHandlerXML implements PDFImageHandler {
+public class AFPImageHandlerXML extends AFPImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.XML_DOM,
@@ -45,15 +46,15 @@ public class PDFImageHandlerXML implements PDFImageHandler {
     };
 
     /** {@inheritDoc} */
-    public PDFXObject generateImage(RendererContext context, Image image,
+    public AFPDataObjectInfo generateDataObjectInfo(RendererContext context, Image image,
             Point origin, Rectangle pos)
             throws IOException {
-        PDFRenderer renderer = (PDFRenderer)context.getRenderer();
+        AFPRenderer renderer = (AFPRenderer)context.getRenderer();
         ImageXMLDOM imgXML = (ImageXMLDOM)image;
         Document doc = imgXML.getDocument();
         String ns = imgXML.getRootNamespace();
         Map foreignAttributes = (Map)context.getProperty(
-                PDFRendererContextConstants.FOREIGN_ATTRIBUTES);
+                RendererContextConstants.FOREIGN_ATTRIBUTES);
         renderer.renderDocument(doc, ns, pos, foreignAttributes);
         return null;
     }
@@ -71,6 +72,11 @@ public class PDFImageHandlerXML implements PDFImageHandler {
     /** {@inheritDoc} */
     public ImageFlavor[] getSupportedImageFlavors() {
         return FLAVORS;
+    }
+
+    /** {@inheritDoc} */
+    protected AFPDataObjectInfo createDataObjectInfo() {
+        return null;
     }
 
 }

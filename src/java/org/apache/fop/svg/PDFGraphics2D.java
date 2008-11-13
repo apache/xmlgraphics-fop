@@ -100,7 +100,7 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
  * @version $Id$
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
-public class PDFGraphics2D extends AbstractGraphics2D {
+public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHandler {
 
     private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
 
@@ -414,7 +414,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param width the width to draw the image
      * @param height the height to draw the image
      */
-    void addNativeImage(org.apache.xmlgraphics.image.loader.Image image, float x, float y,
+    public void addNativeImage(org.apache.xmlgraphics.image.loader.Image image, float x, float y,
                              float width, float height) {
         preparePainting();
         String key = image.getInfo().getOriginalURI();
@@ -521,7 +521,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             g.clip(new Rectangle(0, 0, imageWidth, imageHeight));
             g.setComposite(gc.getComposite());
 
-            if (!g.drawImage(img, 0, 0, imageWidth, imageHeight, observer)) {
+            boolean drawn = g.drawImage(img, 0, 0, imageWidth, imageHeight, observer);
+            if (!drawn) {
                 return false;
             }
             g.dispose();

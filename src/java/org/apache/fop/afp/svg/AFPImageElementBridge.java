@@ -17,27 +17,18 @@
 
 /* $Id$ */
 
-package org.apache.fop.svg;
+package org.apache.fop.afp.svg;
 
+import org.apache.fop.svg.AbstractFOPImageElementBridge;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 
-/**
- * PDF Image Element Bridge class for the &lt;image> element when jpeg images.
- *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- */
-public class PDFImageElementBridge extends AbstractFOPImageElementBridge {
-
-    /**
-     * Constructs a new bridge for the &lt;image> element.
-     */
-    public PDFImageElementBridge() { }
+public class AFPImageElementBridge extends AbstractFOPImageElementBridge {
 
     private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
-                                               {ImageFlavor.RAW_JPEG,
-                                                ImageFlavor.RAW_CCITTFAX,
-                                                ImageFlavor.GRAPHICS2D,
-                                                ImageFlavor.XML_DOM};
+                                                                   {ImageFlavor.RAW_JPEG,
+                                                                    ImageFlavor.RAW_CCITTFAX,
+                                                                    ImageFlavor.GRAPHICS2D,
+                                                                    ImageFlavor.XML_DOM};
 
     /** {@inheritDoc} */
     protected ImageFlavor[] getSupportedFlavours() {

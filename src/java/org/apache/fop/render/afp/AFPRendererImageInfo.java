@@ -50,9 +50,6 @@ public class AFPRendererImageInfo {
     /** the image */
     protected final Image img;
 
-    /** the AFP graphics 2d adapter */
-    protected AFPGraphics2DAdapter g2dAdapter;
-
     /** the renderer context */
     protected RendererContext rendererContext;
 
@@ -64,15 +61,17 @@ public class AFPRendererImageInfo {
      * @param origin the current position
      * @param info the image info
      * @param img the image
+     * @param rendererContext the renderer context
      * @param foreignAttributes the foreign attributes
      */
     public AFPRendererImageInfo(String uri, Rectangle2D pos, Point origin,
-            ImageInfo info, Image img, Map foreignAttributes) {
+            ImageInfo info, Image img, RendererContext rendererContext, Map foreignAttributes) {
         this.uri = uri;
         this.pos = pos;
         this.origin = origin;
         this.info = info;
         this.img = img;
+        this.rendererContext = rendererContext;
         this.foreignAttributes = foreignAttributes;
     }
 
@@ -83,15 +82,6 @@ public class AFPRendererImageInfo {
      */
     public void setRendererContext(RendererContext rendererContext) {
         this.rendererContext = rendererContext;
-    }
-
-    /**
-     * Sets the graphics 2d adapter
-     *
-     * @param adapter the graphics 2d adapter
-     */
-    public void setGraphics2DAdapter(AFPGraphics2DAdapter adapter) {
-        this.g2dAdapter = adapter;
     }
 
     /**
@@ -110,15 +100,6 @@ public class AFPRendererImageInfo {
      */
     public Image getImage() {
         return this.img;
-    }
-
-    /**
-     * Returns the graphics 2D adapter
-     *
-     * @return the graphics 2D adapter
-     */
-    public AFPGraphics2DAdapter getGraphics2DAdapter() {
-        return this.g2dAdapter;
     }
 
     /**

@@ -27,33 +27,41 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.ImageBuffered;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 /**
- * A buffered image data object info factory
+ * PDFImageHandler implementation which handles RenderedImage instances.
  */
-public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
+public class AFPImageHandlerRenderedImage extends AFPImageHandler {
 
-    /**
-     * Main constructor
-     *
-     * @param state the AFP painting state
-     */
-    public AFPImageRenderedFactory(AFPPaintingState state) {
-        super(state);
-    }
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
+        ImageFlavor.BUFFERED_IMAGE,
+        ImageFlavor.RENDERED_IMAGE
+    };
+
+    private static final Class[] CLASSES = new Class[] {
+        ImageBuffered.class,
+        ImageRendered.class
+    };
 
     /** {@inheritDoc} */
-    public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
+    public AFPDataObjectInfo generateDataObjectInfo(
+            AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPImageObjectInfo imageObjectInfo
-            = (AFPImageObjectInfo)super.create(rendererImageInfo);
+            = (AFPImageObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
 
         imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
 
         AFPObjectAreaInfo objectAreaInfo = imageObjectInfo.getObjectAreaInfo();
-        int resolution = state.getResolution();
+        AFPRendererContext rendererContext
+            = (AFPRendererContext)rendererImageInfo.getRendererContext();
+        AFPInfo afpInfo = rendererContext.getInfo();
+        AFPPaintingState paintingState = afpInfo.getPaintingState();
+        int resolution = paintingState.getResolution();
         objectAreaInfo.setWidthRes(resolution);
         objectAreaInfo.setHeightRes(resolution);
 
@@ -70,13 +78,13 @@ public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
         ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baos);
         byte[] imageData = baos.toByteArray();
 
-        boolean colorImages = state.isColorImages();
+        boolean colorImages = paintingState.isColorImages();
         imageObjectInfo.setColor(colorImages);
 
         // convert to grayscale
         if (!colorImages) {
             baos.reset();
-            int bitsPerPixel = state.getBitsPerPixel();
+            int bitsPerPixel = paintingState.getBitsPerPixel();
             imageObjectInfo.setBitsPerPixel(bitsPerPixel);
             ImageEncodingHelper.encodeRGBAsGrayScale(
                   imageData, dataWidth, dataHeight, bitsPerPixel, baos);
@@ -91,4 +99,20 @@ public class AFPImageRenderedFactory extends AFPDataObjectInfoFactory {
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPImageObjectInfo();
     }
+
+    /** {@inheritDoc} */
+    public int getPriority() {
+        return 300;
+    }
+
+    /** {@inheritDoc} */
+    public Class[] getSupportedImageClasses() {
+        return CLASSES;
+    }
+
+    /** {@inheritDoc} */
+    public ImageFlavor[] getSupportedImageFlavors() {
+        return FLAVORS;
+    }
+
 }

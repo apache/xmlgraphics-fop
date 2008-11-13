@@ -389,8 +389,8 @@ public class FontInfo {
             }
             matchedTriplet = fontLookup(awtFontFamily, awtFontStyle, awtFontWeight);
         }
-        float awtFontSize = awtFont.getSize2D();
-        return getFontInstance(matchedTriplet, (int)(awtFontSize * 1000 + 0.5));
+        int fontSize = Math.round(awtFont.getSize2D() * 1000);
+        return getFontInstance(matchedTriplet, fontSize);
     }
 
     /**

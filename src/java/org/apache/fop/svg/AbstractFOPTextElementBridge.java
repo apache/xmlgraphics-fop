@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,10 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp;
+package org.apache.fop.svg;
 
-import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.TextPainter;
@@ -31,21 +31,26 @@ import org.w3c.dom.Node;
  * Bridge class for the &lt;text> element.
  * This bridge will use the direct text painter if the text
  * for the element is simple.
+ *
+ * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
-public class AFPTextElementBridge extends SVGTextElementBridge {
-    
-    private AFPTextPainter textPainter;
+public abstract class AbstractFOPTextElementBridge extends SVGTextElementBridge {
+
+    /** text painter */
+    protected TextPainter textPainter;
 
     /**
-     * Constructs a new bridge for the &lt;text> element.
-     * @param textPainter the text painter to use
+     * Main constructor
+     *
+     * @param textPainter the text painter
      */
-    public AFPTextElementBridge(AFPTextPainter textPainter) {
+    public AbstractFOPTextElementBridge(TextPainter textPainter) {
         this.textPainter = textPainter;
     }
 
     /**
      * Create a text element bridge.
+     *
      * This set the text painter on the node if the text is simple.
      * @param ctx the bridge context
      * @param e the svg element
@@ -53,14 +58,11 @@ public class AFPTextElementBridge extends SVGTextElementBridge {
      */
     public GraphicsNode createGraphicsNode(BridgeContext ctx, Element e) {
         GraphicsNode node = super.createGraphicsNode(ctx, e);
-        if (node != null && isSimple(ctx, e, node)) {
-            ((TextNode)node).setTextPainter(getTextPainter());
+        if (node != null) {
+            //Set our own text painter
+            ((TextNode)node).setTextPainter(textPainter);
         }
         return node;
-    }
-
-    private TextPainter getTextPainter() {
-        return this.textPainter;
     }
 
     /**
@@ -75,9 +77,9 @@ public class AFPTextElementBridge extends SVGTextElementBridge {
      * @param element the svg text element
      * @param node the graphics node
      * @return true if this text is simple of false if it cannot be
-     *         easily rendered using normal drawString on the PDFGraphics2D
+     *         easily rendered using normal drawString on the Graphics2D
      */
-    private boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
+    protected boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
         for (Node n = element.getFirstChild();
                 n != null;
                 n = n.getNextSibling()) {
@@ -106,5 +108,6 @@ public class AFPTextElementBridge extends SVGTextElementBridge {
 
         return true;
     }
+
 }
 

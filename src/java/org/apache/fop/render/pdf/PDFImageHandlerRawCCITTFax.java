@@ -23,15 +23,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.apache.xmlgraphics.image.loader.Image;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
-
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RendererContext;
+import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 
 /**
  * PDFImageHandler implementation which handles CCITT encoded images (CCITT fax group 3/4).
@@ -40,6 +39,10 @@ public class PDFImageHandlerRawCCITTFax implements PDFImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RAW_CCITTFAX,
+    };
+
+    private static final Class[] CLASSES = new Class[] {
+        ImageRawCCITTFax.class,
     };
 
     /** {@inheritDoc} */
@@ -71,8 +74,8 @@ public class PDFImageHandlerRawCCITTFax implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class getSupportedImageClass() {
-        return ImageRawCCITTFax.class;
+    public Class[] getSupportedImageClasses() {
+        return CLASSES;
     }
 
     /** {@inheritDoc} */

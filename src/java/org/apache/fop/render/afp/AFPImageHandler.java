@@ -19,68 +19,76 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
-import org.apache.fop.afp.AFPForeignAttributeReader;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.render.ImageHandler;
 
-
-/**
- * Abstract image configurator
- */
-public abstract class AFPAbstractImageFactory {
+public abstract class AFPImageHandler implements ImageHandler {
     private static final int X = 0;
     private static final int Y = 1;
-
-    /** the AFP state */
-    protected final AFPPaintingState state;
 
     /** foreign attribute reader */
     private final AFPForeignAttributeReader foreignAttributeReader
         = new AFPForeignAttributeReader();
 
     /**
-     * Main constructor
+     * Generates an intermediate AFPDataObjectInfo that is later used to construct
+     * the appropriate data object in the AFP DataStream.
      *
-     * @param state the AFP painting state
-     */
-    public AFPAbstractImageFactory(AFPPaintingState state) {
-        this.state = state;
-    }
-
-    /**
-     * Configures the data object info
-     *
-     * @param afpImageInfo the afp image info
-     * @return the data object info
+     * @param rendererImageInfo the renderer image info
+     * @return a data object info object
      * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
-    public AFPDataObjectInfo create(AFPRendererImageInfo afpImageInfo) throws IOException {
+    public AFPDataObjectInfo generateDataObjectInfo(
+            AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
 
         // set resource information
+        Map foreignAttributes = rendererImageInfo.getForeignAttributes();
         AFPResourceInfo resourceInfo
-        = foreignAttributeReader.getResourceInfo(afpImageInfo.foreignAttributes);
-        resourceInfo.setUri(afpImageInfo.uri);
+            = foreignAttributeReader.getResourceInfo(foreignAttributes);
+        resourceInfo.setUri(rendererImageInfo.getURI());
         dataObjectInfo.setResourceInfo(resourceInfo);
 
         // set object area
         AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
-        float srcX = afpImageInfo.origin.x + (float)afpImageInfo.pos.getX();
-        float srcY = afpImageInfo.origin.y + (float)afpImageInfo.pos.getY();
-        AFPUnitConverter unitConv = state.getUnitConverter();
+
+        Point origin = rendererImageInfo.getOrigin();
+        Rectangle2D position = rendererImageInfo.getPosition();
+        float srcX = origin.x + (float)position.getX();
+        float srcY = origin.y + (float)position.getY();
+
+        AFPRendererContext rendererContext
+            = (AFPRendererContext)rendererImageInfo.getRendererContext();
+        AFPInfo afpInfo = rendererContext.getInfo();
+        AFPPaintingState paintingState = afpInfo.getPaintingState();
+        AFPUnitConverter unitConv = paintingState.getUnitConverter();
         int[] coords = unitConv.mpts2units(new float[] {srcX, srcY});
         objectAreaInfo.setX(coords[X]);
         objectAreaInfo.setY(coords[Y]);
-        int width = Math.round(unitConv.mpt2units((float)afpImageInfo.pos.getWidth()));
+
+        int width = Math.round(unitConv.mpt2units((float)position.getWidth()));
         objectAreaInfo.setWidth(width);
-        int height = Math.round(unitConv.mpt2units((float)afpImageInfo.pos.getHeight()));
+
+        int height = Math.round(unitConv.mpt2units((float)position.getHeight()));
         objectAreaInfo.setHeight(height);
+
+        int resolution = paintingState.getResolution();
+        objectAreaInfo.setHeightRes(resolution);
+        objectAreaInfo.setWidthRes(resolution);
+
+        objectAreaInfo.setRotation(paintingState.getRotation());
+
         dataObjectInfo.setObjectAreaInfo(objectAreaInfo);
+
         return dataObjectInfo;
     }
 

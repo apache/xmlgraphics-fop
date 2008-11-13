@@ -24,36 +24,39 @@ import java.io.IOException;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
-import org.apache.fop.afp.AFPPaintingState;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 
 /**
- * An CITT fax image data object info factory
+ * PDFImageHandler implementation which handles CCITT encoded images (CCITT fax group 3/4).
  */
-public class AFPRawCCITTFaxFactory extends AFPDataObjectInfoFactory {
+public class AFPImageHandlerRawCCITTFax extends AFPImageHandler {
 
-    /**
-     * Main constructor
-     *
-     * @param state the AFP painting state
-     */
-    public AFPRawCCITTFaxFactory(AFPPaintingState state) {
-        super(state);
-    }
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
+        ImageFlavor.RAW_CCITTFAX,
+    };
+
+    private static final Class[] CLASSES = new Class[] {
+        ImageRawCCITTFax.class,
+    };
 
     /** {@inheritDoc} */
-    public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
-        AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)super.create(rendererImageInfo);
+    public AFPDataObjectInfo generateDataObjectInfo(
+            AFPRendererImageInfo rendererImageInfo) throws IOException {
+        AFPImageObjectInfo imageObjectInfo
+            = (AFPImageObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
 
-        ImageRawCCITTFax ccitt = (ImageRawCCITTFax) rendererImageInfo.img;
+        ImageRawCCITTFax ccitt = (ImageRawCCITTFax) rendererImageInfo.getImage();
         imageObjectInfo.setCompression(ccitt.getCompression());
 
         AFPObjectAreaInfo objectAreaInfo = imageObjectInfo.getObjectAreaInfo();
-        int xresol = (int) (ccitt.getSize().getDpiHorizontal() * 10);
-        objectAreaInfo.setWidthRes(xresol);
+        ImageSize imageSize = ccitt.getSize();
+        int widthRes = (int) (imageSize.getDpiHorizontal() * 10);
+        objectAreaInfo.setWidthRes(widthRes);
 
-        int yresol = (int) (ccitt.getSize().getDpiVertical() * 10);
-        objectAreaInfo.setHeightRes(yresol);
+        int heightRes = (int) (imageSize.getDpiVertical() * 10);
+        objectAreaInfo.setHeightRes(heightRes);
 
         imageObjectInfo.setInputStream(ccitt.createInputStream());
 
@@ -64,4 +67,20 @@ public class AFPRawCCITTFaxFactory extends AFPDataObjectInfoFactory {
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPImageObjectInfo();
     }
+
+    /** {@inheritDoc} */
+    public int getPriority() {
+        return 400;
+    }
+
+    /** {@inheritDoc} */
+    public Class[] getSupportedImageClasses() {
+        return CLASSES;
+    }
+
+    /** {@inheritDoc} */
+    public ImageFlavor[] getSupportedImageFlavors() {
+        return FLAVORS;
+    }
+
 }

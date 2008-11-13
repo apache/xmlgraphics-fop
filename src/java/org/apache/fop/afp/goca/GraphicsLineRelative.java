@@ -17,30 +17,26 @@
 
 /* $Id$ */
 
-package org.apache.fop.svg;
-
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
+package org.apache.fop.afp.goca;
 
 /**
- * PDF Image Element Bridge class for the &lt;image> element when jpeg images.
- *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
+ * A GOCA graphics straight line drawn from the
+ * relative from the current position.
  */
-public class PDFImageElementBridge extends AbstractFOPImageElementBridge {
+public class GraphicsLineRelative extends AbstractGraphicsCoord {
 
     /**
-     * Constructs a new bridge for the &lt;image> element.
+     * Constructor
+     *
+     * @param coords the x/y coordinates for this object
      */
-    public PDFImageElementBridge() { }
-
-    private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
-                                               {ImageFlavor.RAW_JPEG,
-                                                ImageFlavor.RAW_CCITTFAX,
-                                                ImageFlavor.GRAPHICS2D,
-                                                ImageFlavor.XML_DOM};
+    public GraphicsLineRelative(int[] coords) {
+        super(coords);
+    }
 
     /** {@inheritDoc} */
-    protected ImageFlavor[] getSupportedFlavours() {
-        return supportedFlavors;
+    protected byte getOrderCode() {
+        return (byte)0x81;
     }
+
 }

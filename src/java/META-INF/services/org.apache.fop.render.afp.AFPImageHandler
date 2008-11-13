@@ -1,0 +1,5 @@
+org.apache.fop.render.afp.AFPImageHandlerRenderedImage
+org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax
+org.apache.fop.render.afp.AFPImageHandlerRawStream
+org.apache.fop.render.afp.AFPImageHandlerGraphics2D
+org.apache.fop.render.afp.AFPImageHandlerXML

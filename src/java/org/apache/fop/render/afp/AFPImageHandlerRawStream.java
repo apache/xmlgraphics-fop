@@ -25,35 +25,48 @@ import java.io.InputStream;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawEPS;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 
 /**
- * A raw stream image data object info factory
+ * AFPImageHandler implementation which handles raw stream images.
  */
-public class AFPImageRawStreamFactory extends AFPDataObjectInfoFactory {
+public class AFPImageHandlerRawStream extends AFPImageHandler {
 
-    /**
-     * Main constructor
-     *
-     * @param state the AFP painting state
-     */
-    public AFPImageRawStreamFactory(AFPPaintingState state) {
-        super(state);
-    }
+    private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
+        ImageFlavor.RAW_JPEG,
+        ImageFlavor.RAW_CCITTFAX,
+        ImageFlavor.RAW_EPS,
+    };
+
+    private static final Class[] CLASSES = new Class[] {
+        ImageRawJPEG.class,
+        ImageRawCCITTFax.class,
+        ImageRawEPS.class
+    };
 
     /** {@inheritDoc} */
-    public AFPDataObjectInfo create(AFPRendererImageInfo rendererImageInfo) throws IOException {
-        AFPDataObjectInfo dataObjectInfo = super.create(rendererImageInfo);
+    public AFPDataObjectInfo generateDataObjectInfo(
+            AFPRendererImageInfo rendererImageInfo) throws IOException {
+        AFPDataObjectInfo dataObjectInfo = super.generateDataObjectInfo(rendererImageInfo);
         ImageInfo imageInfo = rendererImageInfo.getImageInfo();
         String mimeType = imageInfo.getMimeType();
         if (mimeType != null) {
             dataObjectInfo.setMimeType(mimeType);
         }
         ImageRawStream rawStream = (ImageRawStream) rendererImageInfo.getImage();
-        int resolution = state.getResolution();
 
         AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+
+        AFPRendererContext rendererContext
+        = (AFPRendererContext)rendererImageInfo.getRendererContext();
+        AFPInfo afpInfo = rendererContext.getInfo();
+        AFPPaintingState paintingState = afpInfo.getPaintingState();
+        int resolution = paintingState.getResolution();
         objectAreaInfo.setWidthRes(resolution);
         objectAreaInfo.setHeightRes(resolution);
 
@@ -66,6 +79,21 @@ public class AFPImageRawStreamFactory extends AFPDataObjectInfoFactory {
         int dataWidth = rawStream.getSize().getWidthPx();
         dataObjectInfo.setDataWidth(dataWidth);
         return dataObjectInfo;
+    }
+
+    /** {@inheritDoc} */
+    public int getPriority() {
+        return 100;
+    }
+
+    /** {@inheritDoc} */
+    public Class[] getSupportedImageClasses() {
+        return CLASSES;
+    }
+
+    /** {@inheritDoc} */
+    public ImageFlavor[] getSupportedImageFlavors() {
+        return FLAVORS;
     }
 
     /** {@inheritDoc} */

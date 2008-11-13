@@ -44,7 +44,7 @@ public class AFPStreamer implements Streamable {
 
     private static final String AFPDATASTREAM_TEMP_FILE_PREFIX = "AFPDataStream_";
 
-    private static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 4096; // 4k writing buffer
 
     private static final String DEFAULT_EXTERNAL_RESOURCE_FILENAME = "resources.afp";
 
@@ -159,8 +159,8 @@ public class AFPStreamer implements Streamable {
      *
      * @throws IOException if an an I/O exception of some sort has occurred
      */
-    public void close() throws IOException {
         // write out any external resource groups
+    public void close() throws IOException {
         Iterator it = pathResourceGroupMap.entrySet().iterator();
         while (it.hasNext()) {
             StreamedResourceGroup resourceGroup = (StreamedResourceGroup)it.next();
@@ -192,6 +192,7 @@ public class AFPStreamer implements Streamable {
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
+//        long start = System.currentTimeMillis();
         int len = (int)documentFile.length();
         int numChunks = len / BUFFER_SIZE;
         int remainingChunkSize = len % BUFFER_SIZE;
@@ -212,5 +213,7 @@ public class AFPStreamer implements Streamable {
             os.write(buffer, 0, remainingChunkSize);
         }
         os.flush();
+//        long end = System.currentTimeMillis();
+//        log.debug("writing time " + (end - start) + "ms");
     }
 }
