@@ -22,92 +22,14 @@ package org.apache.fop.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.triplets.Triplet;
+import org.apache.fop.afp.modca.triplets.ResourceObjectTypeTriplet;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * This resource structured field begins an envelope that is used to carry
  * resource objects in print-file-level (external) resource groups.
  */
-public class ResourceObject extends AbstractPreparedAFPObject {
-
-    private AbstractNamedAFPObject namedObject;
-
-    /**
-     * Default constructor
-     *
-     * @param name the name of this resource (reference id)
-     */
-    public ResourceObject(String name) {
-        super(name);
-    }
-
-    /**
-     * Sets the data object referenced by this resource object
-     *
-     * @param obj the named data object
-     */
-    public void setDataObject(AbstractNamedAFPObject obj) {
-        this.namedObject = obj;
-    }
-
-    /**
-     * Returns the data object referenced by this resource object
-     *
-     * @return the data object referenced by this resource object
-     */
-    public AbstractNamedAFPObject getDataObject() {
-        return namedObject;
-    }
-
-    /** {@inheritDoc} */
-    protected void writeStart(OutputStream os) throws IOException {
-        super.writeStart(os);
-
-        byte[] data = new byte[19];
-        copySF(data, Type.BEGIN, Category.NAME_RESOURCE);
-
-        // Set the total record length
-        int tripletDataLength = getTripletDataLength();
-        byte[] len = BinaryUtils.convert(18 + tripletDataLength, 2);
-        data[1] = len[0]; // Length byte 1
-        data[2] = len[1]; // Length byte 2
-
-        // Set reserved bits
-        data[17] = 0x00; // Reserved
-        data[18] = 0x00; // Reserved
-
-        os.write(data);
-    }
-
-    /** {@inheritDoc} */
-    protected void writeContent(OutputStream os) throws IOException {
-        super.writeContent(os); // write triplets
-        if (namedObject != null) {
-            namedObject.writeToStream(os);
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected void writeEnd(OutputStream os) throws IOException {
-        byte[] data = new byte[17];
-        copySF(data, Type.END, Category.NAME_RESOURCE);
-        os.write(data);
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return this.getName();
-    }
-
-    /**
-     * Sets Resource Object Type triplet
-     *
-     * @param type the resource object type
-     */
-    public void setType(byte type) {
-        getTriplets().add(new ResourceObjectTypeTriplet(type));
-    }
+public class ResourceObject extends AbstractNamedAFPObject {
 
     /** graphics object type */
     public static final byte TYPE_GRAPHIC = 0x03;
@@ -145,24 +67,84 @@ public class ResourceObject extends AbstractPreparedAFPObject {
     /** form def type */
     public static final byte TYPE_FORMDEF = (byte) 0xFE;
 
+    private AbstractNamedAFPObject namedObject;
 
-    /** resource object type triplet */
-    private class ResourceObjectTypeTriplet extends Triplet {
+    /**
+     * Default constructor
+     *
+     * @param name the name of this resource (reference id)
+     */
+    public ResourceObject(String name) {
+        super(name);
+    }
 
-        private static final byte RESOURCE_OBJECT = 0x21;
+    /**
+     * Sets the data object referenced by this resource object
+     *
+     * @param namedObject the named data object
+     */
+    public void setDataObject(AbstractNamedAFPObject namedObject) {
+        this.namedObject = namedObject;
+    }
 
-        /**
-         * Main constructor
-         *
-         * @param objectType the resource object type
-         */
-        public ResourceObjectTypeTriplet(byte objectType) {
-            super(RESOURCE_OBJECT,
-                new byte[] {
-                    objectType,
-                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // Constant Data
-                }
-            );
+    /**
+     * Returns the data object referenced by this resource object
+     *
+     * @return the data object referenced by this resource object
+     */
+    public AbstractNamedAFPObject getDataObject() {
+        return namedObject;
+    }
+
+    /** {@inheritDoc} */
+    protected void writeStart(OutputStream os) throws IOException {
+        super.writeStart(os);
+
+        byte[] data = new byte[19];
+        copySF(data, Type.BEGIN, Category.NAME_RESOURCE);
+
+        // Set the total record length
+        int tripletDataLength = getTripletDataLength();
+        byte[] len = BinaryUtils.convert(18 + tripletDataLength, 2);
+        data[1] = len[0]; // Length byte 1
+        data[2] = len[1]; // Length byte 2
+
+        // Set reserved bits
+        data[17] = 0x00; // Reserved
+        data[18] = 0x00; // Reserved
+
+        os.write(data);
+
+        // Write triplets
+        writeTriplets(os);
+    }
+
+    /** {@inheritDoc} */
+    protected void writeContent(OutputStream os) throws IOException {
+        if (namedObject != null) {
+            namedObject.writeToStream(os);
         }
     }
+
+    /** {@inheritDoc} */
+    protected void writeEnd(OutputStream os) throws IOException {
+        byte[] data = new byte[17];
+        copySF(data, Type.END, Category.NAME_RESOURCE);
+        os.write(data);
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return this.getName();
+    }
+
+    /**
+     * Sets Resource Object Type triplet
+     *
+     * @param type the resource object type
+     */
+    public void setType(byte type) {
+        getTriplets().add(new ResourceObjectTypeTriplet(type));
+    }
+
 }

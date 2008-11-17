@@ -101,7 +101,6 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHandler {
-
     private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
 
     /** The number of decimal places. */

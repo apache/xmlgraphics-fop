@@ -19,12 +19,17 @@
 
 package org.apache.fop.afp.modca.triplets;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * The Object Byte Extent triplet is used to specify the number of bytes contained in an object
  */
-public class ObjectByteExtentTriplet extends Triplet {
+public class ObjectByteExtentTriplet extends AbstractTriplet {
+
+    private final int byteExt;
 
     /**
      * Main constructor
@@ -33,7 +38,19 @@ public class ObjectByteExtentTriplet extends Triplet {
      */
     public ObjectByteExtentTriplet(int byteExt) {
         super(OBJECT_BYTE_EXTENT);
-        byte[] data = BinaryUtils.convert(byteExt, 4);
-        super.setData(data);
+        this.byteExt = byteExt;
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 6;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
+        byte[] extData = BinaryUtils.convert(byteExt, 4);
+        System.arraycopy(extData, 0, data, 2, extData.length);
+        os.write(data);
     }
 }

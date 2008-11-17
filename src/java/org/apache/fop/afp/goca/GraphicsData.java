@@ -22,21 +22,20 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractPreparedObjectContainer;
-import org.apache.fop.afp.modca.PreparedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
 import org.apache.fop.afp.util.BinaryUtils;
 import org.apache.fop.afp.util.StringUtils;
 
 /**
  * A GOCA graphics data
  */
-public final class GraphicsData extends AbstractPreparedObjectContainer {
+public final class GraphicsData extends AbstractGraphicsObjectContainer {
 
     /** The maximum graphics data length */
     public static final int MAX_DATA_LEN = 32767;
 
     /** The graphics segment */
-    private GraphicsChainedSegment currentSegment = null;
+    private GraphicsChainedSegment segment = null;
 
     /** {@inheritDoc} */
     public int getDataLength() {
@@ -74,10 +73,10 @@ public final class GraphicsData extends AbstractPreparedObjectContainer {
      * @return the current graphics chained segment
      */
     private GraphicsChainedSegment getSegment() {
-        if (currentSegment == null) {
+        if (segment == null) {
             newSegment();
         }
-        return this.currentSegment;
+        return this.segment;
     }
 
     /**
@@ -87,23 +86,23 @@ public final class GraphicsData extends AbstractPreparedObjectContainer {
      */
     public GraphicsChainedSegment newSegment() {
         String name = createSegmentName();
-        if (currentSegment == null) {
-            this.currentSegment = new GraphicsChainedSegment(name);
+        if (segment == null) {
+            this.segment = new GraphicsChainedSegment(name);
         } else {
-            this.currentSegment = new GraphicsChainedSegment(name, currentSegment);
+            this.segment = new GraphicsChainedSegment(name, segment);
         }
-        super.addObject(currentSegment);
-        return currentSegment;
+        super.addObject(segment);
+        return segment;
     }
 
     /** {@inheritDoc} */
-    public void addObject(PreparedAFPObject drawingOrder) {
-        if (currentSegment == null
-            || (currentSegment.getDataLength() + drawingOrder.getDataLength())
+    public void addObject(StructuredDataObject drawingOrder) {
+        if (segment == null
+            || (segment.getDataLength() + drawingOrder.getDataLength())
             >= GraphicsChainedSegment.MAX_DATA_LEN) {
             newSegment();
         }
-        currentSegment.addObject(drawingOrder);
+        segment.addObject(drawingOrder);
     }
 
     /** {@inheritDoc} */

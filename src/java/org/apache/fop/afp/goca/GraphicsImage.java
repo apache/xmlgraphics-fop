@@ -22,13 +22,13 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractStructuredAFPObject;
+import org.apache.fop.afp.modca.AbstractStructuredObject;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * A GOCA Image
  */
-public class GraphicsImage extends AbstractStructuredAFPObject {
+public class GraphicsImage extends AbstractStructuredObject {
 
     /** x coordinate */
     private final int x;

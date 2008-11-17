@@ -22,37 +22,36 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-
-public class GraphicsSetMix extends AbstractNamedAFPObject {
-
-    public static final byte MODE_DEFAULT = 0x00;
-    public static final byte MODE_OVERPAINT = 0x02;
-
-    /** the mix mode value */
-    private final byte mode;
+/**
+ * A GOCA graphics string
+ */
+public class GraphicsStringRelative extends AbstractGraphicsString {
 
     /**
-     * Main constructor
+     * Constructor
      *
-     * @param mode the mix mode value
+     * @param str the character string
      */
-    public GraphicsSetMix(byte mode) {
-        this.mode = mode;
+    public GraphicsStringRelative(String str) {
+        super(str);
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
+        return (byte)0x83;
     }
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
-        byte[] data = new byte[] {
-           0x0C, // GSMX order code
-           mode // MODE (mix mode value)
-        };
+        byte[] data = getData();
+        byte[] strData = getStringAsBytes();
+        System.arraycopy(strData, 0, data, 2, strData.length);
         os.write(data);
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return "GraphicsSetMix{mode=" + mode + "}";
+        return "GraphicsStringRelative{str='" + str + "'" + "}";
     }
 
 }

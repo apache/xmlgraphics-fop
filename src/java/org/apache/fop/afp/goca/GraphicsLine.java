@@ -21,7 +21,7 @@ package org.apache.fop.afp.goca;
 
 /**
  * A GOCA graphics straight line drawn from the
- * given position
+ * given absolute position
  */
 public class GraphicsLine extends AbstractGraphicsCoord {
 
@@ -35,7 +35,7 @@ public class GraphicsLine extends AbstractGraphicsCoord {
     }
 
     /** {@inheritDoc} */
-    protected byte getOrderCode() {
+    byte getOrderCode() {
         return (byte)0xC1;
     }
 

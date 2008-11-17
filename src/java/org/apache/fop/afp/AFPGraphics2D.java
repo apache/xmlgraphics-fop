@@ -47,6 +47,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.modca.GraphicsObject;
+import org.apache.fop.afp.svg.AFPGraphicsConfiguration;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.NativeImageHandler;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -100,6 +101,9 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
     /** Current AFP state */
     private AFPPaintingState paintingState = null;
+
+    /** AFP graphics configuration */
+    private final AFPGraphicsConfiguration graphicsConfig = new AFPGraphicsConfiguration();
 
     /** The AFP FontInfo */
     private FontInfo fontInfo;
@@ -246,8 +250,8 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         if (fill) {
             graphicsObj.beginArea();
         }
-        AffineTransform trans = super.getTransform();
 
+        AffineTransform trans = gc.getTransform();
         PathIterator iter = shape.getPathIterator(trans);
         double[] dstPts = new double[6];
         int[] coords = null;
@@ -294,44 +298,39 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     mhr
             );
         } else {
-            for (int[] openingCoords = new int[2], currCoords = new int[2];
-                !iter.isDone(); iter.next()) {
+            for (int[] openingCoords = new int[2]; !iter.isDone(); iter.next()) {
                 int type = iter.currentSegment(dstPts);
-                if (type == PathIterator.SEG_MOVETO) {
-                    openingCoords[X] = currCoords[X] = (int)Math.round(dstPts[X]);
-                    openingCoords[Y] = currCoords[Y] = (int)Math.round(dstPts[Y]);
-                    graphicsObj.setCurrentPosition(openingCoords);
+                int numCoords;
+                if (type == PathIterator.SEG_MOVETO || type == PathIterator.SEG_LINETO) {
+                    numCoords = 2;
+                } else if (type == PathIterator.SEG_QUADTO) {
+                    numCoords = 4;
+                } else if (type == PathIterator.SEG_CUBICTO) {
+                    numCoords = 6;
                 } else {
-                    int numCoords;
-                    if (type == PathIterator.SEG_LINETO) {
-                        numCoords = 2;
-                    } else if (type == PathIterator.SEG_QUADTO) {
-                        numCoords = 4;
-                    } else if (type == PathIterator.SEG_CUBICTO) {
-                        numCoords = 6;
+                    // close of the graphics segment
+                    if (type == PathIterator.SEG_CLOSE) {
+                        // close segment by drawing to opening position
+                        graphicsObj.addLine(openingCoords, true);
                     } else {
-                        // close of the graphics segment
-                        if (type == PathIterator.SEG_CLOSE) {
-                            graphicsObj.addLine(openingCoords, true);
-                        } else {
-                            log.debug("Unrecognised path iterator type: "
-                                    + type);
-                        }
-                        continue;
+                        log.debug("Unrecognised path iterator type: "
+                                + type);
                     }
-                    coords = new int[numCoords];
-                    for (int i = 0; i < numCoords; i++) {
-                        coords[i] = (int) Math.round(dstPts[i]);
-                    }
-                    if (type == PathIterator.SEG_LINETO) {
-                        graphicsObj.addLine(coords, true);
-                    } else if (type == PathIterator.SEG_QUADTO
-                            || type == PathIterator.SEG_CUBICTO) {
-                        graphicsObj.addFillet(coords, true);
-                    }
-                    // update current position coordinates
-                    currCoords[X] = coords[coords.length - 2];
-                    currCoords[Y] = coords[coords.length - 1];
+                    continue;
+                }
+                coords = new int[numCoords];
+                for (int i = 0; i < numCoords; i++) {
+                    coords[i] = (int) Math.round(dstPts[i]);
+                }
+                if (type == PathIterator.SEG_MOVETO) {
+                    graphicsObj.setCurrentPosition(coords);
+                    openingCoords[X] = coords[X];
+                    openingCoords[Y] = coords[Y];
+                } else if (type == PathIterator.SEG_LINETO) {
+                    graphicsObj.addLine(coords, true);
+                } else if (type == PathIterator.SEG_QUADTO
+                        || type == PathIterator.SEG_CUBICTO) {
+                    graphicsObj.addFillet(coords, true);
                 }
             }
         }
@@ -379,7 +378,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
     /** {@inheritDoc} */
     public GraphicsConfiguration getDeviceConfiguration() {
-        return new AFPGraphicsConfiguration();
+        return graphicsConfig;
     }
 
     /** {@inheritDoc} */

@@ -22,11 +22,10 @@ package org.apache.fop.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.fop.afp.modca.triplets.DescriptorPositionTriplet;
 import org.apache.fop.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.afp.modca.triplets.PresentationSpaceResetMixingTriplet;
-import org.apache.fop.afp.modca.triplets.Triplet;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
@@ -48,40 +47,27 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         super(width, height, widthRes, heightRes);
     }
 
-    /** {@inheritDoc} */
-    protected byte[] getTripletData() throws IOException {
-        if (tripletData == null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            // Specifies the associated ObjectAreaPosition structured field
-            final byte oapId = 0x01;
-            Triplet triplet = new Triplet(Triplet.DESCRIPTOR_POSITION, oapId);
-            triplet.writeToStream(baos);
-
-            triplet = new MeasurementUnitsTriplet(widthRes, heightRes);
-            triplet.writeToStream(baos);
-
-            triplet = new ObjectAreaSizeTriplet(width, height);
-            triplet.writeToStream(baos);
-
-            triplet = new PresentationSpaceResetMixingTriplet(
-                    PresentationSpaceResetMixingTriplet.NOT_RESET);
-            triplet.writeToStream(baos);
-
-            this.tripletData = baos.toByteArray();
-        }
-        return this.tripletData;
-    }
+    private static final byte oapId = 0x01;
 
     /** {@inheritDoc} */
-    public void writeStart(OutputStream os) throws IOException {
-        super.writeStart(os);
+    public void writeToStream(OutputStream os) throws IOException {
+        // add triplets
+        addTriplet(new DescriptorPositionTriplet(oapId));
+        addTriplet(new MeasurementUnitsTriplet(widthRes, heightRes));
+        addTriplet(new ObjectAreaSizeTriplet(width, height));
+        addTriplet(new PresentationSpaceResetMixingTriplet(
+                PresentationSpaceResetMixingTriplet.NOT_RESET));
+
         byte[] data = new byte[9];
         copySF(data, Type.DESCRIPTOR, Category.OBJECT_AREA);
-        byte[] len = BinaryUtils.convert(data.length + tripletData.length - 1, 2);
+
+        int tripletDataLength = getTripletDataLength();
+        byte[] len = BinaryUtils.convert(data.length + tripletDataLength, 2);
         data[1] = len[0]; // Length
         data[2] = len[1];
         os.write(data);
+
+        writeTriplets(os);
     }
 
 }

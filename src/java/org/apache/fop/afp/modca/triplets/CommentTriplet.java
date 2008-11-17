@@ -17,42 +17,36 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.goca;
+package org.apache.fop.afp.modca.triplets;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.AFPConstants;
 
-public class GraphicsSetMix extends AbstractNamedAFPObject {
+/**
+ * An inline comment triplet.
+ */
+public class CommentTriplet extends AbstractTriplet {
 
-    public static final byte MODE_DEFAULT = 0x00;
-    public static final byte MODE_OVERPAINT = 0x02;
+    private final String commentString;
 
-    /** the mix mode value */
-    private final byte mode;
+    public CommentTriplet(byte id, String commentString) {
+        super(id);
+        this.commentString = commentString;
+    }
 
-    /**
-     * Main constructor
-     *
-     * @param mode the mix mode value
-     */
-    public GraphicsSetMix(byte mode) {
-        this.mode = mode;
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 2 + commentString.length();
     }
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
-        byte[] data = new byte[] {
-           0x0C, // GSMX order code
-           mode // MODE (mix mode value)
-        };
+        byte[] data = getData();
+        byte[] strData = commentString.getBytes(AFPConstants.EBCIDIC_ENCODING);
+        System.arraycopy(strData, 0, data, 2, strData.length);
         os.write(data);
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return "GraphicsSetMix{mode=" + mode + "}";
     }
 
 }

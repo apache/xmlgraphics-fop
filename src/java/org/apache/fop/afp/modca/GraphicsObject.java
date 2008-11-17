@@ -51,11 +51,11 @@ import org.apache.fop.afp.goca.GraphicsString;
 public class GraphicsObject extends AbstractDataObject {
 
     /** The graphics data */
-    private GraphicsData currentGraphicsData = null;
+    private GraphicsData data = null;
 
     /** list of objects contained within this container */
-    protected List/*<PreparedAFPObject>*/ objects
-        = new java.util.ArrayList/*<PreparedAFPObject>*/();
+    protected List/*<GraphicsDrawingOrder>*/ objects
+        = new java.util.ArrayList/*<GraphicsDrawingOrder>*/();
 
     /**
      * Default constructor
@@ -85,13 +85,13 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
-    public void addObject(PreparedAFPObject drawingOrder) {
-        if (currentGraphicsData == null
-                || (currentGraphicsData.getDataLength() + drawingOrder.getDataLength())
+    public void addObject(StructuredDataObject drawingOrder) {
+        if (data == null
+                || (data.getDataLength() + drawingOrder.getDataLength())
                 >= GraphicsData.MAX_DATA_LEN) {
             newData();
         }
-        currentGraphicsData.addObject(drawingOrder);
+        data.addObject(drawingOrder);
     }
 
     /**
@@ -100,10 +100,10 @@ public class GraphicsObject extends AbstractDataObject {
      * @return the current graphics data
      */
     private GraphicsData getData() {
-        if (this.currentGraphicsData == null) {
+        if (this.data == null) {
             return newData();
         }
-        return this.currentGraphicsData;
+        return this.data;
     }
 
     /**
@@ -112,9 +112,9 @@ public class GraphicsObject extends AbstractDataObject {
      * @return a newly created graphics data
      */
     private GraphicsData newData() {
-        this.currentGraphicsData = factory.createGraphicsData();
-        objects.add(currentGraphicsData);
-        return currentGraphicsData;
+        this.data = factory.createGraphicsData();
+        objects.add(data);
+        return data;
     }
 
     /**
@@ -284,18 +284,18 @@ public class GraphicsObject extends AbstractDataObject {
      * Begins a graphics area (start of fill)
      */
     public void beginArea() {
-        if (currentGraphicsData == null) {
+        if (data == null) {
             newData();
         }
-        currentGraphicsData.beginArea();
+        data.beginArea();
     }
 
     /**
      * Ends a graphics area (end of fill)
      */
     public void endArea() {
-        if (currentGraphicsData != null) {
-            currentGraphicsData.endArea();
+        if (data != null) {
+            data.endArea();
         }
     }
 

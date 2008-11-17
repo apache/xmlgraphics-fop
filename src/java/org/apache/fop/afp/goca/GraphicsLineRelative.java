@@ -35,7 +35,7 @@ public class GraphicsLineRelative extends AbstractGraphicsCoord {
     }
 
     /** {@inheritDoc} */
-    protected byte getOrderCode() {
+    byte getOrderCode() {
         return (byte)0x81;
     }
 

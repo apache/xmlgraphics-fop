@@ -19,12 +19,17 @@
 
 package org.apache.fop.afp.goca;
 
-import org.apache.fop.afp.modca.AbstractPreparedAFPObject;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
 
 /**
  * Sets the value of the current line type attribute when stroking GOCA shapes (structured fields)
  */
-public class GraphicsSetLineType extends AbstractPreparedAFPObject {
+public class GraphicsSetLineType extends AbstractNamedAFPObject
+implements StructuredDataObject {
 
     /** the default line type */
     public static final byte DEFAULT = 0x00; // normally SOLID
@@ -63,15 +68,20 @@ public class GraphicsSetLineType extends AbstractPreparedAFPObject {
      */
     public GraphicsSetLineType(byte type) {
        this.type = type;
-       prepareData();
     }
 
     /** {@inheritDoc} */
-    protected void prepareData() {
-        super.data = new byte[] {
-           0x18, // GSLW order code
-           type // line type
+    public int getDataLength() {
+        return 2;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
+            0x18, // GSLW order code
+            type // line type
         };
+        os.write(data);
     }
 
     private static final String[] TYPES = {

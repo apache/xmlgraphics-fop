@@ -30,6 +30,7 @@ public final class Registry {
     /** IOB supported object types */
     private static final byte COMPID_IOCA_FS10 = 5;
     private static final byte COMPID_IOCA_FS11 = 11;
+    private static final byte COMPID_IOCA_FS40 = 55;
     private static final byte COMPID_IOCA_FS45 = 12;
     private static final byte COMPID_EPS = 13;
     private static final byte COMPID_TIFF = 14;
@@ -37,6 +38,9 @@ public final class Registry {
     private static final byte COMPID_JFIF = 23; // jpeg file interchange format
     private static final byte COMPID_PDF_SINGLE_PAGE = 25;
     private static final byte COMPID_PCL_PAGE_OBJECT = 34;
+
+    private static final byte COMPID_TRUETYPE_OPENTYPE_FONT_RESOURCE_OBJECT = 51;
+    private static final byte COMPID_TRUETYPE_OPENTYPE_FONT_COLLECTION_RESOURCE_OBJECT = 53;
 
     /** mime type entry mapping */
     private final java.util.Map/*<String, ObjectType>*/ mimeObjectTypeMap
@@ -91,6 +95,16 @@ public final class Registry {
                         MimeConstants.MIME_AFP_IOCA_FS11
                 )
         );
+//      mimeObjectTypeMap.put(
+//      MimeConstants.MIME_AFP_IOCA_FS40,
+//      new ObjectType(
+//              COMPID_IOCA_FS40,
+//              new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x37},
+//              "IOCA FS40",
+//              true,
+//              MimeConstants.MIME_AFP_IOCA_FS40
+//      )
+//);
         mimeObjectTypeMap.put(
                 MimeConstants.MIME_AFP_IOCA_FS45,
                 new ObjectType(
@@ -160,6 +174,26 @@ public final class Registry {
                         MimeConstants.MIME_PCL
                 )
         );
+//        mimeObjectTypeMap.put(
+//                null,
+//                new ObjectType(
+//                        COMPID_TRUETYPE_OPENTYPE_FONT_RESOURCE_OBJECT,
+//                        new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x33},
+//                        "TrueType/OpenType Font Resource Object",
+//                        true,
+//                        null
+//                )
+//        );
+//        mimeObjectTypeMap.put(
+//                null,
+//                new ObjectType(
+//                        COMPID_TRUETYPE_OPENTYPE_FONT_COLLECTION_RESOURCE_OBJECT,
+//                        new byte[] {0x06, 0x07, 0x2B, 0x12, 0x00, 0x04, 0x01, 0x01, 0x35},
+//                        "TrueType/OpenType Font Collection Resource Object",
+//                        true,
+//                        null
+//                )
+//        );
     }
 
     /**
@@ -193,11 +227,11 @@ public final class Registry {
          */
         public ObjectType(byte componentId, byte[] oid, String name,
                 boolean includable, String mimeType) {
+            this.componentId = componentId;
+            this.oid = oid;
             this.name = name;
             this.includable = includable;
             this.mimeType = mimeType;
-            this.componentId = componentId;
-            this.oid = oid;
         }
 
         /**

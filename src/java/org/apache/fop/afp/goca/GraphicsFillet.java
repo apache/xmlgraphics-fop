@@ -34,8 +34,7 @@ public final class GraphicsFillet extends AbstractGraphicsCoord {
         super(coords);
     }
 
-    /** {@inheritDoc} */
-    protected byte getOrderCode() {
+    byte getOrderCode() {
         return (byte)0xC5;
     }
 

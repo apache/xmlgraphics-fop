@@ -22,12 +22,11 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractPreparedObjectContainer;
 
 /**
  * A GOCA graphics area (container for filled shapes/objects)
  */
-public final class GraphicsArea extends AbstractPreparedObjectContainer {
+public final class GraphicsArea extends AbstractGraphicsObjectContainer {
 
     private static final int RES1 = 1;
     private static final int BOUNDARY = 2;
@@ -47,7 +46,6 @@ public final class GraphicsArea extends AbstractPreparedObjectContainer {
 
     /** {@inheritDoc} */
     public int getDataLength() {
-        // start len + end len + data len
         return 4 + super.getDataLength();
     }
 
@@ -62,11 +60,11 @@ public final class GraphicsArea extends AbstractPreparedObjectContainer {
 
     /** {@inheritDoc} */
     protected void writeEnd(OutputStream os) throws IOException {
-        byte[] endData = new byte[] {
+        byte[] data = new byte[] {
             (byte)0x60, // GEAR order code
             0x00, // LENGTH
         };
-        os.write(endData);
+        os.write(data);
     }
 
     /** {@inheritDoc} */

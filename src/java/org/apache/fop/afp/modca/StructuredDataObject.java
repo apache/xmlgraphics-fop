@@ -17,26 +17,17 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.goca;
-
+package org.apache.fop.afp.modca;
 
 /**
- * A GOCA graphics curved tangential line to a specified set of
- * straight lines drawn from the given position or current position
+ * An AFP object which is able to know its own data length before writeToStream()
  */
-public final class GraphicsFilletRelative extends AbstractGraphicsCoord {
+public interface StructuredDataObject {
 
     /**
-     * Constructor
+     * Returns the data length of this structured field
      *
-     * @param coords the x/y coordinates for this object
+     * @return the data length of this structured field
      */
-    public GraphicsFilletRelative(int[] coords) {
-        super(coords);
-    }
-
-    /** {@inheritDoc} */
-    byte getOrderCode() {
-        return (byte)0x85;
-    }
+    int getDataLength();
 }

@@ -19,13 +19,18 @@
 
 package org.apache.fop.afp.goca;
 
-import org.apache.fop.afp.modca.AbstractPreparedAFPObject;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * A base class encapsulating the structure of coordinate based GOCA objects
  */
-public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
+public abstract class AbstractGraphicsCoord extends AbstractNamedAFPObject
+    implements StructuredDataObject {
 
     /** array of x/y coordinates */
     protected int[] coords = null;
@@ -37,7 +42,6 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
      */
     public AbstractGraphicsCoord(int[] coords) {
         this.coords = coords;
-        prepareData();
     }
 
     /**
@@ -62,40 +66,48 @@ public abstract class AbstractGraphicsCoord extends AbstractPreparedAFPObject {
         this(new int[] {x1, y1, x2, y2});
     }
 
-    /**
-     * Returns the order code to use
-     *
-     * @return the order code to use
-     */
-    protected abstract byte getOrderCode();
-
-    /**
-     * Returns the length of this order code (typically this is the same as the coordinate length)
-     *
-     * @return the length of this order code
-     */
-    protected int getLength() {
-        return this.coords.length * 2;
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 2 + (coords.length * 2);
     }
 
     /**
-     * Creates a newly created and initialized byte data
+     * Returns the order code of this structured field
      *
-     * @return a newly created and initialized byte data
+     * @return the order code of this structured field
      */
-    protected byte[] createData() {
-        int len = getLength();
-        byte[] data = new byte[len + 2];
-        data[0] = getOrderCode(); // ORDER CODE
-        data[1] = (byte)len; // LENGTH
+    abstract byte getOrderCode();
+
+    /**
+     * Returns the coordinate data start index
+     *
+     * @return the coordinate data start index
+     */
+    int getCoordinateDataStartIndex() {
+        return 2;
+    }
+
+    /**
+     * Returns the coordinate data
+     *
+     * @return the coordinate data
+     */
+    byte[] getData() {
+        int len = getDataLength();
+        byte[] data = new byte[len];
+        data[0] = getOrderCode();
+        data[1] = (byte)(len - 2);
+
+        if (coords != null) {
+            addCoords(data, getCoordinateDataStartIndex());
+        }
+
         return data;
     }
 
     /** {@inheritDoc} */
-    protected void prepareData() {
-        super.data = createData();
-        int fromIndex = data.length - getLength();
-        addCoords(data, fromIndex);
+    public void writeToStream(OutputStream os) throws IOException {
+        os.write(getData());
     }
 
     /**

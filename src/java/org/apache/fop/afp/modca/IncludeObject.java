@@ -238,9 +238,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
         os.write(data);
 
         // Write triplet for FQN internal/external object reference
-        if (tripletData != null) {
-            os.write(tripletData);
-        }
+        writeTriplets(os);
     }
 
     private String getObjectTypeName() {

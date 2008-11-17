@@ -17,27 +17,30 @@
 
 /* $Id: $ */
 
-package org.apache.fop.afp.modca;
+package org.apache.fop.afp.goca;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
+
 /**
  * A base container of prepared structured AFP objects
  */
-public abstract class AbstractPreparedObjectContainer extends AbstractNamedAFPObject
-implements PreparedAFPObject {
+public abstract class AbstractGraphicsObjectContainer extends AbstractNamedAFPObject
+implements StructuredDataObject {
 
     /** list of objects contained within this container */
-    protected List/*<PreparedAFPObject>*/ objects
-        = new java.util.ArrayList/*<PreparedAFPObject>*/();
+    protected List/*<StructuredDataObject>*/ objects
+        = new java.util.ArrayList/*<StructuredDataObject>*/();
 
     /**
      * Default constructor
      */
-    protected AbstractPreparedObjectContainer() {
+    protected AbstractGraphicsObjectContainer() {
     }
 
     /**
@@ -45,7 +48,7 @@ implements PreparedAFPObject {
      *
      * @param name the name of the container
      */
-    protected AbstractPreparedObjectContainer(String name) {
+    protected AbstractGraphicsObjectContainer(String name) {
         super(name);
     }
 
@@ -55,12 +58,12 @@ implements PreparedAFPObject {
     }
 
     /**
-     * Adds a given prepared object to this container
+     * Adds a given graphics object to this container
      *
-     * @param preparedObject the prepared object
+     * @param drawingOrder the graphics object
      */
-    public void addObject(PreparedAFPObject preparedObject) {
-        objects.add(preparedObject);
+    public void addObject(StructuredDataObject drawingOrder) {
+        objects.add(drawingOrder);
     }
 
     /**
@@ -73,11 +76,7 @@ implements PreparedAFPObject {
         int dataLen = 0;
         Iterator it = objects.iterator();
         while (it.hasNext()) {
-            Object obj = it.next();
-            if (obj instanceof PreparedAFPObject) {
-                PreparedAFPObject prepObj = (PreparedAFPObject)obj;
-                dataLen += prepObj.getDataLength();
-            }
+            dataLen += ((StructuredDataObject)it.next()).getDataLength();
         }
         return dataLen;
     }

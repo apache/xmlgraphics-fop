@@ -17,50 +17,53 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.modca.triplets;
+package org.apache.fop.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * This triplet is used to specify the resulting appearance when data in a new
- * presentation space is merged with data in an existing presentation space.
+ * An abstract class encapsulating an MODCA structured object
  */
-public class PresentationSpaceResetMixingTriplet extends AbstractTriplet {
+public abstract class AbstractStructuredObject extends AbstractAFPObject {
 
     /**
-     * Do not reset to the color of the medium prior to
-     * placing data into this MO:DCA presentation space.
+     * Default constructor
      */
-    public static final byte NOT_RESET = 0x00;
-
-    /**
-     * Reset to the color of the medium prior to placing
-     * data into this MO:DCA presentation space.
-     */
-    public static final byte RESET = 0x01;
-
-    private final byte backgroundMixFlag;
-
-    /**
-     * Main constructor
-     *
-     * @param backgroundMixFlag the background mixing flag
-     */
-    public PresentationSpaceResetMixingTriplet(byte backgroundMixFlag) {
-        super(PRESENTATION_SPACE_RESET_MIXING);
-        this.backgroundMixFlag = backgroundMixFlag;
+    protected AbstractStructuredObject() {
     }
 
-    /** {@inheritDoc} */
-    public int getDataLength() {
-        return 3;
+    /**
+     * Helper method to write the start of the Object.
+     *
+     * @param os The stream to write to
+     * @throws IOException throws an I/O exception if one occurred
+     */
+    protected void writeStart(OutputStream os) throws IOException {
+    }
+
+    /**
+     * Helper method to write the end of the Object.
+     *
+     * @param os The stream to write to
+     * @throws IOException an I/O exception if one occurred
+     */
+    protected void writeEnd(OutputStream os) throws IOException {
+    }
+
+    /**
+     * Helper method to write the contents of the Object.
+     *
+     * @param os The stream to write to
+     * @throws IOException throws an I/O exception if one occurred
+     */
+    protected void writeContent(OutputStream os) throws IOException {
     }
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
-        byte[] data = getData();
-        data[2] = backgroundMixFlag;
-        os.write(data);
+        writeStart(os);
+        writeContent(os);
+        writeEnd(os);
     }
 }

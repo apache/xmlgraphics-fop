@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp;
+package org.apache.fop.afp.svg;
 
 import java.awt.GraphicsDevice;
 import java.awt.Rectangle;
@@ -77,10 +77,10 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
     /**
      * TODO: This should return the page bounds in Pts,
      * I couldn't figure out how to get this for the current
-     * page from the PDFDocument (this still works for now,
+     * page (this still works for now,
      * but it should be fixed...).
      *
-     * @return the bounds of the PDF document page
+     * @return the bounds of the page
      */
     public Rectangle getBounds() {
         return null;
@@ -109,10 +109,10 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
     }
 
     private static final Log log = LogFactory.getLog(AFPGraphicsConfiguration.class);
-    
+
     private AffineTransform defaultTransform = null;
     private AffineTransform normalizingTransform = null;
-    private GraphicsDevice graphicsDevice = null; 
+    private final GraphicsDevice graphicsDevice = new AFPGraphicsDevice(this);;
 
     /**
      * The default transform (1:1).
@@ -122,7 +122,7 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
     public AffineTransform getDefaultTransform() {
         log.debug("getDefaultTransform()");
         if (defaultTransform == null) {
-            defaultTransform = new AffineTransform(); 
+            defaultTransform = new AffineTransform();
         }
         return defaultTransform;
     }
@@ -142,14 +142,9 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
         return normalizingTransform;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public GraphicsDevice getDevice() {
         log.debug("getDevice()");
-        if (graphicsDevice == null) {
-            graphicsDevice = new AFPGraphicsDevice(this);
-        }
         return graphicsDevice;
     }
 }

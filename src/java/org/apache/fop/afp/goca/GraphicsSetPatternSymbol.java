@@ -19,12 +19,18 @@
 
 package org.apache.fop.afp.goca;
 
-import org.apache.fop.afp.modca.AbstractPreparedAFPObject;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
 
 /**
  * Sets the pattern symbol to use when filling following GOCA structured fields
  */
-public class GraphicsSetPatternSymbol extends AbstractPreparedAFPObject {
+public class GraphicsSetPatternSymbol extends AbstractNamedAFPObject
+implements StructuredDataObject {
+
     /** dotted density 1 */
     public static final byte DOTTED_DENSITY_1 = 0x01;
 
@@ -86,15 +92,20 @@ public class GraphicsSetPatternSymbol extends AbstractPreparedAFPObject {
      */
     public GraphicsSetPatternSymbol(byte symb) {
         this.symbol = symb;
-        prepareData();
     }
 
     /** {@inheritDoc} */
-    protected void prepareData() {
-        super.data = new byte[] {
+    public int getDataLength() {
+        return 2;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
             0x28, // GSPT order code
             symbol
         };
+        os.write(data);
     }
 
     /** {@inheritDoc} */

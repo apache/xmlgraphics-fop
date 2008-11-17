@@ -19,17 +19,13 @@
 
 package org.apache.fop.afp.modca.triplets;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.Streamable;
+import org.apache.fop.afp.modca.StructuredDataObject;
 
 /**
  * A simple implementation of a MOD:CA triplet
  */
-public class Triplet implements Streamable {
+public abstract class AbstractTriplet implements Streamable, StructuredDataObject {
     public static final byte CODED_GRAPHIC_CHARACTER_SET_GLOBAL_IDENTIFIER = 0x01;
 
     /** Triplet identifiers */
@@ -89,57 +85,15 @@ public class Triplet implements Streamable {
     public static final byte DEVICE_APPEARANCE = (byte)0x97;
 
     /** the triplet identifier */
-    private final byte id;
-
-    /** the triplet's data contents */
-    private byte[] data;
-
-    /**
-     * Main constructor
-     *
-     * @param id the triplet identifier (see static definitions above)
-     * @param data the data item contained in this triplet
-     */
-    public Triplet(byte id, byte[] data) {
-        this(id);
-        setData(data);
-    }
+    protected final byte id;
 
     /**
      * Constructor
      *
      * @param id the triplet identifier (see static definitions above)
      */
-    public Triplet(byte id) {
+    public AbstractTriplet(byte id) {
         this.id = id;
-    }
-
-    /**
-     * Constructor
-     *
-     * @param id the triplet identifier (see static definitions above)
-     * @param content the content byte data
-     */
-    public Triplet(byte id, byte content) {
-        this(id, new byte[] {content});
-    }
-
-    /**
-     * Constructor
-     *
-     * @param id the triplet identifier (see static definitions above)
-     * @param data the data item (in String form) contained in this triplet
-     * @throws UnsupportedEncodingException EBCIDIC encoding is not supported
-     */
-    public Triplet(byte id, String data) throws UnsupportedEncodingException {
-        this(id, data.getBytes(AFPConstants.EBCIDIC_ENCODING));
-    }
-
-    /** {@inheritDoc} */
-    public void writeToStream(OutputStream os) throws IOException {
-        os.write((byte)data.length + 2);
-        os.write(id);
-        os.write(data);
     }
 
     /**
@@ -152,11 +106,15 @@ public class Triplet implements Streamable {
     }
 
     /**
-     * Sets the data contents of this triplet
+     * Returns the structured triplet data array
      *
-     * @param data the data contents
+     * @return the structured triplet data array
      */
-    protected void setData(byte[] data) {
-        this.data = data;
+    public byte[] getData() {
+        int dataLen = getDataLength();
+        byte[] data = new byte[dataLen];
+        data[0] = (byte)dataLen;
+        data[1] = id;
+        return data;
     }
 }

@@ -21,15 +21,21 @@ package org.apache.fop.afp.goca;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractPreparedAFPObject;
+import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
 
 /**
  * Sets the current processing color for the following GOCA structured fields
  */
-public class GraphicsSetProcessColor extends AbstractPreparedAFPObject {
-    /** the color to set */
+public class GraphicsSetProcessColor extends AbstractNamedAFPObject
+implements StructuredDataObject {
+
     private final Color color;
+
+    private final float[] colorComponents;
 
     /**
      * Main constructor
@@ -38,11 +44,22 @@ public class GraphicsSetProcessColor extends AbstractPreparedAFPObject {
      */
     public GraphicsSetProcessColor(Color color) {
         this.color = color;
-        prepareData();
+        this.colorComponents = color.getColorComponents(null);
     }
 
     /** {@inheritDoc} */
-    protected void prepareData() {
+    public int getDataLength() {
+        return 12 + colorComponents.length;
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
+        return (byte)0xB2;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+
         // COLSPCE
         byte colspace;
         int colSpaceType = color.getColorSpace().getType();
@@ -56,16 +73,15 @@ public class GraphicsSetProcessColor extends AbstractPreparedAFPObject {
         }
 
         // COLSIZE(S)
-        float[] colcomp = color.getColorComponents(null);
         byte[] colsizes = new byte[] {0x00, 0x00, 0x00, 0x00};
-        for (int i = 0; i < colcomp.length; i++) {
+        for (int i = 0; i < colorComponents.length; i++) {
             colsizes[i] = (byte)8;
         }
 
-        int len = 10 + colcomp.length;
-        super.data = new byte[len + 2];
-        data[0] = (byte)0xB2; // GSPCOL order code
-        data[1] = (byte)len; // LEN
+        int len = getDataLength();
+        byte[] data = new byte[len];
+        data[0] = getOrderCode(); // GSPCOL order code
+        data[1] = (byte)(len - 2); // LEN
         data[2] = 0x00; // reserved; must be zero
         data[3] = colspace; // COLSPCE
         data[4] = 0x00; // reserved; must be zero
@@ -76,10 +92,13 @@ public class GraphicsSetProcessColor extends AbstractPreparedAFPObject {
         data[9] = colsizes[1];
         data[10] = colsizes[2];
         data[11] = colsizes[3];
+
         // COLVALUE(S)
-        for (int i = 0; i < colcomp.length; i++) {
-            data[i + 12] = (byte)(colcomp[i] * 255);
+        for (int i = 0; i < colorComponents.length; i++) {
+            data[i + 12] = (byte)(colorComponents[i] * 255);
         }
+
+        os.write(data);
     }
 
     /** {@inheritDoc} */

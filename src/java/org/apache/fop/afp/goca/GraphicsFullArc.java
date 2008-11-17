@@ -19,12 +19,16 @@
 
 package org.apache.fop.afp.goca;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * A GOCA graphics arc (circle/ellipse)
  */
 public class GraphicsFullArc extends AbstractGraphicsCoord {
+
     /** the integer portion of the multiplier */
     private final int mh;
 
@@ -43,27 +47,29 @@ public class GraphicsFullArc extends AbstractGraphicsCoord {
         super(x, y);
         this.mh = mh;
         this.mhr = mhr;
-        // integer portion of multiplier
-        data[data.length - 2] = BinaryUtils.convert(mh, 1)[0];
-        // fractional portion of multiplier
-        data[data.length - 1] = BinaryUtils.convert(mhr, 1)[0];
     }
 
     /** {@inheritDoc} */
-    protected byte getOrderCode() {
+    public int getDataLength() {
+        return 8;
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
         return (byte)0xC7;
     }
 
     /** {@inheritDoc} */
-    protected int getLength() {
-        return super.getLength() + 2;
-    }
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
 
-    /** {@inheritDoc} */
-    protected void prepareData() {
-        super.data = super.createData();
-        final int fromIndex = 2;
-        super.addCoords(data, fromIndex);
+        // integer portion of multiplier
+        data[6] = BinaryUtils.convert(mh, 1)[0];
+
+        // fractional portion of multiplier
+        data[7] = BinaryUtils.convert(mhr, 1)[0];
+
+        os.write(data);
     }
 
     /** {@inheritDoc} */
@@ -75,4 +81,5 @@ public class GraphicsFullArc extends AbstractGraphicsCoord {
              + ", mhr=" + mhr
          + "}";
     }
+
 }

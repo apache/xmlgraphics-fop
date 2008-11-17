@@ -19,6 +19,9 @@
 
 package org.apache.fop.afp.modca.triplets;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
@@ -27,7 +30,7 @@ import org.apache.fop.afp.util.BinaryUtils;
  * resource name by a map structured field, such as a Map Data Resource structured
  * field, or a Map Media Type structured field.
  */
-public class ExtendedResourceLocalIdentifierTriplet extends Triplet {
+public class ExtendedResourceLocalIdentifierTriplet extends AbstractTriplet {
 
     /** the image resource type */
     public static final byte TYPE_IMAGE_RESOURCE = 0x10;
@@ -38,6 +41,12 @@ public class ExtendedResourceLocalIdentifierTriplet extends Triplet {
     /** the retired value type */
     public static final byte TYPE_MEDIA_RESOURCE = 0x40;
 
+    /** the resource type */
+    private final byte type;
+
+    /** the resource local id */
+    private final int localId;
+
     /**
      * Main constructor
      *
@@ -45,11 +54,22 @@ public class ExtendedResourceLocalIdentifierTriplet extends Triplet {
      * @param localId the resource local id
      */
     public ExtendedResourceLocalIdentifierTriplet(byte type, int localId) {
-        super(Triplet.EXTENDED_RESOURCE_LOCAL_IDENTIFIER);
-        byte[] data = new byte[5];
-        data[0] = type;
-        byte[] resLID = BinaryUtils.convert(localId, 4);
-        System.arraycopy(resLID, 0, data, 1, resLID.length);
-        super.setData(data);
+        super(AbstractTriplet.EXTENDED_RESOURCE_LOCAL_IDENTIFIER);
+        this.type = type;
+        this.localId = localId;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
+        data[2] = type;
+        byte[] resLID = BinaryUtils.convert(localId, 4); // 4 bytes
+        System.arraycopy(resLID, 0, data, 3, resLID.length);
+        os.write(data);
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 7;
     }
 }

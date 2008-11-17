@@ -22,7 +22,7 @@ package org.apache.fop.afp.modca;
 /**
  * Base class for AFP descriptor objects
  */
-public abstract class AbstractDescriptor extends AbstractStructuredAFPObject {
+public abstract class AbstractDescriptor extends AbstractTripletStructuredObject {
     /** width of this descriptor */
     protected int width = 0;
     /** height of this descriptor */

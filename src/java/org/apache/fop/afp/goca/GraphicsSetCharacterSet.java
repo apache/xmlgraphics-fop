@@ -19,13 +19,18 @@
 
 package org.apache.fop.afp.goca;
 
-import org.apache.fop.afp.modca.AbstractPreparedAFPObject;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * Sets the current character set (font) to be used for following graphics strings
  */
-public class GraphicsSetCharacterSet extends AbstractPreparedAFPObject {
+public class GraphicsSetCharacterSet extends AbstractNamedAFPObject
+    implements StructuredDataObject {
 
     /** font character set reference */
     private final int fontReference;
@@ -35,19 +40,25 @@ public class GraphicsSetCharacterSet extends AbstractPreparedAFPObject {
      */
     public GraphicsSetCharacterSet(int fontReference) {
         this.fontReference = fontReference;
-        prepareData();
     }
 
     /** {@inheritDoc} */
-    protected void prepareData() {
-        super.data = new byte[] {
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
             0x38, // GSCS order code
             BinaryUtils.convert(fontReference)[0]
         };
+        os.write(data);
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 2;
     }
 
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetCharacterSet(" + fontReference + ")";
     }
+
 }

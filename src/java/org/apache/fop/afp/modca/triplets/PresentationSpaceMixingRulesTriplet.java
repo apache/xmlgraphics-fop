@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,28 +19,31 @@
 
 package org.apache.fop.afp.modca.triplets;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * This triplet is used to specify the resulting appearance when data in a new
  * presentation space is merged with data in an existing presentation space.
  */
-public class PresentationSpaceMixingRulesTriplet extends Triplet {
+public class PresentationSpaceMixingRulesTriplet extends AbstractTriplet {
 
-    /** background on background mixing rule */ 
+    /** background on background mixing rule */
     public static final byte RULE_BACK_ON_BACK = 0x70;
 
-    /** background on foreground mixing rule */ 
+    /** background on foreground mixing rule */
     public static final byte RULE_BACK_ON_FORE = 0x71;
 
-    /** foreground on background mixing rule */ 
+    /** foreground on background mixing rule */
     public static final byte RULE_FORE_ON_BACK = 0x72;
 
-    /** foreground on foreground mixing rule */ 
+    /** foreground on foreground mixing rule */
     public static final byte RULE_FORE_ON_FORE = 0x73;
 
-    
+
     /** overpaint */
     public static final byte OVERPAINT = (byte)0x01;
-    
+
     /** underpaint */
     public static final byte UNDERPAINT = (byte)0x02;
 
@@ -49,14 +52,29 @@ public class PresentationSpaceMixingRulesTriplet extends Triplet {
 
     /** MO:DCA default mixing */
     public static final byte DEFAULT = (byte)0xFF;
-    
-    
+
+    /** the mixing rules */
+    private final byte[] rules;
+
     /**
      * Main constructor
-     * 
+     *
      * @param rules the mixing rules
      */
     public PresentationSpaceMixingRulesTriplet(byte[] rules) {
-        super(PRESENTATION_SPACE_MIXING_RULE, rules);
+        super(PRESENTATION_SPACE_MIXING_RULE);
+        this.rules = rules;
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 2 + rules.length;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
+        System.arraycopy(rules, 0, data, 2, rules.length);
+        os.write(data);
     }
 }

@@ -19,7 +19,8 @@
 
 package org.apache.fop.afp.modca.triplets;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.modca.Registry.ObjectType;
@@ -29,7 +30,7 @@ import org.apache.fop.afp.util.StringUtils;
  * The Object Classification is used to classify and identify object data.
  * The object data may or may not be defined by an IBM presentation architecture
  */
-public class ObjectClassificationTriplet extends Triplet {
+public class ObjectClassificationTriplet extends AbstractTriplet {
 
     /**
      * The scope of this object is the including page or overlay
@@ -64,6 +65,28 @@ public class ObjectClassificationTriplet extends Triplet {
      */
     public static final byte CLASS_DATA_OBJECT_FONT = 0x41;
 
+    /** the object class */
+    private final byte objectClass;
+
+    /** the object type */
+    private final ObjectType objectType;
+
+    /** whether the container has an object environment group */
+    private final boolean containerHasOEG;
+
+    /** whether the data resides within the container */
+    private final boolean dataInContainer;
+
+    /** whether the data resides within the object container data */
+    private final boolean dataInOCD;
+
+    /** the object level (version) */
+    private final String objectLevel;
+
+    /** the company/organization name */
+    private final String companyName;
+
+
     /**
      * Main constructor
      *
@@ -78,11 +101,6 @@ public class ObjectClassificationTriplet extends Triplet {
         // no object level or company name specified
         this(objectClass, objectType, dataInContainer, containerHasOEG, dataInOCD, null, null);
     }
-
-
-    private static final int OBJECT_LEVEL_LEN = 8;
-    private static final int OBJECT_TYPE_NAME_LEN = 32;
-    private static final int COMPANY_NAME_LEN = 32;
 
     /**
      * Fully parameterized constructor
@@ -100,56 +118,16 @@ public class ObjectClassificationTriplet extends Triplet {
             String objLev, String compName) {
         super(OBJECT_CLASSIFICATION);
 
+        this.objectClass = objectClass;
         if (objectType == null) {
             throw new IllegalArgumentException("MO:DCA Registry object type is null");
         }
-
-        byte[] data = new byte[94];
-        data[0] = 0x00; // reserved (must be zero)
-        data[1] = objectClass; // ObjClass
-        data[2] = 0x00; // reserved (must be zero)
-        data[3] = 0x00; // reserved (must be zero)
-
-        // StrucFlgs - Information on the structure of the object container
-        byte[] strucFlgs = getStrucFlgs(dataInContainer, containerHasOEG, dataInOCD);
-        data[4] = strucFlgs[0];
-        data[5] = strucFlgs[1];
-
-        byte[] oid = objectType.getOID();
-        // RegObjId - MOD:CA-registered ASN.1 OID for object type (8-23)
-        System.arraycopy(oid, 0, data, 6, oid.length);
-
-        // ObjTpName - name of object type (24-55)
-        byte[] objTpName;
-        try {
-            objTpName = StringUtils.rpad(objectType.getName(), ' ', OBJECT_TYPE_NAME_LEN).getBytes(
-                    AFPConstants.EBCIDIC_ENCODING);
-            System.arraycopy(objTpName, 0, data, 22, objTpName.length);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("an encoding exception occurred");
-        }
-
-        // ObjLev - release level or version number of object type (56-63)
-        byte[] objectLevel;
-        try {
-            objectLevel = StringUtils.rpad(objLev, ' ', OBJECT_LEVEL_LEN).getBytes(
-                    AFPConstants.EBCIDIC_ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("an encoding exception occurred");
-        }
-        System.arraycopy(objectLevel, 0, data, 54, objectLevel.length);
-
-        // CompName - name of company or organization that owns object definition (64-95)
-        byte[] companyName;
-        try {
-            companyName = StringUtils.rpad(compName, ' ', COMPANY_NAME_LEN).getBytes(
-                    AFPConstants.EBCIDIC_ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("an encoding exception occurred");
-        }
-        System.arraycopy(companyName, 0, data, 62, companyName.length);
-
-        super.setData(data);
+        this.objectType = objectType;
+        this.dataInContainer = dataInContainer;
+        this.containerHasOEG = containerHasOEG;
+        this.dataInOCD = dataInOCD;
+        this.objectLevel = objLev;
+        this.companyName = compName;
     }
 
     /**
@@ -161,7 +139,7 @@ public class ObjectClassificationTriplet extends Triplet {
      *
      * @return the byte value of this structure
      */
-    public byte[] getStrucFlgs(boolean dataInContainer, boolean containerHasOEG,
+    public byte[] getStructureFlagsAsBytes(boolean dataInContainer, boolean containerHasOEG,
             boolean dataInOCD) {
         byte[] strucFlgs = new byte[2];
         // Object Container (BOC/EOC)
@@ -184,5 +162,53 @@ public class ObjectClassificationTriplet extends Triplet {
         }
         strucFlgs[1] = 0x00;
         return strucFlgs;
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 95;
+    }
+
+    private static final int OBJECT_LEVEL_LEN = 8;
+    private static final int OBJECT_TYPE_NAME_LEN = 32;
+    private static final int COMPANY_NAME_LEN = 32;
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
+        data[2] = 0x00; // reserved (must be zero)
+        data[3] = objectClass; // ObjClass
+        data[4] = 0x00; // reserved (must be zero)
+        data[5] = 0x00; // reserved (must be zero)
+
+        // StrucFlgs - Information on the structure of the object container
+        byte[] structureFlagsBytes = getStructureFlagsAsBytes(dataInContainer, containerHasOEG, dataInOCD);
+        data[6] = structureFlagsBytes[0];
+        data[7] = structureFlagsBytes[1];
+
+        byte[] objectIdBytes = objectType.getOID();
+        // RegObjId - MOD:CA-registered ASN.1 OID for object type (8-23)
+        System.arraycopy(objectIdBytes, 0, data, 8, objectIdBytes.length);
+
+        // ObjTpName - name of object type (24-55)
+        byte[] objectTypeNameBytes;
+        objectTypeNameBytes
+            = StringUtils.rpad(objectType.getName(), ' ', OBJECT_TYPE_NAME_LEN).getBytes(
+                AFPConstants.EBCIDIC_ENCODING);
+        System.arraycopy(objectTypeNameBytes, 0, data, 24, objectTypeNameBytes.length);
+
+        // ObjLev - release level or version number of object type (56-63)
+        byte[] objectLevelBytes;
+        objectLevelBytes = StringUtils.rpad(objectLevel, ' ', OBJECT_LEVEL_LEN).getBytes(
+                AFPConstants.EBCIDIC_ENCODING);
+        System.arraycopy(objectLevelBytes, 0, data, 56, objectLevelBytes.length);
+
+        // CompName - name of company or organization that owns object definition (64-95)
+        byte[] companyNameBytes;
+        companyNameBytes = StringUtils.rpad(companyName, ' ', COMPANY_NAME_LEN).getBytes(
+                AFPConstants.EBCIDIC_ENCODING);
+        System.arraycopy(companyNameBytes, 0, data, 64, companyNameBytes.length);
+
+        os.write(data);
     }
 }

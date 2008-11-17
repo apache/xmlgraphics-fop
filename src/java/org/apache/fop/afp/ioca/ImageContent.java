@@ -22,12 +22,12 @@ package org.apache.fop.afp.ioca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractStructuredAFPObject;
+import org.apache.fop.afp.modca.AbstractStructuredObject;
 
 /**
  * An IOCA Image Content
  */
-public class ImageContent extends AbstractStructuredAFPObject {
+public class ImageContent extends AbstractStructuredObject {
 
     /**
      * The CCITT T.4 Group 3 Coding Standard (G3 MH-Modified Huffman) is a

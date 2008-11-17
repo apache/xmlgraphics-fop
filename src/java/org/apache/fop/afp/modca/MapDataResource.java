@@ -28,7 +28,7 @@ import org.apache.fop.afp.util.BinaryUtils;
  * The Map Data Resource structured field specifies resources that are
  * required for presentation.
  */
-public class MapDataResource extends AbstractStructuredAFPObject {
+public class MapDataResource extends AbstractTripletStructuredObject {
 
     /**
      * Main constructor
@@ -53,6 +53,6 @@ public class MapDataResource extends AbstractStructuredAFPObject {
         data[10] = len[1];
 
         os.write(data);
-        os.write(tripletData);
+        writeTriplets(os);
     }
 }

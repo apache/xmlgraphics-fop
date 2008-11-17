@@ -27,7 +27,7 @@ import org.apache.fop.afp.AFPConstants;
  * This is the base class for all named data stream objects.
  * A named data stream object has an 8 byte EBCIDIC name.
  */
-public abstract class AbstractNamedAFPObject extends AbstractStructuredAFPObject {
+public abstract class AbstractNamedAFPObject extends AbstractTripletStructuredObject {
 
     private static final int DEFAULT_NAME_LENGTH = 8;
 

@@ -22,7 +22,6 @@ package org.apache.fop.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.triplets.Triplet;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
@@ -30,33 +29,12 @@ import org.apache.fop.afp.util.BinaryUtils;
  * affect the rendering of presentation data and the appearance that is to be assumed
  * by the presentation device.
  */
-public class PresentationEnvironmentControl extends AbstractStructuredAFPObject {
+public class PresentationEnvironmentControl extends AbstractTripletStructuredObject {
 
     /**
      * Main constructor
      */
     public PresentationEnvironmentControl() {
-    }
-
-    /**
-     * Sets the object offset
-     */
-    public void setObjectOffset() {
-        addTriplet(new ObjectOffsetTriplet());
-    }
-
-    /**
-     * Sets the rendering intent
-     */
-    public void setRenderingIntent() {
-        addTriplet(new RenderingIntentTriplet());
-    }
-
-    /**
-     * Sets the device appearance
-     */
-    public void setDeviceAppearance() {
-        addTriplet(new DeviceAppearanceTriplet());
     }
 
     /** {@inheritDoc} */
@@ -71,27 +49,50 @@ public class PresentationEnvironmentControl extends AbstractStructuredAFPObject 
         data[10] = 0x00; // Reserved; must be zero
 
         os.write(data);
-        os.write(tripletData);
+
+        writeTriplets(os);
     }
 
-    // TODO
-    private class DeviceAppearanceTriplet extends Triplet {
-        public DeviceAppearanceTriplet() {
-            super(Triplet.DEVICE_APPEARANCE);
-        }
-    }
+//  /**
+//  * Sets the object offset
+//  */
+// public void setObjectOffset() {
+//     addTriplet(new ObjectOffsetTriplet());
+// }
+//
+// /**
+//  * Sets the rendering intent
+//  */
+// public void setRenderingIntent() {
+//     addTriplet(new RenderingIntentTriplet());
+// }
+//
+// /**
+//  * Sets the device appearance
+//  */
+// public void setDeviceAppearance() {
+//     addTriplet(new DeviceAppearanceTriplet());
+// }
+
 
     // TODO
-    private class RenderingIntentTriplet extends Triplet {
-        public RenderingIntentTriplet() {
-            super(Triplet.RENDERING_INTENT);
-        }
-    }
+//    private class DeviceAppearanceTriplet extends AbstractTriplet {
+//        public DeviceAppearanceTriplet() {
+//            super(AbstractTriplet.DEVICE_APPEARANCE);
+//        }
+//    }
 
     // TODO
-    private class ObjectOffsetTriplet extends Triplet {
-        public ObjectOffsetTriplet() {
-            super(Triplet.OBJECT_OFFSET);
-        }
-    }
+//    private class RenderingIntentTriplet extends AbstractTriplet {
+//        public RenderingIntentTriplet() {
+//            super(AbstractTriplet.RENDERING_INTENT);
+//        }
+//    }
+
+    // TODO
+//    private class ObjectOffsetTriplet extends AbstractTriplet {
+//        public ObjectOffsetTriplet() {
+//            super(AbstractTriplet.OBJECT_OFFSET);
+//        }
+//    }
 }

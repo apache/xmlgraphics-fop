@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 public class RasterFont extends AFPFont {
 
     /** Static logging instance */
-    protected static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp.fonts");
+    protected static final Log log = LogFactory.getLog("org.apache.fop.afp.fonts");
 
     private final Map/*<String,CharacterSet>*/ charSets
         = new java.util.HashMap/*<String,CharacterSet>*/();

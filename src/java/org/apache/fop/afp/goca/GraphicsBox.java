@@ -19,6 +19,9 @@
 
 package org.apache.fop.afp.goca;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * A GOCA graphics rectangular box
  */
@@ -34,28 +37,27 @@ public final class GraphicsBox extends AbstractGraphicsCoord {
     }
 
     /** {@inheritDoc} */
-    protected byte getOrderCode() {
+    public int getDataLength() {
+        return 12;
+    }
+
+    /** {@inheritDoc} */
+    int getCoordinateDataStartIndex() {
+        return 4;
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
         return (byte)0xC0;
     }
 
     /** {@inheritDoc} */
-    protected int getLength() {
-        return 10;
-    }
-
-    /** {@inheritDoc} */
-    protected void prepareData() {
-        super.data = createData();
-        final int fromIndex = 4;
-        addCoords(data, fromIndex);
-    }
-
-    /** {@inheritDoc} */
-    protected byte[] createData() {
-        byte[] data = super.createData();
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
         data[2] = (byte)0x20; // CONTROL draw control flags
         data[3] = 0x00; // reserved
-        return data;
+
+        os.write(data);
     }
 
 }

@@ -22,14 +22,13 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractPreparedObjectContainer;
-import org.apache.fop.afp.modca.PreparedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * A GOCA graphics segment
  */
-public final class GraphicsChainedSegment extends AbstractPreparedObjectContainer {
+public final class GraphicsChainedSegment extends AbstractGraphicsObjectContainer {
 
     /** The maximum segment data length */
     protected static final int MAX_DATA_LEN = 8192;
@@ -84,11 +83,16 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
     }
 
     /** {@inheritDoc} */
+    byte getOrderCode() {
+        return 0x70;
+    }
+
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
 
         byte[] data = new byte[14];
-        data[0] = 0x70; // BEGIN_SEGMENT
+        data[0] = getOrderCode(); // BEGIN_SEGMENT
         data[1] = 0x0C; // Length of following parameters
 
         // segment name
@@ -133,7 +137,7 @@ public final class GraphicsChainedSegment extends AbstractPreparedObjectContaine
     }
 
     /** {@inheritDoc} */
-    public void addObject(PreparedAFPObject drawingOrder) {
+    public void addObject(StructuredDataObject drawingOrder) {
         if (currentArea != null) {
             currentArea.addObject(drawingOrder);
         } else {

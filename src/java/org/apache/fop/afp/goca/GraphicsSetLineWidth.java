@@ -19,12 +19,17 @@
 
 package org.apache.fop.afp.goca;
 
-import org.apache.fop.afp.modca.AbstractPreparedAFPObject;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.modca.StructuredDataObject;
 
 /**
  * Sets the line width to use when stroking GOCA shapes (structured fields)
  */
-public class GraphicsSetLineWidth extends AbstractPreparedAFPObject {
+public class GraphicsSetLineWidth extends AbstractNamedAFPObject implements StructuredDataObject {
+
     /** line width multiplier */
     private int multiplier = 1;
 
@@ -35,15 +40,20 @@ public class GraphicsSetLineWidth extends AbstractPreparedAFPObject {
      */
     public GraphicsSetLineWidth(int multiplier) {
         this.multiplier = multiplier;
-        prepareData();
     }
 
     /** {@inheritDoc} */
-    protected void prepareData() {
-        super.data = new byte[] {
+    public int getDataLength() {
+        return 2;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
            0x19, // GSLW order code
            (byte)multiplier // MH (line-width)
         };
+        os.write(data);
     }
 
     /** {@inheritDoc} */

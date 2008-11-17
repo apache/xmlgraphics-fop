@@ -19,41 +19,13 @@
 
 package org.apache.fop.afp.goca;
 
-import java.io.UnsupportedEncodingException;
-
-import org.apache.fop.afp.AFPConstants;
-import org.apache.fop.afp.modca.AbstractPreparedAFPObject;
-import org.apache.fop.afp.util.BinaryUtils;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * A GOCA graphics string
  */
-public class GraphicsString extends AbstractPreparedAFPObject {
-    /** Up to 255 bytes of character data */
-    private static final int MAX_STR_LEN = 255;
-
-    /** drawn from the current position */
-    private boolean fromCurrentPosition = false;
-
-    /** the string to draw */
-    private String str = null;
-
-    /** x coordinate */
-    private int x;
-
-    /** y coordinate */
-    private int y;
-
-    /**
-     * Constructor
-     *
-     * @param str the character string
-     */
-    public GraphicsString(String str) {
-        this.str  = str;
-        fromCurrentPosition = true;
-        prepareData();
-    }
+public class GraphicsString extends AbstractGraphicsString {
 
     /**
      * Constructor
@@ -63,53 +35,30 @@ public class GraphicsString extends AbstractPreparedAFPObject {
      * @param y the y coordinate
      */
     public GraphicsString(String str, int x, int y) {
-        this.str = str;
-        this.x = x;
-        this.y = y;
-        prepareData();
+        super(str, x, y);
     }
 
     /** {@inheritDoc} */
-    protected void prepareData() {
-        int maxStrLen = MAX_STR_LEN - (fromCurrentPosition ? 0 : 4);
-        if (str.length() > maxStrLen) {
-            str = str.substring(0, maxStrLen);
-            log.warn("truncated character string, longer than " + maxStrLen + " chars");
-        }
-        byte[] strData = null;
-        try {
-            strData = str.getBytes(AFPConstants.EBCIDIC_ENCODING);
-        } catch (UnsupportedEncodingException ex) {
-            log.error("unsupported encoding: " + ex.getMessage());
-        }
-        int len = strData.length;
-        if (fromCurrentPosition) {
-            data = new byte[len + 2];
-            data[0] = (byte)0x83;
-            data[1] = (byte)len;
-            System.arraycopy(strData, 0, data, 2, strData.length);
-        } else {
-            len += 4; // x/y coordinates
-            byte[] osx = BinaryUtils.convert(x, 2);
-            byte[] osy = BinaryUtils.convert(y, 2);
-            data = new byte[len + 2];
-            data[0] = (byte)0xC3;
-            data[1] = (byte)len;
-            data[2] = osx[0];
-            data[3] = osx[1];
-            data[4] = osy[0];
-            data[5] = osy[1];
-            System.arraycopy(strData, 0, data, 6, strData.length);
-        }
+    byte getOrderCode() {
+        return (byte)0xC3;
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return super.getDataLength() + (coords.length * 2);
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
+        byte[] strData = getStringAsBytes();
+        System.arraycopy(strData, 0, data, 6, strData.length);
+
+        os.write(data);
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        String string = "GraphicsString{str='" + str + "'";
-        if (!fromCurrentPosition) {
-            string += ",x=" + x + ",y=" + y;
-        }
-        string += "}";
-        return string;
+        return "GraphicsString{x=" + coords[0] + ", y=" + coords[1] + "str='" + str + "'" + "}";
     }
 }

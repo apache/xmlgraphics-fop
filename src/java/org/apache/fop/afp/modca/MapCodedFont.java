@@ -41,7 +41,7 @@ import org.apache.fop.afp.util.BinaryUtils;
  * the Map Coded Font structured field specifies a set of resource attributes
  * for the coded font.
  */
-public class MapCodedFont extends AbstractStructuredAFPObject {
+public class MapCodedFont extends AbstractStructuredObject {
 
     /**
      * The collection of map coded fonts (maximum of 254)

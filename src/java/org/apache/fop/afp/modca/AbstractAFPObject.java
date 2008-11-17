@@ -20,6 +20,7 @@
 package org.apache.fop.afp.modca;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.Streamable;
+import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * This is the base class for all data stream objects. Page objects are
@@ -97,6 +99,81 @@ public abstract class AbstractAFPObject implements Streamable {
                     it.remove(); // once written, immediately remove the object
                 }
             }
+        }
+    }
+
+    /**
+     * Reads data chunks from an inputstream
+     * and then formats them with a structured header to a given outputstream
+     *
+     * @param dataHeader the header data
+     * @param lengthOffset offset of length field in data chunk
+     * @param maxChunkLength the maximum chunk length
+     * @param inputStream the inputstream to read from
+     * @param outputStream the outputstream to write to
+     * @throws IOException thrown if an I/O exception of some sort has occurred.
+     */
+    protected static void copyChunks(byte[] dataHeader, int lengthOffset,
+            int maxChunkLength, InputStream inputStream, OutputStream outputStream)
+    throws IOException {
+        int headerLen = dataHeader.length - lengthOffset;
+        // length field is just before data so do not include in data length
+        if (headerLen == 2) {
+            headerLen = 0;
+        }
+        byte[] data = new byte[maxChunkLength];
+        int numBytesRead = 0;
+        while ((numBytesRead = inputStream.read(data, 0, maxChunkLength)) > 0) {
+            byte[] len = BinaryUtils.convert(headerLen + numBytesRead, 2);
+            dataHeader[lengthOffset] = len[0]; // Length byte 1
+            dataHeader[lengthOffset + 1] = len[1]; // Length byte 2
+            outputStream.write(dataHeader);
+            outputStream.write(data, 0, numBytesRead);
+        }
+    }
+
+    /**
+     * Writes data chunks to a given outputstream
+     *
+     * @param data the data byte array
+     * @param dataHeader the header data
+     * @param lengthOffset offset of length field in data chunk
+     * @param maxChunkLength the maximum chunk length
+     * @param os the outputstream to write to
+     * @throws IOException thrown if an I/O exception of some sort has occurred.
+     */
+    protected static void writeChunksToStream(byte[] data, byte[] dataHeader,
+            int lengthOffset, int maxChunkLength, OutputStream os) throws IOException {
+        int dataLength = data.length;
+        int numFullChunks = dataLength / maxChunkLength;
+        int lastChunkLength = dataLength % maxChunkLength;
+
+        int headerLen = dataHeader.length - lengthOffset;
+        // length field is just before data so do not include in data length
+        if (headerLen == 2) {
+            headerLen = 0;
+        }
+
+        byte[] len;
+        int off = 0;
+        if (numFullChunks > 0) {
+            // write out full data chunks
+            len = BinaryUtils.convert(headerLen + maxChunkLength, 2);
+            dataHeader[lengthOffset] = len[0]; // Length byte 1
+            dataHeader[lengthOffset + 1] = len[1]; // Length byte 2
+            for (int i = 0; i < numFullChunks; i++, off += maxChunkLength) {
+                os.write(dataHeader);
+                os.write(data, off, maxChunkLength);
+            }
+        }
+
+        if (lastChunkLength > 0) {
+            // write last data chunk
+            len = BinaryUtils.convert(headerLen + lastChunkLength, 2);
+            dataHeader[lengthOffset] = len[0]; // Length byte 1
+            dataHeader[lengthOffset + 1] = len[1]; // Length byte 2
+            os.write(dataHeader);
+            os.write(data, off, lastChunkLength);
         }
     }
 

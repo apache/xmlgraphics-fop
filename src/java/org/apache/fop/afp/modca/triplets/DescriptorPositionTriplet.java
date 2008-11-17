@@ -17,18 +17,34 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.modca;
+package org.apache.fop.afp.modca.triplets;
 
-/**
- * An AFP object which is able to know its own data length before write()
- */
-public interface PreparedAFPObject {
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class DescriptorPositionTriplet extends AbstractTriplet {
+
+    private final byte oapId;
 
     /**
-     * Returns the current data length of this container
+     * Main constructor
      *
-     * @return the current data length of this container including
-     * all enclosed GOCA drawing objects
+     * @param oapId the object area position id
      */
-    int getDataLength();
+    public DescriptorPositionTriplet(byte oapId) {
+        super(DESCRIPTOR_POSITION);
+        this.oapId = oapId;
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 3;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
+        data[2] = oapId;
+        os.write(data);
+    }
 }
