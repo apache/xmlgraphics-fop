@@ -48,7 +48,7 @@ public final class FontCache implements Serializable {
      * Serialization Version UID. Change this value if you want to make sure the user's cache
      * file is purged after an update.
      */
-    private static final long serialVersionUID = 605232520271754718L;
+    private static final long serialVersionUID = 605232520271754719L;
 
     /** logging instance */
     private static Log log = LogFactory.getLog(FontCache.class);
@@ -64,7 +64,7 @@ public final class FontCache implements Serializable {
     private transient boolean changed = false;
 
     /** change lock */
-    private transient Object changeLock = new Object();
+    private final Object changeLock = new Object();
 
     /** master mapping of font url -> font info.  This needs to be
      *  a list, since a TTC file may contain more than 1 font. */
@@ -78,12 +78,6 @@ public final class FontCache implements Serializable {
      */
     public FontCache() {
         //nop
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        this.changeLock = new Object(); //Initialize transient field
     }
 
     private static File getUserHome() {
@@ -226,10 +220,8 @@ public final class FontCache implements Serializable {
      * @return boolean
      */
     public boolean containsFont(String embedUrl) {
-        if (embedUrl != null) {
-            return getFontFileMap().containsKey(embedUrl);
-        }
-        return false;
+        return (embedUrl != null
+                && getFontFileMap().containsKey(embedUrl));
     }
 
     /**
@@ -238,10 +230,8 @@ public final class FontCache implements Serializable {
      * @return font
      */
     public boolean containsFont(EmbedFontInfo fontInfo) {
-        if (fontInfo != null) {
-            return getFontFileMap().containsKey(getCacheKey(fontInfo));
-        }
-        return false;
+        return (fontInfo != null
+                && getFontFileMap().containsKey(getCacheKey(fontInfo)));
     }
 
     /**
@@ -316,10 +306,7 @@ public final class FontCache implements Serializable {
      * @return CachedFontFile object
      */
     public CachedFontFile getFontFile(String embedUrl) {
-        if (containsFont(embedUrl)) {
-            return (CachedFontFile)getFontFileMap().get(embedUrl);
-        }
-        return null;
+        return containsFont(embedUrl) ? (CachedFontFile) getFontFileMap().get(embedUrl) : null;
     }
 
     /**
@@ -362,8 +349,8 @@ public final class FontCache implements Serializable {
      * @return whether this is a failed font
      */
     public boolean isFailedFont(String embedUrl, long lastModified) {
-        if (getFailedFontMap().containsKey(embedUrl)) {
-            synchronized (changeLock) {
+        synchronized (changeLock) {
+            if (getFailedFontMap().containsKey(embedUrl)) {
                 long failedLastModified = ((Long)getFailedFontMap().get(embedUrl)).longValue();
                 if (lastModified != failedLastModified) {
                     // this font has been changed so lets remove it
@@ -371,10 +358,11 @@ public final class FontCache implements Serializable {
                     getFailedFontMap().remove(embedUrl);
                     changed = true;
                 }
+                return true;
+            } else {
+                return false;
             }
-            return true;
         }
-        return false;
     }
 
     /**
@@ -457,10 +445,8 @@ public final class FontCache implements Serializable {
         }
 
         public boolean containsFont(EmbedFontInfo efi) {
-            if (efi.getPostScriptName() != null) {
-                return getFileFontsMap().containsKey(efi.getPostScriptName());
-            }
-            return false;
+            return efi.getPostScriptName() != null
+                    && getFileFontsMap().containsKey(efi.getPostScriptName());
         }
 
         public EmbedFontInfo[] getEmbedFontInfos() {
