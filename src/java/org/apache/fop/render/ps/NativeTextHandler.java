@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.ps;
 
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
@@ -37,7 +38,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
  */
 public class NativeTextHandler implements PSTextHandler {
 
-    private PSGraphics2D g2d;
+    private final PSGenerator gen;
 
     /** FontInfo containing all available fonts */
     protected FontInfo fontInfo;
@@ -59,8 +60,8 @@ public class NativeTextHandler implements PSTextHandler {
      * @param g2d the PSGraphics2D instance this instances is used by
      * @param fontInfo the FontInfo object with all available fonts
      */
-    public NativeTextHandler(PSGraphics2D g2d, FontInfo fontInfo) {
-        this.g2d = g2d;
+    public NativeTextHandler(PSGenerator gen, FontInfo fontInfo) {
+        this.gen = gen;
         if (fontInfo != null) {
             this.fontInfo = fontInfo;
         } else {
@@ -83,7 +84,7 @@ public class NativeTextHandler implements PSTextHandler {
     }
 
     private PSGenerator getPSGenerator() {
-        return this.g2d.getPSGenerator();
+        return this.gen;
     }
 
     /** {@inheritDoc} */
@@ -98,12 +99,19 @@ public class NativeTextHandler implements PSTextHandler {
         //nop
     }
 
+    /** {@inheritDoc} */
+    public void drawString(String text, float x, float y) throws IOException {
+        // TODO Remove me after removing the deprecated method in TextHandler.
+        throw new UnsupportedOperationException("Deprecated method!");
+    }
+
     /**
      * Draw a string to the PostScript document. The text is painted using
      * text operations.
      * {@inheritDoc}
      */
-    public void drawString(String s, float x, float y) throws IOException {
+    public void drawString(Graphics2D g, String s, float x, float y) throws IOException {
+        PSGraphics2D g2d = (PSGraphics2D)g;
         g2d.preparePainting();
         if (this.overrideFont == null) {
             java.awt.Font awtFont = g2d.getFont();
