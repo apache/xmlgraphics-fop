@@ -115,8 +115,8 @@ public class AFPTextPainter implements TextPainter {
     private boolean hasUnsupportedAttributes(AttributedCharacterIterator aci) {
         boolean hasUnsupported = false;
 
+        Font font = getFont(aci);
         String text = getText(aci);
-        Font font = makeFont(aci);
         if (hasUnsupportedGlyphs(text, font)) {
             log.trace("-> Unsupported glyphs found");
             hasUnsupported = true;
@@ -228,8 +228,10 @@ public class AFPTextPainter implements TextPainter {
         loc = at.transform(loc, null);
 
         // font
-        Font font = makeFont(aci);
-        nativeTextHandler.setOverrideFont(font);
+        Font font = getFont(aci);
+        if (font != null) {
+            nativeTextHandler.setOverrideFont(font);
+        }
 
         // color
         TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
@@ -333,11 +335,8 @@ public class AFPTextPainter implements TextPainter {
                        : Font.WEIGHT_NORMAL;
     }
 
-    private Font makeFont(AttributedCharacterIterator aci) {
+    private Font getFont(AttributedCharacterIterator aci) {
         Float fontSize = (Float)aci.getAttribute(TextAttribute.SIZE);
-        if (fontSize == null) {
-            fontSize = new Float(10.0f);
-        }
         String style = getStyle(aci);
         int weight = getWeight(aci);
 
