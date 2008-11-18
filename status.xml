@@ -61,7 +61,6 @@
         <li>perform the HashMap check for a failed font inside the synchronized block to avoid a race condition</li>
         </ul>
       </action>
-      </action>
       <action context="Renderers" dev="AD" type="add" fixes-bug="45113" due-to="Alexander Stamenov">
         Added PDF /Launch action: references to URIs using the file:// protocol will now generate
         a /Launch action as opposed to a more general /URI (which doesn't yield the expected result
