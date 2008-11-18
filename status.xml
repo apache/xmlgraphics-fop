@@ -54,17 +54,24 @@
   <changes>
     <release version="FOP Trunk" date="TBD">
       <action context="Renderers" dev="AC" importance="high" type="add">
-        AFP Output: An AFPGraphics2D implementation which provides the ability to use Batik to drive the production of  AFP Graphics (GOCA) output from SVG.
-        Added SVG support for AFP (GOCA).
+        AFP Output: An AFPGraphics2D implementation which provides the ability to use Batik to drive the production of AFP Graphics (GOCA) output from SVG.
       </action>
       <action context="Renderers" dev="AC" importance="high" type="add">
-        AFP Output: Resource group leveling, external streaming and de-duplication of images and graphics using IncludeObject and ResourceGroup.
+        AFP Output: Resource group leveling, external streaming, and de-duplication of images and graphics using IncludeObject and ResourceGroup.
       </action>
       <action context="Renderers" dev="AC" importance="high" type="add">
         AFP Output: Native image embedding support (e.g. JPEG, GIF, TIFF) using ObjectContainer and a MOD:CA Registry implementation.
       </action>
       <action context="Fonts" dev="AC" importance="high" type="fix">
-        AFP Output: More robust AFP font parsing, although it is still in need of some rework in the future.
+        More robust AFP font parsing, although it is still in need of some rework in the future.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="46211" due-to="rogov.AT.devexperts.com">
+        Fixed some multi-threading issues in FontCache.java:
+        <ul>
+        <li>remove the unused private readObject()</li>
+        <li>make the changeLock member final (initialization-safety + impossible to reassign)</li>
+        <li>perform the HashMap check for a failed font inside the synchronized block to avoid a race condition</li>
+        </ul>
       </action>
       <action context="Renderers" dev="AD" type="add" fixes-bug="45113" due-to="Alexander Stamenov">
         Added PDF /Launch action: references to URIs using the file:// protocol will now generate
