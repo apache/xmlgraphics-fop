@@ -64,7 +64,7 @@ public final class FontCache implements Serializable {
     private transient boolean changed = false;
 
     /** change lock */
-    private final Object changeLock = new Object();
+    private final boolean[] changeLock = new boolean[1];
 
     /** master mapping of font url -> font info.  This needs to be
      *  a list, since a TTC file may contain more than 1 font. */
