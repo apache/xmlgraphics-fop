@@ -19,13 +19,11 @@
 
 package org.apache.fop.render.afp;
 
-import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
-import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceLevel;
@@ -51,7 +49,8 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler {
     public AFPDataObjectInfo generateDataObjectInfo(
             AFPRendererImageInfo rendererImageInfo) throws IOException {
 
-        AFPRendererContext rendererContext = (AFPRendererContext)rendererImageInfo.getRendererContext();
+        AFPRendererContext rendererContext
+            = (AFPRendererContext)rendererImageInfo.getRendererContext();
         AFPInfo afpInfo = rendererContext.getInfo();
         ImageGraphics2D imageG2D = (ImageGraphics2D)rendererImageInfo.getImage();
         Graphics2DImagePainter painter = imageG2D.getGraphics2DImagePainter();
@@ -67,11 +66,11 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler {
             return null;
         } else {
             AFPGraphicsObjectInfo graphicsObjectInfo
-            = (AFPGraphicsObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
+                = (AFPGraphicsObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
 
             AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();
             //level not explicitly set/changed so default to inline for GOCA graphic objects
-            // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07) - hard copy works just fine)
+            // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07), hard copy works just fine)
             if (!resourceInfo.levelChanged()) {
                 resourceInfo.setLevel(new AFPResourceLevel(AFPResourceLevel.INLINE));
             }
@@ -86,21 +85,8 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler {
 
             graphicsObjectInfo.setGraphics2D(g2d);
 
-            // translate to current location
-            AFPPaintingState paintingState = afpInfo.getPaintingState();
-            AffineTransform at = paintingState.getData().getTransform();
-            g2d.translate(at.getTranslateX(), at.getTranslateY());
-
             // set painter
             graphicsObjectInfo.setPainter(painter);
-
-            // invert y-axis for GOCA
-            final int sx = 1;
-            final int sy = -1;
-            AFPObjectAreaInfo objectAreaInfo = graphicsObjectInfo.getObjectAreaInfo();
-            int height = objectAreaInfo.getHeight();
-            g2d.translate(0, height);
-            g2d.scale(sx, sy);
 
             return graphicsObjectInfo;
         }

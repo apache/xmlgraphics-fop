@@ -138,8 +138,7 @@ public class PreprocessPresentationObject extends AbstractTripletStructuredObjec
         }
         os.write(data);
 
-        // Triplets
-        super.writeContent(os);
+        writeTriplets(os);
     }
 
 }

@@ -333,37 +333,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void clip() {
-        // TODO
-        log.debug("NYI clip()");
-    }
-
-    /** {@inheritDoc} */
-    public void clipRect(float x, float y, float width, float height) {
-        // TODO
-        log.debug("NYI clipRect(x=" + x + ",y=" + y
-                    + ",width=" + width + ", height=" + height + ")");
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(float x, float y) {
-        // TODO
-        log.debug("NYI moveTo(x=" + x + ",y=" + y + ")");
-    }
-
-    /** {@inheritDoc} */
-    public void lineTo(float x, float y) {
-        // TODO
-        log.debug("NYI lineTo(x=" + x + ",y=" + y + ")");
-    }
-
-    /** {@inheritDoc} */
-    public void closePath() {
-        // TODO
-        log.debug("NYI closePath()");
-    }
-
-    /** {@inheritDoc} */
     public void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         BorderPaintInfo borderPaintInfo = new BorderPaintInfo(x1, y1, x2, y2, horz, style, col);
@@ -533,18 +502,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     public void restoreGraphicsState() {
         paintingState.pop();
-    }
-
-    /** Indicates the beginning of a text object. */
-    public void beginTextObject() {
-        //TODO PDF specific maybe?
-        log.debug("NYI beginTextObject()");
-    }
-
-    /** Indicates the end of a text object. */
-    public void endTextObject() {
-        //TODO PDF specific maybe?
-        log.debug("NYI endTextObject()");
     }
 
     /** {@inheritDoc} */
@@ -807,6 +764,49 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     protected void establishTransformationMatrix(AffineTransform at) {
         saveGraphicsState();
         concatenateTransformationMatrix(at);
+    }
+
+    /** {@inheritDoc} */
+    public void clip() {
+        // TODO
+//        log.debug("NYI clip()");
+    }
+
+    /** {@inheritDoc} */
+    public void clipRect(float x, float y, float width, float height) {
+        // TODO
+//        log.debug("NYI clipRect(x=" + x + ",y=" + y
+//                    + ",width=" + width + ", height=" + height + ")");
+    }
+
+    /** {@inheritDoc} */
+    public void moveTo(float x, float y) {
+        // TODO
+//        log.debug("NYI moveTo(x=" + x + ",y=" + y + ")");
+    }
+
+    /** {@inheritDoc} */
+    public void lineTo(float x, float y) {
+        // TODO
+//        log.debug("NYI lineTo(x=" + x + ",y=" + y + ")");
+    }
+
+    /** {@inheritDoc} */
+    public void closePath() {
+        // TODO
+//        log.debug("NYI closePath()");
+    }
+
+    /** Indicates the beginning of a text object. */
+    public void beginTextObject() {
+        //TODO PDF specific maybe?
+//        log.debug("NYI beginTextObject()");
+    }
+
+    /** Indicates the end of a text object. */
+    public void endTextObject() {
+        //TODO PDF specific maybe?
+//        log.debug("NYI endTextObject()");
     }
 
 }

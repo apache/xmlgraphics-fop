@@ -81,7 +81,7 @@ public class AFPBridgeContext extends AbstractFOPBridgeContext {
         super.registerSVGBridges();
 
         if (fontInfo != null) {
-            AFPTextHandler textHandler = new AFPTextHandler(g2d);
+            AFPTextHandler textHandler = new AFPTextHandler(fontInfo);
             g2d.setCustomTextHandler(textHandler);
 
             TextPainter textPainter = new AFPTextPainter(textHandler);

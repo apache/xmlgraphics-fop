@@ -34,10 +34,10 @@ import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPUnitConverter;
-import org.apache.fop.afp.Graphics2DImagePainterGOCA;
 import org.apache.fop.afp.svg.AFPBridgeContext;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.image.loader.batik.Graphics2DImagePainterImpl;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
@@ -66,9 +66,6 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
             renderSVGDocument(context, doc);
         }
     }
-
-    private static final int X = 0;
-    private static final int Y = 1;
 
     /**
      * Render the SVG document.
@@ -101,7 +98,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         }
 
         // Create a new AFPGraphics2D
-        final boolean textAsShapes = false;
+        final boolean textAsShapes = afpInfo.strokeText();
         AFPGraphics2D g2d = afpInfo.createGraphics2D(textAsShapes);
 
         AFPPaintingState paintingState = g2d.getPaintingState();
@@ -220,7 +217,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
             painter = super.createGraphics2DImagePainter(root, ctx, imageSize);
         } else {
             // paint as GOCA Graphics
-            painter = new Graphics2DImagePainterGOCA(root, ctx, imageSize);
+            painter = new Graphics2DImagePainterImpl(root, ctx, imageSize);
         }
         return painter;
     }

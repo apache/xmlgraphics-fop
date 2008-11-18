@@ -88,7 +88,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     private GraphicsObject graphicsObj = null;
 
     /** Fallback text handler */
-    protected TextHandler fallbackTextHandler = new StrokingTextHandler(this);
+    protected TextHandler fallbackTextHandler = new StrokingTextHandler();
 
     /** Custom text handler */
     protected TextHandler customTextHandler = null;
@@ -367,9 +367,9 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     public void drawString(String str, float x, float y) {
         try {
             if (customTextHandler != null && !textAsShapes) {
-                customTextHandler.drawString(str, x, y);
+                customTextHandler.drawString(this, str, x, y);
             } else {
-                fallbackTextHandler.drawString(str, x, y);
+                fallbackTextHandler.drawString(this, str, x, y);
             }
         } catch (IOException ioe) {
             handleIOException(ioe);

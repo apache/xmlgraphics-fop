@@ -20,6 +20,7 @@
 package org.apache.fop.afp.svg;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
@@ -32,29 +33,30 @@ import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.xmlgraphics.java2d.TextHandler;
+import org.apache.fop.svg.FOPTextHandler;
 
 /**
  * Specialized TextHandler implementation that the AFPGraphics2D class delegates to to paint text
  * using AFP GOCA text operations.
  */
-public class AFPTextHandler implements TextHandler {
+public class AFPTextHandler implements FOPTextHandler {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(AFPTextHandler.class);
 
-    private AFPGraphics2D g2d = null;
-
     /** Overriding FontState */
     protected Font overrideFont = null;
+
+    /** Font information */
+    private final FontInfo fontInfo;
 
     /**
      * Main constructor.
      *
-     * @param g2d the AFPGraphics2D instance
+     * @param fontInfo the AFPGraphics2D instance
      */
-    public AFPTextHandler(AFPGraphics2D g2d) {
-        this.g2d = g2d;
+    public AFPTextHandler(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
     }
 
     /**
@@ -63,21 +65,20 @@ public class AFPTextHandler implements TextHandler {
      * @return the FontInfo object
      */
     public FontInfo getFontInfo() {
-        return g2d.getFontInfo();
+        return fontInfo;
     }
 
     /**
      * Registers a page font
      *
      * @param internalFontName the internal font name
+     * @param internalFontName the internal font name
      * @param fontSize the font size
      * @return a font reference
      */
-    private int registerPageFont(String internalFontName, int fontSize) {
+    private int registerPageFont(AFPPageFonts pageFonts, String internalFontName, int fontSize) {
         FontInfo fontInfo = getFontInfo();
         AFPFont afpFont = (AFPFont)fontInfo.getFonts().get(internalFontName);
-        AFPPaintingState paintingState = g2d.getPaintingState();
-        AFPPageFonts pageFonts = paintingState.getPageFonts();
         // register if necessary
         AFPFontAttributes afpFontAttributes = pageFonts.registerFont(
                 internalFontName,
@@ -87,14 +88,21 @@ public class AFPTextHandler implements TextHandler {
         return afpFontAttributes.getFontReference();
     }
 
+    /** {@inheritDoc} */
+    public void drawString(String text, float x, float y) throws IOException {
+        // TODO Remove me after removing the deprecated method in TextHandler.
+        throw new UnsupportedOperationException("Deprecated method!");
+    }
+
     /**
      * Add a text string to the current data object of the AFP datastream.
      * The text is painted using text operations.
      *
      * {@inheritDoc}
      */
-    public void drawString(String str, float x, float y) throws IOException {
+    public void drawString(Graphics2D g, String str, float x, float y) throws IOException {
         log.debug("drawString() str=" + str + ", x=" + x + ", y=" + y);
+        AFPGraphics2D g2d = (AFPGraphics2D)g;
         GraphicsObject graphicsObj = g2d.getGraphicsObject();
         Color color = g2d.getColor();
 
@@ -106,10 +114,11 @@ public class AFPTextHandler implements TextHandler {
 
         // set the character set
         int fontReference = 0;
+        AFPPageFonts pageFonts = paintingState.getPageFonts();
         if (overrideFont != null) {
             String internalFontName = overrideFont.getFontName();
             int fontSize = overrideFont.getFontSize();
-            fontReference = registerPageFont(internalFontName, fontSize);
+            fontReference = registerPageFont(pageFonts, internalFontName, fontSize);
         } else {
             java.awt.Font awtFont = g2d.getFont();
 //            AffineTransform fontTransform = awtFont.getTransform();
@@ -117,7 +126,7 @@ public class AFPTextHandler implements TextHandler {
             Font fopFont = fontInfo.getFontInstanceForAWTFont(awtFont);
             String internalFontName = fopFont.getFontName();
             int fontSize = fopFont.getFontSize();
-            fontReference = registerPageFont(internalFontName, fontSize);
+            fontReference = registerPageFont(pageFonts, internalFontName, fontSize);
         }
         graphicsObj.setCharacterSet(fontReference);
 
