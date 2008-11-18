@@ -910,7 +910,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             }
             startIndex = stopIndex;
         }
-        this.hasChanged = !nothingChanged;
+        this.hasChanged = (this.hasChanged || !nothingChanged);
     }
 
     /** {@inheritDoc} */
