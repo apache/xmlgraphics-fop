@@ -25,21 +25,20 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGLength;
-
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
-import org.apache.xmlgraphics.java2d.TextHandler;
-
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.svg.AbstractFOPTranscoder;
+import org.apache.xmlgraphics.java2d.TextHandler;
+import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGLength;
 
 /**
  * This class enables to transcode an input to a PostScript document.
@@ -70,7 +69,7 @@ import org.apache.fop.svg.AbstractFOPTranscoder;
  */
 public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
 
-    private   Configuration                cfg      = null;
+    private final   Configuration                cfg      = null;
     protected AbstractPSDocumentGraphics2D graphics = null;
 
     /**
@@ -99,7 +98,8 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
             FontInfo fontInfo = new FontInfo();
             //TODO Do custom font configuration here somewhere/somehow
             FontSetup.setup(fontInfo);
-            graphics.setCustomTextHandler(new NativeTextHandler(graphics, fontInfo));
+            PSGenerator generator = graphics.getPSGenerator();
+            graphics.setCustomTextHandler(new NativeTextHandler(generator, fontInfo));
         }
 
         super.transcode(document, uri, output);

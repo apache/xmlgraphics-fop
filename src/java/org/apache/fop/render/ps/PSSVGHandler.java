@@ -24,18 +24,12 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
-import org.apache.xmlgraphics.ps.PSGenerator;
-
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
@@ -43,6 +37,9 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.w3c.dom.Document;
 
 /**
  * PostScript XML handler for SVG. Uses Apache Batik for SVG processing.
@@ -262,7 +259,9 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         NativeTextHandler nativeTextHandler = null;
         BridgeContext ctx = new BridgeContext(ua);
         if (!strokeText) {
-            nativeTextHandler = new NativeTextHandler(graphics, psInfo.getFontInfo());
+            PSGenerator generator = graphics.getPSGenerator();
+            FontInfo fontInfo = psInfo.getFontInfo();
+            nativeTextHandler = new NativeTextHandler(generator, fontInfo);
             graphics.setCustomTextHandler(nativeTextHandler);
             PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
             ctx.setTextPainter(textPainter);
@@ -283,8 +282,8 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
-        float sx = psInfo.getWidth() / (float)w;
-        float sy = psInfo.getHeight() / (float)h;
+        float sx = psInfo.getWidth() / w;
+        float sy = psInfo.getHeight() / h;
 
         ctx = null;
         builder = null;
