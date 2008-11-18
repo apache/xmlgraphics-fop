@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -639,15 +639,25 @@ Check the following:</p>
           <link href="http://www.mulberrytech.com/xsl/xsl-list/">XSL list
           archive</link> for how to perform these tasks.
         </p>
-        <p>
-          If your text is not hyphenated at all and overflows the cell, please check
-          if you've specified <code>keep-together="always"</code> on the table-cell
-          or one of its parent elements. <code>keep-together="always"</code> implicitely
-          also sets <code>keep-together.within-line="always"</code> which forbids FOP
-          to break the text into multiple lines. This is important as FOP supports inline-level
-          keeps since version 0.94. It's a good idea not to use the shorthand
-          <code>keep-together="always"</code> at all!
-        </p>
+      </answer>
+    </faq>
+    <faq id="table-cell-wrap">
+      <question>The contents of table cells don’t wrap</question>
+      <answer>
+        <p>You probably have <code>keep-together="always"</code> set on the table cell. See <link 
+            href="#keep-together">next question</link>.</p>
+      </answer>
+    </faq>
+    <faq id="keep-together">
+      <question>FOP 0.95 and FOP 0.94 behave differently when <code>keep-together="always"</code> 
+        is set on table cells</question>
+      <answer>
+        <p>Support for inline-level keeps has been added in FOP 0.95, and setting 
+          <code>keep-together="always"</code> also implicitly sets 
+          <code>keep-together.within-line="always"</code>, which forbids FOP
+          to break the text into multiple lines. Set 
+          <code>keep-together.within-column="always"</code> on table-cell instead. It’s a good idea 
+          not to use the shorthand <code>keep-together="always"</code> at all!</p>
       </answer>
     </faq>
     <faq id="row-height-constraint">
