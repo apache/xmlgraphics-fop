@@ -1248,10 +1248,11 @@ public class TTFFile {
             }
         }
 
-        log.debug("Font box height: " + (ascender - descender));
-        if (ascender - descender > upem) {
-            log.warn("Ascender and descender together are larger than the em box."
-                    + " This could lead to a wrong baseline placement in Apache FOP.");
+        if (log.isDebugEnabled()) {
+            log.debug("Font box height: " + (ascender - descender));
+            if (ascender - descender > upem) {
+                log.debug("Ascender and descender together are larger than the em box.");
+            }
         }
     }
 
@@ -1259,7 +1260,7 @@ public class TTFFile {
         // Approximate capHeight from height of "H"
         // It's most unlikely that a font misses the PCLT table
         // This also assumes that postscriptnames exists ("H")
-        // Should look it up int the cmap (that wouldn't help
+        // Should look it up in the cmap (that wouldn't help
         // for charsets without H anyway...)
         // Same for xHeight with the letter "x"
         int localCapHeight = 0;
@@ -1294,10 +1295,12 @@ public class TTFFile {
                 }
             }
         }
-        log.debug("Ascender from glyph 'd': " + localAscender
-                + " " + convertTTFUnit2PDFUnit(localAscender));
-        log.debug("Descender from glyph 'p': " + localDescender
-                + " " + convertTTFUnit2PDFUnit(localDescender));
+        if (log.isDebugEnabled()) {
+            log.debug("Ascender from glyph 'd': " + localAscender
+                    + " " + convertTTFUnit2PDFUnit(localAscender));
+            log.debug("Descender from glyph 'p': " + localDescender
+                    + " " + convertTTFUnit2PDFUnit(localDescender));
+        }
         if (ascender - descender > upem) {
             log.debug("Replacing specified ascender/descender with derived values to get values"
                     + " which fit in the em box.");
@@ -1305,10 +1308,12 @@ public class TTFFile {
             descender = localDescender;
         }
 
-        log.debug("xHeight from glyph 'x': " + localXHeight
-                + " " + convertTTFUnit2PDFUnit(localXHeight));
-        log.debug("CapHeight from glyph 'H': " + localCapHeight
-                + " " + convertTTFUnit2PDFUnit(localCapHeight));
+        if (log.isDebugEnabled()) {
+            log.debug("xHeight from glyph 'x': " + localXHeight
+                    + " " + convertTTFUnit2PDFUnit(localXHeight));
+            log.debug("CapHeight from glyph 'H': " + localCapHeight
+                    + " " + convertTTFUnit2PDFUnit(localCapHeight));
+        }
         if (capHeight == 0) {
             capHeight = localCapHeight;
             if (capHeight == 0) {
