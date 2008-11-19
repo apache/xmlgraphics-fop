@@ -19,15 +19,13 @@
 
 package org.apache.fop.render.afp;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
-import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.w3c.dom.Document;
@@ -46,15 +44,16 @@ public class AFPImageHandlerXML extends AFPImageHandler {
     };
 
     /** {@inheritDoc} */
-    public AFPDataObjectInfo generateDataObjectInfo(RendererContext context, Image image,
-            Point origin, Rectangle pos)
+    public AFPDataObjectInfo generateDataObjectInfo(AFPRendererImageInfo rendererImageInfo)
             throws IOException {
-        AFPRenderer renderer = (AFPRenderer)context.getRenderer();
-        ImageXMLDOM imgXML = (ImageXMLDOM)image;
+        RendererContext rendererContext = rendererImageInfo.getRendererContext();
+        AFPRenderer renderer = (AFPRenderer)rendererContext.getRenderer();
+        ImageXMLDOM imgXML = (ImageXMLDOM)rendererImageInfo.getImage();
         Document doc = imgXML.getDocument();
         String ns = imgXML.getRootNamespace();
-        Map foreignAttributes = (Map)context.getProperty(
+        Map foreignAttributes = (Map)rendererContext.getProperty(
                 RendererContextConstants.FOREIGN_ATTRIBUTES);
+        Rectangle2D pos = rendererImageInfo.getPosition();
         renderer.renderDocument(doc, ns, pos, foreignAttributes);
         return null;
     }
