@@ -47,22 +47,21 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         super(width, height, widthRes, heightRes);
     }
 
-    private static final byte oapId = 0x01;
+    private static final byte OBJECT_AREA_POSITION_ID = 0x01;
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
-        // add triplets
-        addTriplet(new DescriptorPositionTriplet(oapId));
+        byte[] data = new byte[9];
+        copySF(data, Type.DESCRIPTOR, Category.OBJECT_AREA);
+
+        addTriplet(new DescriptorPositionTriplet(OBJECT_AREA_POSITION_ID));
         addTriplet(new MeasurementUnitsTriplet(widthRes, heightRes));
         addTriplet(new ObjectAreaSizeTriplet(width, height));
         addTriplet(new PresentationSpaceResetMixingTriplet(
                 PresentationSpaceResetMixingTriplet.NOT_RESET));
 
-        byte[] data = new byte[9];
-        copySF(data, Type.DESCRIPTOR, Category.OBJECT_AREA);
-
         int tripletDataLength = getTripletDataLength();
-        byte[] len = BinaryUtils.convert(data.length + tripletDataLength, 2);
+        byte[] len = BinaryUtils.convert(data.length + tripletDataLength - 1, 2);
         data[1] = len[0]; // Length
         data[2] = len[1];
         os.write(data);
