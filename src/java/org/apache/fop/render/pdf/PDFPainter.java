@@ -100,7 +100,7 @@ public class PDFPainter extends AbstractIFPainter {
     public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
         generator.saveGraphicsState();
-        generator.concatenate(generator.toPoints(transform));
+        generator.concatenate(toPoints(transform));
         if (clipRect != null) {
             clipRect(clipRect);
         }
@@ -114,7 +114,7 @@ public class PDFPainter extends AbstractIFPainter {
     /** {@inheritDoc} */
     public void startGroup(AffineTransform transform) throws IFException {
         generator.saveGraphicsState();
-        generator.concatenate(generator.toPoints(transform));
+        generator.concatenate(toPoints(transform));
     }
 
     /** {@inheritDoc} */
@@ -196,8 +196,8 @@ public class PDFPainter extends AbstractIFPainter {
         if (fill == null) {
             return;
         }
-        generator.endTextObject();
         if (rect.width != 0 && rect.height != 0) {
+            generator.endTextObject();
             if (fill != null) {
                 if (fill instanceof Color) {
                     generator.updateColor((Color)fill, true, null);
@@ -302,7 +302,7 @@ public class PDFPainter extends AbstractIFPainter {
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
                     ch = font.mapChar(CharUtilities.SPACE);
                     int spaceDiff = font.getCharWidth(ch) - font.getCharWidth(orgChar);
-                    glyphAdjust = -(10 * spaceDiff / fontSize);
+                    glyphAdjust = -spaceDiff;
                 } else {
                     ch = font.mapChar(orgChar);
                 }
@@ -314,7 +314,7 @@ public class PDFPainter extends AbstractIFPainter {
             }
 
             if (glyphAdjust != 0) {
-                textutil.adjustGlyphTJ(-glyphAdjust / 10f);
+                textutil.adjustGlyphTJ(-glyphAdjust / fontSize);
             }
 
         }

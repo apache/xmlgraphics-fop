@@ -168,7 +168,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void startPage(int index, String name, Dimension size) throws IFException {
+    public void startPage(int index, String name, String pageMasterName, Dimension size)
+                throws IFException {
         this.pdfResources = this.pdfDoc.getResources();
 
         this.currentPage = this.pdfDoc.getFactory().makePage(

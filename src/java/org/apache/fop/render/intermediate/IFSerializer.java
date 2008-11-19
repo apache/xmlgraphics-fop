@@ -191,11 +191,12 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler implements
     }
 
     /** {@inheritDoc} */
-    public void startPage(int index, String name, Dimension size) throws IFException {
+    public void startPage(int index, String name, String pageMasterName, Dimension size) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "index", Integer.toString(index));
             addAttribute(atts, "name", name);
+            addAttribute(atts, "page-master-name", name);
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
             handler.startElement(EL_PAGE, atts);

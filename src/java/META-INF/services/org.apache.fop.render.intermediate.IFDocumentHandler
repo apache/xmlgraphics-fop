@@ -1,3 +1,4 @@
 org.apache.fop.render.pdf.PDFDocumentHandlerMaker
 org.apache.fop.render.pcl.PCLDocumentHandlerMaker
 org.apache.fop.render.bitmap.TIFFDocumentHandlerMaker
+org.apache.fop.render.ps.PSDocumentHandlerMaker

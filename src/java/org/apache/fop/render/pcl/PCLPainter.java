@@ -414,7 +414,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                 glyphAdjust += dx[i + 1];
             }
 
-            width += cw - glyphAdjust;
+            width += cw + glyphAdjust;
         }
         int extraWidth = font.getFontSize() / 3;
         boundingRect.setSize(
@@ -447,14 +447,14 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                     g2d.setBackground(Color.LIGHT_GRAY);
                     g2d.clearRect(0, 0, (int)area.getWidth(), (int)area.getHeight());
                 }
-                g2d.translate(0, -y + baselineOffset);
+                g2d.translate(-x, -y + baselineOffset);
 
                 if (DEBUG) {
                     Rectangle rect = new Rectangle(x, y - maxAscent, 3000, maxAscent);
                     g2d.draw(rect);
                     rect = new Rectangle(x, y - ascent, 2000, ascent);
                     g2d.draw(rect);
-                    rect = new Rectangle(x, y, 1000, - descent);
+                    rect = new Rectangle(x, y, 1000, -descent);
                     g2d.draw(rect);
                 }
                 Java2DPainter painter = new Java2DPainter(g2d,

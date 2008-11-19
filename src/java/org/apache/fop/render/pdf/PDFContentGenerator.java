@@ -186,20 +186,6 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Converts a transformation matrix from millipoints to points.
-     * @param transform the transformation matrix (in millipoints)
-     * @return the converted transformation matrix (in points)
-     */
-    public AffineTransform toPoints(AffineTransform transform) {
-        final double[] matrix = new double[6];
-        transform.getMatrix(matrix);
-        //Convert from millipoints to points
-        matrix[4] /= 1000;
-        matrix[5] /= 1000;
-        return new AffineTransform(matrix);
-    }
-
-    /**
      * Concatenates the given transformation matrix with the current one.
      * @param transform the transformation matrix (in points)
      */

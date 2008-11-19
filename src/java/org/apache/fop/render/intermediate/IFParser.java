@@ -332,9 +332,10 @@ public class IFParser implements IFConstants {
             public void startElement(Attributes attributes) throws IFException {
                 int index = Integer.parseInt(attributes.getValue("index"));
                 String name = attributes.getValue("name");
+                String pageMasterName = attributes.getValue("page-master-name");
                 int width = Integer.parseInt(attributes.getValue("width"));
                 int height = Integer.parseInt(attributes.getValue("height"));
-                documentHandler.startPage(index, name, new Dimension(width, height));
+                documentHandler.startPage(index, name, pageMasterName, new Dimension(width, height));
             }
 
             public void endElement() throws IFException {

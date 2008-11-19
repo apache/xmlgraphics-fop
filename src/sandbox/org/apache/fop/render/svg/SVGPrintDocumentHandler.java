@@ -111,7 +111,8 @@ public class SVGPrintDocumentHandler extends AbstractSVGDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void startPage(int index, String name, Dimension size) throws IFException {
+    public void startPage(int index, String name, String pageMasterName, Dimension size)
+                throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             /*

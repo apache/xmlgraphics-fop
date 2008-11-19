@@ -233,7 +233,7 @@ public class Java2DPainter extends AbstractIFPainter {
                 glyphAdjust += dx[i + 1];
             }
 
-            cursor.setLocation(cursor.getX() + cw - glyphAdjust, cursor.getY());
+            cursor.setLocation(cursor.getX() + cw + glyphAdjust, cursor.getY());
             gv.setGlyphPosition(i + 1, cursor);
         }
         g2d.drawGlyphVector(gv, x, y);
