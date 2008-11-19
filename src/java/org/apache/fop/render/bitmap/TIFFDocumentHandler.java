@@ -166,7 +166,8 @@ public class TIFFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void startPage(int index, String name, Dimension size) throws IFException {
+    public void startPage(int index, String name, String pageMasterName, Dimension size)
+                throws IFException {
         this.pageCount++;
         this.currentPageDimensions = new Dimension(size);
     }

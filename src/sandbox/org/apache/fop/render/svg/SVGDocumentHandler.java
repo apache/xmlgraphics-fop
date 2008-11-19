@@ -149,7 +149,8 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void startPage(int index, String name, Dimension size) throws IFException {
+    public void startPage(int index, String name, String pageMasterName, Dimension size)
+                throws IFException {
         OutputStream out;
         try {
             if (index == 0) {

@@ -195,6 +195,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    /** {@inheritDoc} */
+    public boolean supportsOutOfOrder() {
+        return (this.documentHandler != null
+                ? this.documentHandler.supportsPagesOutOfOrder() : false);
+    }
+
     /**
      * Creates a default {@code IFDocumentHandler} when none has been set.
      * @return the default IFDocumentHandler
@@ -492,7 +498,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             Dimension dim = new Dimension(
                     (int)Math.ceil(viewArea.getWidth()),
                     (int)Math.ceil(viewArea.getHeight()));
-            documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(), dim);
+            documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(),
+                    page.getSimplePageMasterName(), dim);
             documentHandler.startPageHeader();
             //TODO Handle page header
             documentHandler.endPageHeader();
@@ -867,8 +874,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             int tws = ((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
                          + 2 * textArea.getTextLetterSpaceAdjust();
             if (tws != 0) {
-                float fontSize = font.getFontSize() / 1000f;
-                textUtil.adjust(Math.round(tws / fontSize * 10));
+                textUtil.adjust(tws);
             }
         }
         super.renderSpace(space);
@@ -891,7 +897,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         for (int i = 0; i < l; i++) {
             char ch = s.charAt(i);
             textUtil.addChar(ch);
-            float glyphAdjust = 0;
+            int glyphAdjust = 0;
             if (font.hasChar(ch)) {
                 int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
                 glyphAdjust += tls;
@@ -900,9 +906,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 glyphAdjust += letterAdjust[i];
             }
 
-            float adjust = glyphAdjust / fontSize;
-
-            textUtil.adjust(Math.round(adjust * 10));
+            textUtil.adjust(glyphAdjust);
         }
     }
 

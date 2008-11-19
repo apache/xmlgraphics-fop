@@ -173,7 +173,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void startPage(int index, String name, Dimension size) throws IFException {
+    public void startPage(int index, String name, String pageMasterName, Dimension size) throws IFException {
 
         try {
             //TODO Add support for paper-source and duplex-mode

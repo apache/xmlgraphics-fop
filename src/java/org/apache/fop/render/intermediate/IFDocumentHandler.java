@@ -189,10 +189,11 @@ public interface IFDocumentHandler {
      * Indicates the start of a new page.
      * @param index the index of the page (0-based)
      * @param name the page name (usually the formatted page number)
+     * @param pageMasterName the name of the simple-page-master that generated this page
      * @param size the size of the page (equivalent to the MediaBox in PDF)
      * @throws IFException if an error occurs while handling this event
      */
-    void startPage(int index, String name, Dimension size) throws IFException;
+    void startPage(int index, String name, String pageMasterName, Dimension size) throws IFException;
 
     /**
      * Indicates the end of a page
