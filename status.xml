@@ -65,6 +65,9 @@
       <action context="Fonts" dev="AC" importance="high" type="fix">
         More robust AFP font parsing, although it is still in need of some rework in the future.
       </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="46240">
+        Fixed a bug when combining break-before with a span change.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="46211" due-to="rogov.AT.devexperts.com">
         Fixed some multi-threading issues in FontCache.java:
         <ul>
