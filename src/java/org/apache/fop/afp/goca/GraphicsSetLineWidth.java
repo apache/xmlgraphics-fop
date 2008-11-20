@@ -22,13 +22,10 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-import org.apache.fop.afp.modca.StructuredDataObject;
-
 /**
  * Sets the line width to use when stroking GOCA shapes (structured fields)
  */
-public class GraphicsSetLineWidth extends AbstractNamedAFPObject implements StructuredDataObject {
+public class GraphicsSetLineWidth extends AbstractGraphicsDrawingOrder {
 
     /** line width multiplier */
     private int multiplier = 1;
@@ -50,7 +47,7 @@ public class GraphicsSetLineWidth extends AbstractNamedAFPObject implements Stru
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[] {
-           0x19, // GSLW order code
+           getOrderCode(), // GSLW order code
            (byte)multiplier // MH (line-width)
         };
         os.write(data);
@@ -59,5 +56,10 @@ public class GraphicsSetLineWidth extends AbstractNamedAFPObject implements Stru
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetLineWidth{multiplier=" + multiplier + "}";
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
+        return 0x19;
     }
 }

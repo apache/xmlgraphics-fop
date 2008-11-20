@@ -22,10 +22,12 @@ package org.apache.fop.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.afp.Completable;
+
 /**
  * A print-file resource group
  */
-public class StreamedResourceGroup extends ResourceGroup {
+public class StreamedResourceGroup extends ResourceGroup implements Completable {
     /** the outputstream to write to */
     private final OutputStream os;
 
@@ -73,15 +75,6 @@ public class StreamedResourceGroup extends ResourceGroup {
     }
 
     /**
-     * Returns true if this resource group is complete
-     *
-     * @return true if this resource group is complete
-     */
-    public boolean isComplete() {
-        return this.complete;
-    }
-
-    /**
      * Returns the outputstream
      *
      * @return the outputstream
@@ -89,4 +82,15 @@ public class StreamedResourceGroup extends ResourceGroup {
     public OutputStream getOutputStream() {
         return this.os;
     }
+
+    /** {@inheritDoc} */
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isComplete() {
+        return this.complete;
+    }
+
 }

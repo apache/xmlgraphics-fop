@@ -20,12 +20,12 @@
 package org.apache.fop.afp.modca.triplets;
 
 import org.apache.fop.afp.Streamable;
-import org.apache.fop.afp.modca.StructuredDataObject;
+import org.apache.fop.afp.StructuredData;
 
 /**
  * A simple implementation of a MOD:CA triplet
  */
-public abstract class AbstractTriplet implements Streamable, StructuredDataObject {
+public abstract class AbstractTriplet implements Streamable, StructuredData {
     public static final byte CODED_GRAPHIC_CHARACTER_SET_GLOBAL_IDENTIFIER = 0x01;
 
     /** Triplet identifiers */

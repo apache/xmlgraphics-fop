@@ -82,13 +82,13 @@ public abstract class AbstractAFPObject implements Streamable {
     }
 
     /**
-     * Help method to write a set of AFPObjects to the AFP datastream.
+     * Writes a collection of Streamable to the AFP Datastream.
      *
      * @param objects a list of AFPObjects
      * @param os The stream to write to
      * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
-    protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os)
+    protected void writeObjects(Collection/*<Streamable>*/ objects, OutputStream os)
         throws IOException {
         if (objects != null && objects.size() > 0) {
             Iterator it = objects.iterator();
@@ -103,14 +103,14 @@ public abstract class AbstractAFPObject implements Streamable {
     }
 
     /**
-     * Reads data chunks from an inputstream
-     * and then formats them with a structured header to a given outputstream
+     * Reads data chunks from an InputStream
+     * and then formats them with a structured header to a given OutputStream
      *
      * @param dataHeader the header data
      * @param lengthOffset offset of length field in data chunk
      * @param maxChunkLength the maximum chunk length
-     * @param inputStream the inputstream to read from
-     * @param outputStream the outputstream to write to
+     * @param inputStream the InputStream to read from
+     * @param outputStream the OutputStream to write to
      * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
     protected static void copyChunks(byte[] dataHeader, int lengthOffset,

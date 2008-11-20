@@ -21,24 +21,26 @@ package org.apache.fop.afp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.afp.modca.DataStream;
 
+/**
+ * A base AFP painter
+ */
 public abstract class AbstractAFPPainter {
 
     /** Static logging instance */
     protected static Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     protected final DataStream dataStream;
-    protected final AFPPaintingState state;
+    protected final AFPPaintingState paintingState;
 
     /**
      * Main constructor
      *
-     * @param state the afp state
-     * @param dataStream the afp datastream
+     * @param paintingState the AFP painting state
+     * @param dataStream the AFP Datastream
      */
-    public AbstractAFPPainter(AFPPaintingState state, DataStream dataStream) {
-        this.state = state;
+    public AbstractAFPPainter(AFPPaintingState paintingState, DataStream dataStream) {
+        this.paintingState = paintingState;
         this.dataStream = dataStream;
     }
 
@@ -47,5 +49,5 @@ public abstract class AbstractAFPPainter {
      *
      * @param paintInfo the painting information
      */
-    public abstract void paint(PaintInfo paintInfo);
+    public abstract void paint(PaintingInfo paintInfo);
 }

@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.afp.goca;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 /**
- * A GOCA graphics area (container for filled shapes/objects)
+ * The beginning of a filled region (graphics area).
  */
-public final class GraphicsArea extends AbstractGraphicsObjectContainer {
+public class GraphicsAreaBegin extends AbstractGraphicsDrawingOrder {
 
     private static final int RES1 = 1;
     private static final int BOUNDARY = 2;
@@ -45,30 +44,26 @@ public final class GraphicsArea extends AbstractGraphicsObjectContainer {
     }
 
     /** {@inheritDoc} */
-    public int getDataLength() {
-        return 4 + super.getDataLength();
-    }
-
-    /** {@inheritDoc} */
-    protected void writeStart(OutputStream os) throws IOException {
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[] {
-            (byte)0x68, // GBAR order code
+            getOrderCode(), // GBAR order code
             (byte)(RES1 + (drawBoundary ? BOUNDARY : NO_BOUNDARY))
         };
         os.write(data);
     }
 
     /** {@inheritDoc} */
-    protected void writeEnd(OutputStream os) throws IOException {
-        byte[] data = new byte[] {
-            (byte)0x60, // GEAR order code
-            0x00, // LENGTH
-        };
-        os.write(data);
+    public int getDataLength() {
+        return 2;
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return "GraphicsArea{drawBoundary=" + drawBoundary + "}";
+        return "GraphicsAreaBegin{drawBoundary=" + drawBoundary + "}";
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
+        return 0x68;
     }
 }

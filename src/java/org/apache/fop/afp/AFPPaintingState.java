@@ -27,7 +27,8 @@ import org.apache.fop.util.AbstractPaintingState;
 /**
  * This keeps information about the current painting state when writing to an AFP datastream.
  */
-public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState  implements Cloneable {
+public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState
+implements Cloneable {
 
     private static final long serialVersionUID = 8206711712452344473L;
 
@@ -337,14 +338,14 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
 
     /** {@inheritDoc} */
     public Object clone() {
-        AFPPaintingState state = (AFPPaintingState)super.clone();
-        state.pagePaintingState = (AFPPagePaintingState)this.pagePaintingState.clone();
-        state.portraitRotation = this.portraitRotation;
-        state.landscapeRotation = this.landscapeRotation;
-        state.bitsPerPixel = this.bitsPerPixel;
-        state.colorImages = this.colorImages;
-        state.resolution = this.resolution;
-        return state;
+        AFPPaintingState paintingState = (AFPPaintingState)super.clone();
+        paintingState.pagePaintingState = (AFPPagePaintingState)this.pagePaintingState.clone();
+        paintingState.portraitRotation = this.portraitRotation;
+        paintingState.landscapeRotation = this.landscapeRotation;
+        paintingState.bitsPerPixel = this.bitsPerPixel;
+        paintingState.colorImages = this.colorImages;
+        paintingState.resolution = this.resolution;
+        return paintingState;
     }
 
     /** {@inheritDoc} */

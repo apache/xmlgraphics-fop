@@ -30,6 +30,9 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
+/**
+ * A FOP base implementation of a Batik BridgeContext.
+ */
 public abstract class AbstractFOPBridgeContext extends BridgeContext {
 
     /** The font list. */

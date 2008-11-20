@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.afp.modca.AbstractAFPObject;
-import org.apache.fop.afp.modca.AbstractAFPObject.Category;
-import org.apache.fop.afp.modca.AbstractAFPObject.Type;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
@@ -49,13 +47,12 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class ImageRasterData extends AbstractAFPObject {
 
-    /**
-     * The image raster data
-     */
+    /** the image raster data */
     private final byte[] rasterData;
 
     /**
      * Constructor for the image raster data object
+     *
      * @param data The raster image data
      */
     public ImageRasterData(byte[] data) {

@@ -17,17 +17,24 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.modca;
+package org.apache.fop.afp;
 
 /**
- * An AFP object which is able to know its own data length before writeToStream()
+ * Set and expose whether an object has started or not.
  */
-public interface StructuredDataObject {
+public interface Startable {
 
     /**
-     * Returns the data length of this structured field
+     * Sets whether or not this object has started or not
      *
-     * @return the data length of this structured field
+     * @param complete true if this object has started
      */
-    int getDataLength();
+    void setStarted(boolean started);
+
+    /**
+     * Returns true if this object has started
+     *
+     * @return true if this object has started
+     */
+    boolean isStarted();
 }

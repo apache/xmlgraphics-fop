@@ -22,14 +22,10 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-import org.apache.fop.afp.modca.StructuredDataObject;
-
 /**
  * Sets the value of the current line type attribute when stroking GOCA shapes (structured fields)
  */
-public class GraphicsSetLineType extends AbstractNamedAFPObject
-implements StructuredDataObject {
+public class GraphicsSetLineType extends AbstractGraphicsDrawingOrder {
 
     /** the default line type */
     public static final byte DEFAULT = 0x00; // normally SOLID
@@ -78,7 +74,7 @@ implements StructuredDataObject {
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[] {
-            0x18, // GSLW order code
+            getOrderCode(), // GSLW order code
             type // line type
         };
         os.write(data);
@@ -92,5 +88,10 @@ implements StructuredDataObject {
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetLineType{type=" + TYPES[type] + "}";
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
+        return 0x18;
     }
 }

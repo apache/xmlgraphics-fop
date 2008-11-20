@@ -38,13 +38,13 @@ import org.apache.fop.afp.util.BinaryUtils;
 public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
     /** the PresentationEnvironmentControl for the object environment group */
-    private PresentationEnvironmentControl presentationEnvironmentControl = null;
+    private PresentationEnvironmentControl presentationEnvironmentControl;
 
     /** the ObjectAreaDescriptor for the object environment group */
-    private ObjectAreaDescriptor objectAreaDescriptor = null;
+    private ObjectAreaDescriptor objectAreaDescriptor;
 
     /** the ObjectAreaPosition for the object environment group */
-    private ObjectAreaPosition objectAreaPosition = null;
+    private ObjectAreaPosition objectAreaPosition;
 
     /** the DataDescriptor for the object environment group */
     private AbstractDescriptor dataDescriptor;
@@ -95,6 +95,8 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
         data[2] = len[1];
 
         os.write(data);
+
+        writeTriplets(os);
     }
 
     /** {@inheritDoc} */

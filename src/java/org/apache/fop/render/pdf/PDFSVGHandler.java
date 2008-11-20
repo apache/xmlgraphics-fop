@@ -243,7 +243,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         pdfInfo.currentStream.add("%SVG start\n");
 
         //Save state and update coordinate system for the SVG image
-        pdfInfo.pdfPaintingState.push();
+        pdfInfo.pdfPaintingState.save();
         pdfInfo.pdfPaintingState.concatenate(imageTransform);
 
         //Now that we have the complete transformation matrix for the image, we can update the
@@ -262,7 +262,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }
-        pdfInfo.pdfPaintingState.pop();
+        pdfInfo.pdfPaintingState.restore();
         renderer.restoreGraphicsState();
         pdfInfo.currentStream.add("%SVG end\n");
     }

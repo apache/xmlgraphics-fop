@@ -61,7 +61,7 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
         final boolean textAsShapes = false;
         AFPGraphics2D g2d = afpInfo.createGraphics2D(textAsShapes);
 
-        paintingState.push();
+        paintingState.save();
 
         //Fallback solution: Paint to a BufferedImage
         if (afpInfo.paintAsBitmap()) {
@@ -95,7 +95,7 @@ public class AFPGraphics2DAdapter extends AbstractGraphics2DAdapter {
             resourceManager.createObject(graphicsObjectInfo);
         }
 
-        paintingState.pop();
+        paintingState.restore();
     }
 
     /** {@inheritDoc} */

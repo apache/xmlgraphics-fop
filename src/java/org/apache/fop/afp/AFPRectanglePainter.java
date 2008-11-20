@@ -21,37 +21,39 @@ package org.apache.fop.afp;
 
 import java.awt.geom.AffineTransform;
 
-import org.apache.fop.afp.modca.DataStream;
 
+/**
+ * A painter of rectangles in AFP
+ */
 public class AFPRectanglePainter extends AbstractAFPPainter {
 
     /**
      * Main constructor
      *
-     * @param state the AFP painting state
-     * @param dataStream the afp datastream
+     * @param paintingState the AFP painting state
+     * @param dataStream the AFP datastream
      */
-    public AFPRectanglePainter(AFPPaintingState state, DataStream dataStream) {
-        super(state, dataStream);
+    public AFPRectanglePainter(AFPPaintingState paintingState, DataStream dataStream) {
+        super(paintingState, dataStream);
     }
 
     /** {@inheritDoc} */
-    public void paint(PaintInfo paintInfo) {
-        RectanglePaintInfo rectanglePaintInfo = (RectanglePaintInfo)paintInfo;
+    public void paint(PaintingInfo paintInfo) {
+        RectanglePaintingInfo rectanglePaintInfo = (RectanglePaintingInfo)paintInfo;
         int pageWidth = dataStream.getCurrentPage().getWidth();
         int pageHeight = dataStream.getCurrentPage().getHeight();
 
-        AFPUnitConverter unitConv = state.getUnitConverter();
+        AFPUnitConverter unitConv = paintingState.getUnitConverter();
         float width = unitConv.pt2units(rectanglePaintInfo.getWidth());
         float height = unitConv.pt2units(rectanglePaintInfo.getHeight());
         float x = unitConv.pt2units(rectanglePaintInfo.getX());
         float y = unitConv.pt2units(rectanglePaintInfo.getY());
 
-        AffineTransform at = state.getData().getTransform();
+        AffineTransform at = paintingState.getData().getTransform();
 
         AFPLineDataInfo lineDataInfo = new AFPLineDataInfo();
-        lineDataInfo.color = state.getColor();
-        lineDataInfo.rotation = state.getRotation();
+        lineDataInfo.color = paintingState.getColor();
+        lineDataInfo.rotation = paintingState.getRotation();
         lineDataInfo.thickness = Math.round(height);
 
         switch (lineDataInfo.rotation) {

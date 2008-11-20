@@ -640,7 +640,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void saveGraphicsState() {
         endTextObject();
-        paintingState.push();
+        paintingState.save();
         currentStream.add("q\n");
     }
 
@@ -648,7 +648,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         endTextObject();
         currentStream.add("Q\n");
         if (popState) {
-            paintingState.pop();
+            paintingState.restore();
         }
     }
 
@@ -1099,7 +1099,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         AbstractPaintingState.AbstractData data;
         while (true) {
             data = paintingState.getData();
-            if (paintingState.pop() == null) {
+            if (paintingState.restore() == null) {
                 break;
             }
             if (breakOutList.size() == 0) {
@@ -1747,7 +1747,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public void renderLeader(Leader area) {
         renderInlineAreaBackAndBorders(area);
 
-        paintingState.push();
+        paintingState.save();
         saveGraphicsState();
         int style = area.getRuleStyle();
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
@@ -1805,7 +1805,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
 
         restoreGraphicsState();
-        paintingState.pop();
+        paintingState.restore();
         beginTextObject();
         super.renderLeader(area);
     }

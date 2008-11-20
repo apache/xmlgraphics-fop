@@ -33,9 +33,7 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class ImageOutputControl extends AbstractAFPObject {
 
-    /**
-     * The orientation of the image
-     */
+    /** the orientation of the image */
     private int orientation = 0;
 
     /**
@@ -50,9 +48,7 @@ public class ImageOutputControl extends AbstractAFPObject {
      */
     private int yCoord = 0;
 
-    /**
-     * Map an image point to a single presentation device
-     */
+    /** map an image point to a single presentation device */
     private boolean singlePoint = true;
 
     /**

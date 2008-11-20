@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.apache.fop.afp.modca.AbstractDataObject;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-import org.apache.fop.afp.modca.DataStream;
 import org.apache.fop.afp.modca.IncludeObject;
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;

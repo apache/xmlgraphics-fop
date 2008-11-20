@@ -30,12 +30,17 @@ public final class GraphicsFillet extends AbstractGraphicsCoord {
      *
      * @param coords the x/y coordinates for this object
      */
-    public GraphicsFillet(int[] coords) {
-        super(coords);
+    public GraphicsFillet(int[] coords, boolean relative) {
+        super(coords, relative);
     }
 
+    /** {@inheritDoc} */
     byte getOrderCode() {
-        return (byte)0xC5;
+        if (isRelative()) {
+            return (byte)0x85;
+        } else {
+            return (byte)0xC5;
+        }
     }
 
 }

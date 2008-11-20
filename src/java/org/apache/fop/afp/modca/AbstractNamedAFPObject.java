@@ -66,7 +66,7 @@ public abstract class AbstractNamedAFPObject extends AbstractTripletStructuredOb
      *
      * @return the name as a byte array in EBCIDIC encoding
      */
-    protected byte[] getNameBytes() {
+    public byte[] getNameBytes() {
         int afpNameLen = getNameLength();
         int nameLen = name.length();
         if (nameLen < afpNameLen) {
@@ -103,7 +103,16 @@ public abstract class AbstractNamedAFPObject extends AbstractTripletStructuredOb
      * @return the name of this object
      */
     public String getName() {
-        return name;
+        return this.name;
+    }
+
+    /**
+     * Sets the name of this object
+     *
+     * @param name the object name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /** {@inheritDoc} */

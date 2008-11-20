@@ -22,20 +22,26 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.StructuredDataObject;
+import org.apache.fop.afp.StructuredData;
 import org.apache.fop.afp.util.BinaryUtils;
 import org.apache.fop.afp.util.StringUtils;
 
 /**
  * A GOCA graphics data
  */
-public final class GraphicsData extends AbstractGraphicsObjectContainer {
+public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
 
-    /** The maximum graphics data length */
+    /** the maximum graphics data length */
     public static final int MAX_DATA_LEN = 32767;
 
-    /** The graphics segment */
-    private GraphicsChainedSegment segment = null;
+    /** the graphics segment */
+    private GraphicsChainedSegment currentSegment = null;
+
+    /**
+     * Main constructor
+     */
+    public GraphicsData() {
+    }
 
     /** {@inheritDoc} */
     public int getDataLength() {
@@ -43,40 +49,14 @@ public final class GraphicsData extends AbstractGraphicsObjectContainer {
     }
 
     /**
-     * Begins a graphics area (start of fill)
-     */
-    public void beginArea() {
-        getSegment().beginArea();
-    }
-
-    /**
-     * Ends a graphics area (end of fill)
-     */
-    public void endArea() {
-        getSegment().endArea();
-    }
-
-    /**
      * Returns a new segment name
      *
      * @return a new segment name
      */
-    private String createSegmentName() {
+    public String createSegmentName() {
         return StringUtils.lpad(String.valueOf(
                 (super.objects != null ? super.objects.size() : 0) + 1),
             '0', 4);
-    }
-
-    /**
-     * Returns the current graphics segment, creating one if one does not exist
-     *
-     * @return the current graphics chained segment
-     */
-    private GraphicsChainedSegment getSegment() {
-        if (segment == null) {
-            newSegment();
-        }
-        return this.segment;
     }
 
     /**
@@ -85,24 +65,35 @@ public final class GraphicsData extends AbstractGraphicsObjectContainer {
      * @return a newly created graphics segment
      */
     public GraphicsChainedSegment newSegment() {
-        String name = createSegmentName();
-        if (segment == null) {
-            this.segment = new GraphicsChainedSegment(name);
+        String segmentName = createSegmentName();
+        if (currentSegment == null) {
+            currentSegment = new GraphicsChainedSegment(segmentName);
         } else {
-            this.segment = new GraphicsChainedSegment(name, segment);
+            currentSegment.setComplete(true);
+            currentSegment = new GraphicsChainedSegment(segmentName, currentSegment.getNameBytes());
         }
-        super.addObject(segment);
-        return segment;
+        super.addObject(currentSegment);
+        return currentSegment;
     }
 
     /** {@inheritDoc} */
-    public void addObject(StructuredDataObject drawingOrder) {
-        if (segment == null
-            || (segment.getDataLength() + drawingOrder.getDataLength())
-            >= GraphicsChainedSegment.MAX_DATA_LEN) {
+    public void addObject(StructuredData object) {
+        if (currentSegment == null
+                || (currentSegment.getDataLength() + object.getDataLength())
+                >= GraphicsChainedSegment.MAX_DATA_LEN) {
             newSegment();
         }
-        segment.addObject(drawingOrder);
+        currentSegment.addObject(object);
+    }
+
+    /**
+     * Removes the current segment from this graphics data
+     *
+     * @return the current segment from this graphics data
+     */
+    public StructuredData removeCurrentSegment() {
+        this.currentSegment = null;
+        return super.removeLast();
     }
 
     /** {@inheritDoc} */
@@ -115,13 +106,21 @@ public final class GraphicsData extends AbstractGraphicsObjectContainer {
         data[2] = len[1]; // Length byte 2
         os.write(data);
 
-        // get first segment in chain and write (including all its connected segments)
-        GraphicsChainedSegment firstSegment = (GraphicsChainedSegment)objects.get(0);
-        firstSegment.writeToStream(os);
+        writeObjects(objects, os);
     }
 
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsData";
+    }
+
+    /**
+     * Adds the given segment to this graphics data
+     *
+     * @param segment a graphics chained segment
+     */
+    public void addSegment(GraphicsChainedSegment segment) {
+        currentSegment = segment;
+        super.addObject(currentSegment);
     }
 }

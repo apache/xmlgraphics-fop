@@ -22,7 +22,7 @@ package org.apache.fop.afp.modca.triplets;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/** resource object type triplet */
+/** A Resource Object Type Triplet */
 public class ResourceObjectTypeTriplet extends AbstractTriplet {
 
     private static final byte RESOURCE_OBJECT = 0x21;

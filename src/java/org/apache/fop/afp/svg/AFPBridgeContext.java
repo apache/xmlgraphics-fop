@@ -31,6 +31,9 @@ import org.apache.fop.svg.AbstractFOPBridgeContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
+/**
+ * An AFP specific implementation of a Batik BridgeContext
+ */
 public class AFPBridgeContext extends AbstractFOPBridgeContext {
 
     private final AFPGraphics2D g2d;

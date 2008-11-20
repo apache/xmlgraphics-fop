@@ -19,24 +19,35 @@
 
 package org.apache.fop.afp.goca;
 
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * A GOCA graphics curved tangential line to a specified set of
- * straight lines drawn from the given position or current position
+ * The end of a filled region (graphics area).
  */
-public final class GraphicsFilletRelative extends AbstractGraphicsCoord {
+public class GraphicsAreaEnd extends AbstractGraphicsDrawingOrder {
 
-    /**
-     * Constructor
-     *
-     * @param coords the x/y coordinates for this object
-     */
-    public GraphicsFilletRelative(int[] coords) {
-        super(coords);
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = new byte[] {
+            getOrderCode(), // GEAR order code
+            0x00, // LENGTH
+        };
+        os.write(data);
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 2;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "GraphicsAreaEnd";
     }
 
     /** {@inheritDoc} */
     byte getOrderCode() {
-        return (byte)0x85;
+        return 0x60;
     }
 }

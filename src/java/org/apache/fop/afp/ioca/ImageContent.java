@@ -53,38 +53,26 @@ public class ImageContent extends AbstractStructuredObject {
      */
     public static final byte COMPID_G3_MMR = (byte)0x82;
 
-    /**
-     * The image size parameter
-     */
+    /** the image size parameter */
     private ImageSizeParameter imageSizeParameter = null;
 
-    /**
-     * The image encoding
-     */
+    /** the image encoding */
     private byte encoding = (byte)0x03;
 
-    /**
-     * The image ide size
-     */
+    /** the image ide size */
     private byte size = 1;
 
-    /**
-     * The image compression
-     */
+    /** the image compression */
     private byte compression = (byte)0xC0;
 
-    /**
-     * The image color model
-     */
+    /** the image color model */
     private byte colorModel = (byte)0x01;
 
-    /**
-     * The image data
-     */
+    /** the image data */
     private byte[] data;
 
     /**
-     * Constructor for the image content
+     * Main Constructor
      */
     public ImageContent() {
     }
@@ -169,7 +157,7 @@ public class ImageContent extends AbstractStructuredObject {
                 0x00  // length
             };
             final int lengthOffset = 2;
-            writeChunksToStream(this.data, dataHeader, lengthOffset, MAX_DATA_LEN, os);
+            writeChunksToStream(data, dataHeader, lengthOffset, MAX_DATA_LEN, os);
         }
     }
 

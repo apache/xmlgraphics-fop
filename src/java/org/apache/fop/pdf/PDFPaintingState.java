@@ -170,7 +170,7 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
      * This call should be used when the q operator is used
      * so that the state is known when popped.
      */
-    public void push() {
+    public void save() {
         AbstractData data = getData();
         AbstractData copy = (AbstractData)data.clone();
         data.clearTransform();

@@ -22,9 +22,10 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-
-public class GraphicsSetMix extends AbstractNamedAFPObject {
+/**
+ * Sets the foreground mix mode.
+ */
+public class GraphicsSetMix extends AbstractGraphicsDrawingOrder {
 
     public static final byte MODE_DEFAULT = 0x00;
     public static final byte MODE_OVERPAINT = 0x02;
@@ -53,6 +54,16 @@ public class GraphicsSetMix extends AbstractNamedAFPObject {
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetMix{mode=" + mode + "}";
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
+        return 0x0C;
+    }
+
+    /** {@inheritDoc} */
+    public int getDataLength() {
+        return 2;
     }
 
 }

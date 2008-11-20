@@ -22,6 +22,9 @@ package org.apache.fop.afp.modca.triplets;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Associates an ObjectAreaPosition with and ObjectAreaDescriptor structured field
+ */
 public class DescriptorPositionTriplet extends AbstractTriplet {
 
     private final byte oapId;

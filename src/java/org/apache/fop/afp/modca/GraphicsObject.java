@@ -22,18 +22,24 @@ package org.apache.fop.afp.modca;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
+import org.apache.fop.afp.StructuredData;
+import org.apache.fop.afp.goca.GraphicsAreaBegin;
+import org.apache.fop.afp.goca.GraphicsAreaEnd;
 import org.apache.fop.afp.goca.GraphicsBox;
+import org.apache.fop.afp.goca.GraphicsChainedSegment;
+import org.apache.fop.afp.goca.GraphicsCharacterString;
 import org.apache.fop.afp.goca.GraphicsData;
 import org.apache.fop.afp.goca.GraphicsFillet;
-import org.apache.fop.afp.goca.GraphicsFilletRelative;
 import org.apache.fop.afp.goca.GraphicsFullArc;
+import org.apache.fop.afp.goca.GraphicsImage;
 import org.apache.fop.afp.goca.GraphicsLine;
-import org.apache.fop.afp.goca.GraphicsLineRelative;
 import org.apache.fop.afp.goca.GraphicsSetArcParameters;
 import org.apache.fop.afp.goca.GraphicsSetCharacterSet;
 import org.apache.fop.afp.goca.GraphicsSetCurrentPosition;
@@ -41,7 +47,6 @@ import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.goca.GraphicsSetLineWidth;
 import org.apache.fop.afp.goca.GraphicsSetPatternSymbol;
 import org.apache.fop.afp.goca.GraphicsSetProcessColor;
-import org.apache.fop.afp.goca.GraphicsString;
 
 /**
  * Top-level GOCA graphics object.
@@ -51,11 +56,26 @@ import org.apache.fop.afp.goca.GraphicsString;
 public class GraphicsObject extends AbstractDataObject {
 
     /** The graphics data */
-    private GraphicsData data = null;
+    private GraphicsData currentData = null;
 
     /** list of objects contained within this container */
     protected List/*<GraphicsDrawingOrder>*/ objects
         = new java.util.ArrayList/*<GraphicsDrawingOrder>*/();
+
+    /** the current color */
+    private Color currentColor;
+
+    /** the current line type */
+    private byte currentLineType;
+
+    /** the current line width */
+    private int currentLineWidth;
+
+    /** the current fill pattern */
+    private byte currentPatternSymbol;
+
+    /** the current character set */
+    private int currentCharacterSet;
 
     /**
      * Default constructor
@@ -85,13 +105,18 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
-    public void addObject(StructuredDataObject drawingOrder) {
-        if (data == null
-                || (data.getDataLength() + drawingOrder.getDataLength())
-                >= GraphicsData.MAX_DATA_LEN) {
+    public void addObject(StructuredData object) {
+        if (currentData == null) {
             newData();
+        } else if (currentData.getDataLength() + object.getDataLength()
+                >= GraphicsData.MAX_DATA_LEN) {
+            // graphics data full so transfer current incomplete segment to new data
+            GraphicsChainedSegment currentSegment
+                = (GraphicsChainedSegment)currentData.removeCurrentSegment();
+            currentSegment.setName(newData().createSegmentName());
+            currentData.addSegment(currentSegment);
         }
-        data.addObject(drawingOrder);
+        currentData.addObject(object);
     }
 
     /**
@@ -100,10 +125,10 @@ public class GraphicsObject extends AbstractDataObject {
      * @return the current graphics data
      */
     private GraphicsData getData() {
-        if (this.data == null) {
+        if (this.currentData == null) {
             return newData();
         }
-        return this.data;
+        return this.currentData;
     }
 
     /**
@@ -112,9 +137,12 @@ public class GraphicsObject extends AbstractDataObject {
      * @return a newly created graphics data
      */
     private GraphicsData newData() {
-        this.data = factory.createGraphicsData();
-        objects.add(data);
-        return data;
+        if (currentData != null) {
+            currentData.setComplete(true);
+        }
+        this.currentData = factory.createGraphicsData();
+        objects.add(currentData);
+        return currentData;
     }
 
     /**
@@ -123,7 +151,10 @@ public class GraphicsObject extends AbstractDataObject {
      * @param color the active color to use
      */
     public void setColor(Color color) {
-        addObject(new GraphicsSetProcessColor(color));
+        if (!color.equals(currentColor)) {
+            this.currentColor = color;
+            addObject(new GraphicsSetProcessColor(color));
+        }
     }
 
     /**
@@ -138,43 +169,60 @@ public class GraphicsObject extends AbstractDataObject {
     /**
      * Sets the line width
      *
-     * @param multiplier the line width multiplier
+     * @param lineWidth the line width multiplier
      */
-    public void setLineWidth(int multiplier) {
-        GraphicsSetLineWidth graphicsSetLineWidth = new GraphicsSetLineWidth(multiplier);
-        addObject(graphicsSetLineWidth);
+    public void setLineWidth(int lineWidth) {
+        if (lineWidth != currentLineWidth) {
+            currentLineWidth = lineWidth;
+            addObject(new GraphicsSetLineWidth(lineWidth));
+        }
     }
 
     /**
      * Sets the line type
      *
-     * @param type the line type
+     * @param lineType the line type
      */
-    public void setLineType(byte type) {
-        GraphicsSetLineType graphicsSetLineType = new GraphicsSetLineType(type);
-        addObject(graphicsSetLineType);
+    public void setLineType(byte lineType) {
+        if (lineType != currentLineType) {
+            currentLineType = lineType;
+            addObject(new GraphicsSetLineType(lineType));
+        }
     }
 
     /**
-     * Sets whether to fill the next shape
+     * Sets whether the following shape is to be filled
      *
-     * @param fill whether to fill the next shape
+     * @param fill true if the following shape is to be filled
      */
     public void setFill(boolean fill) {
-        GraphicsSetPatternSymbol graphicsSetPattern = new GraphicsSetPatternSymbol(
-                fill ? GraphicsSetPatternSymbol.SOLID_FILL
-                     : GraphicsSetPatternSymbol.NO_FILL
-        );
-        addObject(graphicsSetPattern);
+        setPatternSymbol(fill ?
+                GraphicsSetPatternSymbol.SOLID_FILL :
+                    GraphicsSetPatternSymbol.NO_FILL);
+    }
+
+    /**
+     * Sets the fill pattern of the next shape
+     *
+     * @param the fill pattern of the next shape
+     */
+    public void setPatternSymbol(byte patternSymbol) {
+        if (currentPatternSymbol != patternSymbol) {
+            currentPatternSymbol = patternSymbol;
+            addObject(new GraphicsSetPatternSymbol(patternSymbol));
+        }
     }
 
     /**
      * Sets the character set to use
      *
-     * @param fontReference the character set (font) reference
+     * @param characterSet the character set (font) reference
      */
-    public void setCharacterSet(int fontReference) {
-        addObject(new GraphicsSetCharacterSet(fontReference));
+    public void setCharacterSet(int characterSet) {
+        if (currentCharacterSet != characterSet) {
+            currentCharacterSet = characterSet;
+            addObject(new GraphicsSetCharacterSet(characterSet));
+        }
     }
 
     /**
@@ -193,11 +241,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param relative relative true for a line at current position (relative to)
      */
     public void addLine(int[] coords, boolean relative) {
-        if (relative) {
-            addObject(new GraphicsLineRelative(coords));
-        } else {
-            addObject(new GraphicsLine(coords));
-        }
+        addObject(new GraphicsLine(coords, relative));
     }
 
     /**
@@ -222,14 +266,10 @@ public class GraphicsObject extends AbstractDataObject {
      * Adds a fillet (curve) at the given coordinates
      *
      * @param coords the x/y coordinates
-     * @param relative relative true for a fillet at current position (relative to)
+     * @param relative relative true for a fillet (curve) at current position (relative to)
      */
     public void addFillet(int[] coords, boolean relative) {
-        if (relative) {
-            addObject(new GraphicsFilletRelative(coords));
-        } else {
-            addObject(new GraphicsFillet(coords));
-        }
+        addObject(new GraphicsFillet(coords, relative));
     }
 
     /**
@@ -245,7 +285,7 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /**
-     * Adds an arc
+     * Adds a full arc
      *
      * @param x the x coordinate
      * @param y the y coordinate
@@ -256,18 +296,18 @@ public class GraphicsObject extends AbstractDataObject {
         addObject(new GraphicsFullArc(x, y, mh, mhr));
     }
 
-//    /**
-//     * Adds an image
-//     *
-//     * @param x the x coordinate
-//     * @param y the y coordinate
-//     * @param width the image width
-//     * @param height the image height
-//     * @param imgData the image data
-//     */
-//    public void addImage(int x, int y, int width, int height, byte[] imgData) {
-//        addObject(new GraphicsImage(x, y, width, height, imgData));
-//    }
+    /**
+     * Adds an image
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param width the image width
+     * @param height the image height
+     * @param imgData the image data
+     */
+    public void addImage(int x, int y, int width, int height, byte[] imgData) {
+        addObject(new GraphicsImage(x, y, width, height, imgData));
+    }
 
     /**
      * Adds a string
@@ -277,26 +317,21 @@ public class GraphicsObject extends AbstractDataObject {
      * @param y the y coordinate
      */
     public void addString(String str, int x, int y) {
-        addObject(new GraphicsString(str, x, y));
+        addObject(new GraphicsCharacterString(str, x, y));
     }
 
     /**
      * Begins a graphics area (start of fill)
      */
     public void beginArea() {
-        if (data == null) {
-            newData();
-        }
-        data.beginArea();
+        addObject(new GraphicsAreaBegin());
     }
 
     /**
      * Ends a graphics area (end of fill)
      */
     public void endArea() {
-        if (data != null) {
-            data.endArea();
-        }
+        addObject(new GraphicsAreaEnd());
     }
 
     /** {@inheritDoc} */
@@ -312,7 +347,18 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    public void setComplete(boolean complete) {
+        Iterator it = objects.iterator();
+        while (it.hasNext()) {
+            Completable completedObject = (Completable)it.next();
+            completedObject.setComplete(true);
+        }
+        super.setComplete(complete);
+    }
+
+    /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
+        super.writeStart(os);
         byte[] data = new byte[17];
         copySF(data, Type.BEGIN, Category.GRAPHICS);
         os.write(data);
@@ -321,7 +367,7 @@ public class GraphicsObject extends AbstractDataObject {
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
-        super.writeObjects(objects, os);
+        writeObjects(objects, os);
     }
 
     /** {@inheritDoc} */

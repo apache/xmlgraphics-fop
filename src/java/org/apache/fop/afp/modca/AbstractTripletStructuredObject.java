@@ -31,6 +31,9 @@ import org.apache.fop.afp.modca.triplets.CommentTriplet;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.afp.modca.triplets.ObjectClassificationTriplet;
 
+/**
+ * A MODCA structured object base class providing support for Triplets
+ */
 public class AbstractTripletStructuredObject extends AbstractStructuredObject {
 
     /** list of object triplets */

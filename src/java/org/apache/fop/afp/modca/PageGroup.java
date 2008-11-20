@@ -74,7 +74,7 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
     /**
      * Method to mark the end of the page group.
      */
-    protected void endPageGroup() {
+    public void endPageGroup() {
         complete = true;
     }
 

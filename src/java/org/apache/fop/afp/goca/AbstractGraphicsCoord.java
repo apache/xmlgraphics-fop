@@ -22,18 +22,17 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-import org.apache.fop.afp.modca.StructuredDataObject;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * A base class encapsulating the structure of coordinate based GOCA objects
  */
-public abstract class AbstractGraphicsCoord extends AbstractNamedAFPObject
-    implements StructuredDataObject {
+public abstract class AbstractGraphicsCoord extends AbstractGraphicsDrawingOrder {
 
     /** array of x/y coordinates */
     protected int[] coords = null;
+
+    protected boolean relative = false;
 
     /**
      * Constructor
@@ -41,7 +40,22 @@ public abstract class AbstractGraphicsCoord extends AbstractNamedAFPObject
      * @param coords the x/y coordinates for this object
      */
     public AbstractGraphicsCoord(int[] coords) {
-        this.coords = coords;
+        if (coords == null) {
+            relative = true;
+        } else {
+            this.coords = coords;
+        }
+    }
+
+    /**
+     * Constructor
+     *
+     * @param coords the x/y coordinates for this object
+     * @param relative
+     */
+    public AbstractGraphicsCoord(int[] coords, boolean relative) {
+        this(coords);
+        this.relative = relative;
     }
 
     /**
@@ -68,15 +82,8 @@ public abstract class AbstractGraphicsCoord extends AbstractNamedAFPObject
 
     /** {@inheritDoc} */
     public int getDataLength() {
-        return 2 + (coords.length * 2);
+        return 2 + (coords != null ? coords.length * 2 : 0);
     }
-
-    /**
-     * Returns the order code of this structured field
-     *
-     * @return the order code of this structured field
-     */
-    abstract byte getOrderCode();
 
     /**
      * Returns the coordinate data start index
@@ -93,15 +100,10 @@ public abstract class AbstractGraphicsCoord extends AbstractNamedAFPObject
      * @return the coordinate data
      */
     byte[] getData() {
-        int len = getDataLength();
-        byte[] data = new byte[len];
-        data[0] = getOrderCode();
-        data[1] = (byte)(len - 2);
-
+        byte[] data = super.getData();
         if (coords != null) {
             addCoords(data, getCoordinateDataStartIndex());
         }
-
         return data;
     }
 
@@ -125,16 +127,6 @@ public abstract class AbstractGraphicsCoord extends AbstractNamedAFPObject
         }
     }
 
-    /**
-     * Returns the short name of this GOCA object
-     *
-     * @return the short name of this GOCA object
-     */
-    public String getName() {
-        String className = getClass().getName();
-        return className.substring(className.lastIndexOf(".") + 1);
-    }
-
     /** {@inheritDoc} */
     public String toString() {
         String coordsStr = "";
@@ -144,5 +136,14 @@ public abstract class AbstractGraphicsCoord extends AbstractNamedAFPObject
         }
         coordsStr = coordsStr.substring(0, coordsStr.length() - 1);
         return getName() + "{" + coordsStr + "}";
+    }
+
+    /**
+     * Returns true if this is a relative drawing order
+     *
+     * @return true if this is a relative drawing order
+     */
+    protected boolean isRelative() {
+        return this.relative;
     }
 }

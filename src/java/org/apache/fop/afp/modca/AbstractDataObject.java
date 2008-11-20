@@ -26,19 +26,27 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceLevel;
+import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
+import org.apache.fop.afp.Startable;
 
 /**
  * Abstract base class used by the ImageObject and GraphicsObject which both
  * have define an ObjectEnvironmentGroup
  */
-public abstract class AbstractDataObject extends AbstractNamedAFPObject {
+public abstract class AbstractDataObject extends AbstractNamedAFPObject implements Startable, Completable {
 
     /** the object environment group */
     protected ObjectEnvironmentGroup objectEnvironmentGroup = null;
 
     /** the object factory */
     protected final Factory factory;
+
+    /** the completion status of this object */
+    private boolean complete;
+
+    /** the starting status of this object */
+    private boolean started;
 
     /**
      * Named constructor
@@ -98,11 +106,34 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject {
     }
 
     /** {@inheritDoc} */
+    protected void writeStart(OutputStream os) throws IOException {
+        setStarted(true);
+    }
+
+    /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
-        super.writeContent(os); // write triplets
         if (objectEnvironmentGroup != null) {
             objectEnvironmentGroup.writeToStream(os);
         }
     }
 
+    /** {@inheritDoc} */
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isStarted() {
+        return this.started;
+    }
+
+    /** {@inheritDoc} */
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isComplete() {
+        return this.complete;
+    }
 }

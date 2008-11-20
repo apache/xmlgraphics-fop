@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,34 +23,27 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.fop.afp.Completable;
+
 /**
  * A Resource Environment Group contains a set of resources for a document
  * or for a group of pages in a document.
  */
-public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
-    /**
-     * Default name for the resource group
-     */
+public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup implements Completable {
+
+    /** default name for the resource group */
     private static final String DEFAULT_NAME = "REG00001";
 
-    /**
-     * The maps data resources contained in this resource environment group
-     */
+    /** the maps data resources contained in this resource environment group */
     private List/*<MapDataResource>*/ mapDataResources = null;
-    
-    /**
-     * The maps page overlays contained in this resource environment group
-     */
+
+    /** the maps page overlays contained in this resource environment group */
     private List mapPageOverlays = null;
-    
-    /**
-     * The pre-process presentation objects contained in this resource environment group
-     */
+
+    /** the pre-process presentation objects contained in this resource environment group */
     private List/*<PreprocessPresentationObject>*/ preProcessPresentationObjects = null;
 
-    /**
-     * The resource environment group state
-     */
+    /** the resource environment group state */
     private boolean complete = false;
 
     /**
@@ -100,16 +93,7 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
 //        createOverlay(obj.get);
 //        getPreprocessPresentationObjects().add(new PreprocessPresentationObject(obj));
 //    }
-        
-    /**
-     * Returns an indication if the resource environment group is complete
-     * 
-     * @return whether or not this resource environment group is complete or not
-     */
-    public boolean isComplete() {
-        return complete;
-    }
-    
+
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
@@ -129,6 +113,16 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup {
         writeObjects(mapDataResources, os);
         writeObjects(mapPageOverlays, os);
         writeObjects(preProcessPresentationObjects, os);
+    }
+
+    /** {@inheritDoc} */
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isComplete() {
+        return complete;
     }
 
 }

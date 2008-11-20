@@ -69,11 +69,7 @@ public final class Document extends AbstractResourceEnvironmentGroupContainer {
         complete = true;
     }
 
-    /**
-     * Returns an indication if the page group is complete
-     *
-     * @return whether or not this page group is complete
-     */
+    /** {@inheritDoc} */
     public boolean isComplete() {
         return complete;
     }

@@ -24,14 +24,10 @@ import java.awt.color.ColorSpace;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-import org.apache.fop.afp.modca.StructuredDataObject;
-
 /**
  * Sets the current processing color for the following GOCA structured fields
  */
-public class GraphicsSetProcessColor extends AbstractNamedAFPObject
-implements StructuredDataObject {
+public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
 
     private final Color color;
 

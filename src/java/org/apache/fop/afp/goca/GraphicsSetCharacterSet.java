@@ -22,15 +22,12 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-import org.apache.fop.afp.modca.StructuredDataObject;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * Sets the current character set (font) to be used for following graphics strings
  */
-public class GraphicsSetCharacterSet extends AbstractNamedAFPObject
-    implements StructuredDataObject {
+public class GraphicsSetCharacterSet extends AbstractGraphicsDrawingOrder {
 
     /** font character set reference */
     private final int fontReference;
@@ -45,7 +42,7 @@ public class GraphicsSetCharacterSet extends AbstractNamedAFPObject
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[] {
-            0x38, // GSCS order code
+            getOrderCode(), // GSCS order code
             BinaryUtils.convert(fontReference)[0]
         };
         os.write(data);
@@ -59,6 +56,11 @@ public class GraphicsSetCharacterSet extends AbstractNamedAFPObject
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetCharacterSet(" + fontReference + ")";
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
+        return 0x38;
     }
 
 }

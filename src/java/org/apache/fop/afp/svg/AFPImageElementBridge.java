@@ -22,6 +22,9 @@ package org.apache.fop.afp.svg;
 import org.apache.fop.svg.AbstractFOPImageElementBridge;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 
+/**
+ * An AFP specific implementation of a Batik SVGImageElementBridge
+ */
 public class AFPImageElementBridge extends AbstractFOPImageElementBridge {
 
     private final ImageFlavor[] supportedFlavors = new ImageFlavor[]

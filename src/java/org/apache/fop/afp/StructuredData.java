@@ -20,8 +20,14 @@
 package org.apache.fop.afp;
 
 /**
- * Generic painting information interface
+ * An AFP object which is able to know its own data length prior to writeToStream()
  */
-public interface PaintInfo {
+public interface StructuredData {
 
+    /**
+     * Returns the data length of this structured field
+     *
+     * @return the data length of this structured field
+     */
+    int getDataLength();
 }

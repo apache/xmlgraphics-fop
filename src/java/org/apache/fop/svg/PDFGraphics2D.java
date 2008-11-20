@@ -608,7 +608,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         if (newClip || newTransform) {
             currentStream.write("q\n");
-            paintingState.push();
+            paintingState.save();
             if (newTransform) {
                 concatMatrix(tranvals);
             }
@@ -634,7 +634,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
                 if (newClip || newTransform) {
                     currentStream.write("Q\n");
-                    paintingState.pop();
+                    paintingState.restore();
                 }
                 return;
             }
@@ -646,7 +646,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         doDrawing(false, true, false);
         if (newClip || newTransform) {
             currentStream.write("Q\n");
-            paintingState.pop();
+            paintingState.restore();
         }
     }
 
@@ -1614,7 +1614,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         if (newClip || newTransform) {
             currentStream.write("q\n");
-            paintingState.push();
+            paintingState.save();
             if (newTransform) {
                 concatMatrix(tranvals);
             }
@@ -1638,7 +1638,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
                 if (newClip || newTransform) {
                     currentStream.write("Q\n");
-                    paintingState.pop();
+                    paintingState.restore();
                 }
                 return;
             }
@@ -1651,7 +1651,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                   iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
         if (newClip || newTransform) {
             currentStream.write("Q\n");
-            paintingState.pop();
+            paintingState.restore();
         }
     }
 

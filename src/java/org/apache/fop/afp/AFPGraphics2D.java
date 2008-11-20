@@ -28,9 +28,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
+import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -83,6 +85,9 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
     private static final int Y2 = 3;
 
+    private static final int X3 = 4;
+
+    private static final int Y3 = 5;
 
     /** graphics object */
     private GraphicsObject graphicsObj = null;
@@ -188,7 +193,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
             // set line width
             float lineWidth = basicStroke.getLineWidth();
-            getGraphicsObject().setLineWidth(Math.round(lineWidth * 2));
+            graphicsObj.setLineWidth(Math.round(lineWidth / 2));
 
             // set line type/style (note: this is an approximation at best!)
             float[] dashArray = basicStroke.getDashArray();
@@ -219,12 +224,39 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                         }
                     }
                 }
-                getGraphicsObject().setLineType(type);
+                graphicsObj.setLineType(type);
             }
         } else {
             log.warn("Unsupported Stroke: " + stroke.getClass().getName());
         }
     }
+
+    /**
+     * Apply the java paint to the AFP.
+     * This takes the java paint sets up the appropriate AFP commands
+     * for the drawing with that paint.
+     * Currently this supports the gradients and patterns from batik.
+     *
+     * @param paint the paint to convert to AFP
+     * @param fill true if the paint should be set for filling
+     * @return true if the paint is handled natively, false if the paint should be rasterized
+     */
+    private boolean applyPaint(Paint paint, boolean fill) {
+        if (paint instanceof Color) {
+            return true;
+        }
+        log.debug("NYI: applyPaint() " + paint + " fill=" + fill);
+        if (paint instanceof TexturePaint) {
+//            TexturePaint texturePaint = (TexturePaint)paint;
+//            BufferedImage bufferedImage = texturePaint.getImage();
+//            AffineTransform at = paintingState.getTransform();
+//            int x = (int)Math.round(at.getTranslateX());
+//            int y = (int)Math.round(at.getTranslateY());
+//            drawImage(bufferedImage, x, y, null);
+        }
+        return false;
+    }
+
 
     /**
      * Handle the Batik drawing event
@@ -239,25 +271,22 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
             graphicsObj.newSegment();
         }
 
-        Color color = getColor();
-        if (paintingState.setColor(color)) {
-            graphicsObj.setColor(color);
-        }
+        graphicsObj.setColor(gc.getColor());
 
-        Stroke stroke = getStroke();
-        applyStroke(stroke);
+        applyPaint(gc.getPaint(), fill);
 
         if (fill) {
             graphicsObj.beginArea();
+        } else {
+            applyStroke(gc.getStroke());
         }
 
         AffineTransform trans = gc.getTransform();
         PathIterator iter = shape.getPathIterator(trans);
-        double[] dstPts = new double[6];
-        int[] coords = null;
         if (shape instanceof Line2D) {
+            double[] dstPts = new double[6];
             iter.currentSegment(dstPts);
-            coords = new int[4];
+            int[] coords = new int[4];
             coords[X1] = (int) Math.round(dstPts[X]);
             coords[Y1] = (int) Math.round(dstPts[Y]);
             iter.next();
@@ -266,8 +295,9 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
             coords[Y2] = (int) Math.round(dstPts[Y]);
             graphicsObj.addLine(coords);
         } else if (shape instanceof Rectangle2D) {
+            double[] dstPts = new double[6];
             iter.currentSegment(dstPts);
-            coords = new int[4];
+            int[] coords = new int[4];
             coords[X2] = (int) Math.round(dstPts[X]);
             coords[Y2] = (int) Math.round(dstPts[Y]);
             iter.next();
@@ -277,6 +307,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
             coords[Y1] = (int) Math.round(dstPts[Y]);
             graphicsObj.addBox(coords);
         } else if (shape instanceof Ellipse2D) {
+            double[] dstPts = new double[6];
             Ellipse2D elip = (Ellipse2D) shape;
             double scale = trans.getScaleX();
             double radiusWidth = elip.getWidth() / 2;
@@ -298,56 +329,73 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     mhr
             );
         } else {
-            for (int[] openingCoords = new int[2]; !iter.isDone(); iter.next()) {
-                int type = iter.currentSegment(dstPts);
-                int numCoords;
-                if (type == PathIterator.SEG_MOVETO || type == PathIterator.SEG_LINETO) {
-                    numCoords = 2;
-                } else if (type == PathIterator.SEG_QUADTO) {
-                    numCoords = 4;
-                } else if (type == PathIterator.SEG_CUBICTO) {
-                    numCoords = 6;
-                } else {
-                    // close of the graphics segment
-                    if (type == PathIterator.SEG_CLOSE) {
-                        // close segment by drawing to opening position
-                        graphicsObj.addLine(openingCoords, true);
-                    } else {
-                        log.debug("Unrecognised path iterator type: "
-                                + type);
-                    }
-                    continue;
-                }
-                coords = new int[numCoords];
-                for (int i = 0; i < numCoords; i++) {
-                    coords[i] = (int) Math.round(dstPts[i]);
-                }
-                if (type == PathIterator.SEG_MOVETO) {
-                    graphicsObj.setCurrentPosition(coords);
-                    openingCoords[X] = coords[X];
-                    openingCoords[Y] = coords[Y];
-                } else if (type == PathIterator.SEG_LINETO) {
-                    graphicsObj.addLine(coords, true);
-                } else if (type == PathIterator.SEG_QUADTO
-                        || type == PathIterator.SEG_CUBICTO) {
-                    graphicsObj.addFillet(coords, true);
-                }
-            }
+            processPathIterator(iter);
         }
+
         if (fill) {
             graphicsObj.endArea();
         }
     }
 
+    /**
+     * Processes a path iterator generating the necessary painting operations.
+     *
+     * @param iter PathIterator to process
+     */
+    private void processPathIterator(PathIterator iter) {
+        double[] dstPts = new double[6];
+        for (int[] openingCoords = new int[2]; !iter.isDone(); iter.next()) {
+            switch (iter.currentSegment(dstPts)) {
+            case PathIterator.SEG_LINETO:
+                graphicsObj.addLine(new int[] {
+                        (int)Math.round(dstPts[X]),
+                        (int)Math.round(dstPts[Y])
+                     }, true);
+                break;
+            case PathIterator.SEG_QUADTO:
+                graphicsObj.addFillet(new int[] {
+                        (int)Math.round(dstPts[X1]),
+                        (int)Math.round(dstPts[Y1]),
+                        (int)Math.round(dstPts[X2]),
+                        (int)Math.round(dstPts[Y2])
+                     }, true);
+                break;
+            case PathIterator.SEG_CUBICTO:
+                graphicsObj.addFillet(new int[] {
+                        (int)Math.round(dstPts[X1]),
+                        (int)Math.round(dstPts[Y1]),
+                        (int)Math.round(dstPts[X2]),
+                        (int)Math.round(dstPts[Y2]),
+                        (int)Math.round(dstPts[X3]),
+                        (int)Math.round(dstPts[Y3])
+                     }, true);
+                break;
+            case PathIterator.SEG_MOVETO:
+                openingCoords = new int[] {
+                        (int)Math.round(dstPts[X]),
+                        (int)Math.round(dstPts[Y])
+                };
+                graphicsObj.setCurrentPosition(openingCoords);
+                break;
+            case PathIterator.SEG_CLOSE:
+                graphicsObj.addLine(openingCoords, true);
+                break;
+            default:
+                log.debug("Unrecognised path iterator type");
+                break;
+            }
+        }
+    }
+
     /** {@inheritDoc} */
     public void draw(Shape shape) {
-//        log.debug("draw() shape=" + shape);
+        log.debug("draw() shape=" + shape);
         doDrawing(shape, false);
     }
 
     /** {@inheritDoc} */
     public void fill(Shape shape) {
-//        log.debug("fill() shape=" + shape);
+        log.debug("fill() shape=" + shape);
         doDrawing(shape, true);
     }
 
@@ -379,11 +427,6 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     /** {@inheritDoc} */
     public GraphicsConfiguration getDeviceConfiguration() {
         return graphicsConfig;
-    }
-
-    /** {@inheritDoc} */
-    public void copyArea(int x, int y, int width, int height, int dx, int dy) {
-        log.debug("copyArea() NYI: ");
     }
 
     /** {@inheritDoc} */
@@ -642,5 +685,10 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
             float x, float y, float width, float height) {
         log.debug("NYI: addNativeImage() "+ "image=" + image
                 + ",x=" + x + ",y=" + y + ",width=" + width + ",height=" + height);
+    }
+
+    /** {@inheritDoc} */
+    public void copyArea(int x, int y, int width, int height, int dx, int dy) {
+        log.debug("copyArea() NYI: ");
     }
 }

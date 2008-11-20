@@ -31,38 +31,27 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class ImageCellPosition extends AbstractAFPObject {
 
-    /**
-     * Offset of image cell in X direction
-     */
+    /** offset of image cell in X direction */
     private int xOffset = 0;
 
-    /**
-     * Offset of image cell in Y direction
-     */
+    /** offset of image cell in Y direction */
     private int yOffset = 0;
 
-    /**
-     * Size of image cell in X direction
-     */
+    /** size of image cell in X direction */
     private final byte[] xSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
-    /**
-     * Size of image cell in Y direction
-     */
+    /** size of image cell in Y direction */
     private final byte[] ySize = new byte[] {(byte)0xFF, (byte)0xFF};
 
-    /**
-     * Size of fill rectangle in X direction
-     */
+    /** size of fill rectangle in X direction */
     private final byte[] xFillSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
-    /**
-     * Size of fill rectangle in Y direction
-     */
+    /** size of fill rectangle in Y direction */
     private final byte[] yFillSize = new byte[] {(byte)0xFF, (byte)0xFF};
 
     /**
-     * Constructor for the ImageCellPosition
+     * Main Constructor
+     *
      * @param x The offset of image cell in X direction
      * @param y The offset of image cell in Y direction
      */

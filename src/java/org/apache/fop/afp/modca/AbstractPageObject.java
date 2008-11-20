@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.fop.afp.AFPLineDataInfo;
 import org.apache.fop.afp.AFPTextDataInfo;
+import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.fonts.AFPFont;
 
@@ -48,7 +49,7 @@ import org.apache.fop.afp.fonts.AFPFont;
  * in page state.
  *
  */
-public abstract class AbstractPageObject extends AbstractNamedAFPObject {
+public abstract class AbstractPageObject extends AbstractNamedAFPObject implements Completable {
 
     /** The active environment group for the page */
     protected ActiveEnvironmentGroup activeEnvironmentGroup = null;
@@ -183,7 +184,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
         if (currentPresentationTextObject != null) {
             currentPresentationTextObject.endControlSequence();
         }
-        complete = true;
+        setComplete(true);
     }
 
     /**
@@ -294,15 +295,6 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
     }
 
     /**
-     * Returns an indication if the page is complete
-     *
-     * @return whether this page is complete
-     */
-    public boolean isComplete() {
-        return complete;
-    }
-
-    /**
      * Returns the height of the page
      *
      * @return the height of the page
@@ -342,5 +334,15 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject {
      */
     public void addObject(Object obj) {
         objects.add(obj);
+    }
+
+    /** {@inheritDoc} */
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isComplete() {
+        return this.complete;
     }
 }

@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.modca;
+package org.apache.fop.afp;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -28,13 +28,16 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.afp.AFPLineDataInfo;
-import org.apache.fop.afp.AFPPaintingState;
-import org.apache.fop.afp.AFPResourceLevel;
-import org.apache.fop.afp.AFPTextDataInfo;
-import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.AFPFontAttributes;
+import org.apache.fop.afp.modca.AbstractPageObject;
+import org.apache.fop.afp.modca.Document;
+import org.apache.fop.afp.modca.InterchangeSet;
+import org.apache.fop.afp.modca.Overlay;
+import org.apache.fop.afp.modca.PageGroup;
+import org.apache.fop.afp.modca.PageObject;
+import org.apache.fop.afp.modca.ResourceGroup;
+import org.apache.fop.afp.modca.TagLogicalElementBean;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 
 /**
@@ -55,7 +58,7 @@ import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 public class DataStream {
 
     /** Static logging instance */
-    protected static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp.modca");
+    protected static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** Boolean completion indicator */
     private boolean complete = false;
@@ -84,17 +87,17 @@ public class DataStream {
     private OutputStream outputStream;
 
     /** the afp painting state */
-    private final AFPPaintingState state;
+    private final AFPPaintingState paintingState;
 
     /**
      * Default constructor for the AFPDocumentStream.
      *
      * @param factory the resource factory
-     * @param state the AFP painting state
+     * @param paintingState the AFP painting state
      * @param outputStream the outputstream to write to
      */
-    public DataStream(Factory factory, AFPPaintingState state, OutputStream outputStream) {
-        this.state = state;
+    public DataStream(Factory factory, AFPPaintingState paintingState, OutputStream outputStream) {
+        this.paintingState = paintingState;
         this.factory = factory;
         this.outputStream = outputStream;
     }
@@ -141,7 +144,11 @@ public class DataStream {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Helper method to mark the end of the current document.
+     *
+     * @throws IOException thrown if an I/O exception of some sort has occurred
+     */
     public void endDocument() throws IOException {
         if (complete) {
             String msg = "Invalid state - document already ended.";
@@ -329,7 +336,7 @@ public class DataStream {
      */
     private Point getPoint(int x, int y) {
         Point p = new Point();
-        int rotation = state.getRotation();
+        int rotation = paintingState.getRotation();
         switch (rotation) {
         case 90:
             p.x = y;
@@ -359,7 +366,7 @@ public class DataStream {
      *            the afp text data
      */
     public void createText(AFPTextDataInfo textDataInfo) {
-        int rotation = state.getRotation();
+        int rotation = paintingState.getRotation();
         if (rotation != 0) {
             textDataInfo.setRotation(rotation);
             Point p = getPoint(textDataInfo.getX(), textDataInfo.getY());
@@ -406,7 +413,7 @@ public class DataStream {
      *            the name of the static overlay
      */
     public void createIncludePageOverlay(String name) {
-        currentPageObject.createIncludePageOverlay(name, 0, 0, state.getRotation());
+        currentPageObject.createIncludePageOverlay(name, 0, 0, paintingState.getRotation());
         currentPageObject.getActiveEnvironmentGroup().createOverlay(name);
     }
 
@@ -433,7 +440,7 @@ public class DataStream {
     public void createIncludePageSegment(String name, int x, int y) {
         int xOrigin;
         int yOrigin;
-        int orientation = state.getRotation();
+        int orientation = paintingState.getRotation();
         switch (orientation) {
         case 90:
             xOrigin = currentPage.getWidth() - y;

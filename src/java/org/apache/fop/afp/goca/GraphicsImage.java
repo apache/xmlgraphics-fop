@@ -22,13 +22,15 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractStructuredObject;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * A GOCA Image
  */
-public class GraphicsImage extends AbstractStructuredObject {
+public class GraphicsImage extends AbstractGraphicsDrawingOrder {
+
+    /** the maximum image data length */
+    public static final short MAX_DATA_LEN = 255;
 
     /** x coordinate */
     private final int x;
@@ -63,13 +65,23 @@ public class GraphicsImage extends AbstractStructuredObject {
     }
 
     /** {@inheritDoc} */
-    protected void writeStart(OutputStream os) throws IOException {
+    public int getDataLength() {
+        //TODO:
+        return 0;
+    }
+
+    byte getOrderCode() {
+        return (byte)0xD1;
+    }
+
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] xcoord = BinaryUtils.convert(x, 2);
         byte[] ycoord = BinaryUtils.convert(y, 2);
         byte[] w = BinaryUtils.convert(width, 2);
         byte[] h = BinaryUtils.convert(height, 2);
-        byte[] data = new byte[] {
-            (byte) 0xD1, // GBIMG order code
+        byte[] startData = new byte[] {
+            getOrderCode(), // GBIMG order code
             (byte) 0x0A, // LENGTH
             xcoord[0],
             xcoord[1],
@@ -82,28 +94,19 @@ public class GraphicsImage extends AbstractStructuredObject {
             h[0], // HEIGHT
             h[1] //
         };
-        os.write(data);
-    }
+        os.write(startData);
 
-    /** the maximum image data length */
-    public static final short MAX_DATA_LEN = 255;
-
-    /** {@inheritDoc} */
-    protected void writeContent(OutputStream os) throws IOException {
         byte[] dataHeader = new byte[] {
             (byte) 0x92 // GIMD
         };
         final int lengthOffset = 1;
         writeChunksToStream(imageData, dataHeader, lengthOffset, MAX_DATA_LEN, os);
-    }
 
-    /** {@inheritDoc} */
-    protected void writeEnd(OutputStream os) throws IOException {
-        byte[] data = new byte[] {
+        byte[] endData = new byte[] {
             (byte) 0x93, // GEIMG order code
             0x00 // LENGTH
         };
-        os.write(data);
+        os.write(endData);
     }
 
     /** {@inheritDoc} */

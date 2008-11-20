@@ -29,15 +29,15 @@ import java.awt.geom.AffineTransform;
 public class AFPUnitConverter {
 
     /** the AFP state */
-    private final AFPPaintingState state;
+    private final AFPPaintingState paintingState;
 
     /**
      * Unit converter
      *
-     * @param state the AFP painting state
+     * @param paintingState the AFP painting state
      */
-    public AFPUnitConverter(AFPPaintingState state) {
-        this.state = state;
+    public AFPUnitConverter(AFPPaintingState paintingState) {
+        this.paintingState = paintingState;
     }
 
     /**
@@ -89,7 +89,7 @@ public class AFPUnitConverter {
      * @return transformed point
      */
     public float pt2units(float pt) {
-        return pt / ((float)AFPConstants.DPI_72 / state.getResolution());
+        return pt / ((float)AFPConstants.DPI_72 / paintingState.getResolution());
     }
 
     /**
@@ -99,14 +99,14 @@ public class AFPUnitConverter {
      * @return transformed point
      */
     public float mpt2units(float mpt) {
-        return mpt / ((float)AFPConstants.DPI_72_MPTS / state.getResolution());
+        return mpt / ((float)AFPConstants.DPI_72_MPTS / paintingState.getResolution());
     }
 
     private int[] transformPoints(float[] srcPts, float[] dstPts, boolean milli) {
         if (dstPts == null) {
             dstPts = new float[srcPts.length];
         }
-        AffineTransform at = state.getData().getTransform();
+        AffineTransform at = paintingState.getData().getTransform();
         at.transform(srcPts, 0, dstPts, 0, srcPts.length / 2);
         int[] coords = new int[srcPts.length];
         for (int i = 0; i < srcPts.length; i++) {

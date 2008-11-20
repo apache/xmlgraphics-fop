@@ -19,6 +19,9 @@
 
 package org.apache.fop.afp.goca;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * A GOCA graphics straight line drawn from the
  * given absolute position
@@ -29,14 +32,25 @@ public class GraphicsLine extends AbstractGraphicsCoord {
      * Constructor
      *
      * @param coords the x/y coordinates for this object
+     *
+     * @param relative is this a relative drawing order
      */
-    public GraphicsLine(int[] coords) {
-        super(coords);
+    public GraphicsLine(int[] coords, boolean relative) {
+        super(coords, relative);
     }
 
     /** {@inheritDoc} */
     byte getOrderCode() {
-        return (byte)0xC1;
+        if (isRelative()) {
+            return (byte)0x81;
+        } else {
+            return (byte)0xC1;
+        }
     }
 
+    /** {@inheritDoc} */
+    public void writeToStream(OutputStream os) throws IOException {
+        byte[] data = getData();
+        os.write(data);
+    }
 }

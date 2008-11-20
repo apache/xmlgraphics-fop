@@ -125,7 +125,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         int height = afpInfo.getHeight();
         int resolution = afpInfo.getResolution();
 
-        paintingState.push(); // save
+        paintingState.save(); // save
 
         AFPObjectAreaInfo objectAreaInfo
             = createObjectAreaInfo(paintingState, x, y, width, height, resolution);
@@ -140,7 +140,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         AFPResourceManager resourceManager = afpInfo.getResourceManager();
         resourceManager.createObject(graphicsObjectInfo);
 
-        paintingState.pop(); // resume
+        paintingState.restore(); // resume
     }
 
     private AFPObjectAreaInfo createObjectAreaInfo(AFPPaintingState paintingState,

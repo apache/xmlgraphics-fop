@@ -32,11 +32,8 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class ImageInputDescriptor extends AbstractAFPObject {
 
-    /**
-     * The resolution of the raster image (default 240)
-     */
+    /** the resolution of the raster image (default 240) */
     private int resolution = 240;
-
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {

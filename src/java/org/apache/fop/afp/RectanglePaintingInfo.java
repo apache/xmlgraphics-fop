@@ -23,7 +23,7 @@ package org.apache.fop.afp;
 /**
  * Filled rectangle painting information
  */
-public class RectanglePaintInfo implements PaintInfo {
+public class RectanglePaintingInfo implements PaintingInfo {
 
     private final float x;
     private final float y;
@@ -38,7 +38,7 @@ public class RectanglePaintInfo implements PaintInfo {
      * @param width the width
      * @param height the height
      */
-    public RectanglePaintInfo(float x, float y, float width, float height) {
+    public RectanglePaintingInfo(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
         this.width = width;

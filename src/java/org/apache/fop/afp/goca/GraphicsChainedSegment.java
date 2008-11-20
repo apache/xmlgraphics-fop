@@ -22,25 +22,17 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.StructuredDataObject;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * A GOCA graphics segment
  */
-public final class GraphicsChainedSegment extends AbstractGraphicsObjectContainer {
+public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderContainer {
 
     /** The maximum segment data length */
     protected static final int MAX_DATA_LEN = 8192;
 
-    /** the current area */
-    private GraphicsArea currentArea = null;
-
-    /** the previous segment in the chain */
-    private GraphicsChainedSegment previous = null;
-
-    /** the next segment in the chain */
-    private GraphicsChainedSegment next = null;
+    private byte[] predecessorNameBytes;
 
     /**
      * Main constructor
@@ -57,13 +49,12 @@ public final class GraphicsChainedSegment extends AbstractGraphicsObjectContaine
      *
      * @param name
      *            the name of this graphics segment
-     * @param previous
-     *            the previous graphics segment in this chain
+     * @param predecessorNameBytes
+     *            the name of the predecessor in this chain
      */
-    public GraphicsChainedSegment(String name, GraphicsChainedSegment previous) {
+    public GraphicsChainedSegment(String name, byte[] predecessorNameBytes) {
         super(name);
-        previous.next = this;
-        this.previous = previous;
+        this.predecessorNameBytes = predecessorNameBytes;
     }
 
     /** {@inheritDoc} */
@@ -88,9 +79,7 @@ public final class GraphicsChainedSegment extends AbstractGraphicsObjectContaine
     }
 
     /** {@inheritDoc} */
-    protected void writeStart(OutputStream os) throws IOException {
-        super.writeStart(os);
-
+    public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[14];
         data[0] = getOrderCode(); // BEGIN_SEGMENT
         data[1] = 0x0C; // Length of following parameters
@@ -108,41 +97,12 @@ public final class GraphicsChainedSegment extends AbstractGraphicsObjectContaine
         data[9] = len[1];
 
         // P/S NAME (predecessor name)
-        if (previous != null) {
-            nameBytes = previous.getNameBytes();
-            System.arraycopy(nameBytes, 0, data, 10, NAME_LENGTH);
+        if (predecessorNameBytes != null) {
+            System.arraycopy(predecessorNameBytes, 0, data, 10, NAME_LENGTH);
         }
         os.write(data);
-    }
 
-    /** {@inheritDoc} */
-    protected void writeEnd(OutputStream os) throws IOException {
-        // I am the first segment in the chain so write out the rest
-        if (previous == null) {
-            for (GraphicsChainedSegment segment = next; segment != null; segment = segment.next) {
-                segment.writeToStream(os);
-            }
-        } // else nothing todo
-    }
-
-    /** Begins a graphics area (start of fill) */
-    protected void beginArea() {
-        this.currentArea = new GraphicsArea();
-        super.addObject(currentArea);
-    }
-
-    /** Ends a graphics area (end of fill) */
-    protected void endArea() {
-        this.currentArea = null;
-    }
-
-    /** {@inheritDoc} */
-    public void addObject(StructuredDataObject drawingOrder) {
-        if (currentArea != null) {
-            currentArea.addObject(drawingOrder);
-        } else {
-            super.addObject(drawingOrder);
-        }
+        writeObjects(objects, os);
     }
 
     /** {@inheritDoc} */

@@ -17,26 +17,24 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.goca;
+package org.apache.fop.afp;
 
 /**
- * A GOCA graphics straight line drawn from the
- * relative from the current position.
+ * Set and expose the internal completeness of an object.
  */
-public class GraphicsLineRelative extends AbstractGraphicsCoord {
+public interface Completable {
 
     /**
-     * Constructor
+     * Sets whether or not this object is complete or not
      *
-     * @param coords the x/y coordinates for this object
+     * @param complete true if this object is complete
      */
-    public GraphicsLineRelative(int[] coords) {
-        super(coords);
-    }
+    void setComplete(boolean complete);
 
-    /** {@inheritDoc} */
-    byte getOrderCode() {
-        return (byte)0x81;
-    }
-
+    /**
+     * Returns true if this object is complete
+     *
+     * @return true if this object is complete
+     */
+    boolean isComplete();
 }

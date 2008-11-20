@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.Streamable;
 
@@ -109,7 +110,7 @@ implements Streamable {
      *
      * @return the resource group in this resource group container
      */
-    protected ResourceGroup getResourceGroup() {
+    public ResourceGroup getResourceGroup() {
         if (resourceGroup == null) {
             resourceGroup = factory.createResourceGroup();
         }
@@ -162,6 +163,6 @@ implements Streamable {
      * @return true if this object can be written
      */
     protected boolean canWrite(AbstractAFPObject obj) {
-        return obj instanceof AbstractPageObject && ((AbstractPageObject)obj).isComplete();
+        return obj instanceof AbstractPageObject && ((Completable)obj).isComplete();
     }
 }

@@ -215,10 +215,10 @@ public final class AFPInfo {
     /**
      * Sets the AFP state
      *
-     * @param state the AFP state
+     * @param paintingState the AFP state
      */
-    public void setPaintingState(AFPPaintingState state) {
-        this.paintingState = state;
+    public void setPaintingState(AFPPaintingState paintingState) {
+        this.paintingState = paintingState;
     }
 
     /**

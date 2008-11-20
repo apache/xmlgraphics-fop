@@ -41,13 +41,13 @@ import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.AFPUnitConverter;
-import org.apache.fop.afp.BorderPaintInfo;
-import org.apache.fop.afp.RectanglePaintInfo;
+import org.apache.fop.afp.BorderPaintingInfo;
+import org.apache.fop.afp.DataStream;
+import org.apache.fop.afp.RectanglePaintingInfo;
 import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.AFPFontAttributes;
 import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
-import org.apache.fop.afp.modca.DataStream;
 import org.apache.fop.afp.modca.PageObject;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -171,9 +171,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public AFPRenderer() {
         super();
+        this.imageHandlerRegistry = new AFPImageHandlerRegistry();
         this.resourceManager = new AFPResourceManager();
         this.paintingState = new AFPPaintingState();
-        this.imageHandlerRegistry = new AFPImageHandlerRegistry();
         this.unitConv = paintingState.getUnitConverter();
     }
 
@@ -335,13 +335,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     public void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
-        BorderPaintInfo borderPaintInfo = new BorderPaintInfo(x1, y1, x2, y2, horz, style, col);
+        BorderPaintingInfo borderPaintInfo = new BorderPaintingInfo(x1, y1, x2, y2, horz, style, col);
         borderPainter.paint(borderPaintInfo);
     }
 
     /** {@inheritDoc} */
     public void fillRect(float x, float y, float width, float height) {
-        RectanglePaintInfo rectanglePaintInfo = new RectanglePaintInfo(x, y, width, height);
+        RectanglePaintingInfo rectanglePaintInfo = new RectanglePaintingInfo(x, y, width, height);
         rectanglePainter.paint(rectanglePaintInfo);
     }
 
@@ -485,23 +485,23 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     public void restoreStateStackAfterBreakOut(List breakOutList) {
         log.debug("Block.FIXED --> restoring context after break-out");
-        paintingState.pushAll(breakOutList);
+        paintingState.saveAll(breakOutList);
     }
 
     /** {@inheritDoc} */
     protected List breakOutOfStateStack() {
         log.debug("Block.FIXED --> break out");
-        return paintingState.popAll();
+        return paintingState.restoreAll();
     }
 
     /** {@inheritDoc} */
     public void saveGraphicsState() {
-        paintingState.push();
+        paintingState.save();
     }
 
     /** {@inheritDoc} */
     public void restoreGraphicsState() {
-        paintingState.pop();
+        paintingState.restore();
     }
 
     /** {@inheritDoc} */

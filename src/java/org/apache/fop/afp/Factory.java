@@ -30,7 +30,6 @@ import org.apache.fop.afp.ioca.ImageSegment;
 import org.apache.fop.afp.ioca.ImageSizeParameter;
 import org.apache.fop.afp.modca.ActiveEnvironmentGroup;
 import org.apache.fop.afp.modca.ContainerDataDescriptor;
-import org.apache.fop.afp.modca.DataStream;
 import org.apache.fop.afp.modca.Document;
 import org.apache.fop.afp.modca.GraphicsDataDescriptor;
 import org.apache.fop.afp.modca.GraphicsObject;
@@ -62,7 +61,7 @@ import org.apache.fop.afp.modca.TagLogicalElement;
 import org.apache.fop.afp.util.StringUtils;
 
 /**
- * Creator of MO:DCA data objects (mostly)
+ * Creator of MO:DCA structured field objects
  */
 public class Factory {
 
@@ -392,12 +391,12 @@ public class Factory {
     /**
      * Creates a new {@link DataStream}
      *
-     * @param state the AFP painting state
+     * @param paintingState the AFP painting state
      * @param outputStream an outputstream to write to
      * @return a new {@link DataStream}
      */
-    public DataStream createDataStream(AFPPaintingState state, OutputStream outputStream) {
-        DataStream dataStream = new DataStream(this, state, outputStream);
+    public DataStream createDataStream(AFPPaintingState paintingState, OutputStream outputStream) {
+        DataStream dataStream = new DataStream(this, paintingState, outputStream);
         return dataStream;
     }
 

@@ -21,7 +21,6 @@ package org.apache.fop.afp;
 
 import java.awt.geom.AffineTransform;
 
-import org.apache.fop.afp.modca.DataStream;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.util.ColorUtil;
 
@@ -33,16 +32,16 @@ public class AFPBorderPainter extends AbstractAFPPainter {
     /**
      * Main constructor
      *
-     * @param state the AFP painting state converter
+     * @param paintingState the AFP painting state converter
      * @param dataStream the AFP datastream
      */
-    public AFPBorderPainter(AFPPaintingState state, DataStream dataStream) {
-        super(state, dataStream);
+    public AFPBorderPainter(AFPPaintingState paintingState, DataStream dataStream) {
+        super(paintingState, dataStream);
     }
 
     /** {@inheritDoc} */
-    public void paint(PaintInfo paintInfo) {
-        BorderPaintInfo borderPaintInfo = (BorderPaintInfo)paintInfo;
+    public void paint(PaintingInfo paintInfo) {
+        BorderPaintingInfo borderPaintInfo = (BorderPaintingInfo)paintInfo;
         float w = borderPaintInfo.getX2() - borderPaintInfo.getX1();
         float h = borderPaintInfo.getY2() - borderPaintInfo.getY1();
         if ((w < 0) || (h < 0)) {
@@ -52,15 +51,15 @@ public class AFPBorderPainter extends AbstractAFPPainter {
 
         int pageWidth = dataStream.getCurrentPage().getWidth();
         int pageHeight = dataStream.getCurrentPage().getHeight();
-        AFPUnitConverter unitConv = state.getUnitConverter();
-        AffineTransform at = state.getData().getTransform();
+        AFPUnitConverter unitConv = paintingState.getUnitConverter();
+        AffineTransform at = paintingState.getData().getTransform();
 
         float x1 = unitConv.pt2units(borderPaintInfo.getX1());
         float y1 = unitConv.pt2units(borderPaintInfo.getY1());
         float x2 = unitConv.pt2units(borderPaintInfo.getX2());
         float y2 = unitConv.pt2units(borderPaintInfo.getY2());
 
-        switch (state.getRotation()) {
+        switch (paintingState.getRotation()) {
         case 0:
             x1 += at.getTranslateX();
             y1 += at.getTranslateY();
@@ -89,7 +88,7 @@ public class AFPBorderPainter extends AbstractAFPPainter {
 
         AFPLineDataInfo lineDataInfo = new AFPLineDataInfo();
         lineDataInfo.setColor(borderPaintInfo.getColor());
-        lineDataInfo.setRotation(state.getRotation());
+        lineDataInfo.setRotation(paintingState.getRotation());
         lineDataInfo.x1 = Math.round(x1);
         lineDataInfo.y1 = Math.round(y1);
         if (borderPaintInfo.isHorizontal()) {

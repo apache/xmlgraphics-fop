@@ -28,9 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-
 /**
- * A base class which holds information about the current rendering state.
+ * A base class which holds information about the current painting state.
  */
 public abstract class AbstractPaintingState implements Cloneable, Serializable {
 
@@ -278,23 +277,23 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
 
 
     /**
-     * Push the current painting state onto the stack.
+     * Save the current painting state.
+     * This pushes the current painting state onto the stack.
      * This call should be used when the Q operator is used
      * so that the state is known when popped.
      */
-    public void push() {
+    public void save() {
         AbstractData copy = (AbstractData)getData().clone();
         stateStack.push(copy);
     }
 
     /**
-     * Pop the painting state from the stack and set current values to popped state.
-     * This should be called when a Q operator is used so
-     * the state is restored to the correct values.
+     * Restore the current painting state.
+     * This pops the painting state from the stack and sets current values to popped state.
      *
      * @return the restored state, null if the stack is empty
      */
-    public AbstractData pop() {
+    public AbstractData restore() {
         if (!stateStack.isEmpty()) {
             setData((AbstractData)stateStack.pop());
             return this.data;
@@ -304,30 +303,32 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
     }
 
     /**
-     * Pushes all painting state data in the given list to the stack
+     * Save all painting state data.
+     * This pushes all painting state data in the given list to the stack
      *
      * @param dataList a state data list
      */
-    public void pushAll(List/*<AbstractData>*/ dataList) {
+    public void saveAll(List/*<AbstractData>*/ dataList) {
         Iterator it = dataList.iterator();
         while (it.hasNext()) {
             // save current data on stack
-            push();
+            save();
             setData((AbstractData)it.next());
         }
     }
 
     /**
-     * Pops all painting state data from the stack
+     * Restore all painting state data.
+     * This pops all painting state data from the stack
      *
      * @return a list of state data popped from the stack
      */
-    public List/*<AbstractData>*/ popAll() {
+    public List/*<AbstractData>*/ restoreAll() {
         List/*<AbstractData>*/ dataList = new java.util.ArrayList/*<AbstractData>*/();
         AbstractData data;
         while (true) {
             data = getData();
-            if (pop() == null) {
+            if (restore() == null) {
                 break;
             }
             // insert because of stack-popping

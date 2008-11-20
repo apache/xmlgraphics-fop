@@ -22,14 +22,10 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.afp.modca.AbstractNamedAFPObject;
-import org.apache.fop.afp.modca.StructuredDataObject;
-
 /**
  * Sets the pattern symbol to use when filling following GOCA structured fields
  */
-public class GraphicsSetPatternSymbol extends AbstractNamedAFPObject
-implements StructuredDataObject {
+public class GraphicsSetPatternSymbol extends AbstractGraphicsDrawingOrder {
 
     /** dotted density 1 */
     public static final byte DOTTED_DENSITY_1 = 0x01;
@@ -83,15 +79,15 @@ implements StructuredDataObject {
     public static final byte BLANK = 0x40; // processed same as NO_FILL
 
     /** the graphics pattern symbol to use */
-    private final byte symbol;
+    private final byte pattern;
 
     /**
      * Main constructor
      *
      * @param symb the pattern symbol to use
      */
-    public GraphicsSetPatternSymbol(byte symb) {
-        this.symbol = symb;
+    public GraphicsSetPatternSymbol(byte pattern) {
+        this.pattern = pattern;
     }
 
     /** {@inheritDoc} */
@@ -102,8 +98,8 @@ implements StructuredDataObject {
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[] {
-            0x28, // GSPT order code
-            symbol
+            getOrderCode(), // GSPT order code
+            pattern
         };
         os.write(data);
     }
@@ -111,6 +107,11 @@ implements StructuredDataObject {
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetPatternSymbol(fill="
-            + (symbol == SOLID_FILL ? true : false)  + ")";
+            + (pattern == SOLID_FILL ? true : false)  + ")";
+    }
+
+    /** {@inheritDoc} */
+    byte getOrderCode() {
+        return 0x28;
     }
 }

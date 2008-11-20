@@ -17,41 +17,11 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.goca;
-
-import java.io.IOException;
-import java.io.OutputStream;
+package org.apache.fop.afp;
 
 /**
- * A GOCA graphics string
+ * Generic painting information interface
  */
-public class GraphicsStringRelative extends AbstractGraphicsString {
-
-    /**
-     * Constructor
-     *
-     * @param str the character string
-     */
-    public GraphicsStringRelative(String str) {
-        super(str);
-    }
-
-    /** {@inheritDoc} */
-    byte getOrderCode() {
-        return (byte)0x83;
-    }
-
-    /** {@inheritDoc} */
-    public void writeToStream(OutputStream os) throws IOException {
-        byte[] data = getData();
-        byte[] strData = getStringAsBytes();
-        System.arraycopy(strData, 0, data, 2, strData.length);
-        os.write(data);
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return "GraphicsStringRelative{str='" + str + "'" + "}";
-    }
+public interface PaintingInfo {
 
 }

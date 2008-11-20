@@ -132,7 +132,10 @@ public class AFPDataObjectFactory {
         Rectangle2D area = graphicsObjectInfo.getArea();
         g2d.scale(1, -1);
         g2d.translate(0, -area.getHeight());
+
         painter.paint(g2d, area);
+
+        graphicsObj.setComplete(true);
 
         // return painted graphics object
         return graphicsObj;
