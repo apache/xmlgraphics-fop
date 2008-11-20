@@ -62,12 +62,16 @@ public class AFPResourceManager {
     /**
      * Sets the outputstream
      *
-     * @param state the AFP painting state
+     * @param paintingState the AFP painting state
      * @param outputStream the outputstream
+     * @return a new AFP DataStream
+     * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public void createDataStream(AFPPaintingState state, OutputStream outputStream) {
-        this.dataStream = streamer.createDataStream(state);
+    public DataStream createDataStream(AFPPaintingState paintingState, OutputStream outputStream)
+    throws IOException {
+        this.dataStream = streamer.createDataStream(paintingState);
         streamer.setOutputStream(outputStream);
+        return this.dataStream;
     }
 
     /**

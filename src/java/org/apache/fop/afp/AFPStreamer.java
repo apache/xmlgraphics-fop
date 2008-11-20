@@ -83,19 +83,16 @@ public class AFPStreamer implements Streamable {
     /**
      * Creates a new DataStream
      *
-     * @param state the AFP painting state
+     * @param paintingState the AFP painting state
      * @return a new {@link DataStream}
+     * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public DataStream createDataStream(AFPPaintingState state) {
-        try {
-            this.tempFile = File.createTempFile(AFPDATASTREAM_TEMP_FILE_PREFIX, null);
-            this.documentFile = new RandomAccessFile(tempFile, "rw");
-            this.documentOutputStream = new BufferedOutputStream(
-                    new FileOutputStream(documentFile.getFD()));
-            this.dataStream = factory.createDataStream(state, documentOutputStream);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+    public DataStream createDataStream(AFPPaintingState paintingState) throws IOException {
+        this.tempFile = File.createTempFile(AFPDATASTREAM_TEMP_FILE_PREFIX, null);
+        this.documentFile = new RandomAccessFile(tempFile, "rw");
+        this.documentOutputStream = new BufferedOutputStream(
+                new FileOutputStream(documentFile.getFD()));
+        this.dataStream = factory.createDataStream(paintingState, documentOutputStream);
         return dataStream;
     }
 

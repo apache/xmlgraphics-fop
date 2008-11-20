@@ -196,9 +196,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     public void startRenderer(OutputStream outputStream) throws IOException {
         paintingState.setColor(Color.WHITE);
 
-        resourceManager.createDataStream(paintingState, outputStream);
-
-        this.dataStream = resourceManager.getDataStream();
+        this.dataStream = resourceManager.createDataStream(paintingState, outputStream);
         this.borderPainter = new AFPBorderPainter(paintingState, dataStream);
         this.rectanglePainter = new AFPRectanglePainter(paintingState, dataStream);
 
