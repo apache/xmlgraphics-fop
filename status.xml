@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Images" dev="JM" type="add">
+        Added support for SVG 1.2 functionality inside fo:instream-foreign-object.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="46240">
         Fixed a bug when combining break-before with a span change.
       </action>
