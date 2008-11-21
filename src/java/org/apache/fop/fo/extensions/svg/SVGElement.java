@@ -26,7 +26,6 @@ import java.awt.geom.Rectangle2D;
 import java.net.URL;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
 
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.dom.svg.SVGContext;
@@ -85,7 +84,6 @@ public class SVGElement extends SVGObj {
             log.error("Could not set base URL for svg", e);
         }
 
-        Element e = ((SVGDocument)doc).getRootElement();
         final float ptmm = getUserAgent().getSourcePixelUnitToMillimeter();
         // temporary svg context
         SVGContext dc = new SVGContext() {
@@ -138,7 +136,8 @@ public class SVGElement extends SVGObj {
             public void deselectAll() {
             }
         };
-        ((SVGOMElement)e).setSVGContext(dc);
+        SVGOMElement e = (SVGOMElement)svgRoot;
+        e.setSVGContext(dc);
 
         //if (!e.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
             e.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns",
@@ -146,7 +145,7 @@ public class SVGElement extends SVGObj {
         //}
         int fontSize = 12;
         Point2D p2d = getSize(fontSize, svgRoot, getUserAgent().getSourcePixelUnitToMillimeter());
-       ((SVGOMElement)e).setSVGContext(null);
+        e.setSVGContext(null);
 
         return p2d;
     }
