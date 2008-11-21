@@ -24,13 +24,14 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
+import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
+import org.apache.xmlgraphics.java2d.ps.PSTextHandler;
+import org.apache.xmlgraphics.ps.PSGenerator;
+
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
-import org.apache.xmlgraphics.java2d.ps.PSTextHandler;
-import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
  * Specialized TextHandler implementation that the PSGraphics2D class delegates to to paint text
@@ -38,7 +39,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
  */
 public class NativeTextHandler implements PSTextHandler {
 
-    private final PSGenerator gen;
+    private PSGraphics2D rootG2D;
 
     /** FontInfo containing all available fonts */
     protected FontInfo fontInfo;
@@ -60,8 +61,8 @@ public class NativeTextHandler implements PSTextHandler {
      * @param g2d the PSGraphics2D instance this instances is used by
      * @param fontInfo the FontInfo object with all available fonts
      */
-    public NativeTextHandler(PSGenerator gen, FontInfo fontInfo) {
-        this.gen = gen;
+    public NativeTextHandler(PSGraphics2D g2d, FontInfo fontInfo) {
+        this.rootG2D = g2d;
         if (fontInfo != null) {
             this.fontInfo = fontInfo;
         } else {
@@ -84,7 +85,7 @@ public class NativeTextHandler implements PSTextHandler {
     }
 
     private PSGenerator getPSGenerator() {
-        return this.gen;
+        return this.rootG2D.getPSGenerator();
     }
 
     /** {@inheritDoc} */
