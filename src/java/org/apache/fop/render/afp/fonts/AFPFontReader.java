@@ -26,12 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.render.afp.exceptions.FontRuntimeException;
 import org.apache.fop.render.afp.modca.AFPConstants;
 import org.apache.fop.render.afp.tools.StructuredFieldReader;
 
@@ -111,143 +110,19 @@ public final class AFPFontReader {
     /**
      * The collection of code pages
      */
-    private HashMap codePages = new HashMap();
+    private final Map/*<String, Map<String, String>>*/ codePages
+        = new java.util.HashMap/*<String, Map<String, String>>*/();
 
     /**
-     * Load the font details and metrics into the CharacterSetMetric object,
-     * this will use the actual afp code page and character set files to load
-     * the object with the necessary metrics.
+     * Returns an InputStream to a given file path and filename
      *
-     * @param characterSet the CharacterSetMetric object to populate
-     */
-    public void loadCharacterSetMetric(CharacterSet characterSet) {
-
-        InputStream inputStream = null;
-
-        try {
-
-            /**
-             * Get the code page which contains the character mapping
-             * information to map the unicode character id to the graphic
-             * chracter global identifier.
-             */
-            String cp = new String(characterSet.getCodePage());
-            String path = characterSet.getPath();
-
-            HashMap codepage = (HashMap) codePages.get(cp);
-
-            if (codepage == null) {
-                codepage = loadCodePage(cp, characterSet.getEncoding(), path);
-                codePages.put(cp, codepage);
-            }
-
-            /**
-             * Load the character set metric information, no need to cache this
-             * information as it should be cached by the objects that wish to
-             * load character set metric information.
-             */
-            final String characterset = characterSet.getName();
-
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            if (classLoader == null) {
-                classLoader = AFPFontReader.class.getClassLoader();
-            }
-
-            URL url = classLoader.getResource(path);
-            if (url == null) {
-                try {
-                    File file = new File(path);
-                    url = file.toURI().toURL();
-                    if (url == null) {
-                        String msg = "CharacterSet file not found for "
-                            + characterset + " in classpath: " + path;
-                        log.error(msg);
-                        throw new FileNotFoundException(msg);
-                    }
-                } catch (MalformedURLException ex) {
-                    String msg = "CharacterSet file not found for "
-                        + characterset + " in classpath: " + path;
-                    log.error(msg);
-                    throw new FileNotFoundException(msg);
-                }
-
-            }
-
-            File directory = new File(url.getPath());
-
-            final String filterpattern = characterset.trim();
-            FilenameFilter filter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.startsWith(filterpattern);
-                }
-            };
-
-            File[] csfont = directory.listFiles(filter);
-            if (csfont.length < 1) {
-                String msg = "CharacterSet file search for " + characterset
-                    + " located " + csfont.length + " files";
-                log.error(msg);
-                throw new FileNotFoundException(msg);
-            } else if (csfont.length > 1) {
-                String msg = "CharacterSet file search for " + characterset
-                    + " located " + csfont.length + " files";
-                log.warn(msg);
-            }
-
-            inputStream = csfont[0].toURI().toURL().openStream();
-            if (inputStream == null) {
-                String msg = "Failed to open character set resource "
-                    + characterset;
-                log.error(msg);
-                throw new FileNotFoundException(msg);
-            }
-
-            StructuredFieldReader sfr = new StructuredFieldReader(inputStream);
-
-            // Process D3A789 Font Control
-            FontControl fnc = processFontControl(sfr);
-
-            //process D3AE89 Font Orientation
-            CharacterSetOrientation[] csoArray = processFontOrientation(sfr);
-
-            //process D3AC89 Font Position
-            processFontPosition(sfr, csoArray, fnc.getDpi());
-
-            //process D38C89 Font Index (per orientation)
-            for (int i = 0; i < csoArray.length; i++) {
-                processFontIndex(sfr, csoArray[i], codepage, fnc.getDpi());
-                characterSet.addCharacterSetOrientation(csoArray[i]);
-            }
-
-        } catch (Exception ex) {
-            throw new FontRuntimeException(
-                "Failed to load the character set metrics for code page "
-                + characterSet.getCodePage(), ex);
-        } finally {
-            try {
-                inputStream.close();
-            } catch (Exception ex) {
-                // Ignore
-            }
-        }
-
-    }
-
-    /**
-     * Load the code page information from the appropriate file. The file name
-     * to load is determined by the code page name and the file extension 'CDP'.
+     * @param path the file path
+     * @param filename the file name
+     * @return an inputStream
      *
-     * @param codePage
-     *            the code page identifier
-     * @param encoding
-     *            the encoding to use for the character decoding
+     * @throws IOException in the event that an I/O exception of some sort has occurred
      */
-    private static HashMap loadCodePage(String codePage, String encoding,
-        String path) throws IOException {
-
-        // Create the HashMap to store code page information
-        HashMap codepages = new HashMap();
-
+    private InputStream openInputStream(String path, String filename) throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             classLoader = AFPFontReader.class.getClassLoader();
@@ -260,14 +135,12 @@ public final class AFPFontReader {
                 File file = new File(path);
                 url = file.toURI().toURL();
                 if (url == null) {
-                    String msg = "CodePage file not found for " + codePage
-                        + " in classpath: " + path;
+                    String msg = "file not found " + filename + " in classpath: " + path;
                     log.error(msg);
                     throw new FileNotFoundException(msg);
                 }
             } catch (MalformedURLException ex) {
-                String msg = "CodePage file not found for " + codePage
-                    + " in classpath: " + path;
+                String msg = "file not found " + filename + " in classpath: " + path;
                 log.error(msg);
                 throw new FileNotFoundException(msg);
             }
@@ -280,115 +153,220 @@ public final class AFPFontReader {
             throw new FileNotFoundException(msg);
         }
 
-        final String filterpattern = codePage.trim();
+        final String filterpattern = filename.trim();
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.startsWith(filterpattern);
             }
         };
 
-        File[] codepage = directory.listFiles(filter);
+        File[] files = directory.listFiles(filter);
 
-        if (codepage.length < 1) {
-            String msg = "CodePage file search for " + codePage + " located "
-                + codepage.length + " files";
+        if (files.length < 1) {
+            String msg = "file search for " + filename + " located "
+                + files.length + " files";
             log.error(msg);
             throw new FileNotFoundException(msg);
-        } else if (codepage.length > 1) {
-            String msg = "CodePage file search for " + codePage + " located "
-                + codepage.length + " files";
+        } else if (files.length > 1) {
+            String msg = "file search for " + filename + " located "
+                + files.length + " files";
             log.warn(msg);
         }
 
-        InputStream is = codepage[0].toURI().toURL().openStream();
+        InputStream inputStream = files[0].toURI().toURL().openStream();
 
-        if (is == null) {
-            String msg = "AFPFontReader:: loadCodePage(String):: code page file not found for "
-                + codePage;
+        if (inputStream == null) {
+            String msg = "AFPFontReader:: getInputStream():: file not found for " + filename;
             log.error(msg);
             throw new FileNotFoundException(msg);
         }
 
-        StructuredFieldReader sfr = new StructuredFieldReader(is);
-        byte[] data = sfr.getNext(CHARACTER_TABLE_SF);
+        return inputStream;
+    }
 
-        int position = 0;
-        byte[] gcgiBytes = new byte[8];
-        byte[] charBytes = new byte[1];
-
-        // Read data, ignoring bytes 0 - 2
-        for (int index = 3; index < data.length; index++) {
-            if (position < 8) {
-                // Build the graphic character global identifier key
-                gcgiBytes[position] = data[index];
-                position++;
-            } else if (position == 9) {
-                position = 0;
-                // Set the character
-                charBytes[0] = data[index];
-                String gcgiString = new String(gcgiBytes,
-                    AFPConstants.EBCIDIC_ENCODING);
-                String charString = new String(charBytes, encoding);
-//                int value = charString.charAt(0);
-                codepages.put(gcgiString, charString);
-            } else {
-                position++;
+    /**
+     * Closes the inputstream
+     *
+     * @param inputStream the inputstream to close
+     */
+    private void closeInputStream(InputStream inputStream) {
+        try {
+            if (inputStream != null) {
+                inputStream.close();
             }
+        } catch (Exception ex) {
+            // Lets log at least!
+            log.error(ex.getMessage());
         }
+    }
+
+    /**
+     * Load the font details and metrics into the CharacterSetMetric object,
+     * this will use the actual afp code page and character set files to load
+     * the object with the necessary metrics.
+     *
+     * @param characterSet the CharacterSetMetric object to populate
+     * @throws IOException if an I/O exception of some sort has occurred.
+     */
+    public void loadCharacterSetMetric(CharacterSet characterSet) throws IOException {
+
+        InputStream inputStream = null;
 
         try {
-            is.close();
-        } catch (Exception ex) {
-            // Ignore
+
+            /**
+             * Get the code page which contains the character mapping
+             * information to map the unicode character id to the graphic
+             * chracter global identifier.
+             */
+            String codePageId = new String(characterSet.getCodePage());
+            String path = characterSet.getPath();
+
+            Map/*<String,String>*/ codePage = (Map/*<String,String>*/)codePages.get(codePageId);
+
+            if (codePage == null) {
+                codePage = loadCodePage(codePageId, characterSet.getEncoding(), path);
+                codePages.put(codePageId, codePage);
+            }
+
+            /**
+             * Load the character set metric information, no need to cache this
+             * information as it should be cached by the objects that wish to
+             * load character set metric information.
+             */
+            final String characterSetName = characterSet.getName();
+
+            inputStream = openInputStream(path, characterSetName);
+
+            StructuredFieldReader structuredFieldReader = new StructuredFieldReader(inputStream);
+
+            // Process D3A789 Font Control
+            FontControl fontControl = processFontControl(structuredFieldReader);
+
+            if (fontControl != null) {
+                //process D3AE89 Font Orientation
+                CharacterSetOrientation[] characterSetOrientations
+                    = processFontOrientation(structuredFieldReader);
+
+                int dpi = fontControl.getDpi();
+
+                //process D3AC89 Font Position
+                processFontPosition(structuredFieldReader, characterSetOrientations, dpi);
+
+                //process D38C89 Font Index (per orientation)
+                for (int i = 0; i < characterSetOrientations.length; i++) {
+                    processFontIndex(structuredFieldReader,
+                            characterSetOrientations[i], codePage, dpi);
+                    characterSet.addCharacterSetOrientation(characterSetOrientations[i]);
+                }
+            } else {
+                throw new IOException(
+                        "Failed to read font control structured field in character set "
+                        + characterSetName);
+            }
+
+        } finally {
+            closeInputStream(inputStream);
         }
 
-        return codepages;
+    }
 
+    /**
+     * Load the code page information from the appropriate file. The file name
+     * to load is determined by the code page name and the file extension 'CDP'.
+     *
+     * @param codePage
+     *            the code page identifier
+     * @param encoding
+     *            the encoding to use for the character decoding
+     * @returns a code page mapping
+     */
+    private Map/*<String,String>*/ loadCodePage(String codePage, String encoding,
+        String path) throws IOException {
+
+        // Create the HashMap to store code page information
+        Map/*<String,String>*/ codePages = new java.util.HashMap/*<String,String>*/();
+
+        InputStream inputStream = null;
+        try {
+            inputStream = openInputStream(path, codePage.trim());
+
+            StructuredFieldReader structuredFieldReader = new StructuredFieldReader(inputStream);
+            byte[] data = structuredFieldReader.getNext(CHARACTER_TABLE_SF);
+
+            int position = 0;
+            byte[] gcgiBytes = new byte[8];
+            byte[] charBytes = new byte[1];
+
+            // Read data, ignoring bytes 0 - 2
+            for (int index = 3; index < data.length; index++) {
+                if (position < 8) {
+                    // Build the graphic character global identifier key
+                    gcgiBytes[position] = data[index];
+                    position++;
+                } else if (position == 9) {
+                    position = 0;
+                    // Set the character
+                    charBytes[0] = data[index];
+                    String gcgiString = new String(gcgiBytes,
+                            AFPConstants.EBCIDIC_ENCODING);
+                    String charString = new String(charBytes, encoding);
+//                int value = charString.charAt(0);
+                    codePages.put(gcgiString, charString);
+                } else {
+                    position++;
+                }
+            }
+        } finally {
+            closeInputStream(inputStream);
+        }
+
+        return codePages;
     }
 
     /**
      * Process the font control details using the structured field reader.
      *
-     * @param sfr
+     * @param structuredFieldReader
      *            the structured field reader
      */
-    private static FontControl processFontControl(StructuredFieldReader sfr)
+    private FontControl processFontControl(StructuredFieldReader structuredFieldReader)
     throws IOException {
 
-        byte[] fncData = sfr.getNext(FONT_CONTROL_SF);
+        byte[] fncData = structuredFieldReader.getNext(FONT_CONTROL_SF);
 
 //        int position = 0;
+        FontControl fontControl = null;
+        if (fncData != null) {
+            fontControl = new FontControl();
 
-        FontControl fontControl = new AFPFontReader().new FontControl();
+            if (fncData[7] == (byte) 0x02) {
+                fontControl.setRelative(true);
+            }
 
-        if (fncData[7] == (byte) 0x02) {
-            fontControl.setRelative(true);
+            int dpi = (((fncData[9] & 0xFF) << 8) + (fncData[10] & 0xFF)) / 10;
+
+            fontControl.setDpi(dpi);
         }
-
-        int dpi = (((fncData[9] & 0xFF) << 8) + (fncData[10] & 0xFF)) / 10;
-
-        fontControl.setDpi(dpi);
-
         return fontControl;
-
     }
 
     /**
      * Process the font orientation details from using the structured field
      * reader.
      *
-     * @param sfr
+     * @param structuredFieldReader
      *            the structured field reader
      */
-    private static CharacterSetOrientation[] processFontOrientation(
-        StructuredFieldReader sfr) throws IOException {
+    private CharacterSetOrientation[] processFontOrientation(
+        StructuredFieldReader structuredFieldReader) throws IOException {
 
-        byte[] data = sfr.getNext(FONT_ORIENTATION_SF);
+        byte[] data = structuredFieldReader.getNext(FONT_ORIENTATION_SF);
 
         int position = 0;
         byte[] fnoData = new byte[26];
 
-        ArrayList orientations = new ArrayList();
+        List orientations = new java.util.ArrayList();
 
         // Read data, ignoring bytes 0 - 2
         for (int index = 3; index < data.length; index++) {
@@ -434,20 +412,20 @@ public final class AFPFontReader {
      * Populate the CharacterSetOrientation object in the suplied array with the
      * font position details using the supplied structured field reader.
      *
-     * @param sfr
+     * @param structuredFieldReader
      *            the structured field reader
-     * @param csoArray
+     * @param characterSetOrientations
      *            the array of CharacterSetOrientation objects
      */
-    private static void processFontPosition(StructuredFieldReader sfr,
-        CharacterSetOrientation[] csoArray, int dpi) throws IOException {
+    private void processFontPosition(StructuredFieldReader structuredFieldReader,
+        CharacterSetOrientation[] characterSetOrientations, int dpi) throws IOException {
 
-        byte[] data = sfr.getNext(FONT_POSITION_SF);
+        byte[] data = structuredFieldReader.getNext(FONT_POSITION_SF);
 
         int position = 0;
         byte[] fpData = new byte[26];
 
-        int csoIndex = 0;
+        int characterSetOrientationIndex = 0;
         int fopFactor = 0;
 
         switch (dpi) {
@@ -475,7 +453,8 @@ public final class AFPFontReader {
 
                 position = 0;
 
-                CharacterSetOrientation cso = csoArray[csoIndex];
+                CharacterSetOrientation characterSetOrientation
+                    = characterSetOrientations[characterSetOrientationIndex];
 
                 int xHeight = ((fpData[2] & 0xFF) << 8) + (fpData[3] & 0xFF);
                 int capHeight = ((fpData[4] & 0xFF) << 8) + (fpData[5] & 0xFF);
@@ -484,12 +463,12 @@ public final class AFPFontReader {
 
                 dscHeight = dscHeight * -1;
 
-                cso.setXHeight(xHeight * fopFactor);
-                cso.setCapHeight(capHeight * fopFactor);
-                cso.setAscender(ascHeight * fopFactor);
-                cso.setDescender(dscHeight * fopFactor);
+                characterSetOrientation.setXHeight(xHeight * fopFactor);
+                characterSetOrientation.setCapHeight(capHeight * fopFactor);
+                characterSetOrientation.setAscender(ascHeight * fopFactor);
+                characterSetOrientation.setDescender(dscHeight * fopFactor);
 
-                csoIndex++;
+                characterSetOrientationIndex++;
 
                 fpData[position] = data[index];
 
@@ -503,18 +482,18 @@ public final class AFPFontReader {
     /**
      * Process the font index details for the character set orientation.
      *
-     * @param sfr
+     * @param structuredFieldReader
      *            the structured field reader
      * @param cso
      *            the CharacterSetOrientation object to populate
      * @param codepage
      *            the map of code pages
      */
-    private static void processFontIndex(StructuredFieldReader sfr,
-        CharacterSetOrientation cso, HashMap codepage, int dpi)
+    private void processFontIndex(StructuredFieldReader structuredFieldReader,
+        CharacterSetOrientation cso, Map/*<String,String>*/ codepage, int dpi)
         throws IOException {
 
-        byte[] data = sfr.getNext(FONT_INDEX_SF);
+        byte[] data = structuredFieldReader.getNext(FONT_INDEX_SF);
 
         int fopFactor = 0;
 
@@ -545,14 +524,14 @@ public final class AFPFontReader {
         // Read data, ignoring bytes 0 - 2
         for (int index = 3; index < data.length; index++) {
             if (position < 8) {
-                gcgid[position] = (byte) data[index];
+                gcgid[position] = data[index];
                 position++;
             } else if (position < 27) {
-                fiData[position - 8] = (byte) data[index];
+                fiData[position - 8] = data[index];
                 position++;
             } else if (position == 27) {
 
-                fiData[position - 8] = (byte) data[index];
+                fiData[position - 8] = data[index];
 
                 position = 0;
 

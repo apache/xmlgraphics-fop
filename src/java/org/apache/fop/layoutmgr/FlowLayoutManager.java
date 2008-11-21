@@ -50,8 +50,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
 
-    private int currentSpan = EN_NONE;
-
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
@@ -89,10 +87,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             } else if (curLM instanceof BlockContainerLayoutManager) {
                 span = ((BlockContainerLayoutManager)curLM).getBlockContainerFO().getSpan();
             }
+
+            int currentSpan = context.getCurrentSpan();
             if (currentSpan != span) {
                 log.debug("span change from " + currentSpan + " to " + span);
                 context.signalSpanChange(span);
-                currentSpan = span;
                 SpaceResolver.resolveElementList(returnList);
                 return returnList;
             }
@@ -228,7 +227,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             oldElement = (KnuthElement)oldListIterator.next();
             if (oldElement.getPosition() instanceof NonLeafPosition) {
                 // oldElement was created by a descendant of this FlowLM
-                oldElement.setPosition(((NonLeafPosition)oldElement.getPosition()).getPosition());
+                oldElement.setPosition((oldElement.getPosition()).getPosition());
             } else {
                 // thisElement was created by this FlowLM, remove it
                 oldListIterator.remove();
@@ -344,7 +343,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * @return the BPD of the content area
      */
     public int getContentAreaBPD() {
-        return (int) getCurrentPV().getBodyRegion().getBPD();
+        return getCurrentPV().getBodyRegion().getBPD();
     }
 
 }

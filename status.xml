@@ -53,6 +53,29 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Images" dev="JM" type="add" fixes-bug="41657">
+        Added support for SVG 1.2 functionality inside fo:instream-foreign-object.
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="46240">
+        Fixed a bug when combining break-before with a span change.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="46211" due-to="rogov.AT.devexperts.com">
+        Fixed some multi-threading issues in FontCache.java:
+        <ul>
+        <li>remove the unused private readObject()</li>
+        <li>make the changeLock member final (initialization-safety + impossible to reassign)</li>
+        <li>perform the HashMap check for a failed font inside the synchronized block to avoid a race condition</li>
+        </ul>
+      </action>
+      <action context="Renderers" dev="AD" type="add" fixes-bug="45113" due-to="Alexander Stamenov">
+        Added PDF /Launch action: references to URIs using the file:// protocol will now generate
+        a /Launch action as opposed to a more general /URI (which doesn't yield the expected result
+        for this protocol).
+      </action>
+      <action context="Layout" dev="JM" type="fix">
+        Fixed a problem where the BPD or a block area could be wrong if there is a nested,
+        absolutely positioned area (for example a block-container).
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="40798">
         Bugzilla 40798: A conditional-page-master-reference with page-position="last" qualifies
         for a first page, if it is also the last. Additionally: also added support for

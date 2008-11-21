@@ -217,6 +217,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
     /** {@inheritDoc} */
     public void notifyObjectBuilt(Object obj) {
         this.doc = (Document)obj;
+        this.element = this.doc.getDocumentElement();
     }
 
 }

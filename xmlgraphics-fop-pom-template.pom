@@ -130,6 +130,11 @@ http://maven.apache.org/maven-v4_0_0.xsd">
       <version>4.3.1</version>
     </dependency>
    <dependency>
+      <groupId>org.apache.avalon.framework</groupId>
+      <artifactId>avalon-framework-impl</artifactId>
+      <version>4.3.1</version>
+    </dependency>
+   <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.2</version>

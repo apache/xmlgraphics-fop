@@ -262,7 +262,8 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         NativeTextHandler nativeTextHandler = null;
         BridgeContext ctx = new BridgeContext(ua);
         if (!strokeText) {
-            nativeTextHandler = new NativeTextHandler(graphics, psInfo.getFontInfo());
+            FontInfo fontInfo = psInfo.getFontInfo();
+            nativeTextHandler = new NativeTextHandler(graphics, fontInfo);
             graphics.setCustomTextHandler(nativeTextHandler);
             PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
             ctx.setTextPainter(textPainter);
@@ -283,8 +284,8 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
-        float sx = psInfo.getWidth() / (float)w;
-        float sy = psInfo.getHeight() / (float)h;
+        float sx = psInfo.getWidth() / w;
+        float sy = psInfo.getHeight() / h;
 
         ctx = null;
         builder = null;
