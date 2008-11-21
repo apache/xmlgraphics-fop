@@ -20,35 +20,27 @@
 package org.apache.fop.fo.extensions.svg;
 
 // FOP
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.PropertyList;
-import org.apache.fop.util.ContentHandlerFactory;
-import org.apache.fop.util.DOMBuilderContentHandlerFactory;
-
-import org.apache.batik.dom.svg.SVGOMDocument;
-import org.apache.batik.dom.svg.SVGOMElement;
-import org.apache.batik.dom.svg.SVGContext;
-import org.apache.batik.dom.util.XMLSupport;
-import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-import org.apache.batik.bridge.UnitProcessor;
-import org.apache.batik.util.SVGConstants;
-
-import org.w3c.dom.DOMImplementation;
-
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-
-import java.net.URL;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.net.URL;
+
+import org.w3c.dom.Element;
+
+import org.apache.batik.bridge.UnitProcessor;
+import org.apache.batik.dom.svg.SVGContext;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.svg.SVGOMDocument;
+import org.apache.batik.dom.svg.SVGOMElement;
+import org.apache.batik.dom.util.XMLSupport;
+import org.apache.batik.util.SVGConstants;
+
+import org.apache.fop.fo.FONode;
+import org.apache.fop.util.ContentHandlerFactory;
 
 /**
- * class representing the SVG root element
- * for constructing an svg document.
+ * Class representing the SVG root element
+ * for constructing an SVG document.
  */
 public class SVGElement extends SVGObj {
 
@@ -61,21 +53,9 @@ public class SVGElement extends SVGObj {
         super(parent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public ContentHandlerFactory getContentHandlerFactory() {
-        return new DOMBuilderContentHandlerFactory(getNamespaceURI(),
-                SVGDOMImplementation.getDOMImplementation());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void processNode(String elementName, Locator locator,
-                            Attributes attlist, PropertyList propertyList) throws FOPException {
-        super.processNode(elementName, locator, attlist, propertyList);
-        init();
+        return new SVGDOMContentHandlerFactory();
     }
 
     /**
@@ -104,7 +84,6 @@ public class SVGElement extends SVGObj {
             log.error("Could not set base URL for svg", e);
         }
 
-        Element e = ((SVGDocument)doc).getRootElement();
         final float ptmm = getUserAgent().getSourcePixelUnitToMillimeter();
         // temporary svg context
         SVGContext dc = new SVGContext() {
@@ -157,7 +136,8 @@ public class SVGElement extends SVGObj {
             public void deselectAll() {
             }
         };
-        ((SVGOMElement)e).setSVGContext(dc);
+        SVGOMElement e = (SVGOMElement)svgRoot;
+        e.setSVGContext(dc);
 
         //if (!e.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
             e.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns",
@@ -165,19 +145,9 @@ public class SVGElement extends SVGObj {
         //}
         int fontSize = 12;
         Point2D p2d = getSize(fontSize, svgRoot, getUserAgent().getSourcePixelUnitToMillimeter());
-       ((SVGOMElement)e).setSVGContext(null);
+        e.setSVGContext(null);
 
         return p2d;
-    }
-
-    private void init() {
-        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
-        String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
-        doc = impl.createDocument(svgNS, "svg", null);
-
-        element = doc.getDocumentElement();
-
-        buildTopLevel(doc, element);
     }
 
     /**

@@ -554,9 +554,13 @@
         changing dummy parameter on the URI to avoid caching.
       </p>
       <p>
-        The image cache has been improved considerably in the redesigned code. Therefore, a 
-        resetCache() method like in earlier versions of FOP has become unnecessary. If you 
+        The image cache has been improved considerably in the redesigned code. Therefore,
+        resetting the image cache should be a thing of the past. If you 
         still experience OutOfMemoryErrors, please notify us.
+      </p>
+      <p>
+        If all else fails, the image cache can be cleared like this:
+        <code>fopFactory.getImageManager().getCache().clearCache();</code>
       </p>
     </section>
   </body>

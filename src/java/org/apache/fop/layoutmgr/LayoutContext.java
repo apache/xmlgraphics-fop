@@ -88,7 +88,8 @@ public class LayoutContext {
      */
     private MinOptMax stackLimitIP;
 
-    /** True if current element list is spanning in multi-column layout. */
+    /** to keep track of spanning in multi-column layout */
+    private int currentSpan = Constants.NOT_SET;
     private int nextSpan = Constants.NOT_SET;
 
     /** inline-progression-dimension of nearest ancestor reference area */
@@ -522,11 +523,20 @@ public class LayoutContext {
     }
 
     /**
-     * @return true if the current element list ends early because of a span change
-     * in multi-column layout.
+     * @return one of: {@link Constants#NOT_SET}, {@link Constants#EN_NONE}
+     *                  {@link Constants#EN_ALL}
      */
     public int getNextSpan() {
         return nextSpan;
+    }
+
+    /**
+     * @return one of: {@link Constants#NOT_SET}, {@link Constants#EN_NONE}
+     *                  {@link Constants#EN_ALL}
+     */
+    public int getCurrentSpan() {
+        return (currentSpan == Constants.NOT_SET)
+                ? Constants.EN_NONE : currentSpan;
     }
 
     /**
@@ -535,9 +545,15 @@ public class LayoutContext {
      * @param span the new span value (legal values: NOT_SET, EN_NONE, EN_ALL)
      */
     public void signalSpanChange(int span) {
-        if (span == Constants.NOT_SET || span == Constants.EN_NONE || span == Constants.EN_ALL) {
+        switch (span) {
+        case Constants.NOT_SET:
+        case Constants.EN_NONE:
+        case Constants.EN_ALL:
+            this.currentSpan = this.nextSpan;
             this.nextSpan = span;
-        } else {
+            break;
+        default:
+            assert false;
             throw new IllegalArgumentException("Illegal value on signalSpanChange() for span: "
                     + span);
         }

@@ -64,16 +64,16 @@ public class Font {
     /** logger */
     private  static Log log = LogFactory.getLog(Font.class);
 
-    private String fontName;
-    private FontTriplet triplet;
-    private int fontSize;
+    private final String fontName;
+    private final FontTriplet triplet;
+    private final int fontSize;
 
     /**
      * normal or small-caps font
      */
     //private int fontVariant;
 
-    private FontMetrics metric;
+    private final FontMetrics metric;
 
     /**
      * Main constructor
@@ -268,7 +268,8 @@ public class Font {
             width = getCharWidth(' ');
         } else {
             if (hasChar(c)) {
-                width = getWidth(mapChar(c));
+                int mappedChar = mapChar(c);
+                width = getWidth(mappedChar);
             } else {
                 width = -1;
             }

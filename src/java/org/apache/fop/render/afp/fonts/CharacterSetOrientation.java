@@ -183,11 +183,15 @@ public class CharacterSetOrientation {
     /**
      * Get the width (in 1/1000ths of a point size) of the character
      * identified by the parameter passed.
-     * @param character the character to evaluate
+     * @param characterIndex the character to evaluate
      * @return the widths of the character
      */
-    public int width(int character) {
-        return chars[character];
+    public int getWidth(int characterIndex) {
+        if (characterIndex >= chars.length) {
+            throw new IllegalArgumentException("Invalid character index: "
+                    + characterIndex + ", maximum is " + (chars.length - 1));
+        }
+        return chars[characterIndex];
     }
 
     /**

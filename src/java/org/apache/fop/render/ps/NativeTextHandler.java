@@ -19,17 +19,19 @@
 
 package org.apache.fop.render.ps;
 
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+
+import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
+import org.apache.xmlgraphics.java2d.ps.PSTextHandler;
+import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
-import org.apache.xmlgraphics.java2d.ps.PSTextHandler;
-import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
  * Specialized TextHandler implementation that the PSGraphics2D class delegates to to paint text
@@ -37,7 +39,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
  */
 public class NativeTextHandler implements PSTextHandler {
 
-    private PSGraphics2D g2d;
+    private PSGraphics2D rootG2D;
 
     /** FontInfo containing all available fonts */
     protected FontInfo fontInfo;
@@ -60,7 +62,7 @@ public class NativeTextHandler implements PSTextHandler {
      * @param fontInfo the FontInfo object with all available fonts
      */
     public NativeTextHandler(PSGraphics2D g2d, FontInfo fontInfo) {
-        this.g2d = g2d;
+        this.rootG2D = g2d;
         if (fontInfo != null) {
             this.fontInfo = fontInfo;
         } else {
@@ -83,7 +85,7 @@ public class NativeTextHandler implements PSTextHandler {
     }
 
     private PSGenerator getPSGenerator() {
-        return this.g2d.getPSGenerator();
+        return this.rootG2D.getPSGenerator();
     }
 
     /** {@inheritDoc} */
@@ -98,12 +100,19 @@ public class NativeTextHandler implements PSTextHandler {
         //nop
     }
 
+    /** {@inheritDoc} */
+    public void drawString(String text, float x, float y) throws IOException {
+        // TODO Remove me after removing the deprecated method in TextHandler.
+        throw new UnsupportedOperationException("Deprecated method!");
+    }
+
     /**
      * Draw a string to the PostScript document. The text is painted using
      * text operations.
      * {@inheritDoc}
      */
-    public void drawString(String s, float x, float y) throws IOException {
+    public void drawString(Graphics2D g, String s, float x, float y) throws IOException {
+        PSGraphics2D g2d = (PSGraphics2D)g;
         g2d.preparePainting();
         if (this.overrideFont == null) {
             java.awt.Font awtFont = g2d.getFont();
