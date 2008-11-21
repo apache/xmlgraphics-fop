@@ -55,27 +55,15 @@ import org.apache.fop.afp.goca.GraphicsSetProcessColor;
  */
 public class GraphicsObject extends AbstractDataObject {
 
-    /** The graphics data */
+    /** the graphics data */
     private GraphicsData currentData = null;
 
     /** list of objects contained within this container */
     protected List/*<GraphicsDrawingOrder>*/ objects
         = new java.util.ArrayList/*<GraphicsDrawingOrder>*/();
 
-    /** the current color */
-    private Color currentColor;
-
-    /** the current line type */
-    private byte currentLineType;
-
-    /** the current line width */
-    private int currentLineWidth;
-
-    /** the current fill pattern */
-    private byte currentPatternSymbol;
-
-    /** the current character set */
-    private int currentCharacterSet;
+    /** the graphics state */
+    private final GraphicsState graphicsState = new GraphicsState();
 
     /**
      * Default constructor
@@ -151,9 +139,9 @@ public class GraphicsObject extends AbstractDataObject {
      * @param color the active color to use
      */
     public void setColor(Color color) {
-        if (!color.equals(currentColor)) {
-            this.currentColor = color;
+        if (!color.equals(graphicsState.color)) {
             addObject(new GraphicsSetProcessColor(color));
+            graphicsState.color = color;
         }
     }
 
@@ -172,9 +160,9 @@ public class GraphicsObject extends AbstractDataObject {
      * @param lineWidth the line width multiplier
      */
     public void setLineWidth(int lineWidth) {
-        if (lineWidth != currentLineWidth) {
-            currentLineWidth = lineWidth;
+        if (lineWidth != graphicsState.lineWidth) {
             addObject(new GraphicsSetLineWidth(lineWidth));
+            graphicsState.lineWidth = lineWidth;
         }
     }
 
@@ -184,9 +172,9 @@ public class GraphicsObject extends AbstractDataObject {
      * @param lineType the line type
      */
     public void setLineType(byte lineType) {
-        if (lineType != currentLineType) {
-            currentLineType = lineType;
+        if (lineType != graphicsState.lineType) {
             addObject(new GraphicsSetLineType(lineType));
+            graphicsState.lineType = lineType;
         }
     }
 
@@ -207,9 +195,9 @@ public class GraphicsObject extends AbstractDataObject {
      * @param the fill pattern of the next shape
      */
     public void setPatternSymbol(byte patternSymbol) {
-        if (currentPatternSymbol != patternSymbol) {
-            currentPatternSymbol = patternSymbol;
+        if (patternSymbol != graphicsState.patternSymbol) {
             addObject(new GraphicsSetPatternSymbol(patternSymbol));
+            graphicsState.patternSymbol = patternSymbol;
         }
     }
 
@@ -219,9 +207,9 @@ public class GraphicsObject extends AbstractDataObject {
      * @param characterSet the character set (font) reference
      */
     public void setCharacterSet(int characterSet) {
-        if (currentCharacterSet != characterSet) {
-            currentCharacterSet = characterSet;
+        if (characterSet != graphicsState.characterSet) {
             addObject(new GraphicsSetCharacterSet(characterSet));
+            graphicsState.characterSet = characterSet;
         }
     }
 
@@ -377,4 +365,21 @@ public class GraphicsObject extends AbstractDataObject {
         os.write(data);
     }
 
+    /** the internal graphics state */
+    private class GraphicsState {
+        /** the current color */
+        private Color color;
+
+        /** the current line type */
+        private byte lineType;
+
+        /** the current line width */
+        private int lineWidth;
+
+        /** the current fill pattern */
+        private byte patternSymbol;
+
+        /** the current character set */
+        private int characterSet;
+    }
 }

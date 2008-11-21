@@ -63,6 +63,9 @@ public class AFPDataObjectFactory {
     public ObjectContainer createObjectContainer(AFPDataObjectInfo dataObjectInfo) {
         ObjectContainer objectContainer = factory.createObjectContainer();
 
+        // set data object viewport (i.e. position, rotation, dimension, resolution)
+        objectContainer.setViewport(dataObjectInfo);
+
         // set object classification
         Registry.ObjectType objectType = dataObjectInfo.getObjectType();
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
@@ -87,6 +90,10 @@ public class AFPDataObjectFactory {
     public ImageObject createImage(AFPImageObjectInfo imageObjectInfo) {
         // IOCA bitmap image
         ImageObject imageObj = factory.createImageObject();
+
+        // set data object viewport (i.e. position, rotation, dimension, resolution)
+        imageObj.setViewport(imageObjectInfo);
+
         if (imageObjectInfo.hasCompression()) {
             int compression = imageObjectInfo.getCompression();
             switch (compression) {
@@ -124,6 +131,10 @@ public class AFPDataObjectFactory {
     public GraphicsObject createGraphic(AFPGraphicsObjectInfo graphicsObjectInfo) {
         // set newly created graphics object in g2d
         GraphicsObject graphicsObj = factory.createGraphicsObject();
+
+        // set data object viewport (i.e. position, rotation, dimension, resolution)
+        graphicsObj.setViewport(graphicsObjectInfo);
+
         AFPGraphics2D g2d = graphicsObjectInfo.getGraphics2D();
         g2d.setGraphicsObject(graphicsObj);
 

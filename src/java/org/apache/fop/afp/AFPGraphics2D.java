@@ -580,13 +580,17 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
     /** {@inheritDoc} */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        int imgWidth = img.getWidth();
+        int imgHeight = img.getHeight();
 
         AffineTransform at = paintingState.getData().getTransform();
         AffineTransform gat = gc.getTransform();
+        int graphicsObjectHeight
+            = graphicsObj.getObjectEnvironmentGroup().getObjectAreaDescriptor().getHeight();
         int x = (int)Math.round(at.getTranslateX() + gat.getTranslateX());
-        int y = (int)Math.round(at.getTranslateY());
+        int y = (int)Math.round(at.getTranslateY() - (gat.getTranslateY() - graphicsObjectHeight));
+        int width = (int)Math.round(imgWidth * gat.getScaleX());
+        int height = (int)Math.round(imgHeight * -gat.getScaleY());
         try {
             // get image object info
             AFPImageObjectInfo imageObjectInfo

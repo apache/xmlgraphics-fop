@@ -517,7 +517,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
 
         // register font as necessary
         String internalFontName = getInternalFontNameForArea(text);
-        AFPFont font = (AFPFont)fontInfo.getFonts().get(internalFontName);
+        Map/*<String,FontMetrics>*/ fontMetricMap = fontInfo.getFonts();
+        AFPFont font = (AFPFont)fontMetricMap.get(internalFontName);
         AFPPageFonts pageFonts = paintingState.getPageFonts();
         AFPFontAttributes fontAttributes = pageFonts.registerFont(internalFontName, font, fontSize);
 

@@ -23,6 +23,7 @@ package org.apache.fop.afp.modca;
  * Base class for AFP descriptor objects
  */
 public abstract class AbstractDescriptor extends AbstractTripletStructuredObject {
+
     /** width of this descriptor */
     protected int width = 0;
     /** height of this descriptor */
@@ -61,4 +62,23 @@ public abstract class AbstractDescriptor extends AbstractTripletStructuredObject
         + ", widthRes=" + widthRes
         + ", heightRes=" + heightRes;
     }
+
+    /**
+     * Returns the width
+     *
+     * @return the width
+     */
+    public int getWidth() {
+        return this.width;
+    }
+
+    /**
+     * Returns the height
+     *
+     * @return the height
+     */
+    public int getHeight() {
+        return this.height;
+    }
+
 }

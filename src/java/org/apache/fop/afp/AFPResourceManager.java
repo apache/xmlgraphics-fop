@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.apache.fop.afp.modca.AbstractDataObject;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.afp.modca.IncludeObject;
 import org.apache.fop.afp.modca.Registry;
@@ -136,16 +135,10 @@ public class AFPResourceManager {
                 AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo)dataObjectInfo;
                 namedObj = dataObjectFactory.createGraphic(graphicsObjectInfo);
             } else {
-                // natively embedded object
+                // natively embedded data object
                 namedObj = dataObjectFactory.createObjectContainer(dataObjectInfo);
                 objectType = dataObjectInfo.getObjectType();
                 useInclude = objectType != null && objectType.isIncludable();
-            }
-
-            // set data object viewport (i.e. position, rotation, dimension, resolution)
-            if (namedObj instanceof AbstractDataObject) {
-                AbstractDataObject dataObj = (AbstractDataObject)namedObj;
-                dataObj.setViewport(dataObjectInfo);
             }
 
             AFPResourceLevel resourceLevel = resourceInfo.getLevel();

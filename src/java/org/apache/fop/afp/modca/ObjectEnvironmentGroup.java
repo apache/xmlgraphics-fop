@@ -172,4 +172,13 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
         this.mapContainerData = mapContainerData;
     }
 
+    /**
+     * Returns the object area descriptor
+     *
+     * @return the object area descriptor
+     */
+    public ObjectAreaDescriptor getObjectAreaDescriptor() {
+        return this.objectAreaDescriptor;
+    }
+
 }

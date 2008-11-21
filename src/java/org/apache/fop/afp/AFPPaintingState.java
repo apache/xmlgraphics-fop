@@ -224,35 +224,12 @@ implements Cloneable {
     }
 
     /**
-     * Sets if the current painted shape is to be filled
-     *
-     * @param fill true if the current painted shape is to be filled
-     * @return true if the fill value has changed
-     */
-    protected boolean setFill(boolean fill) {
-        if (fill != ((AFPData)getData()).filled) {
-            ((AFPData)getData()).filled = fill;
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Gets the current page fonts
      *
      * @return the current page fonts
      */
     public AFPPageFonts getPageFonts() {
         return pagePaintingState.getFonts();
-    }
-
-    /**
-     * Increments and returns the page font count
-     *
-     * @return the page font count
-     */
-    public int incrementPageFontCount() {
-        return pagePaintingState.incrementFontCount();
     }
 
     /**
