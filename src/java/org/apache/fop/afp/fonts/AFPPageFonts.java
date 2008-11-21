@@ -56,7 +56,8 @@ public class AFPPageFonts extends java.util.HashMap {
         if (afpFontAttributes == null) {
             afpFontAttributes = new AFPFontAttributes(fontName, font, fontSize);
             super.put(pageFontKey, afpFontAttributes);
-            afpFontAttributes.setFontReference(super.size());
+            int fontRef = super.size();
+            afpFontAttributes.setFontReference(fontRef);
         }
         return afpFontAttributes;
     }

@@ -59,8 +59,8 @@ public class GraphicsObject extends AbstractDataObject {
     private GraphicsData currentData = null;
 
     /** list of objects contained within this container */
-    protected List/*<GraphicsDrawingOrder>*/ objects
-        = new java.util.ArrayList/*<GraphicsDrawingOrder>*/();
+    protected List/*<GraphicsData>*/ objects
+        = new java.util.ArrayList/*<GraphicsData>*/();
 
     /** the graphics state */
     private final GraphicsState graphicsState = new GraphicsState();
