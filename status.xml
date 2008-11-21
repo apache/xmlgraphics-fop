@@ -53,7 +53,7 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
-      <action context="Images" dev="JM" type="add">
+      <action context="Images" dev="JM" type="add" fixes-bug="41657">
         Added support for SVG 1.2 functionality inside fo:instream-foreign-object.
       </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="46240">
