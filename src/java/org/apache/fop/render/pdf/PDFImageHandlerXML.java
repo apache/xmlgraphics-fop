@@ -40,10 +40,6 @@ public class PDFImageHandlerXML implements PDFImageHandler {
         ImageFlavor.XML_DOM,
     };
 
-    private static final Class[] CLASSES = new Class[] {
-        ImageXMLDOM.class,
-    };
-
     /** {@inheritDoc} */
     public PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos)
@@ -64,8 +60,8 @@ public class PDFImageHandlerXML implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageXMLDOM.class;
     }
 
     /** {@inheritDoc} */

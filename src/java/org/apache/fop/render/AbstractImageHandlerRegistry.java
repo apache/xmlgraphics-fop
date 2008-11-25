@@ -100,10 +100,7 @@ public abstract class AbstractImageHandlerRegistry {
      * @param handler the ImageHandler instance
      */
     public synchronized void addHandler(ImageHandler handler) {
-        Class[] imageClasses = handler.getSupportedImageClasses();
-        for (int i = 0; i < imageClasses.length; i++) {
-            this.handlers.put(imageClasses[i], handler);
-        }
+        this.handlers.put(handler.getSupportedImageClass(), handler);
 
         //Sorted insert
         ListIterator iter = this.handlerList.listIterator();

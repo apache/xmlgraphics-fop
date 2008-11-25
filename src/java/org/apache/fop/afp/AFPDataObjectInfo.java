@@ -19,8 +19,6 @@
 
 package org.apache.fop.afp;
 
-import java.io.InputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.modca.Registry;
@@ -43,11 +41,17 @@ public class AFPDataObjectInfo {
     /** the data object height */
     private int dataHeight;
 
-    /** the object data in an inputstream */
-    private InputStream inputStream;
-
     /** the object registry mimetype */
     private String mimeType;
+
+    /** the object data in a byte array */
+    private byte[] data;
+
+    /** the object data height resolution */
+    private int dataHeightRes;
+
+    /** the object data width resolution */
+    private int dataWidthRes;
 
     /**
      * Default constructor
@@ -121,16 +125,6 @@ public class AFPDataObjectInfo {
         return this.objectAreaInfo;
     }
 
-    /** {@inheritDoc} */
-    public String toString() {
-        return "AFPDataObjectInfo{"
-            + "mimeType=" + mimeType
-            + ", dataWidth=" + dataWidth
-            + ", dataHeight=" + dataHeight
-            + (objectAreaInfo != null ? ", objectAreaInfo=" + objectAreaInfo : "")
-            + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "");
-    }
-
     /**
      * Returns the uri of this data object
      *
@@ -186,21 +180,68 @@ public class AFPDataObjectInfo {
     }
 
     /**
-     * Sets the object data inputstream
+     * Returns the data height resolution
      *
-     * @param inputStream the object data inputstream
+     * @return the data height resolution
      */
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
+    public int getDataHeightRes() {
+        return this.dataHeightRes;
     }
 
     /**
-     * Returns the object data inputstream
+     * Sets the data width resolution
      *
-     * @return the object data inputstream
+     * @param dataWidthRes the data width resolution
      */
-    public InputStream getInputStream() {
-        return this.inputStream;
+    public void setDataHeightRes(int dataHeightRes) {
+        this.dataHeightRes = dataHeightRes;
     }
 
+    /**
+     * Returns the data width resolution
+     *
+     * @return the data width resolution
+     */
+    public int getDataWidthRes() {
+        return this.dataWidthRes;
+    }
+
+    /**
+     * Sets the data width resolution
+     *
+     * @param dataWidthRes the data width resolution
+     */
+    public void setDataWidthRes(int dataWidthRes) {
+        this.dataWidthRes = dataWidthRes;
+    }
+
+    /**
+     * Sets the object data
+     *
+     * @param data the object data
+     */
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    /**
+     * Returns the object data
+     *
+     * @return the object data
+     */
+    public byte[] getData() {
+        return this.data;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "AFPDataObjectInfo{"
+            + "mimeType=" + mimeType
+            + ", dataWidth=" + dataWidth
+            + ", dataHeight=" + dataHeight
+            + ", dataWidthRes=" + dataWidthRes
+            + ", dataHeightRes=" + dataHeightRes
+            + (objectAreaInfo != null ? ", objectAreaInfo=" + objectAreaInfo : "")
+            + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "");
+    }
 }

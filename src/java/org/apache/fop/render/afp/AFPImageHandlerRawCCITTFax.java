@@ -23,22 +23,16 @@ import java.io.IOException;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
-import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 
 /**
- * PDFImageHandler implementation which handles CCITT encoded images (CCITT fax group 3/4).
+ * AFPImageHandler implementation which handles CCITT encoded images (CCITT fax group 3/4).
  */
-public class AFPImageHandlerRawCCITTFax extends AFPImageHandler {
+public class AFPImageHandlerRawCCITTFax extends AbstractAFPImageHandlerRawStream {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RAW_CCITTFAX,
-    };
-
-    private static final Class[] CLASSES = new Class[] {
-        ImageRawCCITTFax.class,
     };
 
     /** {@inheritDoc} */
@@ -48,18 +42,10 @@ public class AFPImageHandlerRawCCITTFax extends AFPImageHandler {
             = (AFPImageObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
 
         ImageRawCCITTFax ccitt = (ImageRawCCITTFax) rendererImageInfo.getImage();
-        imageObjectInfo.setCompression(ccitt.getCompression());
+        int compression = ccitt.getCompression();
+        imageObjectInfo.setCompression(compression);
 
-        AFPObjectAreaInfo objectAreaInfo = imageObjectInfo.getObjectAreaInfo();
-        ImageSize imageSize = ccitt.getSize();
-        int widthRes = (int) (imageSize.getDpiHorizontal() * 10);
-        objectAreaInfo.setWidthRes(widthRes);
-
-        int heightRes = (int) (imageSize.getDpiVertical() * 10);
-        objectAreaInfo.setHeightRes(heightRes);
-
-        imageObjectInfo.setInputStream(ccitt.createInputStream());
-
+        imageObjectInfo.setBitsPerPixel(1);
         return imageObjectInfo;
     }
 
@@ -74,8 +60,8 @@ public class AFPImageHandlerRawCCITTFax extends AFPImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageRawCCITTFax.class;
     }
 
     /** {@inheritDoc} */

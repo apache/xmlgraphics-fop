@@ -112,6 +112,7 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject implemen
 
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
+        writeTriplets(os);
         if (objectEnvironmentGroup != null) {
             objectEnvironmentGroup.writeToStream(os);
         }

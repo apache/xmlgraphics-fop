@@ -41,10 +41,6 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler {
         ImageFlavor.GRAPHICS2D
     };
 
-    private static final Class[] CLASSES = new Class[] {
-        ImageGraphics2D.class
-    };
-
     /** {@inheritDoc} */
     public AFPDataObjectInfo generateDataObjectInfo(
             AFPRendererImageInfo rendererImageInfo) throws IOException {
@@ -98,8 +94,8 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageGraphics2D.class;
     }
 
     /** {@inheritDoc} */

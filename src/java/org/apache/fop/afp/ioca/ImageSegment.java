@@ -118,8 +118,8 @@ public class ImageSegment extends AbstractNamedAFPObject {
      *
      * @param data the image data
      */
-    public void setData(byte[] data) {
-        getImageContent().setImageData(data);
+    public void setData(byte[] imageData) {
+        getImageContent().setImageData(imageData);
     }
 
     /** {@inheritDoc} */

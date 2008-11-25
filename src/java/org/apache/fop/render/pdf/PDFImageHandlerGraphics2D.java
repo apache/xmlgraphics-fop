@@ -38,10 +38,6 @@ public class PDFImageHandlerGraphics2D implements PDFImageHandler {
         ImageFlavor.GRAPHICS2D,
     };
 
-    private static final Class[] CLASSES = new Class[] {
-        ImageGraphics2D.class,
-    };
-
     /** {@inheritDoc} */
     public PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos)
@@ -59,8 +55,8 @@ public class PDFImageHandlerGraphics2D implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageGraphics2D.class;
     }
 
     /** {@inheritDoc} */

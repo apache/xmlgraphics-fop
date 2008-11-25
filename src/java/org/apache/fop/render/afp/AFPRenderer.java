@@ -71,7 +71,6 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
-import org.apache.fop.util.AbstractPaintingState;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -740,15 +739,6 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public int getResolution() {
         return paintingState.getResolution();
-    }
-
-    /**
-     * Returns the current AFP state
-     *
-     * @return the current AFP state
-     */
-    public AbstractPaintingState getState() {
-        return this.paintingState;
     }
 
     /**

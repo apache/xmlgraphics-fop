@@ -41,10 +41,6 @@ public class PDFImageHandlerRawJPEG implements PDFImageHandler {
         ImageFlavor.RAW_JPEG,
     };
 
-    private static final Class[] CLASSES = new Class[] {
-        ImageRawJPEG.class,
-    };
-
     /** {@inheritDoc} */
     public PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos)
@@ -74,8 +70,8 @@ public class PDFImageHandlerRawJPEG implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageRawJPEG.class;
     }
 
     /** {@inheritDoc} */

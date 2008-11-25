@@ -146,4 +146,17 @@ public class AFPRendererImageInfo {
         return this.pos;
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        return "AFPRendererImageInfo{\n"
+            + "\turi=" + uri + ",\n"
+            + "\tinfo=" + info + ",\n"
+            + "\tpos=" + pos + ",\n"
+            + "\torigin=" + origin + ",\n"
+            + "\timg=" + img + ",\n"
+            + "\tforeignAttributes=" + foreignAttributes + ",\n"
+            + "\trendererContext=" + rendererContext + "\n"
+        + "}";
+
+    }
 }

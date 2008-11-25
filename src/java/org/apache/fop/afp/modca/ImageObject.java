@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
-import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.ioca.ImageSegment;
 
@@ -65,15 +64,17 @@ public class ImageObject extends AbstractDataObject {
         int dataWidth = imageObjectInfo.getDataWidth();
         int dataHeight = imageObjectInfo.getDataHeight();
 
-        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-        int widthRes = objectAreaInfo.getWidthRes();
-        int heightRes = objectAreaInfo.getHeightRes();
+//        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+//        int widthRes = objectAreaInfo.getWidthRes();
+//        int heightRes = objectAreaInfo.getHeightRes();
 
+        int dataWidthRes = imageObjectInfo.getDataWidthRes();
+        int dataHeightRes = imageObjectInfo.getDataWidthRes();
         ImageDataDescriptor imageDataDescriptor
-            = factory.createImageDataDescriptor(dataWidth, dataHeight, widthRes, heightRes);
+            = factory.createImageDataDescriptor(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
         getObjectEnvironmentGroup().setDataDescriptor(imageDataDescriptor);
 
-        getImageSegment().setImageSize(dataWidth, dataHeight, widthRes, heightRes);
+        getImageSegment().setImageSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
     }
 
     /**
@@ -117,8 +118,8 @@ public class ImageObject extends AbstractDataObject {
      *
      * @param data the image data
      */
-    public void setData(byte[] data) {
-        getImageSegment().setData(data);
+    public void setData(byte[] imageData) {
+        getImageSegment().setData(imageData);
     }
 
     /** {@inheritDoc} */

@@ -28,7 +28,6 @@ import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.impl.ImageBuffered;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 import org.apache.xmlgraphics.util.MimeConstants;
@@ -43,27 +42,21 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
         ImageFlavor.RENDERED_IMAGE
     };
 
-    private static final Class[] CLASSES = new Class[] {
-        ImageBuffered.class,
-        ImageRendered.class
-    };
-
     /** {@inheritDoc} */
     public AFPDataObjectInfo generateDataObjectInfo(
             AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPImageObjectInfo imageObjectInfo
             = (AFPImageObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
 
-        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
-
-        AFPObjectAreaInfo objectAreaInfo = imageObjectInfo.getObjectAreaInfo();
         AFPRendererContext rendererContext
             = (AFPRendererContext)rendererImageInfo.getRendererContext();
         AFPInfo afpInfo = rendererContext.getInfo();
         AFPPaintingState paintingState = afpInfo.getPaintingState();
         int resolution = paintingState.getResolution();
-        objectAreaInfo.setWidthRes(resolution);
-        objectAreaInfo.setHeightRes(resolution);
+
+        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
+        imageObjectInfo.setDataHeightRes(resolution);
+        imageObjectInfo.setDataWidthRes(resolution);
 
         ImageRendered imageRendered = (ImageRendered) rendererImageInfo.img;
         RenderedImage renderedImage = imageRendered.getRenderedImage();
@@ -92,6 +85,11 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
         }
         imageObjectInfo.setData(imageData);
 
+        // set object area info
+        AFPObjectAreaInfo objectAreaInfo = imageObjectInfo.getObjectAreaInfo();
+        objectAreaInfo.setWidthRes(resolution);
+        objectAreaInfo.setHeightRes(resolution);
+
         return imageObjectInfo;
     }
 
@@ -106,8 +104,8 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageRendered.class;
     }
 
     /** {@inheritDoc} */

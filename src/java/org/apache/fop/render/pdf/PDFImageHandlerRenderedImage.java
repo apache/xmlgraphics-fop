@@ -42,11 +42,6 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
         ImageFlavor.RENDERED_IMAGE
     };
 
-    private static final Class[] CLASSES = new Class[] {
-        ImageRendered.class,
-    };
-
-
     /** {@inheritDoc} */
     public PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos)
@@ -76,8 +71,8 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageRendered.class;
     }
 
     /** {@inheritDoc} */

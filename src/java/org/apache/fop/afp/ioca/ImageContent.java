@@ -123,7 +123,7 @@ public class ImageContent extends AbstractStructuredObject {
     }
 
     /**
-     * Set the data image store information.
+     * Set the image data (can be byte array or inputstream)
      *
      * @param imageData the image data
      */
@@ -148,15 +148,16 @@ public class ImageContent extends AbstractStructuredObject {
 
         os.write(getExternalAlgorithmParameter());
 
-        // Image Data
-        if (data != null) {
-            final byte[] dataHeader = new byte[] {
+        final byte[] dataHeader = new byte[] {
                 (byte)0xFE, // ID
                 (byte)0x92, // ID
                 0x00, // length
                 0x00  // length
             };
-            final int lengthOffset = 2;
+        final int lengthOffset = 2;
+
+        // Image Data
+        if (data != null) {
             writeChunksToStream(data, dataHeader, lengthOffset, MAX_DATA_LEN, os);
         }
     }

@@ -77,7 +77,7 @@ public class AFPDataObjectFactory {
                 ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
                 objectType, dataInContainer, containerHasOEG, dataInOCD);
 
-        objectContainer.setInputStream(dataObjectInfo.getInputStream());
+        objectContainer.setData(dataObjectInfo.getData());
         return objectContainer;
     }
 
@@ -117,6 +117,7 @@ public class AFPDataObjectFactory {
         } else {
             imageObj.setIDESize((byte) imageObjectInfo.getBitsPerPixel());
         }
+
         imageObj.setData(imageObjectInfo.getData());
 
         return imageObj;

@@ -20,10 +20,8 @@
 package org.apache.fop.afp.modca;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPResourceInfo;
@@ -40,7 +38,7 @@ public class ObjectContainer extends AbstractDataObject {
     /** the object container data maximum length */
     private static final int MAX_DATA_LEN = 32759;
 
-    private InputStream inputStream;
+    private byte[] data;
 
     /**
      * Main constructor
@@ -75,8 +73,9 @@ public class ObjectContainer extends AbstractDataObject {
         copySF(dataHeader, SF_CLASS, Type.DATA, Category.OBJECT_CONTAINER);
         final int lengthOffset = 1;
 
-        copyChunks(dataHeader, lengthOffset, MAX_DATA_LEN, inputStream, os);
-        IOUtils.closeQuietly(inputStream);
+        if (data != null) {
+            writeChunksToStream(data, dataHeader, lengthOffset, MAX_DATA_LEN, os);
+        }
     }
 
     /** {@inheritDoc} */
@@ -118,7 +117,7 @@ public class ObjectContainer extends AbstractDataObject {
      *
      * @param inputStream the inputstream for the object container data
      */
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
+    public void setData(byte[] data) {
+        this.data = data;
     }
 }

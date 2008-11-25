@@ -39,10 +39,6 @@ public class AFPImageHandlerXML extends AFPImageHandler {
         ImageFlavor.XML_DOM,
     };
 
-    private static final Class[] CLASSES = new Class[] {
-        ImageXMLDOM.class,
-    };
-
     /** {@inheritDoc} */
     public AFPDataObjectInfo generateDataObjectInfo(AFPRendererImageInfo rendererImageInfo)
             throws IOException {
@@ -64,8 +60,8 @@ public class AFPImageHandlerXML extends AFPImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageXMLDOM.class;
     }
 
     /** {@inheritDoc} */

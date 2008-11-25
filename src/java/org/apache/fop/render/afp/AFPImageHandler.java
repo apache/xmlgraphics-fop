@@ -31,6 +31,9 @@ import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.render.ImageHandler;
 
+/**
+ * A base abstract AFP image handler
+ */
 public abstract class AFPImageHandler implements ImageHandler {
     private static final int X = 0;
     private static final int Y = 1;

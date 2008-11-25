@@ -41,10 +41,6 @@ public class PDFImageHandlerRawCCITTFax implements PDFImageHandler {
         ImageFlavor.RAW_CCITTFAX,
     };
 
-    private static final Class[] CLASSES = new Class[] {
-        ImageRawCCITTFax.class,
-    };
-
     /** {@inheritDoc} */
     public PDFXObject generateImage(RendererContext context, Image image,
             Point origin, Rectangle pos)
@@ -74,8 +70,8 @@ public class PDFImageHandlerRawCCITTFax implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
-    public Class[] getSupportedImageClasses() {
-        return CLASSES;
+    public Class getSupportedImageClass() {
+        return ImageRawCCITTFax.class;
     }
 
     /** {@inheritDoc} */

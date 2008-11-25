@@ -24,6 +24,7 @@ package org.apache.fop.afp;
  * A list of parameters associated with an image
  */
 public class AFPImageObjectInfo extends AFPDataObjectInfo {
+
     /** number of bits per pixel used */
     private int bitsPerPixel;
 
@@ -32,9 +33,6 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
 
     /** compression type if any */
     private int compression = -1;
-
-    /** the object data in a byte array */
-    private byte[] data;
 
     /**
      * Default constructor
@@ -106,24 +104,6 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
         this.compression = compression;
     }
 
-    /**
-     * Sets the object data
-     *
-     * @param data the object data
-     */
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    /**
-     * Returns the object data
-     *
-     * @return the object data
-     */
-    public byte[] getData() {
-        return this.data;
-    }
-
     /** {@inheritDoc} */
     public String toString() {
         return "AFPImageObjectInfo{" + super.toString()
@@ -132,5 +112,4 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
             + ", bitsPerPixel=" + bitsPerPixel
             + "}";
     }
-
 }
