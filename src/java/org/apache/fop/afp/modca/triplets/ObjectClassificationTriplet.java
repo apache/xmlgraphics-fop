@@ -166,7 +166,7 @@ public class ObjectClassificationTriplet extends AbstractTriplet {
 
     /** {@inheritDoc} */
     public int getDataLength() {
-        return 95;
+        return 96;
     }
 
     private static final int OBJECT_LEVEL_LEN = 8;
