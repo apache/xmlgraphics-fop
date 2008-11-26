@@ -62,8 +62,11 @@
       <action context="Renderers" dev="AC" importance="high" type="add">
         AFP Output: Native image embedding support (e.g. JPEG, GIF, TIFF) using ObjectContainer and a MOD:CA Registry implementation.
       </action>
-      <action context="Fonts" dev="AC" importance="high" type="fix">
+      <action context="Fonts" dev="AC" type="fix">
         More robust AFP font parsing, although it is still in need of some rework in the future.
+      </action>
+      <action context="Images" dev="JM" type="add" fixes-bug="41657">
+        Added support for SVG 1.2 functionality inside fo:instream-foreign-object.
       </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="46240">
         Fixed a bug when combining break-before with a span change.

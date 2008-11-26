@@ -21,6 +21,8 @@ package org.apache.fop.svg;
 
 import java.io.IOException;
 
+import org.w3c.dom.Document;
+
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -69,6 +71,15 @@ public class FOPSAXSVGDocumentFactory extends SAXSVGDocumentFactory {
             }
         }
         return super.resolveEntity(publicId, systemId);
+    }
+
+    /**
+     * Returns the document built up by handling the incoming SAX events. This method will not
+     * return any instance for the first SAX events have been received.
+     * @return the DOM document
+     */
+    public Document getDocument() {
+        return this.document;
     }
 
 }
