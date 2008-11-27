@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.fop.afp.AFPBorderPainter;
-import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPResourceManager;
@@ -48,6 +48,7 @@ import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.AFPFontAttributes;
 import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
+import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.PageObject;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -537,40 +538,34 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         Color color = (Color) text.getTrait(Trait.COLOR);
         textDataInfo.setColor(color);
 
-        int variableSpaceCharacterIncrement = font.getWidth(' ', fontSize) / 1000
-            + text.getTextWordSpaceAdjust()
-            + text.getTextLetterSpaceAdjust();
+        int textWordSpaceAdjust = text.getTextWordSpaceAdjust();
+        int textLetterSpaceAdjust = text.getTextLetterSpaceAdjust();
+        int textWidth = font.getWidth(' ', fontSize) / 1000;
+        int variableSpaceCharacterIncrement
+            = textWidth + textWordSpaceAdjust + textLetterSpaceAdjust;
+
         variableSpaceCharacterIncrement
             = Math.round(unitConv.mpt2units(variableSpaceCharacterIncrement));
         textDataInfo.setVariableSpaceCharacterIncrement(variableSpaceCharacterIncrement);
 
         int interCharacterAdjustment
-            = Math.round(unitConv.mpt2units(text.getTextLetterSpaceAdjust()));
+            = Math.round(unitConv.mpt2units(textLetterSpaceAdjust));
         textDataInfo.setInterCharacterAdjustment(interCharacterAdjustment);
 
-        // Try and get the encoding to use for the font
-        String encoding = null;
-        try {
-            encoding = font.getCharacterSet(fontSize).getEncoding();
-        } catch (Throwable ex) {
-            encoding = AFPConstants.EBCIDIC_ENCODING;
-            log.warn("renderText():: Error getting encoding for font '"
-                    + font.getFullName() + "' - using default encoding "
-                    + encoding);
-        }
+        CharacterSet charSet = font.getCharacterSet(fontSize);
+        String encoding = charSet.getEncoding();
+        textDataInfo.setEncoding(encoding);
 
         String textString = text.getText();
-        byte[] data = null;
-        try {
-            data = textString.getBytes(encoding);
-            textDataInfo.setData(data);
-        } catch (UnsupportedEncodingException usee) {
-            log.error("renderText:: Font " + fontAttributes.getFontKey()
-                    + " caused UnsupportedEncodingException");
-            return;
-        }
+        textDataInfo.setString(textString);
 
-        dataStream.createText(textDataInfo);
+        try {
+            dataStream.createText(textDataInfo);
+        } catch (UnsupportedEncodingException e) {
+            AFPEventProducer eventProducer
+                = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
+            eventProducer.characterSetEncodingError(this, charSet.getName(), encoding);
+        }
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         // where previous line area failed to take up entire allocated space

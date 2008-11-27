@@ -21,6 +21,7 @@ package org.apache.fop.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.fop.afp.AFPLineDataInfo;
@@ -171,8 +172,9 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      *
      * @param textDataInfo
      *            the afp text data
+     * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
-    public void createText(AFPTextDataInfo textDataInfo) {
+    public void createText(AFPTextDataInfo textDataInfo) throws UnsupportedEncodingException {
         getPresentationTextObject().createTextData(textDataInfo);
     }
 

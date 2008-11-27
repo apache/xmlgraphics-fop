@@ -21,6 +21,7 @@ package org.apache.fop.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.fop.afp.AFPLineDataInfo;
@@ -68,8 +69,9 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      *
      * @param textDataInfo
      *            The afp text data
+     * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
-    public void createTextData(AFPTextDataInfo textDataInfo) {
+    public void createTextData(AFPTextDataInfo textDataInfo) throws UnsupportedEncodingException {
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
@@ -78,6 +80,9 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
         } catch (MaximumSizeExceededException msee) {
             endPresentationTextData();
             createTextData(textDataInfo);
+        } catch (UnsupportedEncodingException e) {
+            endPresentationTextData();
+            throw e;
         }
     }
 

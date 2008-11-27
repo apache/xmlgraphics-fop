@@ -26,21 +26,32 @@ import java.awt.Color;
  */
 public class AFPTextDataInfo {
 
+    /** the text font reference */
     private int fontReference;
 
+    /** the text x coordinate position */
     private int x;
 
+    /** the text y coordinate position */
     private int y;
 
+    /** the text color */
     private Color color;
 
+    /** the text variable space adjustment */
     private int variableSpaceCharacterIncrement;
 
+    /** the text inter character adjustment */
     private int interCharacterAdjustment;
 
-    private byte[] data;
-
+    /** the text orientation */
     private int rotation;
+
+    /** the text encoding */
+    private String textEncoding;
+
+    /** the text string */
+    private String textString;
 
     /**
      * Returns the font reference
@@ -152,24 +163,6 @@ public class AFPTextDataInfo {
     }
 
     /**
-     * Return the text data
-     *
-     * @return the text data
-     */
-    public byte[] getData() {
-        return data;
-    }
-
-    /**
-     * Sets the text data
-     *
-     * @param data the text orientation
-     */
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    /**
      * Sets the text orientation
      *
      * @param rotation the text rotation
@@ -187,6 +180,42 @@ public class AFPTextDataInfo {
         return this.rotation;
     }
 
+    /**
+     * Sets the text encoding
+     *
+     * @param textEncoding the text encoding
+     */
+    public void setEncoding(String textEncoding) {
+        this.textEncoding = textEncoding;
+    }
+
+    /**
+     * Returns the text encoding
+     *
+     * @return the text encoding
+     */
+    public String getEncoding() {
+        return this.textEncoding;
+    }
+
+    /**
+     * Sets the text string
+     *
+     * @param textString the text string
+     */
+    public void setString(String textString) {
+        this.textString = textString;
+    }
+
+    /**
+     * Returns the text string
+     *
+     * @return the text string
+     */
+    public String getString() {
+        return this.textString;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "TextDataInfo{fontReference=" + fontReference
@@ -196,7 +225,8 @@ public class AFPTextDataInfo {
         + ", vsci=" + variableSpaceCharacterIncrement
         + ", ica=" + interCharacterAdjustment
         + ", orientation=" + rotation
-        + ", data=" + data
+        + ", textString=" + textString
+        + ", textEncoding=" + textEncoding
         + "}";
     }
 }

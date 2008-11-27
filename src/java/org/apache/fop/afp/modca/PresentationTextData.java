@@ -22,6 +22,7 @@ package org.apache.fop.afp.modca;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.afp.AFPLineDataInfo;
@@ -50,49 +51,31 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class PresentationTextData extends AbstractAFPObject {
 
-    /**
-     * The maximum size of the presentation text data.
-     */
+    /** the maximum size of the presentation text data.*/
     private static final int MAX_SIZE = 8192;
 
-    /**
-     * The afp data relating to this presentation text data.
-     */
+    /** the AFP data relating to this presentation text data. */
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    /**
-     * The current x coordinate.
-     */
+    /** the current x coordinate. */
     private int currentX = -1;
 
-    /**
-     * The current y cooridnate
-     */
+    /** the current y cooridnate */
     private int currentY = -1;
 
-    /**
-     * The current font
-     */
+    /** the current font */
     private String currentFont = "";
 
-    /**
-     * The current orientation
-     */
+    /** the current orientation */
     private int currentOrientation = 0;
 
-    /**
-     * The current color
-     */
+    /** the current color */
     private Color currentColor = new Color(0, 0, 0);
 
-    /**
-     * The current variable space increment
-     */
+    /** the current variable space increment */
     private int currentVariableSpaceCharacterIncrement = 0;
 
-    /**
-     * The current inter character adjustment
-     */
+    /** the current inter character adjustment */
     private int currentInterCharacterAdjustment = 0;
 
     /**
@@ -115,9 +98,9 @@ public class PresentationTextData extends AbstractAFPObject {
                 0x5A, // Structured field identifier
                 0x00, // Record length byte 1
                 0x00, // Record length byte 2
-                (byte) 0xD3, // PresentationTextData identifier byte 1
-                (byte) 0xEE, // PresentationTextData identifier byte 2
-                (byte) 0x9B, // PresentationTextData identifier byte 3
+                SF_CLASS, // PresentationTextData identifier byte 1
+                Type.DATA, // PresentationTextData identifier byte 2
+                Category.PRESENTATION_TEXT, // PresentationTextData identifier byte 3
                 0x00, // Flag
                 0x00, // Reserved
                 0x00, // Reserved
@@ -270,10 +253,12 @@ public class PresentationTextData extends AbstractAFPObject {
      * @param textDataInfo
      *            the afp text data
      * @throws MaximumSizeExceededException
-     *             thrown if the maximum number of text data is exceeded
+     *            thrown if the maximum number of text data is exceeded
+     * @throws UnsupportedEncodingException
+     *            thrown if character encoding is not supported
      */
     public void createTextData(AFPTextDataInfo textDataInfo)
-            throws MaximumSizeExceededException {
+            throws MaximumSizeExceededException, UnsupportedEncodingException {
 
         ByteArrayOutputStream afpdata = new ByteArrayOutputStream();
 
@@ -325,7 +310,9 @@ public class PresentationTextData extends AbstractAFPObject {
                 afpdata);
 
         // Add transparent data
-        byte[] data = textDataInfo.getData();
+        String textString = textDataInfo.getString();
+        String encoding = textDataInfo.getEncoding();
+        byte[] data = textString.getBytes(encoding);
         if (data.length <= TRANSPARENT_MAX_SIZE) {
             addTransparentData(data, afpdata);
         } else {

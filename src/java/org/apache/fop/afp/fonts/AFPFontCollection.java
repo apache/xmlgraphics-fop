@@ -22,12 +22,12 @@ package org.apache.fop.afp.fonts;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.render.afp.AFPEventProducer;
 
 /**
  * A base collection of AFP fonts

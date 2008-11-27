@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -364,8 +365,9 @@ public class DataStream {
      *
      * @param textDataInfo
      *            the afp text data
+     * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
-    public void createText(AFPTextDataInfo textDataInfo) {
+    public void createText(AFPTextDataInfo textDataInfo) throws UnsupportedEncodingException {
         int rotation = paintingState.getRotation();
         if (rotation != 0) {
             textDataInfo.setRotation(rotation);

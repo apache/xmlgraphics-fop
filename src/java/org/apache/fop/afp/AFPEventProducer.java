@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp;
+package org.apache.fop.afp;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
@@ -55,6 +55,7 @@ public interface AFPEventProducer extends EventProducer {
 
     /**
      * Warn about using default font setup.
+     *
      * @param source the event source
      * @event.severity WARN
      */
@@ -62,10 +63,21 @@ public interface AFPEventProducer extends EventProducer {
 
     /**
      * Warn about a missing default "any" font configuration.
+     *
      * @param source the event source
      * @param style the font style
      * @param weight the font weight
      * @event.severity WARN
      */
     void warnMissingDefaultFont(Object source, String style, int weight);
+
+    /**
+     * A character set encoding error occurred.
+     *
+     * @param source the event source
+     * @param charSetName the character set name
+     * @param encoding the encoding
+     * @event.severity ERROR
+     */
+    void characterSetEncodingError(Object source, String charSetName, String encoding);
 }
