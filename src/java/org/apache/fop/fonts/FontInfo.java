@@ -110,6 +110,19 @@ public class FontInfo {
     }
 
     /**
+     * Adds a series of new font triplets given an array of font family names.
+     * @param name internal key
+     * @param families an array of font family names
+     * @param style font style (normal, italic, oblique...)
+     * @param weight font weight
+     */
+    public void addFontProperties(String name, String[] families, String style, int weight) {
+        for (int i = 0; i < families.length; i++) {
+            addFontProperties(name, families[i], style, weight);
+        }
+    }
+
+    /**
      * Adds a new font triplet.
      * @param internalFontKey internal font key
      * @param triplet the font triplet to associate with the internal key
@@ -193,7 +206,8 @@ public class FontInfo {
     private FontTriplet fontLookup(String family, String style,
                              int weight, boolean substitutable) {
         if (log.isTraceEnabled()) {
-            log.trace("Font lookup: " + family + " " + style + " " + weight);
+            log.trace("Font lookup: " + family + " " + style + " " + weight
+                    + (substitutable ? " substitutable" : ""));
         }
 
         FontTriplet startKey = createFontKey(family, style, weight);
@@ -215,7 +229,7 @@ public class FontInfo {
     }
 
     private FontTriplet fuzzyFontLookup(String family, String style,
-            int weight, FontTriplet startKey, boolean substFont) {
+            int weight, FontTriplet startKey, boolean substitutable) {
         FontTriplet key;
         String internalFontKey = null;
         if (!family.equals(startKey.getName())) {
@@ -232,7 +246,8 @@ public class FontInfo {
             internalFontKey = getInternalFontKey(key);
         }
 
-        if (!substFont && internalFontKey == null) {
+        // return null if not found and not substitutable
+        if (!substitutable && internalFontKey == null) {
             return null;
         }
 
@@ -263,18 +278,18 @@ public class FontInfo {
 
         // fallback 2: try the same font-family with default style and weight
         /* obsolete: replaced by the loop above
-        if (f == null) {
+        if (internalFontKey == null) {
             key = createFontKey(family, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            f = getInternalFontKey(key);
+            internalFontKey = getInternalFontKey(key);
         }*/
 
-        // fallback 3: try any family with orig style/weight
+        // fallback 3: try any family with original style/weight
         if (internalFontKey == null) {
             return fuzzyFontLookup("any", style, weight, startKey, false);
         }
 
         // last resort: use default
-        if (internalFontKey == null) {
+        if (key == null && internalFontKey == null) {
             key = Font.DEFAULT_FONT;
             internalFontKey = getInternalFontKey(key);
         }
@@ -303,6 +318,7 @@ public class FontInfo {
 
     /**
      * Retrieves a (possibly cached) Font instance based on a FontTriplet and a font size.
+     *
      * @param triplet the font triplet designating the requested font
      * @param fontSize the font size
      * @return the requested Font instance
@@ -326,6 +342,57 @@ public class FontInfo {
         return font;
     }
 
+    private List/*<FontTriplet>*/ getTripletsForName(String fontName) {
+        List/*<FontTriplet>*/ matchedTriplets = new java.util.ArrayList/*<FontTriplet>*/();
+        Iterator it = triplets.keySet().iterator();
+        while (it.hasNext()) {
+            FontTriplet triplet = (FontTriplet)it.next();
+            String tripletName = triplet.getName();
+            if (tripletName.toLowerCase().equals(fontName.toLowerCase())) {
+                matchedTriplets.add(triplet);
+            }
+        }
+        return matchedTriplets;
+    }
+
+    /**
+     * Returns a suitable internal font given an AWT Font instance.
+     *
+     * @param awtFont the AWT font
+     * @return a best matching internal Font
+     */
+    public Font getFontInstanceForAWTFont(java.awt.Font awtFont) {
+        String awtFontName = awtFont.getName();
+        String awtFontFamily = awtFont.getFamily();
+        String awtFontStyle = awtFont.isItalic() ? Font.STYLE_ITALIC : Font.STYLE_NORMAL;
+        int awtFontWeight = awtFont.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
+
+        FontTriplet matchedTriplet = null;
+        List/*<FontTriplet>*/ triplets = getTripletsForName(awtFontName);
+        if (!triplets.isEmpty()) {
+            Iterator it = triplets.iterator();
+            while (it.hasNext()) {
+                FontTriplet triplet = (FontTriplet)it.next();
+                boolean styleMatched = triplet.getStyle().equals(awtFontStyle);
+                boolean weightMatched = triplet.getWeight() == awtFontWeight;
+                if (styleMatched && weightMatched) {
+                    matchedTriplet = triplet;
+                    break;
+                }
+            }
+        }
+
+        // not matched on font name so do a lookup using family
+        if (matchedTriplet == null) {
+            if (awtFontFamily.equals("sanserif")) {
+                awtFontFamily = "sans-serif";
+            }
+            matchedTriplet = fontLookup(awtFontFamily, awtFontStyle, awtFontWeight);
+        }
+        int fontSize = Math.round(awtFont.getSize2D() * 1000);
+        return getFontInstance(matchedTriplet, fontSize);
+    }
+
     /**
      * Lookup a font.
      * <br>
@@ -345,7 +412,7 @@ public class FontInfo {
 
     private List/*<FontTriplet>*/ fontLookup(String[] families, String style,
             int weight, boolean substitutable) {
-        List matchingTriplets = new java.util.ArrayList();
+        List/*<FontTriplet>*/ matchingTriplets = new java.util.ArrayList/*<FontTriplet>*/();
         FontTriplet triplet = null;
         for (int i = 0; i < families.length; i++) {
             triplet = fontLookup(families[i], style, weight, substitutable);
@@ -555,7 +622,7 @@ public class FontInfo {
         List/*<FontTriplet>*/ foundTriplets = new java.util.ArrayList();
         for (Iterator iter = triplets.entrySet().iterator(); iter.hasNext();) {
             Map.Entry tripletEntry = (Map.Entry) iter.next();
-            if (fontName.equals(((String)tripletEntry.getValue()))) {
+            if (fontName.equals((tripletEntry.getValue()))) {
                 foundTriplets.add(tripletEntry.getKey());
             }
         }

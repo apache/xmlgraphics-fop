@@ -42,6 +42,7 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
 
     /**
      * Default constructor
+     * 
      * @param userAgent user agent
      */
     public PDFRendererConfigurator(FOUserAgent userAgent) {
@@ -52,6 +53,7 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
      * Configure the PDF renderer.
      * Get the configuration to be used for pdf stream filters,
      * fonts etc.
+     * 
      * @param renderer pdf renderer
      * @throws FOPException fop exception
      */
@@ -79,7 +81,8 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
             if (s != null) {
                 pdfRenderer.setXMode(PDFXMode.valueOf(s));
             }
-            Configuration encryptionParamsConfig = cfg.getChild(PDFRenderer.ENCRYPTION_PARAMS, false);
+            Configuration encryptionParamsConfig
+                = cfg.getChild(PDFRenderer.ENCRYPTION_PARAMS, false);
             if (encryptionParamsConfig != null) {
                 PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
                 Configuration ownerPasswordConfig = encryptionParamsConfig.getChild(
@@ -124,15 +127,18 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
             if (s != null) {
                 pdfRenderer.setOutputProfileURI(s);
             }
-            Configuration disableColorSpaceConfig = cfg.getChild(PDFRenderer.KEY_DISABLE_SRGB_COLORSPACE, false);
+            Configuration disableColorSpaceConfig = cfg.getChild(
+                    PDFRenderer.KEY_DISABLE_SRGB_COLORSPACE, false);
             if (disableColorSpaceConfig != null) {
-                pdfRenderer.disableSRGBColorSpace = disableColorSpaceConfig.getValueAsBoolean(false);
+                pdfRenderer.disableSRGBColorSpace
+                    = disableColorSpaceConfig.getValueAsBoolean(false);
             }
         }
     }
 
     /**
      * Builds a filter map from an Avalon Configuration object.
+     * 
      * @param cfg the Configuration object
      * @return Map the newly built filter map
      * @throws ConfigurationException if a filter list is defined twice

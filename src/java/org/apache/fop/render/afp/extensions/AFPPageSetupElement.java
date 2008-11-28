@@ -23,9 +23,10 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
- * Extension element for fox:ps-page-setup-code.
+ * Extension element for afp:ps-page-setup-code.
  */
 public class AFPPageSetupElement extends AbstractAFPExtensionObject {
 
@@ -45,4 +46,10 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected ExtensionAttachment instantiateExtensionAttachment() {
+        return new AFPPageSetup(this.name);
+    }
 }

@@ -19,29 +19,29 @@
 
 package org.apache.fop.svg;
 
-import org.apache.fop.Version;
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFFilterList;
-import org.apache.fop.pdf.PDFPage;
-import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFState;
-import org.apache.fop.pdf.PDFNumber;
-import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontSetup;
-
-import java.awt.Graphics;
-import java.awt.Font;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringWriter;
+
+import org.apache.fop.Version;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.pdf.PDFAnnotList;
+import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFPaintingState;
+import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFStream;
 
 /**
  * This class is a wrapper for the <tt>PDFGraphics2D</tt> that
@@ -52,7 +52,7 @@ import java.io.StringWriter;
  */
 public class PDFDocumentGraphics2D extends PDFGraphics2D {
 
-    private PDFContext pdfContext;
+    private final PDFContext pdfContext;
 
     private int width;
     private int height;
@@ -296,7 +296,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             throw new IllegalStateException("Close page first before starting another");
         }
         //Start page
-        graphicsState = new PDFState();
+        paintingState = new PDFPaintingState();
         if (this.initialTransform == null) {
             //Save initial transformation matrix
             this.initialTransform = getTransform();
@@ -322,7 +322,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         pageRef = page.referencePDF();
 
         AffineTransform at = new AffineTransform(1.0, 0.0, 0.0, -1.0,
-                                                 0.0, (double)height);
+                                                 0.0, height);
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
         if (svgWidth != 0) {
             double scaleX = width / svgWidth;
@@ -340,7 +340,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             scale(1 / s, 1 / s);
         }
         // Remember the transform we installed.
-        graphicsState.concatenate(at);
+        paintingState.concatenate(at);
 
         pdfContext.increasePageCount();
     }

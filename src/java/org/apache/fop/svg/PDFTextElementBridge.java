@@ -19,13 +19,7 @@
 
 package org.apache.fop.svg;
 
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.SVGTextElementBridge;
-import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.TextPainter;
-import org.apache.fop.fonts.FontInfo;
-import org.w3c.dom.Element;
 
 /**
  * Bridge class for the &lt;text> element.
@@ -34,41 +28,15 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
-public class PDFTextElementBridge extends SVGTextElementBridge {
-
-    private PDFTextPainter pdfTextPainter;
+public class PDFTextElementBridge extends AbstractFOPTextElementBridge {
 
     /**
      * Constructs a new bridge for the &lt;text> element.
-     * @param fi the font information
+     *
+     * @param textPainter the text painter to use
      */
-    public PDFTextElementBridge(FontInfo fi) {
-        pdfTextPainter = new PDFTextPainter(fi);
+    public PDFTextElementBridge(TextPainter textPainter) {
+        super(textPainter);
     }
-
-    /**
-     * Create a text element bridge.
-     * This set the text painter on the node if the text is simple.
-     * @param ctx the bridge context
-     * @param e the svg element
-     * @return the text graphics node created by the super class
-     */
-    public GraphicsNode createGraphicsNode(BridgeContext ctx, Element e) {
-        GraphicsNode node = super.createGraphicsNode(ctx, e);
-        if (node != null) {
-            //Set our own text painter
-            ((TextNode)node).setTextPainter(getTextPainter());
-        }
-        return node;
-    }
-
-    /**
-     * Returns the TextPainter instance used by this bridge.
-     * @return the text painter
-     */
-    public TextPainter getTextPainter() {
-        return pdfTextPainter;
-    }
-
 }
 

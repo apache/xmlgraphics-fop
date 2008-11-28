@@ -19,33 +19,10 @@
 
 package org.apache.fop.render.afp.extensions;
 
-import java.io.Serializable;
-
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
-import org.apache.xmlgraphics.util.XMLizable;
-
-import org.apache.fop.fo.extensions.ExtensionAttachment;
-
 /**
  * This is the pass-through value object for the PostScript extension.
  */
-public class AFPPageSetup implements ExtensionAttachment, Serializable, XMLizable  {
-
-    private static final long serialVersionUID = 7190606822558332901L;
-
-    /** The category URI for this extension attachment. */
-    public static final String CATEGORY = "apache:fop:extensions:afp";
-
-    private String elementName;
-
-    private String name;
-
-    private String value;
-
-    private String content;
+public class AFPPageSetup extends AFPExtensionAttachment {
 
     /**
      * Default constructor.
@@ -53,85 +30,16 @@ public class AFPPageSetup implements ExtensionAttachment, Serializable, XMLizabl
      * @param elementName the name of the setup code object, may be null
      */
     public AFPPageSetup(String elementName) {
-        this.elementName = elementName;
+        super(elementName);
     }
 
-    /** @return the name */
-    public String getElementName() {
-        return elementName;
-    }
-
-    /** @return the name */
-    public String getName() {
-        return name;
-    }
+    private static final long serialVersionUID = -549941295384013190L;
 
     /**
-     * Sets the name of the setup code object.
-     * @param name The name to set.
+     * {@inheritDoc}
      */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Sets the value
-     * @param source The value name to set.
-     */
-    public void setValue(String source) {
-        this.value = source;
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory() {
-        return CATEGORY;
-    }
-
-    /**
-     * @return the data
-     */
-    public String getContent() {
-        return content;
-    }
-
-    /**
-     * Sets the data
-     * @param content The byte data to set.
-     */
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    /** {@inheritDoc} */
     public String toString() {
         return "AFPPageSetup(element-name=" + getElementName()
             + " name=" + getName() + " value=" + getValue() + ")";
-    }
-
-    private static final String ATT_NAME = "name";
-    private static final String ATT_VALUE = "value";
-
-    /** {@inheritDoc} */
-    public void toSAX(ContentHandler handler) throws SAXException {
-        AttributesImpl atts = new AttributesImpl();
-        if (name != null && name.length() > 0) {
-            atts.addAttribute(null, ATT_NAME, ATT_NAME, "CDATA", name);
-        }
-        if (value != null && value.length() > 0) {
-            atts.addAttribute(null, ATT_VALUE, ATT_VALUE, "CDATA", value);
-        }
-        handler.startElement(CATEGORY, elementName, elementName, atts);
-        if (content != null && content.length() > 0) {
-            char[] chars = content.toCharArray();
-            handler.characters(chars, 0, chars.length);
-        }
-        handler.endElement(CATEGORY, elementName, elementName);
     }
 }

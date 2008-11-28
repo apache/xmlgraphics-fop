@@ -36,11 +36,11 @@ import org.apache.commons.logging.LogFactory;
  * the life of the area tree model.
  */
 public class AreaTreeModel {
-    private List pageSequenceList = null;
+    private List/*<PageSequence>*/ pageSequenceList = null;
     private int currentPageSequenceIndex = -1;
     /** the current page sequence */
     protected PageSequence currentPageSequence;
-    private List offDocumentItems = new java.util.ArrayList();
+//    private List offDocumentItems = new java.util.ArrayList();
     /** logger instance */
     protected static Log log = LogFactory.getLog(AreaTreeModel.class);
 
@@ -48,7 +48,7 @@ public class AreaTreeModel {
      * Create a new store pages model
      */
     public AreaTreeModel() {
-        pageSequenceList = new java.util.ArrayList();
+        pageSequenceList = new java.util.ArrayList/*<PageSequence>*/();
     }
 
     /**
@@ -83,13 +83,13 @@ public class AreaTreeModel {
      * Handle an OffDocumentItem
      * @param ext the extension to handle
      */
-    public void handleOffDocumentItem(OffDocumentItem ext) {};
+    public void handleOffDocumentItem(OffDocumentItem ext) { };
 
     /**
      * Signal the end of the document for any processing.
      * @throws SAXException if a problem was encountered.
      */
-    public void endDocument() throws SAXException {};
+    public void endDocument() throws SAXException { };
 
     /**
      * Returns the currently active page-sequence.

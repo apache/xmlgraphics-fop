@@ -28,11 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.w3c.dom.Document;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
@@ -68,6 +65,7 @@ import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
+import org.w3c.dom.Document;
 
 /**
  * Abstract base class for all renderers. The Abstract renderer does all the
@@ -504,7 +502,7 @@ public abstract class AbstractRenderer
      */
     protected void renderBlocks(Block parent, List blocks) {
         int saveIP = currentIPPosition;
-        int saveBP = currentBPPosition;
+//        int saveBP = currentBPPosition;
 
         // Calculate the position of the content rectangle.
         if (parent != null && !parent.getTraitAsBoolean(Trait.IS_VIEWPORT_AREA)) {

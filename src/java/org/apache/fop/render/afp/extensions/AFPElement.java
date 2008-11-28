@@ -23,6 +23,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
  * This class extends the org.apache.fop.extensions.ExtensionObj class. The
@@ -45,13 +46,13 @@ public class AFPElement extends AbstractAFPExtensionObject {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        //if (!AFPElementMapping.NAMESPACE.equals(parent.getNamespaceURI())
-        //    || !AFPElementMapping.PAGE.equals(parent.getLocalName())) {
-        //    throw new ValidationException(getName() + " must be a child of afp:page.");
-        //}
         if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
             throw new ValidationException(getName() + " must be a child of fo:simple-page-master.");
         }
     }
 
+    /** {@inheritDoc} */    
+    protected ExtensionAttachment instantiateExtensionAttachment() {
+        return new AFPPageSetup(getName());
+    }
 }

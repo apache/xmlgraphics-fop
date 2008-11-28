@@ -24,8 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.CustomFontCollection;
@@ -36,6 +34,7 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.base14.Base14FontCollection;
+import org.w3c.dom.Document;
 
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
@@ -112,6 +111,14 @@ public abstract class PrintRenderer extends AbstractRenderer {
     }
 
     /**
+     * Instantiates a RendererContext for an image
+     * @return a newly created RendererContext.
+     */
+    protected RendererContext instantiateRendererContext() {
+        return new RendererContext(this, getMimeType());
+    }
+
+    /**
      * Creates a RendererContext for an image.
      * @param x the x coordinate (in millipoints)
      * @param y the y coordinate (in millipoints)
@@ -122,8 +129,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     protected RendererContext createRendererContext(int x, int y, int width, int height,
             Map foreignAttributes) {
-        RendererContext context;
-        context = new RendererContext(this, getMimeType());
+        RendererContext context = instantiateRendererContext();
         context.setUserAgent(userAgent);
 
         context.setProperty(RendererContextConstants.WIDTH,
