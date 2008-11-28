@@ -119,8 +119,10 @@ public class Area extends AreaTreeObject implements Serializable {
     public static final int CLASS_MAX = CLASS_SIDE_FLOAT + 1;
 
     private int areaClass = CLASS_NORMAL;
+    
     /** the area's inline-progression-dimension */
     protected int ipd;
+
     /** the area's block-progression-dimension */
     protected int bpd;
 
@@ -141,7 +143,7 @@ public class Area extends AreaTreeObject implements Serializable {
      * @return the area class
      */
     public int getAreaClass() {
-        return areaClass;
+        return this.areaClass;
     }
 
     /**
@@ -157,11 +159,11 @@ public class Area extends AreaTreeObject implements Serializable {
      * Set the inline progression dimension of content rectangle
      * for this area.
      *
-     * @param i the new inline progression dimension
-     * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">ipd</a>
+     * @param ipd the new inline progression dimension
+     * @see <a href="http://www.w3.org/TR/xsl/#inline-progression-dimension">ipd</a>
      */
-    public void setIPD(int i) {
-        ipd = i;
+    public void setIPD(int ipd) {
+        this.ipd = ipd;
     }
 
     /**
@@ -169,10 +171,10 @@ public class Area extends AreaTreeObject implements Serializable {
      * for this area.
      *
      * @return the inline progression dimension
-     * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">ipd</a>
+     * @see <a href="http://www.w3.org/TR/xsl/#inline-progression-dimension">ipd</a>
      */
     public int getIPD() {
-        return ipd;
+        return this.ipd;
     }
 
     /**
@@ -180,7 +182,7 @@ public class Area extends AreaTreeObject implements Serializable {
      * for this area.
      *
      * @param b the new block progression dimension
-     * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">bpd</a>
+     * @see <a href="http://www.w3.org/TR/xsl/#block-progression-dimension">bpd</a>
      */
     public void setBPD(int b) {
         bpd = b;
@@ -191,7 +193,7 @@ public class Area extends AreaTreeObject implements Serializable {
      * for this area.
      *
      * @return the block progression dimension
-     * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">bpd</a>
+     * @see <a href="http://www.w3.org/TR/xsl/#block-progression-dimension">bpd</a>
      */
     public int getBPD() {
         return bpd;

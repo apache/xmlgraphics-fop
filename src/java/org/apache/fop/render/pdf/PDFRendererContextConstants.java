@@ -29,8 +29,8 @@ public interface PDFRendererContextConstants extends RendererContextConstants {
     /** The PDF document that this image is being drawn into. */
     String PDF_DOCUMENT = "pdfDoc";
 
-    /** The current pdf state. */
-    String PDF_STATE = "pdfState";
+    /** The current PDF painting state. */
+    String PDF_PAINTING_STATE = "pdfPaintingState";
 
     /** The current PDF page for page renference and as a resource context. */
     String PDF_PAGE = "pdfPage";

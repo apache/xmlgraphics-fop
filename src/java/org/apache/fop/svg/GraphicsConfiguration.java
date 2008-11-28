@@ -17,7 +17,6 @@
 
 /* $Id$ */
 
-
 package org.apache.fop.svg;
 
 import java.awt.image.VolatileImage;

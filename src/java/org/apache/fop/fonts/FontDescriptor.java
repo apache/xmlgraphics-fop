@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+
 /**
  * This interface enhances the font metrics interface with access methods to
  * value needed to register fonts in various target formats like PDF or

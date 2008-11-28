@@ -20,9 +20,35 @@
 package org.apache.fop.render.afp;
 
 // FOP
+import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
+import java.io.IOException;
+
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.fop.afp.AFPGraphics2D;
+import org.apache.fop.afp.AFPGraphicsObjectInfo;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.svg.AFPBridgeContext;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.image.loader.batik.Graphics2DImagePainterImpl;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererContext.RendererContextWrapper;
+import org.apache.fop.svg.SVGEventProducer;
+import org.apache.fop.svg.SVGUserAgent;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.MimeConstants;
+import org.w3c.dom.Document;
 
 /**
  * AFP XML handler for SVG. Uses Apache Batik for SVG processing.
@@ -30,6 +56,147 @@ import org.apache.fop.render.RendererContext;
  * @see AFPGraphics2DAdapter
  */
 public class AFPSVGHandler extends AbstractGenericSVGHandler {
+
+    private boolean paintAsBitmap = false;
+
+    /** {@inheritDoc} */
+    public void handleXML(RendererContext context,
+                Document doc, String ns) throws Exception {
+        if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
+            renderSVGDocument(context, doc);
+        }
+    }
+
+    /**
+     * Render the SVG document.
+     *
+     * @param rendererContext the renderer context
+     * @param doc the SVG document
+     * @throws IOException In case of an I/O error while painting the image
+     */
+    protected void renderSVGDocument(final RendererContext rendererContext,
+            final Document doc) throws IOException {
+
+        AFPRendererContext afpRendererContext = (AFPRendererContext)rendererContext;
+        AFPInfo afpInfo = afpRendererContext.getInfo();
+
+        this.paintAsBitmap = afpInfo.paintAsBitmap();
+
+        FOUserAgent userAgent = rendererContext.getUserAgent();
+
+        // fallback paint as bitmap
+        String uri = getDocumentURI(doc);
+        if (paintAsBitmap) {
+            try {
+                super.renderSVGDocument(rendererContext, doc);
+            } catch (IOException ioe) {
+                SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                        userAgent.getEventBroadcaster());
+                eventProducer.svgRenderingError(this, ioe, uri);
+            }
+            return;
+        }
+
+        // Create a new AFPGraphics2D
+        final boolean textAsShapes = afpInfo.strokeText();
+        AFPGraphics2D g2d = afpInfo.createGraphics2D(textAsShapes);
+
+        AFPPaintingState paintingState = g2d.getPaintingState();
+        paintingState.setImageUri(uri);
+
+        // Create an AFPBridgeContext
+        BridgeContext bridgeContext = createBridgeContext(userAgent, g2d);
+
+        // Build the SVG DOM and provide the painter with it
+        GraphicsNode root = buildGraphicsNode(userAgent, bridgeContext, doc);
+
+        // Create Graphics2DImagePainter
+        final RendererContextWrapper wrappedContext
+            = RendererContext.wrapRendererContext(rendererContext);
+        Dimension imageSize = getImageSize(wrappedContext);
+        Graphics2DImagePainter painter
+            = createGrapics2DImagePainter(bridgeContext, root, imageSize);
+
+        // Create AFPObjectAreaInfo
+        RendererContextWrapper rctx = RendererContext.wrapRendererContext(rendererContext);
+        int x = rctx.getCurrentXPosition();
+        int y = rctx.getCurrentYPosition();
+        int width = afpInfo.getWidth();
+        int height = afpInfo.getHeight();
+        int resolution = afpInfo.getResolution();
+
+        paintingState.save(); // save
+
+        AFPObjectAreaInfo objectAreaInfo
+            = createObjectAreaInfo(paintingState, x, y, width, height, resolution);
+
+        // Create AFPGraphicsObjectInfo
+        AFPResourceInfo resourceInfo = afpInfo.getResourceInfo();
+        AFPGraphicsObjectInfo graphicsObjectInfo = createGraphicsObjectInfo(
+                paintingState, painter, userAgent, resourceInfo, g2d);
+        graphicsObjectInfo.setObjectAreaInfo(objectAreaInfo);
+
+        // Create the GOCA GraphicsObject in the DataStream
+        AFPResourceManager resourceManager = afpInfo.getResourceManager();
+        resourceManager.createObject(graphicsObjectInfo);
+
+        paintingState.restore(); // resume
+    }
+
+    private AFPObjectAreaInfo createObjectAreaInfo(AFPPaintingState paintingState,
+            int x, int y, int width, int height, int resolution) {
+        // set the data object parameters
+        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
+
+        AffineTransform at = paintingState.getData().getTransform();
+        at.translate(x, y);
+        objectAreaInfo.setX((int)Math.round(at.getTranslateX()));
+        objectAreaInfo.setY((int)Math.round(at.getTranslateY()));
+
+        objectAreaInfo.setWidthRes(resolution);
+        objectAreaInfo.setHeightRes(resolution);
+
+        AFPUnitConverter unitConv = paintingState.getUnitConverter();
+        objectAreaInfo.setWidth(Math.round(unitConv.mpt2units(width)));
+        objectAreaInfo.setHeight(Math.round(unitConv.mpt2units(height)));
+
+        int rotation = paintingState.getRotation();
+        objectAreaInfo.setRotation(rotation);
+
+        return objectAreaInfo;
+    }
+
+    private AFPGraphicsObjectInfo createGraphicsObjectInfo(AFPPaintingState paintingState, Graphics2DImagePainter painter,
+            FOUserAgent userAgent, AFPResourceInfo resourceInfo, AFPGraphics2D g2d) {
+        AFPGraphicsObjectInfo graphicsObjectInfo = new AFPGraphicsObjectInfo();
+
+        String uri = paintingState.getImageUri();
+        graphicsObjectInfo.setUri(uri);
+
+        graphicsObjectInfo.setMimeType(MimeConstants.MIME_AFP_GOCA);
+
+        graphicsObjectInfo.setResourceInfo(resourceInfo);
+
+        graphicsObjectInfo.setPainter(painter);
+
+        // Set the afp graphics 2d implementation
+        graphicsObjectInfo.setGraphics2D(g2d);
+
+        return graphicsObjectInfo;
+    }
+
+    public static BridgeContext createBridgeContext(FOUserAgent userAgent, AFPGraphics2D g2d) {
+        ImageManager imageManager = userAgent.getFactory().getImageManager();
+
+        SVGUserAgent svgUserAgent
+            = new SVGUserAgent(userAgent, new AffineTransform());
+
+        ImageSessionContext imageSessionContext = userAgent.getImageSessionContext();
+
+        FontInfo fontInfo = g2d.getFontInfo();
+        return new AFPBridgeContext(svgUserAgent, fontInfo, imageManager, imageSessionContext,
+                new AffineTransform(), g2d);
+    }
 
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
@@ -39,9 +206,29 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
     /** {@inheritDoc} */
     protected void updateRendererContext(RendererContext context) {
         //Work around a problem in Batik: Gradients cannot be done in ColorSpace.CS_GRAY
-        context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE,
-                Boolean.FALSE);
+        context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE, Boolean.FALSE);
+    }
+
+    /** {@inheritDoc} */
+    protected Graphics2DImagePainter createGrapics2DImagePainter(BridgeContext ctx, GraphicsNode root, Dimension imageSize) {
+        Graphics2DImagePainter painter = null;
+        if (paintAsBitmap()) {
+            // paint as IOCA Image
+            painter = super.createGraphics2DImagePainter(root, ctx, imageSize);
+        } else {
+            // paint as GOCA Graphics
+            painter = new Graphics2DImagePainterImpl(root, ctx, imageSize);
+        }
+        return painter;
+    }
+
+    /**
+     * Returns true if the SVG is to be painted as a bitmap
+     *
+     * @return true if the SVG is to be painted as a bitmap
+     */
+    private boolean paintAsBitmap() {
+        return paintAsBitmap;
     }
 
 }
-

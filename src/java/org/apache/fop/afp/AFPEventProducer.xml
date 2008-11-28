@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogue xml:lang="en">
+  <message key="org.apache.fop.afp.AFPEventProducer.warnDefaultFontSetup">No AFP fonts configured. Using default setup.</message>
+  <message key="org.apache.fop.afp.AFPEventProducer.warnMissingDefaultFont">No AFP default "any", {style}, {weight} font configured.</message>
+  <message key="org.apache.fop.afp.AFPEventProducer.characterSetEncodingError">An error occurred when attempting to encode character set {charSetName} with encoding scheme {encoding}.</message>
+</catalogue>

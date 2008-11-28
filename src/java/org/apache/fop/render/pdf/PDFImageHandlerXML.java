@@ -24,14 +24,12 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
+import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.RendererContext;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
-
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.RendererContext;
+import org.w3c.dom.Document;
 
 /**
  * PDFImageHandler implementation which handles XML-based images.

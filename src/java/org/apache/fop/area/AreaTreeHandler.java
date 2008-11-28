@@ -101,12 +101,12 @@ public class AreaTreeHandler extends FOEventHandler {
 
         setupModel(userAgent, outputFormat, stream);
 
-        lmMaker = userAgent.getFactory().getLayoutManagerMakerOverride();
+        this.lmMaker = userAgent.getFactory().getLayoutManagerMakerOverride();
         if (lmMaker == null) {
             lmMaker = new LayoutManagerMapping();
         }
 
-        idTracker = new IDTracker();
+        this.idTracker = new IDTracker();
 
         if (log.isDebugEnabled()) {
             statistics = new Statistics();
@@ -124,7 +124,7 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     protected void setupModel(FOUserAgent userAgent, String outputFormat,
             OutputStream stream) throws FOPException {
-        model = new RenderPagesModel(userAgent, outputFormat, fontInfo, stream);
+        this.model = new RenderPagesModel(userAgent, outputFormat, fontInfo, stream);
     }
 
     /**
@@ -133,7 +133,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @return AreaTreeModel the model being used for this area tree
      */
     public AreaTreeModel getAreaTreeModel() {
-        return model;
+        return this.model;
     }
 
     /**
@@ -143,7 +143,7 @@ public class AreaTreeHandler extends FOEventHandler {
      *         area tree
      */
     public LayoutManagerMaker getLayoutManagerMaker() {
-        return lmMaker;
+        return this.lmMaker;
     }
 
     /**
@@ -152,7 +152,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @return IDTracker used to track reference ids for items in this area tree
      */
     public IDTracker getIDTracker() {
-        return idTracker;
+        return this.idTracker;
     }
 
     /**
@@ -207,9 +207,9 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     private void wrapAndAddExtensionAttachments(List list) {
-        Iterator i = list.iterator();
-        while (i.hasNext()) {
-            ExtensionAttachment attachment = (ExtensionAttachment) i.next();
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            ExtensionAttachment attachment = (ExtensionAttachment) it.next();
             addOffDocumentItem(new OffDocumentExtensionAttachment(attachment));
         }
     }
@@ -357,7 +357,7 @@ public class AreaTreeHandler extends FOEventHandler {
      *
      * @param id the property ID of the area
      * @param pv a page viewport that contains the area with this ID
-     * @deprecated use getIdTracker().associateIDWithPageViewport(id, pv) instead
+     * @deprecated use getIDTracker().associateIDWithPageViewport(id, pv) instead
      */
     public void associateIDWithPageViewport(String id, PageViewport pv) {
         idTracker.associateIDWithPageViewport(id, pv);
@@ -369,7 +369,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * know when an id can be resolved.
      *
      * @param id the id of the object being processed
-     * @deprecated use getIdTracker().signalPendingID(id) instead
+     * @deprecated use getIDTracker().signalPendingID(id) instead
      */
     public void signalPendingID(String id) {
         idTracker.signalPendingID(id);
@@ -381,7 +381,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * ref-ids can be resolved.
      *
      * @param id the id of the formatting object which was just finished
-     * @deprecated use getIdTracker().signalIDProcessed(id) instead
+     * @deprecated use getIDTracker().signalIDProcessed(id) instead
      */
     public void signalIDProcessed(String id) {
         idTracker.signalIDProcessed(id);
@@ -392,7 +392,7 @@ public class AreaTreeHandler extends FOEventHandler {
      *
      * @param id the id to check
      * @return true if the ID has been resolved
-     * @deprecated use getIdTracker().alreadyResolvedID(id) instead
+     * @deprecated use getIDTracker().alreadyResolvedID(id) instead
      */
     public boolean alreadyResolvedID(String id) {
         return idTracker.alreadyResolvedID(id);
@@ -402,7 +402,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * Tries to resolve all unresolved ID references on the given page.
      *
      * @param pv page viewport whose ID refs to resolve
-     * @deprecated use getIdTracker().tryIDResolution(pv) instead
+     * @deprecated use getIDTracker().tryIDResolution(pv) instead
      */
     public void tryIDResolution(PageViewport pv) {
         idTracker.tryIDResolution(pv);
@@ -413,7 +413,7 @@ public class AreaTreeHandler extends FOEventHandler {
      *
      * @param id the id to lookup
      * @return the list of PageViewports
-     * @deprecated use getIdTracker().getPageViewportsContainingID(id) instead
+     * @deprecated use getIDTracker().getPageViewportsContainingID(id) instead
      */
     public List getPageViewportsContainingID(String id) {
         return idTracker.getPageViewportsContainingID(id);
@@ -424,7 +424,7 @@ public class AreaTreeHandler extends FOEventHandler {
      *
      * @param idref the idref whose target id has not yet been located
      * @param res the Resolvable object needing the idref to be resolved
-     * @deprecated use getIdTracker().addUnresolvedIDRef(idref, res) instead
+     * @deprecated use getIDTracker().addUnresolvedIDRef(idref, res) instead
      */
     public void addUnresolvedIDRef(String idref, Resolvable res) {
         idTracker.addUnresolvedIDRef(idref, res);

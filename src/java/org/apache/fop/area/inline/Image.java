@@ -28,14 +28,14 @@ import org.apache.fop.area.Area;
  */
 public class Image extends Area {
     private String url;
-
+    
     /**
      * Create a new image with the given url.
      *
-     * @param u the url of the image
+     * @param url the url of the image
      */
-    public Image(String u) {
-        url = u;
+    public Image(String url) {
+        this.url = url;
     }
 
     /**
@@ -45,7 +45,7 @@ public class Image extends Area {
      * @return the url of this image
      */
     public String getURL() {
-        return url;
+        return this.url;
     }
 }
 

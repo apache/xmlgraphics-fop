@@ -20,20 +20,21 @@
 package org.apache.fop.render.java2d;
 
 import java.awt.geom.AffineTransform;
-
-import org.w3c.dom.Document;
+import java.io.IOException;
+import java.util.Map;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.w3c.dom.Document;
 
 /**
  * Java2D XML handler for SVG (uses Apache Batik).
@@ -66,6 +67,11 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
         pdfi.height = ((Integer)context.getProperty(HEIGHT)).intValue();
         pdfi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
+        Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+        if (foreign != null
+                && BITMAP.equalsIgnoreCase((String)foreign.get(CONVERSION_MODE))) {
+            pdfi.paintAsBitmap = true;
+        }
         return pdfi;
     }
 
@@ -83,6 +89,7 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
         public int currentXPosition;
         /** see Java2D_YPOS */
         public int currentYPosition;
+        public boolean paintAsBitmap;
 
         /** {@inheritDoc} */
         public String toString() {
@@ -91,7 +98,8 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
                 + "width = " + width + ", "
                 + "height = " + height + ", "
                 + "currentXPosition = " + currentXPosition + ", "
-                + "currentYPosition = " + currentYPosition + "}";
+                + "currentYPosition = " + currentYPosition  + ", "
+                + "paintAsBitmap = " + paintAsBitmap + "}";
         }
     }
 
@@ -101,6 +109,18 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
         Java2DInfo info = getJava2DInfo(context);
         if (log.isDebugEnabled()) {
             log.debug("renderSVGDocument(" + context + ", " + doc + ", " + info + ")");
+        }
+
+        // fallback paint as bitmap
+        if (info.paintAsBitmap) {
+            try {
+                super.renderSVGDocument(context, doc);
+            } catch (IOException ioe) {
+                SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
+                        context.getUserAgent().getEventBroadcaster());
+                eventProducer.svgRenderingError(this, ioe, getDocumentURI(doc));
+            }
+            return;
         }
 
         int x = info.currentXPosition;
@@ -126,8 +146,8 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
         float iw = (float) ctx.getDocumentSize().getWidth() * 1000f;
         float ih = (float) ctx.getDocumentSize().getHeight() * 1000f;
 
-        float w = (float) info.width;
-        float h = (float) info.height;
+        float w = info.width;
+        float h = info.height;
 
         AffineTransform origTransform = info.state.getGraph().getTransform();
 

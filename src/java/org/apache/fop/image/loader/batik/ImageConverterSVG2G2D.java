@@ -20,9 +20,7 @@
 package org.apache.fop.image.loader.batik;
 
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -36,6 +34,7 @@ import org.apache.fop.svg.SimpleSVGUserAgent;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
 import org.apache.xmlgraphics.image.loader.XMLNamespaceEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageConverter;
@@ -58,7 +57,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
     private static Log log = LogFactory.getLog(ImageConverterSVG2G2D.class);
 
     /** {@inheritDoc} */
-    public Image convert(Image src, Map hints) throws ImageException {
+    public Image convert(final Image src, Map hints) throws ImageException {
         checkSourceFlavor(src);
         final ImageXMLDOM svg = (ImageXMLDOM)src;
         if (!SVGDOMImplementation.SVG_NAMESPACE_URI.equals(svg.getRootNamespace())) {
@@ -85,28 +84,14 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         }
 
         //Create the painter
-        Graphics2DImagePainter painter = new Graphics2DImagePainter() {
+        int width = svg.getSize().getWidthMpt();
+        int height = svg.getSize().getHeightMpt();
+        Dimension imageSize = new Dimension(width, height);
+        Graphics2DImagePainter painter = createPainter(ctx, root, imageSize);
 
-            public void paint(Graphics2D g2d, Rectangle2D area) {
-                // If no viewbox is defined in the svg file, a viewbox of 100x100 is
-                // assumed, as defined in SVGUserAgent.getViewportSize()
-                float iw = (float) ctx.getDocumentSize().getWidth();
-                float ih = (float) ctx.getDocumentSize().getHeight();
-                float w = (float) area.getWidth();
-                float h = (float) area.getHeight();
-                g2d.translate(area.getX(), area.getY());
-                g2d.scale(w / iw, h / ih);
-
-                root.paint(g2d);
-            }
-
-            public Dimension getImageSize() {
-                return new Dimension(svg.getSize().getWidthMpt(), svg.getSize().getHeightMpt());
-            }
-
-        };
-
-        ImageGraphics2D g2dImage = new ImageGraphics2D(src.getInfo(), painter);
+        //Create g2d image
+        ImageInfo imageInfo = src.getInfo();
+        ImageGraphics2D g2dImage = new ImageGraphics2D(imageInfo, painter);
         return g2dImage;
     }
 
@@ -127,6 +112,19 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
             }
 
         };
+    }
+
+    /**
+     * Creates a Graphics 2D image painter
+     *
+     * @param ctx the bridge context
+     * @param root the graphics node root
+     * @param imageSize the image size
+     * @return the newly created graphics 2d image painter
+     */
+    protected Graphics2DImagePainter createPainter(
+            BridgeContext ctx, GraphicsNode root, Dimension imageSize) {
+        return new Graphics2DImagePainterImpl(root, ctx, imageSize);
     }
 
     /** {@inheritDoc} */

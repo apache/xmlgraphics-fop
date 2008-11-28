@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fonts.CodePointMapping;
 
 /**
  * This class holds font state information and provides access to the font

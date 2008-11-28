@@ -479,7 +479,7 @@ out = proc.getOutputStream();]]></source>
     <section id="afp-configuration">
       <title>Configuration</title>
       <section id="afp-font-config">
-        <title>Fonts</title>
+      <title>Fonts</title>
       <p>The AFP Renderer requires special configuration particularly related to fonts.
       AFP Render configuration is done through the normal FOP configuration file. The MIME type
       for the AFP Renderer is application/x-afp which means the AFP Renderer section in the FOP configuration file
@@ -615,16 +615,33 @@ out = proc.getOutputStream();]]></source>
       <section id="afp-image-config">
         <title>Images</title>
         <p>By default the AFP Renderer converts all images to 8 bit grey level.
-        This can be overridden by the &lt;images&gt; configuration element. Example:</p>
+        This can be overridden by the &lt;images/&gt; configuration element. Example:</p>
       <source><![CDATA[
       <images mode="color" />
 ]]></source>
       <p>This will put images as RGB images into the AFP output stream. The default setting is:</p>
       <source><![CDATA[
-      <images mode="b+w" bits-per-pixel="8" />
+      <images mode="b+w" bits-per-pixel="8" native="true"/>
 ]]></source>
-      <p>Only the values "color" and "b+w" are allowed for the mode attribute. The bits-per-pixel
-      attribute is ignored if mode is "color". For "b+w" mode is must be 1, 4, or 8.</p>
+      <p>Only the values "color" and "b+w" are allowed for the mode attribute.</p>
+      <p>The bits-per-pixel attribute is ignored if mode is "color". For "b+w" mode is must be 1, 4, or 8.</p>
+      <source><![CDATA[
+      <images native="true"/>
+]]></source>
+      <p>When the native attribute is specified and set to "true", all image resources will be natively injected
+      into the datastream using an object container rather than being converted into an IOCA FS45 image.
+      Support for native image formats (e.g. JPEG, GIF) is not always available on printer implementations
+      so by default this configuration option is set to "false".</p>
+      </section>
+      <section id="afp-resource-group-file">
+      <title>Resource Group File</title>
+      <p>By default the AFP Renderer will place all data resource objects such as images within
+      the document of the main output datastream.  An external resource group file where document resources
+      may be specified with the &lt;resource-group-file/&gt; configuration element.  Example:</p>
+      <source><![CDATA[
+      <resource-group-file>external_resources.afp</resource-group-file>
+]]></source>
+      <note>Be careful when using this option not to overwrite existing resource files from previous rendering runs.</note>
       </section>
     </section>
     <section id="afp-extensions">
@@ -707,6 +724,43 @@ out = proc.getOutputStream();]]></source>
         Multiple no-operation extension elements within a simple-page-master are allowed.
         The name attribute is mandatory.
         </p>
+      </section>
+    </section>
+    <section id="afp-foreign-attributes">
+      <title>Foreign Attributes</title>
+        <section id="afp-foreign-attributes-resource">
+        <title>Resource</title>
+        <p>The resource foreign attributes provides the ability to name and control where data object resources
+        (e.g. images/scalable vector graphics) will reside in the AFP output.
+        The afp foreign attributes are only used in conjuntion with &lt;fo:external-graphic/&gt; and &lt;instream-foreign-object/&gt;.
+        Example:</p>
+      <source><![CDATA[
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+     ...
+     <fo:block>
+      <fo:external-graphic width="2.0cm" content-width="2.0cm" height="1.8cm" content-height="1.8cm"
+        src="examples/fo/graphics/xml_feather.gif"
+        afp:resource-name="feather" afp:resource-level="external" afp:resource-group-file="resources.afp"/>
+     </fo:block>
+     <fo:block>
+      <fo:instream-foreign-object height="758.047pt" content-height="758.047pt" width="576.96pt" content-width="576.96pt"
+      afp:resource-name"circles" afp:resource-level="inline">
+       <svg xmlns="http://www.w3.org/2000/svg" width="12cm" height="12cm">
+        <g style="fill-opacity:0.7; stroke:black; stroke-width:0.1cm;">
+         <circle cx="6cm" cy="2cm" r="100" style="fill:red;" transform="translate(0,50)" />
+         <circle cx="6cm" cy="2cm" r="100" style="fill:blue;" transform="translate(70,150)" />
+         <circle cx="6cm" cy="2cm" r="100" style="fill:green;" transform="translate(-70,150)"/>
+        </g>
+       </svg>
+      </fo:instream-foreign-object>
+     </fo:block>
+]]></source>
+        <p>The resource-level attribute where the resource object will reside in the AFP output datastream.
+        The possible values for this are "inline", "print-file" and "external".
+        When no resource-level attribute is provided, resources are by default placed at "print-file" level.
+        When "external" is used a resource-group-file attribute must also be specified.</p>
+        <p></p>
       </section>
     </section>
   </section>
