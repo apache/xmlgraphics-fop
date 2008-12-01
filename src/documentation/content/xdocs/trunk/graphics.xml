@@ -421,7 +421,7 @@
             be controlled through the "target resolution" setting in the 
             <a href="configuration.html">configuration</a>.</p>
           <p>
-            Currently transparency is limited in PDF so many SVG images that
+            Currently transparency is limited in PDF so some SVG images that
             contain effects or graphics with transparent areas may not be displayed
             correctly.
           </p>
@@ -431,11 +431,15 @@
           <p>If possible, Batik will use normal PDF or PostScript text when inserting text. It does
             this by checking if the text can be drawn normally and the font is
             supported. This example svg <a href="../dev/svg/text.svg">text.svg</a> /
-            <!--link href="../dev/svg/text.pdf"-->text.pdf<!--/link-->
+            <a href="../dev/svg/text.pdf">text.pdf</a> / <a href="../dev/svg/text.png">text.png</a>
             shows how various types and effects with text are handled.
-            Note that tspan and outlined text are not yet implemented.</p>
+            Note that SVG font support is not yet implemented. Furthermore, text handling in
+            PostScript output is inferior to PDF output - more text will be painted as shapes in
+            PS than in PDF.
+          </p>
           <p>
-            Otherwise, text is converted and drawn as a set of shapes by Batik, using the
+            When there's no support to paint text using native text operations,
+            text is converted and drawn as a set of shapes by Batik, using the
             stroking text painter. This means that a typical character will
             have about 10 curves (each curve consists of at least 20 characters).
             This can make the output files large and when it is viewed the
@@ -451,7 +455,30 @@
             "smooth line art" and "smooth text" settings that may need to be set for SVG images 
             to be displayed nicely on your screen (see Edit / Preferences / Display).
             This setting will not affect the printing of your document, which should be OK in 
-            any case, but will only affect the quality of the screen display.</p>
+            any case, but will only affect the quality of the screen display.
+          </p>
+        </section>
+        <section id="svg-font-selection">
+          <title>Font selection notes</title>
+          <p>
+            Apache Batik uses the AWT/Java2D subsystem as font source while FOP has its on font
+            subsystem. Great care has been taken that font selection does the best possible choices.
+            But it must be noted when creating PDF or PostScript that a font used in SVG graphics
+            needs to be registered with the operating system as well as in FOP's configuration.
+            By using FOP's font auto-detection, you simply have to install the font in the operating
+            system and not care about anything else. This is less of an issue if you create
+            formats like TIFFs, PNGs or PCL because in these cases SVG graphics are usually rendered
+            to bitmaps which means that on both sides (Batik and FOP), AWT/Java2D is used as the
+            single font source.
+          </p>
+          <p>
+            Whenever an SVG is converted into a PDF or PostScript file, the font that has been used
+            inside Batik has to be mapped to a font used by the actual output format. Features like
+            font substitution in FOP may need to be taken into account but can also be an advantage
+            when working around font mapping issues. Like for XSL-FO content, you'll get a warning
+            if a particular font could not be found and had to be substituted, or if a particular
+            glyph is missing in a font.
+          </p> 
         </section>
         <section id="svg-scaling">
           <title>Scaling</title>
