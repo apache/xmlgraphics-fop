@@ -130,6 +130,35 @@
         Symbol and ZapfDingbats.
       </p>
       <p>
+        The following font family names are hard-coded into FOP for the Base-14 font set:
+      </p>
+      <table>
+        <tr>
+          <th>Base-14 font</th>
+          <th>font families</th>
+        </tr>
+        <tr>
+          <td>Helvetica</td>
+          <td>Helvetica, sans-serif, SansSerif</td>
+        </tr>
+        <tr>
+          <td>Times</td>
+          <td>Times, Times Roman, Times-Roman, serif, any</td>
+        </tr>
+        <tr>
+          <td>Courier</td>
+          <td>Courier, monospace, Monospaced</td>
+        </tr>
+        <tr>
+          <td>Symbol</td>
+          <td>Symbol</td>
+        </tr>
+        <tr>
+          <td>ZapfDingbats</td>
+          <td>ZapfDingbats</td>
+        </tr>
+      </table>
+      <p>
         Please note that recent versions of Adobe Acrobat Reader replace
         "Helvetica" with "Arial" and "Times" with "Times New Roman" internally.
         GhostScript replaces "Helvetica" with "Nimbus Sans L" and "Times" with 
