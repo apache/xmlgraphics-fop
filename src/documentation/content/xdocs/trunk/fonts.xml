@@ -168,13 +168,27 @@
         the target document.
       </p>
     </section>
-    <section>
+    <section id="missing-fonts">
       <title>Missing Fonts</title>
       <p>
         When FOP does not have a specific font at its disposal (because it's 
         not installed in the operating system or set up in FOP's configuration),
         the font is replaced with "any". "any" is internally mapped to the
         Base-14 font "Times" (see above).
+      </p>
+    </section>
+    <section id="missing-glyphs">
+      <title>Missing Glyphs</title>
+      <p>
+        Every font contains a particular set of
+        <a href="http://en.wikipedia.org/wiki/Glyph">glyphs</a>. If no glyph can be found for
+        a given character, FOP will issue a warning and use the glpyh for "#" (if available)
+        instead. Before it does that, it consults a (currently hard-coded) registry of
+        glyph substitution groups (see Glyphs.java in Apache XML Graphics Commons).
+        This registry can supply alternative glyphs in some cases (like using space when a no-break
+        space is requested). But there's no guarantee that the result will be as expected (for
+        example, in the case of hyphens and similar glyphs). A better way is to use a font that
+        has all the necessary glyphs. This glyph substitution is only a last resort.
       </p>
     </section>
     <section id="awt">
