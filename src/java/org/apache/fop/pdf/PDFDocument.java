@@ -645,16 +645,6 @@ public class PDFDocument {
     }
 
     /**
-     * Finds a uri.
-     *
-     * @param compare reference object to use as search template
-     * @return the launch if found, null otherwise
-     */
-    protected PDFUri findURI(PDFUri compare) {
-        return (PDFUri) findPDFObject(this.uris, compare);
-    }
-
-    /**
      * Looks for an existing GState to use
      *
      * @param wanted requested features
