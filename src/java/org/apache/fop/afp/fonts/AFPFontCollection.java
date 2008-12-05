@@ -67,16 +67,16 @@ public class AFPFontCollection implements FontCollection {
                     num++;
                 }
             }
-            if (fontInfo.fontLookup("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL) == null) {
+            if (!fontInfo.hasFont("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL)) {
                 eventProducer.warnMissingDefaultFont(this, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
             }
-            if (fontInfo.fontLookup("any", Font.STYLE_ITALIC, Font.WEIGHT_NORMAL) == null) {
+            if (!fontInfo.hasFont("any", Font.STYLE_ITALIC, Font.WEIGHT_NORMAL)) {
                 eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_NORMAL);
             }
-            if (fontInfo.fontLookup("any", Font.STYLE_NORMAL, Font.WEIGHT_BOLD) == null) {
+            if (!fontInfo.hasFont("any", Font.STYLE_NORMAL, Font.WEIGHT_BOLD)) {
                 eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
             }
-            if (fontInfo.fontLookup("any", Font.STYLE_ITALIC, Font.WEIGHT_BOLD) == null) {
+            if (!fontInfo.hasFont("any", Font.STYLE_ITALIC, Font.WEIGHT_BOLD)) {
                 eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
             }
         } else {
