@@ -154,7 +154,7 @@ public class RasterFont extends AFPFont {
      * @return the ascender for the given point size
      */
     public int getAscender(int size) {
-        return getCharacterSet(size).getAscender();
+        return getCharacterSet(size).getAscender() * size;
     }
 
     /**
@@ -164,7 +164,7 @@ public class RasterFont extends AFPFont {
      * @return the cap height for the specified point size
      */
     public int getCapHeight(int size) {
-        return getCharacterSet(size).getCapHeight();
+        return getCharacterSet(size).getCapHeight() * size;
     }
 
     /**
@@ -176,7 +176,7 @@ public class RasterFont extends AFPFont {
      * @return the descender for the specified point size
      */
     public int getDescender(int size) {
-        return getCharacterSet(size).getDescender();
+        return getCharacterSet(size).getDescender() * size;
     }
 
     /**
@@ -186,7 +186,7 @@ public class RasterFont extends AFPFont {
      * @return the x height for the given point size
      */
     public int getXHeight(int size) {
-        return getCharacterSet(size).getXHeight();
+        return getCharacterSet(size).getXHeight() * size;
     }
 
     /**
@@ -196,7 +196,7 @@ public class RasterFont extends AFPFont {
      * @return the width for the given point size
      */
     public int getWidth(int character, int size) {
-        return getCharacterSet(size).getWidth(character);
+        return getCharacterSet(size).getWidth(character) * size;
     }
 
     /**

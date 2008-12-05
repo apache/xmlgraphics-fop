@@ -92,7 +92,7 @@ public class OutlineFont extends AFPFont {
      * @return the ascender for the given size
      */
     public int getAscender(int size) {
-        return charSet.getAscender() / 1000 * size;
+        return charSet.getAscender() * size;
     }
 
     /**
@@ -103,7 +103,7 @@ public class OutlineFont extends AFPFont {
      * @return the cap height for the given size
      */
     public int getCapHeight(int size) {
-        return charSet.getCapHeight() / 1000 * size;
+        return charSet.getCapHeight() * size;
     }
 
     /**
@@ -116,7 +116,7 @@ public class OutlineFont extends AFPFont {
      * @return the descender for the given size
      */
     public int getDescender(int size) {
-        return charSet.getDescender() / 1000 * size;
+        return charSet.getDescender() * size;
     }
 
     /**
@@ -127,7 +127,7 @@ public class OutlineFont extends AFPFont {
      * @return the x height for the given size
      */
     public int getXHeight(int size) {
-        return charSet.getXHeight() / 1000 * size;
+        return charSet.getXHeight() * size;
     }
 
     /**
@@ -137,7 +137,7 @@ public class OutlineFont extends AFPFont {
      * @return the width of the character for the specified point size
      */
     public int getWidth(int character, int size) {
-        return charSet.getWidth(character) / 1000 * size;
+        return charSet.getWidth(character) * size;
     }
 
     /**
@@ -151,7 +151,7 @@ public class OutlineFont extends AFPFont {
     public int[] getWidths(int size) {
         int[] widths =  charSet.getWidths();
         for (int i = 0; i < widths.length; i++) {
-            widths[i] = widths[i] / 1000 * size;
+            widths[i] = widths[i] * size;
         }
         return widths;
     }
