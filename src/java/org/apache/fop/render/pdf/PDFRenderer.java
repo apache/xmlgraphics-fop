@@ -1635,6 +1635,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 (int)pos.getHeight());
 
         uri = URISpecification.getURL(uri);
+        uri = URISpecification.preResolveURI(uri, userAgent.getBaseURL());
         PDFXObject xobject = pdfDoc.getXObject(uri);
         if (xobject != null) {
             float w = (float) pos.getWidth() / 1000f;

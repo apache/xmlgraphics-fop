@@ -25,14 +25,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFDocument;
@@ -49,7 +53,6 @@ import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
-import org.w3c.dom.Document;
 
 /**
  * PDF XML handler for SVG (uses Apache Batik).
@@ -164,8 +167,6 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         AffineTransform resolutionScaling = new AffineTransform();
         resolutionScaling.scale(s, s);
 
-        GVTBuilder builder = new GVTBuilder();
-
         //Controls whether text painted by Batik is generated using text or path operations
         boolean strokeText = false;
         Configuration cfg = pdfInfo.cfg;
@@ -179,10 +180,14 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
                 userAgent.getImageSessionContext(),
                 new AffineTransform());
 
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
+
         GraphicsNode root;
         try {
-            root = builder.build(ctx, doc);
-            builder = null;
+            GVTBuilder builder = new GVTBuilder();
+            root = builder.build(ctx, clonedDoc);
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());

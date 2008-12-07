@@ -23,6 +23,8 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgent;
@@ -30,7 +32,7 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.svg.SimpleSVGUserAgent;
+
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
@@ -42,6 +44,8 @@ import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.util.UnitConv;
+
+import org.apache.fop.svg.SimpleSVGUserAgent;
 
 /**
  * This ImageConverter converts SVG images to Java2D.
@@ -75,10 +79,15 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         GVTBuilder builder = new GVTBuilder();
         final BridgeContext ctx = new BridgeContext(ua);
 
+        Document doc = svg.getDocument();
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = BatikUtil.cloneSVGDocument(doc);
+
         //Build the GVT tree
         final GraphicsNode root;
         try {
-            root = builder.build(ctx, svg.getDocument());
+            root = builder.build(ctx, clonedDoc);
         } catch (Exception e) {
             throw new ImageException("GVT tree could not be built for SVG graphic", e);
         }

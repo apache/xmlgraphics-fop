@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixed-bug="46360">
+        Fixed a multi-threading issue when rendering SVG.
+      </action>
       <action context="Renderers" dev="AC" importance="high" type="add">
         AFP Output: An AFPGraphics2D implementation which provides the ability to use Batik to drive the production of AFP Graphics (GOCA) output from SVG.
       </action>
