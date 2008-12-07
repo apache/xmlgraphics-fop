@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
 import org.apache.fop.afp.fonts.AFPFontInfo;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.FopCharacterSet;
@@ -124,7 +125,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                         try {
                             Typeface tf = (Typeface)clazz.newInstance();
                             font.addCharacterSet(size, new FopCharacterSet(
-                                codepage, encoding, characterset, size, tf));
+                                codepage, encoding, characterset, tf));
                         } catch (Exception ie) {
                             String msg = "The base 14 font class " + clazz.getName()
                                 + " could not be instantiated";
@@ -158,7 +159,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                     try {
                         Typeface tf = (Typeface)clazz.newInstance();
                         characterSet = new FopCharacterSet(
-                                codepage, encoding, characterset, 1, tf);
+                                codepage, encoding, characterset, tf);
                     } catch (Exception ie) {
                         String msg = "The base 14 font class " + clazz.getName()
                             + " could not be instantiated";

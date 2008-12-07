@@ -52,7 +52,7 @@ public class AFPBase12FontCollection implements FontCollection {
             int size = RASTER_SIZES[i];
             FopCharacterSet characterSet = new FopCharacterSet(
                     CharacterSet.DEFAULT_CODEPAGE, CharacterSet.DEFAULT_ENCODING,
-                    charsetName + CHARSET_REF[i], size, base14);
+                    charsetName + CHARSET_REF[i], base14);
             font.addCharacterSet(size, characterSet);
         }
     }

@@ -28,7 +28,6 @@ public class FopCharacterSet extends CharacterSet {
 
     /** The character set for this font */
     private Typeface charSet = null;
-    private int size = 0;
 
     /**
      * Constructor for the CharacterSetMetric object, the character set is used
@@ -36,19 +35,16 @@ public class FopCharacterSet extends CharacterSet {
      * @param codePage the code page identifier
      * @param encoding the encoding of the font
      * @param name the character set name
-     * @param size the font size
      * @param charSet the fop character set
      */
     public FopCharacterSet(
         String codePage,
         String encoding,
         String name,
-        int size,
         Typeface charSet) {
 
         super(codePage, encoding, name, null);
         this.charSet = charSet;
-        this.size = size * 1000;
     }
 
     /**
@@ -64,7 +60,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the ascender value in millipoints
      */
     public int getAscender() {
-        return charSet.getAscender(size);
+        return charSet.getAscender(1);
     }
 
     /**
@@ -74,7 +70,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the cap height value in millipoints
      */
     public int getCapHeight() {
-        return charSet.getCapHeight(size);
+        return charSet.getCapHeight(1);
     }
 
     /**
@@ -84,7 +80,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the descender value in millipoints
      */
     public int getDescender() {
-        return charSet.getDescender(size);
+        return charSet.getDescender(1);
     }
 
     /**
@@ -116,7 +112,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the typical height of characters
      */
     public int getXHeight() {
-        return charSet.getXHeight(size);
+        return charSet.getXHeight(1);
     }
 
     /**
@@ -126,7 +122,7 @@ public class FopCharacterSet extends CharacterSet {
      * @return the width of the character
      */
     public int getWidth(int character) {
-        return charSet.getWidth(character, size);
+        return charSet.getWidth(character, 1);
     }
 
     /**
