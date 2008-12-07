@@ -24,9 +24,18 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
+import org.w3c.dom.Document;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.gvt.GraphicsNode;
+
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.MimeConstants;
+
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
@@ -44,11 +53,6 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.apache.xmlgraphics.util.MimeConstants;
-import org.w3c.dom.Document;
 
 /**
  * AFP XML handler for SVG. Uses Apache Batik for SVG processing.
@@ -107,8 +111,12 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         // Create an AFPBridgeContext
         BridgeContext bridgeContext = createBridgeContext(userAgent, g2d);
 
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
+
         // Build the SVG DOM and provide the painter with it
-        GraphicsNode root = buildGraphicsNode(userAgent, bridgeContext, doc);
+        GraphicsNode root = buildGraphicsNode(userAgent, bridgeContext, clonedDoc);
 
         // Create Graphics2DImagePainter
         final RendererContextWrapper wrappedContext

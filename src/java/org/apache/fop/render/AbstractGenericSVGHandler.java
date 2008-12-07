@@ -24,22 +24,25 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
+import org.w3c.dom.Document;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.AbstractDocument;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.gvt.GraphicsNode;
+
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.image.loader.batik.Graphics2DImagePainterImpl;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
-import org.apache.fop.render.afp.AFPGraphics2DAdapter;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.apache.xmlgraphics.util.QName;
-import org.w3c.dom.Document;
 
 /**
  * Generic XML handler for SVG. Uses Apache Batik for SVG processing and simply paints to
@@ -133,15 +136,19 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
         //Create Batik BridgeContext
         final BridgeContext bridgeContext = new BridgeContext(svgUserAgent);
 
-        //Build the GVT tree
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
 
-        final GraphicsNode root = buildGraphicsNode(userAgent, bridgeContext, doc);
+        //Build the GVT tree
+        final GraphicsNode root = buildGraphicsNode(userAgent, bridgeContext, clonedDoc);
 
         // Create Graphics2DImagePainter
         final RendererContextWrapper wrappedContext = RendererContext.wrapRendererContext(
                 rendererContext);
         Dimension imageSize = getImageSize(wrappedContext);
-        final Graphics2DImagePainter painter = createGraphics2DImagePainter(root, bridgeContext, imageSize);
+        final Graphics2DImagePainter painter = createGraphics2DImagePainter(
+                root, bridgeContext, imageSize);
 
         //Let the painter paint the SVG on the Graphics2D instance
         Graphics2DAdapter g2dAdapter = rendererContext.getRenderer().getGraphics2DAdapter();

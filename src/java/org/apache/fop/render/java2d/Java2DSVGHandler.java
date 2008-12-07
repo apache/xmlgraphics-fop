@@ -23,18 +23,21 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
-import org.w3c.dom.Document;
 
 /**
  * Java2D XML handler for SVG (uses Apache Batik).
@@ -128,12 +131,16 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
 
         SVGUserAgent ua = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
 
-        GVTBuilder builder = new GVTBuilder();
         BridgeContext ctx = new BridgeContext(ua);
+
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
 
         GraphicsNode root;
         try {
-            root = builder.build(ctx, doc);
+            GVTBuilder builder = new GVTBuilder();
+            root = builder.build(ctx, clonedDoc);
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
