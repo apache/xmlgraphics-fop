@@ -31,7 +31,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.logging.Log;
@@ -39,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFPaintingState;
@@ -182,7 +182,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
 
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
         //to it.
-        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
+        Document clonedDoc = BatikUtil.cloneSVGDocument(doc);
 
         GraphicsNode root;
         try {

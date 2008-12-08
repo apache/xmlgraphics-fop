@@ -28,7 +28,6 @@ import org.w3c.dom.Document;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
@@ -46,6 +45,7 @@ import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.afp.svg.AFPBridgeContext;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.image.loader.batik.Graphics2DImagePainterImpl;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
@@ -113,7 +113,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
         //to it.
-        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
+        Document clonedDoc = BatikUtil.cloneSVGDocument(doc);
 
         // Build the SVG DOM and provide the painter with it
         GraphicsNode root = buildGraphicsNode(userAgent, bridgeContext, clonedDoc);
