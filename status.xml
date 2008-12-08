@@ -53,6 +53,11 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="46319">
+        Fixed a memory-leak in Marker.MarkerAttribute, where an instance was used both as key and value in
+        a WeakHashMap, effectively neutralizing the benefit of using WeakReferences. Solved by extending
+        PropertyCache to work for MarkerAttributes as well.
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixed-bug="46360">
         Fixed a multi-threading issue when rendering SVG.
       </action>
