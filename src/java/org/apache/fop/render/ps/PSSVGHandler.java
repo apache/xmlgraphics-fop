@@ -29,7 +29,6 @@ import org.w3c.dom.Document;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +37,7 @@ import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
@@ -273,7 +273,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
 
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
         //to it.
-        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
+        Document clonedDoc = BatikUtil.cloneSVGDocument(doc);
 
         GraphicsNode root;
         try {

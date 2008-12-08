@@ -29,7 +29,6 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,7 +82,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         Document doc = svg.getDocument();
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
         //to it.
-        Document clonedDoc = DOMUtilities.deepCloneDocument(doc, doc.getImplementation());
+        Document clonedDoc = BatikUtil.cloneSVGDocument(doc);
 
         //Build the GVT tree
         final GraphicsNode root;
