@@ -108,7 +108,7 @@ public class PDFImageHandlerGraphics2D extends AbstractImageHandlerGraphics2D
         AffineTransform transform = new AffineTransform();
         transform.translate(fx, fy);
         generator.getState().concatenate(transform);
-        graphics.setPDFState(generator.getState());
+        graphics.setPaintingState(generator.getState());
         graphics.setOutputStream(generator.getOutputStream());
 
         Rectangle2D area = new Rectangle2D.Double(0.0, 0.0, imw, imh);

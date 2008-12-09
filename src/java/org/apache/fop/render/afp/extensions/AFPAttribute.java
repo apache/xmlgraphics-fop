@@ -19,14 +19,13 @@
 
 package org.apache.fop.render.afp.extensions;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.StringProperty;
 
 /**
  * This class extends the org.apache.fop.fo.StringProperty.Maker inner class
- * in order to provide a static property maker. The object faciliates
+ * in order to provide a static property maker. The object facilitates
  * extraction of attributes from formatted objects based on the static list
  * as defined in the AFPElementMapping implementation.
  * <p/>
@@ -58,5 +57,4 @@ public class AFPAttribute extends StringProperty.Maker {
         }
         return property;
     }
-
 }

@@ -39,6 +39,7 @@ public abstract class ElementMapping {
 
     /** The HashMap table of formatting objects defined by the ElementMapping */
     protected HashMap foObjs = null;
+    //Please don't change that to java.util.Map as that can break extensions.
 
     /** The namespace for the ElementMapping */
     protected String namespaceURI = null;

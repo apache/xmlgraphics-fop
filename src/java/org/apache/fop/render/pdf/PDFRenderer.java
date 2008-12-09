@@ -82,9 +82,9 @@ import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFPaintingState;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.PDFXObject;
@@ -92,8 +92,9 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.util.AbstractPaintingState;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.util.ColorUtil;
+import org.apache.fop.util.AbstractPaintingState.AbstractData;
 
 /**
  * Renderer that renders areas to PDF.
@@ -190,7 +191,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     protected int pageHeight;
 
     /** Image handler registry */
-    private PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
+    private final PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
 
 
     /**
@@ -213,7 +214,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         return this.generator;
     }
 
-    PDFState getState() {
+    PDFPaintingState getState() {
         return getGenerator().getState();
     }
 
@@ -262,11 +263,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         //pvReferences.clear();
         pdfResources = null;
         this.generator = null;
-        //currentStream = null;
         currentContext = null;
         currentPage = null;
-        //currentState = null;
-        //this.textutil = null;
 
         idPositions.clear();
         idGoTos.clear();
@@ -505,7 +503,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         }
         // multiply with current CTM
         generator.concatenate(new AffineTransform(CTMHelper.toPDFArray(ctm)));
-        //currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
     }
 
     /** {@inheritDoc} */
@@ -516,11 +513,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     /** {@inheritDoc} */
     protected void concatenateTransformationMatrix(AffineTransform at) {
         generator.concatenate(at);
-        /*
-        if (!at.isIdentity()) {
-            currentState.concatenate(at);
-            currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
-        }*/
     }
 
     /**
@@ -582,10 +574,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     /**
      * {@inheritDoc}
      */
-    protected void fillRect(float x, float y, float w, float h) {
-        if (w != 0 && h != 0) {
+    protected void fillRect(float x, float y, float width, float height) {
+        if (width > 0 && height > 0) {
             generator.add(format(x) + " " + format(y) + " "
-                    + format(w) + " " + format(h) + " re f\n");
+                    + format(width) + " " + format(height) + " re f\n");
         }
     }
 
@@ -607,11 +599,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
      * @return the saved state stack to recreate later
      */
     protected List breakOutOfStateStack() {
+        PDFPaintingState paintingState = getState();
         List breakOutList = new java.util.ArrayList();
-        PDFState.Data data;
+        AbstractPaintingState.AbstractData data;
         while (true) {
-            data = getState().getData();
-            if (getState().pop() == null) {
+            data = paintingState.getData();
+            if (paintingState.restore() == null) {
                 break;
             }
             if (breakOutList.size() == 0) {
@@ -629,10 +622,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
      */
     protected void restoreStateStackAfterBreakOut(List breakOutList) {
         generator.comment("------ restoring context after break-out...");
-        PDFState.Data data;
+//        currentState.pushAll(breakOutList);
+        AbstractData data;
         Iterator i = breakOutList.iterator();
         while (i.hasNext()) {
-            data = (PDFState.Data)i.next();
+            data = (AbstractData)i.next();
             saveGraphicsState();
             AffineTransform at = data.getTransform();
             concatenateTransformationMatrix(at);
@@ -1131,7 +1125,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
                         info, supportedFlavors, hints, sessionContext);
 
             //First check for a dynamically registered handler
-            PDFImageHandler handler = imageHandlerRegistry.getHandler(img.getClass());
+            PDFImageHandler handler
+                = (PDFImageHandler)imageHandlerRegistry.getHandler(img.getClass());
             if (handler != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Using PDFImageHandler: " + handler.getClass().getName());
@@ -1170,6 +1165,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
             this.generator.flushPDFDoc();
         } catch (IOException ioe) {
             // ioexception will be caught later
+            log.error(ioe.getMessage());
         }
     }
 
@@ -1198,7 +1194,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
                 x, y, width, height, foreignAttributes);
         context.setProperty(PDFRendererContextConstants.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFRendererContextConstants.OUTPUT_STREAM, ostream);
-        context.setProperty(PDFRendererContextConstants.PDF_STATE, getState());
         context.setProperty(PDFRendererContextConstants.PDF_PAGE, currentPage);
         context.setProperty(PDFRendererContextConstants.PDF_CONTEXT,
                     currentContext == null ? currentPage : currentContext);

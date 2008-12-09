@@ -34,6 +34,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.PropertyListMaker;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.PropertyCache;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_marker">
@@ -334,10 +335,10 @@ public class Marker extends FObjMixed {
     }
 
     /** Convenience inner class */
-    private static final class MarkerAttribute {
+    public static final class MarkerAttribute {
 
-        private static Map attributeCache =
-            Collections.synchronizedMap(new java.util.WeakHashMap());
+        private static PropertyCache attributeCache =
+                new PropertyCache(MarkerAttribute.class);
 
         protected String namespace;
         protected String qname;
@@ -373,18 +374,26 @@ public class Marker extends FObjMixed {
         private static MarkerAttribute getInstance(
                                             String namespace, String qname,
                                             String name, String value) {
-            MarkerAttribute newInstance =
-                new MarkerAttribute(namespace, qname, name, value);
-            if (attributeCache.containsKey(newInstance)) {
-                return (MarkerAttribute) attributeCache.get(newInstance);
-            } else {
-                attributeCache.put(newInstance, newInstance);
-                return newInstance;
-            }
+            return attributeCache.fetch(
+                    new MarkerAttribute(namespace, qname, name, value));
+        }
+
+        /** {@inheritDoc} */
+        public int hashCode() {
+            int hash = 17;
+            hash = (37 * hash) + (this.namespace == null ? 0 : this.namespace.hashCode());
+            hash = (37 * hash) + (this.qname == null ? 0 : this.qname.hashCode());
+            hash = (37 * hash) + (this.name == null ? 0 : this.name.hashCode());
+            hash = (37 * hash) + (this.value == null ? 0 : this.value.hashCode());
+            return hash;
         }
 
         /** {@inheritDoc} */
         public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
             if (o instanceof MarkerAttribute) {
                 MarkerAttribute attr = (MarkerAttribute) o;
                 return ((attr.namespace == this.namespace)

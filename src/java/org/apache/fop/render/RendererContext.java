@@ -20,9 +20,12 @@
 package org.apache.fop.render;
 
 //Java
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.xmlgraphics.util.QName;
 
 /**
  * The Render Context for external handlers. This provides a rendering context
@@ -30,21 +33,28 @@ import org.apache.fop.apps.FOUserAgent;
  * render target.
  */
 public class RendererContext {
+    /** conversion-mode extension attribute */
+    protected static final QName CONVERSION_MODE = new QName(
+            ExtensionElementMapping.URI, null, "conversion-mode");
 
-    private String mime;
-    private AbstractRenderer renderer;
+    /** "bitmap" value for the "conversion-mode" extension attribute. */
+    protected static final String BITMAP = "bitmap";
+
+    private final String mime;
+    private final AbstractRenderer renderer;
     private FOUserAgent userAgent;
-    private Map props = new java.util.HashMap();
+
+    private final Map/*<String,Object>*/ props = new java.util.HashMap/*<String,Object>*/();
 
     /**
-     * Contructor for this class. It takes a MIME type as parameter.
+     * Constructor for this class. It takes a MIME type as parameter.
      *
-     * @param renderer The current renderer
-     * @param m  The MIME type of the output that's generated.
+     * @param renderer the current renderer
+     * @param mime the MIME type of the output that's generated.
      */
-    public RendererContext(AbstractRenderer renderer, String m) {
+    public RendererContext(AbstractRenderer renderer, String mime) {
         this.renderer = renderer;
-        this.mime = m;
+        this.mime = mime;
     }
 
     /**
@@ -112,6 +122,19 @@ public class RendererContext {
         return wrapper;
     }
 
+    /** {@inheritDoc} **/
+    public String toString() {
+        StringBuffer stringBuffer = new StringBuffer("RendererContext{\n");
+        Iterator it = props.keySet().iterator();
+        while (it.hasNext()) {
+            String key = (String)it.next();
+            Object value = props.get(key);
+            stringBuffer.append("\t" + key + "=" + value + "\n");
+        }
+        stringBuffer.append("}");
+        return stringBuffer.toString();
+    }
+
     /**
      * Base class for a wrapper around RendererContext to access its properties in a type-safe,
      * renderer-specific way.
@@ -157,6 +180,19 @@ public class RendererContext {
         /** @return the foreign attributes */
         public Map getForeignAttributes() {
             return (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return "RendererContextWrapper{"
+                + "userAgent=" + getUserAgent()
+                + "x=" + getCurrentXPosition()
+                + "y=" + getCurrentYPosition()
+                + "width=" + getWidth()
+                + "height=" + getHeight()
+                + "foreignAttributes=" + getForeignAttributes()
+            + "}";
+
         }
     }
 }

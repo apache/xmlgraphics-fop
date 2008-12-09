@@ -23,6 +23,7 @@ package org.apache.fop.fonts;
 import java.text.DecimalFormat;
 import java.util.Map;
 
+
 /**
  * Generic MultiByte (CID) font
  */

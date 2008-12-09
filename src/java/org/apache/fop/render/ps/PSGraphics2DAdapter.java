@@ -33,6 +33,7 @@ import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
+import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;

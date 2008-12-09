@@ -43,7 +43,7 @@ public class PSCommentAfterElement extends AbstractPSCommentElement {
      * @see org.apache.fop.fo.FONode#getLocalName()
      */
     public String getLocalName() {
-        return ELEMENT;
+        return PSCommentAfter.ELEMENT;
     }
 
     /**

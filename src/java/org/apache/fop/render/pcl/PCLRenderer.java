@@ -534,7 +534,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
                     public Dimension getImageSize() {
                         return paintRect.getSize();
                     }
-
+                    
                 };
                 g2a.paintImage(painter, rc,
                         paintRect.x, paintRect.y, paintRect.width, paintRect.height);

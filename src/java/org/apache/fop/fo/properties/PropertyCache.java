@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.fo.flow.Marker;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
@@ -53,7 +55,7 @@ public final class PropertyCache {
 
     private Class runtimeType;
 
-    private boolean[] votesForRehash = new boolean[SEGMENT_COUNT];
+    private final boolean[] votesForRehash = new boolean[SEGMENT_COUNT];
 
     /* same hash function as used by java.util.HashMap */
     private static int hash(Object x) {
@@ -379,6 +381,19 @@ public final class PropertyCache {
     public CommonBorderPaddingBackground.BorderInfo fetch(
             CommonBorderPaddingBackground.BorderInfo bi) {
         return (CommonBorderPaddingBackground.BorderInfo) fetch((Object) bi);
+    }
+
+    /**
+     *  Checks if the given {@link Marker.MarkerAttribute} is present
+     *  in the cache - if so, returns a reference to the cached instance.
+     *  Otherwise the given object is added to the cache and returned.
+     *
+     *  @param ma the MarkerAttribute instance to check for
+     *  @return the cached instance
+     */
+    public Marker.MarkerAttribute fetch(
+            Marker.MarkerAttribute ma) {
+        return (Marker.MarkerAttribute) fetch((Object) ma);
     }
 
     /** {@inheritDoc} */

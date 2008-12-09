@@ -45,7 +45,7 @@ public class Viewport extends InlineArea {
      * @param child the child content area of this viewport
      */
     public Viewport(Area child) {
-        content = child;
+        this.content = child;
     }
 
     /**
@@ -54,7 +54,7 @@ public class Viewport extends InlineArea {
      * @param c true if this viewport should clip
      */
     public void setClip(boolean c) {
-        clip = c;
+        this.clip = c;
     }
 
     /**
@@ -63,7 +63,7 @@ public class Viewport extends InlineArea {
      * @return true if this viewport should clip
      */
     public boolean getClip() {
-        return clip;
+        return this.clip;
     }
 
     /**
@@ -72,7 +72,7 @@ public class Viewport extends InlineArea {
      * @param cp the position and size to place the content
      */
     public void setContentPosition(Rectangle2D cp) {
-        contentPosition = cp;
+        this.contentPosition = cp;
     }
 
     /**
@@ -81,7 +81,7 @@ public class Viewport extends InlineArea {
      * @return the position and size to place the content
      */
     public Rectangle2D getContentPosition() {
-        return contentPosition;
+        return this.contentPosition;
     }
 
     /**
@@ -98,7 +98,7 @@ public class Viewport extends InlineArea {
      * @return the content area
      */
     public Area getContent() {
-        return content;
+        return this.content;
     }
 
     private void writeObject(java.io.ObjectOutputStream out)
@@ -123,9 +123,9 @@ public class Viewport extends InlineArea {
                                                     in.readFloat(),
                                                     in.readFloat());
         }
-        clip = in.readBoolean();
-        props = (HashMap) in.readObject();
-        content = (Area) in.readObject();
+        this.clip = in.readBoolean();
+        this.props = (HashMap) in.readObject();
+        this.content = (Area) in.readObject();
     }
 
 }

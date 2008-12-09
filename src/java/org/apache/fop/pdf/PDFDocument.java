@@ -29,9 +29,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
 /* font support based on work by Takayuki Takeuchi */
 
 /**
- * class representing a PDF document.
+ * Class representing a PDF document.
  *
  * The document is built up by calling various methods and then finally
  * output to given filehandle using output method.
@@ -72,53 +75,38 @@ public class PDFDocument {
     /** Integer constant to represent PDF 1.4 */
     public static final int PDF_VERSION_1_4 = 4;
 
-    /**
-     * the encoding to use when converting strings to PDF commandos.
-     */
+    /** the encoding to use when converting strings to PDF commands */
     public static final String ENCODING = "ISO-8859-1";
 
-    private Log log = LogFactory.getLog("org.apache.fop.pdf");
-
-    /**
-     * the current character position
-     */
-    protected int position = 0;
-
-    /**
-     * the character position of each object
-     */
-    protected List location = new java.util.ArrayList();
-
-    /** List of objects to write in the trailer */
-    private List trailerObjects = new java.util.ArrayList();
-
-    /**
-     * the counter for object numbering
-     */
+    /** the counter for object numbering */
     protected int objectcount = 0;
 
-    /**
-     * the objects themselves
-     */
-    protected List objects = new java.util.LinkedList();
+    /** the logger instance */
+    private Log log = LogFactory.getLog("org.apache.fop.pdf");
 
-    /**
-     * character position of xref table
-     */
-    protected int xref;
+    /** the current character position */
+    private int position = 0;
+
+    /** character position of xref table */
+    private int xref;
+
+    /** the character position of each object */
+    private List location = new ArrayList();
+
+    /** List of objects to write in the trailer */
+    private List trailerObjects = new ArrayList();
+
+    /** the objects themselves */
+    private List objects = new LinkedList();
 
     /** Indicates what PDF version is active */
-    protected int pdfVersion = PDF_VERSION_1_4;
+    private int pdfVersion = PDF_VERSION_1_4;
 
-    /**
-     * Indicates which PDF profiles are active (PDF/A, PDF/X etc.)
-     */
-    protected PDFProfile pdfProfile = new PDFProfile(this);
+    /** Indicates which PDF profiles are active (PDF/A, PDF/X etc.) */
+    private PDFProfile pdfProfile = new PDFProfile(this);
 
-    /**
-     * the /Root object
-     */
-    protected PDFRoot root;
+    /** the /Root object */
+    private PDFRoot root;
 
     /** The root outline object */
     private PDFOutline outlineRoot = null;
@@ -126,107 +114,67 @@ public class PDFDocument {
     /** The /Pages object (mark-fop@inomial.com) */
     private PDFPages pages;
 
-    /**
-     * the /Info object
-     */
-    protected PDFInfo info;
+    /** the /Info object */
+    private PDFInfo info;
 
-    /**
-     * the /Resources object
-     */
-    protected PDFResources resources;
+    /** the /Resources object */
+    private PDFResources resources;
 
-    /**
-     * the documents encryption, if exists
-     */
-    protected PDFEncryption encryption;
+    /** the document's encryption, if it exists */
+    private PDFEncryption encryption;
 
-    /**
-     * the colorspace (0=RGB, 1=CMYK)
-     */
-    protected PDFDeviceColorSpace colorspace =
+    /** the colorspace (0=RGB, 1=CMYK) */
+    private PDFDeviceColorSpace colorspace =
         new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
-    /**
-     * the counter for Pattern name numbering (e.g. 'Pattern1')
-     */
-    protected int patternCount = 0;
+    /** the counter for Pattern name numbering (e.g. 'Pattern1') */
+    private int patternCount = 0;
 
-    /**
-     * the counter for Shading name numbering
-     */
-    protected int shadingCount = 0;
+    /** the counter for Shading name numbering */
+    private int shadingCount = 0;
 
-    /**
-     * the counter for XObject numbering
-     */
-    protected int xObjectCount = 0;
+    /** the counter for XObject numbering */
+    private int xObjectCount = 0;
 
-    /**
-     * the XObjects Map.
-     * Should be modified (works only for image subtype)
-     */
-    protected Map xObjectsMap = new java.util.HashMap();
+    /** the {@link PDFXObject}s map */
+    /* TODO: Should be modified (works only for image subtype) */
+    private Map xObjectsMap = new HashMap();
 
-    /**
-     * the Font Map.
-     */
-    protected Map fontMap = new java.util.HashMap();
+    /** The {@link PDFFont} map */
+    private Map fontMap = new HashMap();
 
-    /**
-     * The filter map.
-     */
-    protected Map filterMap = new java.util.HashMap();
+    /** The {@link PDFFilter} map */
+    private Map filterMap = new HashMap();
 
-    /**
-     * List of PDFGState objects.
-     */
-    protected List gstates = new java.util.ArrayList();
+    /** List of {@link PDFGState}s. */
+    private List gstates = new ArrayList();
 
-    /**
-     * List of functions.
-     */
-    protected List functions = new java.util.ArrayList();
+    /** List of {@link PDFFunction}s. */
+    private List functions = new ArrayList();
 
-    /**
-     * List of shadings.
-     */
-    protected List shadings = new java.util.ArrayList();
+    /** List of {@link PDFShading}s. */
+    private List shadings = new ArrayList();
 
-    /**
-     * List of patterns.
-     */
-    protected List patterns = new java.util.ArrayList();
+    /** List of {@link PDFPattern}s. */
+    private List patterns = new ArrayList();
 
-    /**
-     * List of Links.
-     */
-    protected List links = new java.util.ArrayList();
+    /** List of {@link PDFLink}s. */
+    private List links = new ArrayList();
 
-    /**
-     * List of Destinations.
-     */
-    protected List destinations;
+    /** List of {@link PDFDestination}s. */
+    private List destinations;
 
-    /**
-     * List of FileSpecs.
-     */
-    protected List filespecs = new java.util.ArrayList();
+    /** List of {@link PDFFileSpec}s. */
+    private List filespecs = new ArrayList();
 
-    /**
-     * List of GoToRemotes.
-     */
-    protected List gotoremotes = new java.util.ArrayList();
+    /** List of {@link PDFGoToRemote}s. */
+    private List gotoremotes = new ArrayList();
 
-    /**
-     * List of GoTos.
-     */
-    protected List gotos = new java.util.ArrayList();
+    /** List of {@link PDFGoTo}s. */
+    private List gotos = new ArrayList();
 
-    /**
-     * List of PDFLaunch objects.
-     */
-    protected List launches = new java.util.ArrayList();
+    /** List of {@link PDFLaunch}es. */
+    private List launches = new ArrayList();
 
     /**
      * The PDFDests object for the name dictionary.
@@ -258,7 +206,7 @@ public class PDFDocument {
         this.pages = getFactory().makePages();
 
         // Create the Root object
-        this.root = getFactory().makeRoot(pages);
+        this.root = getFactory().makeRoot(this.pages);
 
         // Create the Resources object
         this.resources = getFactory().makeResources();
@@ -268,7 +216,8 @@ public class PDFDocument {
     }
 
     /**
-     * @return the integer representing the active PDF version (one of PDFDocument.PDF_VERSION_*)
+     * @return the integer representing the active PDF version
+     *          (one of PDFDocument.PDF_VERSION_*)
      */
     public int getPDFVersion() {
         return this.pdfVersion;
@@ -293,7 +242,8 @@ public class PDFDocument {
 
     /**
      * Returns the factory for PDF objects.
-     * @return PDFFactory the factory
+     *
+     * @return the {@link PDFFactory} object
      */
     public PDFFactory getFactory() {
         return this.factory;
@@ -303,7 +253,8 @@ public class PDFDocument {
      * Indicates whether stream encoding on-the-fly is enabled. If enabled
      * stream can be serialized without the need for a buffer to merely
      * calculate the stream length.
-     * @return boolean true if on-the-fly encoding is enabled
+     *
+     * @return <code>true</code> if on-the-fly encoding is enabled
      */
     public boolean isEncodingOnTheFly() {
         return this.encodingOnTheFly;
@@ -311,8 +262,9 @@ public class PDFDocument {
 
     /**
      * Converts text to a byte array for writing to a PDF file.
+     *
      * @param text text to convert/encode
-     * @return byte[] the resulting byte array
+     * @return the resulting <code>byte</code> array
      */
     public static byte[] encode(String text) {
         try {
@@ -327,6 +279,7 @@ public class PDFDocument {
      * buffered to reduce the number of calls to the encoding converter so don't forget
      * to <code>flush()</code> the Writer after use or before writing directly to the
      * underlying OutputStream.
+     *
      * @param out the OutputStream to write to
      * @return the requested Writer
      */
@@ -339,7 +292,7 @@ public class PDFDocument {
     }
 
     /**
-     * set the producer of the document
+     * Sets the producer of the document.
      *
      * @param producer string indicating application producing the PDF
      */
@@ -348,16 +301,16 @@ public class PDFDocument {
     }
 
     /**
-      * Set the creation date of the document.
+      * Sets the creation date of the document.
       *
       * @param date Date to be stored as creation date in the PDF.
       */
     public void setCreationDate(Date date) {
-        info.setCreationDate(date);
+        this.info.setCreationDate(date);
     }
 
     /**
-      * Set the creator of the document.
+      * Sets the creator of the document.
       *
       * @param creator string indicating application creating the document
       */
@@ -366,7 +319,7 @@ public class PDFDocument {
     }
 
     /**
-     * Set the filter map to use for filters in this document.
+     * Sets the filter map to use for filters in this document.
      *
      * @param map the map of filter lists for each stream type
      */
@@ -375,7 +328,7 @@ public class PDFDocument {
     }
 
     /**
-     * Get the filter map used for filters in this document.
+     * Returns the {@link PDFFilter}s map used for filters in this document.
      *
      * @return the map of filters being used
      */
@@ -384,36 +337,38 @@ public class PDFDocument {
     }
 
     /**
-     * Returns the PDFPages object associated with the root object.
-     * @return the PDFPages object
+     * Returns the {@link PDFPages} object associated with the root object.
+     *
+     * @return the {@link PDFPages} object
      */
     public PDFPages getPages() {
         return this.pages;
     }
 
     /**
-     * Get the PDF root object.
+     * Get the {@link PDFRoot} object for this document.
      *
-     * @return the PDFRoot object
+     * @return the {@link PDFRoot} object
      */
     public PDFRoot getRoot() {
         return this.root;
     }
 
     /**
-     * Get the pdf info object for this document.
+     * Get the {@link PDFInfo} object for this document.
      *
-     * @return the PDF Info object for this document
+     * @return the {@link PDFInfo} object
      */
     public PDFInfo getInfo() {
-        return info;
+        return this.info;
     }
 
     /**
-     * Registers a PDFObject in this PDF document. The PDF is assigned a new
-     * object number.
-     * @param obj PDFObject to add
-     * @return PDFObject the PDFObject added (its object number set)
+     * Registers a {@link PDFObject} in this PDF document.
+     * The object is assigned a new object number.
+     *
+     * @param obj {@link PDFObject} to add
+     * @return the added {@link PDFObject} added (with its object number set)
      */
     public PDFObject registerObject(PDFObject obj) {
         assignObjectNumber(obj);
@@ -422,9 +377,10 @@ public class PDFDocument {
     }
 
     /**
-     * Assigns the PDFObject a object number and sets the parent of the
-     * PDFObject to this PDFDocument.
-     * @param obj PDFObject to assign a number to
+     * Assigns the {@link PDFObject} an object number,
+     * and sets the parent of the {@link PDFObject} to this document.
+     *
+     * @param obj {@link PDFObject} to assign a number to
      */
     public void assignObjectNumber(PDFObject obj) {
         if (obj == null) {
@@ -450,9 +406,10 @@ public class PDFDocument {
     }
 
     /**
-     * Adds an PDFObject to this document. The object must have a object number
-     * assigned.
-     * @param obj PDFObject to add
+     * Adds a {@link PDFObject} to this document.
+     * The object <em>MUST</em> have an object number assigned.
+     *
+     * @param obj {@link PDFObject} to add
      */
     public void addObject(PDFObject obj) {
         if (obj == null) {
@@ -521,6 +478,7 @@ public class PDFDocument {
 
     /**
      * Apply the encryption filter to a PDFStream if encryption is enabled.
+     *
      * @param stream PDFStream to encrypt
      */
     public void applyEncryption(AbstractPDFStream stream) {
@@ -531,13 +489,14 @@ public class PDFDocument {
 
     /**
      * Enables PDF encryption.
+     *
      * @param params The encryption parameters for the pdf file
      */
     public void setEncryption(PDFEncryptionParams params) {
         getProfile().verifyEncryptionAllowed();
         this.encryption = PDFEncryptionManager.newInstance(++this.objectcount, params);
-        if (encryption != null) {
-            PDFObject pdfObject = (PDFObject)encryption;
+        if (this.encryption != null) {
+            PDFObject pdfObject = (PDFObject)this.encryption;
             pdfObject.setDocument(this);
             addTrailerObject(pdfObject);
         } else {
@@ -549,6 +508,7 @@ public class PDFDocument {
 
     /**
      * Indicates whether encryption is active for this PDF or not.
+     *
      * @return boolean True if encryption is active
      */
     public boolean isEncryptionActive() {
@@ -557,10 +517,11 @@ public class PDFDocument {
 
     /**
      * Returns the active Encryption object.
+     *
      * @return the Encryption object
      */
     public PDFEncryption getEncryption() {
-        return encryption;
+        return this.encryption;
     }
 
     private Object findPDFObject(List list, PDFObject compare) {
@@ -576,21 +537,23 @@ public class PDFDocument {
     /**
      * Looks through the registered functions to see if one that is equal to
      * a reference object exists
+     *
      * @param compare reference object
      * @return the function if it was found, null otherwise
      */
     protected PDFFunction findFunction(PDFFunction compare) {
-        return (PDFFunction)findPDFObject(functions, compare);
+        return (PDFFunction)findPDFObject(this.functions, compare);
     }
 
     /**
      * Looks through the registered shadings to see if one that is equal to
      * a reference object exists
+     *
      * @param compare reference object
      * @return the shading if it was found, null otherwise
      */
     protected PDFShading findShading(PDFShading compare) {
-        return (PDFShading)findPDFObject(shadings, compare);
+        return (PDFShading)findPDFObject(this.shadings, compare);
     }
 
     /**
@@ -598,24 +561,27 @@ public class PDFDocument {
      * The problem with this is for tiling patterns the pattern
      * data stream is stored and may use up memory, usually this
      * would only be a small amount of data.
+     *
      * @param compare reference object
      * @return the shading if it was found, null otherwise
      */
     protected PDFPattern findPattern(PDFPattern compare) {
-        return (PDFPattern)findPDFObject(patterns, compare);
+        return (PDFPattern)findPDFObject(this.patterns, compare);
     }
 
     /**
      * Finds a font.
+     *
      * @param fontname name of the font
      * @return PDFFont the requested font, null if it wasn't found
      */
     protected PDFFont findFont(String fontname) {
-        return (PDFFont)fontMap.get(fontname);
+        return (PDFFont)this.fontMap.get(fontname);
     }
 
     /**
      * Finds a named destination.
+     *
      * @param compare reference object to use as search template
      * @return the link if found, null otherwise
      */
@@ -630,58 +596,64 @@ public class PDFDocument {
 
     /**
      * Finds a link.
+     *
      * @param compare reference object to use as search template
      * @return the link if found, null otherwise
      */
     protected PDFLink findLink(PDFLink compare) {
-        return (PDFLink)findPDFObject(links, compare);
+        return (PDFLink)findPDFObject(this.links, compare);
     }
 
     /**
      * Finds a file spec.
+     *
      * @param compare reference object to use as search template
      * @return the file spec if found, null otherwise
      */
     protected PDFFileSpec findFileSpec(PDFFileSpec compare) {
-        return (PDFFileSpec)findPDFObject(filespecs, compare);
+        return (PDFFileSpec)findPDFObject(this.filespecs, compare);
     }
 
     /**
      * Finds a goto remote.
+     *
      * @param compare reference object to use as search template
      * @return the goto remote if found, null otherwise
      */
     protected PDFGoToRemote findGoToRemote(PDFGoToRemote compare) {
-        return (PDFGoToRemote)findPDFObject(gotoremotes, compare);
+        return (PDFGoToRemote)findPDFObject(this.gotoremotes, compare);
     }
 
     /**
      * Finds a goto.
+     *
      * @param compare reference object to use as search template
      * @return the goto if found, null otherwise
      */
     protected PDFGoTo findGoTo(PDFGoTo compare) {
-        return (PDFGoTo)findPDFObject(gotos, compare);
+        return (PDFGoTo)findPDFObject(this.gotos, compare);
     }
 
     /**
      * Finds a launch.
+     *
      * @param compare reference object to use as search template
      * @return the launch if found, null otherwise
      */
     protected PDFLaunch findLaunch(PDFLaunch compare) {
-        return (PDFLaunch) findPDFObject(launches, compare);
+        return (PDFLaunch) findPDFObject(this.launches, compare);
     }
 
     /**
      * Looks for an existing GState to use
+     *
      * @param wanted requested features
      * @param current currently active features
-     * @return PDFGState the GState if found, null otherwise
+     * @return the GState if found, null otherwise
      */
     protected PDFGState findGState(PDFGState wanted, PDFGState current) {
         PDFGState poss;
-        Iterator iter = gstates.iterator();
+        Iterator iter = this.gstates.iterator();
         while (iter.hasNext()) {
             PDFGState avail = (PDFGState)iter.next();
             poss = new PDFGState();
@@ -695,7 +667,7 @@ public class PDFDocument {
     }
 
     /**
-     * Get the PDF color space object.
+     * Returns the PDF color space object.
      *
      * @return the color space
      */
@@ -704,7 +676,7 @@ public class PDFDocument {
     }
 
     /**
-     * Get the color space.
+     * Returns the color space.
      *
      * @return the color space
      */
@@ -723,12 +695,12 @@ public class PDFDocument {
     }
 
     /**
-     * Get the font map for this document.
+     * Returns the font map for this document.
      *
      * @return the map of fonts used in this document
      */
     public Map getFontMap() {
-        return fontMap;
+        return this.fontMap;
     }
 
     /**
@@ -741,7 +713,7 @@ public class PDFDocument {
     protected InputStream resolveURI(String uri)
         throws java.io.FileNotFoundException {
         try {
-            /**@todo Temporary hack to compile, improve later */
+            /* TODO: Temporary hack to compile, improve later */
             return new java.net.URL(uri).openStream();
         } catch (Exception e) {
             throw new java.io.FileNotFoundException(
@@ -757,8 +729,7 @@ public class PDFDocument {
      * @deprecated Use getXObject instead (so forms are treated in the same way)
      */
     public PDFImageXObject getImage(String key) {
-        PDFImageXObject xObject = (PDFImageXObject)xObjectsMap.get(key);
-        return xObject;
+        return (PDFImageXObject)this.xObjectsMap.get(key);
     }
 
     /**
@@ -768,8 +739,7 @@ public class PDFDocument {
      * @return the PDFXObject for the key if found
      */
     public PDFXObject getXObject(String key) {
-        PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
-        return xObject;
+        return (PDFXObject)this.xObjectsMap.get(key);
     }
 
     /**
@@ -778,7 +748,7 @@ public class PDFDocument {
      * @return the PDFDests object (which represents the /Dests entry).
      */
     public PDFDests getDests() {
-        return dests;
+        return this.dests;
     }
 
     /**
@@ -787,7 +757,7 @@ public class PDFDocument {
      */
     public void addDestination(PDFDestination destination) {
         if (this.destinations == null) {
-            this.destinations = new java.util.ArrayList();
+            this.destinations = new ArrayList();
         }
         this.destinations.add(destination);
     }
@@ -799,7 +769,7 @@ public class PDFDocument {
      */
     public List getDestinationList() {
         if (hasDestinations()) {
-            return destinations;
+            return this.destinations;
         } else {
             return Collections.EMPTY_LIST;
         }
@@ -818,7 +788,7 @@ public class PDFDocument {
      * Add an image to the PDF document.
      * This adds an image to the PDF objects.
      * If an image with the same key already exists it will return the
-     * old PDFXObject.
+     * old {@link PDFXObject}.
      *
      * @param res the PDF resource context to add to, may be null
      * @param img the PDF image to add
@@ -827,7 +797,7 @@ public class PDFDocument {
     public PDFImageXObject addImage(PDFResourceContext res, PDFImage img) {
         // check if already created
         String key = img.getKey();
-        PDFImageXObject xObject = (PDFImageXObject)xObjectsMap.get(key);
+        PDFImageXObject xObject = (PDFImageXObject)this.xObjectsMap.get(key);
         if (xObject != null) {
             if (res != null) {
                 res.getPDFResources().addXObject(xObject);
@@ -852,7 +822,7 @@ public class PDFDocument {
      * Add a form XObject to the PDF document.
      * This adds a Form XObject to the PDF objects.
      * If a Form XObject with the same key already exists it will return the
-     * old PDFFormXObject.
+     * old {@link PDFFormXObject}.
      *
      * @param res the PDF resource context to add to, may be null
      * @param cont the PDF Stream contents of the Form XObject
@@ -896,19 +866,19 @@ public class PDFDocument {
      * @return the PDF Outline root object
      */
     public PDFOutline getOutlineRoot() {
-        if (outlineRoot != null) {
-            return outlineRoot;
+        if (this.outlineRoot != null) {
+            return this.outlineRoot;
         }
 
-        outlineRoot = new PDFOutline(null, null, true);
-        assignObjectNumber(outlineRoot);
-        addTrailerObject(outlineRoot);
-        root.setRootOutline(outlineRoot);
-        return outlineRoot;
+        this.outlineRoot = new PDFOutline(null, null, true);
+        assignObjectNumber(this.outlineRoot);
+        addTrailerObject(this.outlineRoot);
+        this.root.setRootOutline(this.outlineRoot);
+        return this.outlineRoot;
     }
 
     /**
-     * get the /Resources object for the document
+     * Get the /Resources object for the document
      *
      * @return the /Resources object
      */
@@ -919,16 +889,18 @@ public class PDFDocument {
     /**
      * Ensure there is room in the locations xref for the number of
      * objects that have been created.
+     * @param objidx    the object's index
+     * @param position  the position
      */
     private void setLocation(int objidx, int position) {
-        while (location.size() <= objidx) {
-            location.add(LOCATION_PLACEHOLDER);
+        while (this.location.size() <= objidx) {
+            this.location.add(LOCATION_PLACEHOLDER);
         }
-        location.set(objidx, new Integer(position));
+        this.location.set(objidx, new Integer(position));
     }
 
     /**
-     * write the entire document out
+     * Writes out the entire document
      *
      * @param stream the OutputStream to output the document to
      * @throws IOException if there is an exception writing to the output stream
@@ -1009,23 +981,23 @@ public class PDFDocument {
     }
 
     /**
-     * write the trailer
+     * Write the trailer
      *
      * @param stream the OutputStream to write the trailer to
      * @throws IOException if there is an exception writing to the output stream
      */
     public void outputTrailer(OutputStream stream) throws IOException {
         if (hasDestinations()) {
-            Collections.sort(destinations, new DestinationComparator());
-            dests = getFactory().makeDests(destinations);
+            Collections.sort(this.destinations, new DestinationComparator());
+            this.dests = getFactory().makeDests(this.destinations);
             if (this.root.getNames() == null) {
                 this.root.setNames(getFactory().makeNames());
             }
             this.root.getNames().setDests(dests);
         }
         output(stream);
-        for (int count = 0; count < trailerObjects.size(); count++) {
-            PDFObject o = (PDFObject)trailerObjects.get(count);
+        for (int count = 0; count < this.trailerObjects.size(); count++) {
+            PDFObject o = (PDFObject)this.trailerObjects.get(count);
             this.location.set(
                 o.getObjectNumber() - 1,
                 new Integer(this.position));
@@ -1036,39 +1008,36 @@ public class PDFDocument {
         this.position += outputXref(stream);
 
         /* construct the trailer */
-        String pdf =
-            "trailer\n"
-                + "<<\n"
-                + "/Size "
-                + (this.objectcount + 1)
-                + "\n"
-                + "/Root "
-                + this.root.referencePDF()
-                + "\n"
-                + "/Info "
-                + this.info.referencePDF()
-                + "\n";
-        if (this.encryption != null) {
-            pdf += this.encryption.getTrailerEntry();
+        StringBuffer pdf = new StringBuffer(128);
+        pdf.append("trailer\n<<\n/Size ")
+                .append(this.objectcount + 1)
+                .append("\n/Root ")
+                .append(this.root.referencePDF())
+                .append("\n/Info ")
+                .append(this.info.referencePDF())
+                .append('\n');
+
+        if (this.isEncryptionActive()) {
+            pdf.append(this.encryption.getTrailerEntry());
         } else {
-            pdf += getIDEntry();
+            pdf.append(this.getIDEntry());
         }
-            pdf += "\n"
-                + ">>\n"
-                + "startxref\n"
-                + this.xref
-                + "\n"
-                + "%%EOF\n";
+
+        pdf.append("\n>>\nstartxref\n")
+                .append(this.xref)
+                .append("\n%%EOF\n");
 
         /* write the trailer */
-        stream.write(encode(pdf));
+        stream.write(encode(pdf.toString()));
     }
 
     /**
-     * write the xref table
+     * Write the xref table
      *
      * @param stream the OutputStream to write the xref table to
      * @return the number of characters written
+     * @throws IOException in case of an error writing the result to
+     *          the parameter stream
      */
     private int outputXref(OutputStream stream) throws IOException {
 
@@ -1077,18 +1046,20 @@ public class PDFDocument {
 
         /* construct initial part of xref */
         StringBuffer pdf = new StringBuffer(128);
-        pdf.append(
-            "xref\n0 " + (this.objectcount + 1) + "\n0000000000 65535 f \n");
+        pdf.append("xref\n0 ");
+        pdf.append(this.objectcount + 1);
+        pdf.append("\n0000000000 65535 f \n");
 
+        String s, loc;
         for (int count = 0; count < this.location.size(); count++) {
-            String x = this.location.get(count).toString();
+            final String padding = "0000000000";
+            s = this.location.get(count).toString();
 
             /* contruct xref entry for object */
-            String padding = "0000000000";
-            String loc = padding.substring(x.length()) + x;
+            loc = padding.substring(s.length()) + s;
 
             /* append to xref table */
-            pdf = pdf.append(loc + " 00000 n \n");
+            pdf = pdf.append(loc).append(" 00000 n \n");
         }
 
         /* write the xref table and return the character length */

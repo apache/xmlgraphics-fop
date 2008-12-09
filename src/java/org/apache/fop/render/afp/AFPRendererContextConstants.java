@@ -32,4 +32,12 @@ public interface AFPRendererContextConstants extends RendererContextConstants {
      */
     String AFP_GRAYSCALE = "afpGrayscale";
 
+    /** The font information for the AFP renderer. */
+    String AFP_FONT_INFO = "afpFontInfo";
+
+    /** The afp resource manager */
+    String AFP_RESOURCE_MANAGER = "afpResourceManager";
+
+    /** The afp painting state */
+    String AFP_PAINTING_STATE = "afpPaintingState";
 }

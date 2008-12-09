@@ -24,6 +24,7 @@ package org.apache.fop.fonts;
  * Sets up a set of fonts
  */
 public interface FontCollection {
+
     /**
      * Sets up fonts in a font info object.
      *

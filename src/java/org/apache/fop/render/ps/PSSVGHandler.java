@@ -37,6 +37,7 @@ import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.AbstractGenericSVGHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
@@ -258,7 +259,6 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         PSGraphics2D graphics = new PSGraphics2D(strokeText, gen);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
-        GVTBuilder builder = new GVTBuilder();
         NativeTextHandler nativeTextHandler = null;
         BridgeContext ctx = new BridgeContext(ua);
         if (!strokeText) {
@@ -271,9 +271,14 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
             ctx.putBridge(tBridge);
         }
 
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = BatikUtil.cloneSVGDocument(doc);
+
         GraphicsNode root;
         try {
-            root = builder.build(ctx, doc);
+            GVTBuilder builder = new GVTBuilder();
+            root = builder.build(ctx, clonedDoc);
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
@@ -288,7 +293,6 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         float sy = psInfo.getHeight() / h;
 
         ctx = null;
-        builder = null;
 
         try {
             gen.commentln("%FOPBeginSVG");

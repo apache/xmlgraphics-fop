@@ -368,6 +368,36 @@
         to "bitmap" which causes all text to be rendered as bitmaps.
       </p>
     </section>
+    <section id="afp-renderer">
+      <title>Special Settings for the AFP Renderer</title>
+      <p>
+      </p>
+      <p>
+        Additionally, there are certain settings that control how the renderer handles various elements.
+      </p>
+<source><![CDATA[<renderer mime="application/x-afp">
+  <images mode="b+w" bits-per-pixel="8" native="true"/>
+  <renderer-resolution>240</renderer-resolution>
+  
+  <!-- a default external resource group file -->
+  <resource-group-file>resources.afp</resource-group-file>
+</renderer>]]></source>
+      <p>
+        The default value for the images "mode" setting is "b+w" (black and white).  When the images "mode" setting is "b+w" a "bits-per-pixel" setting can be provided to aid the grayscale conversion process.  With this setting all images referenced in your source document are converted to an IOCA FS45 grayscale bitmap image form. 
+        When the setting is "color" all images are converted to an IOCA FS45 color bitmap image form.  When "native" setting is "true", all images encountered (TIFF, GIF, JPEG and Encapsulated Postscript etc.) will be embedded directly in the datastream in their native form using a MO:DCA Object Container.
+      </p>
+      <p>
+        The default value for the "renderer-resolution" is 240 dpi. 
+      </p>
+ <!--
+      <p>
+        The default value for the MO:DCA "interchange-set" is "MO:DCA-L". Other compliance settings include presentation interchange sets "MO:DCA-P IS/1" and "MO:DCA-P IS/2" (Resource Groups). 
+      </p>
+ -->
+      <p>
+        By default if there is no configuration definition for "resource-group-file", external resources will be placed in a file called resources.afp. 
+      </p>
+    </section>
   </section>
 
         <section>

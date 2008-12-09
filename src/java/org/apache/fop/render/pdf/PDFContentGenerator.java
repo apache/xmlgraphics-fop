@@ -29,8 +29,8 @@ import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFPaintingState;
 import org.apache.fop.pdf.PDFResourceContext;
-import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
@@ -52,7 +52,7 @@ public class PDFContentGenerator {
     private PDFStream currentStream;
 
     /** drawing state */
-    protected PDFState currentState = null;
+    protected PDFPaintingState currentState = null;
     /** Text generation utility holding the current font status */
     protected PDFTextUtil textutil;
 
@@ -77,7 +77,7 @@ public class PDFContentGenerator {
             }
         };
 
-        this.currentState = new PDFState();
+        this.currentState = new PDFPaintingState();
     }
 
     /**
@@ -116,7 +116,7 @@ public class PDFContentGenerator {
      * Returns the {@code PDFState} associated with this instance.
      * @return the PDF state
      */
-    public PDFState getState() {
+    public PDFPaintingState getState() {
         return this.currentState;
     }
 
@@ -149,7 +149,7 @@ public class PDFContentGenerator {
     /** {@inheritDoc} */
     protected void saveGraphicsState() {
         endTextObject();
-        currentState.push();
+        currentState.save();
         currentStream.add("q\n");
     }
 
@@ -162,7 +162,7 @@ public class PDFContentGenerator {
         endTextObject();
         currentStream.add("Q\n");
         if (popState) {
-            currentState.pop();
+            currentState.restore();
         }
     }
 

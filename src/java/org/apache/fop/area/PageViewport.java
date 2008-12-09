@@ -89,7 +89,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
 
     //Arbitrary attachments to the page from extensions that need to pass information
     //down to the renderers.
-    private List extensionAttachments = null;
+    private List/*<ExtensionAttachment>*/ extensionAttachments = null;
 
     /**
      * logging instance
@@ -122,7 +122,8 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      */
     public PageViewport(PageViewport original) {
         if (original.extensionAttachments != null) {
-            this.extensionAttachments = new java.util.ArrayList(original.extensionAttachments);
+            this.extensionAttachments
+                = new java.util.ArrayList/*<ExtensionAttachment>*/(original.extensionAttachments);
         }
         this.pageIndex = original.pageIndex;
         this.pageNumber = original.pageNumber;
@@ -588,7 +589,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      */
     public void addExtensionAttachment(ExtensionAttachment attachment) {
         if (this.extensionAttachments == null) {
-            this.extensionAttachments = new java.util.ArrayList();
+            this.extensionAttachments = new java.util.ArrayList/*<ExtensionAttachment>*/();
         }
         extensionAttachments.add(attachment);
     }

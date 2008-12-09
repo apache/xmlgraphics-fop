@@ -36,11 +36,9 @@ import org.apache.batik.util.SVGConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.util.QName;
-
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFResourceContext;
@@ -89,9 +87,9 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
         pdfi.cfg = (Configuration)context.getProperty(HANDLER_CONFIGURATION);
         Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-        QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
+
         if (foreign != null
-                && "bitmap".equalsIgnoreCase((String)foreign.get(qName))) {
+                && BITMAP.equalsIgnoreCase((String)foreign.get(CONVERSION_MODE))) {
             pdfi.paintAsBitmap = true;
         }
         return pdfi;
@@ -105,8 +103,6 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         public PDFDocument pdfDoc;
         /** see OUTPUT_STREAM */
         public OutputStream outputStream;
-        /** see PDF_STATE */
-        //public PDFState pdfState;
         /** see PDF_PAGE */
         public PDFPage pdfPage;
         /** see PDF_CONTEXT */
@@ -167,8 +163,6 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         AffineTransform resolutionScaling = new AffineTransform();
         resolutionScaling.scale(s, s);
 
-        GVTBuilder builder = new GVTBuilder();
-
         //Controls whether text painted by Batik is generated using text or path operations
         boolean strokeText = false;
         Configuration cfg = pdfInfo.cfg;
@@ -182,10 +176,14 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
                 userAgent.getImageSessionContext(),
                 new AffineTransform());
 
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = BatikUtil.cloneSVGDocument(doc);
+
         GraphicsNode root;
         try {
-            root = builder.build(ctx, doc);
-            builder = null;
+            GVTBuilder builder = new GVTBuilder();
+            root = builder.build(ctx, clonedDoc);
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());
@@ -196,8 +194,8 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
-        float sx = pdfInfo.width / (float)w;
-        float sy = pdfInfo.height / (float)h;
+        float sx = pdfInfo.width / w;
+        float sy = pdfInfo.height / h;
 
         //Scaling and translation for the bounding box of the image
         AffineTransform scaling = new AffineTransform(
@@ -247,7 +245,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         generator.comment("SVG start");
 
         //Save state and update coordinate system for the SVG image
-        generator.getState().push();
+        generator.getState().save();
         generator.getState().concatenate(imageTransform);
 
         //Now that we have the complete transformation matrix for the image, we can update the
@@ -256,7 +254,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
                 SVGDOMImplementation.SVG_NAMESPACE_URI, SVGConstants.SVG_A_TAG);
         aBridge.getCurrentTransform().setTransform(generator.getState().getTransform());
 
-        graphics.setPDFState(generator.getState());
+        graphics.setPaintingState(generator.getState());
         graphics.setOutputStream(pdfInfo.outputStream);
         try {
             root.paint(graphics);
@@ -266,7 +264,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgRenderingError(this, e, getDocumentURI(doc));
         }
-        generator.getState().pop();
+        generator.getState().restore();
         generator.restoreGraphicsState();
         generator.comment("SVG end");
     }
