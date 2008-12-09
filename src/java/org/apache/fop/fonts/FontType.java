@@ -19,12 +19,10 @@
 
 package org.apache.fop.fonts;
 
-import org.apache.avalon.framework.ValuedEnum;
-
 /**
  * This class enumerates all supported font types.
  */
-public class FontType extends ValuedEnum {
+public class FontType {
 
     /**
      * Collective identifier for "other" font types
@@ -51,12 +49,16 @@ public class FontType extends ValuedEnum {
      */
     public static final FontType TRUETYPE    = new FontType("TrueType", 5);
 
+    private final String name;
+    private final int value;
+
 
     /**
      * @see org.apache.avalon.framework.Enum#Enum(String)
      */
     protected FontType(String name, int value) {
-        super(name, value);
+        this.name = name;
+        this.value = value;
     }
 
 
@@ -105,6 +107,24 @@ public class FontType extends ValuedEnum {
         } else {
             throw new IllegalArgumentException("Invalid font type: " + value);
         }
+    }
+
+    /**
+     * Returns the name
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns the value
+     *
+     * @return the value
+     */
+    public int getValue() {
+        return value;
     }
 
 }

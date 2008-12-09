@@ -26,6 +26,7 @@ import java.awt.image.ColorModel;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+
 /**
  * Our implementation of the class that returns information about
  * roughly what we can handle and want to see (alpha for example).

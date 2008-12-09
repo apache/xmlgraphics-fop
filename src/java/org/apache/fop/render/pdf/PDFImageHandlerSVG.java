@@ -148,7 +148,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
         generator.comment("SVG start");
 
         //Save state and update coordinate system for the SVG image
-        generator.getState().push();
+        generator.getState().save();
         generator.getState().concatenate(imageTransform);
 
         //Now that we have the complete transformation matrix for the image, we can update the
@@ -157,7 +157,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
                 SVGDOMImplementation.SVG_NAMESPACE_URI, SVGConstants.SVG_A_TAG);
         aBridge.getCurrentTransform().setTransform(generator.getState().getTransform());
 
-        graphics.setPDFState(generator.getState());
+        graphics.setPaintingState(generator.getState());
         graphics.setOutputStream(generator.getOutputStream());
         try {
             root.paint(graphics);
@@ -167,7 +167,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
                     context.getUserAgent().getEventBroadcaster());
             eventProducer.svgRenderingError(this, e, image.getInfo().getOriginalURI());
         }
-        generator.getState().pop();
+        generator.getState().restore();
         generator.restoreGraphicsState();
         generator.comment("SVG end");
     }

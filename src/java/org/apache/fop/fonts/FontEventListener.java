@@ -19,7 +19,6 @@
 
 package org.apache.fop.fonts;
 
-
 /**
  * Event listener interface for font-related events.
  */

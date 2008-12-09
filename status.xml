@@ -53,6 +53,26 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="46319">
+        Fixed a memory-leak in Marker.MarkerAttribute, where an instance was used both as key and value in
+        a WeakHashMap, effectively neutralizing the benefit of using WeakReferences. Solved by extending
+        PropertyCache to work for MarkerAttributes as well.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixed-bug="46360">
+        Fixed a multi-threading issue when rendering SVG.
+      </action>
+      <action context="Renderers" dev="AC" importance="high" type="add">
+        AFP Output: An AFPGraphics2D implementation which provides the ability to use Batik to drive the production of AFP Graphics (GOCA) output from SVG.
+      </action>
+      <action context="Renderers" dev="AC" importance="high" type="add">
+        AFP Output: Resource group leveling, external streaming, and de-duplication of images and graphics using IncludeObject and ResourceGroup.
+      </action>
+      <action context="Renderers" dev="AC" importance="high" type="add">
+        AFP Output: Native image embedding support (e.g. JPEG, GIF, TIFF) using ObjectContainer and a MOD:CA Registry implementation.
+      </action>
+      <action context="Fonts" dev="AC" type="fix">
+        More robust AFP font parsing, although it is still in need of some rework in the future.
+      </action>
       <action context="Images" dev="JM" type="add" fixes-bug="41657">
         Added support for SVG 1.2 functionality inside fo:instream-foreign-object.
       </action>
@@ -156,10 +176,6 @@
         offer an implementation for addCharacters() should take care to make
         similar modifications in their code !!</em>
       </action>
-      <!-- change reverted, to be added back later
-      <action context="Renderers" dev="AC" importance="high" type="add">
-        Added SVG support for AFP (GOCA).
-      </action -->
       <action context="Renderers" dev="JM" type="add" fixes-bug="45115" due-to="Martin Edge">
         Added a PCL-specific extension attribute on simple-page-master for controlling
         the simplex/duplex mode.

@@ -98,7 +98,7 @@ public class PDFGraphics2DAdapter extends AbstractGraphics2DAdapter {
         AffineTransform transform = new AffineTransform();
         transform.translate(fx, fy);
         generator.getState().concatenate(transform);
-        graphics.setPDFState(generator.getState());
+        graphics.setPaintingState(generator.getState());
         graphics.setOutputStream(pdfInfo.outputStream);
 
         if (pdfInfo.paintAsBitmap) {

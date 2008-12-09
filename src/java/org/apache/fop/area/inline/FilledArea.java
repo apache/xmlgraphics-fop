@@ -70,10 +70,10 @@ public class FilledArea extends InlineParent {
     /**
      * Set the unit width for the areas to fill the full width.
      *
-     * @param w the unit width
+     * @param width the unit width
      */
-    public void setUnitWidth(int w) {
-        unitWidth = w;
+    public void setUnitWidth(int width) {
+        this.unitWidth = width;
     }
 
     /**
@@ -82,7 +82,7 @@ public class FilledArea extends InlineParent {
      * @return the unit width
      */
     public int getUnitWidth() {
-        return unitWidth;
+        return this.unitWidth;
     }
 
     /**
@@ -117,7 +117,7 @@ public class FilledArea extends InlineParent {
     }
 
     /**
-     * recursively apply the variation factor to all descendant areas
+     * Recursively apply the variation factor to all descendant areas
      * @param variationFactor the variation factor that must be applied to adjustments
      * @param lineStretch     the total stretch of the line
      * @param lineShrink      the total shrink of the line

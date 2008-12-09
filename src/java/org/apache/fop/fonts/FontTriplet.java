@@ -21,6 +21,7 @@ package org.apache.fop.fonts;
 
 import java.io.Serializable;
 
+
 /**
  * FontTriplet contains information on name, style and weight of one font
  */

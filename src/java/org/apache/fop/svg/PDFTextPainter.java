@@ -63,8 +63,8 @@ public class PDFTextPainter extends StrokingTextPainter {
 
     private static final boolean DEBUG = false;
 
-    private boolean strokeText = false;
-    private FontInfo fontInfo;
+    private final boolean strokeText = false;
+    private final FontInfo fontInfo;
 
     /**
      * Create a new PDF text painter with the given font information.
@@ -280,12 +280,12 @@ public class PDFTextPainter extends StrokingTextPainter {
         Float fontSize = (Float) aci.getAttribute(TextAttribute.SIZE);
 
         String style = ((posture != null) && (posture.floatValue() > 0.0))
-                       ? "italic" : "normal";
+                       ? Font.STYLE_ITALIC : Font.STYLE_NORMAL;
         int weight = ((taWeight != null)
                        &&  (taWeight.floatValue() > 1.0)) ? Font.WEIGHT_BOLD
                        : Font.WEIGHT_NORMAL;
 
-        String fontFamily = null;
+        String firstFontFamily = null;
 
         //GVT_FONT can sometimes be different from the fonts in GVT_FONT_FAMILIES
         //or GVT_FONT_FAMILIES can even be empty and only GVT_FONT is set
@@ -307,6 +307,7 @@ public class PDFTextPainter extends StrokingTextPainter {
                     int fsize = (int)(fontSize.floatValue() * 1000);
                     fonts.add(fontInfo.getFontInstance(triplet, fsize));
                 }
+                firstFontFamily = gvtFontFamily;
             } catch (Exception e) {
                 //Most likely NoSuchMethodError here when using Batik 1.6
                 //Just skip this section in this case
@@ -320,7 +321,7 @@ public class PDFTextPainter extends StrokingTextPainter {
                 if (fam instanceof SVGFontFamily) {
                     return null; //Let Batik paint this text!
                 }
-                fontFamily = fam.getFamilyName();
+                String fontFamily = fam.getFamilyName();
                 if (DEBUG) {
                     System.out.print(fontFamily + ", ");
                 }
@@ -330,15 +331,20 @@ public class PDFTextPainter extends StrokingTextPainter {
                     int fsize = (int)(fontSize.floatValue() * 1000);
                     fonts.add(fontInfo.getFontInstance(triplet, fsize));
                 }
+                if (firstFontFamily == null) {
+                    firstFontFamily = fontFamily;
+                }
             }
         }
         if (fonts.size() == 0) {
-            FontTriplet triplet = fontInfo.fontLookup("any", style, Font.WEIGHT_NORMAL);
+            if (firstFontFamily == null) {
+                //This will probably never happen. Just to be on the safe side.
+                firstFontFamily = "any";
+            }
+            //lookup with fallback possibility (incl. substitution notification)
+            FontTriplet triplet = fontInfo.fontLookup(firstFontFamily, style, weight);
             int fsize = (int)(fontSize.floatValue() * 1000);
             fonts.add(fontInfo.getFontInstance(triplet, fsize));
-            if (DEBUG) {
-                System.out.print("fallback to 'any' font");
-            }
         }
         if (DEBUG) {
             System.out.println();

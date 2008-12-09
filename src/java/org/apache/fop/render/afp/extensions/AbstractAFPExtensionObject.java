@@ -35,11 +35,14 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 public abstract class AbstractAFPExtensionObject extends FONode {
 
     /**
-     * AFP setup code
+     * the AFP extension attachment
      */
-    private AFPPageSetup setupCode;
+    protected AFPExtensionAttachment extensionAttachment;
 
-    private String name;
+    /**
+     * the element name of this extension
+     */
+    protected String name;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -49,10 +52,11 @@ public abstract class AbstractAFPExtensionObject extends FONode {
     public AbstractAFPExtensionObject(FONode parent, String name) {
         super(parent);
         this.name = name;
-        this.setupCode = new AFPPageSetup(name);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
@@ -60,60 +64,85 @@ public abstract class AbstractAFPExtensionObject extends FONode {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void characters(char[] data, int start, int length,
-                                 PropertyList pList, Locator locator) {
-        setupCode.setContent(new String(data, start, length));
+                                 PropertyList pList, Locator locator) throws FOPException {
+        ((AFPExtensionAttachment)getExtensionAttachment()).setContent(
+                new String(data, start, length));       
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getNamespaceURI() {
         return AFPElementMapping.NAMESPACE;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getNormalNamespacePrefix() {
         return AFPElementMapping.NAMESPACE_PREFIX;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
-        String name = attlist.getValue("name");
-        if (name != null && name.length() > 0) {
-            setupCode.setName(name);
+        getExtensionAttachment();
+        String attr = attlist.getValue("name");
+        if (attr != null && attr.length() > 0) {
+            extensionAttachment.setName(attr);
         } else {
             throw new FOPException(elementName + " must have a name attribute.");
         }
         if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(elementName)) {
-            name = attlist.getValue("src");
-            if (name != null && name.length() > 0) {
-                setupCode.setValue(name);
+            attr = attlist.getValue("src");
+            if (attr != null && attr.length() > 0) {
+                extensionAttachment.setValue(attr);
             } else {
                 throw new FOPException(elementName + " must have a src attribute.");
             }
         } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(elementName)) {
-            name = attlist.getValue("value");
-            if (name != null && name.length() > 0) {
-                setupCode.setValue(name);
+            attr = attlist.getValue("value");
+            if (attr != null && attr.length() > 0) {
+                extensionAttachment.setValue(attr);
             } else {
                 throw new FOPException(elementName + " must have a value attribute.");
             }
         }
     }
-
-    /** {@inheritDoc} */
+    
+    /**
+     * {@inheritDoc}
+     */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Instantiates extension attachment object
+     * @return extension attachment
+     */
+    protected abstract ExtensionAttachment instantiateExtensionAttachment();
+
+    /**
+     * {@inheritDoc}
+     */
     public ExtensionAttachment getExtensionAttachment() {
-        return this.setupCode;
+        if (extensionAttachment == null) {
+            this.extensionAttachment = (AFPExtensionAttachment)instantiateExtensionAttachment();
+        }
+        return this.extensionAttachment;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getLocalName() {
         return name;
     }
