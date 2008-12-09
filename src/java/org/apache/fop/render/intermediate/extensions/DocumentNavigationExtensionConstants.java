@@ -38,10 +38,15 @@ public interface DocumentNavigationExtensionConstants {
 
     /** the named-destination element */
     QName NAMED_DESTINATION = new QName(NAMESPACE, "named-destination");
+    /** the link element */
+    QName LINK = new QName(NAMESPACE, "link");
 
     /** the goto-xy element */
     QName GOTO_XY = new QName(NAMESPACE, "goto-xy");
     /** the goto-uri element */
     QName GOTO_URI = new QName(NAMESPACE, "goto-uri");
+
+    /** Attribute name for the action reference */
+    String ACTION_REF = "action-ref";
 
 }

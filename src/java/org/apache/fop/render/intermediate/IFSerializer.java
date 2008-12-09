@@ -38,6 +38,10 @@ import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.intermediate.extensions.AbstractAction;
+import org.apache.fop.render.intermediate.extensions.BookmarkTree;
+import org.apache.fop.render.intermediate.extensions.Link;
+import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
@@ -47,7 +51,8 @@ import org.apache.fop.util.XMLUtil;
 /**
  * IFPainter implementation that serializes the intermediate format to XML.
  */
-public class IFSerializer extends AbstractXMLWritingIFDocumentHandler implements IFConstants, IFPainter {
+public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
+        implements IFConstants, IFPainter, IFDocumentNavigationHandler {
 
     private IFDocumentHandler mimicHandler;
 
@@ -81,6 +86,11 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler implements
         } else {
             return new IFSerializerConfiguration(getUserAgent());
         }
+    }
+
+    /** {@inheritDoc} */
+    public IFDocumentNavigationHandler getDocumentNavigationHandler() {
+        return this;
     }
 
     public void mimicDocumentHandler(IFDocumentHandler targetHandler) {
@@ -551,6 +561,36 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler implements
 
     private void addAttribute(AttributesImpl atts, String localName, String value) {
         XMLUtil.addAttribute(atts, localName, value);
+    }
+
+    // ---=== IFDocumentNavigationHandler ===---
+
+    /** {@inheritDoc} */
+    public void renderNamedDestination(NamedDestination destination) throws IFException {
+        renderXMLizable(destination);
+    }
+
+    /** {@inheritDoc} */
+    public void renderBookmarkTree(BookmarkTree tree) throws IFException {
+        renderXMLizable(tree);
+    }
+
+    /** {@inheritDoc} */
+    public void addResolvedAction(AbstractAction action) throws IFException {
+        renderXMLizable(action);
+    }
+
+    /** {@inheritDoc} */
+    public void renderLink(Link link) throws IFException {
+        renderXMLizable(link);
+    }
+
+    private void renderXMLizable(XMLizable object) throws IFException {
+        try {
+            object.toSAX(handler);
+        } catch (SAXException e) {
+            throw new IFException("SAX error serializing object", e);
+        }
     }
 
 }

@@ -21,9 +21,7 @@ package org.apache.fop.render.pdf;
 
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -34,23 +32,17 @@ import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
-import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
+import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
-import org.apache.fop.render.intermediate.extensions.AbstractAction;
-import org.apache.fop.render.intermediate.extensions.Bookmark;
-import org.apache.fop.render.intermediate.extensions.BookmarkTree;
-import org.apache.fop.render.intermediate.extensions.GoToXYAction;
-import org.apache.fop.render.intermediate.extensions.NamedDestination;
 
 /**
  * {@code IFDocumentHandler} implementation that produces PDF.
@@ -81,11 +73,14 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** the current page to add annotations to */
     protected PDFPage currentPage;
 
-    /** the current page's PDF reference string (to avoid numerous function calls) */
-    protected String currentPageRef;
+    /** the current page's PDF reference */
+    protected PageReference currentPageRef;
 
     /** Used for bookmarks/outlines. */
     protected Map pageReferences = new java.util.HashMap();
+
+    private PDFDocumentNavigationHandler documentNavigationHandler
+            = new PDFDocumentNavigationHandler(this);
 
     /**
      * Default constructor.
@@ -112,6 +107,11 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
         return new PDFRendererConfigurator(getUserAgent());
+    }
+
+    /** {@inheritDoc} */
+    public IFDocumentNavigationHandler getDocumentNavigationHandler() {
+        return this.documentNavigationHandler;
     }
 
     PDFRenderingUtil getPDFUtil() {
@@ -142,6 +142,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
         try {
+            this.documentNavigationHandler.commit();
             pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
             pdfDoc.outputTrailer(this.outputStream);
 
@@ -182,15 +183,14 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
         pdfUtil.generatePageLabel(index, name);
 
-        currentPageRef = currentPage.referencePDF();
-        this.pageReferences.put(new Integer(index), new PageReference(currentPage, size));
+        currentPageRef = new PageReference(currentPage, size);
+        this.pageReferences.put(new Integer(index), currentPageRef);
 
         this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream, this.currentPage);
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFPainter's
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 size.height / 1000f);
         generator.concatenate(basicPageTransform);
-
     }
 
     /** {@inheritDoc} */
@@ -220,51 +220,6 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         }
     }
 
-    private void renderBookmarkTree(BookmarkTree tree) {
-        Iterator iter = tree.getBookmarks().iterator();
-        while (iter.hasNext()) {
-            Bookmark b = (Bookmark)iter.next();
-            renderBookmark(b, null);
-        }
-    }
-
-    private void renderBookmark(Bookmark bookmark, PDFOutline parent) {
-        if (parent == null) {
-            parent = pdfDoc.getOutlineRoot();
-        }
-        PDFAction action = getAction(bookmark.getAction());
-        PDFOutline pdfOutline = pdfDoc.getFactory().makeOutline(parent,
-            bookmark.getTitle(), action, bookmark.isShown());
-        Iterator iter = bookmark.getChildBookmarks().iterator();
-        while (iter.hasNext()) {
-            Bookmark b = (Bookmark)iter.next();
-            renderBookmark(b, pdfOutline);
-        }
-    }
-
-    private void renderNamedDestination(NamedDestination destination) {
-        PDFAction action = getAction(destination.getAction());
-        pdfDoc.getFactory().makeDestination(
-                destination.getName(), action.makeReference());
-    }
-
-    private PDFAction getAction(AbstractAction action) {
-        if (action instanceof GoToXYAction) {
-            GoToXYAction a = (GoToXYAction)action;
-            PageReference pageRef = (PageReference)this.pageReferences.get(
-                    new Integer(a.getPageIndex()));
-            //Convert target location from millipoints to points and adjust for different
-            //page origin
-            Point2D p2d = new Point2D.Double(
-                    a.getTargetLocation().x / 1000.0,
-                    (pageRef.pageDimension.height - a.getTargetLocation().y) / 1000.0);
-            return pdfDoc.getFactory().getPDFGoTo(pageRef.pageRef.toString(), p2d);
-        } else {
-            throw new UnsupportedOperationException("Unsupported action type: "
-                    + action + " (" + action.getClass().getName() + ")");
-        }
-    }
-
     /** {@inheritDoc} */
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof XMPMetadata) {
@@ -272,17 +227,18 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         } else if (extension instanceof Metadata) {
             XMPMetadata wrapper = new XMPMetadata(((Metadata)extension));
             pdfUtil.renderXMPMetadata(wrapper);
-        } else if (extension instanceof BookmarkTree) {
-            renderBookmarkTree((BookmarkTree)extension);
-        } else if (extension instanceof NamedDestination) {
-            renderNamedDestination((NamedDestination)extension);
         } else {
             log.debug("Don't know how to handle extension object. Ignoring: "
                     + extension + " (" + extension.getClass().getName() + ")");
         }
     }
 
-    private static final class PageReference {
+    PageReference getPageReference(int pageIndex) {
+        return (PageReference)this.pageReferences.get(
+                new Integer(pageIndex));
+    }
+
+    static final class PageReference {
 
         private PDFReference pageRef;
         private Dimension pageDimension;
@@ -290,6 +246,14 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         private PageReference(PDFPage page, Dimension dim) {
             this.pageRef = page.makeReference();
             this.pageDimension = new Dimension(dim);
+        }
+
+        public PDFReference getPageRef() {
+            return this.pageRef;
+        }
+
+        public Dimension getPageDimension() {
+            return this.pageDimension;
         }
     }
 

@@ -98,14 +98,17 @@ public class DocumentNavigationExtensionHandlerFactory
                     NamedDestination dest = new NamedDestination(name, null);
                     objectStack.push(dest);
                 } else if (GOTO_XY.getLocalName().equals(localName)) {
+                    String id = attributes.getValue("id");
                     int pageIndex = XMLUtil.getAttributeAsInt(attributes, "page-index");
                     int x = XMLUtil.getAttributeAsInt(attributes, "x");
                     int y = XMLUtil.getAttributeAsInt(attributes, "y");
-                    GoToXYAction action = new GoToXYAction(pageIndex, new Point(x, y));
+                    GoToXYAction action = new GoToXYAction(id, pageIndex, new Point(x, y));
                     objectStack.push(action);
                 } else if (GOTO_URI.getLocalName().equals(localName)) {
                     String gotoURI = attributes.getValue("uri");
-                    URIAction action = new URIAction(gotoURI);
+                    String showDestination = attributes.getValue("show-destination");
+                    boolean newWindow = "new".equals(showDestination);
+                    URIAction action = new URIAction(gotoURI, newWindow);
                     objectStack.push(action);
                 } else {
                     throw new SAXException(

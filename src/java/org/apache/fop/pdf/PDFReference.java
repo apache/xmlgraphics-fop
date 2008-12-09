@@ -33,7 +33,8 @@ import java.lang.ref.SoftReference;
  */
 public class PDFReference implements PDFWritable {
 
-    private String indirectReference;
+    private int objectNumber;
+    private int generation;
 
     private Reference objReference;
 
@@ -42,7 +43,8 @@ public class PDFReference implements PDFWritable {
      * @param obj the object to be referenced
      */
     public PDFReference(PDFObject obj) {
-        this.indirectReference = obj.referencePDF();
+        this.objectNumber = obj.getObjectNumber();
+        this.generation = obj.getGeneration();
         this.objReference = new SoftReference(obj);
     }
 
@@ -54,7 +56,11 @@ public class PDFReference implements PDFWritable {
         if (ref == null) {
             throw new NullPointerException("ref must not be null");
         }
-        this.indirectReference = ref;
+        String[] parts = ref.split(" ");
+        assert parts.length == 3;
+        this.objectNumber = Integer.parseInt(parts[0]);
+        this.generation = Integer.parseInt(parts[1]);
+        assert "R".equals(parts[2]);
     }
 
     /**
@@ -73,9 +79,25 @@ public class PDFReference implements PDFWritable {
         }
     }
 
+    /**
+     * Returns the object number.
+     * @return the object number
+     */
+    public int getObjectNumber() {
+        return this.objectNumber;
+    }
+
+    /**
+     * Returns the generation.
+     * @return the generation
+     */
+    public int getGeneration() {
+        return this.generation;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
-        return this.indirectReference;
+        return getObjectNumber() + " " + getGeneration() + " R";
     }
 
     /** {@inheritDoc} */

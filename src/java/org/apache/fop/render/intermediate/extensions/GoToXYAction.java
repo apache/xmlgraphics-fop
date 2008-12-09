@@ -40,9 +40,10 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
      * @param pageIndex the page index (0-based) of the target page
      * @param targetLocation the absolute location on the page (coordinates in millipoints)
      */
-    public GoToXYAction(int pageIndex, Point targetLocation) {
+    public GoToXYAction(String id, int pageIndex, Point targetLocation) {
+        setID(id);
         this.pageIndex = pageIndex;
-        this.targetLocation = targetLocation;
+        setTargetLocation(targetLocation);
     }
 
     /**
@@ -70,8 +71,35 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
     }
 
     /** {@inheritDoc} */
+    public boolean isSame(AbstractAction other) {
+        if (other == null) {
+            throw new NullPointerException("other must not be null");
+        }
+        if (!(other instanceof GoToXYAction)) {
+            return false;
+        }
+        GoToXYAction otherAction = (GoToXYAction)other;
+        if (getPageIndex() != otherAction.getPageIndex()) {
+            return false;
+        }
+        if (getTargetLocation() == null && otherAction.getTargetLocation() != null) {
+            return false;
+        }
+        if (!getTargetLocation().equals(otherAction.getTargetLocation())) {
+            return false;
+        }
+        return true;
+    }
+
+    /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
+        if (getTargetLocation() == null) {
+            setTargetLocation(new Point(0, 0));
+        }
         AttributesImpl atts = new AttributesImpl();
+        if (hasID()) {
+            atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
+        }
         atts.addAttribute(null, "page-index", "page-index",
                 XMLUtil.CDATA, Integer.toString(pageIndex));
         atts.addAttribute(null, "x", "x", XMLUtil.CDATA, Integer.toString(targetLocation.x));

@@ -19,41 +19,36 @@
 
 package org.apache.fop.render.intermediate.extensions;
 
+import java.awt.Rectangle;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.XMLizable;
 
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.util.XMLConstants;
 
 /**
- * This class is a named destination element for use in the intermediate format.
+ * This class is a link element for use in the intermediate format.
  */
-public class NamedDestination implements XMLizable, DocumentNavigationExtensionConstants {
+public class Link implements XMLizable, DocumentNavigationExtensionConstants {
 
-    /** Attribute name for the destination name */
-    public static final String NAME = "name";
+    /** Attribute name for the target rectangle */
+    public static final String RECT = "rect";
 
-    private String name;
     private AbstractAction action;
+    private Rectangle targetRect;
 
     /**
      * Creates a new named destination.
-     * @param name the destination's name
      * @param action the action performed when the destination is selected
+     * @param targetRect the target rectangle (coordinates in millipoints)
      */
-    public NamedDestination(String name, AbstractAction action) {
-        this.name = name;
+    public Link(AbstractAction action, Rectangle targetRect) {
         this.action = action;
-    }
-
-    /**
-     * Returns the destination's name.
-     * @return the name
-     */
-    public String getName() {
-        return this.name;
+        this.targetRect = targetRect;
     }
 
     /**
@@ -62,6 +57,14 @@ public class NamedDestination implements XMLizable, DocumentNavigationExtensionC
      */
     public AbstractAction getAction() {
         return this.action;
+    }
+
+    /**
+     * Returns the target rectangle, i.e. the hot zone in which the link is activated.
+     * @return the target rectangle
+     */
+    public Rectangle getTargetRect() {
+        return new Rectangle(this.targetRect);
     }
 
     /**
@@ -78,18 +81,19 @@ public class NamedDestination implements XMLizable, DocumentNavigationExtensionC
             throw new IllegalStateException("Action has not been set");
         }
         AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(null, NAME, NAME, XMLConstants.CDATA, getName());
+        atts.addAttribute(null, RECT, RECT,
+                XMLConstants.CDATA, IFUtil.toString(getTargetRect()));
         if (getAction().isReference()) {
             atts.addAttribute(null, ACTION_REF, ACTION_REF,
                     XMLConstants.CDATA, getAction().getID());
         }
-        handler.startElement(NAMED_DESTINATION.getNamespaceURI(),
-                NAMED_DESTINATION.getLocalName(), NAMED_DESTINATION.getQName(), atts);
+        handler.startElement(LINK.getNamespaceURI(),
+                LINK.getLocalName(), LINK.getQName(), atts);
         if (!getAction().isReference()) {
             getAction().toSAX(handler);
         }
-        handler.endElement(NAMED_DESTINATION.getNamespaceURI(),
-                NAMED_DESTINATION.getLocalName(), NAMED_DESTINATION.getQName());
+        handler.endElement(LINK.getNamespaceURI(),
+                LINK.getLocalName(), LINK.getQName());
     }
 
 }

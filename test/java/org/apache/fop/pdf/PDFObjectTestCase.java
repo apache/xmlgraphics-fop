@@ -56,4 +56,22 @@ public class PDFObjectTestCase extends TestCase {
 
     }
 
+    /**
+     * Tests PDF object references.
+     * @throws Exception if an error occurs
+     */
+    public void testReference() throws Exception {
+        PDFDictionary dict = new PDFDictionary();
+        dict.setObjectNumber(7);
+        PDFReference ref = dict.makeReference();
+        assertEquals(ref.getObjectNumber(), 7);
+        assertEquals(ref.getGeneration(), 0);
+        assertEquals(ref.toString(), "7 0 R");
+
+        ref = new PDFReference("8 0 R");
+        assertEquals(ref.getObjectNumber(), 8);
+        assertEquals(ref.getGeneration(), 0);
+        assertEquals(ref.toString(), "8 0 R");
+    }
+
 }

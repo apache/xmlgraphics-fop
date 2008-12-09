@@ -26,4 +26,62 @@ import org.apache.xmlgraphics.util.XMLizable;
  */
 public abstract class AbstractAction implements XMLizable {
 
+    private String id;
+
+    /**
+     * Sets an ID to make the action referencable.
+     * @param id the ID
+     */
+    public void setID(String id) {
+        this.id = id;
+    }
+
+    /**
+     * Returns an optional ID for this action.
+     * @return the ID or null
+     */
+    public String getID() {
+        return this.id;
+    }
+
+    /**
+     * Indicates whether the action has an ID and is therefore referencable.
+     * @return true if the action has an ID
+     */
+    public boolean hasID() {
+        return this.id != null;
+    }
+
+    /**
+     * Indicates whether two action are equal. Note: this is not the same as
+     * {@link Object#equals(Object)}!
+     * @param other the other action to compare to
+     * @return true if the actions are equal
+     */
+    public abstract boolean isSame(AbstractAction other);
+
+    /**
+     * Indicates whether this action is a reference.
+     * @return true if this action is a reference, false for a normal action
+     */
+    public boolean isReference() {
+        return false;
+    }
+
+    /**
+     * Creates a reference to this action.
+     * @return the reference
+     */
+    public AbstractAction createReference() {
+        return new ReferencedAction(getID());
+    }
+
+    /**
+     * Returns a string that is used to prefix a generated ID to make it unique.
+     * @return the prefix string
+     */
+    public String getIDPrefix() {
+        return null;
+    }
+
 }

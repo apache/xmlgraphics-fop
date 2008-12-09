@@ -238,17 +238,6 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Establishes a new foreground or fill color. In contrast to updateColor
-     * this method does not check the PDFState for optimization possibilities.
-     * @param col the color to apply
-     * @param fill true to set the fill color, false for the foreground color
-     * @param pdf StringBuffer to write the PDF code to
-     *//*
-    public void setColor(Color col, boolean fill, StringBuffer pdf) {
-        assert pdf != null;
-    }*/
-
-    /**
      * Establishes a new foreground or fill color.
      * @param col the color to apply
      * @param fill true to set the fill color, false for the foreground color
