@@ -29,6 +29,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.XMLizable;
 
+import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -114,9 +115,13 @@ public class Bookmark implements XMLizable, DocumentNavigationExtensionConstants
         atts.addAttribute(null, "title", "title", XMLUtil.CDATA, getTitle());
         atts.addAttribute(null, "starting-state", "starting-state",
                 XMLUtil.CDATA, isShown() ? "show" : "hide");
+        if (getAction().isReference()) {
+            atts.addAttribute(null, ACTION_REF, ACTION_REF,
+                    XMLConstants.CDATA, getAction().getID());
+        }
         handler.startElement(BOOKMARK.getNamespaceURI(),
                 BOOKMARK.getLocalName(), BOOKMARK.getQName(), atts);
-        if (getAction() != null) {
+        if (!getAction().isReference()) {
             getAction().toSAX(handler);
         }
         if (this.childBookmarks != null) {

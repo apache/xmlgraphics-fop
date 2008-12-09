@@ -57,6 +57,11 @@ public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
     }
 
     /** {@inheritDoc} */
+    public IFDocumentNavigationHandler getDocumentNavigationHandler() {
+        return null; //By default, this is not supported
+    }
+
+    /** {@inheritDoc} */
     public void startDocumentHeader() throws IFException {
         //nop
     }

@@ -113,6 +113,12 @@ public interface IFDocumentHandler {
     IFDocumentHandlerConfigurator getConfigurator();
 
     /**
+     * Returns a document navigation handler if this feature is supported.
+     * @return the document navigation handler or null if not supported
+     */
+    IFDocumentNavigationHandler getDocumentNavigationHandler();
+
+    /**
      * Indicates whether the painter supports to handle the pages in mixed order rather than
      * ascending order.
      * @return true if out-of-order handling is supported

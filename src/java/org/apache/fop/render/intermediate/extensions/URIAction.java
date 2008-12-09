@@ -32,13 +32,19 @@ import org.apache.fop.util.XMLUtil;
 public class URIAction extends AbstractAction implements DocumentNavigationExtensionConstants {
 
     private String uri;
+    private boolean newWindow;
 
     /**
      * Creates a new instance.
      * @param uri the target URI
+     * @param newWindow true if the link should be opened in a new window
      */
-    public URIAction(String uri) {
+    public URIAction(String uri, boolean newWindow) {
+        if (uri == null) {
+            throw new NullPointerException("uri must not be null");
+        }
         this.uri = uri;
+        this.newWindow = newWindow;
     }
 
     /**
@@ -49,10 +55,47 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
         return this.uri;
     }
 
+    /**
+     * Indicates whether the link shall be opened in a new window.
+     * @return true if a new window shall be opened
+     */
+    public boolean isNewWindow() {
+        return this.newWindow;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isSame(AbstractAction other) {
+        if (other == null) {
+            throw new NullPointerException("other must not be null");
+        }
+        if (!(other instanceof URIAction)) {
+            return false;
+        }
+        URIAction otherAction = (URIAction)other;
+        if (!getURI().equals(otherAction.getURI())) {
+            return false;
+        }
+        if (isNewWindow() != otherAction.isNewWindow()) {
+            return false;
+        }
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public String getIDPrefix() {
+        return "fop:" + GOTO_URI.getLocalName();
+    }
+
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
+        if (hasID()) {
+            atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
+        }
         atts.addAttribute(null, "uri", "uri", XMLUtil.CDATA, getURI());
+        if (isNewWindow()) {
+            atts.addAttribute(null, "show-destination", "show-destination", XMLUtil.CDATA, "new");
+        }
         handler.startElement(GOTO_URI.getNamespaceURI(),
                 GOTO_URI.getLocalName(), GOTO_URI.getQName(), atts);
         handler.endElement(GOTO_URI.getNamespaceURI(),

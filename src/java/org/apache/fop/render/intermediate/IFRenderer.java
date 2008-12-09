@@ -28,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -67,6 +68,7 @@ import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
@@ -82,10 +84,14 @@ import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.intermediate.extensions.AbstractAction;
+import org.apache.fop.render.intermediate.extensions.ActionSet;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
 import org.apache.fop.render.intermediate.extensions.GoToXYAction;
+import org.apache.fop.render.intermediate.extensions.Link;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
+import org.apache.fop.render.intermediate.extensions.URIAction;
 import org.apache.fop.render.pdf.PDFEventProducer;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
@@ -130,12 +136,6 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     private Map idPositions = new java.util.HashMap();
 
     /**
-     * Maps XSL-FO element IDs to "go-to" actions targeting the corresponding areas
-     * These objects may not all be fully filled in yet
-     */
-    private Map idGoTos = new java.util.HashMap();
-
-    /**
      * The "go-to" actions in idGoTos that are not complete yet
      */
     private List unfinishedGoTos = new java.util.ArrayList();
@@ -143,6 +143,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     // even if the object number differs
 
     private BookmarkTree bookmarkTree;
+    private List deferredDestinations = new java.util.ArrayList();
+    private List deferredLinks = new java.util.ArrayList();
+    private ActionSet actionSet = new ActionSet();
 
     private TextUtil textUtil = new TextUtil();
 
@@ -202,6 +205,22 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * Returns the document navigation handler if available/supported.
+     * @return the document navigation handler or null if not supported
+     */
+    protected IFDocumentNavigationHandler getDocumentNavigationHandler() {
+        return this.documentHandler.getDocumentNavigationHandler();
+    }
+
+    /**
+     * Indicates whether document navigation features are supported by the document handler.
+     * @return true if document navigation features are available
+     */
+    protected boolean hasDocumentNavigation() {
+        return getDocumentNavigationHandler() != null;
+    }
+
+    /**
      * Creates a default {@code IFDocumentHandler} when none has been set.
      * @return the default IFDocumentHandler
      */
@@ -246,17 +265,32 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 this.inPageSequence = false;
             }
             documentHandler.startDocumentTrailer();
+
+            //Wrap up document navigation
             finishOpenGoTos();
-            if (this.bookmarkTree != null) {
-                documentHandler.handleExtensionObject(this.bookmarkTree);
+            Iterator iter;
+            iter = this.actionSet.getActions();
+            while (iter.hasNext()) {
+                getDocumentNavigationHandler().addResolvedAction((AbstractAction)iter.next());
             }
+            iter = this.deferredDestinations.iterator();
+            while (iter.hasNext()) {
+                NamedDestination dest = (NamedDestination)iter.next();
+                iter.remove();
+                getDocumentNavigationHandler().renderNamedDestination(dest);
+            }
+
+            if (this.bookmarkTree != null) {
+                getDocumentNavigationHandler().renderBookmarkTree(this.bookmarkTree);
+            }
+
             documentHandler.endDocumentTrailer();
             documentHandler.endDocument();
         } catch (IFException e) {
             handleIFExceptionWithIOException(e);
         }
         idPositions.clear();
-        idGoTos.clear();
+        actionSet.clear();
         super.stopRenderer();
         log.debug("Rendering finished.");
     }
@@ -278,6 +312,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     private void renderDestination(DestinationData dd) {
+        if (!hasDocumentNavigation()) {
+            return;
+        }
         String targetID = dd.getIDRef();
         if (targetID == null || targetID.length() == 0) {
             throw new IllegalArgumentException("DestinationData must contain a ID reference");
@@ -285,12 +322,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         PageViewport pv = dd.getPageViewport();
         if (pv != null) {
             GoToXYAction action = getGoToActionForID(targetID, pv.getPageIndex());
-            NamedDestination namedDestination = new NamedDestination(targetID, action);
-            try {
-                documentHandler.handleExtensionObject(namedDestination);
-            } catch (IFException ife) {
-                handleIFException(ife);
-            }
+            NamedDestination namedDestination = new NamedDestination(targetID,
+                        action.createReference());
+            this.deferredDestinations.add(namedDestination);
         } else {
             //Warning already issued by AreaTreeHandler (debug level is sufficient)
             log.debug("Unresolved destination item received: " + dd.getIDRef());
@@ -303,6 +337,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
      */
     protected void renderBookmarkTree(BookmarkData bookmarks) {
         assert this.bookmarkTree == null;
+        if (!hasDocumentNavigation()) {
+            return;
+        }
         this.bookmarkTree = new BookmarkTree();
         for (int i = 0; i < bookmarks.getCount(); i++) {
             BookmarkData ext = bookmarks.getSubData(i);
@@ -330,7 +367,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Bookmark b = new Bookmark(
                 bookmarkItem.getBookmarkTitle(),
                 bookmarkItem.showChildItems(),
-                action);
+                (action != null ? action.createReference() : null));
         for (int i = 0; i < bookmarkItem.getCount(); i++) {
             b.addChildBookmark(renderBookmarkItem(bookmarkItem.getSubData(i)));
         }
@@ -342,23 +379,21 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     private GoToXYAction getGoToActionForID(String targetID, int pageIndex) {
-        // Already a PDFGoTo present for this target? If not, create.
-        GoToXYAction action = (GoToXYAction)idGoTos.get(targetID);
+        // Already a GoToXY present for this target? If not, create.
+        GoToXYAction action = (GoToXYAction)actionSet.get(targetID);
+        //GoToXYAction action = (GoToXYAction)idGoTos.get(targetID);
         if (action == null) {
-            //String pdfPageRef = (String) pageReferences.get(pvKey);
             Point position = (Point)idPositions.get(targetID);
             // can the GoTo already be fully filled in?
-            if (/*pdfPageRef != null &&*/ position != null) {
-                // getPDFGoTo shares PDFGoTo objects as much as possible.
-                // It also takes care of assignObjectNumber and addTrailerObject.
-                //action = pdfDoc.getFactory().getPDFGoTo(pdfPageRef, position);
-                action = new GoToXYAction(pageIndex, position);
+            if (position != null) {
+                action = new GoToXYAction(targetID, pageIndex, position);
             } else {
                 // Not complete yet, can't use getPDFGoTo:
-                action = new GoToXYAction(pageIndex, null);
+                action = new GoToXYAction(targetID, pageIndex, null);
                 unfinishedGoTos.add(action);
             }
-            idGoTos.put(targetID, action);
+            action = (GoToXYAction)actionSet.put(action);
+            //idGoTos.put(targetID, action);
         }
         return action;
     }
@@ -393,7 +428,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         tf.transform(position, position);
         idPositions.put(id, position);
         // is there already a PDFGoTo waiting to be completed?
-        GoToXYAction action = (GoToXYAction)idGoTos.get(id);
+        GoToXYAction action = (GoToXYAction)actionSet.get(id);
         if (action != null) {
             noteGoToPosition(action, pv, position);
         }
@@ -507,9 +542,18 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             super.renderPage(page);
             this.painter = null;
             documentHandler.endPageContent();
+
             documentHandler.startPageTrailer();
-            //TODO Handle page trailer
+            if (hasDocumentNavigation()) {
+                Iterator iter = this.deferredLinks.iterator();
+                while (iter.hasNext()) {
+                    Link link = (Link)iter.next();
+                    iter.remove();
+                    getDocumentNavigationHandler().renderLink(link);
+                }
+            }
             documentHandler.endPageTrailer();
+
             documentHandler.endPage();
         } catch (IFException e) {
             handleIFException(e);
@@ -797,6 +841,59 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     protected void renderInlineArea(InlineArea inlineArea) {
         saveInlinePosIfTargetable(inlineArea);
         super.renderInlineArea(inlineArea);
+    }
+
+    /** {@inheritDoc} */
+    public void renderInlineParent(InlineParent ip) {
+        // stuff we only need if a link must be created:
+        Rectangle ipRect = null;
+        AbstractAction action = null;
+        // make sure the rect is determined *before* calling super!
+        int ipp = currentIPPosition;
+        int bpp = currentBPPosition + ip.getOffset();
+        ipRect = new Rectangle(ipp, bpp, ip.getIPD(), ip.getBPD());
+        AffineTransform transform = graphicContext.getTransform();
+        ipRect = transform.createTransformedShape(ipRect).getBounds();
+
+        // render contents
+        super.renderInlineParent(ip);
+
+        boolean linkTraitFound = false;
+
+        // try INTERNAL_LINK first
+        Trait.InternalLink intLink = (Trait.InternalLink) ip.getTrait(Trait.INTERNAL_LINK);
+        if (intLink != null) {
+            linkTraitFound = true;
+            String pvKey = intLink.getPVKey();
+
+            String idRef = intLink.getIDRef();
+            boolean pvKeyOK = pvKey != null && pvKey.length() > 0;
+            boolean idRefOK = idRef != null && idRef.length() > 0;
+            if (pvKeyOK && idRefOK) {
+                action = getGoToActionForID(idRef, this.currentPageViewport.getPageIndex());
+            } else {
+                //Warnings already issued by AreaTreeHandler
+            }
+        }
+
+        // no INTERNAL_LINK, look for EXTERNAL_LINK
+        if (!linkTraitFound) {
+            Trait.ExternalLink extLink = (Trait.ExternalLink) ip.getTrait(Trait.EXTERNAL_LINK);
+            if (extLink != null) {
+                String extDest = extLink.getDestination();
+                if (extDest != null && extDest.length() > 0) {
+                    linkTraitFound = true;
+                    action = new URIAction(extDest, extLink.newWindow());
+                    action = actionSet.put(action);
+                }
+            }
+        }
+
+        // warn if link trait found but not allowed, else create link
+        if (linkTraitFound) {
+            Link link = new Link(action.createReference(), ipRect);
+            this.deferredLinks.add(link);
+        }
     }
 
     /** {@inheritDoc} */
