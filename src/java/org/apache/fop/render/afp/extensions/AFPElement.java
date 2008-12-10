@@ -53,6 +53,6 @@ public class AFPElement extends AbstractAFPExtensionObject {
 
     /** {@inheritDoc} */    
     protected ExtensionAttachment instantiateExtensionAttachment() {
-        return new AFPPageSetup(getName());
+        return new AFPPageSetup(getLocalName());
     }
 }

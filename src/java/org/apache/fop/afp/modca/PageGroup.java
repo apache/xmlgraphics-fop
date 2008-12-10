@@ -40,13 +40,20 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
     private List tagLogicalElements = null;
 
     /**
+     * Sequence number for TLE's.
+     */
+    private int tleSequence = 0;
+
+    /**
      * Constructor for the PageGroup.
      *
      * @param factory the resource manager
      * @param name the name of the page group
+     * @param tleSequence current start tle sequence number within stream
      */
-    public PageGroup(Factory factory, String name) {
+    public PageGroup(Factory factory, String name, int tleSequence) {
         super(factory, name);
+        this.tleSequence = tleSequence;
     }
 
     private List getTagLogicalElements() {
@@ -65,9 +72,10 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
      *            the value of the tag
      */
     public void createTagLogicalElement(String name, String value) {
-        TagLogicalElement tle = factory.createTagLogicalElement(name, value);
+        TagLogicalElement tle = factory.createTagLogicalElement(name, value, tleSequence);
         if (!getTagLogicalElements().contains(tle)) {
             getTagLogicalElements().add(tle);
+            tleSequence++;
         }
     }
 
@@ -101,5 +109,9 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
     /** {@inheritDoc} */
     public String toString() {
         return this.getName();
+    }
+
+    public int getTleSequence() {
+        return tleSequence;
     }
 }

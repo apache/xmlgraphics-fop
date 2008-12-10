@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="46369">
+        Fixed bug that caused AFP Renderer Extensions to be ignored.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="46319">
         Fixed a memory-leak in Marker.MarkerAttribute, where an instance was used both as key and value in
         a WeakHashMap, effectively neutralizing the benefit of using WeakReferences. Solved by extending

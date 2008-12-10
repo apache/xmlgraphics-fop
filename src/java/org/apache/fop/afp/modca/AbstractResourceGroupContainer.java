@@ -163,6 +163,11 @@ implements Streamable {
      * @return true if this object can be written
      */
     protected boolean canWrite(AbstractAFPObject obj) {
-        return obj instanceof AbstractPageObject && ((Completable)obj).isComplete();
+        if (obj instanceof AbstractPageObject) {
+            return ((Completable)obj).isComplete();
+        }
+        else {
+            return this.isComplete();
+        }
     }
 }

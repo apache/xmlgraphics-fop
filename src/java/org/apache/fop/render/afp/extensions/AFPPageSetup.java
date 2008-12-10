@@ -20,7 +20,7 @@
 package org.apache.fop.render.afp.extensions;
 
 /**
- * This is the pass-through value object for the PostScript extension.
+ * This is the pass-through value object for the AFP extension.
  */
 public class AFPPageSetup extends AFPExtensionAttachment {
 
