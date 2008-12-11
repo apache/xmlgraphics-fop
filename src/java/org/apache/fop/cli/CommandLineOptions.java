@@ -30,8 +30,11 @@ import java.util.Vector;
 
 import javax.swing.UIManager;
 
+import org.xml.sax.SAXException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -49,7 +52,6 @@ import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.CommandLineLogger;
-import org.xml.sax.SAXException;
 
 /**
  * Options parses the commandline arguments
@@ -71,8 +73,10 @@ public class CommandLineOptions {
     public static final int XSLT_INPUT = 2;
     /** input: Area Tree XML file */
     public static final int AREATREE_INPUT = 3;
+    /** input: Intermediate Format XML file */
+    public static final int IF_INPUT = 4;
     /** input: Image file */
-    public static final int IMAGE_INPUT = 4;
+    public static final int IMAGE_INPUT = 5;
 
     /* show configuration information */
     private Boolean showConfiguration = Boolean.FALSE;
@@ -88,6 +92,8 @@ public class CommandLineOptions {
     private File xmlfile = null;
     /* area tree input file */
     private File areatreefile = null;
+    /* intermediate format input file */
+    private File iffile = null;
     /* area tree input file */
     private File imagefile = null;
     /* output file */
@@ -274,6 +280,8 @@ public class CommandLineOptions {
                 i = i + parseXMLInputOption(args, i);
             } else if (args[i].equals("-atin")) {
                 i = i + parseAreaTreeInputOption(args, i);
+            } else if (args[i].equals("-ifin")) {
+                i = i + parseIFInputOption(args, i);
             } else if (args[i].equals("-imagein")) {
                 i = i + parseImageInputOption(args, i);
             } else if (args[i].equals("-awt")) {
@@ -387,7 +395,7 @@ public class CommandLineOptions {
     }
 
     private int parseFOInputOption(String[] args, int i) throws FOPException {
-        inputmode = FO_INPUT;
+        setInputFormat(FO_INPUT);
         if ((i + 1 == args.length)
                 || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the fo file for the '-fo' option");
@@ -403,7 +411,7 @@ public class CommandLineOptions {
     }
 
     private int parseXSLInputOption(String[] args, int i) throws FOPException {
-        inputmode = XSLT_INPUT;
+        setInputFormat(XSLT_INPUT);
         if ((i + 1 == args.length)
                 || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the stylesheet "
@@ -415,7 +423,7 @@ public class CommandLineOptions {
     }
 
     private int parseXMLInputOption(String[] args, int i) throws FOPException {
-        inputmode = XSLT_INPUT;
+        setInputFormat(XSLT_INPUT);
         if ((i + 1 == args.length)
                 || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the input file "
@@ -704,7 +712,7 @@ public class CommandLineOptions {
     }
 
     private int parseAreaTreeInputOption(String[] args, int i) throws FOPException {
-        inputmode = AREATREE_INPUT;
+        setInputFormat(AREATREE_INPUT);
         if ((i + 1 == args.length)
                 || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the Area Tree file for the '-atin' option");
@@ -719,8 +727,24 @@ public class CommandLineOptions {
         }
     }
 
+    private int parseIFInputOption(String[] args, int i) throws FOPException {
+        setInputFormat(IF_INPUT);
+        if ((i + 1 == args.length)
+                || (isOption(args[i + 1]))) {
+            throw new FOPException("you must specify the intermediate file for the '-ifin' option");
+        } else {
+            String filename = args[i + 1];
+            if (isSystemInOutFile(filename)) {
+                this.useStdIn = true;
+            } else {
+                iffile = new File(filename);
+            }
+            return 1;
+        }
+    }
+
     private int parseImageInputOption(String[] args, int i) throws FOPException {
-        inputmode = IMAGE_INPUT;
+        setInputFormat(IMAGE_INPUT);
         if ((i + 1 == args.length)
                 || (isOption(args[i + 1]))) {
             throw new FOPException("you must specify the image file for the '-imagein' option");
@@ -827,6 +851,14 @@ public class CommandLineOptions {
         }
     }
 
+    private void setInputFormat(int format) throws FOPException {
+        if (inputmode == NOT_SET || inputmode == format) {
+            inputmode = format;
+        } else {
+            throw new FOPException("Only one input mode can be specified!");
+        }
+    }
+
     /**
      * checks whether all necessary information has been given in a consistent way
      */
@@ -881,11 +913,6 @@ public class CommandLineOptions {
                 throw new FOPException(
                         "FO output mode is only available if you use -xml and -xsl");
             }
-            if (xmlfile != null || xsltfile != null) {
-                log.warn("fo input mode, but xmlfile or xslt file are set:");
-                log.error("xml file: " + xmlfile);
-                log.error("xslt file: " + xsltfile);
-            }
             if (fofile != null && !fofile.exists()) {
                 throw new FileNotFoundException("Error: fo file "
                                                 + fofile.getAbsolutePath()
@@ -899,24 +926,31 @@ public class CommandLineOptions {
                 throw new FOPException(
                         "Area Tree Output is not available if Area Tree is used as input!");
             }
-            if (xmlfile != null || xsltfile != null) {
-                log.warn("area tree input mode, but xmlfile or xslt file are set:");
-                log.error("xml file: " + xmlfile);
-                log.error("xslt file: " + xsltfile);
-            }
             if (areatreefile != null && !areatreefile.exists()) {
                 throw new FileNotFoundException("Error: area tree file "
                                               + areatreefile.getAbsolutePath()
+                                              + " not found ");
+            }
+        } else if (inputmode == IF_INPUT) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
+                throw new FOPException(
+                        "FO output mode is only available if you use -xml and -xsl");
+            } else if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
+                throw new FOPException(
+                    "Area Tree Output is not available if Intermediate Format is used as input!");
+            } else if (outputmode.equals(MimeConstants.MIME_FOP_IF)) {
+                throw new FOPException(
+                    "Intermediate Output is not available if Intermediate Format is used as input!");
+            }
+            if (iffile != null && !iffile.exists()) {
+                throw new FileNotFoundException("Error: intermediate format file "
+                                              + iffile.getAbsolutePath()
                                               + " not found ");
             }
         } else if (inputmode == IMAGE_INPUT) {
             if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
                 throw new FOPException(
                         "FO output mode is only available if you use -xml and -xsl");
-            }
-            if (xmlfile != null) {
-                log.warn("image input mode, but XML file is set:");
-                log.error("XML file: " + xmlfile.toString());
             }
             if (imagefile != null && !imagefile.exists()) {
                 throw new FileNotFoundException("Error: image file "
@@ -967,6 +1001,8 @@ public class CommandLineOptions {
                 return new InputHandler(fofile);
             case AREATREE_INPUT:
                 return new AreaTreeInputHandler(areatreefile);
+            case IF_INPUT:
+                return new IFInputHandler(iffile);
             case XSLT_INPUT:
                 return new InputHandler(xmlfile, xsltfile, xsltParams);
             case IMAGE_INPUT:
@@ -1101,6 +1137,7 @@ public class CommandLineOptions {
             + "  -fo  infile       xsl:fo input file  \n"
             + "  -xml infile       xml input file, must be used together with -xsl \n"
             + "  -atin infile      area tree input file \n"
+            + "  -ifin infile      intermediate format input file \n"
             + "  -imagein infile   image input file (piping through stdin not supported)\n"
             + "  -xsl stylesheet   xslt stylesheet \n \n"
             + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
@@ -1186,6 +1223,30 @@ public class CommandLineOptions {
                 log.info("xml input file: " + xmlfile.toString());
             }
             log.info("xslt stylesheet: " + xsltfile.toString());
+            break;
+        case AREATREE_INPUT:
+            log.info("AT ");
+            if (this.useStdIn) {
+                log.info("area tree input file: from stdin");
+            } else {
+                log.info("area tree input file: " + areatreefile.toString());
+            }
+            break;
+        case IF_INPUT:
+            log.info("IF ");
+            if (this.useStdIn) {
+                log.info("intermediate input file: from stdin");
+            } else {
+                log.info("intermediate input file: " + iffile.toString());
+            }
+            break;
+        case IMAGE_INPUT:
+            log.info("Image ");
+            if (this.useStdIn) {
+                log.info("image input file: from stdin");
+            } else {
+                log.info("image input file: " + imagefile.toString());
+            }
             break;
         default:
             log.info("unknown input type");

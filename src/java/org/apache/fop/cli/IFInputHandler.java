@@ -25,59 +25,58 @@ import java.util.Vector;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.sax.SAXResult;
-
-import org.xml.sax.SAXException;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.area.AreaTreeModel;
-import org.apache.fop.area.AreaTreeParser;
-import org.apache.fop.area.RenderPagesModel;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.IFParser;
 
 /**
- * InputHandler for the area tree XML (the old intermediate format) as input.
+ * InputHandler for the intermediate format XML as input.
  */
-public class AreaTreeInputHandler extends InputHandler {
+public class IFInputHandler extends InputHandler {
 
     /**
-     * Constructor for XML->XSLT->area tree XML input
+     * Constructor for XML->XSLT->intermediate XML input
      * @param xmlfile XML file
      * @param xsltfile XSLT file
      * @param params Vector of command-line parameters (name, value,
      *      name, value, ...) for XSL stylesheet, null if none
      */
-    public AreaTreeInputHandler(File xmlfile, File xsltfile, Vector params) {
+    public IFInputHandler(File xmlfile, File xsltfile, Vector params) {
         super(xmlfile, xsltfile, params);
     }
 
     /**
-     * Constructor for area tree XML input
-     * @param atfile the file to read the area tree document.
+     * Constructor for intermediate input
+     * @param iffile the file to read the intermediate format document from.
      */
-    public AreaTreeInputHandler(File atfile) {
-        super(atfile);
+    public IFInputHandler(File iffile) {
+        super(iffile);
     }
 
     /** {@inheritDoc} */
     public void renderTo(FOUserAgent userAgent, String outputFormat, OutputStream out)
                 throws FOPException {
-        FontInfo fontInfo = new FontInfo();
-        AreaTreeModel treeModel = new RenderPagesModel(userAgent,
-                outputFormat, fontInfo, out);
-
-        //Iterate over all intermediate files
-        AreaTreeParser parser = new AreaTreeParser();
-
-        // Resulting SAX events (the generated FO) must be piped through to FOP
-        Result res = new SAXResult(parser.getContentHandler(treeModel, userAgent));
-
-        transformTo(res);
-
+        IFDocumentHandler documentHandler
+            = userAgent.getFactory().getRendererFactory().createDocumentHandler(
+                    userAgent, outputFormat);
         try {
-            treeModel.endDocument();
-        } catch (SAXException e) {
-            throw new FOPException(e);
+            documentHandler.setResult(new StreamResult(out));
+            documentHandler.setDefaultFontInfo(new FontInfo());
+
+            //Create IF parser
+            IFParser parser = new IFParser();
+
+            // Resulting SAX events are sent to the parser
+            Result res = new SAXResult(parser.getContentHandler(documentHandler, userAgent));
+
+            transformTo(res);
+        } catch (IFException ife) {
+            throw new FOPException(ife);
         }
     }
 
