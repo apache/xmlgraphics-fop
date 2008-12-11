@@ -20,19 +20,12 @@
 package org.apache.fop.render.intermediate.extensions;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
-import org.apache.xmlgraphics.util.XMLizable;
 
 /**
  * This class is the root of the bookmark tree for use in the intermediate format.
  */
-public class BookmarkTree implements XMLizable, DocumentNavigationExtensionConstants {
+public class BookmarkTree {
 
     private List bookmarks = new java.util.ArrayList();
 
@@ -57,20 +50,6 @@ public class BookmarkTree implements XMLizable, DocumentNavigationExtensionConst
      */
     public List getBookmarks() {
         return Collections.unmodifiableList(this.bookmarks);
-    }
-
-    /** {@inheritDoc} */
-    public void toSAX(ContentHandler handler) throws SAXException {
-        AttributesImpl atts = new AttributesImpl();
-        handler.startElement(BOOKMARK_TREE.getNamespaceURI(),
-                BOOKMARK_TREE.getLocalName(), BOOKMARK_TREE.getQName(), atts);
-        Iterator iter = this.bookmarks.iterator();
-        while (iter.hasNext()) {
-            Bookmark b = (Bookmark)iter.next();
-            b.toSAX(handler);
-        }
-        handler.endElement(BOOKMARK_TREE.getNamespaceURI(),
-                BOOKMARK_TREE.getLocalName(), BOOKMARK_TREE.getQName());
     }
 
 }

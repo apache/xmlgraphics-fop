@@ -32,18 +32,41 @@ import org.apache.fop.util.XMLUtil;
  */
 public class GoToXYAction extends AbstractAction implements DocumentNavigationExtensionConstants {
 
-    private int pageIndex;
+    private int pageIndex = -1;
     private Point targetLocation;
 
     /**
+     * Creates a new instance with yet unknown location.
+     * @param id the identifier for this action
+     */
+    public GoToXYAction(String id) {
+        this(id, -1, null);
+    }
+
+    /**
      * Creates a new instance.
-     * @param pageIndex the page index (0-based) of the target page
-     * @param targetLocation the absolute location on the page (coordinates in millipoints)
+     * @param id the identifier for this action
+     * @param pageIndex the index (0-based) of the target page, -1 if the page index is
+     *                  still unknown
+     * @param targetLocation the absolute location on the page (coordinates in millipoints),
+     *                  or null, if the position isn't known, yet
      */
     public GoToXYAction(String id, int pageIndex, Point targetLocation) {
         setID(id);
-        this.pageIndex = pageIndex;
+        if (pageIndex < 0 && targetLocation != null) {
+            throw new IllegalArgumentException(
+                    "Page index may not be null if target location is known!");
+        }
+        setPageIndex(pageIndex);
         setTargetLocation(targetLocation);
+    }
+
+    /**
+     * Sets the index of the target page.
+     * @param pageIndex the index (0-based) of the target page
+     */
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
     }
 
     /**
@@ -71,6 +94,11 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
     }
 
     /** {@inheritDoc} */
+    public boolean isComplete() {
+        return (getPageIndex() >= 0) && (getTargetLocation() != null);
+    }
+
+    /** {@inheritDoc} */
     public boolean isSame(AbstractAction other) {
         if (other == null) {
             throw new NullPointerException("other must not be null");
@@ -82,7 +110,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
         if (getPageIndex() != otherAction.getPageIndex()) {
             return false;
         }
-        if (getTargetLocation() == null && otherAction.getTargetLocation() != null) {
+        if (getTargetLocation() == null || otherAction.getTargetLocation() == null) {
             return false;
         }
         if (!getTargetLocation().equals(otherAction.getTargetLocation())) {
@@ -97,17 +125,27 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
             setTargetLocation(new Point(0, 0));
         }
         AttributesImpl atts = new AttributesImpl();
-        if (hasID()) {
+        if (isComplete()) {
             atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
+            atts.addAttribute(null, "page-index", "page-index",
+                    XMLUtil.CDATA, Integer.toString(pageIndex));
+            atts.addAttribute(null, "x", "x", XMLUtil.CDATA, Integer.toString(targetLocation.x));
+            atts.addAttribute(null, "y", "y", XMLUtil.CDATA, Integer.toString(targetLocation.y));
+        } else {
+            atts.addAttribute(null, "idref", "idref", XMLUtil.CDATA, getID());
         }
-        atts.addAttribute(null, "page-index", "page-index",
-                XMLUtil.CDATA, Integer.toString(pageIndex));
-        atts.addAttribute(null, "x", "x", XMLUtil.CDATA, Integer.toString(targetLocation.x));
-        atts.addAttribute(null, "y", "y", XMLUtil.CDATA, Integer.toString(targetLocation.y));
         handler.startElement(GOTO_XY.getNamespaceURI(),
                 GOTO_XY.getLocalName(), GOTO_XY.getQName(), atts);
         handler.endElement(GOTO_XY.getNamespaceURI(),
                 GOTO_XY.getLocalName(), GOTO_XY.getQName());
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "GoToXY: ID=" + getID()
+            + ", page=" + getPageIndex()
+            + ", loc=" + getTargetLocation() + ", "
+            + (isComplete() ? "complete" : "INCOMPLETE");
     }
 
 }

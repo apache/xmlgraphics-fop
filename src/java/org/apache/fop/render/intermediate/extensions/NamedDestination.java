@@ -19,21 +19,11 @@
 
 package org.apache.fop.render.intermediate.extensions;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
-import org.apache.xmlgraphics.util.XMLizable;
-
-import org.apache.fop.util.XMLConstants;
 
 /**
  * This class is a named destination element for use in the intermediate format.
  */
-public class NamedDestination implements XMLizable, DocumentNavigationExtensionConstants {
-
-    /** Attribute name for the destination name */
-    public static final String NAME = "name";
+public class NamedDestination {
 
     private String name;
     private AbstractAction action;
@@ -70,26 +60,6 @@ public class NamedDestination implements XMLizable, DocumentNavigationExtensionC
      */
     public void setAction(AbstractAction action) {
         this.action = action;
-    }
-
-    /** {@inheritDoc} */
-    public void toSAX(ContentHandler handler) throws SAXException {
-        if (getAction() == null) {
-            throw new IllegalStateException("Action has not been set");
-        }
-        AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(null, NAME, NAME, XMLConstants.CDATA, getName());
-        if (getAction().isReference()) {
-            atts.addAttribute(null, ACTION_REF, ACTION_REF,
-                    XMLConstants.CDATA, getAction().getID());
-        }
-        handler.startElement(NAMED_DESTINATION.getNamespaceURI(),
-                NAMED_DESTINATION.getLocalName(), NAMED_DESTINATION.getQName(), atts);
-        if (!getAction().isReference()) {
-            getAction().toSAX(handler);
-        }
-        handler.endElement(NAMED_DESTINATION.getNamespaceURI(),
-                NAMED_DESTINATION.getLocalName(), NAMED_DESTINATION.getQName());
     }
 
 }

@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.Document;
@@ -39,13 +40,16 @@ import org.apache.xmlgraphics.util.XMLizable;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
+import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
+import org.apache.fop.render.intermediate.extensions.DocumentNavigationExtensionConstants;
 import org.apache.fop.render.intermediate.extensions.Link;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.DOM2SAX;
+import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -55,6 +59,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         implements IFConstants, IFPainter, IFDocumentNavigationHandler {
 
     private IFDocumentHandler mimicHandler;
+
+    /** Holds the intermediate format state */
+    private IFState state;
 
     /**
      * Default constructor.
@@ -93,10 +100,19 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         return this;
     }
 
+    /**
+     * Tells this serializer to mimic the given document handler (mostly applies to the font set
+     * that is used during layout).
+     * @param targetHandler the document handler to mimic
+     */
     public void mimicDocumentHandler(IFDocumentHandler targetHandler) {
         this.mimicHandler = targetHandler;
     }
 
+    /**
+     * Returns the document handler that is being mimicked by this serializer.
+     * @return the mimicked document handler or null if no such document handler has been set
+     */
     public IFDocumentHandler getMimickedDocumentHandler() {
         return this.mimicHandler;
     }
@@ -126,6 +142,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             handler.startDocument();
             handler.startPrefixMapping("", NAMESPACE);
             handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
+            handler.startPrefixMapping(DocumentNavigationExtensionConstants.PREFIX,
+                    DocumentNavigationExtensionConstants.NAMESPACE);
             handler.startElement(EL_DOCUMENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
@@ -173,6 +191,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         try {
             handler.endElement(EL_DOCUMENT);
             handler.endDocument();
+            finishDocumentNavigation();
         } catch (SAXException e) {
             throw new IFException("SAX error in endDocument()", e);
         }
@@ -201,7 +220,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void startPage(int index, String name, String pageMasterName, Dimension size) throws IFException {
+    public void startPage(int index, String name, String pageMasterName, Dimension size)
+                throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "index", Integer.toString(index));
@@ -237,6 +257,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public IFPainter startPageContent() throws IFException {
         try {
             handler.startElement(EL_PAGE_CONTENT);
+            this.state = IFState.create();
             return this;
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageContent()", e);
@@ -246,6 +267,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void endPageContent() throws IFException {
         try {
+            this.state = null;
             handler.endElement(EL_PAGE_CONTENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageContent()", e);
@@ -256,6 +278,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void startPageTrailer() throws IFException {
         try {
             handler.startElement(EL_PAGE_TRAILER);
+            commitNavigation();
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageTrailer()", e);
         }
@@ -510,25 +533,52 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             Color color) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
+            boolean changed;
             if (family != null) {
-                addAttribute(atts, "family", family);
+                changed = !family.equals(state.getFontFamily());
+                if (changed) {
+                    state.setFontFamily(family);
+                    addAttribute(atts, "family", family);
+                }
             }
             if (style != null) {
-                addAttribute(atts, "style", style);
+                changed = !style.equals(state.getFontStyle());
+                if (changed) {
+                    state.setFontStyle(style);
+                    addAttribute(atts, "style", style);
+                }
             }
             if (weight != null) {
-                addAttribute(atts, "weight", weight.toString());
+                changed = (weight.intValue() != state.getFontWeight());
+                if (changed) {
+                    state.setFontWeight(weight.intValue());
+                    addAttribute(atts, "weight", weight.toString());
+                }
             }
             if (variant != null) {
-                addAttribute(atts, "variant", variant);
+                changed = !variant.equals(state.getFontVariant());
+                if (changed) {
+                    state.setFontVariant(variant);
+                    addAttribute(atts, "variant", variant);
+                }
             }
             if (size != null) {
-                addAttribute(atts, "size", size.toString());
+                changed = (size.intValue() != state.getFontSize());
+                if (changed) {
+                    state.setFontSize(size.intValue());
+                    addAttribute(atts, "size", size.toString());
+                }
             }
             if (color != null) {
-                addAttribute(atts, "color", toString(color));
+                changed = !color.equals(state.getTextColor());
+                if (changed) {
+                    state.setTextColor(color);
+                    addAttribute(atts, "color", toString(color));
+                }
             }
-            handler.element(EL_FONT, atts);
+            if (atts.getLength() > 0) {
+                handler.element(EL_FONT, atts);
+            }
         } catch (SAXException e) {
             throw new IFException("SAX error in setFont()", e);
         }
@@ -565,27 +615,112 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     // ---=== IFDocumentNavigationHandler ===---
 
+    private Map incompleteActions = new java.util.HashMap();
+    private List completeActions = new java.util.LinkedList();
+
+    private void noteAction(AbstractAction action) {
+        if (action == null) {
+            throw new NullPointerException("action must not be null");
+        }
+        if (!action.isComplete()) {
+            assert action.hasID();
+            incompleteActions.put(action.getID(), action);
+        }
+    }
+
     /** {@inheritDoc} */
     public void renderNamedDestination(NamedDestination destination) throws IFException {
-        renderXMLizable(destination);
+        noteAction(destination.getAction());
+
+        AttributesImpl atts = new AttributesImpl();
+        atts.addAttribute(null, "name", "name", XMLConstants.CDATA, destination.getName());
+        try {
+            handler.startElement(DocumentNavigationExtensionConstants.NAMED_DESTINATION, atts);
+            serializeXMLizable(destination.getAction());
+            handler.endElement(DocumentNavigationExtensionConstants.NAMED_DESTINATION);
+        } catch (SAXException e) {
+            throw new IFException("SAX error serializing named destination", e);
+        }
     }
 
     /** {@inheritDoc} */
     public void renderBookmarkTree(BookmarkTree tree) throws IFException {
-        renderXMLizable(tree);
+        AttributesImpl atts = new AttributesImpl();
+        try {
+            handler.startElement(DocumentNavigationExtensionConstants.BOOKMARK_TREE, atts);
+            Iterator iter = tree.getBookmarks().iterator();
+            while (iter.hasNext()) {
+                Bookmark b = (Bookmark)iter.next();
+                serializeBookmark(b);
+            }
+            handler.endElement(DocumentNavigationExtensionConstants.BOOKMARK_TREE);
+        } catch (SAXException e) {
+            throw new IFException("SAX error serializing bookmark tree", e);
+        }
     }
 
-    /** {@inheritDoc} */
-    public void addResolvedAction(AbstractAction action) throws IFException {
-        renderXMLizable(action);
+    private void serializeBookmark(Bookmark bookmark) throws SAXException, IFException {
+        noteAction(bookmark.getAction());
+
+        AttributesImpl atts = new AttributesImpl();
+        atts.addAttribute(null, "title", "title", XMLUtil.CDATA, bookmark.getTitle());
+        atts.addAttribute(null, "starting-state", "starting-state",
+                XMLUtil.CDATA, bookmark.isShown() ? "show" : "hide");
+        handler.startElement(DocumentNavigationExtensionConstants.BOOKMARK, atts);
+        serializeXMLizable(bookmark.getAction());
+        Iterator iter = bookmark.getChildBookmarks().iterator();
+        while (iter.hasNext()) {
+            Bookmark b = (Bookmark)iter.next();
+            serializeBookmark(b);
+        }
+        handler.endElement(DocumentNavigationExtensionConstants.BOOKMARK);
+
     }
 
     /** {@inheritDoc} */
     public void renderLink(Link link) throws IFException {
-        renderXMLizable(link);
+        noteAction(link.getAction());
+
+        AttributesImpl atts = new AttributesImpl();
+        atts.addAttribute(null, "rect", "rect",
+                XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
+        try {
+            handler.startElement(DocumentNavigationExtensionConstants.LINK, atts);
+            serializeXMLizable(link.getAction());
+            handler.endElement(DocumentNavigationExtensionConstants.LINK);
+        } catch (SAXException e) {
+            throw new IFException("SAX error serializing link", e);
+        }
     }
 
-    private void renderXMLizable(XMLizable object) throws IFException {
+    /** {@inheritDoc} */
+    public void addResolvedAction(AbstractAction action) throws IFException {
+        assert action.isComplete();
+        assert action.hasID();
+        AbstractAction noted = (AbstractAction)incompleteActions.get(action.getID());
+        if (noted != null) {
+            incompleteActions.remove(action.getID());
+            completeActions.add(action);
+        } else {
+            //ignore as it was already complete when it was first used.
+        }
+    }
+
+    private void commitNavigation() throws IFException {
+        Iterator iter = this.completeActions.iterator();
+        while (iter.hasNext()) {
+            AbstractAction action = (AbstractAction)iter.next();
+            iter.remove();
+            serializeXMLizable(action);
+        }
+        assert this.completeActions.size() == 0;
+    }
+
+    private void finishDocumentNavigation() {
+        assert this.incompleteActions.size() == 0 : "Still holding incomplete actions!";
+    }
+
+    private void serializeXMLizable(XMLizable object) throws IFException {
         try {
             object.toSAX(handler);
         } catch (SAXException e) {

@@ -142,7 +142,6 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
         try {
-            this.documentNavigationHandler.commit();
             pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
             pdfDoc.outputTrailer(this.outputStream);
 
@@ -206,6 +205,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void endPage() throws IFException {
         try {
+            this.documentNavigationHandler.commit();
             this.pdfDoc.registerObject(generator.getStream());
             currentPage.setContents(generator.getStream());
             PDFAnnotList annots = currentPage.getAnnotations();

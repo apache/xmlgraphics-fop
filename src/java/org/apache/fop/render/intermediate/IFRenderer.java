@@ -142,6 +142,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     // can't use a Set because PDFGoTo.equals returns true if the target is the same,
     // even if the object number differs
 
+    /** Maps unique PageViewport key to page indices (for link target handling) */
+    protected Map pageIndices = new java.util.HashMap();
+
     private BookmarkTree bookmarkTree;
     private List deferredDestinations = new java.util.ArrayList();
     private List deferredLinks = new java.util.ArrayList();
@@ -267,21 +270,18 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             documentHandler.startDocumentTrailer();
 
             //Wrap up document navigation
-            finishOpenGoTos();
-            Iterator iter;
-            iter = this.actionSet.getActions();
-            while (iter.hasNext()) {
-                getDocumentNavigationHandler().addResolvedAction((AbstractAction)iter.next());
-            }
-            iter = this.deferredDestinations.iterator();
-            while (iter.hasNext()) {
-                NamedDestination dest = (NamedDestination)iter.next();
-                iter.remove();
-                getDocumentNavigationHandler().renderNamedDestination(dest);
-            }
+            if (hasDocumentNavigation()) {
+                finishOpenGoTos();
+                Iterator iter = this.deferredDestinations.iterator();
+                while (iter.hasNext()) {
+                    NamedDestination dest = (NamedDestination)iter.next();
+                    iter.remove();
+                    getDocumentNavigationHandler().renderNamedDestination(dest);
+                }
 
-            if (this.bookmarkTree != null) {
-                getDocumentNavigationHandler().renderBookmarkTree(this.bookmarkTree);
+                if (this.bookmarkTree != null) {
+                    getDocumentNavigationHandler().renderBookmarkTree(this.bookmarkTree);
+                }
             }
 
             documentHandler.endDocumentTrailer();
@@ -289,6 +289,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         } catch (IFException e) {
             handleIFExceptionWithIOException(e);
         }
+        pageIndices.clear();
         idPositions.clear();
         actionSet.clear();
         super.stopRenderer();
@@ -322,8 +323,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         PageViewport pv = dd.getPageViewport();
         if (pv != null) {
             GoToXYAction action = getGoToActionForID(targetID, pv.getPageIndex());
-            NamedDestination namedDestination = new NamedDestination(targetID,
-                        action.createReference());
+            NamedDestination namedDestination = new NamedDestination(targetID, action);
             this.deferredDestinations.add(namedDestination);
         } else {
             //Warning already issued by AreaTreeHandler (debug level is sufficient)
@@ -367,7 +367,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Bookmark b = new Bookmark(
                 bookmarkItem.getBookmarkTitle(),
                 bookmarkItem.showChildItems(),
-                (action != null ? action.createReference() : null));
+                action);
         for (int i = 0; i < bookmarkItem.getCount(); i++) {
             b.addChildBookmark(renderBookmarkItem(bookmarkItem.getSubData(i)));
         }
@@ -383,9 +383,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         GoToXYAction action = (GoToXYAction)actionSet.get(targetID);
         //GoToXYAction action = (GoToXYAction)idGoTos.get(targetID);
         if (action == null) {
+            if (pageIndex < 0) {
+                //pageIndex = page
+            }
             Point position = (Point)idPositions.get(targetID);
             // can the GoTo already be fully filled in?
-            if (position != null) {
+            if (pageIndex >= 0 && position != null) {
                 action = new GoToXYAction(targetID, pageIndex, position);
             } else {
                 // Not complete yet, can't use getPDFGoTo:
@@ -415,10 +418,16 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     private void noteGoToPosition(GoToXYAction action, Point position) {
         action.setTargetLocation(position);
+        try {
+            getDocumentNavigationHandler().addResolvedAction(action);
+        } catch (IFException ife) {
+            handleIFException(ife);
+        }
         unfinishedGoTos.remove(action);
     }
 
     private void noteGoToPosition(GoToXYAction action, PageViewport pv, Point position) {
+        action.setPageIndex(pv.getPageIndex());
         noteGoToPosition(action, position);
     }
 
@@ -427,7 +436,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Point position = new Point(relativeIPP, relativeBPP);
         tf.transform(position, position);
         idPositions.put(id, position);
-        // is there already a PDFGoTo waiting to be completed?
+        // is there already a GoTo action waiting to be completed?
         GoToXYAction action = (GoToXYAction)actionSet.get(id);
         if (action != null) {
             noteGoToPosition(action, pv, position);
@@ -439,9 +448,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                              relativeIPP, relativeBPP, graphicContext.getTransform());
     }
 
-    protected void saveBlockPosIfTargetable(Block block) {
+    private void saveBlockPosIfTargetable(Block block) {
         String id = getTargetableID(block);
-        if (id != null) {
+        if (hasDocumentNavigation() && id != null) {
             // FIXME: Like elsewhere in the renderer code, absolute and relative
             //        directions are happily mixed here. This makes sure that the
             //        links point to the right location, but it is not correct.
@@ -458,7 +467,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     private void saveInlinePosIfTargetable(InlineArea inlineArea) {
         String id = getTargetableID(inlineArea);
-        if (id != null) {
+        if (hasDocumentNavigation() && id != null) {
             int extraMarginBefore = 5000; // millipoints
             int ipp = currentIPPosition;
             int bpp = currentBPPosition + inlineArea.getOffset() - extraMarginBefore;
@@ -524,11 +533,17 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
+    public void preparePage(PageViewport page) {
+        super.preparePage(page);
+    }
+
+    /** {@inheritDoc} */
     public void renderPage(PageViewport page) throws IOException, FOPException {
         if (log.isTraceEnabled()) {
             log.trace("renderPage() " + page);
         }
         try {
+            pageIndices.put(page.getKey(), new Integer(page.getPageIndex()));
             Rectangle2D viewArea = page.getViewArea();
             Dimension dim = new Dimension(
                     (int)Math.ceil(viewArea.getWidth()),
@@ -865,12 +880,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         if (intLink != null) {
             linkTraitFound = true;
             String pvKey = intLink.getPVKey();
-
             String idRef = intLink.getIDRef();
             boolean pvKeyOK = pvKey != null && pvKey.length() > 0;
             boolean idRefOK = idRef != null && idRef.length() > 0;
             if (pvKeyOK && idRefOK) {
-                action = getGoToActionForID(idRef, this.currentPageViewport.getPageIndex());
+                Integer pageIndex = (Integer)pageIndices.get(pvKey);
+                action = getGoToActionForID(idRef, (pageIndex != null ? pageIndex.intValue() : -1));
             } else {
                 //Warnings already issued by AreaTreeHandler
             }
@@ -891,7 +906,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         // warn if link trait found but not allowed, else create link
         if (linkTraitFound) {
-            Link link = new Link(action.createReference(), ipRect);
+            Link link = new Link(action, ipRect);
             this.deferredLinks.add(link);
         }
     }
@@ -987,7 +1002,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     protected void renderText(String s,
                            int[] letterAdjust,
                            Font font, AbstractTextArea parentArea) {
-        float fontSize = font.getFontSize() / 1000f;
+        //float fontSize = font.getFontSize() / 1000f;
 
         int l = s.length();
 

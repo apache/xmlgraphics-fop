@@ -21,22 +21,10 @@ package org.apache.fop.render.intermediate.extensions;
 
 import java.awt.Rectangle;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
-import org.apache.xmlgraphics.util.XMLizable;
-
-import org.apache.fop.render.intermediate.IFUtil;
-import org.apache.fop.util.XMLConstants;
-
 /**
  * This class is a link element for use in the intermediate format.
  */
-public class Link implements XMLizable, DocumentNavigationExtensionConstants {
-
-    /** Attribute name for the target rectangle */
-    public static final String RECT = "rect";
+public class Link {
 
     private AbstractAction action;
     private Rectangle targetRect;
@@ -73,27 +61,6 @@ public class Link implements XMLizable, DocumentNavigationExtensionConstants {
      */
     public void setAction(AbstractAction action) {
         this.action = action;
-    }
-
-    /** {@inheritDoc} */
-    public void toSAX(ContentHandler handler) throws SAXException {
-        if (getAction() == null) {
-            throw new IllegalStateException("Action has not been set");
-        }
-        AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(null, RECT, RECT,
-                XMLConstants.CDATA, IFUtil.toString(getTargetRect()));
-        if (getAction().isReference()) {
-            atts.addAttribute(null, ACTION_REF, ACTION_REF,
-                    XMLConstants.CDATA, getAction().getID());
-        }
-        handler.startElement(LINK.getNamespaceURI(),
-                LINK.getLocalName(), LINK.getQName(), atts);
-        if (!getAction().isReference()) {
-            getAction().toSAX(handler);
-        }
-        handler.endElement(LINK.getNamespaceURI(),
-                LINK.getLocalName(), LINK.getQName());
     }
 
 }
