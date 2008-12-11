@@ -1025,7 +1025,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     private class TextUtil {
         private static final int INITIAL_BUFFER_SIZE = 16;
         private int[] dx = new int[INITIAL_BUFFER_SIZE];
-        private boolean hasDX = false;
+        private int lastDXPos = 0;
         private StringBuffer text = new StringBuffer();
         private int startx, starty;
 
@@ -1035,7 +1035,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         void adjust(int adjust) {
             if (adjust != 0) {
-                int idx = text.length();
+                int idx = text.length() - 1;
                 if (idx > dx.length - 1) {
                     int newSize = Math.max(dx.length, idx + 1) + INITIAL_BUFFER_SIZE;
                     int[] newDX = new int[newSize];
@@ -1043,7 +1043,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                     dx = newDX;
                 }
                 dx[idx] += adjust;
-                hasDX = true;
+                lastDXPos = idx;
             }
         }
 
@@ -1051,7 +1051,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             if (text.length() > 0) {
                 text.setLength(0);
                 Arrays.fill(dx, 0);
-                hasDX = false;
+                lastDXPos = 0;
             }
         }
 
@@ -1063,7 +1063,13 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         void flush() {
             if (text.length() > 0) {
                 try {
-                    painter.drawText(startx, starty, (hasDX ? dx : null), null, text.toString());
+                    int[] effDX = null;
+                    if (lastDXPos > 0) {
+                        int size = lastDXPos + 1;
+                        effDX = new int[size];
+                        System.arraycopy(dx, 0, effDX, 0, size);
+                    }
+                    painter.drawText(startx, starty, effDX, null, text.toString());
                 } catch (IFException e) {
                     handleIFException(e);
                 }
