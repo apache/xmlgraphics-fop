@@ -28,25 +28,26 @@ import org.apache.fop.render.intermediate.IFConstants;
  */
 public interface DocumentNavigationExtensionConstants {
 
-    /** Namespace URI for the bookmark extension */
+    /** Namespace URI for the document navigation namespace */
     String NAMESPACE = IFConstants.NAMESPACE + "/document-navigation";
 
+    /** Default Namespace prefix for the document navigation namespace */
+    String PREFIX = "nav";
+
     /** the bookmark-tree element */
-    QName BOOKMARK_TREE = new QName(NAMESPACE, "bookmark-tree");
+    QName BOOKMARK_TREE = new QName(NAMESPACE, PREFIX, "bookmark-tree");
     /** the bookmark element */
-    QName BOOKMARK = new QName(NAMESPACE, "bookmark");
+    QName BOOKMARK = new QName(NAMESPACE, PREFIX, "bookmark");
 
     /** the named-destination element */
-    QName NAMED_DESTINATION = new QName(NAMESPACE, "named-destination");
+    QName NAMED_DESTINATION = new QName(NAMESPACE, PREFIX, "named-destination");
     /** the link element */
-    QName LINK = new QName(NAMESPACE, "link");
+    QName LINK = new QName(NAMESPACE, PREFIX, "link");
 
     /** the goto-xy element */
-    QName GOTO_XY = new QName(NAMESPACE, "goto-xy");
+    QName GOTO_XY = new QName(NAMESPACE, PREFIX, "goto-xy");
     /** the goto-uri element */
-    QName GOTO_URI = new QName(NAMESPACE, "goto-uri");
+    QName GOTO_URI = new QName(NAMESPACE, PREFIX, "goto-uri");
 
-    /** Attribute name for the action reference */
-    String ACTION_REF = "action-ref";
 
 }

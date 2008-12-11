@@ -61,19 +61,12 @@ public abstract class AbstractAction implements XMLizable {
     public abstract boolean isSame(AbstractAction other);
 
     /**
-     * Indicates whether this action is a reference.
-     * @return true if this action is a reference, false for a normal action
+     * Indicates whether the action is complete, i.e has all the required information to be
+     * rendered in the target format.
+     * @return true if the action is complete
      */
-    public boolean isReference() {
-        return false;
-    }
-
-    /**
-     * Creates a reference to this action.
-     * @return the reference
-     */
-    public AbstractAction createReference() {
-        return new ReferencedAction(getID());
+    public boolean isComplete() {
+        return true;
     }
 
     /**

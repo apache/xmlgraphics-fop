@@ -22,21 +22,21 @@ package org.apache.fop.render.intermediate.extensions;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
-import org.apache.xmlgraphics.util.XMLizable;
-
 /**
  * This class manages actions and action references. Some action (like {@link GoToXYAction}s)
  * cannot be fully resolved at the time they are needed, so they are deferred. This class
  * helps manages the references and resolution.
  */
-public class ActionSet implements XMLizable {
+public class ActionSet {
 
     private int lastGeneratedID = 0;
     private Map actionRegistry = new java.util.HashMap();
 
+    /**
+     * Generates a new synthetic ID for an action.
+     * @param action the action
+     * @return the generated ID
+     */
     public synchronized String generateNewID(AbstractAction action) {
         this.lastGeneratedID++;
         String prefix = action.getIDPrefix();
@@ -46,10 +46,21 @@ public class ActionSet implements XMLizable {
         return prefix + this.lastGeneratedID;
     }
 
+    /**
+     * Returns the action with the given ID.
+     * @param id the ID
+     * @return the action or null if no action with this ID is stored
+     */
     public AbstractAction get(String id) {
         return (AbstractAction)this.actionRegistry.get(id);
     }
 
+    /**
+     * Puts an action into the set and returns the normalized instance (another one if the given
+     * one is equal to another.
+     * @param action the action
+     * @return the action instance that should be used in place of the given one
+     */
     public AbstractAction put(AbstractAction action) {
         if (!action.hasID()) {
             action.setID(generateNewID(action));
@@ -61,11 +72,14 @@ public class ActionSet implements XMLizable {
         return effAction;
     }
 
+    /**
+     * Clears the set.
+     */
     public void clear() {
         this.actionRegistry.clear();
     }
 
-    public AbstractAction normalize(AbstractAction action) {
+    private AbstractAction normalize(AbstractAction action) {
         Iterator iter = this.actionRegistry.values().iterator();
         while (iter.hasNext()) {
             AbstractAction a = (AbstractAction)iter.next();
@@ -76,12 +90,4 @@ public class ActionSet implements XMLizable {
         return action;
     }
 
-    public Iterator getActions() {
-        return this.actionRegistry.values().iterator();
-    }
-
-    public void toSAX(ContentHandler handler) throws SAXException {
-        // TODO Auto-generated method stub
-
-    }
 }

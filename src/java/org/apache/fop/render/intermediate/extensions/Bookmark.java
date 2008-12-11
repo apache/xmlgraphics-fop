@@ -20,22 +20,12 @@
 package org.apache.fop.render.intermediate.extensions;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
-import org.apache.xmlgraphics.util.XMLizable;
-
-import org.apache.fop.util.XMLConstants;
-import org.apache.fop.util.XMLUtil;
 
 /**
  * This class is a bookmark element for use in the intermediate format.
  */
-public class Bookmark implements XMLizable, DocumentNavigationExtensionConstants {
+public class Bookmark {
 
     private String title;
     private boolean show;
@@ -107,32 +97,6 @@ public class Bookmark implements XMLizable, DocumentNavigationExtensionConstants
         } else {
             return Collections.unmodifiableList(this.childBookmarks);
         }
-    }
-
-    /** {@inheritDoc} */
-    public void toSAX(ContentHandler handler) throws SAXException {
-        AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(null, "title", "title", XMLUtil.CDATA, getTitle());
-        atts.addAttribute(null, "starting-state", "starting-state",
-                XMLUtil.CDATA, isShown() ? "show" : "hide");
-        if (getAction().isReference()) {
-            atts.addAttribute(null, ACTION_REF, ACTION_REF,
-                    XMLConstants.CDATA, getAction().getID());
-        }
-        handler.startElement(BOOKMARK.getNamespaceURI(),
-                BOOKMARK.getLocalName(), BOOKMARK.getQName(), atts);
-        if (!getAction().isReference()) {
-            getAction().toSAX(handler);
-        }
-        if (this.childBookmarks != null) {
-            Iterator iter = this.childBookmarks.iterator();
-            while (iter.hasNext()) {
-                Bookmark b = (Bookmark)iter.next();
-                b.toSAX(handler);
-            }
-        }
-        handler.endElement(BOOKMARK.getNamespaceURI(),
-                BOOKMARK.getLocalName(), BOOKMARK.getQName());
     }
 
 }
