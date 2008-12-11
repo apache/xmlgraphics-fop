@@ -113,6 +113,7 @@ public class IFTester {
             ifRenderer.setUserAgent(ua);
 
             IFSerializer serializer = new IFSerializer();
+            serializer.setUserAgent(ua);
             DOMResult result = new DOMResult();
             serializer.setResult(result);
             ifRenderer.setDocumentHandler(serializer);
