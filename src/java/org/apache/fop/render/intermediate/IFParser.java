@@ -50,6 +50,8 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.render.intermediate.extensions.DocumentNavigationExtensionConstants;
+import org.apache.fop.render.intermediate.extensions.DocumentNavigationHandler;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
@@ -122,6 +124,8 @@ public class IFParser implements IFConstants {
         private boolean inForeignObject;
         private Document foreignObject;
 
+        private ContentHandler navParser;
+
         public Handler(IFDocumentHandler documentHandler, FOUserAgent userAgent,
                 ElementMappingRegistry elementMappingRegistry) {
             this.documentHandler = documentHandler;
@@ -174,6 +178,15 @@ public class IFParser implements IFConstants {
                     } else {
                         handled = false;
                     }
+                } else if (DocumentNavigationExtensionConstants.NAMESPACE.equals(uri)) {
+                    if (this.navParser == null) {
+                        this.navParser = new DocumentNavigationHandler(
+                                this.documentHandler.getDocumentNavigationHandler());
+                    }
+                    delegate = this.navParser;
+                    delegateDepth++;
+                    delegate.startDocument();
+                    delegate.startElement(uri, localName, qName, attributes);
                 } else {
                     ContentHandlerFactoryRegistry registry
                             = userAgent.getFactory().getContentHandlerFactoryRegistry();
