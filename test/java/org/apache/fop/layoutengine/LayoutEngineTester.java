@@ -223,11 +223,15 @@ public class LayoutEngineTester {
         Document doc = (Document)res.getNode();
         Element root = doc.getDocumentElement();
 
-        Element atChecks = (Element)root.getElementsByTagName("at-checks").item(0);
-        doATChecks(atChecks, result);
+        NodeList nodes;
+        //AT tests only when checks are available
+        nodes = root.getElementsByTagName("at-checks");
+        if (nodes.getLength() > 0) {
+            Element atChecks = (Element)nodes.item(0);
+            doATChecks(atChecks, result);
+        }
 
         //IF tests only when checks are available
-        NodeList nodes;
         nodes = root.getElementsByTagName("if-checks");
         if (nodes.getLength() > 0) {
             Element ifChecks = (Element)nodes.item(0);
