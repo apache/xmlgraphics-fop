@@ -770,6 +770,10 @@ public class PCLGenerator {
                         BufferedImage.TYPE_BYTE_GRAY);
                 Graphics2D g2d = src.createGraphics();
                 try {
+                    g2d.setBackground(Color.white);
+                    g2d.setColor(Color.black);
+                    g2d.clearRect(0, 0, effDim.width, effDim.height);
+
                     AffineTransform at = new AffineTransform();
                     double sx = effDim.getWidth() / orgDim.getWidth();
                     double sy = effDim.getHeight() / orgDim.getHeight();

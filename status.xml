@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed black backgrounds occurring for transparent images in PCL output.
+      </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="46369">
         Fixed bug that caused AFP Renderer Extensions to be ignored.
       </action>
