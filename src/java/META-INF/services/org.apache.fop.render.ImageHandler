@@ -7,3 +7,9 @@ org.apache.fop.render.java2d.Java2DImageHandlerRenderedImage
 org.apache.fop.render.java2d.Java2DImageHandlerGraphics2D
 org.apache.fop.render.pcl.PCLImageHandlerRenderedImage
 org.apache.fop.render.pcl.PCLImageHandlerGraphics2D
+org.apache.fop.render.ps.PSImageHandlerRenderedImage
+org.apache.fop.render.ps.PSImageHandlerEPS
+org.apache.fop.render.ps.PSImageHandlerRawCCITTFax
+org.apache.fop.render.ps.PSImageHandlerRawJPEG
+org.apache.fop.render.ps.PSImageHandlerGraphics2D
+org.apache.fop.render.ps.PSImageHandlerSVG

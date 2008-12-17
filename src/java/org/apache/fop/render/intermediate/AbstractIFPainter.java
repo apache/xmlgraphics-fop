@@ -209,6 +209,34 @@ public abstract class AbstractIFPainter implements IFPainter {
     }
 
     /**
+     * Returns an ImageInfo instance for the given URI. If there's an error, null is returned.
+     * The caller can assume that any exceptions have already been handled properly. The caller
+     * simply skips painting anything in this case.
+     * @param uri the URI identifying the image
+     * @return the ImageInfo instance or null if there has been an error.
+     */
+    protected ImageInfo getImageInfo(String uri) {
+        ImageManager manager = getFopFactory().getImageManager();
+        try {
+            ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();
+            return manager.getImageInfo(uri, sessionContext);
+        } catch (ImageException ie) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageError(this, uri, ie, null);
+        } catch (FileNotFoundException fe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageNotFound(this, uri, fe, null);
+        } catch (IOException ioe) {
+            ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                    getUserAgent().getEventBroadcaster());
+            eventProducer.imageIOError(this, uri, ioe, null);
+        }
+        return null;
+    }
+
+    /**
      * Default drawing method for handling an image referenced by a URI.
      * @param uri the image's URI
      * @param rect the rectangle in which to paint the image

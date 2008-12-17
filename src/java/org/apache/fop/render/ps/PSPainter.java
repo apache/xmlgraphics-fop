@@ -33,6 +33,10 @@ import org.w3c.dom.Document;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 
@@ -135,19 +139,57 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
-        //TODO Implement me
+    protected Map createDefaultImageProcessingHints(ImageSessionContext sessionContext) {
+        Map hints = super.createDefaultImageProcessingHints(sessionContext);
+
+        //PostScript doesn't support alpha channels
+        hints.put(ImageProcessingHints.TRANSPARENCY_INTENT,
+                ImageProcessingHints.TRANSPARENCY_INTENT_IGNORE);
+        //TODO We might want to support image masks in the future.
+        return hints;
     }
 
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
         PSRenderingContext psContext = new PSRenderingContext(
-                getUserAgent(), getFontInfo());
+                getUserAgent(), getGenerator(), getFontInfo());
         return psContext;
     }
 
     /** {@inheritDoc} */
+    protected void drawImageUsingImageHandler(ImageInfo info, Rectangle rect)
+            throws ImageException, IOException {
+        if (!getPSUtil().isOptimizeResources()
+                || PSImageUtils.isImageInlined(info,
+                        (PSRenderingContext)createRenderingContext())) {
+            super.drawImageUsingImageHandler(info, rect);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Image " + info + " is embedded as a form later");
+            }
+            //Don't load image at this time, just put a form placeholder in the stream
+            PSResource form = documentHandler.getFormForImage(info.getOriginalURI());
+            PSImageUtils.drawForm(form, info, rect, getGenerator());
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
+        try {
+            endTextObject();
+        } catch (IOException ioe) {
+            throw new IFException("I/O error in drawImage()", ioe);
+        }
+        drawImageUsingURI(uri, rect);
+    }
+
+    /** {@inheritDoc} */
     public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+        try {
+            endTextObject();
+        } catch (IOException ioe) {
+            throw new IFException("I/O error in drawImage()", ioe);
+        }
         drawImageUsingDocument(doc, rect);
     }
 

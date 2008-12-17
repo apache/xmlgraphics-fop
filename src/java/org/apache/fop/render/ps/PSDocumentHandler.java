@@ -268,8 +268,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         in = new java.io.BufferedInputStream(in);
         try {
             try {
-                ResourceHandler.process(getUserAgent(), in, this.outputStream,
-                        this.fontInfo, resTracker, this.formResources,
+                ResourceHandler handler = new ResourceHandler(getUserAgent(), this.fontInfo,
+                        resTracker, this.formResources);
+                handler.process(in, this.outputStream,
                         this.currentPageNumber, this.documentBoundingBox);
                 this.outputStream.flush();
             } catch (DSCException e) {
@@ -517,6 +518,26 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             this.fontResources.put(key, res);
         }
         return res;
+    }
+
+    /**
+     * Returns a PSResource instance representing a image as a PostScript form.
+     * @param uri the image URI
+     * @return a PSResource instance
+     */
+    protected PSResource getFormForImage(String uri) {
+        if (uri == null || "".equals(uri)) {
+            throw new IllegalArgumentException("uri must not be empty or null");
+        }
+        if (this.formResources == null) {
+            this.formResources = new java.util.HashMap();
+        }
+        PSResource form = (PSResource)this.formResources.get(uri);
+        if (form == null) {
+            form = new PSImageFormResource(this.formResources.size() + 1, uri);
+            this.formResources.put(uri, form);
+        }
+        return form;
     }
 
 }

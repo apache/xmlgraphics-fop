@@ -46,6 +46,7 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 
 /**
  * This is the user agent for FOP.
@@ -92,6 +93,7 @@ public class FOUserAgent {
     private float targetResolution = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
     private Map rendererOptions = new java.util.HashMap();
     private File outputFile = null;
+    private IFDocumentHandler documentHandlerOverride = null;
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
     private boolean locatorEnabled = true; // true by default (for error messages).
@@ -116,6 +118,8 @@ public class FOUserAgent {
     protected String author = null;
     /** Title of the document. */
     protected String title = null;
+    /** Subject of the document. */
+    protected String subject = null;
     /** Set of keywords applicable to this document. */
     protected String keywords = null;
 
@@ -157,6 +161,24 @@ public class FOUserAgent {
     }
 
     // ---------------------------------------------- rendering-run dependent stuff
+
+    /**
+     * Sets an explicit document handler to use which overrides the one that would be
+     * selected by default.
+     * @param documentHandler the document handler instance to use
+     */
+    public void setDocumentHandlerOverride(IFDocumentHandler documentHandler) {
+        this.documentHandlerOverride = documentHandler;
+
+    }
+
+    /**
+     * Returns the overriding {@link IFDocumentHandler} instance, if any.
+     * @return the overriding document handler or null
+     */
+    public IFDocumentHandler getDocumentHandlerOverride() {
+        return this.documentHandlerOverride;
+    }
 
     /**
      * Sets an explicit renderer to use which overrides the one defined by the
@@ -271,6 +293,22 @@ public class FOUserAgent {
      */
     public String getTitle() {
         return title;
+    }
+
+    /**
+     * Sets the subject of the document.
+     * @param subject of document
+     */
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    /**
+     * Returns the subject of the document
+     * @return the subject
+     */
+    public String getSubject() {
+        return subject;
     }
 
     /**

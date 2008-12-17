@@ -82,6 +82,12 @@ public interface IFDocumentHandler {
     void setUserAgent(FOUserAgent userAgent);
 
     /**
+     * Returns the associated user agent.
+     * @return the user agent
+     */
+    FOUserAgent getUserAgent();
+
+    /**
      * Sets the JAXP Result object to receive the generated content.
      * @param result the JAXP Result object to receive the generated content
      * @throws IFException if an error occurs setting up the output
@@ -199,7 +205,8 @@ public interface IFDocumentHandler {
      * @param size the size of the page (equivalent to the MediaBox in PDF)
      * @throws IFException if an error occurs while handling this event
      */
-    void startPage(int index, String name, String pageMasterName, Dimension size) throws IFException;
+    void startPage(int index, String name, String pageMasterName, Dimension size)
+        throws IFException;
 
     /**
      * Indicates the end of a page

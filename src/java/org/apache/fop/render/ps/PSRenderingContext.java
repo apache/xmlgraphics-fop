@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.ps;
 
+import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -30,17 +31,34 @@ import org.apache.fop.render.AbstractRenderingContext;
  */
 public class PSRenderingContext extends AbstractRenderingContext {
 
+    private PSGenerator gen;
     private FontInfo fontInfo;
+    private boolean createForms;
 
     /**
      * Main constructor.
      * @param userAgent the user agent
+     * @param gen the PostScript generator
      * @param fontInfo the font list
      */
     public PSRenderingContext(FOUserAgent userAgent,
-            FontInfo fontInfo) {
+            PSGenerator gen, FontInfo fontInfo) {
+        this(userAgent, gen, fontInfo, false);
+    }
+
+    /**
+     * Special constructor.
+     * @param userAgent the user agent
+     * @param gen the PostScript generator
+     * @param fontInfo the font list
+     * @param createForms true if form generation mode should be enabled
+     */
+    public PSRenderingContext(FOUserAgent userAgent,
+            PSGenerator gen, FontInfo fontInfo, boolean createForms) {
         super(userAgent);
+        this.gen = gen;
         this.fontInfo = fontInfo;
+        this.createForms = createForms;
     }
 
     /** {@inheritDoc} */
@@ -49,11 +67,36 @@ public class PSRenderingContext extends AbstractRenderingContext {
     }
 
     /**
+     * Returns the PostScript generator.
+     * @return the PostScript generator
+     */
+    public PSGenerator getGenerator() {
+        return this.gen;
+    }
+
+    /**
      * Returns the font list.
      * @return the font list
      */
     public FontInfo getFontInfo() {
         return this.fontInfo;
+    }
+
+    /**
+     * Indicates whether PS forms should be created for the images instead of inline images.
+     * Note that not all image handlers will support this!
+     * @return true if PS forms shall be created
+     */
+    public boolean isCreateForms() {
+        return this.createForms;
+    }
+
+    /**
+     * Create a copy of this rendering context and activate form mode.
+     * @return the form-enabled rendering context
+     */
+    public PSRenderingContext toFormContext() {
+        return new PSRenderingContext(getUserAgent(), getGenerator(), getFontInfo(), true);
     }
 
 }

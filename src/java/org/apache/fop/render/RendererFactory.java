@@ -231,7 +231,9 @@ public class RendererFactory {
      */
     public Renderer createRenderer(FOUserAgent userAgent, String outputFormat)
                     throws FOPException {
-        if (userAgent.getRendererOverride() != null) {
+        if (userAgent.getDocumentHandlerOverride() != null) {
+            return createRendererForDocumentHandler(userAgent.getDocumentHandlerOverride());
+        } else if (userAgent.getRendererOverride() != null) {
             return userAgent.getRendererOverride();
         } else {
             AbstractRendererMaker maker = getRendererMaker(outputFormat);
@@ -247,18 +249,22 @@ public class RendererFactory {
                 AbstractIFDocumentHandlerMaker documentHandlerMaker
                     = getDocumentHandlerMaker(outputFormat);
                 if (documentHandlerMaker != null) {
-                    IFRenderer rend = new IFRenderer();
-                    rend.setUserAgent(userAgent);
                     IFDocumentHandler documentHandler = createDocumentHandler(
                             userAgent, outputFormat);
-                    rend.setDocumentHandler(documentHandler);
-                    return rend;
+                    return createRendererForDocumentHandler(documentHandler);
                 } else {
                     throw new UnsupportedOperationException(
                             "No renderer for the requested format available: " + outputFormat);
                 }
             }
         }
+    }
+
+    private Renderer createRendererForDocumentHandler(IFDocumentHandler documentHandler) {
+        IFRenderer rend = new IFRenderer();
+        rend.setUserAgent(documentHandler.getUserAgent());
+        rend.setDocumentHandler(documentHandler);
+        return rend;
     }
 
     /**
@@ -319,23 +325,17 @@ public class RendererFactory {
      */
     public IFDocumentHandler createDocumentHandler(FOUserAgent userAgent, String outputFormat)
                     throws FOPException {
-        /*
-        if (userAgent.getIFDocumentHandlerOverride() != null) {
-            return userAgent.getIFDocumentHandlerOverride();
-        } else {
-        */
-            AbstractIFDocumentHandlerMaker maker = getDocumentHandlerMaker(outputFormat);
-            if (maker == null) {
-                throw new UnsupportedOperationException(
-                    "No IF document handler for the requested format available: " + outputFormat);
-            }
-            IFDocumentHandler documentHandler = maker.makeIFDocumentHandler(userAgent);
-            IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
-            if (configurator != null) {
-                configurator.configure(documentHandler);
-            }
-            return documentHandler;
-        //}
+        AbstractIFDocumentHandlerMaker maker = getDocumentHandlerMaker(outputFormat);
+        if (maker == null) {
+            throw new UnsupportedOperationException(
+                "No IF document handler for the requested format available: " + outputFormat);
+        }
+        IFDocumentHandler documentHandler = maker.makeIFDocumentHandler(userAgent);
+        IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
+        if (configurator != null) {
+            configurator.configure(documentHandler);
+        }
+        return documentHandler;
     }
 
     /**

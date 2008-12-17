@@ -48,10 +48,7 @@ public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
         this.userAgent = ua;
     }
 
-    /**
-     * Returns the user agent.
-     * @return the user agent
-     */
+    /** {@inheritDoc} */
     public FOUserAgent getUserAgent() {
         return this.userAgent;
     }

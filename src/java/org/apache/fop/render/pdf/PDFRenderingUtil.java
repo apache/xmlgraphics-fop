@@ -234,6 +234,7 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         info.setCreationDate(userAgent.getCreationDate());
         info.setAuthor(userAgent.getAuthor());
         info.setTitle(userAgent.getTitle());
+        info.setSubject(userAgent.getSubject());
         info.setKeywords(userAgent.getKeywords());
     }
 
