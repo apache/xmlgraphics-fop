@@ -26,7 +26,14 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import org.apache.batik.parser.AWTTransformProducer;
+
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.util.QName;
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -42,10 +49,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.traits.BorderProps;
-import org.apache.xmlgraphics.image.loader.ImageSize;
-import org.apache.xmlgraphics.util.QName;
-import org.apache.xmlgraphics.util.UnitConv;
-import org.w3c.dom.Document;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -383,7 +386,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             endTextObject();
 
             float sx1 = startx;
-            float sx2 = (slant[START] ? sx1 + borderWidth[AFTER] - clipw[AFTER] : sx1);
+            float sx2 = (slant[START] ? sx1 + borderWidth[START] - clipw[START] : sx1);
             float ex1 = startx + width;
             float ex2 = (slant[AFTER] ? ex1 - borderWidth[END] + clipw[END] : ex1);
             float outery = starty + height + clipw[AFTER];
