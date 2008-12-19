@@ -21,6 +21,7 @@ package org.apache.fop.render.ps;
 
 // Java
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -37,7 +38,6 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -80,7 +80,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.LazyFont;
@@ -98,8 +97,8 @@ import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
+import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.util.ColorUtil;
 
 /**
  * Renderer that renders to PostScript.
@@ -159,6 +158,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      * normal rendering process.
      */
     protected PSRenderingUtil psUtil;
+    private PSBorderPainter borderPainter;
 
     /** Is used to determine the document's bounding box */
     private Rectangle2D documentBoundingBox;
@@ -600,151 +600,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     protected void drawBorderLine(float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         try {
-            float w = x2 - x1;
-            float h = y2 - y1;
-            if ((w < 0) || (h < 0)) {
-                log.error("Negative extent received. Border won't be painted.");
-                return;
-            }
-            switch (style) {
-                case Constants.EN_DASHED:
-                    useColor(col);
-                    if (horz) {
-                        float unit = Math.abs(2 * h);
-                        int rep = (int)(w / unit);
-                        if (rep % 2 == 0) {
-                            rep++;
-                        }
-                        unit = w / rep;
-                        gen.useDash("[" + unit + "] 0");
-                        gen.useLineCap(0);
-                        gen.useLineWidth(h);
-                        float ym = y1 + (h / 2);
-                        drawLine(x1, ym, x2, ym);
-                    } else {
-                        float unit = Math.abs(2 * w);
-                        int rep = (int)(h / unit);
-                        if (rep % 2 == 0) {
-                            rep++;
-                        }
-                        unit = h / rep;
-                        gen.useDash("[" + unit + "] 0");
-                        gen.useLineCap(0);
-                        gen.useLineWidth(w);
-                        float xm = x1 + (w / 2);
-                        drawLine(xm, y1, xm, y2);
-                    }
-                    break;
-                case Constants.EN_DOTTED:
-                    useColor(col);
-                    gen.useLineCap(1); //Rounded!
-                    if (horz) {
-                        float unit = Math.abs(2 * h);
-                        int rep = (int)(w / unit);
-                        if (rep % 2 == 0) {
-                            rep++;
-                        }
-                        unit = w / rep;
-                        gen.useDash("[0 " + unit + "] 0");
-                        gen.useLineWidth(h);
-                        float ym = y1 + (h / 2);
-                        drawLine(x1, ym, x2, ym);
-                    } else {
-                        float unit = Math.abs(2 * w);
-                        int rep = (int)(h / unit);
-                        if (rep % 2 == 0) {
-                            rep++;
-                        }
-                        unit = h / rep;
-                        gen.useDash("[0 " + unit + "] 0");
-                        gen.useLineWidth(w);
-                        float xm = x1 + (w / 2);
-                        drawLine(xm, y1, xm, y2);
-                    }
-                    break;
-                case Constants.EN_DOUBLE:
-                    useColor(col);
-                    gen.useDash(null);
-                    if (horz) {
-                        float h3 = h / 3;
-                        gen.useLineWidth(h3);
-                        float ym1 = y1 + (h3 / 2);
-                        float ym2 = ym1 + h3 + h3;
-                        drawLine(x1, ym1, x2, ym1);
-                        drawLine(x1, ym2, x2, ym2);
-                    } else {
-                        float w3 = w / 3;
-                        gen.useLineWidth(w3);
-                        float xm1 = x1 + (w3 / 2);
-                        float xm2 = xm1 + w3 + w3;
-                        drawLine(xm1, y1, xm1, y2);
-                        drawLine(xm2, y1, xm2, y2);
-                    }
-                    break;
-                case Constants.EN_GROOVE:
-                case Constants.EN_RIDGE:
-                    float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
-                    gen.useDash(null);
-                    if (horz) {
-                        Color uppercol = ColorUtil.lightenColor(col, -colFactor);
-                        Color lowercol = ColorUtil.lightenColor(col, colFactor);
-                        float h3 = h / 3;
-                        gen.useLineWidth(h3);
-                        float ym1 = y1 + (h3 / 2);
-                        gen.useColor(uppercol);
-                        drawLine(x1, ym1, x2, ym1);
-                        gen.useColor(col);
-                        drawLine(x1, ym1 + h3, x2, ym1 + h3);
-                        gen.useColor(lowercol);
-                        drawLine(x1, ym1 + h3 + h3, x2, ym1 + h3 + h3);
-                    } else {
-                        Color leftcol = ColorUtil.lightenColor(col, -colFactor);
-                        Color rightcol = ColorUtil.lightenColor(col, colFactor);
-                        float w3 = w / 3;
-                        gen.useLineWidth(w3);
-                        float xm1 = x1 + (w3 / 2);
-                        gen.useColor(leftcol);
-                        drawLine(xm1, y1, xm1, y2);
-                        gen.useColor(col);
-                        drawLine(xm1 + w3, y1, xm1 + w3, y2);
-                        gen.useColor(rightcol);
-                        drawLine(xm1 + w3 + w3, y1, xm1 + w3 + w3, y2);
-                    }
-                    break;
-                case Constants.EN_INSET:
-                case Constants.EN_OUTSET:
-                    colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
-                    gen.useDash(null);
-                    if (horz) {
-                        Color c = ColorUtil.lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
-                        gen.useLineWidth(h);
-                        float ym1 = y1 + (h / 2);
-                        gen.useColor(c);
-                        drawLine(x1, ym1, x2, ym1);
-                    } else {
-                        Color c = ColorUtil.lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
-                        gen.useLineWidth(w);
-                        float xm1 = x1 + (w / 2);
-                        gen.useColor(c);
-                        drawLine(xm1, y1, xm1, y2);
-                    }
-                    break;
-                case Constants.EN_HIDDEN:
-                    break;
-                default:
-                    useColor(col);
-                    gen.useDash(null);
-                    gen.useLineCap(0);
-                    if (horz) {
-                        gen.useLineWidth(h);
-                        float ym = y1 + (h / 2);
-                        drawLine(x1, ym, x2, ym);
-                    } else {
-                        gen.useLineWidth(w);
-                        float xm = x1 + (w / 2);
-                        drawLine(xm, y1, xm, y2);
-                    }
-            }
+            PSBorderPainter.drawBorderLine(gen, x1, y1, x2, y2, horz, startOrBefore, style, col);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
@@ -773,6 +629,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
             }
         };
         this.gen.setPSLevel(getLanguageLevel());
+        this.borderPainter = new PSBorderPainter(this.gen);
         this.currentPageNumber = 0;
 
         //Initial default page device dictionary settings
@@ -852,6 +709,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         if (pageDeviceDictionary != null) {
             pageDeviceDictionary.clear();
         }
+        this.borderPainter = null;
+        this.gen = null;
     }
 
     /**
@@ -1346,74 +1205,27 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         super.renderInlineParent(ip);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void renderLeader(Leader area) {
         renderInlineAreaBackAndBorders(area);
 
-        endTextObject();
-        saveGraphicsState();
         int style = area.getRuleStyle();
-        float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
-        float starty = (currentBPPosition + area.getOffset()) / 1000f;
-        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
-                        + area.getIPD()) / 1000f;
-        float ruleThickness = area.getRuleThickness() / 1000f;
+        int ruleThickness = area.getRuleThickness();
+        int startx = currentIPPosition + area.getBorderAndPaddingWidthStart();
+        int starty = currentBPPosition + area.getOffset() + (ruleThickness / 2);
+        int endx = currentIPPosition
+                        + area.getBorderAndPaddingWidthStart()
+                        + area.getIPD();
         Color col = (Color)area.getTrait(Trait.COLOR);
 
+        endTextObject();
         try {
-            switch (style) {
-                case EN_SOLID:
-                case EN_DASHED:
-                case EN_DOUBLE:
-                    drawBorderLine(startx, starty, endx, starty + ruleThickness,
-                            true, true, style, col);
-                    break;
-                case EN_DOTTED:
-                    clipRect(startx, starty, endx - startx, ruleThickness);
-                    //This displaces the dots to the right by half a dot's width
-                    //TODO There's room for improvement here
-                    gen.concatMatrix(1, 0, 0, 1, ruleThickness / 2, 0);
-                    drawBorderLine(startx, starty, endx, starty + ruleThickness,
-                            true, true, style, col);
-                    break;
-                case EN_GROOVE:
-                case EN_RIDGE:
-                    float half = area.getRuleThickness() / 2000f;
-
-                    gen.useColor(ColorUtil.lightenColor(col, 0.6f));
-                    moveTo(startx, starty);
-                    lineTo(endx, starty);
-                    lineTo(endx, starty + 2 * half);
-                    lineTo(startx, starty + 2 * half);
-                    closePath();
-                    gen.writeln(" fill newpath");
-                    gen.useColor(col);
-                    if (style == EN_GROOVE) {
-                        moveTo(startx, starty);
-                        lineTo(endx, starty);
-                        lineTo(endx, starty + half);
-                        lineTo(startx + half, starty + half);
-                        lineTo(startx, starty + 2 * half);
-                    } else {
-                        moveTo(endx, starty);
-                        lineTo(endx, starty + 2 * half);
-                        lineTo(startx, starty + 2 * half);
-                        lineTo(startx, starty + half);
-                        lineTo(endx - half, starty + half);
-                    }
-                    closePath();
-                    gen.writeln(" fill newpath");
-                    break;
-                default:
-                    throw new UnsupportedOperationException("rule style not supported");
-            }
+            borderPainter.drawLine(new Point(startx, starty), new Point(endx, starty),
+                    ruleThickness, col, RuleStyle.valueOf(style));
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         }
 
-        restoreGraphicsState();
         super.renderLeader(area);
     }
 

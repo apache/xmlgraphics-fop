@@ -190,7 +190,12 @@ public class Java2DPainter extends AbstractIFPainter {
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
             BorderProps start, BorderProps end) throws IFException {
         if (before != null || after != null || start != null || end != null) {
-            this.borderPainter.drawBorders(rect, before, after, start, end);
+            try {
+                this.borderPainter.drawBorders(rect, before, after, start, end);
+            } catch (IOException e) {
+                //Won't happen with Java2D
+                throw new IllegalStateException("Unexpected I/O error");
+            }
         }
     }
 

@@ -64,6 +64,7 @@ public class PSPainter extends AbstractIFPainter {
     private static Log log = LogFactory.getLog(PSPainter.class);
 
     private PSDocumentHandler documentHandler;
+    private PSBorderPainter borderPainter;
 
     private boolean inTextMode = false;
 
@@ -74,6 +75,7 @@ public class PSPainter extends AbstractIFPainter {
     public PSPainter(PSDocumentHandler documentHandler) {
         super();
         this.documentHandler = documentHandler;
+        this.borderPainter = new PSBorderPainter(documentHandler.gen);
         this.state = IFState.create();
     }
 
@@ -236,9 +238,8 @@ public class PSPainter extends AbstractIFPainter {
             BorderProps start, BorderProps end) throws IFException {
         if (before != null || after != null || start != null || end != null) {
             try {
-                //TODO Implement me
                 endTextObject();
-                //this.borderPainter.drawBorders(rect, before, after, start, end);
+                this.borderPainter.drawBorders(rect, before, after, start, end);
             } catch (IOException ioe) {
                 throw new IFException("I/O error in drawBorderRect()", ioe);
             }
@@ -249,9 +250,8 @@ public class PSPainter extends AbstractIFPainter {
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
                 throws IFException {
         try {
-            //TODO Implement me
             endTextObject();
-            //this.borderPainter.drawLine(start, end, width, color, style);
+            this.borderPainter.drawLine(start, end, width, color, style);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawLine()", ioe);
         }
