@@ -22,6 +22,7 @@ package org.apache.fop.render.intermediate;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.IOException;
 
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
@@ -38,10 +39,11 @@ public abstract class BorderPainter {
      * @param bpsAfter the border specification on the after side
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
+     * @throws IOException if an I/O error occurs while creating the borders
      */
     public void drawBorders(Rectangle borderRect,
             BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) {
+            BorderProps bpsStart, BorderProps bpsEnd) throws IOException {
         int startx = borderRect.x;
         int starty = borderRect.y;
         int width = borderRect.width;
@@ -199,21 +201,75 @@ public abstract class BorderPainter {
     }
 
 
+    /**
+     * Draws a border line.
+     * @param x1 X coordinate of the upper left corner
+     *                  of the line's bounding rectangle (in millipoints)
+     * @param y1 start Y coordinate of the upper left corner
+     *                  of the line's bounding rectangle (in millipoints)
+     * @param x2 end X coordinate of the lower right corner
+     *                  of the line's bounding rectangle (in millipoints)
+     * @param y2 end y coordinate of the lower right corner
+     *                  of the line's bounding rectangle (in millipoints)
+     * @param horz true if it is a horizontal line
+     * @param startOrBefore true if the line is the start or end edge of a border box
+     * @param style the border style
+     * @param color the border color
+     * @throws IOException if an I/O error occurs
+     */
     protected abstract void drawBorderLine(int x1, int y1, int x2, int y2,
-            boolean horz, boolean startOrBefore, int style, Color color);
+            boolean horz, boolean startOrBefore, int style, Color color) throws IOException;
 
+    /**
+     * Draws a line/rule.
+     * @param start start point (coordinates in millipoints)
+     * @param end end point (coordinates in millipoints)
+     * @param width width of the line
+     * @param color the line color
+     * @param style the rule style
+     * @throws IOException if an I/O error occurs
+     */
     public abstract void drawLine(Point start, Point end,
-            int width, Color color, RuleStyle style);
+            int width, Color color, RuleStyle style) throws IOException;
 
-    protected abstract void moveTo(int x, int y);
+    /**
+     * Moves the cursor to the given coordinate.
+     * @param x the X coordinate (in millipoints)
+     * @param y the Y coordinate (in millipoints)
+     * @throws IOException if an I/O error occurs
+     */
+    protected abstract void moveTo(int x, int y) throws IOException;
 
-    protected abstract void lineTo(int x, int y);
+    /**
+     * Draws a line from the current cursor position to the given coordinates.
+     * @param x the X coordinate (in millipoints)
+     * @param y the Y coordinate (in millipoints)
+     * @throws IOException if an I/O error occurs
+     */
+    protected abstract void lineTo(int x, int y) throws IOException;
 
-    protected abstract void closePath();
+    /**
+     * Closes the current path.
+     * @throws IOException if an I/O error occurs
+     */
+    protected abstract void closePath() throws IOException;
 
-    protected abstract void clip();
+    /**
+     * Reduces the current clipping region to the current path.
+     * @throws IOException if an I/O error occurs
+     */
+    protected abstract void clip() throws IOException;
 
-    protected abstract void saveGraphicsState();
-    protected abstract void restoreGraphicsState();
+    /**
+     * Save the graphics state on the stack.
+     * @throws IOException if an I/O error occurs
+     */
+    protected abstract void saveGraphicsState() throws IOException;
+
+    /**
+     * Restore the last graphics state from the stack.
+     * @throws IOException if an I/O error occurs
+     */
+    protected abstract void restoreGraphicsState() throws IOException;
 
 }

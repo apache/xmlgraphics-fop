@@ -482,6 +482,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
             this.pdfDoc.addObject(annots);
         }
         this.pdfDoc.addObject(currentPage);
+        this.borderPainter = null;
         this.generator.flushPDFDoc();
         this.generator = null;
     }

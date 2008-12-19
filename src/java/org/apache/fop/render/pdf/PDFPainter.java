@@ -227,7 +227,11 @@ public class PDFPainter extends AbstractIFPainter {
             BorderProps start, BorderProps end) throws IFException {
         if (before != null || after != null || start != null || end != null) {
             generator.endTextObject();
-            this.borderPainter.drawBorders(rect, before, after, start, end);
+            try {
+                this.borderPainter.drawBorders(rect, before, after, start, end);
+            } catch (IOException ioe) {
+                throw new IFException("I/O error while drawing borders", ioe);
+            }
         }
     }
 
