@@ -219,13 +219,13 @@ public class Factory {
 
     /**
      * Creates a new MO:DCA {@link PageGroup}
-     *
+     * @param tleSequence current start tle sequence number within stream
      * @return a new {@link PageGroup}
      */
-    public PageGroup createPageGroup() {
+    public PageGroup createPageGroup(int tleSequence) {
         String name = PAGE_GROUP_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++pageGroupCount), '0', 5);
-        return new PageGroup(this, name);
+        return new PageGroup(this, name, tleSequence);
     }
 
     /**
@@ -381,10 +381,11 @@ public class Factory {
      *
      * @param name name of the element
      * @param value value of the element
+     * @param tleSequence current start tle sequence number within stream*
      * @return a new {@link TagLogicalElement}
      */
-    public TagLogicalElement createTagLogicalElement(String name, String value) {
-        TagLogicalElement tle = new TagLogicalElement(name, value);
+    public TagLogicalElement createTagLogicalElement(String name, String value, int tleSequence) {
+        TagLogicalElement tle = new TagLogicalElement(name, value, tleSequence);
         return tle;
     }
 

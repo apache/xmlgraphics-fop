@@ -222,9 +222,11 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      *            the name of the tag
      * @param value
      *            the value of the tag
+     * @param tleID
+     *            unique ID within AFP stream
      */
-    public void createTagLogicalElement(String name, String value) {
-        TagLogicalElement tle = new TagLogicalElement(name, value);
+    public void createTagLogicalElement(String name, String value, int tleID) {
+        TagLogicalElement tle = new TagLogicalElement(name, value, tleID);
         if (tagLogicalElements == null) {
             tagLogicalElements = new java.util.ArrayList/*<TagLogicalElement>*/();
         }

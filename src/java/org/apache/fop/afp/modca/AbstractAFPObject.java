@@ -181,7 +181,7 @@ public abstract class AbstractAFPObject implements Streamable {
     public interface Type {
 
         /** Attribute */
-        byte ATTRIBUTE = (byte)0x0A;
+        byte ATTRIBUTE = (byte)0xA0;
 
         /** Copy Count */
         byte COPY_COUNT = (byte)0xA2;
