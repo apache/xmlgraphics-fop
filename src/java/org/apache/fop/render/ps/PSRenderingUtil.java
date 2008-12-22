@@ -28,6 +28,8 @@ import java.util.List;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.ps.extensions.PSCommentAfter;
+import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 
@@ -157,26 +159,32 @@ public class PSRenderingUtil implements PSConfigurationConstants {
      */
     public static void writeEnclosedExtensionAttachment(PSGenerator gen,
                 PSExtensionAttachment attachment) throws IOException {
-        String info = "";
-        if (attachment instanceof PSSetupCode) {
-            PSSetupCode setupCodeAttach = (PSSetupCode)attachment;
-            String name = setupCodeAttach.getName();
-            if (name != null) {
-                info += ": (" + name + ")";
+        if (attachment instanceof PSCommentBefore) {
+            gen.commentln("%" + attachment.getContent());
+        } else if (attachment instanceof PSCommentAfter) {
+            gen.commentln("%" + attachment.getContent());
+        } else {
+            String info = "";
+            if (attachment instanceof PSSetupCode) {
+                PSSetupCode setupCodeAttach = (PSSetupCode)attachment;
+                String name = setupCodeAttach.getName();
+                if (name != null) {
+                    info += ": (" + name + ")";
+                }
             }
-        }
-        String type = attachment.getType();
-        gen.commentln("%FOPBegin" + type + info);
-        LineNumberReader reader = new LineNumberReader(
-                new java.io.StringReader(attachment.getContent()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            line = line.trim();
-            if (line.length() > 0) {
-                gen.writeln(line);
+            String type = attachment.getType();
+            gen.commentln("%FOPBegin" + type + info);
+            LineNumberReader reader = new LineNumberReader(
+                    new java.io.StringReader(attachment.getContent()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.length() > 0) {
+                    gen.writeln(line);
+                }
             }
+            gen.commentln("%FOPEnd" + type);
         }
-        gen.commentln("%FOPEnd" + type);
     }
 
     /**

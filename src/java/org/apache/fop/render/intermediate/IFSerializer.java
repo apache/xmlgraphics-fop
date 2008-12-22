@@ -226,7 +226,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "index", Integer.toString(index));
             addAttribute(atts, "name", name);
-            addAttribute(atts, "page-master-name", name);
+            addAttribute(atts, "page-master-name", pageMasterName);
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
             handler.startElement(EL_PAGE, atts);
