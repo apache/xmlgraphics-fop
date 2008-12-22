@@ -308,6 +308,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
             if (XMPMetadata.CATEGORY.equals(attachment.getCategory())) {
                 renderXMPMetadata((XMPMetadata)attachment);
+            } else {
+                try {
+                    this.documentHandler.handleExtensionObject(attachment);
+                } catch (IFException ife) {
+                    handleIFException(ife);
+                }
             }
         }
     }
@@ -551,7 +557,16 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(),
                     page.getSimplePageMasterName(), dim);
             documentHandler.startPageHeader();
-            //TODO Handle page header
+
+            //Add page attachments to page header
+            if (page.hasExtensionAttachments()) {
+                for (Iterator iter = page.getExtensionAttachments().iterator();
+                    iter.hasNext();) {
+                    ExtensionAttachment attachment = (ExtensionAttachment) iter.next();
+                    this.documentHandler.handleExtensionObject(attachment);
+                }
+            }
+
             documentHandler.endPageHeader();
             this.painter = documentHandler.startPageContent();
             super.renderPage(page);

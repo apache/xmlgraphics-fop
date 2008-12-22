@@ -20,13 +20,13 @@
 package org.apache.fop.render.ps;
 
 import java.awt.Dimension;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.java2d.Dimension2DDouble;
 import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.PSDictionary;
+import org.apache.xmlgraphics.ps.PSDictionaryFormatException;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSPageDeviceDictionary;
 import org.apache.xmlgraphics.ps.PSProcSets;
@@ -54,8 +57,10 @@ import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
-import org.apache.fop.render.ps.extensions.PSExtensionAttachment;
+import org.apache.fop.render.ps.extensions.PSCommentAfter;
+import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
+import org.apache.fop.render.ps.extensions.PSSetupCode;
 
 /**
  * {@code IFDocumentHandler} implementation that produces PostScript.
@@ -78,6 +83,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private File tempFile;
 
     private int currentPageNumber = 0;
+    private PageDefinition currentPageDefinition;
 
     /** Is used to determine the document's bounding box */
     private Rectangle2D documentBoundingBox;
@@ -94,10 +100,10 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private PSPageDeviceDictionary pageDeviceDictionary;
 
     /** This is a collection holding all document header comments */
-    private Collection headerComments;
-
-    /** This is a collection holding all document footer comments */
-    private Collection footerComments;
+    private Collection[] comments = new Collection[3];
+    private static final int COMMENT_DOCUMENT_HEADER = 0;
+    private static final int COMMENT_DOCUMENT_TRAILER = 1;
+    private static final int COMMENT_PAGE_TRAILER = 2;
 
     /**
      * Default constructor.
@@ -180,12 +186,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         gen.writeDSCComment(DSCConstants.HIRES_BBOX, DSCConstants.ATEND);
         gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES,
                 new Object[] {DSCConstants.ATEND});
-        if (headerComments != null) {
-            for (Iterator iter = headerComments.iterator(); iter.hasNext();) {
-                PSExtensionAttachment comment = (PSExtensionAttachment)iter.next();
-                gen.writeln("%" + comment.getContent());
-            }
-        }
+        writeExtensions(COMMENT_DOCUMENT_HEADER);
         gen.writeDSCComment(DSCConstants.END_COMMENTS);
 
         //Defaults
@@ -225,13 +226,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         try {
             //Write trailer
             gen.writeDSCComment(DSCConstants.TRAILER);
-            if (footerComments != null) {
-                for (Iterator iter = footerComments.iterator(); iter.hasNext();) {
-                    PSExtensionAttachment comment = (PSExtensionAttachment)iter.next();
-                    gen.commentln("%" + comment.getContent());
-                }
-                footerComments.clear();
-            }
+            writeExtensions(COMMENT_DOCUMENT_TRAILER);
             gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
             new DSCCommentBoundingBox(this.documentBoundingBox).generate(gen);
             new DSCCommentHiResBoundingBox(this.documentBoundingBox).generate(gen);
@@ -242,9 +237,6 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             if (psUtil.isOptimizeResources()) {
                 IOUtils.closeQuietly(gen.getOutputStream());
                 rewritePostScriptFile();
-            }
-            if (footerComments != null) {
-                headerComments.clear();
             }
             if (pageDeviceDictionary != null) {
                 pageDeviceDictionary.clear();
@@ -328,6 +320,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 pageSizes.add(new Long(Math.round(pageHeight)));
             }
             pageDeviceDictionary.put("/PageSize", pageSizes);
+            this.currentPageDefinition = new PageDefinition(
+                    new Dimension2DDouble(pageWidth, pageHeight), rotate);
 
             //TODO Handle extension attachments for the page!!!!!!!
             /*
@@ -357,10 +351,6 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 }
             }*/
 
-            if (setupCodeList != null) {
-                PSRenderingUtil.writeEnclosedExtensionAttachments(gen, setupCodeList);
-                setupCodeList.clear();
-            }
             final Integer zero = new Integer(0);
             Rectangle2D pageBoundingBox = new Rectangle2D.Double();
             if (rotate) {
@@ -390,26 +380,25 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                     new Object[] {DSCConstants.ATEND});
 
             gen.commentln("%FOPSimplePageMaster: " + pageMasterName);
+        } catch (IOException ioe) {
+            throw new IFException("I/O error in startPage()", ioe);
+        }
+    }
 
+    /** {@inheritDoc} */
+    public void startPageHeader() throws IFException {
+        super.startPageHeader();
+
+        try {
             gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
+        } catch (IOException ioe) {
+            throw new IFException("I/O error in startPageHeader()", ioe);
+        }
+    }
 
-            //TODO Handle extension attachments for the page!!!!!!!
-            /*
-            if (page.hasExtensionAttachments()) {
-                List extensionAttachments = page.getExtensionAttachments();
-                for (int i = 0; i < extensionAttachments.size(); i++) {
-                    Object attObj = extensionAttachments.get(i);
-                    if (attObj instanceof PSExtensionAttachment) {
-                        PSExtensionAttachment attachment = (PSExtensionAttachment)attObj;
-                        if (attachment instanceof PSCommentBefore) {
-                            gen.commentln("%" + attachment.getContent());
-                        } else if (attachment instanceof PSSetupCode) {
-                            gen.writeln(attachment.getContent());
-                        }
-                    }
-                }
-            }*/
-
+    /** {@inheritDoc} */
+    public void endPageHeader() throws IFException {
+        try {
             // Write any unwritten changes to page device dictionary
             if (!pageDeviceDictionary.isEmpty()) {
                 String content = pageDeviceDictionary.getContent();
@@ -421,15 +410,26 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 PSRenderingUtil.writeEnclosedExtensionAttachment(gen, new PSSetPageDevice(content));
             }
 
-            if (rotate) {
-                gen.writeln(Math.round(pageHeight) + " 0 translate");
+            double pageHeight = this.currentPageDefinition.dimensions.getHeight();
+            if (this.currentPageDefinition.rotate) {
+                gen.writeln(gen.formatDouble(pageHeight) + " 0 translate");
                 gen.writeln("90 rotate");
             }
             gen.concatMatrix(1, 0, 0, -1, 0, pageHeight);
 
             gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);
         } catch (IOException ioe) {
-            throw new IFException("I/O error in startPage()", ioe);
+            throw new IFException("I/O error in endPageHeader()", ioe);
+        }
+
+        super.endPageHeader();
+    }
+
+    private void writeExtensions(int which) throws IOException {
+        Collection extensions = comments[which];
+        if (extensions != null) {
+            PSRenderingUtil.writeEnclosedExtensionAttachments(gen, extensions);
+            extensions.clear();
         }
     }
 
@@ -449,34 +449,94 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void endPage() throws IFException {
+    public void startPageTrailer() throws IFException {
+        super.startPageTrailer();
         try {
             gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
-
-            //TODO Handle extension attachments for the page!!!!!!!
-            /*
-            if (page.hasExtensionAttachments()) {
-                List extensionAttachments = page.getExtensionAttachments();
-                for (int i = 0; i < extensionAttachments.size(); i++) {
-                    Object attObj = extensionAttachments.get(i);
-                    if (attObj instanceof PSExtensionAttachment) {
-                        PSExtensionAttachment attachment = (PSExtensionAttachment)attObj;
-                        if (attachment instanceof PSCommentAfter) {
-                            gen.commentln("%" + attachment.getContent());
-                        }
-                    }
-                }
-            }*/
-            gen.getResourceTracker().writeResources(true, gen);
         } catch (IOException ioe) {
-            throw new IFException("I/O error in endPage()", ioe);
+            throw new IFException("I/O error in startPageTrailer()", ioe);
         }
     }
 
     /** {@inheritDoc} */
+    public void endPageTrailer() throws IFException {
+        try {
+            writeExtensions(COMMENT_PAGE_TRAILER);
+        } catch (IOException ioe) {
+            throw new IFException("I/O error in endPageTrailer()", ioe);
+        }
+        super.endPageTrailer();
+    }
+
+    /** {@inheritDoc} */
+    public void endPage() throws IFException {
+        try {
+            gen.getResourceTracker().writeResources(true, gen);
+        } catch (IOException ioe) {
+            throw new IFException("I/O error in endPage()", ioe);
+        }
+
+        this.currentPageDefinition = null;
+    }
+
+    private boolean inPage() {
+        return this.currentPageDefinition != null;
+    }
+
+    /** {@inheritDoc} */
     public void handleExtensionObject(Object extension) throws IFException {
-        log.debug("Don't know how to handle extension object. Ignoring: "
-                + extension + " (" + extension.getClass().getName() + ")");
+        try {
+            if (extension instanceof PSSetupCode) {
+                if (inPage()) {
+                    PSRenderingUtil.writeEnclosedExtensionAttachment(gen, (PSSetupCode)extension);
+                } else {
+                    //A special collection for setup code as it's put in a different place
+                    //than the "before comments".
+                    if (setupCodeList == null) {
+                        setupCodeList = new java.util.ArrayList();
+                    }
+                    if (!setupCodeList.contains(extension)) {
+                        setupCodeList.add(extension);
+                    }
+                }
+            } else if (extension instanceof PSSetPageDevice) {
+                /**
+                 * Extract all PSSetPageDevice instances from the
+                 * attachment list on the s-p-m and add all dictionary
+                 * entries to our internal representation of the the
+                 * page device dictionary.
+                 */
+                PSSetPageDevice setPageDevice = (PSSetPageDevice)extension;
+                String content = setPageDevice.getContent();
+                if (content != null) {
+                    try {
+                        this.pageDeviceDictionary.putAll(PSDictionary.valueOf(content));
+                    } catch (PSDictionaryFormatException e) {
+                        PSEventProducer eventProducer = PSEventProducer.Provider.get(
+                                getUserAgent().getEventBroadcaster());
+                        eventProducer.postscriptDictionaryParseError(this, content, e);
+                    }
+                }
+            } else if (extension instanceof PSCommentBefore) {
+                if (inPage()) {
+                    PSRenderingUtil.writeEnclosedExtensionAttachment(
+                            gen, (PSCommentBefore)extension);
+                } else {
+                    if (comments[COMMENT_DOCUMENT_HEADER] == null) {
+                        comments[COMMENT_DOCUMENT_HEADER] = new java.util.ArrayList();
+                    }
+                    comments[COMMENT_DOCUMENT_HEADER].add(extension);
+                }
+            } else if (extension instanceof PSCommentAfter) {
+                int targetCollection = (inPage() ? COMMENT_PAGE_TRAILER : COMMENT_DOCUMENT_TRAILER);
+                if (comments[targetCollection] == null) {
+                    comments[targetCollection] = new java.util.ArrayList();
+                }
+                comments[targetCollection].add(extension);
+            }
+        } catch (IOException ioe) {
+            throw new IFException("I/O error in handleExtensionObject()", ioe);
+        }
     }
 
     private String getPostScriptNameForFontKey(String key) {
@@ -538,6 +598,16 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             this.formResources.put(uri, form);
         }
         return form;
+    }
+
+    private static final class PageDefinition {
+        private Dimension2D dimensions;
+        private boolean rotate;
+
+        private PageDefinition(Dimension2D dimensions, boolean rotate) {
+            this.dimensions = dimensions;
+            this.rotate = rotate;
+        }
     }
 
 }
