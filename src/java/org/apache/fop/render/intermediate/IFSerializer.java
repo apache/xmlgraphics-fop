@@ -511,6 +511,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
+            XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
             addAttribute(atts, "x", Integer.toString(x));
             addAttribute(atts, "y", Integer.toString(y));
             if (dx != null) {
