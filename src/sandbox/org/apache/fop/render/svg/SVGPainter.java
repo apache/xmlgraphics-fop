@@ -58,6 +58,7 @@ import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.GenerationHelperContentHandler;
+import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -330,6 +331,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         try {
             establish(MODE_TEXT);
             AttributesImpl atts = new AttributesImpl();
+            XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
             XMLUtil.addAttribute(atts, "x", Integer.toString(x));
             XMLUtil.addAttribute(atts, "y", Integer.toString(y));
             if (dx != null) {

@@ -32,6 +32,9 @@ public interface XMLConstants {
     String XML_PREFIX = "xml";
     /** XML namespace URI */
     String XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace";
+    /** xml:space attribute */
+    org.apache.xmlgraphics.util.QName XML_SPACE = new org.apache.xmlgraphics.util.QName(
+            XML_NAMESPACE, XML_PREFIX, "space");
 
     /** XMLNS namespace prefix */
     String XMLNS_PREFIX = "xmlns";
