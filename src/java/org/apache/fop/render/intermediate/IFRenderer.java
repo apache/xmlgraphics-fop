@@ -1002,10 +1002,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     protected void renderText(String s,
                            int[] letterAdjust,
                            Font font, AbstractTextArea parentArea) {
-        //float fontSize = font.getFontSize() / 1000f;
-
         int l = s.length();
 
+        if (letterAdjust != null) {
+            textUtil.adjust(letterAdjust[0]);
+        }
         for (int i = 0; i < l; i++) {
             char ch = s.charAt(i);
             textUtil.addChar(ch);
@@ -1014,8 +1015,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
                 glyphAdjust += tls;
             }
-            if (letterAdjust != null && i < l) {
-                glyphAdjust += letterAdjust[i];
+            if (letterAdjust != null && i < l - 1) {
+                glyphAdjust += letterAdjust[i + 1];
             }
 
             textUtil.adjust(glyphAdjust);
@@ -1035,7 +1036,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         void adjust(int adjust) {
             if (adjust != 0) {
-                int idx = text.length() - 1;
+                int idx = text.length();
                 if (idx > dx.length - 1) {
                     int newSize = Math.max(dx.length, idx + 1) + INITIAL_BUFFER_SIZE;
                     int[] newDX = new int[newSize];

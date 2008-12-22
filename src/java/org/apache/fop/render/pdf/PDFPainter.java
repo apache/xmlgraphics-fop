@@ -283,7 +283,7 @@ public class PDFPainter extends AbstractIFPainter {
         int dxl = (dx != null ? dx.length : 0);
 
         if (dx != null && dxl > 0 && dx[0] != 0) {
-            textutil.adjustGlyphTJ(-dx[0] / 10f);
+            textutil.adjustGlyphTJ(-dx[0] / fontSize);
         }
         for (int i = 0; i < l; i++) {
             char orgChar = text.charAt(i);
