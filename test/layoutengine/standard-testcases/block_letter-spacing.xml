@@ -62,4 +62,20 @@
     <eval expected="2000" xpath="//flow/block[8]/lineArea[3]/text/@tlsadjust"/>
     <eval expected="2000" xpath="//flow/block[8]/lineArea[4]/text/@tlsadjust"/>
   </checks>
+  <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
+    <eval expected="Default space between characters is defined to be 0pt, i.e.," xpath="//if:text[2]"/>
+    <eval expected="0" xpath="//if:text[2]/@x"/>
+    <eval expected="24666" xpath="//if:text[2]/@y"/>
+    <true xpath="not(//if:text[2]/@dx)"/>
+
+    <eval expected="Default space between characters is defined to" xpath="//if:text[14]"/>
+    <eval expected="0" xpath="//if:text[14]/@x"/>
+    <eval expected="197466" xpath="//if:text[14]/@y"/>
+    <eval expected="0 2000 2000 2000 2000 2000 2000 0 4000 2000 2000 2000 2000 0 4000 2000 2000 2000 2000 2000 2000 0 4000 2000 2000 2000 2000 2000 2000 2000 2000 2000 0 4000 2000 0 4000 2000 2000 2000 2000 2000 2000 0 4000 2000" xpath="//if:text[14]/@dx"/>
+
+    <eval expected="Default space between characters is defined to be" xpath="//if:text[20]"/>
+    <eval expected="0" xpath="//if:text[20]/@x"/>
+    <eval expected="283866" xpath="//if:text[20]/@y"/>
+    <eval expected="0 1938 1938 1938 1938 1938 1938 0 3836 1938 1938 1938 1938 0 3836 1938 1938 1938 1938 1938 1938 0 3836 1938 1938 1938 1938 1938 1938 1938 1938 1938 0 3836 1938 0 3836 1938 1938 1938 1938 1938 1938 0 3836 1938 0 3836 1938" xpath="//if:text[20]/@dx"/>
+  </if-checks>
 </testcase>
