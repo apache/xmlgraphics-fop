@@ -215,7 +215,7 @@ public abstract class FObj extends FONode implements Constants {
      * @param parent    the (cloned) parent node
      * @throws FOPException when the child could not be added to the parent
      */
-    protected static void addChildTo(FONode child, FObj parent)
+    protected static void addChildTo(FONode child, FONode parent)
                             throws FOPException {
         parent.addChildNode(child);
     }
@@ -573,11 +573,11 @@ public abstract class FObj extends FONode implements Constants {
         }
     }
 
-    /** @return true if this FObj has extension attachments */ 
+    /** @return true if this FObj has extension attachments */
     public boolean hasExtensionAttachments() {
         return extensionAttachments != null;
     }
-    
+
     /**
      * Adds a foreign attribute to this FObj.
      * @param attributeName the attribute name as a QName instance

@@ -30,8 +30,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TableFObj;
 
 /**
  * Abstract base class for the <a href="http://www.w3.org/TR/xsl/#fo_retrieve-marker">
@@ -102,7 +102,7 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
                         getLocator(),
                         pList,
                         newPropertyList);
-                addChildTo(newChild, (FObj) newParent);
+                addChildTo(newChild, newParent);
                 if (newChild.getNameId() == FO_TABLE) {
                     Table t = (Table) child;
                     cloneSubtree(t.getColumns().iterator(),
@@ -117,7 +117,9 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
             } else if (child instanceof FOText) {
                 FOText ft = (FOText) newChild;
                 ft.bind(parentPropertyList);
-                addChildTo(newChild, (FObj) newParent);
+                addChildTo(newChild, newParent);
+            } else if (child instanceof XMLObj) {
+                addChildTo(newChild, newParent);
             }
 
             // trigger end-of-node white-space handling
