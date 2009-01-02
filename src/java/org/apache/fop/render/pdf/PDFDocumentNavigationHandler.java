@@ -86,8 +86,9 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
             parent = getPDFDoc().getOutlineRoot();
         }
         PDFAction action = getAction(bookmark.getAction());
+        String actionRef = (action != null ? action.makeReference().toString() : null);
         PDFOutline pdfOutline = getPDFDoc().getFactory().makeOutline(parent,
-            bookmark.getTitle(), action.makeReference().toString(), bookmark.isShown());
+            bookmark.getTitle(), actionRef, bookmark.isShown());
         Iterator iter = bookmark.getChildBookmarks().iterator();
         while (iter.hasNext()) {
             Bookmark b = (Bookmark)iter.next();
@@ -109,7 +110,9 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         //TODO Revisit when PDFLink is converted to a PDFDictionary
         PDFLink pdfLink = getPDFDoc().getFactory().makeLink(
                 targetRect2D, pdfAction);
-        documentHandler.currentPage.addAnnotation(pdfLink);
+        if (pdfLink != null) {
+            documentHandler.currentPage.addAnnotation(pdfLink);
+        }
     }
 
     /**
@@ -134,6 +137,9 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
     }
 
     private PDFAction getAction(AbstractAction action) {
+        if (action == null) {
+            return null;
+        }
         PDFAction pdfAction = (PDFAction)this.completeActions.get(action.getID());
         if (pdfAction != null) {
             return pdfAction;
