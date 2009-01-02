@@ -20,7 +20,10 @@
 package org.apache.fop.fo.properties;
 
 import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
@@ -29,7 +32,9 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -362,6 +367,7 @@ public class CommonBorderPaddingBackground {
                 && !("".equals(newInstance.backgroundImage))) {
             //Additional processing: preload image
             String uri = URISpecification.getURL(newInstance.backgroundImage);
+            FObj fobj = pList.getFObj();
             FOUserAgent userAgent = pList.getFObj().getUserAgent();
             ImageManager manager = userAgent.getFactory().getImageManager();
             ImageSessionContext sessionContext = userAgent.getImageSessionContext();
@@ -369,10 +375,19 @@ public class CommonBorderPaddingBackground {
             try {
                 info = manager.getImageInfo(uri, sessionContext);
                 newInstance.backgroundImageInfo = info;
-            } catch (Exception e) {
-                Property.log.error("Background image not available: " + uri);
+            } catch (ImageException e) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        fobj.getUserAgent().getEventBroadcaster());
+                eventProducer.imageError(fobj, uri, e, fobj.getLocator());
+            } catch (FileNotFoundException fnfe) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        fobj.getUserAgent().getEventBroadcaster());
+                eventProducer.imageNotFound(fobj, uri, fnfe, fobj.getLocator());
+            } catch (IOException ioe) {
+                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                        fobj.getUserAgent().getEventBroadcaster());
+                eventProducer.imageIOError(fobj, uri, ioe, fobj.getLocator());
             }
-            //TODO Report to caller so he can decide to throw an exception
         }
 
         return (cachedInstance != null ? cachedInstance : newInstance);
