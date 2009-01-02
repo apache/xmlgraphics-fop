@@ -53,6 +53,9 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="JM" type="fix" fixes-bug="45306">
+        Fixed fo:instream-foreign-object inside fo:marker.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed black backgrounds occurring for transparent images in PCL output.
       </action>
