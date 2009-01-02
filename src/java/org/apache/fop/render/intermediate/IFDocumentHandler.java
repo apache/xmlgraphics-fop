@@ -23,7 +23,6 @@ import java.awt.Dimension;
 
 import javax.xml.transform.Result;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 
 /**
@@ -76,16 +75,16 @@ import org.apache.fop.fonts.FontInfo;
 public interface IFDocumentHandler {
 
     /**
-     * Set the user agent.
-     * @param userAgent  The user agent
+     * Sets the intermediate format context object.
+     * @param context the context object
      */
-    void setUserAgent(FOUserAgent userAgent);
+    void setContext(IFContext context);
 
     /**
-     * Returns the associated user agent.
-     * @return the user agent
+     * Returns the associated intermediate format context object.
+     * @return the context object
      */
-    FOUserAgent getUserAgent();
+    IFContext getContext();
 
     /**
      * Sets the JAXP Result object to receive the generated content.

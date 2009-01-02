@@ -32,14 +32,15 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.UnitConv;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.java2d.Java2DPainter;
+import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 
 /**
  * {@code IFDocumentHandler} implementation that produces PCL 5.
@@ -84,9 +85,9 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent ua) {
-        super.setUserAgent(ua);
-        this.pclUtil = new PCLRenderingUtil(ua);
+    public void setContext(IFContext context) {
+        super.setContext(context);
+        this.pclUtil = new PCLRenderingUtil(context.getUserAgent());
     }
 
     /** {@inheritDoc} */
@@ -173,24 +174,23 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void startPage(int index, String name, String pageMasterName, Dimension size) throws IFException {
+    public void startPage(int index, String name, String pageMasterName, Dimension size)
+            throws IFException {
 
         try {
-            //TODO Add support for paper-source and duplex-mode
-            /*
             //Paper source
-            String paperSource = page.getForeignAttributeValue(
-                    new QName(PCLElementMapping.NAMESPACE, null, "paper-source"));
+            Object paperSource = getContext().getForeignAttribute(
+                    PCLElementMapping.PCL_PAPER_SOURCE);
             if (paperSource != null) {
-                gen.selectPaperSource(Integer.parseInt(paperSource));
+                gen.selectPaperSource(Integer.parseInt(paperSource.toString()));
             }
 
             // Is Page duplex?
-            String pageDuplex = page.getForeignAttributeValue(
-                    new QName(PCLElementMapping.NAMESPACE, null, "duplex-mode"));
+            Object pageDuplex = getContext().getForeignAttribute(
+                    PCLElementMapping.PCL_DUPLEX_MODE);
             if (pageDuplex != null) {
-                gen.selectDuplexMode(Integer.parseInt(pageDuplex));
-            }*/
+                gen.selectDuplexMode(Integer.parseInt(pageDuplex.toString()));
+            }
 
             //Page size
             final long pagewidth = size.width;
@@ -240,7 +240,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         graphics2D.scale(scale / 1000f, scale / 1000f);
         graphics2D.translate(-printArea.x, -printArea.y);
 
-        return new Java2DPainter(graphics2D, getUserAgent(), getFontInfo());
+        return new Java2DPainter(graphics2D, getContext(), getFontInfo());
     }
 
     private BufferedImage createBufferedImage(int bitmapWidth, int bitmapHeight) {

@@ -99,17 +99,27 @@ public class DocumentNavigationHandler extends DefaultHandler
                 Link link = new Link(null, targetRect);
                 objectStack.push(link);
             } else if (GOTO_XY.getLocalName().equals(localName)) {
-                String id = attributes.getValue("id");
-                int pageIndex = XMLUtil.getAttributeAsInt(attributes, "page-index");
-                int x = XMLUtil.getAttributeAsInt(attributes, "x");
-                int y = XMLUtil.getAttributeAsInt(attributes, "y");
-                GoToXYAction action = new GoToXYAction(id, pageIndex, new Point(x, y));
+                String idref = attributes.getValue("idref");
+                GoToXYAction action;
+                if (idref != null) {
+                    action = new GoToXYAction(idref);
+                } else {
+                    String id = attributes.getValue("id");
+                    int pageIndex = XMLUtil.getAttributeAsInt(attributes, "page-index");
+                    int x = XMLUtil.getAttributeAsInt(attributes, "x");
+                    int y = XMLUtil.getAttributeAsInt(attributes, "y");
+                    action = new GoToXYAction(id, pageIndex, new Point(x, y));
+                }
                 objectStack.push(action);
             } else if (GOTO_URI.getLocalName().equals(localName)) {
+                String id = attributes.getValue("id");
                 String gotoURI = attributes.getValue("uri");
                 String showDestination = attributes.getValue("show-destination");
                 boolean newWindow = "new".equals(showDestination);
                 URIAction action = new URIAction(gotoURI, newWindow);
+                if (id != null) {
+                    action.setID(id);
+                }
                 objectStack.push(action);
             } else {
                 throw new SAXException(

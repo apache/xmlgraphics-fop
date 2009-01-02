@@ -26,14 +26,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
-import java.util.Map;
 
 import org.w3c.dom.Document;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -46,6 +44,7 @@ import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
@@ -80,8 +79,8 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    protected FOUserAgent getUserAgent() {
-        return this.documentHandler.getUserAgent();
+    protected IFContext getContext() {
+        return this.documentHandler.getContext();
     }
 
     PDFRenderingUtil getPDFUtil() {
@@ -123,7 +122,7 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
         PDFXObject xobject = getPDFDoc().getXObject(uri);
         if (xobject != null) {
             placeImage(rect, xobject);
@@ -161,7 +160,7 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         drawImageUsingDocument(doc, rect);
 
         flushPDFDoc();

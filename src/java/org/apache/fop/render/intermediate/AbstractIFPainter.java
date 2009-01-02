@@ -73,10 +73,18 @@ public abstract class AbstractIFPainter implements IFPainter {
     }
 
     /**
+     * Returns the intermediate format context object.
+     * @return the context object
+     */
+    protected abstract IFContext getContext();
+
+    /**
      * Returns the user agent.
      * @return the user agent
      */
-    protected abstract FOUserAgent getUserAgent();
+    protected FOUserAgent getUserAgent() {
+        return getContext().getUserAgent();
+    }
 
     /**
      * Returns the FOP factory.

@@ -36,6 +36,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFParser;
 import org.apache.fop.render.intermediate.IFRenderer;
@@ -87,7 +88,7 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
 
         //Setup painter
         IFSerializer serializer = new IFSerializer();
-        serializer.setUserAgent(userAgent);
+        serializer.setContext(new IFContext(userAgent));
         serializer.mimicDocumentHandler(targetHandler);
         serializer.setResult(domResult);
 
@@ -125,7 +126,7 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
         FOUserAgent userAgent = createUserAgent();
 
         IFSerializer serializer = new IFSerializer();
-        serializer.setUserAgent(userAgent);
+        serializer.setContext(new IFContext(userAgent));
         DOMResult domResult = new DOMResult();
         serializer.setResult(domResult);
 

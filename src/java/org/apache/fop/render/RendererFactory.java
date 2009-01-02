@@ -262,7 +262,7 @@ public class RendererFactory {
 
     private Renderer createRendererForDocumentHandler(IFDocumentHandler documentHandler) {
         IFRenderer rend = new IFRenderer();
-        rend.setUserAgent(documentHandler.getUserAgent());
+        rend.setUserAgent(documentHandler.getContext().getUserAgent());
         rend.setDocumentHandler(documentHandler);
         return rend;
     }

@@ -22,6 +22,7 @@ package org.apache.fop.render.pcl;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
@@ -36,7 +37,7 @@ public class PCLDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
     /** {@inheritDoc} */
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
         PCLDocumentHandler handler = new PCLDocumentHandler();
-        handler.setUserAgent(ua);
+        handler.setContext(new IFContext(ua));
         return handler;
     }
 
