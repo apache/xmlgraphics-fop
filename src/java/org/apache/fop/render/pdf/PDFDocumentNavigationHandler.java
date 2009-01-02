@@ -158,7 +158,10 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
             assert u.isComplete();
             PDFFactory factory = getPDFDoc().getFactory();
             pdfAction = factory.getExternalAction(u.getURI(), u.isNewWindow());
-            getPDFDoc().registerObject(pdfAction);
+            if (!pdfAction.hasObjectNumber()) {
+                //Some PDF actions a pooled
+                getPDFDoc().registerObject(pdfAction);
+            }
             this.completeActions.put(action.getID(), pdfAction);
             return pdfAction;
         } else {
