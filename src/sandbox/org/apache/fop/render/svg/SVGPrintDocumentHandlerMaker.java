@@ -21,6 +21,7 @@ package org.apache.fop.render.svg;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
@@ -34,7 +35,7 @@ public class SVGPrintDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker
     /** {@inheritDoc} */
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
         SVGPrintDocumentHandler handler = new SVGPrintDocumentHandler();
-        handler.setUserAgent(ua);
+        handler.setContext(new IFContext(ua));
         return handler;
     }
 

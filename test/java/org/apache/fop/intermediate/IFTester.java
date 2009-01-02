@@ -51,6 +51,7 @@ import org.apache.fop.area.RenderPagesModel;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.layoutengine.EvalCheck;
 import org.apache.fop.layoutengine.TrueCheck;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFRenderer;
 import org.apache.fop.render.intermediate.IFSerializer;
 import org.apache.fop.util.DelegatingContentHandler;
@@ -113,7 +114,7 @@ public class IFTester {
             ifRenderer.setUserAgent(ua);
 
             IFSerializer serializer = new IFSerializer();
-            serializer.setUserAgent(ua);
+            serializer.setContext(new IFContext(ua));
             DOMResult result = new DOMResult();
             serializer.setResult(result);
             ifRenderer.setDocumentHandler(serializer);

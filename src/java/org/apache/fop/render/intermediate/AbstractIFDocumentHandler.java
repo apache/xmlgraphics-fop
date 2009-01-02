@@ -32,7 +32,7 @@ public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
     /** logging instance */
     private static Log log = LogFactory.getLog(AbstractIFDocumentHandler.class);
 
-    private FOUserAgent userAgent;
+    private IFContext ifContext;
 
     /**
      * Default constructor.
@@ -41,16 +41,21 @@ public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent ua) {
-        if (this.userAgent != null) {
-            throw new IllegalStateException("The user agent was already set");
-        }
-        this.userAgent = ua;
+    public void setContext(IFContext context) {
+        this.ifContext = context;
     }
 
     /** {@inheritDoc} */
+    public IFContext getContext() {
+        return this.ifContext;
+    }
+
+    /**
+     * Returns the associated user agent.
+     * @return the user agent
+     */
     public FOUserAgent getUserAgent() {
-        return this.userAgent;
+        return getContext().getUserAgent();
     }
 
     /** {@inheritDoc} */

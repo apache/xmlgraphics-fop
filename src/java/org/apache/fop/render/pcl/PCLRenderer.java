@@ -56,7 +56,6 @@ import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOPException;
@@ -284,15 +283,13 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         saveGraphicsState();
 
         //Paper source
-        String paperSource = page.getForeignAttributeValue(
-                new QName(PCLElementMapping.NAMESPACE, null, "paper-source"));
+        String paperSource = page.getForeignAttributeValue(PCLElementMapping.PCL_PAPER_SOURCE);
         if (paperSource != null) {
             gen.selectPaperSource(Integer.parseInt(paperSource));
         }
 
         // Is Page duplex?
-        String pageDuplex = page.getForeignAttributeValue(
-                new QName(PCLElementMapping.NAMESPACE, null, "duplex-mode"));
+        String pageDuplex = page.getForeignAttributeValue(PCLElementMapping.PCL_DUPLEX_MODE);
         if (pageDuplex != null) {
             gen.selectDuplexMode(Integer.parseInt(pageDuplex));
         }
@@ -534,7 +531,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
                     public Dimension getImageSize() {
                         return paintRect.getSize();
                     }
-                    
+
                 };
                 g2a.paintImage(painter, rc,
                         paintRect.x, paintRect.y, paintRect.width, paintRect.height);

@@ -229,6 +229,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "page-master-name", pageMasterName);
             addAttribute(atts, "width", Integer.toString(size.width));
             addAttribute(atts, "height", Integer.toString(size.height));
+            addForeignAttributes(atts);
             handler.startElement(EL_PAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPage()", e);
@@ -278,7 +279,6 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void startPageTrailer() throws IFException {
         try {
             handler.startElement(EL_PAGE_TRAILER);
-            commitNavigation();
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageTrailer()", e);
         }
@@ -287,6 +287,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void endPageTrailer() throws IFException {
         try {
+            commitNavigation();
             handler.endElement(EL_PAGE_TRAILER);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageTrailer()", e);
@@ -375,7 +376,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, XLINK_HREF, uri);
@@ -383,34 +384,33 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "y", Integer.toString(rect.y));
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
-            if (foreignAttributes != null) {
-                Iterator iter = foreignAttributes.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry)iter.next();
-                    addAttribute(atts, (QName)entry.getKey(), entry.getValue().toString());
-                }
-            }
+            addForeignAttributes(atts);
             handler.element(EL_IMAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
         }
     }
 
+    private void addForeignAttributes(AttributesImpl atts) {
+        Map foreignAttributes = getContext().getForeignAttributes();
+        if (!foreignAttributes.isEmpty()) {
+            Iterator iter = foreignAttributes.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry)iter.next();
+                addAttribute(atts, (QName)entry.getKey(), entry.getValue().toString());
+            }
+        }
+    }
+
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x", Integer.toString(rect.x));
             addAttribute(atts, "y", Integer.toString(rect.y));
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
-            if (foreignAttributes != null) {
-                Iterator iter = foreignAttributes.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry)iter.next();
-                    addAttribute(atts, (QName)entry.getKey(), entry.getValue().toString());
-                }
-            }
+            addForeignAttributes(atts);
             handler.startElement(EL_IMAGE, atts);
             new DOM2SAX(handler).writeDocument(doc, true);
             handler.endElement(EL_IMAGE);
@@ -499,7 +499,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "x2", Integer.toString(end.x));
             addAttribute(atts, "y2", Integer.toString(end.y));
             addAttribute(atts, "stroke-width", Integer.toString(width));
-            addAttribute(atts, "color", Integer.toString(width));
+            addAttribute(atts, "color", ColorUtil.colorToString(color));
             addAttribute(atts, "style", style.getName());
             handler.element(EL_LINE, atts);
         } catch (SAXException e) {
@@ -698,9 +698,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void addResolvedAction(AbstractAction action) throws IFException {
         assert action.isComplete();
         assert action.hasID();
-        AbstractAction noted = (AbstractAction)incompleteActions.get(action.getID());
+        AbstractAction noted = (AbstractAction)incompleteActions.remove(action.getID());
         if (noted != null) {
-            incompleteActions.remove(action.getID());
             completeActions.add(action);
         } else {
             //ignore as it was already complete when it was first used.

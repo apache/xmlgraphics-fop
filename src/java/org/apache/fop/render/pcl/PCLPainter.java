@@ -45,11 +45,11 @@ import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.java2d.FontMetricsMapper;
@@ -83,6 +83,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     /**
      * Main constructor.
      * @param parent the parent document handler
+     * @param pageDefinition the page definition describing the page to be rendered
      */
     public PCLPainter(PCLDocumentHandler parent, PCLPageDefinition pageDefinition) {
         this.parent = parent;
@@ -92,8 +93,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
-    public FOUserAgent getUserAgent() {
-        return this.parent.getUserAgent();
+    public IFContext getContext() {
+        return this.parent.getContext();
     }
 
     PCLRenderingUtil getPCLUtil() {
@@ -152,8 +153,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
-        drawImageUsingURI(uri, rect/*, foreignAttributes*/);
+    public void drawImage(String uri, Rectangle rect) throws IFException {
+        drawImageUsingURI(uri, rect);
     }
 
     /** {@inheritDoc} */
@@ -174,7 +175,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         drawImageUsingDocument(doc, rect);
     }
 
@@ -225,7 +226,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                     g2d.translate(-rect.x, -rect.y);
 
                     Java2DPainter painter = new Java2DPainter(g2d,
-                            getUserAgent(), parent.getFontInfo(), state);
+                            getContext(), parent.getFontInfo(), state);
                     try {
                         painter.drawBorderRect(rect, before, after, start, end);
                     } catch (IFException e) {
@@ -260,7 +261,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                 g2d.translate(-boundingBox.x, -boundingBox.y);
 
                 Java2DPainter painter = new Java2DPainter(g2d,
-                        getUserAgent(), parent.getFontInfo(), state);
+                        getContext(), parent.getFontInfo(), state);
                 try {
                     painter.drawLine(start, end, width, color, style);
                 } catch (IFException e) {
@@ -458,7 +459,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                     g2d.draw(rect);
                 }
                 Java2DPainter painter = new Java2DPainter(g2d,
-                        getUserAgent(), parent.getFontInfo(), state);
+                        getContext(), parent.getFontInfo(), state);
                 try {
                     painter.drawText(x, y, dx, dy, text);
                 } catch (IFException e) {

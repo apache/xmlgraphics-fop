@@ -29,7 +29,6 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Stack;
 
 import org.w3c.dom.Document;
@@ -37,12 +36,12 @@ import org.w3c.dom.Document;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
@@ -56,8 +55,8 @@ public class Java2DPainter extends AbstractIFPainter {
     /** logging instance */
     private static Log log = LogFactory.getLog(Java2DPainter.class);
 
-    /** the FO user agent */
-    protected FOUserAgent userAgent;
+    /** the IF context */
+    protected IFContext ifContext;
 
     /** The font information */
     protected FontInfo fontInfo;
@@ -71,23 +70,23 @@ public class Java2DPainter extends AbstractIFPainter {
     /**
      * Main constructor.
      * @param g2d the target Graphics2D instance
-     * @param userAgent the user agent
+     * @param context the IF context
      * @param fontInfo the font information
      */
-    public Java2DPainter(Graphics2D g2d, FOUserAgent userAgent, FontInfo fontInfo) {
-        this(g2d, userAgent, fontInfo, null);
+    public Java2DPainter(Graphics2D g2d, IFContext context, FontInfo fontInfo) {
+        this(g2d, context, fontInfo, null);
     }
 
     /**
      * Special constructor for embedded use (when another painter uses Java2DPainter
      * to convert part of a document into a bitmap, for example).
      * @param g2d the target Graphics2D instance
-     * @param userAgent the user agent
+     * @param context the IF context
      * @param fontInfo the font information
      */
-    public Java2DPainter(Graphics2D g2d, FOUserAgent userAgent, FontInfo fontInfo, IFState state) {
+    public Java2DPainter(Graphics2D g2d, IFContext context, FontInfo fontInfo, IFState state) {
         super();
-        this.userAgent = userAgent;
+        this.ifContext = context;
         if (state != null) {
             this.state = state.push();
         } else {
@@ -99,8 +98,8 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public FOUserAgent getUserAgent() {
-        return this.userAgent;
+    public IFContext getContext() {
+        return this.ifContext;
     }
 
     /**
@@ -155,7 +154,7 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
         drawImageUsingURI(uri, rect);
     }
 
@@ -167,7 +166,7 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         drawImageUsingDocument(doc, rect);
     }
 

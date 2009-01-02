@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.xmp.Metadata;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAnnotList;
@@ -39,6 +38,7 @@ import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
@@ -99,9 +99,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent ua) {
-        super.setUserAgent(ua);
-        this.pdfUtil = new PDFRenderingUtil(ua);
+    public void setContext(IFContext context) {
+        super.setContext(context);
+        this.pdfUtil = new PDFRenderingUtil(context.getUserAgent());
     }
 
     /** {@inheritDoc} */

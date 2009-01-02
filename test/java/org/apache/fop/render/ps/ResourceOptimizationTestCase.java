@@ -45,6 +45,7 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPage;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPages;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.intermediate.IFContext;
 
 /**
  * Tests the PostScript resource optimization (selective de-duplication of
@@ -77,7 +78,7 @@ public class ResourceOptimizationTestCase extends AbstractPostScriptTestCase {
     public void testResourceOptimizationWithIF() throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         PSDocumentHandler handler = new PSDocumentHandler();
-        handler.setUserAgent(ua);
+        handler.setContext(new IFContext(ua));
         // This is the important part: we're enabling resource optimization
         handler.getPSUtil().setOptimizeResources(true);
         ua.setDocumentHandlerOverride(handler);

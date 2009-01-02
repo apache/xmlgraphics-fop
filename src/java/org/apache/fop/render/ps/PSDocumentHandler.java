@@ -49,11 +49,11 @@ import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -122,9 +122,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent ua) {
-        super.setUserAgent(ua);
-        this.psUtil = new PSRenderingUtil(ua);
+    public void setContext(IFContext context) {
+        super.setContext(context);
+        this.psUtil = new PSRenderingUtil(context.getUserAgent());
     }
 
     /** {@inheritDoc} */

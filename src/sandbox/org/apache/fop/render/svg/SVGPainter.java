@@ -44,13 +44,13 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.xmp.Metadata;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFConstants;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
@@ -93,8 +93,8 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     }
 
     /** {@inheritDoc} */
-    protected FOUserAgent getUserAgent() {
-        return parent.getUserAgent();
+    protected IFContext getContext() {
+        return parent.getContext();
     }
 
     /** {@inheritDoc} */
@@ -197,7 +197,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
             = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
         try {
             establish(MODE_NORMAL);
 
@@ -208,6 +208,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
                 info = manager.getImageInfo(uri, sessionContext);
 
                 String mime = info.getMimeType();
+                Map foreignAttributes = getContext().getForeignAttributes();
                 String conversionMode = (String)foreignAttributes.get(CONVERSION_MODE);
                 if ("reference".equals(conversionMode)
                         && (MimeConstants.MIME_GIF.equals(mime)
@@ -245,7 +246,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         try {
             establish(MODE_NORMAL);
 

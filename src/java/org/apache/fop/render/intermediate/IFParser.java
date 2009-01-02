@@ -151,6 +151,13 @@ public class IFParser implements IFConstants {
             elementHandlers.put(EL_IMAGE, new ImageHandler());
         }
 
+        private void establishForeignAttributes(Map foreignAttributes) {
+            documentHandler.getContext().setForeignAttributes(foreignAttributes);
+        }
+
+        private void resetForeignAttributes() {
+            documentHandler.getContext().resetForeignAttributes();
+        }
 
         /** {@inheritDoc} */
         public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -348,7 +355,11 @@ public class IFParser implements IFConstants {
                 String pageMasterName = attributes.getValue("page-master-name");
                 int width = Integer.parseInt(attributes.getValue("width"));
                 int height = Integer.parseInt(attributes.getValue("height"));
-                documentHandler.startPage(index, name, pageMasterName, new Dimension(width, height));
+                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                establishForeignAttributes(foreignAttributes);
+                documentHandler.startPage(index, name, pageMasterName,
+                        new Dimension(width, height));
+                resetForeignAttributes();
             }
 
             public void endElement() throws IFException {
@@ -547,9 +558,10 @@ public class IFParser implements IFConstants {
                 int width = Integer.parseInt(lastAttributes.getValue("width"));
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
                 Map foreignAttributes = getForeignAttributes(lastAttributes);
+                establishForeignAttributes(foreignAttributes);
                 if (foreignObject != null) {
                     painter.drawImage(foreignObject,
-                            new Rectangle(x, y, width, height), foreignAttributes);
+                            new Rectangle(x, y, width, height));
                     foreignObject = null;
                 } else {
                     String uri = lastAttributes.getValue(
@@ -557,8 +569,9 @@ public class IFParser implements IFConstants {
                     if (uri == null) {
                         throw new IFException("xlink:href is missing on image", null);
                     }
-                    painter.drawImage(uri, new Rectangle(x, y, width, height), foreignAttributes);
+                    painter.drawImage(uri, new Rectangle(x, y, width, height));
                 }
+                resetForeignAttributes();
                 inForeignObject = false;
             }
 

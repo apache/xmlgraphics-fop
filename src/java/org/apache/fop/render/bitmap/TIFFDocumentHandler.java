@@ -32,11 +32,11 @@ import org.apache.xmlgraphics.image.writer.ImageWriter;
 import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
 import org.apache.xmlgraphics.image.writer.MultiImageWriter;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -80,11 +80,11 @@ public class TIFFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent ua) {
-        super.setUserAgent(ua);
+    public void setContext(IFContext context) {
+        super.setContext(context);
 
         //Set target resolution
-        int dpi = Math.round(ua.getTargetResolution());
+        int dpi = Math.round(context.getUserAgent().getTargetResolution());
         getSettings().getWriterParams().setResolution(dpi);
     }
 
@@ -213,7 +213,7 @@ public class TIFFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 RenderingHints.VALUE_STROKE_PURE);
         graphics2D.scale(scale / 1000f, scale / 1000f);
 
-        return new Java2DPainter(graphics2D, getUserAgent(), getFontInfo());
+        return new Java2DPainter(graphics2D, getContext(), getFontInfo());
     }
 
     /**

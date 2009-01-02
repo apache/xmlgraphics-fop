@@ -229,7 +229,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
      */
     protected IFDocumentHandler createDefaultDocumentHandler() {
         IFSerializer serializer = new IFSerializer();
-        serializer.setUserAgent(getUserAgent());
+        serializer.setContext(new IFContext(getUserAgent()));
         return serializer;
     }
 
@@ -554,8 +554,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             Dimension dim = new Dimension(
                     (int)Math.ceil(viewArea.getWidth()),
                     (int)Math.ceil(viewArea.getHeight()));
+
+            establishForeignAttributes(page.getForeignAttributes());
             documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(),
                     page.getSimplePageMasterName(), dim);
+            resetForeignAttributes();
             documentHandler.startPageHeader();
 
             //Add page attachments to page header
@@ -584,10 +587,20 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             }
             documentHandler.endPageTrailer();
 
+            establishForeignAttributes(page.getForeignAttributes());
             documentHandler.endPage();
+            resetForeignAttributes();
         } catch (IFException e) {
             handleIFException(e);
         }
+    }
+
+    private void establishForeignAttributes(Map foreignAttributes) {
+        documentHandler.getContext().setForeignAttributes(foreignAttributes);
+    }
+
+    private void resetForeignAttributes() {
+        documentHandler.getContext().resetForeignAttributes();
     }
 
     /** {@inheritDoc} */
@@ -1108,7 +1121,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 (int)pos.getHeight());
         uri = URISpecification.getURL(uri);
         try {
-            painter.drawImage(uri, posInt, foreignAttributes);
+            establishForeignAttributes(foreignAttributes);
+            painter.drawImage(uri, posInt);
+            resetForeignAttributes();
         } catch (IFException ife) {
             handleIFException(ife);
         }
@@ -1124,7 +1139,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 (int)pos.getHeight());
         Document doc = fo.getDocument();
         try {
-            painter.drawImage(doc, posInt, fo.getForeignAttributes());
+            establishForeignAttributes(fo.getForeignAttributes());
+            painter.drawImage(doc, posInt);
+            resetForeignAttributes();
         } catch (IFException ife) {
             handleIFException(ife);
         }

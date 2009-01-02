@@ -35,6 +35,7 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentTitle;
 import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.intermediate.IFContext;
 
 /**
  * Tests the image handling in PostScript output.
@@ -90,7 +91,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
     private void innerTestJPEGImageWithIF(int level) throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         PSDocumentHandler handler = new PSDocumentHandler();
-        handler.setUserAgent(ua);
+        handler.setContext(new IFContext(ua));
         PSRenderingUtil psUtil = handler.getPSUtil();
         psUtil.setLanguageLevel(level);
         psUtil.setOptimizeResources(true);

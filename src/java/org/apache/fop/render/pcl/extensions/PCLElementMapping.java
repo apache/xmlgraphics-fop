@@ -21,6 +21,8 @@ package org.apache.fop.render.pcl.extensions;
 
 import java.util.HashMap;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.fo.ElementMapping;
 
 /**
@@ -33,6 +35,14 @@ public class PCLElementMapping extends ElementMapping {
 
     /** The usual namespace prefix used for PCL extensions */
     public static final String NAMESPACE_PREFIX = "pcl";
+
+    /** The extension attribute for the PCL paper source */
+    public static final QName PCL_PAPER_SOURCE
+        = new QName(PCLElementMapping.NAMESPACE, null, "paper-source");
+
+    /** The extension attribute for the PCL duplex mode */
+    public static final QName PCL_DUPLEX_MODE
+        = new QName(PCLElementMapping.NAMESPACE, null, "duplex-mode");
 
     /** Main constructor */
     public PCLElementMapping() {

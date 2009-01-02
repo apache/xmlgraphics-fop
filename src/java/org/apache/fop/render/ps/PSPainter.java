@@ -40,7 +40,6 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -49,6 +48,7 @@ import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
@@ -80,8 +80,8 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    protected FOUserAgent getUserAgent() {
-        return this.documentHandler.getUserAgent();
+    protected IFContext getContext() {
+        return this.documentHandler.getContext();
     }
 
     PSRenderingUtil getPSUtil() {
@@ -176,7 +176,7 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
         try {
             endTextObject();
         } catch (IOException ioe) {
@@ -186,7 +186,7 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, Map foreignAttributes) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         try {
             endTextObject();
         } catch (IOException ioe) {
