@@ -367,7 +367,9 @@
    <renderer mime="application/pdf">
       <fonts>
          <!-- register a particular font -->
-         <font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes" embed-url="file:///C:/myfonts/FTL_____.pfb">
+         <font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes"
+           embed-url="file:///C:/myfonts/FTL_____.pfb"
+           encoding-mode="single-byte">
             <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
          </font>
   
@@ -393,6 +395,13 @@
           <li>The font "kerning" attribute is optional. Default is "true".</li>
           <li>If embedding is off (i.e. embed-url is not set), the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
           <li>When setting the "embed-url" attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>
+          <li>The attribute "encoding-mode" is optional an may have the following values:
+            <ul>
+              <li>auto: default font encoding mode ("cid" for Truetype, "single-byte" for Type 1)</li>
+              <li>single-byte: use single-byte encodings in the target format (if applicable)</li>
+              <li>cid: encode as CID-keyed font (currently only supported for PDF output with TrueType fonts)</li>
+            </ul>
+          </li>
           <li>The fonts "directory" tag can be used to register fonts contained within a single or list of directory paths.  The "recursive" attribute can be specified to recursively add fonts from all sub directories.</li>
           <li>The fonts "auto-detect" tag can be used to automatically register fonts that are found to be installed on the native operating system.</li>
           <li>Fonts registered with "font" tag configurations override fonts found by means of "directory" tag definitions.</li>

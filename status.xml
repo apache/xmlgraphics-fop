@@ -53,6 +53,10 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="add">
+        Added support for forcing single-byte encodings for TrueType fonts without
+        creating an XML font metric file (see "encoding-mode" attribute on "font" element)
+      </action>
       <action context="Layout" dev="JM" type="fix" fixes-bug="45306">
         Fixed fo:instream-foreign-object inside fo:marker.
       </action>

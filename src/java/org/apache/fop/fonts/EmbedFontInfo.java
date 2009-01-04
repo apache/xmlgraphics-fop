@@ -29,7 +29,7 @@ import java.util.List;
 public class EmbedFontInfo implements Serializable {
 
     /** Serialization Version UID */
-    private static final long serialVersionUID = 8755432068669997367L;
+    private static final long serialVersionUID = 8755432068669997368L;
 
     /** filename of the metrics file */
     protected String metricsFile;
@@ -37,6 +37,8 @@ public class EmbedFontInfo implements Serializable {
     protected String embedFile;
     /** false, to disable kerning */
     protected boolean kerning;
+    /** the requested encoding mode for the font */
+    protected EncodingMode encodingMode = EncodingMode.AUTO;
 
     /** the PostScript name of the font */
     protected String postScriptName = null;
@@ -142,6 +144,25 @@ public class EmbedFontInfo implements Serializable {
         this.embedded = value;
     }
 
+    /**
+     * Returns the requested encoding mode for this font.
+     * @return the encoding mode
+     */
+    public EncodingMode getEncodingMode() {
+        return this.encodingMode;
+    }
+
+    /**
+     * Sets the requested encoding mode for this font.
+     * @param mode the new encoding mode
+     */
+    public void setEncodingMode(EncodingMode mode) {
+        if (mode == null) {
+            throw new NullPointerException("mode must not be null");
+        }
+        this.encodingMode = mode;
+    }
+
     private void readObject(java.io.ObjectInputStream in)
                 throws IOException, ClassNotFoundException {
         in.defaultReadObject();
@@ -150,8 +171,10 @@ public class EmbedFontInfo implements Serializable {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "metrics-url=" + metricsFile + ",embed-url=" + embedFile
-            + ", kerning=" + kerning + ", " + "font-triplet=" + fontTriplets
+        return "metrics-url=" + metricsFile + ", embed-url=" + embedFile
+            + ", kerning=" + kerning
+            + ", enc-mode=" + encodingMode
+            + ", font-triplet=" + fontTriplets
             + (getSubFontName() != null ? ", sub-font=" + getSubFontName() : "")
             + (isEmbedded() ? "" : ", NOT embedded");
     }
