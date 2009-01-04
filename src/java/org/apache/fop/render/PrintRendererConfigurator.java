@@ -42,6 +42,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.EmbedFontInfo;
+import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontEventListener;
@@ -410,8 +411,11 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         }
 
         boolean useKerning = fontCfg.getAttributeAsBoolean("kerning", true);
+        EncodingMode encodingMode = EncodingMode.valueOf(
+                fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()));
         EmbedFontInfo embedFontInfo
                 = new EmbedFontInfo(metricsUrl, useKerning, tripletList, embedUrl, subFont);
+        embedFontInfo.setEncodingMode(encodingMode);
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {
                 fontCache.addFont(embedFontInfo);

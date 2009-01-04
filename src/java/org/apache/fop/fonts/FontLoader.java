@@ -75,13 +75,14 @@ public abstract class FontLoader {
      * @param fontFile the File representation of the font
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param encodingMode the requested encoding mode
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(File fontFile, String subFontName,
-            boolean embedded, FontResolver resolver) throws IOException {
-        return loadFont(fontFile.getAbsolutePath(), subFontName, embedded, resolver);
+            boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
+        return loadFont(fontFile.getAbsolutePath(), subFontName, embedded, encodingMode, resolver);
     }
 
     /**
@@ -89,13 +90,14 @@ public abstract class FontLoader {
      * @param fontUrl the URL representation of the font
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param encodingMode the requested encoding mode
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(URL fontUrl, String subFontName,
-            boolean embedded, FontResolver resolver) throws IOException {
-        return loadFont(fontUrl.toExternalForm(), subFontName, embedded, resolver);
+            boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
+        return loadFont(fontUrl.toExternalForm(), subFontName, embedded, encodingMode, resolver);
     }
 
     /**
@@ -103,19 +105,24 @@ public abstract class FontLoader {
      * @param fontFileURI the URI to the font
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param encodingMode the requested encoding mode
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(String fontFileURI, String subFontName,
-            boolean embedded, FontResolver resolver) throws IOException {
+            boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
         fontFileURI = fontFileURI.trim();
         boolean type1 = isType1(fontFileURI);
         FontLoader loader;
         if (type1) {
+            if (encodingMode == EncodingMode.CID) {
+                throw new IllegalArgumentException(
+                        "CID encoding mode not supported for Type 1 fonts");
+            }
             loader = new Type1FontLoader(fontFileURI, embedded, resolver);
         } else {
-            loader = new TTFFontLoader(fontFileURI, subFontName, embedded, resolver);
+            loader = new TTFFontLoader(fontFileURI, subFontName, embedded, encodingMode, resolver);
         }
         return loader.getFont();
     }

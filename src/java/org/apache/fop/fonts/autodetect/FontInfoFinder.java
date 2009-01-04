@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
+import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontEventListener;
@@ -224,7 +225,7 @@ public class FontInfoFinder {
                 }
                 try {
                     TTFFontLoader ttfLoader = new TTFFontLoader(
-                            fontFileURI, fontName, true, resolver);
+                            fontFileURI, fontName, true, EncodingMode.AUTO, resolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);
@@ -248,7 +249,7 @@ public class FontInfoFinder {
         } else {
             // The normal case
             try {
-                customFont = FontLoader.loadFont(fontUrl, null, true, resolver);
+                customFont = FontLoader.loadFont(fontUrl, null, true, EncodingMode.AUTO, resolver);
                 if (this.eventListener != null) {
                     customFont.setEventListener(this.eventListener);
                 }
