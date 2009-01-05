@@ -1031,6 +1031,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                            int[] letterAdjust,
                            Font font, AbstractTextArea parentArea) {
         int l = s.length();
+        if (l == 0) {
+            return;
+        }
 
         if (letterAdjust != null) {
             textUtil.adjust(letterAdjust[0]);
