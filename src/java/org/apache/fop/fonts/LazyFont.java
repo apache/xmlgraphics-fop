@@ -44,6 +44,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     private String metricsFileName = null;
     private String fontEmbedPath = null;
     private boolean useKerning = false;
+    private EncodingMode encodingMode = EncodingMode.AUTO;
     private boolean embedded = true;
     private String subFontName = null;
 
@@ -63,6 +64,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
         this.metricsFileName = fontInfo.getMetricsFile();
         this.fontEmbedPath = fontInfo.getEmbedFile();
         this.useKerning = fontInfo.getKerning();
+        this.encodingMode = fontInfo.getEncodingMode();
         this.subFontName = fontInfo.getSubFontName();
         this.embedded = fontInfo.isEmbedded();
         this.resolver = resolver;
@@ -130,7 +132,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
                     realFont = FontLoader.loadFont(fontEmbedPath, this.subFontName,
-                            this.embedded, resolver);
+                            this.embedded, this.encodingMode, resolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;

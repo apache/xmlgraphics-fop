@@ -31,6 +31,7 @@ import org.apache.xmlgraphics.fonts.Glyphs;
 
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
+import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontType;
@@ -46,6 +47,7 @@ public class TTFFontLoader extends FontLoader {
     private MultiByteFont multiFont;
     private SingleByteFont singleFont;
     private String subFontName;
+    private EncodingMode encodingMode;
 
     /**
      * Default constructor
@@ -53,7 +55,7 @@ public class TTFFontLoader extends FontLoader {
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, FontResolver resolver) {
-        this(fontFileURI, null, true, resolver);
+        this(fontFileURI, null, true, EncodingMode.AUTO, resolver);
     }
 
     /**
@@ -62,12 +64,17 @@ public class TTFFontLoader extends FontLoader {
      * @param subFontName the sub-fontname of a font in a TrueType Collection (or null for normal
      *          TrueType fonts)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param encodingMode the requested encoding mode
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, String subFontName,
-                boolean embedded, FontResolver resolver) {
+                boolean embedded, EncodingMode encodingMode, FontResolver resolver) {
         super(fontFileURI, embedded, resolver);
         this.subFontName = subFontName;
+        this.encodingMode = encodingMode;
+        if (this.encodingMode == EncodingMode.AUTO) {
+            this.encodingMode = EncodingMode.CID; //Default to CID mode for TrueType
+        }
     }
 
     /** {@inheritDoc} */
@@ -105,6 +112,9 @@ public class TTFFontLoader extends FontLoader {
         }
 
         boolean isCid = this.embedded;
+        if (this.encodingMode == EncodingMode.SINGLE_BYTE) {
+            isCid = false;
+        }
 
         if (isCid) {
             multiFont = new MultiByteFont();
@@ -156,7 +166,7 @@ public class TTFFontLoader extends FontLoader {
 
         copyKerning(ttf, isCid);
         if (this.embedded && ttf.isEmbeddable()) {
-            multiFont.setEmbedFileName(this.fontFileURI);
+            returnFont.setEmbedFileName(this.fontFileURI);
         }
     }
 

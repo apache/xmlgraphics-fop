@@ -110,8 +110,16 @@ public class CMapBuilder {
     }
 
     protected void writeCodeSpaceRange() throws IOException {
+        writeCodeSpaceRange(false);
+    }
+
+    protected void writeCodeSpaceRange(boolean singleByte) throws IOException {
         writer.write("1 begincodespacerange\n");
-        writer.write("<0000> <FFFF>\n");
+        if (singleByte) {
+            writer.write("<00> <FF>\n");
+        } else {
+            writer.write("<0000> <FFFF>\n");
+        }
         writer.write("endcodespacerange\n");
     }
 

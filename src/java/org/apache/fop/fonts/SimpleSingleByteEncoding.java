@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 
+import org.apache.fop.util.CharUtilities;
+
 /**
  * A simple implementation of the OneByteEncoding mostly used for encodings that are constructed
  * on-the-fly.
@@ -135,6 +137,18 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
         } else {
             return null;
         }
+    }
+
+    /** {@inheritDoc} */
+    public char[] getUnicodeCharMap() {
+        char[] map = new char[getLastChar() + 1];
+        for (int i = 0; i < getFirstChar(); i++) {
+            map[i] = CharUtilities.NOT_A_CHARACTER;
+        }
+        for (int i = getFirstChar(); i <= getLastChar(); i++) {
+            map[i] = getCharacterForIndex(i).getSingleUnicodeValue();
+        }
+        return map;
     }
 
     /** {@inheritDoc} */

@@ -53,6 +53,17 @@
 
   <changes>
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="add">
+        FOP now creates ToUnicode CMaps for single-byte fonts that don't use built-in
+        encodings to help PDF text extractors interpreting characters.
+      </action>
+      <action context="Fonts" dev="JM" type="add">
+        Added support for forcing single-byte encodings for TrueType fonts without
+        creating an XML font metric file (see "encoding-mode" attribute on "font" element)
+      </action>
+      <action context="Layout" dev="JM" type="fix" fixes-bug="45306">
+        Fixed fo:instream-foreign-object inside fo:marker.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed black backgrounds occurring for transparent images in PCL output.
       </action>

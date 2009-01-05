@@ -219,6 +219,15 @@
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>
+    <xsd:attribute name="encoding-mode" use="optional" default="auto">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="auto"/>
+          <xsd:enumeration value="single-byte"/>
+          <xsd:enumeration value="cid"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
   </xsd:complexType>
   <xsd:complexType name="fontTripletType">
     <xsd:attribute name="name" type="xsd:string" use="required"/>
