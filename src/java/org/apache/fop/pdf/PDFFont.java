@@ -86,6 +86,14 @@ public class PDFFont extends PDFDictionary {
     }
 
     /**
+     * Sets a ToUnicode CMap.
+     * @param cmap the ToUnicode character map
+     */
+    public void setToUnicode(PDFCMap cmap) {
+        put("ToUnicode", cmap);
+    }
+
+    /**
      * factory method with the basic parameters
      *
      * @param fontname the internal name for the font

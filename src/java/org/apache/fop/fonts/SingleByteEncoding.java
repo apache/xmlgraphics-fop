@@ -47,4 +47,12 @@ public interface SingleByteEncoding {
      */
     String[] getCharNameMap();
 
+    /**
+     * Returns a character array with Unicode scalar values which can be used to map encoding
+     * code points to Unicode values. Note that this does not return all possible Unicode values
+     * that the encoding maps.
+     * @return a character array with Unicode scalar values
+     */
+    char[] getUnicodeCharMap();
+
 }
