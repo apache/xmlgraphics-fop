@@ -71,14 +71,6 @@ public abstract class PDFFontNonBase14 extends PDFFont {
         return (PDFFontDescriptor)get("FontDescriptor");
     }
 
-    /**
-     * Sets a ToUnicode CMap.
-     * @param cmap the ToUnicode character map
-     */
-    public void setToUnicode(PDFCMap cmap) {
-        put("ToUnicode", cmap);
-    }
-
     /** {@inheritDoc} */
     protected void validate() {
         if (getDocumentSafely().getProfile().isFontEmbeddingRequired()) {
