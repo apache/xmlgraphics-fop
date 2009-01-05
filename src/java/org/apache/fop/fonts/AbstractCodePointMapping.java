@@ -189,12 +189,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
         return this.unicodeMap[idx];
     }
 
-    /**
-     * Returns a character array with Unicode scalar values which can be used to map encoding
-     * code points to Unicode values. Note that this does not return all possible Unicode values
-     * that the encoding maps.
-     * @return a character array with Unicode scalar values
-     */
+    /** {@inheritDoc} */
     public final char[] getUnicodeCharMap() {
         char[] copy = new char[this.unicodeMap.length];
         System.arraycopy(this.unicodeMap, 0, copy, 0, this.unicodeMap.length);

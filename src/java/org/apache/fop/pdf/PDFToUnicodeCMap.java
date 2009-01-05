@@ -43,6 +43,8 @@ public class PDFToUnicodeCMap extends PDFCMap {
      */
     protected char[] unicodeCharMap;
 
+    private boolean singleByte;
+
     /**
      * Constructor.
      *
@@ -51,10 +53,17 @@ public class PDFToUnicodeCMap extends PDFCMap {
      * @param name One of the registered names found in Table 5.14 in PDF
      * Reference, Second Edition.
      * @param sysInfo The attributes of the character collection of the CIDFont.
+     * @param singleByte true for single-byte, false for double-byte
      */
-    public PDFToUnicodeCMap(char[] unicodeCharMap, String name, PDFCIDSystemInfo sysInfo) {
+    public PDFToUnicodeCMap(char[] unicodeCharMap, String name, PDFCIDSystemInfo sysInfo,
+            boolean singleByte) {
         super(name, sysInfo);
+        if (singleByte && unicodeCharMap.length > 256) {
+            throw new IllegalArgumentException("unicodeCharMap may not contain more than"
+                    + " 256 characters for single-byte encodings");
+        }
         this.unicodeCharMap = unicodeCharMap;
+        this.singleByte = singleByte;
     }
 
     /** {@inheritDoc} */
@@ -78,7 +87,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
             writeCIDSystemInfo("Adobe", "UCS", 0);
             writeName("Adobe-Identity-UCS");
             writeType("2");
-            writeCodeSpaceRange();
+            writeCodeSpaceRange(singleByte);
             writeBFEntries();
             writeWrapUp();
         }
@@ -122,7 +131,7 @@ public class PDFToUnicodeCMap extends PDFCMap {
                     while (partOfRange(charArray, charIndex)) {
                         charIndex++;
                     }
-                    writer.write("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
+                    writer.write("<" + padCharIndex(charIndex) + "> ");
                     writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
                             + ">\n");
                     charIndex++;
@@ -130,6 +139,10 @@ public class PDFToUnicodeCMap extends PDFCMap {
                 remainingEntries -= entriesThisSection;
                 writer.write("endbfchar\n");
             } while (remainingEntries > 0);
+        }
+
+        private String padCharIndex(int charIndex) {
+            return padHexString(Integer.toHexString(charIndex), (singleByte ? 2 : 4));
         }
 
         /**
@@ -159,9 +172,9 @@ public class PDFToUnicodeCMap extends PDFCMap {
                     while (!startOfRange(charArray, charIndex)) {
                         charIndex++;
                     }
-                    writer.write("<" + padHexString(Integer.toHexString(charIndex), 4) + "> ");
+                    writer.write("<" + padCharIndex(charIndex) + "> ");
                     writer.write("<"
-                            + padHexString(Integer.toHexString(endOfRange(charArray, charIndex)), 4)
+                            + padCharIndex(endOfRange(charArray, charIndex))
                             + "> ");
                     writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
                             + ">\n");
