@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import org.apache.fop.afp.AFPLineDataInfo;
 import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.util.BinaryUtils;
@@ -321,13 +322,13 @@ public class PresentationTextData extends AbstractAFPObject {
             byte[] buff = new byte[TRANSPARENT_MAX_SIZE];
             int currIndex = 0;
             for (int transDataCnt = 0; transDataCnt < numTransData; transDataCnt++) {
-                currIndex = transDataCnt * TRANSPARENT_MAX_SIZE;
                 System.arraycopy(data, currIndex, buff, 0, TRANSPARENT_MAX_SIZE);
                 addTransparentData(buff, afpdata);
+                currIndex += TRANSPARENT_MAX_SIZE;
             }
-            int remainingTransData = data.length / TRANSPARENT_MAX_SIZE;
-            buff = new byte[remainingTransData];
-            System.arraycopy(data, currIndex, buff, 0, remainingTransData);
+            int left = data.length - currIndex;
+            buff = new byte[left];
+            System.arraycopy(data, currIndex, buff, 0, left);
             addTransparentData(buff, afpdata);
         }
         currentX = -1;
