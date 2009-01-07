@@ -988,7 +988,7 @@ NOTE:
     <property name="javadoc.level" value=""/>
     <echo message="Producing the javadoc files${javadoc.level}"/>
     <mkdir dir="${build.javadocs.dir}"/>
-    <javadoc packagenames="${javadoc.packages}" destdir="${build.javadocs.dir}" author="true" version="true" windowtitle="${Name} ${version} API" doctitle="Apache Formatting Objects Processor (FOP)" bottom="Copyright ${year} The Apache Software Foundation. All Rights Reserved." overview="${src.dir}/java/org/apache/fop/overview.html" use="true" failonerror="true" source="${javac.source}" public="${javadoc.public}" package="${javadoc.package}" private="${javadoc.private}">
+    <javadoc packagenames="${javadoc.packages}" destdir="${build.javadocs.dir}" author="true" version="true" windowtitle="${Name} ${version} API" doctitle="Apache Formatting Objects Processor (FOP)" bottom="Copyright ${year} The Apache Software Foundation. All Rights Reserved." overview="${src.dir}/java/org/apache/fop/overview.html" use="true" failonerror="true" source="${javac.source}" public="${javadoc.public}" package="${javadoc.package}" private="${javadoc.private}" maxmemory="128M">
       <header><![CDATA[${name} ${version}]]></header>
       <footer><![CDATA[${name} ${version}]]></footer>
       <classpath>
@@ -1001,6 +1001,7 @@ NOTE:
         <pathelement path="${build.gensrc.dir}"/>
       </sourcepath>
       <tag name="todo" scope="all" description="To do:"/>
+      <tag name="event.severity" scope="all" description="Event severity level:"/>
       <group title="Control and Startup">
         <package name="org.apache.fop"/>
         <package name="org.apache.fop.apps"/>
@@ -1032,17 +1033,31 @@ NOTE:
         <package name="org.apache.fop.render.rtf"/>
         <package name="org.apache.fop.render.mif"/>
       </group>
-      <group title="Utility">
-        <package name="org.apache.fop.hyphenation"/>
-        <package name="org.apache.fop.pdf"/>
-        <package name="org.apache.fop.tools"/>
-        <package name="org.apache.fop.tools.*"/>
-        <package name="org.apache.fop.svg"/>
-        <package name="org.apache.fop.image"/>
-        <package name="org.apache.fop.image.*"/>
+      <group title="Fonts">
         <package name="org.apache.fop.fonts"/>
         <package name="org.apache.fop.fonts.*"/>
+      </group>
+      <group title="Events">
+        <package name="org.apache.fop.events"/>
+        <package name="org.apache.fop.events.*"/>
+      </group>
+      <group title="Utility">
+        <package name="org.apache.fop.hyphenation"/>
+        <package name="org.apache.fop.tools"/>
+        <package name="org.apache.fop.tools.*"/>
+        <package name="org.apache.fop.image"/>
+        <package name="org.apache.fop.image.*"/>
+        <package name="org.apache.fop.text.*"/>
         <package name="org.apache.fop.util"/>
+        <package name="org.apache.fop.util.*"/>
+      </group>
+      <group title="AFP library">
+        <package name="org.apache.fop.afp"/>
+        <package name="org.apache.fop.afp.*"/>
+      </group>
+      <group title="PDF library">
+        <package name="org.apache.fop.pdf"/>
+        <package name="org.apache.fop.svg"/>
       </group>
       <group title="RTFLib (formerly JFor) Subpackage Candidate">
         <package name="org.apache.fop.render.rtf.rtflib"/>
