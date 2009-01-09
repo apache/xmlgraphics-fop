@@ -29,7 +29,7 @@ import org.apache.batik.gvt.GraphicsNode;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 /**
- * A generic graphics 2D image painter implementation
+ * A graphics 2D image painter implementation for painting SVG images using Batik.
  */
 public class Graphics2DImagePainterImpl implements Graphics2DImagePainter {
 
