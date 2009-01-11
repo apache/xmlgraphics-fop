@@ -19,8 +19,11 @@
 
 package org.apache.fop.afp;
 
+import java.awt.Point;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.util.AbstractPaintingState;
 
@@ -53,7 +56,7 @@ implements Cloneable {
     private int resolution = 240; // 240 dpi
 
     /** the current page */
-    private AFPPagePaintingState pagePaintingState = new AFPPagePaintingState();
+    private transient AFPPagePaintingState pagePaintingState = new AFPPagePaintingState();
 
 //    /** reference orientation */
 //    private int orientation = 0;
@@ -311,6 +314,37 @@ implements Cloneable {
      */
     public AFPUnitConverter getUnitConverter() {
         return this.unitConv;
+    }
+
+    /**
+     * Returns a point on the current page, taking the current painting state into account.
+     *
+     * @param x the X-coordinate
+     * @param y the Y-coordinate
+     * @return a point on the current page
+     */
+    public Point getPoint(int x, int y) {
+        Point p = new Point();
+        int rotation = getRotation();
+        switch (rotation) {
+        case 90:
+            p.x = y;
+            p.y = getPageWidth() - x;
+            break;
+        case 180:
+            p.x = getPageWidth() - x;
+            p.y = getPageHeight() - y;
+            break;
+        case 270:
+            p.x = getPageHeight() - y;
+            p.y = x;
+            break;
+        default:
+            p.x = x;
+            p.y = y;
+            break;
+        }
+        return p;
     }
 
     /** {@inheritDoc} */
