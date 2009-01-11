@@ -19,9 +19,14 @@
 
 package org.apache.fop.render.afp;
 
-import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawEPS;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.render.RenderingContext;
 
 /**
  * AFPImageHandler implementation which handles raw stream images.
@@ -51,5 +56,15 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
     /** {@inheritDoc} */
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPDataObjectInfo();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isCompatible(RenderingContext targetContext, Image image) {
+        if (targetContext instanceof AFPRenderingContext) {
+            AFPRenderingContext afpContext = (AFPRenderingContext)targetContext;
+            return (afpContext.getPaintingState().isNativeImagesSupported())
+                && (image == null || image instanceof ImageRawJPEG || image instanceof ImageRawEPS);
+        }
+        return false;
     }
 }

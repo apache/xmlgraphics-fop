@@ -13,3 +13,8 @@ org.apache.fop.render.ps.PSImageHandlerRawCCITTFax
 org.apache.fop.render.ps.PSImageHandlerRawJPEG
 org.apache.fop.render.ps.PSImageHandlerGraphics2D
 org.apache.fop.render.ps.PSImageHandlerSVG
+org.apache.fop.render.afp.AFPImageHandlerRenderedImage
+org.apache.fop.render.afp.AFPImageHandlerGraphics2D
+org.apache.fop.render.afp.AFPImageHandlerRawStream
+org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax
+org.apache.fop.render.afp.AFPImageHandlerSVG

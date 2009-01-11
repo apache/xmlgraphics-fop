@@ -50,14 +50,19 @@ public abstract class AbstractRenderingContext implements RenderingContext {
     }
 
     /** {@inheritDoc} */
-    public void putHints(Map hints) {
-        if (hints == null) {
+    public void putHints(Map additionalHints) {
+        if (additionalHints == null) {
             return;
         }
         if (this.hints == null) {
             this.hints = new java.util.HashMap();
         }
-        this.hints.putAll(hints);
+        this.hints.putAll(additionalHints);
+    }
+
+    /** {@inheritDoc} */
+    public void putHint(Object key, Object value) {
+        this.hints.put(key, value);
     }
 
     /** {@inheritDoc} */

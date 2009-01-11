@@ -33,6 +33,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.ps.ImageEncodingHelper;
+
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPEventProducer;
@@ -72,13 +80,6 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
-import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
-import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -134,7 +135,7 @@ import org.apache.xmlgraphics.ps.ImageEncodingHelper;
  * (ie. at the start or end of the page).
  *
  */
-public class AFPRenderer extends AbstractPathOrientedRenderer {
+public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCustomizable {
 
     private static final int X = 0;
     private static final int Y = 1;
@@ -541,6 +542,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         int textWordSpaceAdjust = text.getTextWordSpaceAdjust();
         int textLetterSpaceAdjust = text.getTextLetterSpaceAdjust();
         int textWidth = font.getWidth(' ', fontSize) / 1000;
+        textWidth = 0; //JM, the above is strange
         int variableSpaceCharacterIncrement
             = textWidth + textWordSpaceAdjust + textLetterSpaceAdjust;
 
@@ -677,7 +679,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Sets the rotation to be used for landsacpe pages, valid values are 0, 90,
+     * Sets the rotation to be used for landscape pages, valid values are 0, 90,
      * 180, 270 (default).
      *
      * @param rotation
@@ -687,59 +689,34 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         paintingState.setLandscapeRotation(rotation);
     }
 
-    /**
-     * Sets the number of bits used per pixel
-     *
-     * @param bitsPerPixel
-     *            number of bits per pixel
-     */
+    // ---=== AFPCustomizable ===---
+
+    /** {@inheritDoc} */
     public void setBitsPerPixel(int bitsPerPixel) {
         paintingState.setBitsPerPixel(bitsPerPixel);
     }
 
-    /**
-     * Sets whether images are color or not
-     *
-     * @param colorImages
-     *            color image output
-     */
+    /** {@inheritDoc} */
     public void setColorImages(boolean colorImages) {
         paintingState.setColorImages(colorImages);
     }
 
-    /**
-     * Sets whether images are supported natively or not
-     *
-     * @param nativeImages
-     *            native image support
-     */
+    /** {@inheritDoc} */
     public void setNativeImagesSupported(boolean nativeImages) {
         paintingState.setNativeImagesSupported(nativeImages);
     }
 
-    /**
-     * Sets the output/device resolution
-     *
-     * @param resolution
-     *            the output resolution (dpi)
-     */
+    /** {@inheritDoc} */
     public void setResolution(int resolution) {
         paintingState.setResolution(resolution);
     }
 
-    /**
-     * Returns the output/device resolution.
-     *
-     * @return the resolution in dpi
-     */
+    /** {@inheritDoc} */
     public int getResolution() {
         return paintingState.getResolution();
     }
 
-    /**
-     * Sets the default resource group file path
-     * @param filePath the default resource group file path
-     */
+    /** {@inheritDoc} */
     public void setDefaultResourceGroupFilePath(String filePath) {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
     }
