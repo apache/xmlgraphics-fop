@@ -29,11 +29,9 @@ import java.util.Map;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.util.QName;
 
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
-import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
@@ -43,10 +41,6 @@ import org.apache.fop.render.pdf.PDFRenderer;
  * Graphics2DAdapter implementation for PostScript.
  */
 public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
-
-    /** Qualified name for the "conversion-mode" extension attribute. */
-    protected static final QName CONVERSION_MODE = new QName(
-            ExtensionElementMapping.URI, null, "conversion-mode");
 
     private PSGenerator gen;
     private boolean clip = true;
@@ -87,7 +81,7 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
         if (context != null) {
             Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
             paintAsBitmap = (foreign != null
-                   && "bitmap".equalsIgnoreCase((String)foreign.get(CONVERSION_MODE)));
+                   && ImageHandlerUtil.isConversionModeBitmap(foreign));
         }
 
         float sx = paintAsBitmap ? 1.0f : (fwidth / (float)imw);

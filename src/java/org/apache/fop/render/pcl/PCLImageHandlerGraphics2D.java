@@ -41,6 +41,7 @@ import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 
 /**
@@ -146,8 +147,9 @@ public class PCLImageHandlerGraphics2D implements ImageHandler {
         boolean supported = (image == null || image instanceof ImageGraphics2D)
                 && targetContext instanceof PCLRenderingContext;
         if (supported) {
-            Object hint = targetContext.getHint(PCLConstants.CONV_MODE);
-            if ("bitmap".equals(hint)) {
+            String mode = (String)targetContext.getHint(ImageHandlerUtil.CONVERSION_MODE);
+            if (ImageHandlerUtil.isConversionModeBitmap(mode)) {
+                //Disabling this image handler automatically causes a bitmap to be generated
                 return false;
             }
         }

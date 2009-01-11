@@ -85,6 +85,7 @@ import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
@@ -513,7 +514,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
                 RendererContext rc = createRendererContext(paintRect.x, paintRect.y,
                         paintRect.width, paintRect.height, null);
                 Map atts = new java.util.HashMap();
-                atts.put(CONV_MODE, "bitmap");
+                atts.put(ImageHandlerUtil.CONVERSION_MODE, ImageHandlerUtil.CONVERSION_MODE_BITMAP);
                 atts.put(SRC_TRANSPARENCY, "true");
                 rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
 
@@ -1264,7 +1265,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         RendererContext rc = createRendererContext(paintRect.x, paintRect.y,
                 paintRect.width, paintRect.height, null);
         Map atts = new java.util.HashMap();
-        atts.put(CONV_MODE, "bitmap");
+        atts.put(ImageHandlerUtil.CONVERSION_MODE, ImageHandlerUtil.CONVERSION_MODE_BITMAP);
         atts.put(SRC_TRANSPARENCY, "true");
         rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
 

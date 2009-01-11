@@ -43,6 +43,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.render.AbstractGenericSVGHandler;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
@@ -87,11 +88,7 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
         pdfi.cfg = (Configuration)context.getProperty(HANDLER_CONFIGURATION);
         Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-
-        if (foreign != null
-                && BITMAP.equalsIgnoreCase((String)foreign.get(CONVERSION_MODE))) {
-            pdfi.paintAsBitmap = true;
-        }
+        pdfi.paintAsBitmap = ImageHandlerUtil.isConversionModeBitmap(foreign);
         return pdfi;
     }
 

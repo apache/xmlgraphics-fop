@@ -24,8 +24,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.xmlgraphics.util.QName;
 
 /**
  * The Render Context for external handlers. This provides a rendering context
@@ -33,12 +31,6 @@ import org.apache.xmlgraphics.util.QName;
  * render target.
  */
 public class RendererContext {
-    /** conversion-mode extension attribute */
-    protected static final QName CONVERSION_MODE = new QName(
-            ExtensionElementMapping.URI, null, "conversion-mode");
-
-    /** "bitmap" value for the "conversion-mode" extension attribute. */
-    protected static final String BITMAP = "bitmap";
 
     private final String mime;
     private final AbstractRenderer renderer;
