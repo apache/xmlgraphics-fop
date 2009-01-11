@@ -26,6 +26,10 @@ import java.util.List;
 
 import org.apache.fop.afp.AFPLineDataInfo;
 import org.apache.fop.afp.AFPTextDataInfo;
+import org.apache.fop.afp.ptoca.LineDataInfoProducer;
+import org.apache.fop.afp.ptoca.PtocaBuilder;
+import org.apache.fop.afp.ptoca.PtocaProducer;
+import org.apache.fop.afp.ptoca.TextDataInfoProducer;
 
 /**
  * The Presentation Text object is the data object used in document processing
@@ -41,6 +45,8 @@ import org.apache.fop.afp.AFPTextDataInfo;
  * collection of the graphic characters and control codes is called Presentation
  * Text, and the object that contains the Presentation Text is called the
  * PresentationText object.
+ * <p>
+ * The content for this object can be created using {@link PtocaBuilder}.
  */
 public class PresentationTextObject extends AbstractNamedAFPObject {
 
@@ -53,6 +59,8 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * The presentation text data list
      */
     private List/*<PresentationTextData>*/ presentationTextDataList = null;
+
+    private PtocaBuilder builder = new DefaultBuilder();
 
     /**
      * Construct a new PresentationTextObject for the specified name argument,
@@ -72,17 +80,37 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
     public void createTextData(AFPTextDataInfo textDataInfo) throws UnsupportedEncodingException {
+        createControlSequences(new TextDataInfoProducer(textDataInfo));
+    }
+
+    /**
+     * Creates a chain of control sequences using a producer.
+     * @param producer the producer
+     * @throws UnsupportedEncodingException thrown if character encoding is not supported
+     */
+    public void createControlSequences(PtocaProducer producer)
+                throws UnsupportedEncodingException {
         if (currentPresentationTextData == null) {
             startPresentationTextData();
         }
         try {
-            currentPresentationTextData.createTextData(textDataInfo);
-        } catch (MaximumSizeExceededException msee) {
-            endPresentationTextData();
-            createTextData(textDataInfo);
+            producer.produce(builder);
         } catch (UnsupportedEncodingException e) {
             endPresentationTextData();
             throw e;
+        } catch (IOException ioe) {
+            endPresentationTextData();
+            handleUnexpectedIOError(ioe);
+        }
+    }
+
+    private class DefaultBuilder extends PtocaBuilder {
+        protected OutputStream getOutputStreamForControlSequence(int length) {
+            if (length > currentPresentationTextData.getBytesAvailable()) {
+                endPresentationTextData();
+                startPresentationTextData();
+            }
+            return currentPresentationTextData.getOutputStream();
         }
     }
 
@@ -93,14 +121,10 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
      * @param lineDataInfo the line data information.
      */
     public void createLineData(AFPLineDataInfo lineDataInfo) {
-        if (currentPresentationTextData == null) {
-            startPresentationTextData();
-        }
         try {
-            currentPresentationTextData.createLineData(lineDataInfo);
-        } catch (MaximumSizeExceededException msee) {
-            endPresentationTextData();
-            createLineData(lineDataInfo);
+            createControlSequences(new LineDataInfoProducer(lineDataInfo));
+        } catch (UnsupportedEncodingException e) {
+            handleUnexpectedIOError(e); //Won't happen for lines
         }
     }
 
@@ -157,11 +181,17 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
             startPresentationTextData();
         }
         try {
-            currentPresentationTextData.endControlSequence();
-        } catch (MaximumSizeExceededException msee) {
+            builder.endChainedControlSequence();
+        } catch (IOException ioe) {
             endPresentationTextData();
-            endControlSequence();
+            handleUnexpectedIOError(ioe);
+            //Should not occur since we're writing to byte arrays
         }
+    }
+
+    private void handleUnexpectedIOError(IOException ioe) {
+        //"Unexpected" since we're currently dealing with ByteArrayOutputStreams here.
+        throw new RuntimeException("Unexpected I/O error", ioe);
     }
 
     /** {@inheritDoc} */
@@ -169,6 +199,6 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
         if (presentationTextDataList != null) {
             return presentationTextDataList.toString();
         }
-        return null;
+        return super.toString();
     }
 }

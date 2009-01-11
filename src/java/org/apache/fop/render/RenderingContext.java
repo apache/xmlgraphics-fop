@@ -42,10 +42,30 @@ public interface RenderingContext {
      */
     FOUserAgent getUserAgent();
 
-    void putHints(Map hints);
+    /**
+     * Adds additional hints to the existing hints, overriding existing hints.
+     * @param additionalHints a map of additional hints
+     */
+    void putHints(Map additionalHints);
 
+    /**
+     * Sets an additional hint, overriding an existing hint.
+     * @param key the key
+     * @param value the value
+     */
+    void putHint(Object key, Object value);
+
+    /**
+     * Returns an unmodifiable representation of all hints.
+     * @return the hints
+     */
     Map getHints();
 
+    /**
+     * Returns a hint identified by a key.
+     * @param key the key
+     * @return the hint or null if no hint with the given key could be found
+     */
     Object getHint(Object key);
 
 }
