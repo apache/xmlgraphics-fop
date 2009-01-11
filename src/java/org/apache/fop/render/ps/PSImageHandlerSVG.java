@@ -65,7 +65,6 @@ public class PSImageHandlerSVG implements ImageHandler {
         PSGraphics2D graphics = new PSGraphics2D(strokeText, gen);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
-        GVTBuilder builder = new GVTBuilder();
         NativeTextHandler nativeTextHandler = null;
         BridgeContext ctx = new BridgeContext(ua);
         if (!strokeText) {
@@ -79,6 +78,7 @@ public class PSImageHandlerSVG implements ImageHandler {
 
         GraphicsNode root;
         try {
+            GVTBuilder builder = new GVTBuilder();
             root = builder.build(ctx, imageSVG.getDocument());
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
@@ -94,7 +94,6 @@ public class PSImageHandlerSVG implements ImageHandler {
         float sy = pos.height / h;
 
         ctx = null;
-        builder = null;
 
         gen.commentln("%FOPBeginSVG");
         gen.saveGraphicsState();

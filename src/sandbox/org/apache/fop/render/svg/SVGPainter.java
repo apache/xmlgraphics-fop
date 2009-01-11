@@ -41,12 +41,11 @@ import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.events.ResourceEventProducer;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFConstants;
@@ -193,9 +192,6 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         }
     }
 
-    private static final QName CONVERSION_MODE
-            = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
-
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect) throws IFException {
         try {
@@ -209,7 +205,8 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
 
                 String mime = info.getMimeType();
                 Map foreignAttributes = getContext().getForeignAttributes();
-                String conversionMode = (String)foreignAttributes.get(CONVERSION_MODE);
+                String conversionMode = (String)foreignAttributes.get(
+                        ImageHandlerUtil.CONVERSION_MODE);
                 if ("reference".equals(conversionMode)
                         && (MimeConstants.MIME_GIF.equals(mime)
                         || MimeConstants.MIME_JPEG.equals(mime)

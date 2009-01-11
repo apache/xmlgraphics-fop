@@ -47,6 +47,7 @@ import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
@@ -296,7 +297,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
             hints.put(ImageProcessingHints.BITMAP_TYPE_INTENT,
                     ImageProcessingHints.BITMAP_TYPE_INTENT_GRAY);
         }
-        hints.put(PCLConstants.CONV_MODE, "bitmap");
+        hints.put(ImageHandlerUtil.CONVERSION_MODE, ImageHandlerUtil.CONVERSION_MODE_BITMAP);
         PCLRenderingContext context = (PCLRenderingContext)createRenderingContext();
         context.setSourceTransparencyEnabled(true);
         try {

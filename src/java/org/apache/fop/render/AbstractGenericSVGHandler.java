@@ -33,11 +33,9 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.events.EventBroadcaster;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.image.loader.batik.Graphics2DImagePainterImpl;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
@@ -51,13 +49,6 @@ import org.apache.fop.svg.SVGUserAgent;
  * To use this class, subclass it and implement the missing methods (supportsRenderer, for example).
  */
 public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererContextConstants {
-
-    /** Qualified name for the "conversion-mode" extension attribute. */
-    protected static final QName CONVERSION_MODE = new QName(
-            ExtensionElementMapping.URI, null, "conversion-mode");
-
-    /** "bitmap" value for the "conversion-mode" extension attribute. */
-    protected static final String BITMAP = "bitmap";
 
     /** {@inheritDoc} */
     public void handleXML(RendererContext context,
@@ -82,9 +73,9 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
     }
 
     /**
-     * Builds the GVT root
+     * Builds the GVT root.
      *
-     * @param rendererContext the renderer context
+     * @param userAgent the user agent
      * @param ctx the batik bridge context
      * @param doc the document
      * @return a built GVT root tree

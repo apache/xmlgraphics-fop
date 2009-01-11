@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
@@ -47,6 +48,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
@@ -136,8 +138,10 @@ public abstract class AbstractIFPainter implements IFPainter {
         RenderingContext context = createRenderingContext();
         Map hints = createDefaultImageProcessingHints(sessionContext);
         context.putHints(hints);
+
+        ImageFlavor[] flavors = imageHandlerRegistry.getSupportedFlavors(context);
         org.apache.xmlgraphics.image.loader.Image img = manager.getImage(
-                    info, imageHandlerRegistry.getSupportedFlavors(context),
+                    info, flavors,
                     hints, sessionContext);
 
         try {
@@ -155,7 +159,15 @@ public abstract class AbstractIFPainter implements IFPainter {
      * @return the default processing hints
      */
     protected Map createDefaultImageProcessingHints(ImageSessionContext sessionContext) {
-        return ImageUtil.getDefaultHints(sessionContext);
+        Map hints = ImageUtil.getDefaultHints(sessionContext);
+
+        //Transfer common foreign attributes to hints
+        Object conversionMode = getContext().getForeignAttribute(ImageHandlerUtil.CONVERSION_MODE);
+        if (conversionMode != null) {
+            hints.put(ImageHandlerUtil.CONVERSION_MODE, conversionMode);
+        }
+
+        return hints;
     }
 
     /**
@@ -212,7 +224,6 @@ public abstract class AbstractIFPainter implements IFPainter {
             log.trace("Using ImageHandler: " + handler.getClass().getName());
         }
 
-        //TODO foreign attributes
         handler.handleImage(context, effImage, rect);
     }
 

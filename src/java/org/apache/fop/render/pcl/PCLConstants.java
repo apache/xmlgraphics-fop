@@ -26,12 +26,15 @@ import org.apache.fop.fo.extensions.ExtensionElementMapping;
 /**
  * Constants used for PCL output.
  */
-public interface PCLConstants {
-
-    /** Image conversion mode */
-    QName CONV_MODE = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
+interface PCLConstants {
 
     /** Source transparency mode */
     QName SRC_TRANSPARENCY = new QName(ExtensionElementMapping.URI, null, "source-transparency");
+
+    /** Disable clipping */
+    Object DISABLE_CLIPPING = new QName(ExtensionElementMapping.URI, null, "disable-clipping");
+
+    /** Enables/Disables a color canvas for bitmap production (required for SVG, for example) */
+    Object COLOR_CANVAS = new QName(ExtensionElementMapping.URI, null, "color-canvas");
 
 }

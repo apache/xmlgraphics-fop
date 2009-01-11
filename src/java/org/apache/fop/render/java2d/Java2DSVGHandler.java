@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.AbstractGenericSVGHandler;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
@@ -71,10 +72,7 @@ public class Java2DSVGHandler extends AbstractGenericSVGHandler
         pdfi.currentXPosition = ((Integer)context.getProperty(XPOS)).intValue();
         pdfi.currentYPosition = ((Integer)context.getProperty(YPOS)).intValue();
         Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-        if (foreign != null
-                && BITMAP.equalsIgnoreCase((String)foreign.get(CONVERSION_MODE))) {
-            pdfi.paintAsBitmap = true;
-        }
+        pdfi.paintAsBitmap = ImageHandlerUtil.isConversionModeBitmap(foreign);
         return pdfi;
     }
 
