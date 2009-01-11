@@ -43,6 +43,7 @@ import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -88,15 +89,28 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
      */
     public void paint(TextNode node, Graphics2D g2d) {
         Point2D loc = node.getLocation();
-        log.debug("painting text node " + node);
-        if (hasUnsupportedAttributes(node)) {
-            log.debug("hasUnsuportedAttributes");
+        if (!isSupportedGraphics2D(g2d) || hasUnsupportedAttributes(node)) {
+            if (log.isDebugEnabled()) {
+                log.debug("painting text node " + node
+                    + " by stroking due to unsupported attributes or an incompatible Graphics2D");
+            }
             PROXY_PAINTER.paint(node, g2d);
         } else {
-            log.debug("allAttributesSupported");
+            if (log.isDebugEnabled()) {
+                log.debug("painting text node " + node + " normally.");
+            }
             paintTextRuns(node.getTextRuns(), g2d, loc);
         }
     }
+
+    /**
+     * Checks whether the Graphics2D is compatible with this text painter. Batik may
+     * pass in a Graphics2D instance that paints on a special buffer image, for example
+     * for filtering operations. In that case, the text painter should be bypassed.
+     * @param g2d the Graphics2D instance to check
+     * @return true if the Graphics2D is supported
+     */
+    protected abstract boolean isSupportedGraphics2D(Graphics2D g2d);
 
     private boolean hasUnsupportedAttributes(TextNode node) {
         Iterator iter = node.getTextRuns().iterator();
@@ -246,12 +260,14 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
         }
         g2d.setPaint(foreground);
 
+        // text anchor
+        TextNode.Anchor anchor = (TextNode.Anchor)aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
+
         // text
         String txt = getText(aci);
         float advance = getStringWidth(txt, font);
         float tx = 0;
-        TextNode.Anchor anchor = (TextNode.Anchor)aci.getAttribute(
-                GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
         if (anchor != null) {
             switch (anchor.getType()) {
             case TextNode.Anchor.ANCHOR_MIDDLE:
@@ -337,6 +353,9 @@ public abstract class AbstractFOPTextPainter implements TextPainter {
 
     private Font getFont(AttributedCharacterIterator aci) {
         Float fontSize = (Float)aci.getAttribute(TextAttribute.SIZE);
+        if (fontSize == null) {
+            fontSize = new Float(10f);
+        }
         String style = getStyle(aci);
         int weight = getWeight(aci);
 
