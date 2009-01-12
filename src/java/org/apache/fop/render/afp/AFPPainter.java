@@ -40,6 +40,7 @@ import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.BorderPaintingInfo;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.RectanglePaintingInfo;
 import org.apache.fop.afp.fonts.AFPFont;
@@ -54,6 +55,7 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
+import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
@@ -73,8 +75,8 @@ public class AFPPainter extends AbstractIFPainter {
 
     private AFPDocumentHandler documentHandler;
 
-    /** the line painter */
-    private AFPBorderPainter borderPainter;
+    /** the border painter */
+    private AFPBorderPainterAdapter borderPainter;
     /** the rectangle painter */
     private AFPRectanglePainter rectanglePainter;
 
@@ -89,7 +91,8 @@ public class AFPPainter extends AbstractIFPainter {
         super();
         this.documentHandler = documentHandler;
         this.state = IFState.create();
-        this.borderPainter = new AFPBorderPainter(getPaintingState(), getDataStream());
+        this.borderPainter = new AFPBorderPainterAdapter(
+                new AFPBorderPainter(getPaintingState(), getDataStream()));
         this.rectanglePainter = new AFPRectanglePainter(getPaintingState(), getDataStream());
         this.unitConv = getPaintingState().getUnitConverter();
     }
@@ -219,26 +222,84 @@ public class AFPPainter extends AbstractIFPainter {
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
             BorderProps start, BorderProps end) throws IFException {
         if (before != null || after != null || start != null || end != null) {
-            /*
             try {
-                endTextObject();
                 this.borderPainter.drawBorders(rect, before, after, start, end);
-            } catch (IOException ioe) {
-                throw new IFException("I/O error in drawBorderRect()", ioe);
-            }*/
+            } catch (IOException ife) {
+                throw new IFException("IO error while painting borders", ife);
+            }
         }
+    }
+
+    //TODO Try to resolve the name-clash between the AFPBorderPainter in the afp package
+    //and this one. Not done for now to avoid a lot of re-implementation and code duplication.
+    private class AFPBorderPainterAdapter extends BorderPainter {
+
+        private AFPBorderPainter delegate;
+
+        public AFPBorderPainterAdapter(AFPBorderPainter borderPainter) {
+            this.delegate = borderPainter;
+        }
+
+        protected void clip() throws IOException {
+            //not supported by AFP
+        }
+
+        protected void closePath() throws IOException {
+            //used for clipping only, so not implemented
+        }
+
+        protected void moveTo(int x, int y) throws IOException {
+            //used for clipping only, so not implemented
+        }
+
+        protected void lineTo(int x, int y) throws IOException {
+            //used for clipping only, so not implemented
+        }
+
+        protected void saveGraphicsState() throws IOException {
+            //used for clipping only, so not implemented
+        }
+
+        protected void restoreGraphicsState() throws IOException {
+            //used for clipping only, so not implemented
+        }
+
+        private float toPoints(int mpt) {
+            return mpt / 1000f;
+        }
+
+        protected void drawBorderLine(int x1, int y1, int x2, int y2, boolean horz,
+                boolean startOrBefore, int style, Color color) throws IOException {
+            BorderPaintingInfo borderPaintInfo = new BorderPaintingInfo(
+                    toPoints(x1), toPoints(y1), toPoints(x2), toPoints(y2),
+                    horz, style, color);
+            delegate.paint(borderPaintInfo);
+        }
+
+        public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+                throws IOException {
+            if (start.y != end.y) {
+                //TODO Support arbitrary lines if necessary
+                throw new UnsupportedOperationException(
+                        "Can only deal with horizontal lines right now");
+            }
+
+            //Simply delegates to drawBorderLine() as AFP line painting is not very sophisticated.
+            int halfWidth = width / 2;
+            drawBorderLine(start.x, start.y - halfWidth, end.x, start.y + halfWidth,
+                    true, true, style.getEnumValue(), color);
+        }
+
     }
 
     /** {@inheritDoc} */
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
                 throws IFException {
-        /*
         try {
-            endTextObject();
             this.borderPainter.drawLine(start, end, width, color, style);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawLine()", ioe);
-        }*/
+        }
     }
 
     /** {@inheritDoc} */
