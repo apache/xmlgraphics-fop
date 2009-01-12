@@ -21,6 +21,7 @@ package org.apache.fop.render.afp;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 import org.w3c.dom.Document;
@@ -112,11 +113,14 @@ public class AFPImageHandlerSVG implements ImageHandler {
             return;
         }
 
-        paintingState.save(); // save
-
         // Image positioning
         AFPObjectAreaInfo objectAreaInfo = AFPImageHandler.createObjectAreaInfo(paintingState, pos);
         graphicsObjectInfo.setObjectAreaInfo(objectAreaInfo);
+
+        paintingState.save(); // save
+        AffineTransform placement = new AffineTransform();
+        placement.translate(pos.x, pos.y);
+        paintingState.concatenate(placement);
 
         //Set up painter and target
         graphicsObjectInfo.setGraphics2D(g2d);
