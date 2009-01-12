@@ -343,7 +343,7 @@ public abstract class PtocaBuilder implements PtocaConstants {
         if (incr == this.currentVariableSpaceCharacterIncrement) {
             return;
         }
-        assert incr > 0 && incr < (1 << 16);
+        assert incr >= 0 && incr < (1 << 16);
         newControlSequence();
         writeShort(Math.abs(incr)); //Increment
         commit(chained(SVI));
