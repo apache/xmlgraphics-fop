@@ -97,15 +97,6 @@ public abstract class AFPFont extends Typeface {
      */
     public abstract CharacterSet getCharacterSet(int size);
 
-     /**
-     * Determines whether this font contains a particular character/glyph.
-     * @param c character to check
-     * @return True if the character is supported, False otherwise
-     */
-    public boolean hasChar(char c) {
-        return true;
-    }
-
     /** {@inheritDoc} */
     public String toString() {
         return "name=" + name;

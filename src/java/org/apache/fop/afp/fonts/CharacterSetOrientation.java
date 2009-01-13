@@ -41,16 +41,6 @@ package org.apache.fop.afp.fonts;
 public class CharacterSetOrientation {
 
     /**
-     * The code page to which the character set relates
-     */
-    private String codePage;
-
-    /**
-     * The encoding used for the code page
-     */
-    private String encoding;
-
-    /**
      * The ascender height for the character set
      */
     private int ascender;
@@ -66,9 +56,9 @@ public class CharacterSetOrientation {
     private int capHeight;
 
     /**
-     * The characters in the charcater set
+     * The character widths in the character set
      */
-    private int[] chars = new int[256];
+    private int[] charsWidths = new int[256];
 
     /**
      * The height of lowercase letters
@@ -166,8 +156,8 @@ public class CharacterSetOrientation {
      * @return the widths of all characters
      */
     public int[] getWidths() {
-        int arr[] = new int[(getLastChar() - getFirstChar()) + 1];
-        System.arraycopy(chars, getFirstChar(), arr, 0, (getLastChar() - getFirstChar()) + 1);
+        int[] arr = new int[(getLastChar() - getFirstChar()) + 1];
+        System.arraycopy(charsWidths, getFirstChar(), arr, 0, (getLastChar() - getFirstChar()) + 1);
         return arr;
     }
 
@@ -187,11 +177,11 @@ public class CharacterSetOrientation {
      * @return the widths of the character
      */
     public int getWidth(int characterIndex) {
-        if (characterIndex >= chars.length) {
+        if (characterIndex >= charsWidths.length) {
             throw new IllegalArgumentException("Invalid character index: "
-                    + characterIndex + ", maximum is " + (chars.length - 1));
+                    + characterIndex + ", maximum is " + (charsWidths.length - 1));
         }
-        return chars[characterIndex];
+        return charsWidths[characterIndex];
     }
 
     /**
@@ -253,14 +243,13 @@ public class CharacterSetOrientation {
      * @param width the widths of the character
      */
     public void setWidth(int character, int width) {
-
-        if (character >= chars.length) {
+        if (character >= charsWidths.length) {
             // Increase the size of the array if necessary
-            int arr[] = new int[(character - firstChar) + 1];
-            System.arraycopy(chars, 0, arr, 0, chars.length);
-            chars = arr;
+            int[] arr = new int[(character - firstChar) + 1];
+            System.arraycopy(charsWidths, 0, arr, 0, charsWidths.length);
+            charsWidths = arr;
         }
-        chars[character] = width;
+        charsWidths[character] = width;
 
     }
 

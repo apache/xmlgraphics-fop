@@ -51,6 +51,7 @@ import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.RenderingContext;
@@ -61,6 +62,7 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * IFPainter implementation that produces AFP (MO:DCA).
@@ -305,7 +307,7 @@ public class AFPPainter extends AbstractIFPainter {
     /** {@inheritDoc} */
     public void drawText(int x, int y, final int[] dx, int[] dy, final String text)
             throws IFException {
-        int fontSize = this.state.getFontSize();
+        final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
 
         FontTriplet triplet = new FontTriplet(
@@ -316,6 +318,7 @@ public class AFPPainter extends AbstractIFPainter {
         // register font as necessary
         Map/*<String,FontMetrics>*/ fontMetricMap = documentHandler.getFontInfo().getFonts();
         final AFPFont afpFont = (AFPFont)fontMetricMap.get(fontKey);
+        final Font font = getFontInfo().getFontInstance(triplet, fontSize);
         AFPPageFonts pageFonts = getPaintingState().getPageFonts();
         AFPFontAttributes fontAttributes = pageFonts.registerFont(fontKey, afpFont, fontSize);
 
@@ -341,40 +344,41 @@ public class AFPPainter extends AbstractIFPainter {
                     builder.setExtendedTextColor(state.getTextColor());
                     builder.setCodedFont((byte)fontReference);
 
-                    if (dx == null) {
-                        //No glyph-shifting necessary, so take a shortcut
-                        builder.addTransparentData(text.getBytes(charSet.getEncoding()));
-                    } else {
-                        int l = text.length();
-                        int dxl = dx.length;
-                        StringBuffer sb = new StringBuffer();
+                    int l = text.length();
+                    int dxl = (dx != null ? dx.length : 0);
+                    StringBuffer sb = new StringBuffer();
 
-                        if (dxl > 0 && dx[0] != 0) {
-                            int dxu = Math.round(unitConv.mpt2units(dx[0]));
-                            builder.relativeMoveInline(-dxu);
+                    if (dxl > 0 && dx[0] != 0) {
+                        int dxu = Math.round(unitConv.mpt2units(dx[0]));
+                        builder.relativeMoveInline(-dxu);
+                    }
+                    for (int i = 0; i < l; i++) {
+                        char orgChar = text.charAt(i);
+                        float glyphAdjust = 0;
+                        if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                            sb.append(CharUtilities.SPACE);
+                            int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
+                            int charWidth = font.getCharWidth(orgChar);
+                            glyphAdjust += (charWidth - spaceWidth);
+                        } else {
+                            sb.append(orgChar);
                         }
-                        for (int i = 0; i < l; i++) {
-                            sb.append(text.charAt(i));
-                            float glyphAdjust = 0;
 
-                            if (i < dxl - 1) {
-                                glyphAdjust += dx[i + 1];
+                        if (i < dxl - 1) {
+                            glyphAdjust += dx[i + 1];
+                        }
+
+                        if (glyphAdjust != 0) {
+                            if (sb.length() > 0) {
+                                builder.addTransparentData(charSet.encodeChars(sb));
+                                sb.setLength(0);
                             }
-
-                            if (glyphAdjust != 0) {
-                                if (sb.length() > 0) {
-                                    String t = sb.toString();
-                                    builder.addTransparentData(t.getBytes(charSet.getEncoding()));
-                                    sb.setLength(0);
-                                }
-                                int increment = Math.round(unitConv.mpt2units(glyphAdjust));
-                                builder.relativeMoveInline(increment);
-                            }
+                            int increment = Math.round(unitConv.mpt2units(glyphAdjust));
+                            builder.relativeMoveInline(increment);
                         }
-                        if (sb.length() > 0) {
-                            String t = sb.toString();
-                            builder.addTransparentData(t.getBytes(charSet.getEncoding()));
-                        }
+                    }
+                    if (sb.length() > 0) {
+                        builder.addTransparentData(charSet.encodeChars(sb));
                     }
                 }
 
