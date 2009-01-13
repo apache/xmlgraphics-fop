@@ -191,7 +191,7 @@ public class PresentationTextObject extends AbstractNamedAFPObject {
 
     private void handleUnexpectedIOError(IOException ioe) {
         //"Unexpected" since we're currently dealing with ByteArrayOutputStreams here.
-        throw new RuntimeException("Unexpected I/O error", ioe);
+        throw new RuntimeException("Unexpected I/O error: " + ioe.getMessage(), ioe);
     }
 
     /** {@inheritDoc} */
