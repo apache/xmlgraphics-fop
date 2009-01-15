@@ -68,6 +68,9 @@ public class ImageContent extends AbstractStructuredObject {
     /** the image color model */
     private byte colorModel = (byte)0x01;
 
+    /** additive/subtractive setting for ASFLAG */
+    private boolean subtractive = false;
+
     /** the image data */
     private byte[] data;
 
@@ -120,6 +123,14 @@ public class ImageContent extends AbstractStructuredObject {
      */
     public void setImageIDEColorModel(byte color) {
         this.colorModel = color;
+    }
+
+    /**
+     * Set either additive or subtractive mode (used for ASFLAG).
+     * @param subtractive true for subtractive mode, false for additive mode
+     */
+    public void setSubtractive(boolean subtractive) {
+        this.subtractive = subtractive;
     }
 
     /**
@@ -243,12 +254,16 @@ public class ImageContent extends AbstractStructuredObject {
      * @return byte[] The data stream.
      */
     private byte[] getIDEStructureParameter() {
+        byte flags = 0x00;
+        if (subtractive) {
+            flags |= 1 << 7;
+        }
         if (colorModel != 0 && size == 24) {
             final byte bits = (byte)(size / 3);
             final byte[] ideStructData = new byte[] {
                 (byte)0x9B, // ID
                 0x00, // Length
-                0x00, // FLAGS
+                flags, // FLAGS
                 0x00, // Reserved
                 colorModel, // COLOR MODEL
                 0x00, // Reserved
@@ -260,6 +275,20 @@ public class ImageContent extends AbstractStructuredObject {
             };
             ideStructData[1] = (byte)(ideStructData.length - 2);
             return ideStructData;
+        } else if (size == 1) {
+            final byte[] ideStructData = new byte[] {
+                    (byte)0x9B, // ID
+                    0x00, // Length
+                    flags, // FLAGS
+                    0x00, // Reserved
+                    colorModel, // COLOR MODEL
+                    0x00, // Reserved
+                    0x00, // Reserved
+                    0x00, // Reserved
+                    1
+                };
+                ideStructData[1] = (byte)(ideStructData.length - 2);
+                return ideStructData;
         }
         return new byte[0];
     }
