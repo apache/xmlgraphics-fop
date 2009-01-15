@@ -114,6 +114,14 @@ public class ImageSegment extends AbstractNamedAFPObject {
     }
 
     /**
+     * Set either additive or subtractive mode (used for ASFLAG).
+     * @param subtractive true for subtractive mode, false for additive mode
+     */
+    public void setSubtractive(boolean subtractive) {
+        getImageContent().setSubtractive(subtractive);
+    }
+
+    /**
      * Set the data image data.
      *
      * @param data the image data

@@ -105,13 +105,15 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
             if (BitmapImageUtil.getColorIndexSize(renderedImage) > 2) {
                 directEncode = false; //Lookup tables are not implemented, yet
             }
-            if (BitmapImageUtil.isMonochromeImage(renderedImage)
-                    && BitmapImageUtil.isZeroBlack(renderedImage)) {
-                directEncode = false; //Passing additive/subtractive info not implemented, yet
-            }
             if (directEncode) {
                 log.debug("Encoding image directly...");
                 imageObjectInfo.setBitsPerPixel(encodedColorModel.getPixelSize());
+                if (BitmapImageUtil.isMonochromeImage(renderedImage)
+                        && !BitmapImageUtil.isZeroBlack(renderedImage)) {
+                    log.trace("set subtractive mode");
+                    imageObjectInfo.setSubtractive(true);
+                }
+
                 helper.encode(baos);
                 imageData = baos.toByteArray();
             }

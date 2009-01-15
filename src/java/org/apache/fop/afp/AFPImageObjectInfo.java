@@ -34,6 +34,8 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
     /** compression type if any */
     private int compression = -1;
 
+    private boolean subtractive;
+
     /**
      * Default constructor
      */
@@ -104,12 +106,29 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
         this.compression = compression;
     }
 
+    /**
+     * Set either additive or subtractive mode (used for ASFLAG).
+     * @param subtractive true for subtractive mode, false for additive mode
+     */
+    public void setSubtractive(boolean subtractive) {
+        this.subtractive = subtractive;
+    }
+
+    /**
+     * Indicates whether additive or subtractive mode is set.
+     * @return true for subtractive mode, false for additive mode
+     */
+    public boolean isSubtractive() {
+        return subtractive;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "AFPImageObjectInfo{" + super.toString()
             + ", compression=" + compression
             + ", color=" + color
             + ", bitsPerPixel=" + bitsPerPixel
+            + ", " + (isSubtractive() ? "subtractive" : "additive")
             + "}";
     }
 }
