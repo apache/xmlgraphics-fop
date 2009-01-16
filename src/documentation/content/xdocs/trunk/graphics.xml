@@ -461,7 +461,7 @@
         <section id="svg-font-selection">
           <title>Font selection notes</title>
           <p>
-            Apache Batik uses the AWT/Java2D subsystem as font source while FOP has its on font
+            Apache Batik uses the AWT/Java2D subsystem as font source while FOP has its own font
             subsystem. Great care has been taken that font selection does the best possible choices.
             But it must be noted when creating PDF or PostScript that a font used in SVG graphics
             needs to be registered with the operating system as well as in FOP's configuration.

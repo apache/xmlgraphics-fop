@@ -20,10 +20,13 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Rectangle;
+import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
@@ -37,11 +40,15 @@ import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.util.BitmapImageUtil;
 
 /**
  * PDFImageHandler implementation which handles RenderedImage instances.
  */
 public class AFPImageHandlerRenderedImage extends AFPImageHandler implements ImageHandler {
+
+    /** logging instance */
+    private static Log log = LogFactory.getLog(AFPImageHandlerRenderedImage.class);
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.BUFFERED_IMAGE,
@@ -82,29 +89,74 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         int dataWidth = renderedImage.getWidth();
         imageObjectInfo.setDataWidth(dataWidth);
 
-        //TODO This needs to be improved: Buffering whole images in memory is bad.
-        //Images with fewer bits per pixel than the required output format are unnecessarily
-        //increased in size (extreme case: 1-bit images are blown up to 24 bits if color is
-        //enabled). For grayscale output, encoding is even a two-step process which
-        //needs to be streamlined to a single step. The resulting bitmap is then still buffered
-        //in memory. To reduce AFP file size, investigate using a compression scheme.
+        //TODO To reduce AFP file size, investigate using a compression scheme.
         //Currently, all image data is uncompressed.
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baos);
-        byte[] imageData = baos.toByteArray();
 
-        boolean colorImages = paintingState.isColorImages();
-        imageObjectInfo.setColor(colorImages);
-
-        // convert to grayscale
-        if (!colorImages) {
-            baos.reset();
-            int bitsPerPixel = paintingState.getBitsPerPixel();
-            imageObjectInfo.setBitsPerPixel(bitsPerPixel);
-            ImageEncodingHelper.encodeRGBAsGrayScale(
-                  imageData, dataWidth, dataHeight, bitsPerPixel, baos);
-            imageData = baos.toByteArray();
+        int maxPixelSize = paintingState.getBitsPerPixel();
+        if (paintingState.isColorImages()) {
+            maxPixelSize *= 3; //RGB only at the moment
         }
+
+        ColorModel cm = renderedImage.getColorModel();
+        if (log.isTraceEnabled()) {
+            log.trace("ColorModel: " + cm);
+        }
+        int pixelSize = cm.getPixelSize();
+        if (cm.hasAlpha()) {
+            pixelSize -= 8;
+        }
+        //TODO Add support for CMYK images
+
+        byte[] imageData = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        boolean allowDirectEncoding = true;
+        if (allowDirectEncoding && pixelSize <= maxPixelSize) {
+            //Attempt to encode without resampling the image
+            ImageEncodingHelper helper = new ImageEncodingHelper(renderedImage);
+            ColorModel encodedColorModel = helper.getEncodedColorModel();
+            boolean directEncode = true;
+            if (helper.getEncodedColorModel().getPixelSize() > maxPixelSize) {
+                directEncode = false; //pixel size needs to be reduced
+            }
+            if (BitmapImageUtil.getColorIndexSize(renderedImage) > 2) {
+                directEncode = false; //Lookup tables are not implemented, yet
+            }
+            if (directEncode) {
+                log.debug("Encoding image directly...");
+                imageObjectInfo.setBitsPerPixel(encodedColorModel.getPixelSize());
+                if (BitmapImageUtil.isMonochromeImage(renderedImage)
+                        && !BitmapImageUtil.isZeroBlack(renderedImage)) {
+                    log.trace("set subtractive mode");
+                    imageObjectInfo.setSubtractive(true);
+                }
+
+                helper.encode(baos);
+                imageData = baos.toByteArray();
+            }
+        }
+        if (imageData == null) {
+            log.debug("Encoding image via RGB...");
+            //Convert image to 24bit RGB
+            ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baos);
+            imageData = baos.toByteArray();
+
+            boolean colorImages = paintingState.isColorImages();
+            imageObjectInfo.setColor(colorImages);
+
+            // convert to grayscale
+            if (!colorImages) {
+                log.debug("Converting RGB image to grayscale...");
+                baos.reset();
+                int bitsPerPixel = paintingState.getBitsPerPixel();
+                imageObjectInfo.setBitsPerPixel(bitsPerPixel);
+                //TODO this should be done off the RenderedImage to avoid buffering the
+                //intermediate 24bit image
+                ImageEncodingHelper.encodeRGBAsGrayScale(
+                      imageData, dataWidth, dataHeight, bitsPerPixel, baos);
+                imageData = baos.toByteArray();
+            }
+        }
+
         imageObjectInfo.setData(imageData);
 
         // set object area info

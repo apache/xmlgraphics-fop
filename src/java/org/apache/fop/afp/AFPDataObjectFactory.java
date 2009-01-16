@@ -21,6 +21,9 @@ package org.apache.fop.afp;
 
 import java.awt.geom.Rectangle2D;
 
+import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+
 import org.apache.fop.afp.ioca.ImageContent;
 import org.apache.fop.afp.modca.AbstractDataObject;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
@@ -35,8 +38,6 @@ import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
 import org.apache.fop.afp.modca.triplets.ObjectClassificationTriplet;
-import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 /**
  * Factory for high level data objects (Image/Graphics etc)
@@ -117,6 +118,7 @@ public class AFPDataObjectFactory {
         } else {
             imageObj.setIDESize((byte) imageObjectInfo.getBitsPerPixel());
         }
+        imageObj.setSubtractive(imageObjectInfo.isSubtractive());
 
         imageObj.setData(imageObjectInfo.getData());
 

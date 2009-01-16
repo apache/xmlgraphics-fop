@@ -37,11 +37,10 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.logging.impl.SimpleLog;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
@@ -78,8 +77,6 @@ public class FopServlet extends HttpServlet {
     /** Name of the parameter used for the XSLT file */
     protected static final String XSLT_REQUEST_PARAM = "xslt";
 
-    /** Logger to give to FOP */
-    protected SimpleLog log = null;
     /** The TransformerFactory used to create Transformer instances */
     protected TransformerFactory transFactory = null;
     /** The FopFactory used to create Fop instances */
@@ -91,8 +88,6 @@ public class FopServlet extends HttpServlet {
      * {@inheritDoc}
      */
     public void init() throws ServletException {
-        this.log = new SimpleLog("FOP/Servlet");
-        log.setLevel(SimpleLog.LOG_LEVEL_WARN);
         this.uriResolver = new ServletContextURIResolver(getServletContext());
         this.transFactory = TransformerFactory.newInstance();
         this.transFactory.setURIResolver(this.uriResolver);
