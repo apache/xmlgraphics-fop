@@ -186,7 +186,14 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect) throws IFException {
-        drawImageUsingURI(uri, rect);
+        String name = documentHandler.getPageSegmentNameFor(uri);
+        if (name != null) {
+            float[] srcPts = {rect.x, rect.y};
+            int[] coords = unitConv.mpts2units(srcPts);
+            getDataStream().createIncludePageSegment(name, coords[X], coords[Y]);
+        } else {
+            drawImageUsingURI(uri, rect);
+        }
     }
 
     /** {@inheritDoc} */
@@ -314,6 +321,10 @@ public class AFPPainter extends AbstractIFPainter {
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
         //TODO Ignored: state.getFontVariant()
         String fontKey = getFontInfo().getInternalFontKey(triplet);
+        if (fontKey == null) {
+            fontKey = getFontInfo().getInternalFontKey(
+                    new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+        }
 
         // register font as necessary
         Map/*<String,FontMetrics>*/ fontMetricMap = documentHandler.getFontInfo().getFonts();

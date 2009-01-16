@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,8 +32,15 @@ import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.afp.DataStream;
+import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.fonts.FontCollection;
+import org.apache.fop.fonts.FontEventAdapter;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontManager;
+import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -59,6 +67,12 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** the AFP datastream */
     private DataStream dataStream;
+
+    /** the map of page segments */
+    private Map/*<String,String>*/pageSegmentMap
+        = new java.util.HashMap/*<String,String>*/();
+
+    private boolean inPageHeader;
 
     /**
      * Default constructor.
@@ -87,6 +101,19 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
         return new AFPRendererConfigurator(getUserAgent());
+    }
+
+    /** {@inheritDoc} */
+    public void setDefaultFontInfo(FontInfo fontInfo) {
+        FontManager fontManager = getUserAgent().getFactory().getFontManager();
+        FontCollection[] fontCollections = new FontCollection[] {
+            new AFPFontCollection(getUserAgent().getEventBroadcaster(), null)
+        };
+
+        FontInfo fi = (fontInfo != null ? fontInfo : new FontInfo());
+        fi.setEventListener(new FontEventAdapter(getUserAgent().getEventBroadcaster()));
+        fontManager.setup(fi, fontCollections);
+        setFontInfo(fi);
     }
 
     AFPPaintingState getPaintingState() {
@@ -168,6 +195,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     public void startPage(int index, String name, String pageMasterName, Dimension size)
                 throws IFException {
         paintingState.clear();
+        pageSegmentMap.clear();
 
         AffineTransform baseTransform = getBaseTransform();
         paintingState.concatenate(baseTransform);
@@ -183,20 +211,17 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
         dataStream.startPage(pageWidth, pageHeight, pageRotation,
                 resolution, resolution);
-
-        //TODO Handle page extensions
-        //renderPageObjectExtensions(pageViewport);
-
     }
 
     /** {@inheritDoc} */
     public void startPageHeader() throws IFException {
         super.startPageHeader();
-
+        this.inPageHeader = true;
     }
 
     /** {@inheritDoc} */
     public void endPageHeader() throws IFException {
+        this.inPageHeader = false;
         super.endPageHeader();
     }
 
@@ -225,12 +250,33 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void handleExtensionObject(Object extension) throws IFException {
-        /*
-        try {
-        } catch (IOException ioe) {
-            throw new IFException("I/O error in handleExtensionObject()", ioe);
+        if (extension instanceof AFPPageSetup) {
+            AFPPageSetup aps = (AFPPageSetup)extension;
+            if (!inPageHeader) {
+                throw new IFException(
+                    "AFP page setup extension encountered outside the page header: " + aps, null);
+            }
+            String element = aps.getElementName();
+            if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
+                String overlay = aps.getName();
+                if (overlay != null) {
+                    dataStream.createIncludePageOverlay(overlay);
+                }
+            } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(element)) {
+                String name = aps.getName();
+                String source = aps.getValue();
+                pageSegmentMap.put(source, name);
+            } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(element)) {
+                String name = aps.getName();
+                String value = aps.getValue();
+                dataStream.createTagLogicalElement(name, value);
+            } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
+                String content = aps.getContent();
+                if (content != null) {
+                    dataStream.createNoOperation(content);
+                }
+            }
         }
-        */
     }
 
     // ---=== AFPCustomizable ===---
@@ -263,6 +309,16 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void setDefaultResourceGroupFilePath(String filePath) {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
+    }
+
+    /**
+     * Returns the page segment name for a given URI if it actually represents a page segment.
+     * Otherwise, it just returns null.
+     * @param uri the URI that identifies the page segment
+     * @return the page segment name or null if there's no page segment for the given URI
+     */
+    String getPageSegmentNameFor(String uri) {
+        return (String)pageSegmentMap.get(uri);
     }
 
 }
