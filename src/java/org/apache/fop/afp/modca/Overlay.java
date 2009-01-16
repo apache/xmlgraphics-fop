@@ -72,7 +72,6 @@ public class Overlay extends PageObject {
 
         getActiveEnvironmentGroup().writeToStream(os);
 
-        writeObjects(includePageSegments, os);
         writeObjects(tagLogicalElements, os);
         writeObjects(objects, os);
     }
