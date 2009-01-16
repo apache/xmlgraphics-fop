@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.fo.extensions.ExtensionAttachment;
+
 /**
  * Abstract base class for all area tree objects.
  */
@@ -36,7 +38,7 @@ public abstract class AreaTreeObject {
 
     /** Extension attachments */
     protected List/*<ExtensionAttachment>*/ extensionAttachments = null;
-    
+
     /**
      * Sets a foreign attribute.
      * @param name the qualified name of the attribute
@@ -87,21 +89,46 @@ public abstract class AreaTreeObject {
             return Collections.EMPTY_MAP;
         }
     }
-    
+
+    private void prepareExtensionAttachmentContainer() {
+        if (this.extensionAttachments == null) {
+            this.extensionAttachments = new java.util.ArrayList/*<ExtensionAttachment>*/();
+        }
+    }
+
     /**
-     * Set extension attachments from a List 
+     * Adds a new ExtensionAttachment instance to this page.
+     * @param attachment the ExtensionAttachment
+     */
+    public void addExtensionAttachment(ExtensionAttachment attachment) {
+        prepareExtensionAttachmentContainer();
+        extensionAttachments.add(attachment);
+    }
+
+    /**
+     * Set extension attachments from a List
      * @param extensionAttachments a List with extension attachments
      */
     public void setExtensionAttachments(List extensionAttachments) {
-        this.extensionAttachments = extensionAttachments;
+        prepareExtensionAttachmentContainer();
+        this.extensionAttachments.addAll(extensionAttachments);
     }
 
     /** @return the extension attachments associated with this area */
     public List getExtensionAttachments() {
-        if (this.foreignAttributes != null) {
+        if (this.extensionAttachments != null) {
             return Collections.unmodifiableList(this.extensionAttachments);
         } else {
             return Collections.EMPTY_LIST;
         }
-    }    
+    }
+
+    /**
+     * Indicates whether this area tree object has any extension attachments.
+     * @return true if there are extension attachments
+     */
+    public boolean hasExtensionAttachments() {
+        return this.extensionAttachments != null && !this.extensionAttachments.isEmpty();
+    }
+
 }
