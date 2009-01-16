@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 
 /**
@@ -87,10 +85,6 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     private Map markerLastEnd = null;
     private Map markerLastAny = null;
 
-    //Arbitrary attachments to the page from extensions that need to pass information
-    //down to the renderers.
-    private List/*<ExtensionAttachment>*/ extensionAttachments = null;
-
     /**
      * logging instance
      */
@@ -105,7 +99,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      */
     public PageViewport(SimplePageMaster spm, int pageNumber, String pageStr, boolean blank) {
         this.simplePageMasterName = spm.getMasterName();
-        this.extensionAttachments = spm.getExtensionAttachments();
+        setExtensionAttachments(spm.getExtensionAttachments());
         this.blank = blank;
         int pageWidth = spm.getPageWidth().getValue();
         int pageHeight = spm.getPageHeight().getValue();
@@ -122,8 +116,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      */
     public PageViewport(PageViewport original) {
         if (original.extensionAttachments != null) {
-            this.extensionAttachments
-                = new java.util.ArrayList/*<ExtensionAttachment>*/(original.extensionAttachments);
+            setExtensionAttachments(original.extensionAttachments);
         }
         this.pageIndex = original.pageIndex;
         this.pageNumber = original.pageNumber;
@@ -583,26 +576,6 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         return this.simplePageMasterName;
     }
 
-    /**
-     * Adds a new ExtensionAttachment instance to this page.
-     * @param attachment the ExtensionAttachment
-     */
-    public void addExtensionAttachment(ExtensionAttachment attachment) {
-        if (this.extensionAttachments == null) {
-            this.extensionAttachments = new java.util.ArrayList/*<ExtensionAttachment>*/();
-        }
-        extensionAttachments.add(attachment);
-    }
-
-    /** @return the list of extension attachments for this page */
-    public List getExtensionAttachments() {
-        if (this.extensionAttachments == null) {
-            return Collections.EMPTY_LIST;
-        } else {
-            return this.extensionAttachments;
-        }
-    }
-
     /** @return True if this is a blank page. */
     public boolean isBlank() {
         return this.blank;
@@ -671,8 +644,4 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         return getPage().getRegionViewport(id).getRegionReference();
     }
 
-    /** @return whether this page viewport has any extension attachments */
-    public boolean hasExtensionAttachments() {
-        return this.extensionAttachments != null && !this.extensionAttachments.isEmpty();
-    }
 }

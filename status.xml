@@ -52,6 +52,11 @@
   </contexts>
 
   <changes>
+    <!--
+      When adding changes, please try to highlight those which might affect upgrading
+      users, i.e. when the behaviour changes and could affect the layout of existing
+      documents. Example: the fix of marks layering will be such a case when it's done.
+    -->
     <release version="FOP Trunk" date="TBD">
       <action context="Fonts" dev="JM" type="add">
         FOP now creates ToUnicode CMaps for single-byte fonts that don't use built-in

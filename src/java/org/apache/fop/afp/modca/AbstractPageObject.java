@@ -60,9 +60,6 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
     /** The list of tag logical elements */
     protected List/*<TagLogicalElement>*/ tagLogicalElements = null;
 
-    /** The list of the include page segments */
-    protected List/*<IncludePageSegment>*/ includePageSegments = null;
-
     /** The list of objects within this resource container */
     protected List/*<AbstractStructuredAFPObject>*/ objects = new java.util.ArrayList();
 
@@ -253,19 +250,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      */
     public void createIncludePageSegment(String name, int x, int y) {
         IncludePageSegment ips = factory.createIncludePageSegment(name, x, y);
-        getIncludePageSegments().add(ips);
-    }
-
-    /**
-     * Returns the include page segments list
-     *
-     * @return the include page segments list
-     */
-    private List getIncludePageSegments() {
-        if (this.includePageSegments == null) {
-            this.includePageSegments = new java.util.ArrayList/*<IncludePageSegment>*/();
-        }
-        return this.includePageSegments;
+        addObject(ips);
     }
 
     /**

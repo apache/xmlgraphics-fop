@@ -47,6 +47,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlgraphics.image.GraphicsUtil;
 import org.apache.xmlgraphics.util.UnitConv;
 
+import org.apache.fop.util.BitmapImageUtil;
+
 /**
  * This class provides methods for generating PCL print files.
  */
@@ -534,7 +536,7 @@ public class PCLGenerator {
      * @return the gray value
      */
     public final int convertToGray(int r, int g, int b) {
-        return (r * 30 + g * 59 + b * 11) / 100;
+        return BitmapImageUtil.convertToGray(r, g, b);
     }
 
     /**
@@ -586,14 +588,8 @@ public class PCLGenerator {
      * @return true if it's a monochrome image
      */
     public static boolean isMonochromeImage(RenderedImage img) {
-        ColorModel cm = img.getColorModel();
-        if (cm instanceof IndexColorModel) {
-            IndexColorModel icm = (IndexColorModel)cm;
-            return icm.getMapSize() == 2;
-        } else {
-            return false;
+        return BitmapImageUtil.isMonochromeImage(img);
         }
-    }
 
     /**
      * Indicates whether an image is a grayscale image.
@@ -601,7 +597,7 @@ public class PCLGenerator {
      * @return true if it's a grayscale image
      */
     public static boolean isGrayscaleImage(RenderedImage img) {
-        return (img.getColorModel().getNumColorComponents() == 1);
+        return BitmapImageUtil.isGrayscaleImage(img);
     }
 
     private static int jaiAvailable = -1; //no synchronization necessary, not critical
@@ -816,21 +812,8 @@ public class PCLGenerator {
                 }
             }
             if (src == null) {
-                src = new BufferedImage(effDim.width, effDim.height,
-                        BufferedImage.TYPE_BYTE_GRAY);
-                Graphics2D g2d = src.createGraphics();
-                try {
-                    clearBackground(g2d, effDim);
-
-                    AffineTransform at = new AffineTransform();
-                    double sx = effDim.getWidth() / orgDim.getWidth();
-                    double sy = effDim.getHeight() / orgDim.getHeight();
-                    at.scale(sx, sy);
-                    g2d.drawRenderedImage(img, at);
-                } finally {
-                    g2d.dispose();
+                src = BitmapImageUtil.convertToGrayscale(img, effDim);
                 }
-            }
             MonochromeBitmapConverter converter = createMonochromeBitmapConverter();
             converter.setHint("quality", "false");
 
@@ -841,23 +824,10 @@ public class PCLGenerator {
             setTransparencyMode(sourceTransparency || mask != null, true);
             paintMonochromeBitmap(red, effResolution);
         } else {
-            //TODO untested!
             RenderedImage effImg = img;
             if (scaled) {
-                BufferedImage buf = new BufferedImage(effDim.width, effDim.height,
-                        BufferedImage.TYPE_BYTE_BINARY);
-                Graphics2D g2d = buf.createGraphics();
-                try {
-                    AffineTransform at = new AffineTransform();
-                    double sx = effDim.getWidth() / orgDim.getWidth();
-                    double sy = effDim.getHeight() / orgDim.getHeight();
-                    at.scale(sx, sy);
-                    g2d.drawRenderedImage(img, at);
-                } finally {
-                    g2d.dispose();
+                effImg = BitmapImageUtil.convertToMonochrome(img, effDim);
                 }
-                effImg = buf;
-            }
             setSourceTransparencyMode(sourceTransparency);
             selectCurrentPattern(0, 0); //Solid black
             paintMonochromeBitmap(effImg, effResolution);

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.Factory;
@@ -114,9 +115,17 @@ public class ImageObject extends AbstractDataObject {
     }
 
     /**
+     * Set either additive or subtractive mode (used for ASFLAG).
+     * @param subtractive true for subtractive mode, false for additive mode
+     */
+    public void setSubtractive(boolean subtractive) {
+        getImageSegment().setSubtractive(subtractive);
+    }
+
+    /**
      * Set the data of the image.
      *
-     * @param data the image data
+     * @param imageData the image data
      */
     public void setData(byte[] imageData) {
         getImageSegment().setData(imageData);
