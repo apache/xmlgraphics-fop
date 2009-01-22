@@ -154,6 +154,9 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                 ImageEncodingHelper.encodeRGBAsGrayScale(
                       imageData, dataWidth, dataHeight, bitsPerPixel, baos);
                 imageData = baos.toByteArray();
+                if (bitsPerPixel == 1) {
+                    imageObjectInfo.setSubtractive(true);
+                }
             }
         }
 
