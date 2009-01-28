@@ -19,10 +19,7 @@
 
 package org.apache.fop.fo.flow;
 
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -34,6 +31,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.xml.sax.Locator;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_block-container">
@@ -56,6 +54,7 @@ public class BlockContainer extends FObj implements BreakPropertySet {
     private int overflow;
     private Numeric referenceOrientation;
     private int span;
+    private int disableColumnBalancing;
     private int writingMode;
     // Unused but valid items, commented out for performance:
     //     private int intrusionDisplace;
@@ -94,6 +93,7 @@ public class BlockContainer extends FObj implements BreakPropertySet {
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         span = pList.get(PR_SPAN).getEnum();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
+        disableColumnBalancing = pList.get(PR_X_DISABLE_COLUMN_BALANCING).getEnum();
     }
 
     /** {@inheritDoc} */
@@ -216,6 +216,15 @@ public class BlockContainer extends FObj implements BreakPropertySet {
     public int getSpan() {
         return this.span;
     }
+
+    /**
+     * @return the "fox:disable-column-balancing" property, one of
+     * {@link Constants#EN_TRUE}, {@link Constants#EN_FALSE}
+     */
+    public int getDisableColumnBalancing() {
+        return disableColumnBalancing;
+    }
+
 
     /** @return the "writing-mode" property */
     public int getWritingMode() {

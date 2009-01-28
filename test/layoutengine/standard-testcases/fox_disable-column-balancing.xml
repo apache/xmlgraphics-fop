@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks fox:disable-column-balancing.
+    </p>
+  </info>
+  <fo>
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" 
+        xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
+        font-size="10pt" line-height="12pt">
+          <fo:layout-master-set>
+              <fo:simple-page-master page-height="250pt" page-width="200pt" master-name="page">
+                  <fo:region-body margin-right="3pt" margin-left="3pt" margin-bottom="14pt" 
+                    margin-top="8pt" column-count="2"/>
+              </fo:simple-page-master>
+          </fo:layout-master-set>
+          <!-- sequence 1: column balancing disabled -->
+          <fo:page-sequence master-reference="page" background-color="#AAAAAA">
+              <fo:flow flow-name="xsl-region-body" background-color="#80F010" 
+                fox:disable-column-balancing="true">
+                <fo:block background-color="#10F010">AAA AAA AAA AAA AAA AAA AAA AAA AAA AAA AAA 
+                  AAA</fo:block>
+                  <fo:block background-color="#20E020">BBB BBB BBB BBB BBB BBB BBB BBB BBB BBB BBB 
+                    BBB BBB</fo:block>
+                  <fo:block background-color="#80D030">CCC CCC CCC CCC CCC CCC CCC CCC CCC CCC CCC 
+                    CCC CCC</fo:block>
+                  <fo:block background-color="#30C040">DDD DDD DDD DDD DDD DDD DDD DDD DDD DDD DDD 
+                    DDD DDD</fo:block>
+                  <fo:block background-color="#90B050">EEE EEE EEE EEE EEE EEE EEE EEE EEE EEE EEE 
+                    EEE EEE EEE EEE</fo:block>
+                  <fo:block background-color="#40A060">FFF FFF FFF FFF FFF FFF FFF FFF FFF FFF FFF 
+                    FFF FFF FFF FFF</fo:block>
+                  <fo:block background-color="#A09070">GGG GGG GGG GGG GGG GGG GGG GGG GGG GGG GGG 
+                    GGG</fo:block>
+                  <fo:block background-color="#508080">HHH HHH HHH HHH HHH HHH HHH HHH HHH HHH HHH 
+                    HHH HHH</fo:block>
+                  <fo:block background-color="#B07090">III III III III III III III III III III III 
+                    III III III III III III III III III III III</fo:block>
+                  <fo:block background-color="#6060A0">JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ 
+                    JJJ JJJ JJJ JJJ JJJ</fo:block>
+                  <fo:block span="all" id="span1" background-color="#C050B0">KKK KKK KKK KKK KKK KKK 
+                    KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK 
+                    KKK</fo:block>
+                  <fo:block background-color="#7040C0">LLL LLL LLL LLL LLL LLL LLL LLL LLL LLL LLL 
+                    LLL LLL LLL</fo:block>
+                  <fo:block background-color="#D0F010">MMM MMM MMM MMM MMM MMM MMM MMM MMM 
+                    MMM</fo:block>
+                  <fo:block background-color="#8030D0">NNN NNN NNN NNN NNN NNN NNN NNN NNN NNN NNN 
+                    NNN NNN</fo:block>
+                  <fo:block background-color="#E020E0">OOO OOO OOO OOO OOO OOO OOO OOO OOO OOO 
+                    OOO</fo:block>
+                  <fo:block background-color="#9010F0">PPP PPP PPP PPP PPP PPP PPP PPP PPP PPP 
+                    PPP</fo:block>
+                  <fo:block background-color="#F0F010">QQQ QQQ QQQ QQQ QQQ QQQ QQQ QQQ 
+                    QQQ</fo:block>
+                  <fo:block background-color="#A0E020">RRR RRR RRR RRR RRR RRR RRR RRR RRR RRR RRR 
+                    RRR RRR</fo:block>
+                  <fo:block background-color="#10D030">SSS SSS SSS SSS SSS SSS SSS SSS SSS SSS SSS 
+                    SSS SSS</fo:block>
+                  <fo:block background-color="#B0C040">TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT 
+                    TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT</fo:block>
+                  <fo:block span="all" id="span2" background-color="#20B050">UUU UUU UUU UUU UUU UUU 
+                    UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU 
+                    UUU UUU UUU UUU</fo:block>
+                  <fo:block background-color="#C0A060">VVV VVV VVV VVV VVV VVV VVV VVV VVV VVV VVV 
+                    VVV</fo:block>
+                  <fo:block background-color="#309070">WWW WWW WWW WWW WWW WWW WWW WWW WWW 
+                    WWW</fo:block>
+                  <fo:block background-color="#D08080">XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX 
+                    XXX XXX XXX</fo:block>
+                  <fo:block background-color="#407090">YYY YYY YYY YYY YYY YYY YYY YYY YYY YYY YYY 
+                    YYY YYY</fo:block>
+                  <fo:block background-color="#E060A0">ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ 
+                    ZZZ ZZZ ZZZ ZZZ</fo:block>
+              </fo:flow>
+          </fo:page-sequence>
+          <!-- sequence 2: column balancing enabled -->
+          <fo:page-sequence master-reference="page" initial-page-number="1" background-color="#AAAAAA">
+              <fo:flow flow-name="xsl-region-body" background-color="#80F010" 
+                fox:disable-column-balancing="false">
+                  <fo:block background-color="#10F010">AAA AAA AAA AAA AAA AAA AAA AAA AAA 
+                    AAA</fo:block>
+                  <fo:block background-color="#20E020">BBB BBB BBB BBB BBB BBB BBB BBB BBB BBB 
+                    BBB</fo:block>
+                  <fo:block background-color="#80D030">CCC CCC CCC CCC CCC CCC CCC CCC CCC CCC 
+                    CCC</fo:block>
+                  <fo:block background-color="#30C040">DDD DDD DDD DDD DDD DDD DDD DDD DDD DDD 
+                    DDD</fo:block>
+                  <fo:block background-color="#90B050">EEE EEE EEE EEE EEE EEE EEE EEE EEE EEE EEE 
+                    EEE EEE</fo:block>
+                  <fo:block background-color="#40A060">FFF FFF FFF FFF FFF FFF FFF FFF FFF FFF FFF 
+                    FFF FFF</fo:block>
+                  <fo:block background-color="#A09070">GGG GGG GGG GGG GGG GGG GGG GGG GGG 
+                    GGG</fo:block>
+                  <fo:block background-color="#508080">HHH HHH HHH HHH HHH HHH HHH HHH HHH HHH HHH 
+                    HHH HHH</fo:block>
+                  <fo:block background-color="#B07090">III III III III III III III III III III III 
+                    III III III III III III III III III III III III III III III III III</fo:block>
+                  <fo:block background-color="#6060A0">JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ 
+                    JJJ JJJ JJJ JJJ JJJ</fo:block>
+                  <fo:block span="all" id="span3" background-color="#C050B0">KKK KKK KKK KKK KKK KKK 
+                    KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK 
+                    KKK</fo:block>
+                  <fo:block background-color="#7040C0">LLL LLL LLL LLL LLL LLL LLL LLL LLL LLL LLL 
+                    LLL LLL LLL</fo:block>
+                  <fo:block background-color="#D0F010">MMM MMM MMM MMM MMM MMM MMM MMM MMM 
+                    MMM</fo:block>
+                  <fo:block background-color="#8030D0">NNN NNN NNN NNN NNN NNN NNN NNN NNN 
+                    NNN NNN NNN NNN</fo:block>
+                  <fo:block background-color="#E020E0">OOO OOO OOO OOO OOO OOO OOO OOO OOO 
+                    OOO OOO</fo:block>
+                  <fo:block background-color="#9010F0">PPP PPP PPP PPP PPP PPP PPP PPP PPP 
+                    PPP PPP PPP PPP PPP PPP</fo:block>
+                  <fo:block background-color="#F0F010">QQQ QQQ QQQ QQQ QQQ QQQ QQQ QQQ QQQ 
+                    QQQ QQQ</fo:block>
+                  <fo:block background-color="#A0E020">RRR RRR RRR RRR RRR RRR RRR RRR RRR RRR 
+                    RRR</fo:block>
+                  <fo:block background-color="#10D030">SSS SSS SSS SSS SSS SSS SSS SSS SSS SSS 
+                    SSS</fo:block>
+                  <fo:block background-color="#B0C040">TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT 
+                    TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT</fo:block>
+                  <fo:block span="all" id="span4" background-color="#20B050">UUU UUU UUU UUU UUU UUU 
+                    UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU 
+                    UUU UUU</fo:block>
+                  <fo:block background-color="#C0A060">VVV VVV VVV VVV VVV VVV VVV VVV VVV VVV VVV 
+                    VVV</fo:block>
+                  <fo:block background-color="#309070">WWW WWW WWW WWW WWW WWW WWW WWW WWW 
+                    WWW</fo:block>
+                  <fo:block background-color="#D08080">XXX XXX XXX XXX XXX XXX XXX XXX XXX 
+                    XXX XXX XXX XXX XXX</fo:block>
+                  <fo:block background-color="#407090">YYY YYY YYY YYY YYY YYY YYY YYY YYY 
+                    YYY YYY YYY YYY</fo:block>
+                  <fo:block background-color="#E060A0">ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ 
+                    ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ</fo:block>
+              </fo:flow>
+          </fo:page-sequence>
+          <!-- sequence 3: mixed -->
+          <fo:page-sequence master-reference="page" initial-page-number="1" background-color="#AAAAAA">
+              <fo:flow flow-name="xsl-region-body" background-color="#80F010">
+                  <fo:block background-color="#10F010">AAA AAA AAA AAA AAA AAA AAA AAA AAA 
+                    AAA</fo:block>
+                  <fo:block background-color="#20E020">BBB BBB 
+                    BBB BBB BBB BBB BBB BBB BBB BBB BBB BBB BBB</fo:block>
+                  <fo:block background-color="#80D030">CCC CCC CCC CCC CCC CCC CCC CCC CCC CCC CCC 
+                    CCC CCC</fo:block>
+                  <fo:block background-color="#30C040">DDD DDD DDD DDD DDD DDD DDD DDD DDD DDD 
+                    DDD</fo:block>
+                  <fo:block background-color="#90B050">EEE EEE EEE EEE EEE EEE EEE EEE EEE 
+                    EEE EEE EEE EEE</fo:block>
+                  <fo:block background-color="#40A060">FFF FFF FFF FFF FFF FFF FFF FFF FFF 
+                    FFF FFF FFF FFF</fo:block>
+                  <fo:block background-color="#A09070">GGG GGG GGG GGG GGG GGG GGG GGG GGG 
+                    GGG</fo:block>
+                  <fo:block background-color="#508080">HHH HHH HHH HHH HHH HHH HHH HHH HHH 
+                    HHH HHH</fo:block>
+                  <fo:block background-color="#B07090">III III III III III III III III III 
+                    III III III III III III III III III III III</fo:block>
+                  <fo:block background-color="#6060A0">JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ JJJ 
+                    JJJ JJJ JJJ JJJ JJJ JJJ JJJ</fo:block>
+                  <fo:block span="all" id="span5" fox:disable-column-balancing="true" 
+                    background-color="#C050B0">KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK 
+                    KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK KKK</fo:block>
+                  <fo:block background-color="#7040C0">LLL LLL LLL LLL LLL LLL LLL LLL LLL LLL LLL 
+                    LLL LLL LLL</fo:block>
+                  <fo:block background-color="#D0F010">MMM MMM MMM MMM MMM MMM MMM MMM MMM 
+                    MMM</fo:block>
+                  <fo:block background-color="#8030D0">NNN NNN NNN NNN NNN NNN NNN NNN NNN 
+                    NNN NNN NNN NNN</fo:block>
+                  <fo:block background-color="#E020E0">OOO OOO OOO OOO OOO OOO OOO OOO OOO 
+                    OOO OOO</fo:block>
+                  <fo:block background-color="#9010F0">PPP PPP PPP PPP PPP PPP PPP PPP PPP 
+                    PPP PPP PPP PPP PPP PPP</fo:block>
+                  <fo:block background-color="#F0F010">QQQ QQQ QQQ QQQ QQQ QQQ QQQ QQQ QQQ 
+                    QQQ QQQ</fo:block>
+                  <fo:block background-color="#A0E020">RRR RRR RRR RRR RRR RRR RRR RRR RRR 
+                    RRR RRR RRR RRR</fo:block>
+                  <fo:block background-color="#10D030">SSS SSS SSS SSS SSS SSS SSS SSS SSS 
+                    SSS SSS SSS SSS</fo:block>
+                  <fo:block background-color="#B0C040">TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT 
+                    TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT TTT 
+                    TTT</fo:block>
+                  <fo:block span="all" id="span6" background-color="#20B050">UUU UUU UUU UUU UUU UUU 
+                    UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU UUU 
+                    UUU UUU</fo:block>
+                  <fo:block background-color="#C0A060">VVV VVV VVV VVV VVV VVV VVV VVV VVV VVV VVV 
+                    VVV</fo:block>
+                  <fo:block background-color="#309070">WWW WWW WWW WWW WWW WWW WWW WWW WWW 
+                    WWW</fo:block>
+                  <fo:block background-color="#D08080">XXX XXX XXX XXX XXX XXX XXX XXX XXX 
+                    XXX XXX XXX XXX XXX</fo:block>
+                  <fo:block background-color="#407090">YYY YYY YYY YYY YYY YYY YYY YYY YYY 
+                    YYY YYY YYY YYY</fo:block>
+                  <fo:block background-color="#E060A0">ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ 
+                    ZZZ ZZZ ZZZ ZZZ ZZZ ZZZ</fo:block>
+              </fo:flow>
+          </fo:page-sequence>
+      </fo:root>
+  </fo>
+  <checks>
+    <eval expected="0" xpath="//pageSequence[1]/pageViewport[2]//span[1]/flow[2]/@bpd"/>
+    <eval expected="12000" xpath="//pageSequence[1]/pageViewport[3]//span[2]/@bpd"/>
+    <!-- TODO Replace with the following test once bugs affecting multiple columns have been 
+    corrected
+        <eval expected="0" xpath="count(//pageSequence[1]/pageViewport[3]//block[@prod-id='span2'])"/>
+    -->
+
+    <eval expected="24000" xpath="//pageSequence[2]/pageViewport[2]//span[1]/flow[2]/@bpd"/>
+    <eval expected="84000" xpath="//pageSequence[2]/pageViewport[3]//span[1]/flow[2]/@bpd"/>
+
+    <eval expected="0" xpath="//pageSequence[3]/pageViewport[2]//span[1]/flow[2]/@bpd"/>
+    <eval expected="180000" xpath="//pageSequence[3]/pageViewport[3]//span[1]/flow[2]/@bpd"/>
+  </checks>
+</testcase>

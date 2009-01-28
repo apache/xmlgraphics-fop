@@ -25,7 +25,6 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.fo.pagination.Flow;
@@ -82,14 +81,22 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             }
 
             int span = EN_NONE;
+            int disableColumnBalancing = EN_FALSE;
             if (curLM instanceof BlockLayoutManager) {
                 span = ((BlockLayoutManager)curLM).getBlockFO().getSpan();
+                disableColumnBalancing = ((BlockLayoutManager) curLM).getBlockFO()
+                        .getDisableColumnBalancing();
             } else if (curLM instanceof BlockContainerLayoutManager) {
                 span = ((BlockContainerLayoutManager)curLM).getBlockContainerFO().getSpan();
+                disableColumnBalancing = ((BlockContainerLayoutManager) curLM)
+                        .getBlockContainerFO().getDisableColumnBalancing();
             }
 
             int currentSpan = context.getCurrentSpan();
             if (currentSpan != span) {
+                if (span == EN_ALL) {
+                    context.setDisableColumnBalancing(disableColumnBalancing);
+                }
                 log.debug("span change from " + currentSpan + " to " + span);
                 context.signalSpanChange(span);
                 SpaceResolver.resolveElementList(returnList);
