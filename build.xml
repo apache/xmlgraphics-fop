@@ -124,8 +124,7 @@ list of possible build targets.
     </fileset>
   </path>
   <patternset id="exclude-jai">
-    <exclude name="org/apache/fop/image/JAIImage.java" unless="jai.present"/>
-    <exclude name="org/apache/fop/render/pcl/JAIMonochromeBitmapConverter.java" unless="jai.present"/>
+    <exclude name="org/apache/fop/util/bitmap/JAIMonochromeBitmapConverter.java" unless="jai.present"/>
   </patternset>
   <patternset id="exclude-jce-dependencies">
     <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
