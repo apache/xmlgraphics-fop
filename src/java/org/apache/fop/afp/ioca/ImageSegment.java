@@ -146,14 +146,17 @@ public class ImageSegment extends AbstractNamedAFPObject {
 
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
-        byte[] nameBytes = getNameBytes();
+        //Name disabled, it's optional and not referenced by our code
+        //byte[] nameBytes = getNameBytes();
         byte[] data = new byte[] {
             0x70, // ID
-            0x04, // Length
+            0x00, // Length
+            /*
             nameBytes[0], // Name byte 1
             nameBytes[1], // Name byte 2
             nameBytes[2], // Name byte 3
             nameBytes[3], // Name byte 4
+            */
         };
         os.write(data);
     }

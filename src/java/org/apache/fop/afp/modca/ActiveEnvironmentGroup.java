@@ -45,8 +45,8 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
     private final List/*<MapCodedFonts>*/ mapCodedFonts
         = new java.util.ArrayList/*<MapCodedFonts>*/();
 
-    /** the collection of MapDataResource objects */
-    private final List mapDataResources = null;
+    /** the collection of MapPageSegments objects */
+    private List mapPageSegments = null;
 
     /** the Object Area Descriptor for the active environment group */
     private ObjectAreaDescriptor objectAreaDescriptor = null;
@@ -132,6 +132,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         writeObjects(mapCodedFonts, os);
         writeObjects(mapDataResources, os);
         writeObjects(mapPageOverlays, os);
+        writeObjects(mapPageSegments, os);
 
         if (pageDescriptor != null) {
             pageDescriptor.writeToStream(os);
@@ -204,18 +205,29 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         }
     }
 
-//  private List getMapDataResources() {
-//  if (mapDataResources == null) {
-//      mapDataResources = new java.util.ArrayList();
-//  }
-//  return mapDataResources;
-//}
+    public void addMapPageSegment(String name) {
+        try {
+            needMapPageSegment().addPageSegment(name);
+        } catch (MaximumSizeExceededException e) {
+            //Should not happen, handled internally
+            throw new IllegalStateException("Internal error: " + e.getMessage());
+        }
+    }
 
-//    /**
-//     * Method to create a map data resource object
-//     * @param dataObjectAccessor a data object accessor
-//     */
-//    protected void createMapDataResource(DataObjectAccessor dataObjectAccessor) {
-//        getMapDataResources().add(new MapDataResource(dataObjectAccessor));
-//    }
+    private MapPageSegment getCurrentMapPageSegment() {
+        return (MapPageSegment)getLastElement(this.mapPageSegments);
+    }
+
+    private MapPageSegment needMapPageSegment() {
+        if (this.mapPageSegments == null) {
+            this.mapPageSegments = new java.util.ArrayList();
+        }
+        MapPageSegment seg = getCurrentMapPageSegment();
+        if (seg == null || seg.isFull()) {
+            seg = new MapPageSegment();
+            this.mapPageSegments.add(seg);
+        }
+        return seg;
+    }
+
 }

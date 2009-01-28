@@ -90,6 +90,8 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject implemen
             // positional values are specified in the oaOffset of the include object
             objectAreaPosition = factory.createObjectAreaPosition(0, 0, 0);
         }
+        objectAreaPosition.setReferenceCoordinateSystem(
+                ObjectAreaPosition.REFCSYS_PAGE_SEGMENT_RELATIVE);
         getObjectEnvironmentGroup().setObjectAreaPosition(objectAreaPosition);
     }
 

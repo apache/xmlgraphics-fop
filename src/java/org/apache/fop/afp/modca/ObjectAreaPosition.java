@@ -31,11 +31,20 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class ObjectAreaPosition extends AbstractAFPObject {
 
+    /**
+     * Object areas will be positioned with respect to a point that is define by the
+     * Include Page Segment (IPS) structured field.
+     */
+    public static final byte REFCSYS_PAGE_SEGMENT_RELATIVE = 0x00;
+    /** Object areas will be positioned with respect to the standard origin */
+    public static final byte REFCSYS_PAGE_RELATIVE = 0x01;
+
     private final int x;
     private final int y;
     private final int rotation;
     private int xOffset;
     private int yOffset;
+    private byte refCSys = 0x01; //Page or overlay coordinate system
 
     /**
      * Construct an object area position for the specified object y, y position.
@@ -45,9 +54,30 @@ public class ObjectAreaPosition extends AbstractAFPObject {
      * @param rotation The coordinate system rotation (must be 0, 90, 180, 270).
      */
     public ObjectAreaPosition(int x, int y, int rotation) {
+        this(x, y, rotation, REFCSYS_PAGE_RELATIVE);
+    }
+
+    /**
+     * Construct an object area position for the specified object y, y position.
+     *
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     * @param rotation The coordinate system rotation (must be 0, 90, 180, 270).
+     * @param refCSys the reference coordinate system (normally 0x01)
+     */
+    public ObjectAreaPosition(int x, int y, int rotation, byte refCSys) {
         this.x = x;
         this.y = y;
         this.rotation = rotation;
+        setReferenceCoordinateSystem(refCSys);
+    }
+
+    /**
+     * Sets the reference coordinate system.
+     * @param refCSys the reference coordinate system (normally 0x01)
+     */
+    public void setReferenceCoordinateSystem(byte refCSys) {
+        this.refCSys = refCSys;
     }
 
     /** {@inheritDoc} */
@@ -94,7 +124,7 @@ public class ObjectAreaPosition extends AbstractAFPObject {
         data[30] = 0x2D; // YocaOrent
         data[31] = 0x00;
 
-        data[32] = 0x01; // RefCSys
+        data[32] = this.refCSys; // RefCSys
 
         os.write(data);
     }
