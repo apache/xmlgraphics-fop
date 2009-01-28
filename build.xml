@@ -217,7 +217,7 @@ list of possible build targets.
     <echo message="${jce.message}"/>
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
     <fail message="${Name} requires at least Java 1.4!" unless="jdk14.present"/>
-    <available property="junit.present" classname="junit.framework.TestCase" classpathref="libs-build-classpath"/>
+    <available property="junit.present" classname="junit.framework.TestCase" classpathref="libs-build-tools-classpath"/>
     <condition property="junit.message" value="JUnit Support PRESENT">
       <equals arg1="${junit.present}" arg2="true"/>
     </condition>
@@ -229,7 +229,7 @@ list of possible build targets.
     <echo message="${junit.message}"/>
     <condition property="xmlunit.present">
       <and>
-        <available classname="org.custommonkey.xmlunit.XMLTestCase" classpathref="libs-build-classpath"/>
+        <available classname="org.custommonkey.xmlunit.XMLTestCase" classpathref="libs-build-tools-classpath"/>
         <isset property="junit.present"/>
       </and>
     </condition>
@@ -909,7 +909,7 @@ list of possible build targets.
       <formatter type="xml" usefile="true"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
-        <path refid="libs-build-classpath"/>
+        <path refid="libs-build-tools-classpath"/>
         <fileset dir="build">
           <include name="fop.jar"/>
         </fileset>
