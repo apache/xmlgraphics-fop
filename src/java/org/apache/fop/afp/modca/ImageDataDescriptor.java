@@ -29,6 +29,11 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class ImageDataDescriptor extends AbstractDescriptor {
 
+    public static final byte FUNCTION_SET_FS10 = 0x0A;
+    public static final byte FUNCTION_SET_FS11 = 0x0B;
+
+    private byte functionSet = FUNCTION_SET_FS11; // FCNSET = IOCA FS 11
+
     /**
      * Constructor for a ImageDataDescriptor for the specified
      * resolution, width and height.
@@ -40,6 +45,14 @@ public class ImageDataDescriptor extends AbstractDescriptor {
      */
     public ImageDataDescriptor(int width, int height, int widthRes, int heightRes) {
         super(width, height, widthRes, heightRes);
+    }
+
+    /**
+     * Sets the IOCA function set to be used.
+     * @param functionSet the function set (0x0A for FS 10, 0x0B for FS 11, etc.)
+     */
+    public void setFunctionSet(byte functionSet) {
+        this.functionSet = functionSet;
     }
 
     /** {@inheritDoc} */
@@ -68,10 +81,11 @@ public class ImageDataDescriptor extends AbstractDescriptor {
         data[16] = h[0];
         data[17] = h[1];
 
+        //IOCA Function Set Field
         data[18] = (byte)0xF7; // ID = Set IOCA Function Set
         data[19] = 0x02; // Length
         data[20] = 0x01; // Category = Function set identifier
-        data[21] = 0x0B; // FCNSET = IOCA FS 11
+        data[21] = functionSet;
 
         os.write(data);
     }

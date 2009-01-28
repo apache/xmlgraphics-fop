@@ -32,7 +32,7 @@ import org.apache.fop.afp.util.StringUtils;
 public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
 
     /** the maximum graphics data length */
-    public static final int MAX_DATA_LEN = 32767;
+    public static final int MAX_DATA_LEN = 8192;
 
     /** the graphics segment */
     private GraphicsChainedSegment currentSegment = null;

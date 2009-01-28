@@ -17,13 +17,13 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pcl;
+package org.apache.fop.util.bitmap;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 
 /**
- * Interface for converters that convert grayscale images to monochrome (1-bit) bitmap images.
+ * Interface for converters that convert images to monochrome (1-bit, bi-level) bitmap images.
  */
 public interface MonochromeBitmapConverter {
 
@@ -35,8 +35,8 @@ public interface MonochromeBitmapConverter {
     void setHint(String name, String value);
 
     /**
-     * Converts a grayscale bitmap image to a monochrome (1-bit) b/w bitmap image.
-     * @param img the grayscale image
+     * Converts a bitmap image to a monochrome (1-bit) b/w bitmap image.
+     * @param img the original image
      * @return the converted monochrome image
      */
     RenderedImage convertToMonochrome(BufferedImage img);

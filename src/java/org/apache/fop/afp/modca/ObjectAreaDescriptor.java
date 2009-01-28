@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import org.apache.fop.afp.modca.triplets.DescriptorPositionTriplet;
 import org.apache.fop.afp.modca.triplets.MeasurementUnitsTriplet;
 import org.apache.fop.afp.modca.triplets.ObjectAreaSizeTriplet;
-import org.apache.fop.afp.modca.triplets.PresentationSpaceResetMixingTriplet;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
@@ -57,8 +56,10 @@ public class ObjectAreaDescriptor extends AbstractDescriptor {
         addTriplet(new DescriptorPositionTriplet(OBJECT_AREA_POSITION_ID));
         addTriplet(new MeasurementUnitsTriplet(widthRes, heightRes));
         addTriplet(new ObjectAreaSizeTriplet(width, height));
+        /* not allowed in Presentation Interchange Set 1
         addTriplet(new PresentationSpaceResetMixingTriplet(
                 PresentationSpaceResetMixingTriplet.NOT_RESET));
+        */
 
         int tripletDataLength = getTripletDataLength();
         byte[] len = BinaryUtils.convert(data.length + tripletDataLength - 1, 2);

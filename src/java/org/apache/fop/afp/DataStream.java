@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.AFPFontAttributes;
 import org.apache.fop.afp.modca.AbstractPageObject;
@@ -464,7 +465,8 @@ public class DataStream {
             yOrigin = y;
             break;
         }
-        currentPage.createIncludePageSegment(name, xOrigin, yOrigin);
+        boolean createHardPageSegments = true;
+        currentPage.createIncludePageSegment(name, xOrigin, yOrigin, createHardPageSegments);
     }
 
     /**

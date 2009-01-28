@@ -58,6 +58,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add">
+        AFP Output: Bilevel images in resource groups as generated as hard page segments
+        (instead of image objects) for better interoperability with older IPDS environments
+        and for better printing performance.
+      </action>
       <action context="Fonts" dev="JM" type="add">
         FOP now creates ToUnicode CMaps for single-byte fonts that don't use built-in
         encodings to help PDF text extractors interpreting characters.

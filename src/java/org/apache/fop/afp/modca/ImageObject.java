@@ -28,13 +28,14 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.ioca.ImageSegment;
+import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
 
 /**
  * An IOCA Image Data Object
  */
 public class ImageObject extends AbstractDataObject {
 
-    private static final int MAX_DATA_LEN = 32759;
+    private static final int MAX_DATA_LEN = 8192;
 
     /** the image segment */
     private ImageSegment imageSegment = null;
@@ -73,7 +74,12 @@ public class ImageObject extends AbstractDataObject {
         int dataHeightRes = imageObjectInfo.getDataWidthRes();
         ImageDataDescriptor imageDataDescriptor
             = factory.createImageDataDescriptor(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
+        if (imageObjectInfo.getBitsPerPixel() == 1) {
+            imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS10);
+        }
         getObjectEnvironmentGroup().setDataDescriptor(imageDataDescriptor);
+        getObjectEnvironmentGroup().setMapImageObject(
+                new MapImageObject(MappingOptionTriplet.SCALE_TO_FILL));
 
         getImageSegment().setImageSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
     }

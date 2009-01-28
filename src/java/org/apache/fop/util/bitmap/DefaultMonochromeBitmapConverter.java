@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pcl;
+package org.apache.fop.util.bitmap;
 
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;

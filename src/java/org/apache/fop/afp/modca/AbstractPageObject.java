@@ -249,9 +249,14 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      * @param y
      *            the y coordinate of the page segment.
      */
-    public void createIncludePageSegment(String name, int x, int y) {
+    public void createIncludePageSegment(String name, int x, int y, boolean hard) {
         IncludePageSegment ips = factory.createIncludePageSegment(name, x, y);
         addObject(ips);
+        if (hard) {
+            //For performance reasons, page segments can be turned into hard page segments
+            //using the Map Page Segment (MPS) structured field.
+            getActiveEnvironmentGroup().addMapPageSegment(name);
+        }
     }
 
     /**
