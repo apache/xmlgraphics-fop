@@ -108,7 +108,9 @@ public class PageBreaker extends AbstractBreaker {
         if (childLC.getNextSpan() != Constants.NOT_SET) {
             //Next block list will have a different span.
             nextSequenceStartsOn = childLC.getNextSpan();
-            needColumnBalancing = (childLC.getNextSpan() == Constants.EN_ALL);
+            needColumnBalancing = childLC.getNextSpan() == Constants.EN_ALL
+                    && childLC.getDisableColumnBalancing() == Constants.EN_FALSE;
+
         }
         if (needColumnBalancing) {
             AbstractBreaker.log.debug(

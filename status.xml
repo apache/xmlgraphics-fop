@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="add" fixes-bug="46315" due-to="Georg Datterl">
+        Added extension to disable column balancing before blocks spanning the whole page, in 
+        multiple-column documents.
+      </action>
       <action context="Renderers" dev="JM" type="add">
         AFP Output: Bilevel images in resource groups as generated as hard page segments
         (instead of image objects) for better interoperability with older IPDS environments
