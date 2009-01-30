@@ -53,7 +53,7 @@ public class IntermediateFormatTestSuite {
     }
 
     private static void addIFTestCase(TestSuite suite,
-            final File f) {
+            final File f) throws IOException {
         suite.addTest(new IFParserTestCase(f) {
             public void runTest() throws Exception {
                 try {

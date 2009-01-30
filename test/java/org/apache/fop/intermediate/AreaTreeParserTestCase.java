@@ -20,6 +20,7 @@
 package org.apache.fop.intermediate;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.xml.transform.Result;
@@ -27,6 +28,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -34,6 +36,7 @@ import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
@@ -50,8 +53,10 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
     /**
      * Constructor for the test suite that is used for each test file.
      * @param testFile the test file to run
+     * @throws IOException
+     * @throws IOException if an I/O error occurs while loading the test case
      */
-    public AreaTreeParserTestCase(File testFile) {
+    public AreaTreeParserTestCase(File testFile) throws IOException {
         super(testFile);
     }
 
@@ -61,18 +66,13 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
     }
 
     /** {@inheritDoc} */
-    protected Document buildIntermediateDocument(Source src, Templates templates)
+    protected Document buildIntermediateDocument(Templates templates)
                 throws Exception {
-        Transformer transformer;
-        if (templates != null) {
-            transformer = templates.newTransformer();
-        } else {
-            transformer = tFactory.newTransformer();
-        }
+        Transformer transformer = templates.newTransformer();
         setErrorListener(transformer);
 
         //Set up XMLRenderer to render to a DOM
-        TransformerHandler handler = tFactory.newTransformerHandler();
+        TransformerHandler handler = env.getTransformerFactory().newTransformerHandler();
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
 
@@ -91,7 +91,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
 
         Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_AREA_TREE, userAgent);
         Result res = new SAXResult(fop.getDefaultHandler());
-        transformer.transform(src, res);
+        transformer.transform(new DOMSource(testDoc), res);
 
         return (Document)domResult.getNode();
     }
@@ -113,7 +113,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         AreaTreeParser parser = new AreaTreeParser();
 
         //Set up XMLRenderer to render to a DOM
-        TransformerHandler handler = tFactory.newTransformerHandler();
+        TransformerHandler handler = env.getTransformerFactory().newTransformerHandler();
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
         XMLRenderer renderer = new XMLRenderer();

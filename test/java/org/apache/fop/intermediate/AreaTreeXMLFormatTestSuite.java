@@ -53,7 +53,7 @@ public class AreaTreeXMLFormatTestSuite {
     }
 
     private static void addATTestCase(TestSuite suite,
-            final File f) {
+            final File f) throws IOException {
         suite.addTest(new AreaTreeParserTestCase(f) {
             public void runTest() throws Exception {
                 try {

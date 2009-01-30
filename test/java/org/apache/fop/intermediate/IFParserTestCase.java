@@ -46,6 +46,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.layoutengine.TestEnvironment;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFParser;
@@ -57,6 +58,7 @@ import org.apache.fop.render.intermediate.IFSerializer;
  */
 public class IFParserTestCase extends AbstractIntermediateTestCase {
 
+    private static TestEnvironment env = new TestEnvironment();
     private static Schema ifSchema;
 
     private static Schema getIFSchema() throws SAXException {
@@ -78,8 +80,9 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
     /**
      * Constructor for the test suite that is used for each test file.
      * @param testFile the test file to run
+     * @throws IOException if an I/O error occurs while loading the test case
      */
-    public IFParserTestCase(File testFile) {
+    public IFParserTestCase(File testFile) throws IOException {
         super(testFile);
     }
 
@@ -94,15 +97,9 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
     }
 
     /** {@inheritDoc} */
-    protected Document buildIntermediateDocument(Source src, Templates templates)
+    protected Document buildIntermediateDocument(Templates templates)
                 throws Exception {
-        Transformer transformer;
-        if (templates != null) {
-            transformer = templates.newTransformer();
-        } else {
-            transformer = tFactory.newTransformer();
-        }
-
+        Transformer transformer = templates.newTransformer();
         setErrorListener(transformer);
 
         //Set up XMLRenderer to render to a DOM
@@ -129,7 +126,7 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
 
         Fop fop = fopFactory.newFop(userAgent);
         Result res = new SAXResult(fop.getDefaultHandler());
-        transformer.transform(src, res);
+        transformer.transform(new DOMSource(testDoc), res);
 
         return (Document)domResult.getNode();
     }

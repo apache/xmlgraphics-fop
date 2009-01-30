@@ -73,18 +73,6 @@ public class RegionReference extends Area implements Cloneable {
         blocks.add(child);
     }
 
-    /** {@inheritDoc} */
-    public int getBPD() {
-        // subtract bpd of borders and padding before / after
-        return super.getBPD() - getBorderAndPaddingWidthBefore() - getBorderAndPaddingWidthAfter();
-    }
-
-    /** {@inheritDoc} */
-    public int getIPD() {
-        // subtract ipd of borders and padding start / end
-        return super.getIPD() - getBorderAndPaddingWidthStart() - getBorderAndPaddingWidthEnd();
-    }
-
     /**
      * Set the Coordinate Transformation Matrix which transforms content
      * coordinates in this region reference area which are specified in

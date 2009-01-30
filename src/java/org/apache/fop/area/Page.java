@@ -128,8 +128,10 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
             }
             // set borders and padding traits
             // (a little extensions wrt what prescribed by the specs at 6.4.14)
-            TraitSetter.addBorders(rr, r.getCommonBorderPaddingBackground(), false, false, false, false, null);
-            TraitSetter.addPadding(rr, r.getCommonBorderPaddingBackground(), false, false, false, false, null);
+            TraitSetter.addBorders(rr, r.getCommonBorderPaddingBackground(),
+                    false, false, false, false, null);
+            TraitSetter.addPadding(rr, r.getCommonBorderPaddingBackground(),
+                    false, false, false, false, null);
             setRegionReferencePosition(rr, r, rvp.getViewArea());
             rvp.setRegionReference(rr);
             setRegionViewport(r.getNameId(), rvp);
@@ -182,8 +184,12 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
         FODimension reldims = new FODimension(0, 0);
         rr.setCTM(CTM.getCTMandRelDims(r.getReferenceOrientation(),
                 r.getWritingMode(), absRegVPRect, reldims));
-        rr.setIPD(reldims.ipd);
-        rr.setBPD(reldims.bpd);
+        rr.setIPD(reldims.ipd
+                - rr.getBorderAndPaddingWidthStart()
+                - rr.getBorderAndPaddingWidthEnd());
+        rr.setBPD(reldims.bpd
+                - rr.getBorderAndPaddingWidthBefore()
+                - rr.getBorderAndPaddingWidthAfter());
     }
 
     /**

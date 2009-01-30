@@ -498,6 +498,7 @@ public class AreaTreeParser {
                 transferForeignObjects(attributes, body);
                 body.setCTM(getAttributeAsCTM(attributes, "ctm"));
                 setAreaAttributes(attributes, body);
+                setTraits(attributes, body, SUBSET_BORDER_PADDING);
                 rv.setRegionReference(body);
                 currentPageViewport.getPage().setRegionViewport(
                         Constants.FO_REGION_BODY, rv);
@@ -939,6 +940,7 @@ public class AreaTreeParser {
             transferForeignObjects(attributes, reg);
             reg.setCTM(getAttributeAsCTM(attributes, "ctm"));
             setAreaAttributes(attributes, reg);
+            setTraits(attributes, reg, SUBSET_BORDER_PADDING);
             rv.setRegionReference(reg);
             currentPageViewport.getPage().setRegionViewport(
                     side, rv);
@@ -993,6 +995,9 @@ public class AreaTreeParser {
             Trait.PADDING_BEFORE, Trait.PADDING_AFTER, Trait.PADDING_START, Trait.PADDING_END,
             Trait.START_INDENT, Trait.END_INDENT,
             Trait.IS_REFERENCE_AREA, Trait.IS_VIEWPORT_AREA};
+        private static final Object[] SUBSET_BORDER_PADDING = new Object[] {
+            Trait.BORDER_BEFORE, Trait.BORDER_AFTER, Trait.BORDER_START, Trait.BORDER_END,
+            Trait.PADDING_BEFORE, Trait.PADDING_AFTER, Trait.PADDING_START, Trait.PADDING_END};
 
         private void setTraits(Attributes attributes, Area area, Object[] traitSubset) {
             for (int i = traitSubset.length; --i >= 0;) {
