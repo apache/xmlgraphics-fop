@@ -20,17 +20,27 @@
 package org.apache.fop.intermediate;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
+
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -46,6 +56,24 @@ import org.apache.fop.render.intermediate.IFSerializer;
  * Tests the intermediate format parser.
  */
 public class IFParserTestCase extends AbstractIntermediateTestCase {
+
+    private static Schema ifSchema;
+
+    private static Schema getIFSchema() throws SAXException {
+        if (ifSchema == null) {
+            SchemaFactory sFactory;
+            try {
+                sFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            } catch (IllegalArgumentException iae) {
+                System.out.println("No suitable SchemaFactory for XML Schema validation found!");
+                return null;
+            }
+            File ifSchemaFile = new File(
+                    "src/documentation/intermediate-format-ng/fop-intermediate-format-ng.xsd");
+            ifSchema = sFactory.newSchema(ifSchemaFile);
+        }
+        return ifSchema;
+    }
 
     /**
      * Constructor for the test suite that is used for each test file.
@@ -104,6 +132,31 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
         transformer.transform(src, res);
 
         return (Document)domResult.getNode();
+    }
+
+    /** {@inheritDoc} */
+    protected void validate(Document doc) throws SAXException, IOException {
+        Schema schema = getIFSchema();
+        if (schema == null) {
+            return; //skip validation;
+        }
+        Validator validator = schema.newValidator();
+        validator.setErrorHandler(new ErrorHandler() {
+
+            public void error(SAXParseException exception) throws SAXException {
+                throw exception;
+            }
+
+            public void fatalError(SAXParseException exception) throws SAXException {
+                throw exception;
+            }
+
+            public void warning(SAXParseException exception) throws SAXException {
+                //ignore
+            }
+
+        });
+        validator.validate(new DOMSource(doc));
     }
 
     /** {@inheritDoc} */

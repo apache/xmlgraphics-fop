@@ -22,6 +22,7 @@ package org.apache.fop.intermediate;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 
@@ -40,6 +41,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
+
+import org.xml.sax.SAXException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -94,6 +97,7 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
             saveDOM(intermediate, new File(outputDir,
                     getName() + ".1" + getIntermediateFileExtension()));
         }
+        validate(intermediate);
     }
 
     /** {@inheritDoc} */
@@ -114,6 +118,16 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
      */
     protected String getTargetMIME() {
         return MimeConstants.MIME_PDF;
+    }
+
+    /**
+     * Validates the intermediate format file.
+     * @param doc the intermediate file
+     * @throws IOException if an IO error occurs while loading the schema
+     * @throws SAXException if a SAX-related exception (including a validation error) occurs
+     */
+    protected void validate(Document doc) throws SAXException, IOException {
+        //nop by default
     }
 
     /**
