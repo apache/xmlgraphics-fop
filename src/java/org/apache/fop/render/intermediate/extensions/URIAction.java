@@ -83,7 +83,7 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
 
     /** {@inheritDoc} */
     public String getIDPrefix() {
-        return "fop:" + GOTO_URI.getLocalName();
+        return "fop-" + GOTO_URI.getLocalName();
     }
 
     /** {@inheritDoc} */

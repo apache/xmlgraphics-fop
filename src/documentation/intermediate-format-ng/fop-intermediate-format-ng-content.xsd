@@ -20,15 +20,26 @@
   targetNamespace="http://xmlgraphics.apache.org/fop/intermediate"
   xmlns:mf="http://xmlgraphics.apache.org/fop/intermediate">
   <xs:include schemaLocation="fop-intermediate-format-ng-datatypes.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+    schemaLocation="http://www.w3.org/2001/xml.xsd"/>
   <xs:complexType name="contentType">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
-      <xs:element name="box">
+      <xs:element name="viewport">
         <xs:complexType>
           <xs:complexContent>
             <xs:extension base="mf:contentType">
               <xs:attribute name="transform" type="xs:string"/>
               <xs:attributeGroup ref="mf:sizeAtts"/>
-              <xs:attribute name="clip" type="xs:boolean" default="false"/>
+              <xs:attribute name="clip-rect" type="mf:rectangleType"/>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="g">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="mf:contentType">
+              <xs:attribute name="transform" type="xs:string"/>
             </xs:extension>
           </xs:complexContent>
         </xs:complexType>
@@ -40,7 +51,7 @@
           <xs:attribute name="variant" type="mf:fontVariantType"/>
           <xs:attribute name="weight" type="mf:fontWeightType"/>
           <xs:attribute name="stretch" type="mf:fontStretchType"/>
-          <xs:attribute name="size" type="xs:positiveInteger"/>
+          <xs:attribute name="size" type="mf:lengthType"/>
           <xs:attribute name="color" type="mf:colorType"/>
         </xs:complexType>
       </xs:element>
@@ -48,29 +59,16 @@
         <xs:complexType>
           <xs:simpleContent>
             <xs:extension base="xs:string">
-              <xs:attribute name="x" use="required">
+              <xs:attribute name="x" use="required" type="mf:lengthType"/>
+              <xs:attribute name="y" use="required" type="mf:lengthType"/>
+              <xs:attribute name="dx">
                 <xs:simpleType>
-                  <xs:list itemType="xs:integer"/>
+                  <xs:list itemType="mf:lengthType"/>
                 </xs:simpleType>
               </xs:attribute>
-              <xs:attribute name="y" use="required">
-                <xs:simpleType>
-                  <xs:list itemType="xs:integer"/>
-                </xs:simpleType>
-              </xs:attribute>
+              <xs:attribute ref="xml:space"/>
             </xs:extension>
           </xs:simpleContent>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="clip-path">
-        <xs:complexType>
-          <xs:attribute name="d" type="mf:pathDataType" use="required"/>
-        </xs:complexType>  
-      </xs:element>
-      <xs:element name="draw-path">
-        <xs:complexType>
-          <xs:attribute name="d" type="mf:pathDataType" use="required"/>
-          <xs:attributeGroup ref="mf:fillStrokeAtts"/>
         </xs:complexType>
       </xs:element>
       <xs:element name="clip-rect">
@@ -78,20 +76,30 @@
           <xs:attributeGroup ref="mf:rectAtts"/>
         </xs:complexType>
       </xs:element>
-      <xs:element name="draw-rect">
+      <xs:element name="rect">
         <xs:complexType>
           <xs:attributeGroup ref="mf:rectAtts"/>
-          <xs:attributeGroup ref="mf:fillStrokeAtts"/>
+          <xs:attributeGroup ref="mf:fillAtts"/>
         </xs:complexType>
       </xs:element>
-      <xs:element name="draw-border-line">
+      <xs:element name="line">
         <xs:complexType>
-          <xs:attribute name="x1" type="xs:integer" use="required"/>
-          <xs:attribute name="y1" type="xs:integer" use="required"/>
-          <xs:attribute name="x2" type="xs:integer" use="required"/>
-          <xs:attribute name="y2" type="xs:integer" use="required"/>
-          <xs:attribute name="width" type="xs:integer" use="required"/>
-          <xs:attribute name="style" type="mf:borderStyle" default="solid"/>
+          <xs:attribute name="x1" use="required" type="mf:lengthType"/>
+          <xs:attribute name="y1" use="required" type="mf:lengthType"/>
+          <xs:attribute name="x2" use="required" type="mf:lengthType"/>
+          <xs:attribute name="y2" use="required" type="mf:lengthType"/>
+          <xs:attribute name="color" use="required" type="mf:colorType"/>
+          <xs:attribute name="stroke-width" use="required" type="mf:lengthType"/>
+          <xs:attribute name="style" use="required" type="mf:ruleStyle"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="border-rect">
+        <xs:complexType>
+          <xs:attributeGroup ref="mf:rectAtts"/>
+          <xs:attribute name="start" type="mf:borderDef"/>
+          <xs:attribute name="end" type="mf:borderDef"/>
+          <xs:attribute name="before" type="mf:borderDef"/>
+          <xs:attribute name="after" type="mf:borderDef"/>
         </xs:complexType>
       </xs:element>
       <xs:element name="image">
@@ -100,7 +108,7 @@
             <xs:extension base="xs:anyType">
               <!-- Either use element content with any namespace or xlink:href -->
               <xs:attributeGroup ref="mf:rectAtts"/>
-              <xs:anyAttribute namespace="http://www.w3.org/1999/xlink" processContents="skip"/>
+              <xs:attributeGroup ref="mf:foreignAtts"/>
             </xs:extension>
           </xs:complexContent>
         </xs:complexType>
@@ -108,16 +116,25 @@
     </xs:choice>
   </xs:complexType>
   <xs:attributeGroup name="sizeAtts">
-    <xs:attribute name="width" type="xs:positiveInteger" use="required"/>
-    <xs:attribute name="height" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="width" type="mf:lengthType" use="required"/>
+    <xs:attribute name="height" type="mf:lengthType" use="required"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="posAtts">
+    <xs:attribute name="x" type="mf:lengthType" default="0"/>
+    <xs:attribute name="y" type="mf:lengthType" default="0"/>
   </xs:attributeGroup>
   <xs:attributeGroup name="rectAtts">
-    <xs:attribute name="x" type="xs:integer" default="0"/>
-    <xs:attribute name="y" type="xs:integer" default="0"/>
+    <xs:attributeGroup ref="mf:posAtts"/>
     <xs:attributeGroup ref="mf:sizeAtts"/>
   </xs:attributeGroup>
-  <xs:attributeGroup name="fillStrokeAtts">
+  <xs:attributeGroup name="fillAtts">
+    <xs:attribute name="fill" type="xs:string" default="none"/>
+  </xs:attributeGroup>
+  <!--xs:attributeGroup name="fillStrokeAtts">
     <xs:attribute name="fill" type="xs:string" default="none"/>
     <xs:attribute name="stroke" type="xs:string" default="none"/>
+  </xs:attributeGroup-->
+  <xs:attributeGroup name="foreignAtts">
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:attributeGroup>
 </xs:schema>

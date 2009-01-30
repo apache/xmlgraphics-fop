@@ -18,15 +18,21 @@
 <!-- $Id$ -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
   targetNamespace="http://xmlgraphics.apache.org/fop/intermediate"
-  xmlns:mf="http://xmlgraphics.apache.org/fop/intermediate">
+  xmlns:mf="http://xmlgraphics.apache.org/fop/intermediate"
+  xmlns:nav="http://xmlgraphics.apache.org/fop/intermediate/document-navigation">
+  <xs:import namespace="http://xmlgraphics.apache.org/fop/intermediate/document-navigation"
+    schemaLocation="fop-intermediate-format-ng-nav.xsd"/>
   <xs:import namespace="adobe:ns:meta/" schemaLocation="xmp-metadata.xsd"/>
+  <xs:import namespace="http://xmlgraphics.apache.org/fop/intermediate/document-navigation"
+    schemaLocation="fop-intermediate-format-ng-nav.xsd"/>
   <xs:include schemaLocation="fop-intermediate-format-ng-datatypes.xsd"/>
   <xs:include schemaLocation="fop-intermediate-format-ng-content.xsd"/>
   <xs:element name="document">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="mf:header"/>
-        <xs:element ref="mf:page-sequence"/>
+        <xs:element ref="mf:page-sequence" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element ref="mf:trailer"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -38,6 +44,7 @@
       </xs:choice>
     </xs:complexType>
   </xs:element>
+  <xs:element name="trailer" type="mf:anyContent"/>
   <xs:element name="bookmark-tree">
     <xs:complexType>
       <xs:sequence minOccurs="1" maxOccurs="unbounded">
@@ -91,38 +98,36 @@
   <xs:element name="page-sequence">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="mf:page"/>
+        <xs:element ref="mf:page" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attributeGroup ref="mf:foreignAtts"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="page">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="page-header">
-          <xs:complexType>
-            <xs:choice minOccurs="1" maxOccurs="unbounded">
-              <xs:any processContents="skip"/>
-            </xs:choice>
-          </xs:complexType>
-        </xs:element>
+        <xs:element name="page-header" type="mf:anyContent"/>
         <xs:element name="content" type="mf:contentType"/>
         <xs:element name="page-trailer" minOccurs="0">
           <xs:complexType>
-            <xs:sequence>
-              <xs:element name="target" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                  <xs:attribute name="x" use="required" type="xs:integer"/>
-                  <xs:attribute name="y" use="required" type="xs:integer"/>
-                  <xs:attribute name="name" use="required" type="xs:ID"/>
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element ref="nav:link"/>
+              <xs:element ref="nav:goto-xy"/>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
       </xs:sequence>
       <xs:attribute name="index" type="xs:nonNegativeInteger" use="required"/>
       <xs:attribute name="name" type="xs:string"/>
+      <xs:attribute name="page-master-name" type="xs:string"/>
+      <xs:attributeGroup ref="mf:sizeAtts"/>
+      <xs:attributeGroup ref="mf:foreignAtts"/>
     </xs:complexType>
   </xs:element>
+  <xs:complexType name="anyContent">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:any processContents="skip"/>
+    </xs:choice>
+  </xs:complexType>
 </xs:schema>
