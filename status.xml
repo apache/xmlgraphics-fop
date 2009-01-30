@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="VH" type="fix" fixes-bug="46638">
+        MinOptMaxUtil.toMinOptMax was converting LengthRangeProperty objects into illegal MinOptMax 
+        objects (in some cases opt could be inferior to min).
+      </action>
       <action context="Layout" dev="VH" type="add" fixes-bug="46315" due-to="Georg Datterl">
         Added extension to disable column balancing before blocks spanning the whole page, in 
         multiple-column documents.
