@@ -593,11 +593,7 @@ list of possible build targets.
       <include name="org/apache/fop/area/AreaTreeControl*"/>
       <include name="org/apache/fop/svg/**"/>
       <include name="org/apache/fop/fonts/**"/>
-      <include name="org/apache/fop/image/FopImag*.class"/>
-      <include name="org/apache/fop/image/Jpeg*"/>
-      <include name="org/apache/fop/image/EPS*"/>
-      <include name="org/apache/fop/image/Abstract*"/>
-      <include name="org/apache/fop/image/analyser/*.class"/>
+      <include name="org/apache/fop/image/loader/batik/BatikImageFlavors*.class"/>
       <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
       <include name="org/apache/fop/util/Color*.class"/>
       <include name="org/apache/fop/util/ASCII*.class"/>
