@@ -595,7 +595,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             }
         } else {
             throw new UnsupportedOperationException(
-                    "Don't know how to handle extension object: "
+                    "Extension must implement XMLizable: "
                     + extension + " (" + extension.getClass().getName() + ")");
         }
     }
