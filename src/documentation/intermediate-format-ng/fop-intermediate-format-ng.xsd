@@ -40,60 +40,16 @@
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <!--xs:element ref="x:xmpmeta" xmlns:x="adobe:ns:meta/"/-->
-        <xs:element ref="mf:bookmark-tree"/>
         <xs:any namespace="##other" processContents="lax"/>
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  <xs:element name="trailer" type="mf:anyContent"/>
-  <xs:element name="bookmark-tree">
+  <xs:element name="trailer">
     <xs:complexType>
-      <xs:sequence minOccurs="1" maxOccurs="unbounded">
-        <xs:element ref="mf:bookmark"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="bookmark">
-    <xs:complexType>
-      <xs:sequence minOccurs="1" maxOccurs="1">
-        <xs:element name="bookmark-title">
-          <xs:complexType>
-            <xs:simpleContent>
-              <xs:extension base="xs:string">
-                <xs:attribute name="color" type="mf:colorType"/>
-                <xs:attribute name="font-style">
-                  <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                      <xs:enumeration value="normal"/>
-                      <xs:enumeration value="italic"/>
-                    </xs:restriction>
-                  </xs:simpleType>
-                </xs:attribute>
-                <xs:attribute name="font-weight">
-                  <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                      <xs:enumeration value="normal"/>
-                      <xs:enumeration value="bold"/>
-                    </xs:restriction>
-                  </xs:simpleType>
-                </xs:attribute>
-              </xs:extension>
-            </xs:simpleContent>
-          </xs:complexType>
-        </xs:element>
-        <xs:element ref="mf:bookmark" maxOccurs="unbounded" minOccurs="0"/>
-      </xs:sequence>
-      <xs:attribute name="external-destination" type="xs:anyURI"/>
-      <xs:attribute name="internal-destination" type="xs:NCName">
-      </xs:attribute>
-      <xs:attribute name="starting-state">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="show"/>
-            <xs:enumeration value="hide"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <!--xs:element ref="nav:bookmark-tree"/-->
+        <xs:any namespace="##other" processContents="lax"/>
+      </xs:choice>
     </xs:complexType>
   </xs:element>
   <xs:element name="page-sequence">

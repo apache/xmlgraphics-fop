@@ -21,8 +21,57 @@
     targetNamespace="http://xmlgraphics.apache.org/fop/intermediate/document-navigation"
     xmlns:nav="http://xmlgraphics.apache.org/fop/intermediate/document-navigation"
     xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
+  
   <xs:import schemaLocation="fop-intermediate-format-ng-datatypes.xsd"
     namespace="http://xmlgraphics.apache.org/fop/intermediate"/>
+  
+  <xs:element name="bookmark-tree">
+    <xs:complexType>
+      <xs:sequence minOccurs="1" maxOccurs="unbounded">
+        <xs:element ref="nav:bookmark"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="bookmark">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="nav:actionType">
+          <xs:sequence>
+            <xs:element ref="nav:bookmark" maxOccurs="unbounded" minOccurs="0"/>
+          </xs:sequence>
+          <xs:attribute name="title" type="xs:string"/>
+          <xs:attribute name="starting-state">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="show"/>
+                <xs:enumeration value="hide"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <!-- Not yet implemented:
+          <xs:attribute name="color" type="if:colorType"/>
+          <xs:attribute name="font-style">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="normal"/>
+                <xs:enumeration value="italic"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="font-weight">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="normal"/>
+                <xs:enumeration value="bold"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          -->
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  
   <xs:element name="link">
     <xs:complexType>
       <xs:complexContent>
@@ -32,6 +81,7 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
+  
   <xs:complexType name="actionType">
     <xs:choice>
       <xs:element ref="nav:goto-uri"/>
@@ -42,6 +92,14 @@
     <xs:complexType>
       <xs:attributeGroup ref="nav:idAtts"/>
       <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+      <xs:attribute name="show-destination" use="optional" default="replace">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="new"/>
+            <xs:enumeration value="replace"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="goto-xy">
@@ -51,15 +109,16 @@
       <xs:attributeGroup ref="nav:posAtts"/>
     </xs:complexType>
   </xs:element>
+  
   <xs:attributeGroup name="posAtts">
     <xs:attribute name="x" type="if:lengthType" default="0"/>
     <xs:attribute name="y" type="if:lengthType" default="0"/>
   </xs:attributeGroup>
   <xs:attributeGroup name="idAtts">
-    <xs:attribute name="id" type="xs:ID"/>
+    <xs:attribute name="id" type="xs:NCName"/>
   </xs:attributeGroup>
   <xs:attributeGroup name="refDef">
     <xs:attributeGroup ref="nav:idAtts"/>
-    <xs:attribute name="idref" type="xs:IDREF"/>
+    <xs:attribute name="idref" type="xs:NCName"/>
   </xs:attributeGroup>
 </xs:schema>
