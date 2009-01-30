@@ -39,8 +39,9 @@
   <xs:element name="header">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="x:xmpmeta" xmlns:x="adobe:ns:meta/"/>
+        <!--xs:element ref="x:xmpmeta" xmlns:x="adobe:ns:meta/"/-->
         <xs:element ref="mf:bookmark-tree"/>
+        <xs:any namespace="##other" processContents="lax"/>
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -127,7 +128,7 @@
   </xs:element>
   <xs:complexType name="anyContent">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:any processContents="skip"/>
+      <xs:any namespace="##other" processContents="lax"/>
     </xs:choice>
   </xs:complexType>
 </xs:schema>
