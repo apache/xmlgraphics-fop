@@ -46,6 +46,9 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
     /** the ObjectAreaPosition for the object environment group */
     private ObjectAreaPosition objectAreaPosition;
 
+    /** the MapImageObject for the object environment group (optional) */
+    private MapImageObject mapImageObject;
+
     /** the DataDescriptor for the object environment group */
     private AbstractDescriptor dataDescriptor;
 
@@ -83,6 +86,15 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
         this.objectAreaPosition = objectAreaPosition;
     }
 
+    /**
+     * Sets the Map Image Object (MIO).
+     *
+     * @param mapImageObject the MIO structured field
+     */
+    public void setMapImageObject(MapImageObject mapImageObject) {
+        this.mapImageObject = mapImageObject;
+    }
+
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
         byte[] data = new byte[17];
@@ -113,6 +125,10 @@ public final class ObjectEnvironmentGroup extends AbstractNamedAFPObject {
 
         if (objectAreaPosition != null) {
             objectAreaPosition.writeToStream(os);
+        }
+
+        if (mapImageObject != null) {
+            mapImageObject.writeToStream(os);
         }
 
         if (mapContainerData != null) {

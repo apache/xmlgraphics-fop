@@ -23,14 +23,16 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
+import org.xml.sax.SAXException;
+
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.pdf.BasePDFTestCase;
-import org.xml.sax.SAXException;
 
 /**
  * Basic runtime test for FOP's font configuration. It is used to verify that
@@ -66,7 +68,7 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
         final File baseDir = getBaseDir();
         final String fontFOFilePath = getFontFOFilePath();
         File foFile = new File(baseDir, fontFOFilePath);
-        final boolean dumpOutput = true;
+        final boolean dumpOutput = false;
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         convertFO(foFile, foUserAgent, dumpOutput);
     }

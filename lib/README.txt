@@ -145,7 +145,7 @@ Please make sure you've read the license of each package.
     Note: This is not the same as JAI! Only the ImageIO-compatible codecs
     are packaged as "Image I/O Tools". The name may be misleading.
 
- - JAI (Java Advanced Imaging API) 
+- JAI (Java Advanced Imaging API) 
 
     http://java.sun.com/products/java-media/jai 	 
     Java Research License and Java Distribution License (Check which one applies to you!)
@@ -186,8 +186,58 @@ Additional development-time dependencies
     http://www.junit.org
     Common Public License V1.0
 
-- XMLUnit (optional)
+- XMLUnit
 
-    (not bundled, to be added to your Apache Ant installation)
+    lib/build/xmlunit-*.jar
+    (based on JUnit, used for testing)
     http://xmlunit.sourceforge.net/
     BSD style license
+
+- QDox
+
+    lib/build/qdox-*.jar
+    (used by the processing feedback mechanism, not needed at runtime)
+    http://qdox.codehaus.org/
+    Apache License V2.0
+
+
+
+Additional build-time dependencies
+-------------------------------------------
+
+These libraries are needed during the build only and
+not at runtime.
+
+- PMD
+
+    lib/build/pmd14-*.jar
+    (used for a code quality report)
+    http://pmd.sourceforge.net/
+    BSD style license
+
+- Jaxen
+
+    lib/build/jaxen-*.jar
+    (required by PMD)
+    http://jaxen.codehaus.org/
+    BSD style license
+
+- Retroweaver
+
+    (currently used only to verify Java 1.4 compatibility)
+    http://retroweaver.sourceforge.net
+    BSD style license
+    
+- ASM
+
+    lib/build/asm-*.jar
+    (required by Retroweaver)
+    http://asm.objectweb.org
+    BSD style license
+    
+- backport-util-concurrent
+
+    lib/build/backport-util-concurrent-*.jar
+    (required by Retroweaver)
+    http://backport-jsr166.sourceforge.net/
+    in public domain

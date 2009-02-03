@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
@@ -30,9 +31,12 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 import org.apache.xmlgraphics.util.MimeConstants;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
@@ -40,7 +44,7 @@ import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
-import org.apache.fop.util.BitmapImageUtil;
+import org.apache.fop.util.bitmap.BitmapImageUtil;
 
 /**
  * PDFImageHandler implementation which handles RenderedImage instances.
@@ -66,22 +70,64 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         AFPInfo afpInfo = rendererContext.getInfo();
         AFPPaintingState paintingState = afpInfo.getPaintingState();
         ImageRendered imageRendered = (ImageRendered) rendererImageInfo.img;
+        Dimension targetSize = new Dimension(afpInfo.getWidth(), afpInfo.getHeight());
 
-        updateDataObjectInfo(imageObjectInfo, paintingState, imageRendered);
+        updateDataObjectInfo(imageObjectInfo, paintingState, imageRendered, targetSize);
         return imageObjectInfo;
     }
 
     private AFPDataObjectInfo updateDataObjectInfo(AFPImageObjectInfo imageObjectInfo,
-            AFPPaintingState paintingState, ImageRendered imageRendered)
+            AFPPaintingState paintingState, ImageRendered imageRendered, Dimension targetSize)
             throws IOException {
 
         int resolution = paintingState.getResolution();
-
-        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
-        imageObjectInfo.setDataHeightRes(resolution);
-        imageObjectInfo.setDataWidthRes(resolution);
-
+        int maxPixelSize = paintingState.getBitsPerPixel();
+        if (paintingState.isColorImages()) {
+            maxPixelSize *= 3; //RGB only at the moment
+        }
         RenderedImage renderedImage = imageRendered.getRenderedImage();
+
+        ImageInfo imageInfo = imageRendered.getInfo();
+        ImageSize intrinsicSize = imageInfo.getSize();
+
+        boolean useFS10 = (maxPixelSize == 1) || BitmapImageUtil.isMonochromeImage(renderedImage);
+        boolean usePageSegments = useFS10
+                    && !imageObjectInfo.getResourceInfo().getLevel().isInline();
+
+        ImageSize effIntrinsicSize = intrinsicSize;
+        if (usePageSegments) {
+            //Resize, optionally resample and convert image
+            Dimension resampledDim = new Dimension(
+                    (int)Math.ceil(UnitConv.mpt2px(targetSize.getWidth(), resolution)),
+                    (int)Math.ceil(UnitConv.mpt2px(targetSize.getHeight(), resolution)));
+
+            imageObjectInfo.setCreatePageSegment(true);
+            imageObjectInfo.getResourceInfo().setImageDimension(resampledDim);
+
+            //Only resample/downsample if image is smaller than its intrinsic size
+            //to make print file smaller
+            boolean resample = resampledDim.width < renderedImage.getWidth()
+                && resampledDim.height < renderedImage.getHeight();
+            if (resample) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Resample from " + intrinsicSize.getDimensionPx()
+                            + " to " + resampledDim);
+                }
+                renderedImage = BitmapImageUtil.convertToMonochrome(renderedImage, resampledDim);
+                effIntrinsicSize = new ImageSize(
+                        resampledDim.width, resampledDim.height, resolution);
+            }
+        }
+        if (useFS10) {
+            imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS10);
+        } else {
+            imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS11);
+        }
+
+        imageObjectInfo.setDataHeightRes((int)Math.round(
+                effIntrinsicSize.getDpiHorizontal() * 10));
+        imageObjectInfo.setDataWidthRes((int)Math.round(
+                effIntrinsicSize.getDpiVertical() * 10));
 
         int dataHeight = renderedImage.getHeight();
         imageObjectInfo.setDataHeight(dataHeight);
@@ -91,12 +137,6 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
 
         //TODO To reduce AFP file size, investigate using a compression scheme.
         //Currently, all image data is uncompressed.
-
-        int maxPixelSize = paintingState.getBitsPerPixel();
-        if (paintingState.isColorImages()) {
-            maxPixelSize *= 3; //RGB only at the moment
-        }
-
         ColorModel cm = renderedImage.getColorModel();
         if (log.isTraceEnabled()) {
             log.trace("ColorModel: " + cm);
@@ -121,11 +161,16 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
             if (BitmapImageUtil.getColorIndexSize(renderedImage) > 2) {
                 directEncode = false; //Lookup tables are not implemented, yet
             }
+            if (useFS10
+                    && BitmapImageUtil.isMonochromeImage(renderedImage)
+                    && BitmapImageUtil.isZeroBlack(renderedImage)) {
+                directEncode = false;
+            }
             if (directEncode) {
                 log.debug("Encoding image directly...");
                 imageObjectInfo.setBitsPerPixel(encodedColorModel.getPixelSize());
                 if (BitmapImageUtil.isMonochromeImage(renderedImage)
-                        && !BitmapImageUtil.isZeroBlack(renderedImage)) {
+                        && BitmapImageUtil.isZeroBlack(renderedImage)) {
                     log.trace("set subtractive mode");
                     imageObjectInfo.setSubtractive(true);
                 }
@@ -136,6 +181,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         }
         if (imageData == null) {
             log.debug("Encoding image via RGB...");
+
             //Convert image to 24bit RGB
             ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baos);
             imageData = baos.toByteArray();
@@ -204,10 +250,11 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
 
         // Positioning
         imageObjectInfo.setObjectAreaInfo(createObjectAreaInfo(afpContext.getPaintingState(), pos));
+        Dimension targetSize = pos.getSize();
 
         // Image content
         ImageRendered imageRend = (ImageRendered)image;
-        updateDataObjectInfo(imageObjectInfo, afpContext.getPaintingState(), imageRend);
+        updateDataObjectInfo(imageObjectInfo, afpContext.getPaintingState(), imageRend, targetSize);
 
         // Create image
         afpContext.getResourceManager().createObject(imageObjectInfo);

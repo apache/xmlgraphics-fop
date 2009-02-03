@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,14 +29,15 @@ import java.util.List;
  */
 public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
 
-    /**
-     * The collection of MapPageOverlay objects
-     */
+    /** the collection of MapDataResource objects */
+    protected final List mapDataResources = null;
+
+    /** the collection of MapPageOverlay objects */
     protected List mapPageOverlays = null;
 
     /**
      * Main constructor
-     * 
+     *
      * @param name the object name
      */
     public AbstractEnvironmentGroup(String name) {
@@ -53,7 +54,7 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * Actually creates the MPO object.
      * Also creates the supporting object (an IPO)
-     * 
+     *
      * @param name the name of the overlay to be used
      */
     public void createOverlay(String name) {
@@ -80,12 +81,16 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
     /**
      * Getter method for the most recent MapPageOverlay added to the
      * Active Environment Group (returns null if no MapPageOverlay exist)
-     * 
+     *
      * @return the most recent Map Coded Font
      */
     private MapPageOverlay getCurrentMapPageOverlay() {
-        if (mapPageOverlays != null && mapPageOverlays.size() > 0) {
-            return (MapPageOverlay) mapPageOverlays.get(mapPageOverlays.size() - 1);
+        return (MapPageOverlay)getLastElement(this.mapPageOverlays);
+    }
+
+    protected Object getLastElement(List list) {
+        if (list != null && list.size() > 0) {
+            return list.get(list.size() - 1);
         } else {
             return null;
         }
@@ -94,8 +99,5 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
-        if (mapPageOverlays != null) {
-            writeObjects(mapPageOverlays, os);
-        }
     }
 }

@@ -194,33 +194,33 @@
         <title>FOP add-ons</title>
         <ul>
           <li>[software] TIFFRenderer is a renderer for outputting multi-page TIFF: <jump href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</jump> (MPL)</li>
-          <li>[software] AFP Renderer / Batch Assembler for FOP: <jump href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</jump> (open source, license unclear)</li>
           <li>[software] The <jump href="http://mogwai.sourceforge.net">Mogwai Project</jump> includes a renderer for FOP that generates output for Okidata dot matrix printers (GPL).</li>
           <li>[software] <jump href="http://barcode4j.sourceforge.net">Barcode4J</jump> (formerly Krysalis Barcode) is a barcode generator which can be used with FOP (Apache license v2.0).</li>
           <li>[software] <jump href="http://jeuclid.sourceforge.net">JEuclid</jump> is a MathML implementation which can be used with FOP (Apache license v2.0).</li>
-          <li>[software] <jump href="http://afp-renderer.sourceforge.net/">AFP Renderer</jump> renders formatted objects to AFP or (MO:DCA).</li>
+          <li>[software] <jump href="http://afp-renderer.sourceforge.net/">AFP Renderer</jump> renders formatted objects to AFP or (MO:DCA). (Has been integrated in FOP)</li>
           <li>[software &amp; tools] <jump href="http://offo.sourceforge.net/">Objects For Formatting Objects</jump> hosts hyphenation patterns and (eventually) files other accessory data files &amp; scripts.</li>
         </ul>        
       </section>
       <section id="products-pdf">
         <title>PDF post-processors</title>
         <ul>
+          <li>[software] <jump href="http://incubator.apache.org/pdfbox">Apache PDFBox</jump> (Incubating, Apache License V2.0)</li>
           <li>[software] <jump href="http://www.lowagie.com/iText">iText</jump> (MPL and LGPL)</li>
           <li>[software] <jump href="http://www.etymon.com/pjc">PJ Classic</jump> by Etymon (GPL)</li>
           <li>[software] <jump href="http://www.etymon.com/pjx">PJ Professional</jump> by Etymon (commercial)</li>
           <li>[software] <jump href="http://www.accesspdf.com/pdftk/">pdftk</jump> the pdf toolkit</li>
-          <li>[software] <jump href="http://www.pdfbox.org">PDFBox</jump> (BSD)</li>
         </ul>
       </section>
       <section id="products-editors">
         <title>XSL-FO editors</title>
         <ul>
           <li>[software] <jump href="http://foa.sourceforge.net/">FOA (Formatting Objects Authoring)</jump> (MPL)</li>
-          <li>[software] <jump href="http://www.scruffyware.com/products/foeditor/">FOEditor</jump> by Scruffy Software (Shareware)</li>
+          <!--infected website
+            <li>[software] <jump href="http://www.scruffyware.com/products/foeditor/">FOEditor</jump> by Scruffy Software (Shareware)</li>
+          -->
           <li>[software] <jump href="http://www.scriptura-xsl.com">Scriptura</jump> by Inventive Designers (commercial)</li>
           <li>[software] <jump href="http://www.xslfast.com">XSLfast</jump> by jCatalog Software AG (commercial)</li>
           <li>[software] <jump href="http://www.digiforms.com/">DIGIFORMS Document Designer</jump> by Metafocus (commercial)</li>
-          <li>[software] <jump href="http://web.assentis.com/products/products.php?navi=Products&amp;product_id=7">Assentis:DocDesign</jump> by Assentis Technologies (commercial)</li>
         </ul>
       </section>
       <section id="products-other">
@@ -228,6 +228,7 @@
         <ul>
           <li>[software] <jump href="http://foray.sourceforge.net/">FOray</jump> a renderer for converting XML files to PDF via XSL Formatting Object elements (FOP fork)</li>
           <li>[software] <jump href="http://defoe.sourceforge.net/folio">Folio</jump> a renderer for XML files containing Formatting Object elements (aka FOP Alt.Design)</li>
+          <li>[software] <jump href="http://xmlroff.org/">xmlroff</jump> an open source XSL-FO implementation written in C (BSD-style license)</li>
 
           <li>[commercial software developer] <jump href="http://antennahouse.com/product.htm">Antenna House</jump> - XSL Formatter, WordMLToFo, XML Editor...</li>
           <li>[commercial software developer] <jump href="http://www.renderx.net/">RenderX</jump> XEP, EnMasse, Docbench...</li>
@@ -242,10 +243,6 @@
           is the most obvious language it would be used for. The tool has a number of
           page-related extensions. It also comes with an API in the form of an XML
           filter (OSI-Approved Open Source - Public Domain).</li>
-          <li> [software] <jump href="http://www.vbxml.com/xpathvisualizer">The XPath Visualizer</jump>.
-Web site says: "This is a full blown Visual XPath Interpreter for the evaluation of any XPath expression and visual presentation of the resulting nodeset or scalar value."
-Requires Internet Explorer 5+.
-(freeware)</li>
           <li>
             [software] <jump href="http://www.ahmadsoft.org/fopbridge.html">FOP Bridge</jump> is an Eclipse plug-in
             that allows to convert FO documents using Apache FOP directly inside the Eclipse workbench (LGPL).

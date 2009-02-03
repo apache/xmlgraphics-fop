@@ -155,9 +155,12 @@ public class ImageContent extends AbstractStructuredObject {
 
         os.write(getImageIDESizeParameter());
 
-        os.write(getIDEStructureParameter());
+        boolean useFS10 = (this.size == 1);
+        if (!useFS10) {
+            os.write(getIDEStructureParameter());
 
-        os.write(getExternalAlgorithmParameter());
+            os.write(getExternalAlgorithmParameter());
+        }
 
         final byte[] dataHeader = new byte[] {
                 (byte)0xFE, // ID
@@ -240,12 +243,15 @@ public class ImageContent extends AbstractStructuredObject {
      * @return byte[] The data stream.
      */
     private byte[] getImageIDESizeParameter() {
-        final byte[] ideSizeData = new byte[] {
-            (byte)0x96, // ID
-            0x01, // Length
-            size,
-        };
-        return ideSizeData;
+        if (size != 1) {
+            final byte[] ideSizeData = new byte[] {
+                    (byte)0x96, // ID
+                    0x01, // Length
+                    size};
+            return ideSizeData;
+        } else {
+            return new byte[0];
+        }
     }
 
     /**
@@ -264,7 +270,6 @@ public class ImageContent extends AbstractStructuredObject {
                 (byte)0x9B, // ID
                 0x00, // Length
                 flags, // FLAGS
-                0x00, // Reserved
                 colorModel, // COLOR MODEL
                 0x00, // Reserved
                 0x00, // Reserved
@@ -280,12 +285,11 @@ public class ImageContent extends AbstractStructuredObject {
                     (byte)0x9B, // ID
                     0x00, // Length
                     flags, // FLAGS
-                    0x00, // Reserved
                     colorModel, // COLOR MODEL
                     0x00, // Reserved
                     0x00, // Reserved
                     0x00, // Reserved
-                    1
+                    0x01
                 };
                 ideStructData[1] = (byte)(ideStructData.length - 2);
                 return ideStructData;

@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pcl;
+package org.apache.fop.util.bitmap;
 
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -56,8 +56,12 @@ public class JAIMonochromeBitmapConverter implements
 
     /** {@inheritDoc} */
     public RenderedImage convertToMonochrome(BufferedImage img) {
+        return convertToMonochromePlanarImage(img);
+    }
+
+    private PlanarImage convertToMonochromePlanarImage(BufferedImage img) {
         if (img.getColorModel().getColorSpace().getNumComponents() != 1) {
-            throw new IllegalArgumentException("Source image must be a grayscale image!");
+            img = BitmapImageUtil.convertToGrayscale(img, null);
         }
 
         // Load the ParameterBlock for the dithering operation
@@ -92,7 +96,7 @@ public class JAIMonochromeBitmapConverter implements
         PlanarImage dst = JAI.create(opName, pb, hints);
 
         //Convert it to a BufferedImage
-        return dst.getAsBufferedImage();
+        return dst;
     }
 
 }

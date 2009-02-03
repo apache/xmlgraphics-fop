@@ -78,11 +78,6 @@
             from the TeX/LaTeX world. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
-        <li id="mb"><link href="mailto:max AT berger DOT name">Max Berger</link> (MB) is currently a
-          PostDoc pursuing an academic career in computer science. His main interest in FOP is to
-          improve the DocBook to PDF tool-chain to produce high quality output, while still
-          conforming to given style-guides. See his <link href="http://max.berger.name">home
-            page</link> for more information.</li>
       </ul>
     </section>
     <section id="contribute-active">

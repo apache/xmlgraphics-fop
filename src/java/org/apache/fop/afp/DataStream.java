@@ -445,7 +445,8 @@ public class DataStream {
             yOrigin = y;
             break;
         }
-        currentPage.createIncludePageSegment(name, xOrigin, yOrigin);
+        boolean createHardPageSegments = true;
+        currentPage.createIncludePageSegment(name, xOrigin, yOrigin, createHardPageSegments);
     }
 
     /**

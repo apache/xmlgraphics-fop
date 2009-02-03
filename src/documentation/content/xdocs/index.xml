@@ -35,9 +35,9 @@
       </p>
         <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
     <p>
-      A beta release of the latest version of FOP (<link href="0.95/">0.95</link>) is now
-      available. After a short testing period it will become the third
-      stable release after the large redesign effort and will implement a large subset of the
+      A stable release of the latest version of FOP (<link href="0.95/">0.95</link>) is
+      available. It's the third
+      stable release after the large redesign effort and implements a large subset of the
       <link href="http://www.w3.org/TR/xsl11/">XSL-FO Version 1.1 W3C
         Recommendation</link>.
     </p>
@@ -53,7 +53,7 @@
     <title>Demonstration</title>
         <figure width="480" height="260" src="images/layout.jpg" alt="Formatting Diagram" />
 <p>
-This image is a demonstration of a real two page document. The xml data on the left
+This image is a demonstration of a real two page document. The XML data on the left
 is formatted into the two pages on the right. The document contains static areas that appear on every page, an external graphic, a footnote on the first page, and a table that goes across both pages.
 </p>
 <p>

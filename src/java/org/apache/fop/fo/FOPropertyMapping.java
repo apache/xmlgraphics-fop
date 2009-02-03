@@ -1895,6 +1895,13 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("all", getEnumProperty(EN_ALL, "ALL"));
         m.setDefault("none");
         addPropertyMaker("span", m);
+
+        // fox:disable-column-balancing
+        m  = new EnumProperty.Maker(PR_X_DISABLE_COLUMN_BALANCING);
+        m.useGeneric(genericBoolean);
+        m.setInherited(true);
+        m.setDefault("false");
+        addPropertyMaker("fox:disable-column-balancing", m);
     }
 
     private void createLeaderAndRuleProperties() {

@@ -21,8 +21,6 @@ package org.apache.fop.fo.flow;
 
 import java.awt.Color;
 
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
@@ -40,6 +38,7 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.xml.sax.Locator;
 
  /**
   * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_block">
@@ -80,6 +79,7 @@ public class Block extends FObjMixed implements BreakPropertySet {
     private int whiteSpaceCollapse;
     private Numeric widows;
     private int wrapOption;
+    private int disableColumnBalancing;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
@@ -130,6 +130,7 @@ public class Block extends FObjMixed implements BreakPropertySet {
         whiteSpaceCollapse = pList.get(PR_WHITE_SPACE_COLLAPSE).getEnum();
         widows = pList.get(PR_WIDOWS).getNumeric();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
+        disableColumnBalancing = pList.get(PR_X_DISABLE_COLUMN_BALANCING).getEnum();
     }
 
     /** {@inheritDoc} */
@@ -317,6 +318,15 @@ public class Block extends FObjMixed implements BreakPropertySet {
     public int getLineHeightShiftAdjustment() {
         return this.lineHeightShiftAdjustment;
     }
+
+     /**
+     * @return the "fox:disable-column-balancing" property, one of
+     * {@link Constants#EN_TRUE}, {@link Constants#EN_FALSE}
+     */
+     public int getDisableColumnBalancing() {
+         return disableColumnBalancing;
+     }
+
 
     /** {@inheritDoc} */
     public CharIterator charIterator() {

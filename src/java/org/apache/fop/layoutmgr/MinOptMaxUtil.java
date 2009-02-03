@@ -103,15 +103,13 @@ public class MinOptMaxUtil {
      * @return the requested MinOptMax instance
      */
     public static MinOptMax toMinOptMax(LengthRangeProperty prop, PercentBaseContext context) {
-        MinOptMax mom = new MinOptMax(
-                (prop.getMinimum(context).isAuto()
-                        ? 0 : prop.getMinimum(context).getLength().getValue(context)),
-                (prop.getOptimum(context).isAuto()
-                        ? 0 : prop.getOptimum(context).getLength().getValue(context)),
-                (prop.getMaximum(context).isAuto()
-                        ? Integer.MAX_VALUE
-                        : prop.getMaximum(context).getLength().getValue(context)));
-        return mom;
+        int min = prop.getMinimum(context).isAuto() ? 0
+                : prop.getMinimum(context).getLength().getValue(context);
+        int opt = prop.getOptimum(context).isAuto() ? min
+                : prop.getOptimum(context).getLength().getValue(context);
+        int max = prop.getMaximum(context).isAuto() ? Integer.MAX_VALUE
+                : prop.getMaximum(context).getLength().getValue(context);
+        return new MinOptMax(min, opt, max);
     }
 
 }
