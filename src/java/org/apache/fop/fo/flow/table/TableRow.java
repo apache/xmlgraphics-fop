@@ -128,7 +128,12 @@ public class TableRow extends TableCellContainer implements BreakPropertySet {
                                      String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
-            if (!localName.equals("table-cell")) {
+            if ("marker".equals(localName)) {
+                if (this.firstChild != null) {
+                    //a table-cell has already been added to this row
+                    nodesOutOfOrderError(loc, "fo:marker", "(table-cell+)");
+                }
+            } else if (!"table-cell".equals(localName)) {
                 invalidChildError(loc, nsURI, localName);
             }
         }

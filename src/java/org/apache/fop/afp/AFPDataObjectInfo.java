@@ -21,6 +21,7 @@ package org.apache.fop.afp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.afp.modca.Registry;
 
 /**
@@ -52,6 +53,9 @@ public class AFPDataObjectInfo {
 
     /** the object data width resolution */
     private int dataWidthRes;
+
+    /** controls whether to create a page segment or a simple object */
+    private boolean createPageSegment;
 
     /**
      * Default constructor
@@ -231,6 +235,22 @@ public class AFPDataObjectInfo {
      */
     public byte[] getData() {
         return this.data;
+    }
+
+    /**
+     * Controls whether to create a page segment or a normal object.
+     * @param value true for page segments, false for objects
+     */
+    public void setCreatePageSegment(boolean value) {
+        this.createPageSegment = value;
+    }
+
+    /**
+     * Indicates whether a page segment or a normal object shall be created.
+     * @return true for page segments, false for objects
+     */
+    public boolean isCreatePageSegment() {
+        return this.createPageSegment;
     }
 
     /** {@inheritDoc} */

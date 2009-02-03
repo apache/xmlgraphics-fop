@@ -766,8 +766,13 @@ public interface Constants {
     int PR_X_WIDOW_CONTENT_LIMIT = 271;
     /** Property constant - FOP proprietary: limit for orphan content in lists and tables */
     int PR_X_ORPHAN_CONTENT_LIMIT = 272;
+    /**
+     * Property constant - FOP proprietary: disable balancing of columns in
+     * multi-column layouts.
+     */
+    int PR_X_DISABLE_COLUMN_BALANCING = 273;
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 272;
+    int PROPERTY_COUNT = 273;
 
     // compound property constants
 

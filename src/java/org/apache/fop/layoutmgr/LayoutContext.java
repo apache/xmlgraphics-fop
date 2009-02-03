@@ -148,6 +148,8 @@ public class LayoutContext {
     private int pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
     private int pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
 
+    private int disableColumnBalancing;
+
     /**
      * Copy constructor for creating child layout contexts.
      * @param parentLC the parent layout context to copy from
@@ -170,6 +172,7 @@ public class LayoutContext {
         this.pendingKeepWithNext = parentLC.pendingKeepWithNext;
         this.pendingKeepWithPrevious = parentLC.pendingKeepWithPrevious;
         // Copy other fields as necessary.
+        this.disableColumnBalancing = parentLC.disableColumnBalancing;
     }
 
     /**
@@ -412,7 +415,7 @@ public class LayoutContext {
 
     /**
      * Sets (Copies) the stack limits in both directions from another layout context.
-     * @param context the layout context to taje the values from
+     * @param context the layout context to take the values from
      */
     public void setStackLimitsFrom(LayoutContext context) {
         setStackLimitBP(context.getStackLimitBP());
@@ -681,5 +684,23 @@ public class LayoutContext {
         + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }
 
+    /**
+     * Returns whether the column balancer should be disabled before a spanning block
+     *
+     * @return one of {@link Constants#EN_TRUE}, {@link Constants#EN_FALSE}
+     */
+    public int getDisableColumnBalancing() {
+        return disableColumnBalancing;
+    }
+
+    /**
+     * Sets whether the column balancer should be disabled before a spanning block
+     *
+     * @param disableColumnBalancing the value of the fox:disable-column-balancing property
+     * @see #getDisableColumnBalancing()
+     */
+    public void setDisableColumnBalancing(int disableColumnBalancing) {
+        this.disableColumnBalancing = disableColumnBalancing;
+    }
 }
 

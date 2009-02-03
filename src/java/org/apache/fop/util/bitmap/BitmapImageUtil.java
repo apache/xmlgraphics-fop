@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.util;
+package org.apache.fop.util.bitmap;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 
 /**
  * Utility method for dealing with bitmap images.
@@ -101,7 +102,7 @@ public class BitmapImageUtil {
      * @return true if it's a grayscale image
      */
     public static final boolean isGrayscaleImage(RenderedImage img) {
-        return (img.getColorModel().getNumColorComponents() == 1);
+        return (img.getColorModel().getColorSpace().getNumComponents() == 1);
     }
 
     /**
@@ -149,6 +150,23 @@ public class BitmapImageUtil {
         return target;
     }
 
+    /**
+     * Returns a BufferedImage based on the given RenderedImage. In the easiest case,
+     * this is a simple typecast. Otherwise, the image is converted to a BufferedImage.
+     * @param img the original image
+     * @return the buffered image
+     */
+    public static BufferedImage toBufferedImage(RenderedImage img) {
+        if (img instanceof BufferedImage) {
+            return (BufferedImage)img;
+        } else {
+            WritableRaster wr = img.getColorModel().createCompatibleWritableRaster(
+                    img.getWidth(), img.getHeight());
+            boolean premult = img.getColorModel().isAlphaPremultiplied();
+            return new BufferedImage(img.getColorModel(), wr, premult, null);
+        }
+    }
+
     private static void transferImage(RenderedImage source, BufferedImage target) {
         Graphics2D g2d = target.createGraphics();
         try {
@@ -167,6 +185,31 @@ public class BitmapImageUtil {
         } finally {
             g2d.dispose();
         }
+    }
+
+    public static MonochromeBitmapConverter createDefaultMonochromeBitmapConverter() {
+        MonochromeBitmapConverter converter = null;
+        try {
+            String clName = "org.apache.fop.util.bitmap.JAIMonochromeBitmapConverter";
+            Class clazz = Class.forName(clName);
+            converter = (MonochromeBitmapConverter)clazz.newInstance();
+        } catch (ClassNotFoundException cnfe) {
+            // Class was not compiled so is not available. Simply ignore.
+        } catch (LinkageError le) {
+            // This can happen if fop was build with support for a
+            // particular provider (e.g. a binary fop distribution)
+            // but the required support files (i.e. JAI) are not
+            // available in the current runtime environment.
+            // Simply continue with the backup implementation.
+        } catch (InstantiationException e) {
+            // Problem instantiating the class, simply continue with the backup implementation
+        } catch (IllegalAccessException e) {
+            // Problem instantiating the class, simply continue with the backup implementation
+        }
+        if (converter == null) {
+            converter = new DefaultMonochromeBitmapConverter();
+        }
+        return converter;
     }
 
 

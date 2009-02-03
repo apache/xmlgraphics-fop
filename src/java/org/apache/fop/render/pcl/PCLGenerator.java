@@ -47,7 +47,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlgraphics.image.GraphicsUtil;
 import org.apache.xmlgraphics.util.UnitConv;
 
-import org.apache.fop.util.BitmapImageUtil;
+import org.apache.fop.util.bitmap.BitmapImageUtil;
+import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
 
 /**
  * This class provides methods for generating PCL print files.
@@ -610,7 +611,7 @@ public class PCLGenerator {
     public static boolean isJAIAvailable() {
         if (jaiAvailable < 0) {
             try {
-                String clName = "org.apache.fop.render.pcl.JAIMonochromeBitmapConverter";
+                String clName = "javax.media.jai.JAI";
                 Class.forName(clName);
                 jaiAvailable = 1;
             } catch (ClassNotFoundException cnfe) {
@@ -618,31 +619,6 @@ public class PCLGenerator {
             }
         }
         return (jaiAvailable > 0);
-    }
-
-    private MonochromeBitmapConverter createMonochromeBitmapConverter() {
-        MonochromeBitmapConverter converter = null;
-        try {
-            String clName = "org.apache.fop.render.pcl.JAIMonochromeBitmapConverter";
-            Class clazz = Class.forName(clName);
-            converter = (MonochromeBitmapConverter)clazz.newInstance();
-        } catch (ClassNotFoundException cnfe) {
-            // Class was not compiled so is not available. Simply ignore.
-        } catch (LinkageError le) {
-            // This can happen if fop was build with support for a
-            // particular provider (e.g. a binary fop distribution)
-            // but the required support files (i.e. JAI) are not
-            // available in the current runtime environment.
-            // Simply continue with the backup implementation.
-        } catch (InstantiationException e) {
-            // Problem instantiating the class, simply continue with the backup implementation
-        } catch (IllegalAccessException e) {
-            // Problem instantiating the class, simply continue with the backup implementation
-        }
-        if (converter == null) {
-            converter = new DefaultMonochromeBitmapConverter();
-        }
-        return converter;
     }
 
     private int calculatePCLResolution(int resolution) {
@@ -814,12 +790,11 @@ public class PCLGenerator {
             if (src == null) {
                 src = BitmapImageUtil.convertToGrayscale(img, effDim);
                 }
-            MonochromeBitmapConverter converter = createMonochromeBitmapConverter();
+            MonochromeBitmapConverter converter
+                = BitmapImageUtil.createDefaultMonochromeBitmapConverter();
             converter.setHint("quality", "false");
 
-            BufferedImage buf = (BufferedImage)converter.convertToMonochrome(src);
-
-            RenderedImage red = buf;
+            RenderedImage red = converter.convertToMonochrome(src);
             selectCurrentPattern(0, 0); //Solid black
             setTransparencyMode(sourceTransparency || mask != null, true);
             paintMonochromeBitmap(red, effResolution);

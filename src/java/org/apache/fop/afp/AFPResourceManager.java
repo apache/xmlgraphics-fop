@@ -24,7 +24,9 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
+import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.IncludeObject;
+import org.apache.fop.afp.modca.PageSegment;
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;
 
@@ -45,9 +47,11 @@ public class AFPResourceManager {
     /** Maintain a reference count of instream objects for referencing purposes */
     private int instreamObjectCount = 0;
 
-    /** a mapping of resourceInfo --> include name */
-    private final Map/*<AFPResourceInfo,String>*/ includeNameMap
+    /** a mapping of resourceInfo --> names of includable objects */
+    private final Map/*<AFPResourceInfo,String>*/ includableObjectsMap
         = new java.util.HashMap()/*<AFPResourceInfo,String>*/;
+
+    private Map pageSegmentMap = new java.util.HashMap();
 
     /**
      * Main constructor
@@ -112,6 +116,81 @@ public class AFPResourceManager {
         AbstractNamedAFPObject namedObj = null;
 
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        updateResourceInfoUri(resourceInfo);
+
+        String objectName = (String)includableObjectsMap.get(resourceInfo);
+        if (objectName != null) {
+            // an existing data resource so reference it by adding an include to the current page
+            includeObject(dataObjectInfo, objectName);
+            return;
+        }
+
+        objectName = (String)pageSegmentMap.get(resourceInfo);
+        if (objectName != null) {
+            // an existing data resource so reference it by adding an include to the current page
+            includePageSegment(dataObjectInfo, objectName);
+            return;
+        }
+
+        boolean useInclude = true;
+        Registry.ObjectType objectType = null;
+
+        // new resource so create
+        if (dataObjectInfo instanceof AFPImageObjectInfo) {
+            AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)dataObjectInfo;
+            namedObj = dataObjectFactory.createImage(imageObjectInfo);
+        } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {
+            AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo)dataObjectInfo;
+            namedObj = dataObjectFactory.createGraphic(graphicsObjectInfo);
+        } else {
+            // natively embedded data object
+            namedObj = dataObjectFactory.createObjectContainer(dataObjectInfo);
+            objectType = dataObjectInfo.getObjectType();
+            useInclude = objectType != null && objectType.isIncludable();
+        }
+
+        AFPResourceLevel resourceLevel = resourceInfo.getLevel();
+        ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
+        useInclude &= resourceGroup != null;
+        if (useInclude) {
+
+            boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
+
+            // if it is to reside within a resource group at print-file or external level
+            if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
+                if (usePageSegment) {
+                    String pageSegmentName = "S10" + namedObj.getName().substring(3);
+                    namedObj.setName(pageSegmentName);
+                    PageSegment seg = new PageSegment(pageSegmentName);
+                    seg.addObject(namedObj);
+                    namedObj = seg;
+                }
+
+                // wrap newly created data object in a resource object
+                namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
+            }
+
+            // add data object into its resource group destination
+            resourceGroup.addObject(namedObj);
+
+            // create the include object
+            objectName = namedObj.getName();
+            if (usePageSegment) {
+                includePageSegment(dataObjectInfo, objectName);
+                pageSegmentMap.put(resourceInfo, objectName);
+            } else {
+                includeObject(dataObjectInfo, objectName);
+                // record mapping of resource info to data object resource name
+                includableObjectsMap.put(resourceInfo, objectName);
+            }
+
+        } else {
+            // not to be included so inline data object directly into the current page
+            dataStream.getCurrentPage().addObject(namedObj);
+        }
+    }
+
+    private void updateResourceInfoUri(AFPResourceInfo resourceInfo) {
         String uri = resourceInfo.getUri();
         if (uri == null) {
             uri = "/";
@@ -121,59 +200,22 @@ public class AFPResourceManager {
             uri += "#" + (++instreamObjectCount);
             resourceInfo.setUri(uri);
         }
+    }
 
-        String objectName = (String)includeNameMap.get(resourceInfo);
-        if (objectName == null) {
-            boolean useInclude = true;
-            Registry.ObjectType objectType = null;
+    private void includeObject(AFPDataObjectInfo dataObjectInfo,
+            String objectName) {
+        IncludeObject includeObject
+            = dataObjectFactory.createInclude(objectName, dataObjectInfo);
+        dataStream.getCurrentPage().addObject(includeObject);
+    }
 
-            // new resource so create
-            if (dataObjectInfo instanceof AFPImageObjectInfo) {
-                AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)dataObjectInfo;
-                namedObj = dataObjectFactory.createImage(imageObjectInfo);
-            } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {
-                AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo)dataObjectInfo;
-                namedObj = dataObjectFactory.createGraphic(graphicsObjectInfo);
-            } else {
-                // natively embedded data object
-                namedObj = dataObjectFactory.createObjectContainer(dataObjectInfo);
-                objectType = dataObjectInfo.getObjectType();
-                useInclude = objectType != null && objectType.isIncludable();
-            }
-
-            AFPResourceLevel resourceLevel = resourceInfo.getLevel();
-            ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
-            useInclude &= resourceGroup != null;
-            if (useInclude) {
-                // if it is to reside within a resource group at print-file or external level
-                if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
-                    // wrap newly created data object in a resource object
-                    namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
-                }
-
-                // add data object into its resource group destination
-                resourceGroup.addObject(namedObj);
-
-                // create the include object
-                objectName = namedObj.getName();
-                IncludeObject includeObject
-                    = dataObjectFactory.createInclude(objectName, dataObjectInfo);
-
-                // add an include to the current page
-                dataStream.getCurrentPage().addObject(includeObject);
-
-                // record mapping of resource info to data object resource name
-                includeNameMap.put(resourceInfo, objectName);
-            } else {
-                // not to be included so inline data object directly into the current page
-                dataStream.getCurrentPage().addObject(namedObj);
-            }
-        } else {
-            // an existing data resource so reference it by adding an include to the current page
-            IncludeObject includeObject
-                = dataObjectFactory.createInclude(objectName, dataObjectInfo);
-            dataStream.getCurrentPage().addObject(includeObject);
-        }
+    private void includePageSegment(AFPDataObjectInfo dataObjectInfo,
+            String pageSegmentName) {
+        int x = dataObjectInfo.getObjectAreaInfo().getX();
+        int y = dataObjectInfo.getObjectAreaInfo().getY();
+        AbstractPageObject currentPage = dataStream.getCurrentPage();
+        boolean createHardPageSegments = true;
+        currentPage.createIncludePageSegment(pageSegmentName, x, y, createHardPageSegments);
     }
 
 }

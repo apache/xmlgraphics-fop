@@ -34,12 +34,6 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup implement
     /** default name for the resource group */
     private static final String DEFAULT_NAME = "REG00001";
 
-    /** the maps data resources contained in this resource environment group */
-    private List/*<MapDataResource>*/ mapDataResources = null;
-
-    /** the maps page overlays contained in this resource environment group */
-    private List mapPageOverlays = null;
-
     /** the pre-process presentation objects contained in this resource environment group */
     private List/*<PreprocessPresentationObject>*/ preProcessPresentationObjects = null;
 
@@ -51,20 +45,6 @@ public class ResourceEnvironmentGroup extends AbstractEnvironmentGroup implement
      */
     public ResourceEnvironmentGroup() {
         this(DEFAULT_NAME);
-    }
-
-    private List/*<MapDataResource>*/ getMapDataResources() {
-        if (mapDataResources == null) {
-            this.mapDataResources = new java.util.ArrayList/*<MapDataResource>*/();
-        }
-        return this.mapDataResources;
-    }
-
-    private List getMapPageOverlays() {
-        if (mapPageOverlays == null) {
-            this.mapPageOverlays = new java.util.ArrayList();
-        }
-        return this.mapPageOverlays;
     }
 
     private List/*<PreprocessPresentationObject>*/ getPreprocessPresentationObjects() {

@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.pcl;
+package org.apache.fop.util.bitmap;
 
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
@@ -32,13 +32,9 @@ import java.awt.image.RenderedImage;
 public class DefaultMonochromeBitmapConverter implements
         MonochromeBitmapConverter {
 
-    private boolean quality = false;
-
     /** {@inheritDoc} */
     public void setHint(String name, String value) {
-        if ("quality".equalsIgnoreCase(name)) {
-            quality = "true".equalsIgnoreCase(value);
-        }
+        //ignore, not supported
     }
 
     /** {@inheritDoc} */
@@ -46,16 +42,8 @@ public class DefaultMonochromeBitmapConverter implements
         BufferedImage buf = new BufferedImage(img.getWidth(), img.getHeight(),
                 BufferedImage.TYPE_BYTE_BINARY);
         RenderingHints hints = new RenderingHints(null);
-        //These hints don't seem to make a difference :-( Not seeing any dithering on Sun Java.
-        hints.put(RenderingHints.KEY_DITHERING,
-                RenderingHints.VALUE_DITHER_ENABLE);
-        if (quality) {
-            hints.put(RenderingHints.KEY_RENDERING,
-                    RenderingHints.VALUE_RENDER_QUALITY);
-            hints.put(RenderingHints.KEY_COLOR_RENDERING,
-                    RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        }
-
+        //This hint doesn't seem to make a difference :-(
+        hints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
         ColorConvertOp op = new ColorConvertOp(
                 ColorSpace.getInstance(ColorSpace.CS_GRAY), hints);
         op.filter(img, buf);

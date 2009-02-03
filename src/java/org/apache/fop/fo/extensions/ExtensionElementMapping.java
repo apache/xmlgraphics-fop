@@ -45,6 +45,7 @@ public class ExtensionElementMapping extends ElementMapping {
         propertyAttributes.add("widow-content-limit");
         propertyAttributes.add("orphan-content-limit");
         propertyAttributes.add("internal-destination");
+        propertyAttributes.add("disable-column-balancing");
     }
 
     /**
