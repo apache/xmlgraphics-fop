@@ -461,6 +461,7 @@ out = proc.getOutputStream();]]></source>
       <ul>
         <li><a href="http://en.wikipedia.org/wiki/Advanced_Function_Presentation">AFP (Advanced Function Presentation)</a></li>
         <li><a href="http://wiki.apache.org/xmlgraphics-fop/AFPResources">AFP Resources on the FOP WIKI</a></li>
+        <li><a href="http://wiki.apache.org/xmlgraphics-fop/AFPOutput">Technical notes on AFP output in FOP</a></li>
       </ul>
     </section>
     <section id="afp-limitations">
@@ -475,6 +476,19 @@ out = proc.getOutputStream();]]></source>
           Support for TrueType fonts may be added later.
         </li>
       </ul>
+    </section>
+    <section id="afp-compatibility">
+      <title>Deployment in older environments</title>
+      <p>
+        There are still a big number of older (or limited) MO:DCA/IPDS environments in production
+        out there. AFP has grown in functionality over time and not every environment supports the
+        latest features. We're trying to make AFP output work in as many environments as possible.
+        However, to make AFP output work on older environments it is recommended to set to
+        configuration to 1 bit per pixel (see below on how to do this). In this case, all images
+        are converted to bi-level images using IOCA function set 10 (FS10). If a higher number of
+        bits per pixel is configured, FOP has to switch to at least FS11 which may not work
+        everywhere.
+      </p>
     </section>
     <section id="afp-configuration">
       <title>Configuration</title>
