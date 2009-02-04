@@ -716,7 +716,7 @@ list of possible build targets.
       <src path="${basedir}/test/java"/>
       <patternset refid="test-sources"/>
       <classpath>
-        <path refid="libs-build-classpath"/>
+        <path refid="libs-build-tools-classpath"/>
         <fileset dir="${build.dir}">
           <include name="fop.jar"/>
         </fileset>
@@ -935,7 +935,9 @@ list of possible build targets.
       <test name="org.apache.fop.text.linebreak.LineBreakStatusTest" todir="${junit.reports.dir}"/>
     </junit>
   </target>
-  <target name="junit" depends="junit-userconfig, junit-basic, junit-transcoder, junit-text-linebreak, junit-layout, junit-fotree, junit-intermediate-format" description="Runs all of FOP's JUnit tests" if="junit.present">
+  <target name="junit-reduced" depends="junit-userconfig, junit-basic, junit-transcoder, junit-text-linebreak, junit-fotree"/>
+  <target name="junit-full" depends="junit-reduced, junit-layout, junit-intermediate-format"/>
+  <target name="junit" depends="junit-full" description="Runs all of FOP's JUnit tests" if="junit.present">
     <fail><condition><or><isset property="fop.junit.error"/><isset property="fop.junit.failure"/><not><isset property="hyphenation.present"/></not></or></condition>
 NOTE:
 **************************************************************************
@@ -1281,7 +1283,7 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Special target for Gump                                             -->
 <!-- =================================================================== -->
-  <target name="gump" depends="all, javadocs"/>
+  <target name="gump" depends="junit-reduced"/>
 <!-- =================================================================== -->
 <!-- Clean targets                                                       -->
 <!-- =================================================================== -->
