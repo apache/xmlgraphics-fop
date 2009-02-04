@@ -42,8 +42,6 @@ public abstract class AbstractFOPTestCase extends TestCase {
     protected File getBaseDir() {
         String basedir = System.getProperty("basedir");
         if (basedir != null) {
-            //Under Java 1.4 the path may contain spaces as %20
-            basedir = basedir.replaceAll("%20", " ");
             return new File(basedir);
         } else {
             return new File(".");
