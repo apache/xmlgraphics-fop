@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add">
+        AFP Output: Added a configuration option to override the resource level defaults in the
+        code.
+      </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="46638">
         MinOptMaxUtil.toMinOptMax was converting LengthRangeProperty objects into illegal MinOptMax 
         objects (in some cases opt could be inferior to min).

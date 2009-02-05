@@ -42,6 +42,9 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.util.bitmap.BitmapImageUtil;
@@ -68,6 +71,9 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         AFPRendererContext rendererContext
             = (AFPRendererContext)rendererImageInfo.getRendererContext();
         AFPInfo afpInfo = rendererContext.getInfo();
+
+        setDefaultResourceLevel(imageObjectInfo, afpInfo.getResourceManager());
+
         AFPPaintingState paintingState = afpInfo.getPaintingState();
         ImageRendered imageRendered = (ImageRendered) rendererImageInfo.img;
         Dimension targetSize = new Dimension(afpInfo.getWidth(), afpInfo.getHeight());
@@ -216,6 +222,15 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         return imageObjectInfo;
     }
 
+    private void setDefaultResourceLevel(AFPImageObjectInfo imageObjectInfo,
+            AFPResourceManager resourceManager) {
+        AFPResourceInfo resourceInfo = imageObjectInfo.getResourceInfo();
+        if (!resourceInfo.levelChanged()) {
+            resourceInfo.setLevel(resourceManager.getResourceLevelDefaults()
+                    .getDefaultResourceLevel(ResourceObject.TYPE_IMAGE));
+        }
+    }
+
     /** {@inheritDoc} */
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPImageObjectInfo();
@@ -247,6 +262,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         setResourceInformation(imageObjectInfo,
                 image.getInfo().getOriginalURI(),
                 afpContext.getForeignAttributes());
+        setDefaultResourceLevel(imageObjectInfo, afpContext.getResourceManager());
 
         // Positioning
         imageObjectInfo.setObjectAreaInfo(createObjectAreaInfo(afpContext.getPaintingState(), pos));

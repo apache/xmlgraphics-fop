@@ -46,6 +46,7 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPRectanglePainter;
+import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.AFPUnitConverter;
@@ -719,6 +720,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** {@inheritDoc} */
     public void setDefaultResourceGroupFilePath(String filePath) {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
+    }
+
+    /** {@inheritDoc} */
+    public void setResourceLevelDefaults(AFPResourceLevelDefaults defaults) {
+        resourceManager.setResourceLevelDefaults(defaults);
     }
 
     /** {@inheritDoc} */

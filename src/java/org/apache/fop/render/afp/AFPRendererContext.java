@@ -25,8 +25,8 @@ import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
-import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RendererContext;
@@ -76,9 +76,12 @@ public class AFPRendererContext extends RendererContext {
                 = new AFPForeignAttributeReader();
             AFPResourceInfo resourceInfo
                 = foreignAttributeReader.getResourceInfo(foreignAttributes);
-            // default to inline level if painted as GOCA
-            if (!resourceInfo.levelChanged() && !paintAsBitmap) {
-                resourceInfo.setLevel(new AFPResourceLevel(AFPResourceLevel.INLINE));
+            // set default resource level if an explicit one hasn't been set
+            if (!resourceInfo.levelChanged()) {
+                byte resourceType = paintAsBitmap
+                    ? ResourceObject.TYPE_IMAGE : ResourceObject.TYPE_GRAPHIC;
+                resourceInfo.setLevel(info.getResourceManager().getResourceLevelDefaults()
+                        .getDefaultResourceLevel(resourceType));
             }
             info.setResourceInfo(resourceInfo);
         }

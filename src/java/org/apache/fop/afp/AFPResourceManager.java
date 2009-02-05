@@ -53,6 +53,8 @@ public class AFPResourceManager {
 
     private Map pageSegmentMap = new java.util.HashMap();
 
+    private AFPResourceLevelDefaults resourceLevelDefaults = new AFPResourceLevelDefaults();
+
     /**
      * Main constructor
      */
@@ -218,4 +220,20 @@ public class AFPResourceManager {
         currentPage.createIncludePageSegment(pageSegmentName, x, y, createHardPageSegments);
     }
 
+    /**
+     * Sets resource level defaults. The existing defaults over merged with the ones passed in
+     * as parameter.
+     * @param defaults the new defaults
+     */
+    public void setResourceLevelDefaults(AFPResourceLevelDefaults defaults) {
+        this.resourceLevelDefaults.mergeFrom(defaults);
+    }
+
+    /**
+     * Returns the resource level defaults in use with this resource manager.
+     * @return the resource level defaults
+     */
+    public AFPResourceLevelDefaults getResourceLevelDefaults() {
+        return this.resourceLevelDefaults;
+    }
 }

@@ -461,6 +461,7 @@ out = proc.getOutputStream();]]></source>
       <ul>
         <li><a href="http://en.wikipedia.org/wiki/Advanced_Function_Presentation">AFP (Advanced Function Presentation)</a></li>
         <li><a href="http://wiki.apache.org/xmlgraphics-fop/AFPResources">AFP Resources on the FOP WIKI</a></li>
+        <li><a href="http://wiki.apache.org/xmlgraphics-fop/AFPOutput">Technical notes on AFP output in FOP</a></li>
       </ul>
     </section>
     <section id="afp-limitations">
@@ -475,6 +476,19 @@ out = proc.getOutputStream();]]></source>
           Support for TrueType fonts may be added later.
         </li>
       </ul>
+    </section>
+    <section id="afp-compatibility">
+      <title>Deployment in older environments</title>
+      <p>
+        There are still a big number of older (or limited) MO:DCA/IPDS environments in production
+        out there. AFP has grown in functionality over time and not every environment supports the
+        latest features. We're trying to make AFP output work in as many environments as possible.
+        However, to make AFP output work on older environments it is recommended to set to
+        configuration to 1 bit per pixel (see below on how to do this). In this case, all images
+        are converted to bi-level images using IOCA function set 10 (FS10). If a higher number of
+        bits per pixel is configured, FOP has to switch to at least FS11 which may not work
+        everywhere.
+      </p>
     </section>
     <section id="afp-configuration">
       <title>Configuration</title>
@@ -643,6 +657,26 @@ out = proc.getOutputStream();]]></source>
 ]]></source>
       <note>Be careful when using this option not to overwrite existing resource files from previous rendering runs.</note>
       </section>
+      <section id="afp-resource-level-defaults">
+        <title>Resource Level Defaults</title>
+        <p>
+          By default, bitmap image objects (or page segments derived from them) are put in the
+          print-file-level resource group and GOCA graphics are inlined for compatibility with
+          the AFP Workbench tool.
+        </p>
+        <p>
+          It is possible to override these defaults, either per image (see the
+          <link href="#afp-foreign-attributes-resource">afp:resource-level</link>
+          extension attribute below) or by specifying different defaults in the configuration:
+        </p>
+        <source><![CDATA[
+<default-resource-levels goca="print-file" bitmap="inline"/>]]></source>
+        <p>
+          "goca" refers to GOCA graphics and "bitmap" refers to IOCA images. The possible values
+          for the attributes are "inline" and "print-file". In the future,
+          additional possibilities may be added.
+        </p>
+      </section>
     </section>
     <section id="afp-extensions">
       <title>Extensions</title>
@@ -758,8 +792,10 @@ out = proc.getOutputStream();]]></source>
 ]]></source>
         <p>The resource-level attribute where the resource object will reside in the AFP output datastream.
         The possible values for this are "inline", "print-file" and "external".
-        When no resource-level attribute is provided, resources are by default placed at "print-file" level.
-        When "external" is used a resource-group-file attribute must also be specified.</p>
+        When "external" is used a resource-group-file attribute must also be specified.
+        Please refer to the <link href="#afp-resource-level-defaults">Resource Level Defaults</link>
+        above to see what is used if the resource-level attribute is not specified.
+        </p>
         <p></p>
       </section>
     </section>
