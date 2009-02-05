@@ -26,10 +26,12 @@ import java.awt.Dimension;
  * The level at which a resource is to reside in the AFP output
  */
 public class AFPResourceInfo {
-    private static final AFPResourceLevel DEFAULT_LEVEL
+
+    /** the general default resource level */
+    public static final AFPResourceLevel DEFAULT_LEVEL
         = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
 
-    /** the uri of this resource */
+    /** the URI of this resource */
     private String uri = null;
 
     /**
@@ -48,18 +50,18 @@ public class AFPResourceInfo {
     private boolean levelChanged = false;
 
     /**
-     * Sets the data object uri
+     * Sets the data object URI.
      *
-     * @param uri the data object uri
+     * @param uri the data object URI
      */
     public void setUri(String uri) {
         this.uri = uri;
     }
 
     /**
-     * Returns the uri of this data object
+     * Returns the URI of this data object.
      *
-     * @return the uri of this data object
+     * @return the URI of this data object
      */
     public String getUri() {
         return uri;

@@ -25,10 +25,8 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.afp.DataStream;
@@ -53,8 +51,8 @@ import org.apache.fop.render.intermediate.IFPainter;
 public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             implements AFPCustomizable {
 
-    /** logging instance */
-    private static Log log = LogFactory.getLog(AFPDocumentHandler.class);
+    //** logging instance */
+    //private static Log log = LogFactory.getLog(AFPDocumentHandler.class);
 
     /** the resource manager */
     private AFPResourceManager resourceManager;
@@ -309,6 +307,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void setDefaultResourceGroupFilePath(String filePath) {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
+    }
+
+    /** {@inheritDoc} */
+    public void setResourceLevelDefaults(AFPResourceLevelDefaults defaults) {
+        resourceManager.setResourceLevelDefaults(defaults);
     }
 
     /**

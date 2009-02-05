@@ -32,6 +32,9 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 
@@ -46,9 +49,11 @@ public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler
             AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPDataObjectInfo dataObjectInfo = super.generateDataObjectInfo(rendererImageInfo);
         ImageRawStream rawStream = (ImageRawStream) rendererImageInfo.getImage();
+        AFPRendererContext rendererContext
+            = (AFPRendererContext)rendererImageInfo.getRendererContext();
+        AFPInfo afpInfo = rendererContext.getInfo();
 
-
-        updateDataObjectInfo(dataObjectInfo, rawStream);
+        updateDataObjectInfo(dataObjectInfo, rawStream, afpInfo.getResourceManager());
 
         setAdditionalParameters(dataObjectInfo, rawStream);
         return dataObjectInfo;
@@ -66,8 +71,15 @@ public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler
     }
 
     private void updateDataObjectInfo(AFPDataObjectInfo dataObjectInfo,
-            ImageRawStream rawStream) throws IOException {
+            ImageRawStream rawStream, AFPResourceManager resourceManager) throws IOException {
         dataObjectInfo.setMimeType(rawStream.getFlavor().getMimeType());
+
+        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        if (!resourceInfo.levelChanged()) {
+            resourceInfo.setLevel(resourceManager.getResourceLevelDefaults()
+                    .getDefaultResourceLevel(ResourceObject.TYPE_IMAGE));
+        }
+
         InputStream inputStream = rawStream.createInputStream();
         try {
             dataObjectInfo.setData(IOUtils.toByteArray(inputStream));
@@ -111,7 +123,7 @@ public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler
 
         // Image content
         ImageRawStream imageStream = (ImageRawStream)image;
-        updateDataObjectInfo(dataObjectInfo, imageStream);
+        updateDataObjectInfo(dataObjectInfo, imageStream, afpContext.getResourceManager());
         setAdditionalParameters(dataObjectInfo, imageStream);
 
         // Create image

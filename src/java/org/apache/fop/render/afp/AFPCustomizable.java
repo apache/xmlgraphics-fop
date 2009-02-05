@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.afp;
 
+import org.apache.fop.afp.AFPResourceLevelDefaults;
+
 /**
  * Interface used to customize the AFP renderer or document handler.
  */
@@ -68,5 +70,12 @@ public interface AFPCustomizable {
      * @param filePath the default resource group file path
      */
     void setDefaultResourceGroupFilePath(String filePath);
+
+    /**
+     * Sets the resource level defaults. The object passed in provides information which resource
+     * level shall be used by default for various kinds of resources.
+     * @param defaults the resource level defaults
+     */
+    void setResourceLevelDefaults(AFPResourceLevelDefaults defaults);
 
 }

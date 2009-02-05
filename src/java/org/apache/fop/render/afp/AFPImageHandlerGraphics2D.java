@@ -33,7 +33,8 @@ import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
-import org.apache.fop.afp.AFPResourceLevel;
+import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
@@ -70,7 +71,7 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
             AFPGraphicsObjectInfo graphicsObjectInfo
                 = (AFPGraphicsObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
 
-            setDefaultToInlineResourceLevel(graphicsObjectInfo);
+            setDefaultResourceLevel(graphicsObjectInfo, afpInfo.getResourceManager());
 
             // set mime type (unsupported by MOD:CA registry)
             graphicsObjectInfo.setMimeType(MimeConstants.MIME_AFP_GOCA);
@@ -88,12 +89,12 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
         }
     }
 
-    private void setDefaultToInlineResourceLevel(AFPGraphicsObjectInfo graphicsObjectInfo) {
+    private void setDefaultResourceLevel(AFPGraphicsObjectInfo graphicsObjectInfo,
+            AFPResourceManager resourceManager) {
         AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();
-        //level not explicitly set/changed so default to inline for GOCA graphic objects
-        // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07), hard copy works just fine)
         if (!resourceInfo.levelChanged()) {
-            resourceInfo.setLevel(new AFPResourceLevel(AFPResourceLevel.INLINE));
+            resourceInfo.setLevel(resourceManager.getResourceLevelDefaults()
+                    .getDefaultResourceLevel(ResourceObject.TYPE_GRAPHIC));
         }
     }
 
@@ -133,7 +134,7 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
         graphicsObjectInfo.setObjectAreaInfo(
                 createObjectAreaInfo(afpContext.getPaintingState(), pos));
 
-        setDefaultToInlineResourceLevel(graphicsObjectInfo);
+        setDefaultResourceLevel(graphicsObjectInfo, afpContext.getResourceManager());
 
         // Image content
         ImageGraphics2D imageG2D = (ImageGraphics2D)image;

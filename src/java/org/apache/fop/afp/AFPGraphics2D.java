@@ -131,10 +131,10 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
             AFPResourceManager resourceManager, AFPResourceInfo resourceInfo,
             FontInfo fontInfo) {
         super(textAsShapes);
-        this.paintingState = paintingState;
-        this.resourceManager = resourceManager;
-        this.resourceInfo = resourceInfo;
-        this.fontInfo = fontInfo;
+        setPaintingState(paintingState);
+        setResourceManager(resourceManager);
+        setResourceInfo(resourceInfo);
+        setFontInfo(fontInfo);
     }
 
     /**
@@ -160,7 +160,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
      *
      * @param resourceManager the AFP resource manager
      */
-    public void setResourceManager(AFPResourceManager resourceManager) {
+    private void setResourceManager(AFPResourceManager resourceManager) {
         this.resourceManager = resourceManager;
     }
 
@@ -169,8 +169,62 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
      *
      * @param resourceInfo the AFP resource info
      */
-    public void setResourceInfo(AFPResourceInfo resourceInfo) {
+    private void setResourceInfo(AFPResourceInfo resourceInfo) {
         this.resourceInfo = resourceInfo;
+    }
+
+    /**
+     * Returns the GOCA graphics object
+     *
+     * @return the GOCA graphics object
+     */
+    public GraphicsObject getGraphicsObject() {
+        return this.graphicsObj;
+    }
+
+    /**
+     * Sets the GOCA graphics object
+     *
+     * @param obj the GOCA graphics object
+     */
+    public void setGraphicsObject(GraphicsObject obj) {
+        this.graphicsObj = obj;
+    }
+
+    /**
+     * Sets the AFP painting state
+     *
+     * @param paintingState the AFP painting state
+     */
+    private void setPaintingState(AFPPaintingState paintingState) {
+        this.paintingState = paintingState;
+    }
+
+    /**
+     * Returns the AFP painting state
+     *
+     * @return the AFP painting state
+     */
+    public AFPPaintingState getPaintingState() {
+        return this.paintingState;
+    }
+
+    /**
+     * Sets the FontInfo
+     *
+     * @param fontInfo the FontInfo
+     */
+    private void setFontInfo(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
+    }
+
+    /**
+     * Returns the FontInfo
+     *
+     * @return the FontInfo
+     */
+    public FontInfo getFontInfo() {
+        return this.fontInfo;
     }
 
     /**
@@ -651,51 +705,6 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
      */
     public void setCustomTextHandler(TextHandler handler) {
         this.customTextHandler = handler;
-    }
-
-    /**
-     * Returns the GOCA graphics object
-     *
-     * @return the GOCA graphics object
-     */
-    public GraphicsObject getGraphicsObject() {
-        return this.graphicsObj;
-    }
-
-    /**
-     * Sets the GOCA graphics object
-     *
-     * @param obj the GOCA graphics object
-     */
-    public void setGraphicsObject(GraphicsObject obj) {
-        this.graphicsObj = obj;
-    }
-
-    /**
-     * Sets the AFP painting state
-     *
-     * @param paintingState the AFP painting state
-     */
-    public void setPaintingState(AFPPaintingState paintingState) {
-        this.paintingState = paintingState;
-    }
-
-    /**
-     * Returns the AFP painting state
-     *
-     * @return the AFP painting state
-     */
-    public AFPPaintingState getPaintingState() {
-        return this.paintingState;
-    }
-
-    /**
-     * Returns the FontInfo
-     *
-     * @return the FontInfo
-     */
-    public FontInfo getFontInfo() {
-        return this.fontInfo;
     }
 
     /** {@inheritDoc} */
