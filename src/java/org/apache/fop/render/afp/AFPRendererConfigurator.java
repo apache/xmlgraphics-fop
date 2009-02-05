@@ -25,6 +25,8 @@ import java.util.List;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
+import org.apache.fop.afp.AFPResourceLevel;
+import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.fonts.AFPFontInfo;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.FopCharacterSet;
@@ -281,6 +283,26 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                     log.warn("Unable to write to default external resource group file '"
                                 + resourceGroupDest + "'");
                 }
+            }
+
+            Configuration defaultResourceLevelCfg = cfg.getChild("default-resource-levels", false);
+            if (defaultResourceLevelCfg != null) {
+                AFPResourceLevelDefaults defaults = new AFPResourceLevelDefaults();
+                String[] types = defaultResourceLevelCfg.getAttributeNames();
+                for (int i = 0, c = types.length; i < c; i++) {
+                    String type = types[i];
+                    try {
+                        String level = defaultResourceLevelCfg.getAttribute(type);
+                        defaults.setDefaultResourceLevel(type, AFPResourceLevel.valueOf(level));
+                    } catch (IllegalArgumentException iae) {
+                        LogUtil.handleException(log, iae,
+                                userAgent.getFactory().validateUserConfigStrictly());
+                    } catch (ConfigurationException e) {
+                        LogUtil.handleException(log, e,
+                                userAgent.getFactory().validateUserConfigStrictly());
+                    }
+                }
+                afpRenderer.setResourceLevelDefaults(defaults);
             }
         }
     }

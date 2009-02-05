@@ -23,12 +23,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.fop.afp.AFPDataObjectInfo;
-import org.apache.fop.afp.AFPObjectAreaInfo;
-import org.apache.fop.afp.AFPPaintingState;
+
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+
+import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPObjectAreaInfo;
+import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.modca.ResourceObject;
 
 /**
  * A base abstract AFP raw stream image handler
@@ -39,12 +43,22 @@ public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler {
     public AFPDataObjectInfo generateDataObjectInfo(
             AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPDataObjectInfo dataObjectInfo = super.generateDataObjectInfo(rendererImageInfo);
+        AFPRendererContext rendererContext
+            = (AFPRendererContext)rendererImageInfo.getRendererContext();
+        AFPInfo afpInfo = rendererContext.getInfo();
 
         ImageInfo imageInfo = rendererImageInfo.getImageInfo();
         String mimeType = imageInfo.getMimeType();
         if (mimeType != null) {
             dataObjectInfo.setMimeType(mimeType);
         }
+
+        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        if (!resourceInfo.levelChanged()) {
+            resourceInfo.setLevel(afpInfo.getResourceManager().getResourceLevelDefaults()
+                    .getDefaultResourceLevel(ResourceObject.TYPE_IMAGE));
+        }
+
         ImageRawStream rawStream = (ImageRawStream) rendererImageInfo.getImage();
         InputStream inputStream = rawStream.createInputStream();
         try {
@@ -65,9 +79,6 @@ public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler {
 
         // set object area info
         AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-        AFPRendererContext rendererContext
-            = (AFPRendererContext)rendererImageInfo.getRendererContext();
-        AFPInfo afpInfo = rendererContext.getInfo();
         AFPPaintingState paintingState = afpInfo.getPaintingState();
         int resolution = paintingState.getResolution();
         objectAreaInfo.setWidthRes(resolution);

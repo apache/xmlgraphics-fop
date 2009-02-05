@@ -657,6 +657,26 @@ out = proc.getOutputStream();]]></source>
 ]]></source>
       <note>Be careful when using this option not to overwrite existing resource files from previous rendering runs.</note>
       </section>
+      <section id="afp-resource-level-defaults">
+        <title>Resource Level Defaults</title>
+        <p>
+          By default, bitmap image objects (or page segments derived from them) are put in the
+          print-file-level resource group and GOCA graphics are inlined for compatibility with
+          the AFP Workbench tool.
+        </p>
+        <p>
+          It is possible to override these defaults, either per image (see the
+          <link href="#afp-foreign-attributes-resource">afp:resource-level</link>
+          extension attribute below) or by specifying different defaults in the configuration:
+        </p>
+        <source><![CDATA[
+<default-resource-levels goca="print-file" bitmap="inline"/>]]></source>
+        <p>
+          "goca" refers to GOCA graphics and "bitmap" refers to IOCA images. The possible values
+          for the attributes are "inline" and "print-file". In the future,
+          additional possibilities may be added.
+        </p>
+      </section>
     </section>
     <section id="afp-extensions">
       <title>Extensions</title>
@@ -772,8 +792,10 @@ out = proc.getOutputStream();]]></source>
 ]]></source>
         <p>The resource-level attribute where the resource object will reside in the AFP output datastream.
         The possible values for this are "inline", "print-file" and "external".
-        When no resource-level attribute is provided, resources are by default placed at "print-file" level.
-        When "external" is used a resource-group-file attribute must also be specified.</p>
+        When "external" is used a resource-group-file attribute must also be specified.
+        Please refer to the <link href="#afp-resource-level-defaults">Resource Level Defaults</link>
+        above to see what is used if the resource-level attribute is not specified.
+        </p>
         <p></p>
       </section>
     </section>
