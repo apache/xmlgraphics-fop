@@ -21,16 +21,17 @@ package org.apache.fop.render.afp;
 
 import java.io.IOException;
 
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+import org.apache.xmlgraphics.util.MimeConstants;
+
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
-import org.apache.fop.afp.AFPResourceLevel;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.apache.xmlgraphics.util.MimeConstants;
+import org.apache.fop.afp.modca.ResourceObject;
 
 /**
  * PDFImageHandler implementation which handles Graphics2D images.
@@ -65,10 +66,9 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler {
                 = (AFPGraphicsObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
 
             AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();
-            //level not explicitly set/changed so default to inline for GOCA graphic objects
-            // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07), hard copy works just fine)
             if (!resourceInfo.levelChanged()) {
-                resourceInfo.setLevel(new AFPResourceLevel(AFPResourceLevel.INLINE));
+                resourceInfo.setLevel(afpInfo.getResourceManager().getResourceLevelDefaults()
+                        .getDefaultResourceLevel(ResourceObject.TYPE_GRAPHIC));
             }
 
             // set mime type (unsupported by MOD:CA registry)

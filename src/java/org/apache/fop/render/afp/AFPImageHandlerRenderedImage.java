@@ -40,6 +40,8 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.util.bitmap.BitmapImageUtil;
 
 /**
@@ -64,6 +66,13 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
         AFPRendererContext rendererContext
             = (AFPRendererContext)rendererImageInfo.getRendererContext();
         AFPInfo afpInfo = rendererContext.getInfo();
+
+        AFPResourceInfo resourceInfo = imageObjectInfo.getResourceInfo();
+        if (!resourceInfo.levelChanged()) {
+            resourceInfo.setLevel(afpInfo.getResourceManager().getResourceLevelDefaults()
+                    .getDefaultResourceLevel(ResourceObject.TYPE_IMAGE));
+        }
+
         AFPPaintingState paintingState = afpInfo.getPaintingState();
         int resolution = paintingState.getResolution();
         int maxPixelSize = paintingState.getBitsPerPixel();
@@ -77,7 +86,8 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
         ImageSize intrinsicSize = imageInfo.getSize();
 
         boolean useFS10 = (maxPixelSize == 1) || BitmapImageUtil.isMonochromeImage(renderedImage);
-        boolean usePageSegments = useFS10 && !imageObjectInfo.getResourceInfo().getLevel().isInline();
+        boolean usePageSegments = useFS10
+                    && !resourceInfo.getLevel().isInline();
 
         ImageSize effIntrinsicSize = intrinsicSize;
         if (usePageSegments) {
@@ -99,7 +109,8 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
                             + " to " + resampledDim);
                 }
                 renderedImage = BitmapImageUtil.convertToMonochrome(renderedImage, resampledDim);
-                effIntrinsicSize = new ImageSize(resampledDim.width, resampledDim.height, resolution);
+                effIntrinsicSize = new ImageSize(
+                        resampledDim.width, resampledDim.height, resolution);
             }
         }
         if (useFS10) {

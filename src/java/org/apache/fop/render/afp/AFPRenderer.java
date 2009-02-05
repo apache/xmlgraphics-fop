@@ -33,11 +33,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.ps.ImageEncodingHelper;
+
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPRectanglePainter;
+import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.AFPUnitConverter;
@@ -72,13 +81,6 @@ import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
-import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
-import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -742,6 +744,15 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
      */
     public void setDefaultResourceGroupFilePath(String filePath) {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
+    }
+
+    /**
+     * Sets the resource level defaults. The object passed in provides information which resource
+     * level shall be used by default for various kinds of resources.
+     * @param defaults the resource level defaults
+     */
+    public void setResourceLevelDefaults(AFPResourceLevelDefaults defaults) {
+        resourceManager.setResourceLevelDefaults(defaults);
     }
 
     /** {@inheritDoc} */
