@@ -199,6 +199,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
         PSProcSets.writeStdProcSet(gen);
         PSProcSets.writeEPSProcSet(gen);
+        FOPProcSet.INSTANCE.writeTo(gen);
         gen.writeDSCComment(DSCConstants.END_PROLOG);
 
         //Setup

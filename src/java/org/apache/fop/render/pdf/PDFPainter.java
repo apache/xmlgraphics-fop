@@ -253,8 +253,8 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
-        //Note: dy is currently ignored
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
+            throws IFException {
         generator.updateColor(state.getTextColor(), true, null);
         generator.beginTextObject();
         FontTriplet triplet = new FontTriplet(
@@ -276,6 +276,8 @@ public class PDFPainter extends AbstractIFPainter {
 
         PDFTextUtil textutil = generator.getTextUtil();
         textutil.updateTf(fontKey, fontSize, tf.isMultiByte());
+
+        generator.updateCharacterSpacing((float)letterSpacing / 1000f);
 
         textutil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, x / 1000f, y / 1000f));
         int l = text.length();
@@ -300,6 +302,9 @@ public class PDFPainter extends AbstractIFPainter {
                         ch = (char)(ch % 256);
                     }
                 }
+                if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                    glyphAdjust += wordSpacing;
+                }
             } else {
                 if (CharUtilities.isFixedWidthSpace(orgChar)) {
                     //Fixed width space are rendered as spaces so copy/paste works in a reader
@@ -308,6 +313,9 @@ public class PDFPainter extends AbstractIFPainter {
                     glyphAdjust = -spaceDiff;
                 } else {
                     ch = font.mapChar(orgChar);
+                    if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                        glyphAdjust += wordSpacing;
+                    }
                 }
             }
             textutil.writeTJMappedChar(ch);

@@ -984,6 +984,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
         textUtil.flush();
         textUtil.setStartPosition(rx, bl);
+        textUtil.setSpacing(text.getTextLetterSpaceAdjust(), text.getTextWordSpaceAdjust());
         super.renderText(text);
 
         textUtil.flush();
@@ -1009,9 +1010,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
         renderText(s, null, font, textArea);
 
-        if (space.isAdjustable()) {
+        if (textUtil.combined && space.isAdjustable()) {
             //Used for justified text, for example
-            int tws = ((TextArea) space.getParentArea()).getTextWordSpaceAdjust()
+            int tws = textArea.getTextWordSpaceAdjust()
                          + 2 * textArea.getTextLetterSpaceAdjust();
             if (tws != 0) {
                 textUtil.adjust(tws);
@@ -1042,7 +1043,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             char ch = s.charAt(i);
             textUtil.addChar(ch);
             int glyphAdjust = 0;
-            if (font.hasChar(ch)) {
+            if (textUtil.combined && font.hasChar(ch)) {
                 int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
                 glyphAdjust += tls;
             }
@@ -1060,6 +1061,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         private int lastDXPos = 0;
         private StringBuffer text = new StringBuffer();
         private int startx, starty;
+        private int tls, tws;
+        private boolean combined = false;
 
         void addChar(char ch) {
             text.append(ch);
@@ -1092,6 +1095,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             this.starty = y;
         }
 
+        void setSpacing(int tls, int tws) {
+            this.tls = tls;
+            this.tws = tws;
+        }
+
         void flush() {
             if (text.length() > 0) {
                 try {
@@ -1101,7 +1109,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                         effDX = new int[size];
                         System.arraycopy(dx, 0, effDX, 0, size);
                     }
-                    painter.drawText(startx, starty, effDX, null, text.toString());
+                    if (combined) {
+                        painter.drawText(startx, starty, 0, 0, effDX, text.toString());
+                    } else {
+                        painter.drawText(startx, starty, tls, tws, effDX, text.toString());
+                    }
                 } catch (IFException e) {
                     handleIFException(e);
                 }

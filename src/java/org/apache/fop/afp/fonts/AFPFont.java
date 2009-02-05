@@ -97,6 +97,14 @@ public abstract class AFPFont extends Typeface {
      */
     public abstract CharacterSet getCharacterSet(int size);
 
+    /**
+     * Indicates if this font may be embedded.
+     * @return True, if embedding is possible/permitted
+     */
+    public boolean isEmbeddable() {
+        return false; //TODO Complete AFP font embedding
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "name=" + name;

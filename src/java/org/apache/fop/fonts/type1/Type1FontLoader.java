@@ -45,12 +45,13 @@ public class Type1FontLoader extends FontLoader {
      * Constructs a new Type 1 font loader.
      * @param fontFileURI the URI to the PFB file of a Type 1 font
      * @param embedded indicates whether the font is embedded or referenced
+     * @param useKerning indicates whether to load kerning information if available
      * @param resolver the font resolver used to resolve URIs
      * @throws IOException In case of an I/O error
      */
-    public Type1FontLoader(String fontFileURI, boolean embedded, FontResolver resolver)
-                throws IOException {
-        super(fontFileURI, embedded, resolver);
+    public Type1FontLoader(String fontFileURI, boolean embedded, boolean useKerning,
+            FontResolver resolver) throws IOException {
+        super(fontFileURI, embedded, useKerning, resolver);
     }
 
     private String getPFMURI(String pfbURI) {
@@ -321,7 +322,9 @@ public class Type1FontLoader extends FontLoader {
                     singleFont.setWidth(chm.getCharCode(), (int)Math.round(chm.getWidthX()));
                 }
             }
-            returnFont.replaceKerningMap(afm.createXKerningMapEncoded());
+            if (useKerning) {
+                returnFont.replaceKerningMap(afm.createXKerningMapEncoded());
+            }
         } else {
             returnFont.setFlags(pfm.getFlags());
             returnFont.setFirstChar(pfm.getFirstChar());
@@ -329,7 +332,9 @@ public class Type1FontLoader extends FontLoader {
             for (short i = pfm.getFirstChar(); i <= pfm.getLastChar(); i++) {
                 singleFont.setWidth(i, pfm.getCharWidth(i));
             }
-            returnFont.replaceKerningMap(pfm.getKerning());
+            if (useKerning) {
+                returnFont.replaceKerningMap(pfm.getKerning());
+            }
         }
     }
 

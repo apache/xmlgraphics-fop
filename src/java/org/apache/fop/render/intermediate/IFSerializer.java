@@ -508,17 +508,21 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing,
+            int[] dx, String text) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
             addAttribute(atts, "x", Integer.toString(x));
             addAttribute(atts, "y", Integer.toString(y));
+            if (letterSpacing != 0) {
+                addAttribute(atts, "letter-spacing", Integer.toString(letterSpacing));
+            }
+            if (wordSpacing != 0) {
+                addAttribute(atts, "word-spacing", Integer.toString(wordSpacing));
+            }
             if (dx != null) {
                 addAttribute(atts, "dx", IFUtil.toString(dx));
-            }
-            if (dy != null) {
-                addAttribute(atts, "dy", IFUtil.toString(dy));
             }
             handler.startElement(EL_TEXT, atts);
             char[] chars = text.toCharArray();

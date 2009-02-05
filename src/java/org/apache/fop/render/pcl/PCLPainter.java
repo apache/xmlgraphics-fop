@@ -312,8 +312,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
-        //Note: dy is currently ignored
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
+                throws IFException {
         try {
             FontTriplet triplet = new FontTriplet(
                     state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
@@ -324,13 +324,13 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                         ? false
                         : HardcodedFonts.setFont(gen, fontKey, state.getFontSize(), text);
             if (pclFont) {
-                drawTextNative(x, y, dx, text, triplet);
+                drawTextNative(x, y, letterSpacing, wordSpacing, dx, text, triplet);
             } else {
-                drawTextAsBitmap(x, y, dx, dy, text, triplet);
+                drawTextAsBitmap(x, y, letterSpacing, wordSpacing, dx, text, triplet);
                 if (DEBUG) {
                     state.setTextColor(Color.GRAY);
                     HardcodedFonts.setFont(gen, "F1", state.getFontSize(), text);
-                    drawTextNative(x, y, dx, text, triplet);
+                    drawTextNative(x, y, letterSpacing, wordSpacing, dx, text, triplet);
                 }
             }
         } catch (IOException ioe) {
@@ -338,8 +338,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
         }
     }
 
-    private void drawTextNative(int x, int y, int[] dx, String text, FontTriplet triplet)
-                throws IOException {
+    private void drawTextNative(int x, int y, int letterSpacing, int wordSpacing, int[] dx,
+            String text, FontTriplet triplet) throws IOException {
         Color textColor = state.getTextColor();
         if (textColor != null) {
             gen.setTransparencyMode(true, false);
@@ -376,6 +376,10 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
             }
             sb.append(ch);
 
+            if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                glyphAdjust += wordSpacing;
+            }
+            glyphAdjust += letterSpacing;
             if (dx != null && i < dxl - 1) {
                 glyphAdjust += dx[i + 1];
             }
@@ -391,7 +395,9 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     private static final double SAFETY_MARGIN_FACTOR = 0.05;
 
-    private Rectangle getTextBoundingBox(int x, int y, int[] dx, int[] dy, String text,
+    private Rectangle getTextBoundingBox(int x, int y,
+            int letterSpacing, int wordSpacing, int[] dx,
+            String text,
             Font font, FontMetricsMapper metrics) {
         int maxAscent = metrics.getMaxAscent(font.getFontSize()) / 1000;
         int descent = metrics.getDescender(font.getFontSize()) / 1000; //is negative
@@ -412,6 +418,10 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
             float glyphAdjust = 0;
             int cw = font.getCharWidth(orgChar);
 
+            if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                glyphAdjust += wordSpacing;
+            }
+            glyphAdjust += letterSpacing;
             if (dx != null && i < dxl - 1) {
                 glyphAdjust += dx[i + 1];
             }
@@ -425,7 +435,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
         return boundingRect;
     }
 
-    private void drawTextAsBitmap(final int x, final int y, final int[] dx, final int[] dy,
+    private void drawTextAsBitmap(final int x, final int y,
+            final int letterSpacing, final int wordSpacing, final int[] dx,
             final String text, FontTriplet triplet) throws IFException {
         //Use Java2D to paint different fonts via bitmap
         final Font font = parent.getFontInfo().getFontInstance(triplet, state.getFontSize());
@@ -439,7 +450,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
         int safetyMargin = (int)(SAFETY_MARGIN_FACTOR * font.getFontSize());
         final int baselineOffset = maxAscent + safetyMargin;
 
-        final Rectangle boundingBox = getTextBoundingBox(x, y, dx, dy, text, font, mapper);
+        final Rectangle boundingBox = getTextBoundingBox(x, y,
+                letterSpacing, wordSpacing, dx, text, font, mapper);
         final Dimension dim = boundingBox.getSize();
 
         Graphics2DImagePainter painter = new Graphics2DImagePainter() {
@@ -462,7 +474,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                 Java2DPainter painter = new Java2DPainter(g2d,
                         getContext(), parent.getFontInfo(), state);
                 try {
-                    painter.drawText(x, y, dx, dy, text);
+                    painter.drawText(x, y, letterSpacing, wordSpacing, dx, text);
                 } catch (IFException e) {
                     //This should never happen with the Java2DPainter
                     throw new RuntimeException("Unexpected error while painting text", e);

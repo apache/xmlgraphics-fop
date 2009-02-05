@@ -345,7 +345,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 LogUtil.handleException(log, e,
                         userAgent.getFactory().validateUserConfigStrictly());
             }
-
+        } else {
+            fontCollections.add(new AFPFontCollection(userAgent.getEventBroadcaster(), null));
         }
 
         fontManager.setup(fontInfo,

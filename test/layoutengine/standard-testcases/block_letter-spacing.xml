@@ -71,11 +71,23 @@
     <eval expected="Default space between characters is defined to" xpath="//if:text[14]"/>
     <eval expected="0" xpath="//if:text[14]/@x"/>
     <eval expected="197466" xpath="//if:text[14]/@y"/>
-    <eval expected="0 2000 2000 2000 2000 2000 2000 0 4000 2000 2000 2000 2000 0 4000 2000 2000 2000 2000 2000 2000 0 4000 2000 2000 2000 2000 2000 2000 2000 2000 2000 0 4000 2000 0 4000 2000 2000 2000 2000 2000 2000 0 4000 2000" xpath="//if:text[14]/@dx"/>
+    <eval expected="2000" xpath="//if:text[14]/@letter-spacing"/>
+    <true xpath="not(//if:text[14]/@word-spacing)"/>
+    <true xpath="not(//if:text[14]/@dx)"/>
 
     <eval expected="Default space between characters is defined to be" xpath="//if:text[20]"/>
     <eval expected="0" xpath="//if:text[20]/@x"/>
     <eval expected="283866" xpath="//if:text[20]/@y"/>
-    <eval expected="0 1938 1938 1938 1938 1938 1938 0 3836 1938 1938 1938 1938 0 3836 1938 1938 1938 1938 1938 1938 0 3836 1938 1938 1938 1938 1938 1938 1938 1938 1938 0 3836 1938 0 3836 1938 1938 1938 1938 1938 1938 0 3836 1938 0 3836 1938" xpath="//if:text[20]/@dx"/>
+    <eval expected="1938" xpath="//if:text[20]/@letter-spacing"/>
+    <eval expected="-40" xpath="//if:text[20]/@word-spacing"/>
+    <true xpath="not(//if:text[20]/@dx)"/>
+
+    <eval expected="2000" xpath="//if:text[21]/@letter-spacing"/>
+    <true xpath="not(//if:text[21]/@word-spacing)"/>
+    <true xpath="not(//if:text[21]/@dx)"/>
+
+    <eval expected="1364" xpath="//if:text[22]/@letter-spacing"/>
+    <eval expected="-362" xpath="//if:text[22]/@word-spacing"/>
+    <true xpath="not(//if:text[22]/@dx)"/>
   </if-checks>
 </testcase>
