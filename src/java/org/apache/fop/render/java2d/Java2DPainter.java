@@ -46,6 +46,7 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * {@code IFPainter} implementation that paints on a Graphics2D instance.
@@ -83,6 +84,7 @@ public class Java2DPainter extends AbstractIFPainter {
      * @param g2d the target Graphics2D instance
      * @param context the IF context
      * @param fontInfo the font information
+     * @param state the IF state object
      */
     public Java2DPainter(Graphics2D g2d, IFContext context, FontInfo fontInfo, IFState state) {
         super();
@@ -206,8 +208,8 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
-        //Note: dy is currently ignored
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
+            throws IFException {
         g2dState.updateColor(state.getTextColor());
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
@@ -234,6 +236,10 @@ public class Java2DPainter extends AbstractIFPainter {
             float glyphAdjust = 0;
             int cw = font.getCharWidth(orgChar);
 
+            if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                glyphAdjust += wordSpacing;
+            }
+            glyphAdjust += letterSpacing;
             if (dx != null && i < dxl - 1) {
                 glyphAdjust += dx[i + 1];
             }

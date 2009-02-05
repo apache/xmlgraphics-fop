@@ -69,37 +69,51 @@
     <eval expected=" text-text Hello World." xpath="//if:text[2]"/>
     <eval expected="36420" xpath="//if:text[2]/@x"/>
     <eval expected="10266" xpath="//if:text[2]/@y"/>
+    <true xpath="not(//if:text[2]/@letter-spacing)"/>
+    <true xpath="not(//if:text[2]/@word-spacing)"/>
     <eval expected="0 0 0 -360 0 0 0 0 -360 0 0 0 0 0 0 0 0 0 -360 0 180" xpath="//if:text[2]/@dx"/>
 
     <eval expected="VAVAV" xpath="//if:text[3]"/>
     <eval expected="0" xpath="//if:text[3]/@x"/>
     <eval expected="24666" xpath="//if:text[3]/@y"/>
-    <eval expected="0 40 160 40 160" xpath="//if:text[3]/@dx"/>
+    <eval expected="1000" xpath="//if:text[3]/@letter-spacing"/>
+    <true xpath="not(//if:text[3]/@word-spacing)"/>
+    <eval expected="0 -960 -840 -960 -840" xpath="//if:text[3]/@dx"/>
     
     <eval expected=" text-text Hello World." xpath="//if:text[4]"/>
     <eval expected="40420" xpath="//if:text[4]/@x"/>
     <eval expected="24666" xpath="//if:text[4]/@y"/>
-    <eval expected="0 2000 1000 640 1000 1000 1000 1000 640 1000 0 2000 1000 1000 1000 1000 0 2000 640 1000 1180 1000 1000" xpath="//if:text[4]/@dx"/>
-
+    <eval expected="1000" xpath="//if:text[4]/@letter-spacing"/>
+    <true xpath="not(//if:text[3]/@word-spacing)"/>
+    <eval expected="0 0 0 -360 0 0 0 0 -360 0 0 0 0 0 0 0 0 0 -360 0 180" xpath="//if:text[4]/@dx"/>
+    
     <eval expected="VAVAV" xpath="//if:text[5]"/>
     <eval expected="0" xpath="//if:text[5]/@x"/>
     <eval expected="39066" xpath="//if:text[5]/@y"/>
+    <true xpath="not(//if:text[5]/@letter-spacing)"/>
+    <eval expected="5000" xpath="//if:text[5]/@word-spacing"/>
     <eval expected="0 -960 -840 -960 -840" xpath="//if:text[5]/@dx"/>
     
     <eval expected=" text-text Hello World." xpath="//if:text[6]"/>
     <eval expected="36420" xpath="//if:text[6]/@x"/>
     <eval expected="39066" xpath="//if:text[6]/@y"/>
-    <eval expected="0 5000 0 -360 0 0 0 0 -360 0 0 5000 0 0 0 0 0 5000 -360 0 180" xpath="//if:text[6]/@dx"/>
-
+    <true xpath="not(//if:text[5]/@letter-spacing)"/>
+    <eval expected="5000" xpath="//if:text[6]/@word-spacing"/>
+    <eval expected="0 0 0 -360 0 0 0 0 -360 0 0 0 0 0 0 0 0 0 -360 0 180" xpath="//if:text[4]/@dx"/>
+    
     <eval expected="VAVAV" xpath="//if:text[7]"/>
     <eval expected="0" xpath="//if:text[7]/@x"/>
     <eval expected="53466" xpath="//if:text[7]/@y"/>
-    <eval expected="0 40 160 40 160" xpath="//if:text[7]/@dx"/>
+    <eval expected="1000" xpath="//if:text[7]/@letter-spacing"/>
+    <eval expected="3000" xpath="//if:text[7]/@word-spacing"/>  <!-- TODO Not sure that's correct! -->
+    <eval expected="0 -960 -840 -960 -840" xpath="//if:text[7]/@dx"/>
     
     <eval expected=" text-text Hello World." xpath="//if:text[8]"/>
     <eval expected="40420" xpath="//if:text[8]/@x"/>
     <eval expected="53466" xpath="//if:text[8]/@y"/>
-    <eval expected="0 5000 1000 640 1000 1000 1000 1000 640 1000 0 5000 1000 1000 1000 1000 0 5000 640 1000 1180 1000 1000" xpath="//if:text[8]/@dx"/>
+    <eval expected="1000" xpath="//if:text[8]/@letter-spacing"/>
+    <eval expected="3000" xpath="//if:text[8]/@word-spacing"/> <!-- TODO Not sure that's correct! -->
+    <eval expected="0 0 0 -360 0 0 0 0 -360 0 0 0 0 0 0 0 0 0 -360 0 180" xpath="//if:text[8]/@dx"/>
     
   </if-checks>
 </testcase>

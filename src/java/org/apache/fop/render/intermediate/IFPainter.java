@@ -81,13 +81,53 @@ import org.apache.fop.traits.RuleStyle;
  */
 public interface IFPainter {
 
-    void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect) throws IFException;
-    void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect) throws IFException;
+    /**
+     * Starts a new viewport, establishing a new coordinate system. A viewport has a size and
+     * can optionally be clipped. Corresponds to SVG's svg element.
+     * @param transform the transformation matrix establishing the new coordinate system
+     * @param size the size of the viewport
+     * @param clipRect the clipping rectangle (may be null)
+     * @throws IFException if an error occurs while handling this element
+     */
+    void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
+        throws IFException;
+
+    /**
+     * Starts a new viewport, establishing a new coordinate system. A viewport has a size and
+     * can optionally be clipped. Corresponds to SVG's svg element.
+     * @param transforms a series of transformation matrices establishing the new coordinate system
+     * @param size the size of the viewport
+     * @param clipRect the clipping rectangle (may be null)
+     * @throws IFException if an error occurs while handling this element
+     */
+    void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect)
+        throws IFException;
     //For transform, Batik's org.apache.batik.parser.TransformListHandler/Parser can be used
+
+    /**
+     * Ends the current viewport and restores the previous coordinate system.
+     * @throws IFException if an error occurs while handling this element
+     */
     void endViewport() throws IFException;
 
+    /**
+     * Starts a new group of graphical elements. Corresponds to SVG's g element.
+     * @param transforms a series of transformation matrices establishing the new coordinate system
+     * @throws IFException if an error occurs while handling this element
+     */
     void startGroup(AffineTransform[] transforms) throws IFException;
+
+    /**
+     * Starts a new group of graphical elements. Corresponds to SVG's g element.
+     * @param transform the transformation matrix establishing the new coordinate system
+     * @throws IFException if an error occurs while handling this element
+     */
     void startGroup(AffineTransform transform) throws IFException;
+
+    /**
+     * Ends the current group and restores the previous coordinate system.
+     * @throws IFException if an error occurs while handling this element
+     */
     void endGroup() throws IFException;
 
     /**
@@ -105,16 +145,18 @@ public interface IFPainter {
 
     /**
      * Draws text. The initial coordinates (x and y) point to the starting point at the normal
-     * baseline of the font. The arrays (dx and dy) are optional and can be used to achieve
-     * effects like kerning.
+     * baseline of the font. The parameters letterSpacing, wordSpacing and the array dx are
+     * optional and can be used to influence character positioning (for example, for kerning).
      * @param x X-coordinate of the starting point of the text
      * @param y Y-coordinate of the starting point of the text
-     * @param dx an array of adjustment values for each character in X-direction
-     * @param dy an array of adjustment values for each character in Y-direction
+     * @param letterSpacing additional spacing between characters (may be 0)
+     * @param wordSpacing additional spacing between words (may be 0)
+     * @param dx an array of adjustment values for each character in X-direction (may be null)
      * @param text the text
      * @throws IFException if an error occurs while handling this event
      */
-    void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException;
+    void drawText(int x, int y, int letterSpacing, int wordSpacing,
+            int[] dx, String text) throws IFException;
 
     /**
      * Restricts the current clipping region with the given rectangle.

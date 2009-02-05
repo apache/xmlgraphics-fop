@@ -325,18 +325,22 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
+                throws IFException {
         try {
             establish(MODE_TEXT);
             AttributesImpl atts = new AttributesImpl();
             XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
             XMLUtil.addAttribute(atts, "x", Integer.toString(x));
             XMLUtil.addAttribute(atts, "y", Integer.toString(y));
+            if (letterSpacing != 0) {
+                XMLUtil.addAttribute(atts, "letter-spacing", Integer.toString(letterSpacing));
+            }
+            if (wordSpacing != 0) {
+                XMLUtil.addAttribute(atts, "word-spacing", Integer.toString(wordSpacing));
+            }
             if (dx != null) {
                 XMLUtil.addAttribute(atts, "dx", IFUtil.toString(dx));
-            }
-            if (dy != null) {
-                XMLUtil.addAttribute(atts, "dy", IFUtil.toString(dy));
             }
             handler.startElement("text", atts);
             char[] chars = text.toCharArray();

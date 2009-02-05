@@ -312,8 +312,33 @@ public class PSPainter extends AbstractIFPainter {
         }
     }
 
+    private String formatMptAsPt(PSGenerator gen, int value) {
+        return gen.formatDouble(value / 1000.0);
+    }
+
+    /* Disabled: performance experiment (incomplete)
+
+    private static final String ZEROS = "0.00";
+
+    private String formatMptAsPt1(int value) {
+        String s = Integer.toString(value);
+        int len = s.length();
+        StringBuffer sb = new StringBuffer();
+        if (len < 4) {
+            sb.append(ZEROS.substring(0, 5 - len));
+            sb.append(s);
+        } else {
+            int dec = len - 3;
+            sb.append(s.substring(0, dec));
+            sb.append('.');
+            sb.append(s.substring(dec));
+        }
+        return sb.toString();
+    }*/
+
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int[] dx, int[] dy, String text) throws IFException {
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing,
+            int[] dx, String text) throws IFException {
         try {
             //Note: dy is currently ignored
             PSGenerator generator = getGenerator();
@@ -334,16 +359,13 @@ public class PSPainter extends AbstractIFPainter {
                 singleByteFont = (SingleByteFont)tf;
             }
             Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
-            //String fontName = font.getFontName();
 
             PSResource res = this.documentHandler.getPSResourceForFontKey(fontKey);
             generator.useFont("/" + res.getName(), fontSize);
             generator.getResourceTracker().notifyResourceUsageOnPage(res);
-            //textutil.updateTf(fontKey, fontSize, tf.isMultiByte());
 
-            generator.writeln("1 0 0 -1 " + generator.formatDouble(x / 1000.0)
-                    + " " + generator.formatDouble(y / 1000.0) + " Tm");
-            //textutil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, x / 1000f, y / 1000f));
+            generator.writeln("1 0 0 -1 " + formatMptAsPt(generator, x)
+                    + " " + formatMptAsPt(generator, y) + " Tm");
 
             int textLen = text.length();
             if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
@@ -356,7 +378,8 @@ public class PSPainter extends AbstractIFPainter {
                     int encoding = mapped / 256;
                     if (currentEncoding != encoding) {
                         if (i > 0) {
-                            writeText(text, start, i - start, dx, dy, font, tf);
+                            writeText(text, start, i - start,
+                                    letterSpacing, wordSpacing, dx, font, tf);
                         }
                         if (encoding == 0) {
                             useFont(fontKey, sizeMillipoints);
@@ -367,62 +390,98 @@ public class PSPainter extends AbstractIFPainter {
                         start = i;
                     }
                 }
-                writeText(text, start, textLen - start, dx, dy, font, tf);
+                writeText(text, start, textLen - start,
+                        letterSpacing, wordSpacing, dx, font, tf);
             } else {
                 //Simple single-font painting
                 useFont(fontKey, sizeMillipoints);
-                writeText(text, 0, textLen, dx, dy, font, tf);
+                writeText(text, 0, textLen,
+                        letterSpacing, wordSpacing, dx, font, tf);
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
         }
     }
 
-    private void writeText(String text, int start, int len, int[] dx, int[] dy,
+    private void writeText(String text, int start, int len,
+            int letterSpacing, int wordSpacing, int[] dx,
             Font font, Typeface tf) throws IOException {
         PSGenerator generator = getGenerator();
         int end = start + len;
         int initialSize = len;
         initialSize += initialSize / 2;
+
+        boolean hasLetterSpacing = (letterSpacing != 0);
+        boolean needTJ = false;
+
+        int lineStart = 0;
+        StringBuffer accText = new StringBuffer(initialSize);
         StringBuffer sb = new StringBuffer(initialSize);
-        sb.append("(");
-        int[] offsets = new int[len];
         int dxl = (dx != null ? dx.length : 0);
         for (int i = start; i < end; i++) {
             char orgChar = text.charAt(i);
             char ch;
             int cw;
+            int glyphAdjust = 0;
             if (CharUtilities.isFixedWidthSpace(orgChar)) {
                 //Fixed width space are rendered as spaces so copy/paste works in a reader
                 ch = font.mapChar(CharUtilities.SPACE);
-                //int spaceDiff = font.getCharWidth(ch) - font.getCharWidth(orgChar);
-                //glyphAdjust = -(spaceDiff);
+                cw = font.getCharWidth(orgChar);
+                glyphAdjust = font.getCharWidth(ch) - cw;
             } else {
+                if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                    glyphAdjust -= wordSpacing;
+                }
                 ch = font.mapChar(orgChar);
-                //cw = tf.getWidth(ch, font.getFontSize()) / 1000;
+                cw = font.getCharWidth(orgChar);
             }
 
-            cw = font.getCharWidth(orgChar);
-            int glyphAdjust = 0;
             if (dx != null && i < dxl - 1) {
-                glyphAdjust += dx[i + 1];
+                glyphAdjust -= dx[i + 1];
             }
-            offsets[i - start] = cw + glyphAdjust;
             char codepoint = (char)(ch % 256);
-            PSGenerator.escapeChar(codepoint, sb);
-        }
-        sb.append(")" + PSGenerator.LF + "[");
-        for (int i = 0; i < len; i++) {
-            if (i > 0) {
-                if (i % 8 == 0) {
-                    sb.append(PSGenerator.LF);
-                } else {
-                    sb.append(" ");
+            PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text
+            if (glyphAdjust != 0) {
+                needTJ = true;
+                if (sb.length() == 0) {
+                    sb.append('['); //Need to start TJ
                 }
+                if (accText.length() > 0) {
+                    if ((sb.length() - lineStart + accText.length()) > 200) {
+                        sb.append(PSGenerator.LF);
+                        lineStart = sb.length();
+                    }
+                    sb.append('(');
+                    sb.append(accText);
+                    sb.append(") ");
+                    accText.setLength(0); //reset accumulated text
+                }
+                sb.append(Integer.toString(glyphAdjust)).append(' ');
             }
-            sb.append(generator.formatDouble(offsets[i] / 1000f));
         }
-        sb.append("]" + PSGenerator.LF + "xshow");
+        if (needTJ) {
+            if (accText.length() > 0) {
+                sb.append('(');
+                sb.append(accText);
+                sb.append(')');
+            }
+            if (hasLetterSpacing) {
+                sb.append("] " + formatMptAsPt(generator, letterSpacing) + " ATJ");
+            } else {
+                sb.append("] TJ");
+            }
+        } else {
+            sb.append('(').append(accText).append(")");
+            if (hasLetterSpacing) {
+                StringBuffer spb = new StringBuffer();
+                spb.append(formatMptAsPt(generator, letterSpacing))
+                    .append(" 0 ");
+                sb.insert(0, spb.toString());
+                sb.append(" ashow");
+            } else {
+                sb.append(" show");
+            }
+        }
         generator.writeln(sb.toString());
     }
 

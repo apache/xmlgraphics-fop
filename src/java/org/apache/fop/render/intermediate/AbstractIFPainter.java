@@ -411,5 +411,4 @@ public abstract class AbstractIFPainter implements IFPainter {
         return new AffineTransform(matrix);
     }
 
-
 }

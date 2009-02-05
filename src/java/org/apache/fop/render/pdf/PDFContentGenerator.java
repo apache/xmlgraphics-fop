@@ -238,6 +238,16 @@ public class PDFContentGenerator {
     }
 
     /**
+     * Sets the current character spacing (Tc) value.
+     * @param value the Tc value (in unscaled text units)
+     */
+    public void updateCharacterSpacing(float value) {
+        if (getState().setCharacterSpacing(value)) {
+            currentStream.add(format(value) + " Tc\n");
+        }
+    }
+
+    /**
      * Establishes a new foreground or fill color.
      * @param col the color to apply
      * @param fill true to set the fill color, false for the foreground color

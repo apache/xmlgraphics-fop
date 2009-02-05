@@ -462,9 +462,12 @@ public class IFParser implements IFConstants {
             public void endElement() throws IFException {
                 int x = Integer.parseInt(lastAttributes.getValue("x"));
                 int y = Integer.parseInt(lastAttributes.getValue("y"));
+                String s = lastAttributes.getValue("letter-spacing");
+                int letterSpacing = (s != null ? Integer.parseInt(s) : 0);
+                s = lastAttributes.getValue("word-spacing");
+                int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
-                int[] dy = XMLUtil.getAttributeAsIntArray(lastAttributes, "dy");
-                painter.drawText(x, y, dx, dy, content.toString());
+                painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
             }
 
             public boolean ignoreCharacters() {

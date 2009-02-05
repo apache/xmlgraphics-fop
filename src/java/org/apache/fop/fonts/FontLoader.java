@@ -53,16 +53,21 @@ public abstract class FontLoader {
     protected boolean loaded = false;
     /** true if the font will be embedded, false if it will be referenced only. */
     protected boolean embedded = true;
+    /** true if kerning information shall be loaded if available. */
+    protected boolean useKerning = true;
 
     /**
      * Default constructor.
      * @param fontFileURI the URI to the PFB file of a Type 1 font
      * @param embedded indicates whether the font is embedded or referenced
+     * @param useKerning indicates whether kerning information shall be loaded if available
      * @param resolver the font resolver used to resolve URIs
      */
-    public FontLoader(String fontFileURI, boolean embedded, FontResolver resolver) {
+    public FontLoader(String fontFileURI, boolean embedded, boolean useKerning,
+            FontResolver resolver) {
         this.fontFileURI = fontFileURI;
         this.embedded = embedded;
+        this.useKerning = useKerning;
         this.resolver = resolver;
     }
 
@@ -82,7 +87,8 @@ public abstract class FontLoader {
      */
     public static CustomFont loadFont(File fontFile, String subFontName,
             boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
-        return loadFont(fontFile.getAbsolutePath(), subFontName, embedded, encodingMode, resolver);
+        return loadFont(fontFile.getAbsolutePath(), subFontName,
+                embedded, encodingMode, true, resolver);
     }
 
     /**
@@ -96,8 +102,11 @@ public abstract class FontLoader {
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(URL fontUrl, String subFontName,
-            boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
-        return loadFont(fontUrl.toExternalForm(), subFontName, embedded, encodingMode, resolver);
+            boolean embedded, EncodingMode encodingMode,
+            FontResolver resolver) throws IOException {
+        return loadFont(fontUrl.toExternalForm(), subFontName,
+                embedded, encodingMode, true,
+                resolver);
     }
 
     /**
@@ -106,12 +115,14 @@ public abstract class FontLoader {
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
      * @param encodingMode the requested encoding mode
+     * @param useKerning indicates whether kerning information should be loaded if available
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(String fontFileURI, String subFontName,
-            boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
+            boolean embedded, EncodingMode encodingMode, boolean useKerning,
+            FontResolver resolver) throws IOException {
         fontFileURI = fontFileURI.trim();
         boolean type1 = isType1(fontFileURI);
         FontLoader loader;
@@ -120,9 +131,10 @@ public abstract class FontLoader {
                 throw new IllegalArgumentException(
                         "CID encoding mode not supported for Type 1 fonts");
             }
-            loader = new Type1FontLoader(fontFileURI, embedded, resolver);
+            loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resolver);
         } else {
-            loader = new TTFFontLoader(fontFileURI, subFontName, embedded, encodingMode, resolver);
+            loader = new TTFFontLoader(fontFileURI, subFontName,
+                    embedded, encodingMode, useKerning, resolver);
         }
         return loader.getFont();
     }

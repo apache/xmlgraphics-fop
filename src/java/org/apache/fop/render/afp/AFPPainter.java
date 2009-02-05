@@ -30,9 +30,6 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
@@ -49,6 +46,7 @@ import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
+import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.fonts.Font;
@@ -69,8 +67,8 @@ import org.apache.fop.util.CharUtilities;
  */
 public class AFPPainter extends AbstractIFPainter {
 
-    /** logging instance */
-    private static Log log = LogFactory.getLog(AFPPainter.class);
+    //** logging instance */
+    //private static Log log = LogFactory.getLog(AFPPainter.class);
 
     private static final int X = 0;
     private static final int Y = 1;
@@ -241,7 +239,7 @@ public class AFPPainter extends AbstractIFPainter {
 
     //TODO Try to resolve the name-clash between the AFPBorderPainter in the afp package
     //and this one. Not done for now to avoid a lot of re-implementation and code duplication.
-    private class AFPBorderPainterAdapter extends BorderPainter {
+    private static class AFPBorderPainterAdapter extends BorderPainter {
 
         private AFPBorderPainter delegate;
 
@@ -312,8 +310,9 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, final int[] dx, int[] dy, final String text)
-            throws IFException {
+    public void drawText(int x, int y,
+            final int letterSpacing, final int wordSpacing, final int[] dx,
+            final String text) throws IFException {
         final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
 
@@ -322,8 +321,8 @@ public class AFPPainter extends AbstractIFPainter {
         //TODO Ignored: state.getFontVariant()
         String fontKey = getFontInfo().getInternalFontKey(triplet);
         if (fontKey == null) {
-            fontKey = getFontInfo().getInternalFontKey(
-                    new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
+            triplet = new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
+            fontKey = getFontInfo().getInternalFontKey(triplet);
         }
 
         // register font as necessary
@@ -339,6 +338,23 @@ public class AFPPainter extends AbstractIFPainter {
 
         final CharacterSet charSet = afpFont.getCharacterSet(fontSize);
 
+        if (afpFont.isEmbeddable()) {
+            try {
+                //Embed fonts (char sets and code pages)
+                //TODO This should be moved to a place where it has less performance impact
+                if (charSet.getPath() != null) {
+                    documentHandler.getResourceManager().createIncludedResource(
+                            charSet.getName(), charSet.getPath(),
+                            ResourceObject.TYPE_FONT_CHARACTER_SET);
+                    documentHandler.getResourceManager().createIncludedResource(
+                            charSet.getCodePage(), charSet.getPath(),
+                            ResourceObject.TYPE_CODE_PAGE);
+                }
+            } catch (IOException ioe) {
+                throw new IFException("Error while embedding font resources", ioe);
+            }
+        }
+
         AbstractPageObject page = getDataStream().getCurrentPage();
         PresentationTextObject pto = page.getPresentationTextObject();
         try {
@@ -350,8 +366,6 @@ public class AFPPainter extends AbstractIFPainter {
                     builder.absoluteMoveBaseline(p.y);
                     builder.absoluteMoveInline(p.x);
 
-                    builder.setVariableSpaceCharacterIncrement(0);
-                    builder.setInterCharacterAdjustment(0);
                     builder.setExtendedTextColor(state.getTextColor());
                     builder.setCodedFont((byte)fontReference);
 
@@ -363,33 +377,105 @@ public class AFPPainter extends AbstractIFPainter {
                         int dxu = Math.round(unitConv.mpt2units(dx[0]));
                         builder.relativeMoveInline(-dxu);
                     }
-                    for (int i = 0; i < l; i++) {
-                        char orgChar = text.charAt(i);
-                        float glyphAdjust = 0;
-                        if (CharUtilities.isFixedWidthSpace(orgChar)) {
-                            sb.append(CharUtilities.SPACE);
-                            int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
-                            int charWidth = font.getCharWidth(orgChar);
-                            glyphAdjust += (charWidth - spaceWidth);
-                        } else {
-                            sb.append(orgChar);
-                        }
 
-                        if (i < dxl - 1) {
-                            glyphAdjust += dx[i + 1];
-                        }
+                    //Following are two variants for glyph placement.
+                    //SVI does not seem to be implemented in the same way everywhere, so
+                    //a fallback alternative is preserved here.
+                    final boolean usePTOCAWordSpacing = true;
+                    if (usePTOCAWordSpacing) {
 
-                        if (glyphAdjust != 0) {
-                            if (sb.length() > 0) {
-                                builder.addTransparentData(charSet.encodeChars(sb));
-                                sb.setLength(0);
+                        int interCharacterAdjustment = 0;
+                        if (letterSpacing != 0) {
+                            interCharacterAdjustment = Math.round(unitConv.mpt2units(
+                                    letterSpacing));
+                        }
+                        builder.setInterCharacterAdjustment(interCharacterAdjustment);
+
+                        int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
+                        int fixedSpaceCharacterIncrement = Math.round(unitConv.mpt2units(
+                                spaceWidth + letterSpacing));
+                        int varSpaceCharacterIncrement = fixedSpaceCharacterIncrement;
+                        if (wordSpacing != 0) {
+                            varSpaceCharacterIncrement = Math.round(unitConv.mpt2units(
+                                    spaceWidth + wordSpacing + letterSpacing));
+                        }
+                        builder.setVariableSpaceCharacterIncrement(varSpaceCharacterIncrement);
+
+                        boolean fixedSpaceMode = false;
+
+                        for (int i = 0; i < l; i++) {
+                            char orgChar = text.charAt(i);
+                            float glyphAdjust = 0;
+                            if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                                flushText(builder, sb, charSet);
+                                builder.setVariableSpaceCharacterIncrement(
+                                        fixedSpaceCharacterIncrement);
+                                fixedSpaceMode = true;
+                                sb.append(CharUtilities.SPACE);
+                                int charWidth = font.getCharWidth(orgChar);
+                                glyphAdjust += (charWidth - spaceWidth);
+                            } else {
+                                if (fixedSpaceMode) {
+                                    flushText(builder, sb, charSet);
+                                    builder.setVariableSpaceCharacterIncrement(
+                                            varSpaceCharacterIncrement);
+                                    fixedSpaceMode = false;
+                                }
+                                char ch;
+                                if (orgChar == CharUtilities.NBSPACE) {
+                                    ch = ' '; //converted to normal space to allow word spacing
+                                } else {
+                                    ch = orgChar;
+                                }
+                                sb.append(ch);
                             }
-                            int increment = Math.round(unitConv.mpt2units(glyphAdjust));
-                            builder.relativeMoveInline(increment);
+
+                            if (i < dxl - 1) {
+                                glyphAdjust += dx[i + 1];
+                            }
+
+                            if (glyphAdjust != 0) {
+                                flushText(builder, sb, charSet);
+                                int increment = Math.round(unitConv.mpt2units(glyphAdjust));
+                                builder.relativeMoveInline(increment);
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < l; i++) {
+                            char orgChar = text.charAt(i);
+                            float glyphAdjust = 0;
+                            if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                                sb.append(CharUtilities.SPACE);
+                                int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
+                                int charWidth = font.getCharWidth(orgChar);
+                                glyphAdjust += (charWidth - spaceWidth);
+                            } else {
+                                sb.append(orgChar);
+                            }
+
+                            if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
+                                glyphAdjust += wordSpacing;
+                            }
+                            glyphAdjust += letterSpacing;
+                            if (i < dxl - 1) {
+                                glyphAdjust += dx[i + 1];
+                            }
+
+                            if (glyphAdjust != 0) {
+                                flushText(builder, sb, charSet);
+                                int increment = Math.round(unitConv.mpt2units(glyphAdjust));
+                                builder.relativeMoveInline(increment);
+                            }
                         }
                     }
+                    flushText(builder, sb, charSet);
+                }
+
+                private void flushText(PtocaBuilder builder, StringBuffer sb,
+                        final CharacterSet charSet) throws IOException {
                     if (sb.length() > 0) {
                         builder.addTransparentData(charSet.encodeChars(sb));
+                        sb.setLength(0);
                     }
                 }
 
