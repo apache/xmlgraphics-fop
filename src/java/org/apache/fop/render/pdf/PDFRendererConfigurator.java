@@ -27,34 +27,23 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fonts.CustomFontCollection;
-import org.apache.fop.fonts.FontCollection;
-import org.apache.fop.fonts.FontEventAdapter;
-import org.apache.fop.fonts.FontEventListener;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontResolver;
-import org.apache.fop.fonts.base14.Base14FontCollection;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFXMode;
-import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
-import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.util.LogUtil;
 
 /**
  * PDF renderer configurator.
  */
-public class PDFRendererConfigurator extends PrintRendererConfigurator
-            implements IFDocumentHandlerConfigurator {
+public class PDFRendererConfigurator extends PrintRendererConfigurator {
 
     /**
      * Default constructor
-     * 
+     *
      * @param userAgent user agent
      */
     public PDFRendererConfigurator(FOUserAgent userAgent) {
@@ -65,7 +54,7 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator
      * Configure the PDF renderer.
      * Get the configuration to be used for pdf stream filters,
      * fonts etc.
-     * 
+     *
      * @param renderer pdf renderer
      * @throws FOPException fop exception
      */
@@ -155,7 +144,7 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator
 
     /**
      * Builds a filter map from an Avalon Configuration object.
-     * 
+     *
      * @param cfg the Configuration object
      * @return Map the newly built filter map
      * @throws ConfigurationException if a filter list is defined twice
@@ -212,28 +201,6 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator
             PDFRenderingUtil pdfUtil = pdfDocumentHandler.getPDFUtil();
             configure(cfg, pdfUtil);
         }
-    }
-
-    /** {@inheritDoc} */
-    public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
-                throws FOPException {
-        FontManager fontManager = userAgent.getFactory().getFontManager();
-        List fontCollections = new java.util.ArrayList();
-        fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
-
-        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
-        if (cfg != null) {
-            FontResolver fontResolver = new DefaultFontResolver(userAgent);
-            FontEventListener listener = new FontEventAdapter(
-                    userAgent.getEventBroadcaster());
-            List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new CustomFontCollection(fontResolver, fontList));
-        }
-
-        fontManager.setup(fontInfo,
-                (FontCollection[])fontCollections.toArray(
-                        new FontCollection[fontCollections.size()]));
-        documentHandler.setFontInfo(fontInfo);
     }
 
 }

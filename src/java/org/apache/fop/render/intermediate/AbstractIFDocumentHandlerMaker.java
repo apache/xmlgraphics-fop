@@ -45,14 +45,6 @@ public abstract class AbstractIFDocumentHandlerMaker {
     public abstract String[] getSupportedMimeTypes();
 
     /**
-     * Returns a configurator object that can be used to
-     * configure the document handler.
-     * @param userAgent the user agent
-     * @return a configurator object that can be used to configure the document handler
-     */
-    public abstract IFDocumentHandlerConfigurator getConfigurator(FOUserAgent userAgent);
-
-    /**
      * Indicates whether a specific MIME type is supported by this document handler.
      * @param mimeType the MIME type (ex. "application/pdf")
      * @return true if the MIME type is supported

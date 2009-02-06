@@ -24,7 +24,6 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
-import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
  * Document handler factory for TIFF output.
@@ -49,11 +48,6 @@ public class TIFFDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
     /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
-    }
-
-    /** {@inheritDoc} */
-    public IFDocumentHandlerConfigurator getConfigurator(FOUserAgent userAgent) {
-        return new TIFFRendererConfigurator(userAgent);
     }
 
 }

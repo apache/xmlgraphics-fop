@@ -22,6 +22,9 @@ package org.apache.fop.render.intermediate;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.util.DecimalFormatCache;
 
 /**
@@ -135,6 +138,38 @@ public class IFUtil {
         sb.append(rect.x).append(' ').append(rect.y).append(' ');
         sb.append(rect.width).append(' ').append(rect.height);
         return sb.toString();
+    }
+
+    /**
+     * Sets up the fonts on a document handler. If the document handler provides a configurator
+     * object the configuration from the {@link FopFactory} will be used. Otherwise,
+     * a default font configuration will be set up.
+     * @param documentHandler the document handler
+     * @param fontInfo the font info object (may be null)
+     * @throws FOPException if an error occurs while setting up the fonts
+     */
+    public static void setupFonts(IFDocumentHandler documentHandler, FontInfo fontInfo)
+                throws FOPException {
+        if (fontInfo == null) {
+            fontInfo = new FontInfo();
+        }
+        IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
+        if (configurator != null) {
+            configurator.setupFontInfo(documentHandler, fontInfo);
+        } else {
+            documentHandler.setDefaultFontInfo(fontInfo);
+        }
+    }
+
+    /**
+     * Sets up the fonts on a document handler. If the document handler provides a configurator
+     * object the configuration from the {@link FopFactory} will be used. Otherwise,
+     * a default font configuration will be set up.
+     * @param documentHandler the document handler
+     * @throws FOPException if an error occurs while setting up the fonts
+     */
+    public static void setupFonts(IFDocumentHandler documentHandler) throws FOPException {
+        setupFonts(documentHandler, null);
     }
 
 }

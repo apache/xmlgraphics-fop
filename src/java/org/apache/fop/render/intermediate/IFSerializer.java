@@ -38,6 +38,7 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
@@ -91,7 +92,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         if (this.mimicHandler != null) {
             return getMimickedDocumentHandler().getConfigurator();
         } else {
-            return new IFSerializerConfiguration(getUserAgent());
+            return new PrintRendererConfigurator(getUserAgent());
         }
     }
 
@@ -128,12 +129,16 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void setFontInfo(FontInfo fontInfo) {
-        //nop, not used
+        if (this.mimicHandler != null) {
+            this.mimicHandler.setFontInfo(fontInfo);
+        }
     }
 
     /** {@inheritDoc} */
     public void setDefaultFontInfo(FontInfo fontInfo) {
-        //nop, not used
+        if (this.mimicHandler != null) {
+            this.mimicHandler.setDefaultFontInfo(fontInfo);
+        }
     }
 
     /** {@inheritDoc} */

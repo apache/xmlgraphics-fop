@@ -19,23 +19,12 @@
 
 package org.apache.fop.render.ps;
 
-import java.util.List;
-
 import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fonts.CustomFontCollection;
-import org.apache.fop.fonts.FontCollection;
-import org.apache.fop.fonts.FontEventAdapter;
-import org.apache.fop.fonts.FontEventListener;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontResolver;
-import org.apache.fop.fonts.base14.Base14FontCollection;
-import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
@@ -99,25 +88,4 @@ public class PSRendererConfigurator extends PrintRendererConfigurator
 
     }
 
-    /** {@inheritDoc} */
-    public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
-            throws FOPException {
-        FontManager fontManager = userAgent.getFactory().getFontManager();
-        List fontCollections = new java.util.ArrayList();
-        fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
-
-        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
-        if (cfg != null) {
-            FontResolver fontResolver = new DefaultFontResolver(userAgent);
-            FontEventListener listener = new FontEventAdapter(
-                    userAgent.getEventBroadcaster());
-            List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new CustomFontCollection(fontResolver, fontList));
-        }
-
-        fontManager.setup(fontInfo,
-                (FontCollection[])fontCollections.toArray(
-                        new FontCollection[fontCollections.size()]));
-        documentHandler.setFontInfo(fontInfo);
-    }
 }

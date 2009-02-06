@@ -21,36 +21,27 @@ package org.apache.fop.render.intermediate;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.AbstractRendererMaker;
-import org.apache.fop.render.PrintRendererConfigurator;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.RendererConfigurator;
 
 /**
- * RendererMaker for the Intermediate Format Renderer.
+ * Intermediate format document handler factory for intermediate format XML output.
  */
-public class IFRendererMaker extends AbstractRendererMaker {
+public class IFSerializerMaker extends AbstractIFDocumentHandlerMaker {
 
-    private static final String[] MIMES = new String[] {MimeConstants.MIME_FOP_IF};
-
-    /**{@inheritDoc} */
-    public Renderer makeRenderer(FOUserAgent userAgent) {
-        return new IFRenderer();
-    }
-
-    /**{@inheritDoc} */
-    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
-        return new PrintRendererConfigurator(userAgent);
+    /** {@inheritDoc} */
+    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
+        IFSerializer handler = new IFSerializer();
+        handler.setContext(new IFContext(ua));
+        return handler;
     }
 
     /** {@inheritDoc} */
     public boolean needsOutputStream() {
-        return false;
+        return true;
     }
 
     /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
-        return MIMES;
+        return new String[] {MimeConstants.MIME_FOP_IF};
     }
 
 }
