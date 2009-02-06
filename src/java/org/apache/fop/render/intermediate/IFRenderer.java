@@ -176,12 +176,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         if (this.documentHandler == null) {
             this.documentHandler = createDefaultDocumentHandler();
         }
-        IFDocumentHandlerConfigurator configurator = this.documentHandler.getConfigurator();
-        if (configurator != null) {
-            configurator.setupFontInfo(documentHandler, inFontInfo);
-        } else {
-            this.documentHandler.setDefaultFontInfo(inFontInfo);
-        }
+        IFUtil.setupFonts(this.documentHandler, inFontInfo);
         this.fontInfo = inFontInfo;
     }
 

@@ -41,9 +41,11 @@ import org.apache.xmlgraphics.util.ClasspathResource;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.fonts.CustomFontCollection;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontCache;
+import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontInfo;
@@ -53,13 +55,16 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.autodetect.FontFileFinder;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
+import org.apache.fop.fonts.base14.Base14FontCollection;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.util.LogUtil;
 
 /**
  * Base Print renderer configurator (mostly handles font configuration)
  */
 public class PrintRendererConfigurator extends AbstractRendererConfigurator
-            implements RendererConfigurator {
+            implements RendererConfigurator, IFDocumentHandlerConfigurator {
 
     /** logger instance */
     protected static Log log = LogFactory.getLog(PrintRendererConfigurator.class);
@@ -450,6 +455,35 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             }
         }
         return embedFontInfo;
+    }
+
+    // ---=== IFDocumentHandler configuration ===---
+
+    /** {@inheritDoc} */
+    public void configure(IFDocumentHandler documentHandler) throws FOPException {
+        //nop
+    }
+
+    /** {@inheritDoc} */
+    public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
+                throws FOPException {
+        FontManager fontManager = userAgent.getFactory().getFontManager();
+        List fontCollections = new java.util.ArrayList();
+        fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
+
+        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
+        if (cfg != null) {
+            FontResolver fontResolver = new DefaultFontResolver(userAgent);
+            FontEventListener listener = new FontEventAdapter(
+                    userAgent.getEventBroadcaster());
+            List fontList = buildFontList(cfg, fontResolver, listener);
+            fontCollections.add(new CustomFontCollection(fontResolver, fontList));
+        }
+
+        fontManager.setup(fontInfo,
+                (FontCollection[])fontCollections.toArray(
+                        new FontCollection[fontCollections.size()]));
+        documentHandler.setFontInfo(fontInfo);
     }
 
 }

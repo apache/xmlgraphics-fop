@@ -287,7 +287,8 @@ public class RendererFactory {
             } else {
                 AbstractRendererMaker rendMaker = getRendererMaker(outputFormat);
                 AbstractIFDocumentHandlerMaker documentHandlerMaker = null;
-                boolean outputStreamMissing = (userAgent.getRendererOverride() == null);
+                boolean outputStreamMissing = (userAgent.getRendererOverride() == null)
+                    && (userAgent.getDocumentHandlerOverride() == null);
                 if (rendMaker == null) {
                     documentHandlerMaker = getDocumentHandlerMaker(outputFormat);
                     if (documentHandlerMaker != null) {
@@ -299,6 +300,7 @@ public class RendererFactory {
                 }
                 if (userAgent.getRendererOverride() != null
                         || rendMaker != null
+                        || userAgent.getDocumentHandlerOverride() != null
                         || documentHandlerMaker != null) {
                     if (outputStreamMissing) {
                         throw new FOPException(
@@ -418,7 +420,8 @@ public class RendererFactory {
         Iterator providers = Service.providers(IFDocumentHandler.class);
         if (providers != null) {
             while (providers.hasNext()) {
-                AbstractIFDocumentHandlerMaker maker = (AbstractIFDocumentHandlerMaker)providers.next();
+                AbstractIFDocumentHandlerMaker maker
+                    = (AbstractIFDocumentHandlerMaker)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
                         log.debug("Dynamically adding maker for IFDocumentHandler: "

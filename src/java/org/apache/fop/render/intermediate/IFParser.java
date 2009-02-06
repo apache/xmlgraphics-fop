@@ -79,15 +79,29 @@ public class IFParser implements IFConstants {
      * @param documentHandler the intermediate format document handler used to process the IF events
      * @param userAgent the user agent
      * @throws TransformerException if an error occurs while parsing the area tree XML
+     * @throws IFException if an IF-related error occurs inside the target document handler
      */
     public void parse(Source src, IFDocumentHandler documentHandler, FOUserAgent userAgent)
-            throws TransformerException {
-        Transformer transformer = tFactory.newTransformer();
-        transformer.setErrorListener(new DefaultErrorListener(log));
+            throws TransformerException, IFException {
+        try {
+            Transformer transformer = tFactory.newTransformer();
+            transformer.setErrorListener(new DefaultErrorListener(log));
 
-        SAXResult res = new SAXResult(getContentHandler(documentHandler, userAgent));
+            SAXResult res = new SAXResult(getContentHandler(documentHandler, userAgent));
 
-        transformer.transform(src, res);
+            transformer.transform(src, res);
+        } catch (TransformerException te) {
+            //Unpack original IFException if applicable
+            if (te.getCause() instanceof SAXException) {
+                SAXException se = (SAXException)te.getCause();
+                if (se.getCause() instanceof IFException) {
+                    throw (IFException)se.getCause();
+                }
+            } else if (te.getCause() instanceof IFException) {
+                throw (IFException)te.getCause();
+            }
+            throw te;
+        }
     }
 
     /**
