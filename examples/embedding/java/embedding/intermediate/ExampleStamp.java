@@ -115,7 +115,7 @@ public class ExampleStamp {
 
             //Setup output file
             File xsltfile = new File(baseDir, "xml/xslt/projectteam2fo.xsl");
-            File iffile = new File(outDir, "team.at.xml");
+            File iffile = new File(outDir, "team.if.xml");
             File stampxsltfile = new File(baseDir, "xml/xslt/ifstamp.xsl");
             File pdffile = new File(outDir, "ResultIFStamped.pdf");
             System.out.println("Intermediate file : " + iffile.getCanonicalPath());
