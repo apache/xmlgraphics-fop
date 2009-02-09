@@ -57,7 +57,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     protected static Log log = LogFactory.getLog(PSFontUtils.class);
 
     /**
-     * Generates the PostScript code for the font dictionary.
+     * Generates the PostScript code for the font dictionary. This method should only be
+     * used if no "resource optimization" is performed, i.e. when the fonts are not embedded
+     * in a second pass.
      * @param gen PostScript generator to use for output
      * @param fontInfo available fonts
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
@@ -65,11 +67,13 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      */
     public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo)
                 throws IOException {
-        return writeFontDict(gen, fontInfo, fontInfo.getFonts());
+        return writeFontDict(gen, fontInfo, fontInfo.getFonts(), true);
     }
 
     /**
-     * Generates the PostScript code for the font dictionary.
+     * Generates the PostScript code for the font dictionary. This method assumes all used
+     * fonts and characters are known, i.e. when PostScript is generated with resource
+     * optimization turned on.
      * @param gen PostScript generator to use for output
      * @param fontInfo available fonts
      * @param fonts the set of fonts to work with
@@ -78,6 +82,21 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      */
     public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts)
                 throws IOException {
+        return writeFontDict(gen, fontInfo, fonts, false);
+    }
+
+    /**
+     * Generates the PostScript code for the font dictionary.
+     * @param gen PostScript generator to use for output
+     * @param fontInfo available fonts
+     * @param fonts the set of fonts to work with
+     * @param encodeAllCharacters true if all characters shall be encoded using additional,
+     *           generated encodings.
+     * @return a Map of PSResource instances representing all defined fonts (key: font key)
+     * @throws IOException in case of an I/O problem
+     */
+    private static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts,
+            boolean encodeAllCharacters) throws IOException {
         gen.commentln("%FOPBeginFontDict");
 
         Map fontResources = new java.util.HashMap();
@@ -91,6 +110,11 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
             if (tf instanceof SingleByteFont) {
                 SingleByteFont sbf = (SingleByteFont)tf;
+
+                if (encodeAllCharacters) {
+                    sbf.encodeAllUnencodedCharacters();
+                }
+
                 for (int i = 0, c = sbf.getAdditionalEncodingCount(); i < c; i++) {
                     SingleByteEncoding encoding = sbf.getAdditionalEncoding(i);
                     defineEncoding(gen, encoding);
@@ -110,6 +134,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         ResourceTracker tracker = gen.getResourceTracker();
 
         if (!tracker.isResourceSupplied(WINANSI_ENCODING_RESOURCE)) {
+            //Only out Base 14 fonts still use that
             defineWinAnsiEncoding(gen);
         }
         gen.commentln("%FOPBeginFontReencode");
