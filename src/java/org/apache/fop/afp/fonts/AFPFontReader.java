@@ -29,8 +29,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.util.StructuredFieldReader;
 
@@ -71,6 +73,10 @@ public final class AFPFontReader {
     private static final byte[] CHARACTER_TABLE_SF = new byte[] {
         (byte) 0xD3, (byte) 0x8C, (byte) 0x87};
 
+    /** Font descriptor MO:DCA structured field. */
+    private static final byte[] FONT_DESCRIPTOR_SF = new byte[] {
+        (byte) 0xD3, (byte) 0xA6, (byte) 0x89 };
+
     /** Font control MO:DCA structured field. */
     private static final byte[] FONT_CONTROL_SF = new byte[] {
         (byte) 0xD3, (byte) 0xA7, (byte) 0x89 };
@@ -86,26 +92,6 @@ public final class AFPFontReader {
     /** Font index MO:DCA structured field. */
     private static final byte[] FONT_INDEX_SF = new byte[] {
         (byte) 0xD3, (byte) 0x8C, (byte) 0x89 };
-
-    /**
-     * The conversion factor to millipoints for 240 dpi
-     */
-    private static final int FOP_100_DPI_FACTOR = 1;
-
-    /**
-     * The conversion factor to millipoints for 240 dpi
-     */
-    private static final int FOP_240_DPI_FACTOR = 300000;
-
-    /**
-     * The conversion factor to millipoints for 300 dpi
-     */
-    private static final int FOP_300_DPI_FACTOR = 240000;
-
-    /**
-     * The encoding to use to convert from EBCIDIC to ASCII
-     */
-    private static final String ASCII_ENCODING = "UTF8";
 
     /**
      * The collection of code pages
@@ -146,7 +132,7 @@ public final class AFPFontReader {
             }
         }
 
-        File directory = new File(url.getPath());
+        File directory = FileUtils.toFile(url);
         if (!directory.canRead()) {
             String msg = "Failed to read directory " + url.getPath();
             log.error(msg);
@@ -240,6 +226,9 @@ public final class AFPFontReader {
 
             StructuredFieldReader structuredFieldReader = new StructuredFieldReader(inputStream);
 
+            // Process D3A689 Font Descriptor
+            int pointSize = processFontDescriptor(structuredFieldReader);
+
             // Process D3A789 Font Control
             FontControl fontControl = processFontControl(structuredFieldReader);
 
@@ -249,14 +238,20 @@ public final class AFPFontReader {
                     = processFontOrientation(structuredFieldReader);
 
                 int dpi = fontControl.getDpi();
+                int metricNormalizationFactor = 0;
+                if (fontControl.isRelative()) {
+                    metricNormalizationFactor = 1;
+                } else {
+                    metricNormalizationFactor = 72000 / dpi / pointSize;
+                }
 
                 //process D3AC89 Font Position
-                processFontPosition(structuredFieldReader, characterSetOrientations, dpi);
+                processFontPosition(structuredFieldReader, characterSetOrientations, metricNormalizationFactor);
 
                 //process D38C89 Font Index (per orientation)
                 for (int i = 0; i < characterSetOrientations.length; i++) {
                     processFontIndex(structuredFieldReader,
-                            characterSetOrientations[i], codePage, dpi);
+                            characterSetOrientations[i], codePage, metricNormalizationFactor);
                     characterSet.addCharacterSetOrientation(characterSetOrientations[i]);
                 }
             } else {
@@ -311,7 +306,6 @@ public final class AFPFontReader {
                     String gcgiString = new String(gcgiBytes,
                             AFPConstants.EBCIDIC_ENCODING);
                     String charString = new String(charBytes, encoding);
-//                int value = charString.charAt(0);
                     codePages.put(gcgiString, charString);
                 } else {
                     position++;
@@ -325,6 +319,21 @@ public final class AFPFontReader {
     }
 
     /**
+     * Process the font descriptor details using the structured field reader.
+     *
+     * @param structuredFieldReader the structured field reader
+     * @return the nominal size of the font (in points)
+     */
+    private static int processFontDescriptor(StructuredFieldReader structuredFieldReader)
+    throws IOException {
+
+        byte[] fndData = structuredFieldReader.getNext(FONT_DESCRIPTOR_SF);
+
+        int nominalPointSize = (((fndData[39] & 0xFF) << 8) + (fndData[40] & 0xFF)) / 10;
+        return nominalPointSize;
+    }
+
+    /**
      * Process the font control details using the structured field reader.
      *
      * @param structuredFieldReader
@@ -335,7 +344,6 @@ public final class AFPFontReader {
 
         byte[] fncData = structuredFieldReader.getNext(FONT_CONTROL_SF);
 
-//        int position = 0;
         FontControl fontControl = null;
         if (fncData != null) {
             fontControl = new FontControl();
@@ -343,10 +351,8 @@ public final class AFPFontReader {
             if (fncData[7] == (byte) 0x02) {
                 fontControl.setRelative(true);
             }
-
-            int dpi = (((fncData[9] & 0xFF) << 8) + (fncData[10] & 0xFF)) / 10;
-
-            fontControl.setDpi(dpi);
+            int metricResolution = (((fncData[9] & 0xFF) << 8) + (fncData[10] & 0xFF)) / 10;
+            fontControl.setDpi(metricResolution);
         }
         return fontControl;
     }
@@ -416,9 +422,12 @@ public final class AFPFontReader {
      *            the structured field reader
      * @param characterSetOrientations
      *            the array of CharacterSetOrientation objects
+     * @param metricNormalizationFactor factor to apply to the metrics to get normalized
+     *                  font metric values
      */
     private void processFontPosition(StructuredFieldReader structuredFieldReader,
-        CharacterSetOrientation[] characterSetOrientations, int dpi) throws IOException {
+        CharacterSetOrientation[] characterSetOrientations, int metricNormalizationFactor)
+            throws IOException {
 
         byte[] data = structuredFieldReader.getNext(FONT_POSITION_SF);
 
@@ -426,52 +435,32 @@ public final class AFPFontReader {
         byte[] fpData = new byte[26];
 
         int characterSetOrientationIndex = 0;
-        int fopFactor = 0;
-
-        switch (dpi) {
-            case 100:
-                fopFactor = FOP_100_DPI_FACTOR;
-                break;
-            case 240:
-                fopFactor = FOP_240_DPI_FACTOR;
-                break;
-            case 300:
-                fopFactor = FOP_300_DPI_FACTOR;
-                break;
-            default:
-                String msg = "Unsupported font resolution of " + dpi + " dpi.";
-                log.error(msg);
-                throw new IOException(msg);
-        }
 
         // Read data, ignoring bytes 0 - 2
         for (int index = 3; index < data.length; index++) {
             if (position < 22) {
                 // Build the font orientation record
                 fpData[position] = data[index];
+                if (position == 9) {
+                    CharacterSetOrientation characterSetOrientation
+                            = characterSetOrientations[characterSetOrientationIndex];
+
+                    int xHeight = ((fpData[2] & 0xFF) << 8) + (fpData[3] & 0xFF);
+                    int capHeight = ((fpData[4] & 0xFF) << 8) + (fpData[5] & 0xFF);
+                    int ascHeight = ((fpData[6] & 0xFF) << 8) + (fpData[7] & 0xFF);
+                    int dscHeight = ((fpData[8] & 0xFF) << 8) + (fpData[9] & 0xFF);
+
+                    dscHeight = dscHeight * -1;
+
+                    characterSetOrientation.setXHeight(xHeight * metricNormalizationFactor);
+                    characterSetOrientation.setCapHeight(capHeight * metricNormalizationFactor);
+                    characterSetOrientation.setAscender(ascHeight * metricNormalizationFactor);
+                    characterSetOrientation.setDescender(dscHeight * metricNormalizationFactor);
+                }
             } else if (position == 22) {
-
                 position = 0;
-
-                CharacterSetOrientation characterSetOrientation
-                    = characterSetOrientations[characterSetOrientationIndex];
-
-                int xHeight = ((fpData[2] & 0xFF) << 8) + (fpData[3] & 0xFF);
-                int capHeight = ((fpData[4] & 0xFF) << 8) + (fpData[5] & 0xFF);
-                int ascHeight = ((fpData[6] & 0xFF) << 8) + (fpData[7] & 0xFF);
-                int dscHeight = ((fpData[8] & 0xFF) << 8) + (fpData[9] & 0xFF);
-
-                dscHeight = dscHeight * -1;
-
-                characterSetOrientation.setXHeight(xHeight * fopFactor);
-                characterSetOrientation.setCapHeight(capHeight * fopFactor);
-                characterSetOrientation.setAscender(ascHeight * fopFactor);
-                characterSetOrientation.setDescender(dscHeight * fopFactor);
-
                 characterSetOrientationIndex++;
-
                 fpData[position] = data[index];
-
             }
 
             position++;
@@ -482,36 +471,17 @@ public final class AFPFontReader {
     /**
      * Process the font index details for the character set orientation.
      *
-     * @param structuredFieldReader
-     *            the structured field reader
-     * @param cso
-     *            the CharacterSetOrientation object to populate
-     * @param codepage
-     *            the map of code pages
+     * @param structuredFieldReader the structured field reader
+     * @param cso the CharacterSetOrientation object to populate
+     * @param codepage the map of code pages
+     * @param metricNormalizationFactor factor to apply to the metrics to get normalized
+     *                  font metric values
      */
     private void processFontIndex(StructuredFieldReader structuredFieldReader,
-        CharacterSetOrientation cso, Map/*<String,String>*/ codepage, int dpi)
+        CharacterSetOrientation cso, Map/*<String,String>*/ codepage, int metricNormalizationFactor)
         throws IOException {
 
         byte[] data = structuredFieldReader.getNext(FONT_INDEX_SF);
-
-        int fopFactor = 0;
-
-        switch (dpi) {
-            case 100:
-                fopFactor = FOP_100_DPI_FACTOR;
-                break;
-            case 240:
-                fopFactor = FOP_240_DPI_FACTOR;
-                break;
-            case 300:
-                fopFactor = FOP_300_DPI_FACTOR;
-                break;
-            default:
-                String msg = "Unsupported font resolution of " + dpi + " dpi.";
-                log.error(msg);
-                throw new IOException(msg);
-        }
 
         int position = 0;
 
@@ -552,7 +522,7 @@ public final class AFPFontReader {
                         highest = cidx;
                     }
 
-                    int a = (width * fopFactor);
+                    int a = (width * metricNormalizationFactor);
 
                     cso.setWidth(cidx, a);
 
