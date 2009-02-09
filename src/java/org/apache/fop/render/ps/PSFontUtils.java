@@ -160,6 +160,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                 if (tf instanceof Base14Font) {
                     //Our Base 14 fonts don't use the default encoding
                     redefineFontEncoding(gen, tf.getFontName(), tf.getEncodingName());
+                } else if (tf instanceof SingleByteFont) {
+                    SingleByteFont sbf = (SingleByteFont)tf;
+                    if (!sbf.isUsingNativeEncoding()) {
+                        //Font has been configured to use an encoding other than the default one
+                        redefineFontEncoding(gen, tf.getFontName(), tf.getEncodingName());
+                    }
                 }
             }
         }

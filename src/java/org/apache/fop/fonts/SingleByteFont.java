@@ -36,12 +36,14 @@ public class SingleByteFont extends CustomFont {
     private  static Log log = LogFactory.getLog(SingleByteFont.class);
 
     private SingleByteEncoding mapping;
+    private boolean useNativeEncoding = false;
 
     private int[] width = null;
 
     private Map unencodedCharacters;
     //Map<Character, UnencodedCharacter>
     private List additionalEncodings;
+
 
     /**
      * Main constructor.
@@ -189,6 +191,24 @@ public class SingleByteFont extends CustomFont {
      */
     public void setEncoding(CodePointMapping encoding) {
         this.mapping = encoding;
+    }
+
+    /**
+     * Controls whether the font is configured to use its native encoding or if it
+     * may need to be re-encoded for the target format.
+     * @param value true indicates that the configured encoding is the font's native encoding
+     */
+    public void setUseNativeEncoding(boolean value) {
+        this.useNativeEncoding = value;
+    }
+
+    /**
+     * Indicates whether this font is configured to use its native encoding. This
+     * method is used to determine whether the font needs to be re-encoded.
+     * @return true if the font uses its native encoding.
+     */
+    public boolean isUsingNativeEncoding() {
+        return this.useNativeEncoding;
     }
 
     /**
