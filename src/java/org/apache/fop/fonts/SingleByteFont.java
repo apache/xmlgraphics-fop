@@ -19,8 +19,10 @@
 
 package org.apache.fop.fonts;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -215,6 +217,24 @@ public class SingleByteFont extends CustomFont {
             this.unencodedCharacters.put(new Character(ch.getSingleUnicodeValue()), uc);
         } else {
             //Cannot deal with unicode sequences, so ignore this character
+        }
+    }
+
+    /**
+     * Makes all unencoded characters available through additional encodings. This method
+     * is used in cases where the fonts need to be encoded in the target format before
+     * all text of the document is processed (for example in PostScript when resource optimization
+     * is disabled).
+     */
+    public void encodeAllUnencodedCharacters() {
+        if (this.unencodedCharacters != null) {
+            Set sortedKeys = new java.util.TreeSet(this.unencodedCharacters.keySet());
+            Iterator iter = sortedKeys.iterator();
+            while (iter.hasNext()) {
+                Character ch = (Character)iter.next();
+                char mapped = mapChar(ch.charValue());
+                assert mapped != Typeface.NOT_FOUND;
+            }
         }
     }
 
