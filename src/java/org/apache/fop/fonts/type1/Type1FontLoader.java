@@ -139,6 +139,7 @@ public class Type1FontLoader extends FontLoader {
         //Encoding
         if (afm != null) {
             String encoding = afm.getEncodingScheme();
+            singleFont.setUseNativeEncoding(true);
             if ("AdobeStandardEncoding".equals(encoding)) {
                 singleFont.setEncoding(CodePointMapping.STANDARD_ENCODING);
             } else {
