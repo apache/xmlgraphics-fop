@@ -474,7 +474,9 @@
             This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</li>
           <li>When embedding PostScript fonts, the entire font is always embedded.</li>
           <li>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the
-          original font, containing only the glyphs used, is embedded in the output document.</li>
+          original font, containing only the glyphs used, is embedded in the output document.
+          That's the default, but if you specify encoding-mode="single-byte" (see above), the
+          complete font is embedded.</li>
         </ul>
       </section>
       <section id="substitution">
