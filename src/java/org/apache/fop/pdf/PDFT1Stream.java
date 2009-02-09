@@ -87,4 +87,14 @@ public class PDFT1Stream extends AbstractPDFStream {
         this.pfb = pfb;
     }
 
+    /** {@inheritDoc} */
+    protected void setupFilterList() {
+        if (!getFilterList().isInitialized()) {
+            getFilterList().addDefaultFilters(
+                getDocumentSafely().getFilterMap(),
+                PDFFilterList.FONT_FILTER);
+        }
+        super.setupFilterList();
+    }
+
 }
