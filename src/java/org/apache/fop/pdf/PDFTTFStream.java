@@ -70,14 +70,4 @@ public class PDFTTFStream extends PDFStream {
         getBufferOutputStream().write(data, 0, size);
     }
 
-    /** {@inheritDoc} */
-    protected void setupFilterList() {
-        if (!getFilterList().isInitialized()) {
-            getFilterList().addDefaultFilters(
-                getDocumentSafely().getFilterMap(),
-                PDFFilterList.FONT_FILTER);
-        }
-        super.setupFilterList();
-    }
-
 }
