@@ -75,12 +75,14 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator
 
     private void configure(Configuration cfg, PCLRenderingUtil pclUtil) throws FOPException {
         String rendering = cfg.getChild("rendering").getValue(null);
-        try {
-            pclUtil.setRenderingMode(PCLRenderingMode.valueOf(rendering));
-        } catch (IllegalArgumentException e) {
-            throw new FOPException(
-                "Valid values for 'rendering' are 'quality', 'speed' and 'bitmap'. Value found: "
-                        + rendering);
+        if (rendering != null) {
+            try {
+                pclUtil.setRenderingMode(PCLRenderingMode.valueOf(rendering));
+            } catch (IllegalArgumentException e) {
+                throw new FOPException(
+                    "Valid values for 'rendering' are 'quality', 'speed' and 'bitmap'."
+                        + " Value found: " + rendering);
+            }
         }
 
         String textRendering = cfg.getChild("text-rendering").getValue(null);
