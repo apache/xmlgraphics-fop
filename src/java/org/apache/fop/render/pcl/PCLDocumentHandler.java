@@ -34,12 +34,14 @@ import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.java2d.Java2DPainter;
+import org.apache.fop.render.java2d.Java2DUtil;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 
 /**
@@ -93,6 +95,12 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
         return new PCLRendererConfigurator(getUserAgent());
+    }
+
+    /** {@inheritDoc} */
+    public void setDefaultFontInfo(FontInfo fontInfo) {
+        FontInfo fi = Java2DUtil.buildDefaultJava2DBasedFontInfo(fontInfo, getUserAgent());
+        setFontInfo(fi);
     }
 
     PCLRenderingUtil getPCLUtil() {
