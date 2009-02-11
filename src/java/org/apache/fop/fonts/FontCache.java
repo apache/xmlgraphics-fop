@@ -81,11 +81,18 @@ public final class FontCache implements Serializable {
     }
 
     private static File getUserHome() {
-        String s = System.getProperty("user.home");
-        if (s != null) {
-            File userDir = new File(s);
-            if (userDir.exists()) {
-                return userDir;
+        return toDirectory(System.getProperty("user.home"));
+    }
+
+    private static File getTempDirectory() {
+        return toDirectory(System.getProperty("java.io.tmpdir"));
+    }
+
+    private static File toDirectory(String path) {
+        if (path != null) {
+            File dir = new File(path);
+            if (dir.exists()) {
+                return dir;
             }
         }
         return null;
@@ -101,7 +108,15 @@ public final class FontCache implements Serializable {
         if (userHome != null) {
             File fopUserDir = new File(userHome, FOP_USER_DIR);
             if (forWriting) {
-                fopUserDir.mkdir();
+                boolean writable = fopUserDir.canWrite();
+                if (!fopUserDir.exists()) {
+                    writable = fopUserDir.mkdir();
+                }
+                if (!writable) {
+                    userHome = getTempDirectory();
+                    fopUserDir = new File(userHome, FOP_USER_DIR);
+                    fopUserDir.mkdir();
+                }
             }
             return new File(fopUserDir, DEFAULT_CACHE_FILENAME);
         }
