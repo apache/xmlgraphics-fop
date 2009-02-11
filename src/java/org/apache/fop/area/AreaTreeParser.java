@@ -42,6 +42,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.logging.Log;
@@ -250,7 +251,7 @@ public class AreaTreeParser {
                 delegate.startDocument();
                 delegate.startElement(uri, localName, qName, attributes);
             } else {
-                lastAttributes = attributes;
+                lastAttributes = new AttributesImpl(attributes);
                 boolean handled = true;
                 if ("".equals(uri)) {
                     Maker maker = (Maker)makers.get(localName);
