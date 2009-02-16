@@ -22,6 +22,7 @@ package org.apache.fop.plan;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -43,6 +44,7 @@ import org.apache.xmlgraphics.image.loader.impl.AbstractImagePreloader;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 
+import org.apache.fop.util.DefaultErrorListener;
 import org.apache.fop.util.UnclosableInputStream;
 
 /**
@@ -71,21 +73,16 @@ public class PreloaderPlan extends AbstractImagePreloader {
 
         InputStream in = new UnclosableInputStream(ImageUtil.needInputStream(src));
         try {
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            Transformer transformer = tFactory.newTransformer();
-            Source source = new StreamSource(in);
-            DOMResult res = new DOMResult();
-            transformer.transform(source, res);
-
-            //Have to render the plan to know its size
-            PlanRenderer pr = new PlanRenderer();
-            Document planDoc = (Document)res.getNode();
+            Document planDoc = getDocument(in);
             Element rootEl = planDoc.getDocumentElement();
-            if (!PlanElementMapping.NAMESPACE.equals(rootEl.getNamespaceURI())) {
+            if (!PlanElementMapping.NAMESPACE.equals(
+                    rootEl.getNamespaceURI())) {
                 in.reset();
                 return null;
             }
 
+            //Have to render the plan to know its size
+            PlanRenderer pr = new PlanRenderer();
             Document svgDoc = pr.createSVGDocument(planDoc);
             float width = pr.getWidth();
             float height = pr.getHeight();
@@ -117,6 +114,21 @@ public class PreloaderPlan extends AbstractImagePreloader {
                     + e.getMessage());
             return null;
         }
+    }
+
+    private Document getDocument(InputStream in) throws TransformerException {
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        //Custom error listener to minimize output to console
+        ErrorListener errorListener = new DefaultErrorListener(log);
+        tFactory.setErrorListener(errorListener);
+        Transformer transformer = tFactory.newTransformer();
+        transformer.setErrorListener(errorListener);
+        Source source = new StreamSource(in);
+        DOMResult res = new DOMResult();
+        transformer.transform(source, res);
+
+        Document doc = (Document)res.getNode();
+        return doc;
     }
 
 }
