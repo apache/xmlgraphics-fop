@@ -20,13 +20,15 @@
 package org.apache.fop.pdf;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Special PDFStream for embeddable TrueType fonts.
  */
-public class PDFTTFStream extends PDFStream {
+public class PDFTTFStream extends AbstractPDFFontStream {
 
     private int origLength;
+    private byte[] ttfData;
 
     /**
      * Main constructor
@@ -35,6 +37,15 @@ public class PDFTTFStream extends PDFStream {
     public PDFTTFStream(int len) {
         super();
         origLength = len;
+    }
+
+    /** {@inheritDoc} */
+    protected int getSizeHint() throws IOException {
+        if (this.ttfData != null) {
+            return ttfData.length;
+        } else {
+            return 0; //no hint available
+        }
     }
 
     /**
@@ -54,6 +65,11 @@ public class PDFTTFStream extends PDFStream {
     }
 
     /** {@inheritDoc} */
+    protected void outputRawStreamData(OutputStream out) throws IOException {
+        out.write(this.ttfData);
+    }
+
+    /** {@inheritDoc} */
     protected void populateStreamDict(Object lengthEntry) {
         put("Length1", origLength);
         super.populateStreamDict(lengthEntry);
@@ -66,8 +82,8 @@ public class PDFTTFStream extends PDFStream {
      * @throws IOException in case of an I/O problem
      */
     public void setData(byte[] data, int size) throws IOException {
-        this.data.clear();
-        getBufferOutputStream().write(data, 0, size);
+        this.ttfData = new byte[size];
+        System.arraycopy(data, 0, this.ttfData, 0, size);
     }
 
 }

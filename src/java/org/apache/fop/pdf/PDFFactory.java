@@ -955,7 +955,7 @@ public class PDFFactory {
 
         PDFGoTo gt = new PDFGoTo(page);
         gt.setDestination(dest);
-        getDocument().addTrailerObject(gt);
+        getDocument().registerObject(gt);
         PDFInternalLink internalLink = new PDFInternalLink(gt.referencePDF());
         link.setAction(internalLink);
 

@@ -58,6 +58,14 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="46686" due-to="Alok Singh">
+        Use temporary directory for the font cache if the user home directory is not
+        write-accessible.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="45342" due-to="Emil Maskovsky">
+        AFP Fonts: Fixed interpretation of metric for fonts with fixed metrics and made sure
+        all repeating groups in FNP (Font Position) are processed.
+      </action>
       <action context="Renderers" dev="JM" type="add">
         AFP Output: Added a configuration option to override the resource level defaults in the
         code.

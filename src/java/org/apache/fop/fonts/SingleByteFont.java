@@ -19,8 +19,10 @@
 
 package org.apache.fop.fonts;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,12 +36,14 @@ public class SingleByteFont extends CustomFont {
     private  static Log log = LogFactory.getLog(SingleByteFont.class);
 
     private SingleByteEncoding mapping;
+    private boolean useNativeEncoding = false;
 
     private int[] width = null;
 
     private Map unencodedCharacters;
     //Map<Character, UnencodedCharacter>
     private List additionalEncodings;
+
 
     /**
      * Main constructor.
@@ -190,6 +194,24 @@ public class SingleByteFont extends CustomFont {
     }
 
     /**
+     * Controls whether the font is configured to use its native encoding or if it
+     * may need to be re-encoded for the target format.
+     * @param value true indicates that the configured encoding is the font's native encoding
+     */
+    public void setUseNativeEncoding(boolean value) {
+        this.useNativeEncoding = value;
+    }
+
+    /**
+     * Indicates whether this font is configured to use its native encoding. This
+     * method is used to determine whether the font needs to be re-encoded.
+     * @return true if the font uses its native encoding.
+     */
+    public boolean isUsingNativeEncoding() {
+        return this.useNativeEncoding;
+    }
+
+    /**
      * Sets a width for a character.
      * @param index index of the character
      * @param w the width of the character
@@ -215,6 +237,24 @@ public class SingleByteFont extends CustomFont {
             this.unencodedCharacters.put(new Character(ch.getSingleUnicodeValue()), uc);
         } else {
             //Cannot deal with unicode sequences, so ignore this character
+        }
+    }
+
+    /**
+     * Makes all unencoded characters available through additional encodings. This method
+     * is used in cases where the fonts need to be encoded in the target format before
+     * all text of the document is processed (for example in PostScript when resource optimization
+     * is disabled).
+     */
+    public void encodeAllUnencodedCharacters() {
+        if (this.unencodedCharacters != null) {
+            Set sortedKeys = new java.util.TreeSet(this.unencodedCharacters.keySet());
+            Iterator iter = sortedKeys.iterator();
+            while (iter.hasNext()) {
+                Character ch = (Character)iter.next();
+                char mapped = mapChar(ch.charValue());
+                assert mapped != Typeface.NOT_FOUND;
+            }
         }
     }
 
