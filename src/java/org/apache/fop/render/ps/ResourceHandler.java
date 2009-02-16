@@ -249,6 +249,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
             DSCEvent event = parser.nextEvent();
             event.generate(gen);
         }
+        gen.flush();
     }
 
     private static void reportInvalidDSC() throws DSCException {

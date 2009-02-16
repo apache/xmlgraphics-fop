@@ -482,7 +482,7 @@ list of possible build targets.
 	 need to be defined even if no jdk 14 is available. -->
     <mkdir dir="${build.dir}/temp"/>
     <retroweaver srcdir="${build.classes.dir}" destdir="${build.dir}/temp"
-       classpathref="verify-classpath" lazy="false"
+       classpath="${toString:verify-classpath}" lazy="false"
        verify="true" target="1.4" />
   </target>
   <target name="retro" depends="retro-avail,retro-unavail,compile">
@@ -1125,22 +1125,27 @@ NOTE:
     </taskdef>
     <pmd shortFilenames="true" targetjdk="${javac.target}">
       <ruleset>basic</ruleset>
-      <ruleset>braces</ruleset>
-      <ruleset>codesize</ruleset>
-      <ruleset>clone</ruleset>
-      <ruleset>design</ruleset>
-      <ruleset>finalizers</ruleset>
-      <ruleset>imports</ruleset>
-      <ruleset>strings</ruleset>
       <ruleset>rulesets/migrating_to_14.xml</ruleset>
-      <ruleset>optimizations</ruleset>
       <ruleset>sunsecure</ruleset>
-      <ruleset>unusedcode</ruleset>
       <formatter type="html" toFile="${build.dir}/report_pmd.html"/>
       <fileset dir="${src.java.dir}">
         <include name="**/*.java"/>
       </fileset>
     </pmd>
+  </target>
+  
+  <target name="cpd" depends="init" description="Runs PMD/CDP for a code quality report">
+    <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask">
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <path refid="libs-build-tools-classpath"/>
+      </classpath>
+    </taskdef>
+     <cpd minimumTokenCount="100" outputFile="${build.dir}/report_cpd.txt">
+      <fileset dir="${src.java.dir}">
+         <include name="**/*.java"/>
+      </fileset>
+    </cpd>
   </target>
 <!-- =================================================================== -->
 <!-- Findbugs                                                            -->
@@ -1164,7 +1169,7 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Creates the reports                                                 -->
 <!-- =================================================================== -->
-  <target name="reports" depends="checkstyle, pmd, findbugs" description="Runs all configured code quality reports"/>
+  <target name="reports" depends="checkstyle, pmd, cpd, findbugs" description="Runs all configured code quality reports"/>
 <!-- =================================================================== -->
 <!-- Creates the documentation                                           -->
 <!-- =================================================================== -->
