@@ -35,8 +35,10 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -163,6 +165,14 @@ public class BatchDiffer {
             //Same filtering as in layout engine tests
             if (cfg.getChild("filter-disabled").getValueAsBoolean(true)) {
                 filter = LayoutEngineTestSuite.decorateWithDisabledList(filter);
+            }
+            String manualFilter = cfg.getChild("manual-filter").getValue(null);
+            if (manualFilter != null) {
+                if (manualFilter.indexOf('*') < 0) {
+                    manualFilter = manualFilter + '*';
+                }
+                filter = new AndFileFilter(
+                        new WildcardFileFilter(manualFilter), filter);
             }
 
             int maxfiles = cfg.getChild("max-files").getValueAsInteger(-1);
