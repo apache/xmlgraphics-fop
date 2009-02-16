@@ -164,11 +164,7 @@ public class PDFImageXObject extends PDFXObject {
      * {@inheritDoc}
      */
     protected void setupFilterList() {
-        if (!getFilterList().isInitialized()) {
-            getFilterList().addDefaultFilters(
-                getDocumentSafely().getFilterMap(),
-                pdfimage.getFilterHint());
-        }
+        addDefaultFilter(pdfimage.getFilterHint());
         super.setupFilterList();
     }
 

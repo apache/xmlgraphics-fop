@@ -60,11 +60,7 @@ public class PDFMetadata extends PDFStream {
 
     /** {@inheritDoc} */
     protected void setupFilterList() {
-        if (!getFilterList().isInitialized()) {
-            getFilterList().addDefaultFilters(
-                getDocumentSafely().getFilterMap(),
-                PDFFilterList.METADATA_FILTER);
-        }
+        addDefaultFilter(PDFFilterList.METADATA_FILTER);
         super.setupFilterList();
     }
 

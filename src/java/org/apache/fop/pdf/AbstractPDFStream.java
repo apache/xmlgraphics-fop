@@ -47,13 +47,21 @@ public abstract class AbstractPDFStream extends PDFDictionary {
      * from outside.
      */
     protected void setupFilterList() {
+        addDefaultFilter(PDFFilterList.DEFAULT_FILTER);
+        prepareImplicitFilters();
+        getDocument().applyEncryption(this);
+    }
+
+    /**
+     * Adds the default filter to the filter list if the filter list hasn't been initialized, yet.
+     * @param filterName the name of the default filter to use
+     */
+    protected void addDefaultFilter(String filterName) {
         if (!getFilterList().isInitialized()) {
             getFilterList().addDefaultFilters(
                 getDocumentSafely().getFilterMap(),
-                PDFFilterList.DEFAULT_FILTER);
+                filterName);
         }
-        prepareImplicitFilters();
-        getDocument().applyEncryption(this);
     }
 
     /**

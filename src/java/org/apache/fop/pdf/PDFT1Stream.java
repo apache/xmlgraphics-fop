@@ -28,13 +28,11 @@ import org.apache.fop.fonts.type1.PFBData;
 /**
  * Special PDFStream for embedding Type 1 fonts.
  */
-public class PDFT1Stream extends AbstractPDFStream {
+public class PDFT1Stream extends AbstractPDFFontStream {
 
     private PFBData pfb;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected int getSizeHint() throws IOException {
         if (this.pfb != null) {
             return pfb.getLength();
