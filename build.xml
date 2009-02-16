@@ -482,7 +482,7 @@ list of possible build targets.
 	 need to be defined even if no jdk 14 is available. -->
     <mkdir dir="${build.dir}/temp"/>
     <retroweaver srcdir="${build.classes.dir}" destdir="${build.dir}/temp"
-       classpathref="verify-classpath" lazy="false"
+       classpath="${toString:verify-classpath}" lazy="false"
        verify="true" target="1.4" />
   </target>
   <target name="retro" depends="retro-avail,retro-unavail,compile">
