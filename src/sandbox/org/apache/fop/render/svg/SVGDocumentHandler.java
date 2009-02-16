@@ -98,6 +98,7 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
 
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
+        super.startDocument();
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setNamespaceAware(true);
         builderFactory.setValidating(false);

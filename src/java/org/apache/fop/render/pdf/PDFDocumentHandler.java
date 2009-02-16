@@ -120,14 +120,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
+        super.startDocument();
         try {
-            if (getUserAgent() == null) {
-                throw new IllegalStateException(
-                        "User agent must be set before starting PDF generation");
-            }
-            if (this.outputStream == null) {
-                throw new IllegalStateException("OutputStream hasn't been set through setResult()");
-            }
             this.pdfDoc = pdfUtil.setupPDFDocument(this.outputStream);
         } catch (IOException e) {
             throw new IFException("I/O error in startDocument()", e);

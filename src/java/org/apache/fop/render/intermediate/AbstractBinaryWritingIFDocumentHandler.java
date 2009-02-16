@@ -107,6 +107,14 @@ public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFD
     }
 
     /** {@inheritDoc} */
+    public void startDocument() throws IFException {
+        super.startDocument();
+        if (this.outputStream == null) {
+            throw new IllegalStateException("OutputStream hasn't been set through setResult()");
+        }
+    }
+
+    /** {@inheritDoc} */
     public void endDocument() throws IFException {
         if (this.ownOutputStream) {
             IOUtils.closeQuietly(this.outputStream);

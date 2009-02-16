@@ -64,6 +64,14 @@ public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
     }
 
     /** {@inheritDoc} */
+    public void startDocument() throws IFException {
+        if (getUserAgent() == null) {
+            throw new IllegalStateException(
+                    "User agent must be set before starting document generation");
+        }
+    }
+
+    /** {@inheritDoc} */
     public void startDocumentHeader() throws IFException {
         //nop
     }
