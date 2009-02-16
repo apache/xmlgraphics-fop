@@ -65,6 +65,7 @@ public class SVGPrintDocumentHandler extends AbstractSVGDocumentHandler {
 
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
+        super.startDocument();
         try {
             handler.startDocument();
             handler.startPrefixMapping("", NAMESPACE);

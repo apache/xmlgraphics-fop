@@ -125,15 +125,8 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
+        super.startDocument();
         try {
-            if (getUserAgent() == null) {
-                throw new IllegalStateException(
-                        "User agent must be set before starting PDF generation");
-            }
-            if (this.outputStream == null) {
-                throw new IllegalStateException("OutputStream hasn't been set through setResult()");
-            }
-            log.debug("Rendering areas to PCL...");
             this.gen = new PCLGenerator(this.outputStream, getResolution());
 
             if (!pclUtil.isPJLDisabled()) {

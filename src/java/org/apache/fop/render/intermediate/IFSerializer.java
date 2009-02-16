@@ -143,6 +143,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
+        super.startDocument();
         try {
             handler.startDocument();
             handler.startPrefixMapping("", NAMESPACE);
