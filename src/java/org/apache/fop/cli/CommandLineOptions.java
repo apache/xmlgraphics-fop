@@ -327,6 +327,8 @@ public class CommandLineOptions {
                 i = i + parseAreaTreeOption(args, i);
             } else if (args[i].equals("-if")) {
                 i = i + parseIntermediateFormatOption(args, i);
+            } else if (args[i].equals("-a")) {
+                this.renderingOptions.put("accessibility", Boolean.TRUE);
             } else if (args[i].equals("-v")) {
                 printVersion();
                 return false;
@@ -1129,6 +1131,7 @@ public class CommandLineOptions {
             + "  -nocopy           PDF file will be encrypted without copy content permission\n"
             + "  -noedit           PDF file will be encrypted without edit content permission\n"
             + "  -noannotations    PDF file will be encrypted without edit annotation permission\n"
+            + "  -a                enables accessibility features (Tagged PDF etc., default off)\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
             + " [INPUT]  \n"

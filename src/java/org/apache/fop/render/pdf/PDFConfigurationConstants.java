@@ -49,4 +49,6 @@ public interface PDFConfigurationConstants {
      * PDF/X profile is active).
      */
     String KEY_DISABLE_SRGB_COLORSPACE = "disable-srgb-colorspace";
+    /** PDF Accessibility */
+    String ACCESSIBLITY = "accessibility";
 }

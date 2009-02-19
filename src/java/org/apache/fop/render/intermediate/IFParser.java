@@ -481,7 +481,8 @@ public class IFParser implements IFConstants {
                 s = lastAttributes.getValue("word-spacing");
                 int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
-                painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
+                String ptr = lastAttributes.getValue("ptr"); // used for accessibility
+                painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString(), ptr);
             }
 
             public boolean ignoreCharacters() {
@@ -576,9 +577,10 @@ public class IFParser implements IFConstants {
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
                 Map foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
+                String ptr = lastAttributes.getValue("ptr"); // used for accessibility
                 if (foreignObject != null) {
                     painter.drawImage(foreignObject,
-                            new Rectangle(x, y, width, height));
+                            new Rectangle(x, y, width, height), ptr);
                     foreignObject = null;
                 } else {
                     String uri = lastAttributes.getValue(
@@ -586,7 +588,7 @@ public class IFParser implements IFConstants {
                     if (uri == null) {
                         throw new IFException("xlink:href is missing on image", null);
                     }
-                    painter.drawImage(uri, new Rectangle(x, y, width, height));
+                    painter.drawImage(uri, new Rectangle(x, y, width, height), ptr);
                 }
                 resetForeignAttributes();
                 inForeignObject = false;

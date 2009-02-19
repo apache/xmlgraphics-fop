@@ -62,6 +62,7 @@ public class Character extends FObj {
     private CommonTextDecoration textDecoration;
     // private ToBeImplementedProperty textShadow;
     private Property wordSpacing;
+    private String ptr;  // used for accessibility
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
     //     private CommonMarginInline commonMarginInline;
@@ -108,6 +109,7 @@ public class Character extends FObj {
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         textDecoration = pList.getTextDecorationProps();
         wordSpacing = pList.get(PR_WORD_SPACING);
+        ptr = pList.get(PR_X_PTR).getString();  // used for accessibility
     }
 
     /** {@inheritDoc} */
@@ -205,6 +207,11 @@ public class Character extends FObj {
     /** @return the "keep-with-previous" property */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
+    }
+
+    /** @return the "foi:ptr" property.  */
+    public String getPtr() {
+        return ptr;
     }
 
     /** {@inheritDoc} */

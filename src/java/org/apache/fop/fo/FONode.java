@@ -36,6 +36,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.CharUtilities;
@@ -419,6 +420,8 @@ public abstract class FONode implements Cloneable {
             return "fo:" + localName;
         } else if (namespaceURI.equals(ExtensionElementMapping.URI)) {
             return "fox:" + localName;
+        } else if (namespaceURI.equals(InternalElementMapping.URI)) {
+            return "foi:" + localName;  // used FOP internally for accessibility
         } else if (namespaceURI.equals(SVGElementMapping.URI)) {
             return "svg:" + localName;
         } else {

@@ -83,7 +83,13 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler, ImageHandl
         float y = (float)pos.getY() / 1000f;
         float w = (float)pos.getWidth() / 1000f;
         float h = (float)pos.getHeight() / 1000f;
-        generator.placeImage(x, y, w, h, xobj);
+        if (context.getUserAgent().accessibilityEnabled()) {
+            String structElemType = pdfContext.getStructElemType();
+            int sequenceNum = pdfContext.getSequenceNum();
+            generator.placeImage(x, y, w, h, xobj, structElemType, sequenceNum);
+        } else {
+            generator.placeImage(x, y, w, h, xobj);
+        }
     }
 
     /** {@inheritDoc} */

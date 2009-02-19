@@ -85,6 +85,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         transferForeignAttributes(viewportArea);
 
         Viewport vp = new Viewport(viewportArea);
+        TraitSetter.addPtr(vp, fobj.getPtr());  // used for accessibility
         TraitSetter.setProducerID(vp, fobj.getId());
         vp.setIPD(imageLayout.getViewportSize().width);
         vp.setBPD(imageLayout.getViewportSize().height);

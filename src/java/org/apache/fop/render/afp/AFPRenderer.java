@@ -375,7 +375,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE };
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+    public void drawImage(String uri, Rectangle2D pos, Map foreignAttributes, String ptr) {
         uri = URISpecification.getURL(uri);
         paintingState.setImageUri(uri);
 
@@ -506,7 +506,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
 
     /** {@inheritDoc} */
     public void renderImage(Image image, Rectangle2D pos) {
-        drawImage(image.getURL(), pos, image.getForeignAttributes());
+        drawImage(image.getURL(), pos, image.getForeignAttributes(),"");
     }
 
     /** {@inheritDoc} */

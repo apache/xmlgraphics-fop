@@ -176,7 +176,7 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect) throws IFException {
+    public void drawImage(String uri, Rectangle rect, String ptr) throws IFException {
         try {
             endTextObject();
         } catch (IOException ioe) {
@@ -186,7 +186,7 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect) throws IFException {
+    public void drawImage(Document doc, Rectangle rect, String ptr) throws IFException {
         try {
             endTextObject();
         } catch (IOException ioe) {
@@ -338,7 +338,7 @@ public class PSPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException {
+            int[] dx, String text, String ptr) throws IFException {
         try {
             //Note: dy is currently ignored
             PSGenerator generator = getGenerator();

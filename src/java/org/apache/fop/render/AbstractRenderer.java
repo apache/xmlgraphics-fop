@@ -737,11 +737,13 @@ public abstract class AbstractRenderer
         currentBPPosition += viewport.getOffset();
         Rectangle2D contpos = viewport.getContentPosition();
         if (content instanceof Image) {
-            renderImage((Image) content, contpos);
+            String ptr = (String) viewport.getTrait(Trait.PTR);
+            renderImage((Image) content, contpos, ptr);
         } else if (content instanceof Container) {
             renderContainer((Container) content);
         } else if (content instanceof ForeignObject) {
-            renderForeignObject((ForeignObject) content, contpos);
+            String ptr = (String) viewport.getTrait(Trait.PTR);
+            renderForeignObject((ForeignObject) content, contpos, ptr);
         } else if (content instanceof InlineBlockParent) {
             renderInlineBlockParent((InlineBlockParent) content);
         }
@@ -754,9 +756,10 @@ public abstract class AbstractRenderer
      *
      * @param image  The image
      * @param pos    The target position of the image
+     * @param ptr  used for accessibility
      * (todo) Make renderImage() protected
      */
-    public void renderImage(Image image, Rectangle2D pos) {
+    public void renderImage(Image image, Rectangle2D pos, String ptr) {
         // Default: do nothing.
         // Some renderers (ex. Text) don't support images.
     }
@@ -780,9 +783,10 @@ public abstract class AbstractRenderer
      *
      * @param fo   The foreign object area
      * @param pos  The target position of the foreign object
+     * @param ptr  used for accessibility
      * (todo) Make renderForeignObject() protected
      */
-    protected void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+    protected void renderForeignObject(ForeignObject fo, Rectangle2D pos, String ptr) {
         // Default: do nothing.
         // Some renderers (ex. Text) don't support foreign objects.
     }

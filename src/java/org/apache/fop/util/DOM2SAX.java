@@ -77,6 +77,15 @@ public class DOM2SAX {
             contentHandler.endDocument();
         }
     }
+    
+    /**
+     * Writes the given fragment using the given ContentHandler.
+     * @param node DOM node
+     * @throws SAXException In case of a problem while writing XML
+     */
+    public void writeFragment(Node node) throws SAXException {
+        writeNode(node);
+    }
 
     /**
      * Begin the scope of namespace prefix. Forward the event to the SAX handler

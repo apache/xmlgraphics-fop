@@ -48,6 +48,7 @@ public abstract class PDFTextUtil {
     public static final int TR_CLIP = 7;
 
     private boolean inTextObject = false;
+    private boolean artifactMode = false;
     private String startText;
     private String endText;
     private boolean useMultiByte;
@@ -116,6 +117,15 @@ public abstract class PDFTextUtil {
     }
 
     /**
+     * Indicates whether we are in a text object and if that text object represents
+     * an artifact.
+     * @return true if in artifact-mode text object
+     */
+    public boolean inArtifactMode() {
+        return this.artifactMode;
+    }
+
+    /**
      * Called when a new text object should be started. Be sure to call setFont() before
      * issuing any text painting commands.
      */
@@ -128,11 +138,51 @@ public abstract class PDFTextUtil {
     }
 
     /**
+     * Begin of a regular text object, used for accessibility
+     * @param mcid of text object
+     * @param structElemType of parent
+     */
+    public void beginTextObjectAccess(int mcid, String structElemType) {
+        if (inTextObject) {
+            throw new IllegalStateException("Already in text object");
+        }
+           write(structElemType + " <</MCID "
+                   + String.valueOf(mcid) + ">>\nBDC\nBT\n");
+        this.inTextObject = true;
+    }
+
+    /**
+     * Begin of a text object marked as artifact (fo:leader in XSL-FO) text object.
+     * Used for accessibility.
+     */
+    public void beginArtifactTextObject() {
+        if (inTextObject) {
+            throw new IllegalStateException("Already in text object");
+        }
+        write("/Artifact\nBMC\nBT\n");
+        this.inTextObject = true;
+        this.artifactMode = true;
+    }
+
+    /**
      * Called when a text object should be ended.
      */
     public void endTextObject() {
+        endTextObject(false);
+    }
+
+    /**
+     * Called when a text object should be ended.
+     * @param accessEnabled indicating if accessibility is turned on or not
+     */
+    public void endTextObject(boolean accessEnabled) {
         checkInTextObject();
-        write("ET\n");
+        if (accessEnabled) {
+            write("ET\nEMC\n");
+        } else {
+            write("ET\n");
+        }
+        this.artifactMode = false;
         this.inTextObject = false;
         initValues();
     }

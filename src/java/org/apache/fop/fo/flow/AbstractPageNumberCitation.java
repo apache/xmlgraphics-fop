@@ -51,6 +51,7 @@ public abstract class AbstractPageNumberCitation extends FObj {
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
+    private String ptr;  // used for accessibility
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     private String refId;
@@ -96,6 +97,7 @@ public abstract class AbstractPageNumberCitation extends FObj {
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
+        ptr = pList.get(PR_X_PTR).getString();   // used for accessibility
         refId = pList.get(PR_REF_ID).getString();
         textDecoration = pList.getTextDecorationProps();
         // textShadow = pList.get(PR_TEXT_SHADOW);
@@ -138,6 +140,11 @@ public abstract class AbstractPageNumberCitation extends FObj {
         return textDecoration;
     }
 
+    /** @return the "foi:ptr" property.  */
+    public String getPtr() {
+        return ptr;
+    }
+    
     /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;

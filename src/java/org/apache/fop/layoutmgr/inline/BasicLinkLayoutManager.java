@@ -56,6 +56,7 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
     private void setupBasicLinkArea(InlineArea area) {
         BasicLink fobj = (BasicLink) this.fobj;
         // internal destinations take precedence:
+        area.addTrait(Trait.PTR, fobj.getPtr());  // used for accessibility
         if (fobj.hasInternalDestination()) {
             String idref = fobj.getInternalDestination();
             PageSequenceLayoutManager pslm = getPSLM();

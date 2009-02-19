@@ -153,10 +153,11 @@ public interface IFPainter {
      * @param wordSpacing additional spacing between words (may be 0)
      * @param dx an array of adjustment values for each character in X-direction (may be null)
      * @param text the text
+     * @param ptr used for accessibility
      * @throws IFException if an error occurs while handling this event
      */
     void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException;
+            int[] dx, String text, String ptr) throws IFException;
 
     /**
      * Restricts the current clipping region with the given rectangle.
@@ -205,18 +206,20 @@ public interface IFPainter {
      * an fo:external-graphic in XSL-FO.
      * @param uri the image's URI
      * @param rect the rectangle in which the image shall be painted
+     * @param ptr used for accessibility
      * @throws IFException if an error occurs while handling this event
      */
-    void drawImage(String uri, Rectangle rect) throws IFException;
+    void drawImage(String uri, Rectangle rect, String ptr) throws IFException;
 
     /**
      * Draws an image (represented by a DOM document) inside a given rectangle. This is the
      * equivalent to an fo:instream-foreign-object in XSL-FO.
      * @param doc the DOM document containing the foreign object
      * @param rect the rectangle in which the image shall be painted
+     * @param ptr used for accessibility 
      * @throws IFException if an error occurs while handling this event
      */
-    void drawImage(Document doc, Rectangle rect) throws IFException;
+    void drawImage(Document doc, Rectangle rect, String ptr) throws IFException;
     //Note: For now, all foreign objects are handled as DOM documents. At the moment, all known
     //implementations use a DOM anyway, so optimizing this to work with SAX wouldn't result in
     //any performance benefits. The IFRenderer itself has a DOM anyway. Only the IFParser could

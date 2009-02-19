@@ -183,7 +183,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect) throws IFException {
+    public void drawImage(String uri, Rectangle rect, String ptr) throws IFException {
         String name = documentHandler.getPageSegmentNameFor(uri);
         if (name != null) {
             float[] srcPts = {rect.x, rect.y};
@@ -195,7 +195,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect) throws IFException {
+    public void drawImage(Document doc, Rectangle rect, String ptr) throws IFException {
         drawImageUsingDocument(doc, rect);
     }
 
@@ -312,7 +312,7 @@ public class AFPPainter extends AbstractIFPainter {
     /** {@inheritDoc} */
     public void drawText(int x, int y,
             final int letterSpacing, final int wordSpacing, final int[] dx,
-            final String text) throws IFException {
+            final String text, final String ptr) throws IFException {
         final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
 

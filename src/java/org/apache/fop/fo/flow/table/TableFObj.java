@@ -46,6 +46,7 @@ public abstract class TableFObj extends FObj {
     private Numeric borderBeforePrecedence;
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
+    private String ptr;
 
     ConditionalBorder borderBefore;
     ConditionalBorder borderAfter;
@@ -71,6 +72,7 @@ public abstract class TableFObj extends FObj {
         borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
         borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
         borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
+        ptr = pList.get(PR_X_PTR).getString();
         if (getNameId() != FO_TABLE //Separate check for fo:table in Table.java
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
@@ -235,6 +237,11 @@ public abstract class TableFObj extends FObj {
         }
     }
 
+    /** @return the "foi:ptr" property.  */
+    public String getPtr() {
+        return ptr;
+    }
+    
     /**
      * Prepares the borders of this element if the collapsing-border model is in use.
      * Conflict resolution with parent elements is done where applicable.

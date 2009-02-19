@@ -65,6 +65,7 @@ public class BasicLink extends Inline {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+
         // destinationPlacementOffset = pList.get(PR_DESTINATION_PLACEMENT_OFFSET);
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         // indicateDestination = pList.get(PR_INDICATE_DESTINATION);
@@ -156,6 +157,11 @@ public class BasicLink extends Inline {
      */
     public int getShowDestination() {
         return this.showDestination;
+    }
+
+    /** @return the "foi:ptr" property.  */
+    public String getPtr() {
+        return super.getPtr();
     }
 
     /** {@inheritDoc} */

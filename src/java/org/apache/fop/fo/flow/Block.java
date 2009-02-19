@@ -71,6 +71,7 @@ public class Block extends FObjMixed implements BreakPropertySet {
     private int lineHeightShiftAdjustment;
     private int lineStackingStrategy;
     private Numeric orphans;
+    private String ptr;  //used for accessibility
     private int whiteSpaceTreatment;
     private int span;
     private int textAlign;
@@ -122,6 +123,7 @@ public class Block extends FObjMixed implements BreakPropertySet {
         lineHeightShiftAdjustment = pList.get(PR_LINE_HEIGHT_SHIFT_ADJUSTMENT).getEnum();
         lineStackingStrategy = pList.get(PR_LINE_STACKING_STRATEGY).getEnum();
         orphans = pList.get(PR_ORPHANS).getNumeric();
+        ptr = pList.get(PR_X_PTR).getString();  //used for accessibility
         whiteSpaceTreatment = pList.get(PR_WHITE_SPACE_TREATMENT).getEnum();
         span = pList.get(PR_SPAN).getEnum();
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
@@ -171,6 +173,11 @@ public class Block extends FObjMixed implements BreakPropertySet {
         return breakAfter;
     }
 
+    /** @return the "foi:ptr" property.  */
+    public String getPtr() {
+        return ptr;
+    }
+    
     /** @return the "break-before" property. */
     public int getBreakBefore() {
         return breakBefore;

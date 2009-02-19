@@ -37,6 +37,7 @@ public class Inline extends InlineLevel {
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
+    private String ptr;  // used for accessibility
     private int dominantBaseline;
     // Unused but valid items, commented out for performance:
     //     private CommonRelativePosition commonRelativePosition;
@@ -66,6 +67,7 @@ public class Inline extends InlineLevel {
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
+        ptr = pList.get(PR_X_PTR).getString(); // used for accessibility
     }
 
     /** {@inheritDoc} */
@@ -142,6 +144,11 @@ public class Inline extends InlineLevel {
     /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
+    }
+
+    /** @return the "foi:ptr" property.  */
+    public String getPtr() {
+        return ptr;
     }
 
     /** {@inheritDoc} */

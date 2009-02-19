@@ -443,7 +443,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
+    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes, String ptr) {
         //No images are painted here
     }
 

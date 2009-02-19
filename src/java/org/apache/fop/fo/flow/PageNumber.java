@@ -47,6 +47,7 @@ public class PageNumber extends FObj {
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
+    private String ptr; // used for accessibility
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     /** Holds the text decoration values. May be null */
@@ -92,6 +93,7 @@ public class PageNumber extends FObj {
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         textDecoration = pList.getTextDecorationProps();
+        ptr = pList.get(PR_X_PTR).getString(); // used for accessibility
         // textShadow = pList.get(PR_TEXT_SHADOW);
 
         // implicit properties
@@ -163,6 +165,11 @@ public class PageNumber extends FObj {
     /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
+    }
+
+    /** @return the "foi:ptr" property.  */
+    public String getPtr() {
+        return ptr;
     }
 
     /** {@inheritDoc} */

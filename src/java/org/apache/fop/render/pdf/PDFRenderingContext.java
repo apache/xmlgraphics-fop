@@ -34,6 +34,11 @@ public class PDFRenderingContext extends AbstractRenderingContext {
     private PDFContentGenerator generator;
     private FontInfo fontInfo;
     private PDFPage page;
+    /** Temp. val. for accessibility, used in PDFImageHandlerRenderedImage */
+    private String structElemType = "";
+
+    /** Temp. val. for accessibility, used in PDFImageHandlerRenderedImage */
+    private int mcid = -1;
 
     /**
      * Main constructor.
@@ -79,4 +84,35 @@ public class PDFRenderingContext extends AbstractRenderingContext {
         return this.fontInfo;
     }
 
+    /**
+     * Used for accessibility, used in PDFPainter.drawImage
+     * @param value to be stored
+     */
+    public void setMCID(int value) {
+        mcid = value;
+    }
+
+    /**
+     * Used for accessibility
+     * @return mcid
+     */
+    public int getSequenceNum() {
+        return mcid;
+    }
+
+    /**
+     * Used for accessibility
+     * @param s the type of the structure element
+     */
+    public void setStructElemType(String s) {
+        structElemType = s;
+    }
+
+    /**
+     * Used for accessibility
+     * @return the type of the structure element
+     */
+    public String getStructElemType() {
+        return structElemType;
+    }
 }

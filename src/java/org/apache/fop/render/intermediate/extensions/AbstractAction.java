@@ -27,6 +27,7 @@ import org.apache.xmlgraphics.util.XMLizable;
 public abstract class AbstractAction implements XMLizable {
 
     private String id;
+    private String ptr; // used for accessibility
 
     /**
      * Sets an ID to make the action referencable.
@@ -43,7 +44,23 @@ public abstract class AbstractAction implements XMLizable {
     public String getID() {
         return this.id;
     }
-
+    
+    /**
+     * Used for accessibility   
+     * @param s representing the ptr
+     */
+    public void setPtr(String s) {
+        this.ptr = s;
+    }
+    
+    /**
+     * Used for accessibility
+     * @return the ptr
+     */
+    public String getPtr() {
+        return this.ptr;
+    }
+    
     /**
      * Indicates whether the action has an ID and is therefore referencable.
      * @return true if the action has an ID

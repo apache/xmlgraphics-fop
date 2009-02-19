@@ -177,22 +177,47 @@ public class PDFFactory {
      * @param pageWidth width of the page in points
      * @param pageHeight height of the page in points
      * @param pageIndex index of the page (zero-based)
+     * @param currentPageParentKey the integer key in the structural parent tree
+     *
+     * @return the created /Page object
+     */
+    public PDFPage makePage(PDFResources resources,
+                            int pageWidth, int pageHeight, int pageIndex,
+                            int currentPageParentKey) {
+        /*
+         * create a PDFPage with the next object number, the given
+         * resources, contents and dimensions
+         */
+        PDFPage page = new PDFPage(resources,                       // old numPages
+                                   pageWidth, pageHeight, pageIndex);
+        if (currentPageParentKey > -1) {
+            //Accessibility is enabled
+            page.setStructParents(currentPageParentKey);
+            //This is a PDF 1.5 feature. It is set as a work-around for a bug in Adobe Acrobat
+            //which reports this missing even if the PDF file is PDF 1.4.
+            page.setTabs(new PDFName("S"));
+        }
+
+        getDocument().assignObjectNumber(page);
+        getDocument().getPages().addPage(page);
+        return page;
+    }
+
+    /**
+     * Make a /Page object. The page is assigned an object number immediately
+     * so references can already be made. The page must be added to the
+     * PDFDocument later using addObject().
+     *
+     * @param resources resources object to use
+     * @param pageWidth width of the page in points
+     * @param pageHeight height of the page in points
+     * @param pageIndex index of the page (zero-based)
      *
      * @return the created /Page object
      */
     public PDFPage makePage(PDFResources resources,
                             int pageWidth, int pageHeight, int pageIndex) {
-
-        /*
-         * create a PDFPage with the next object number, the given
-         * resources, contents and dimensions
-         */
-        PDFPage page = new PDFPage(resources,
-                                   pageWidth, pageHeight, pageIndex);
-
-        getDocument().assignObjectNumber(page);
-        getDocument().getPages().addPage(page);
-        return page;
+        return makePage(resources, pageWidth, pageHeight, pageIndex, -1);
     }
 
     /**
@@ -865,6 +890,17 @@ public class PDFFactory {
         getDocument().assignObjectNumber(pageLabels);
         getDocument().addTrailerObject(pageLabels);
         return pageLabels;
+    }
+
+    /**
+     * Creates and returns a StructTreeRoot object. Used for accessibility.
+     * @return structure Tree Root element
+     */
+    public PDFStructTreeRoot makeStructTreeRoot() {
+        PDFStructTreeRoot structTreeRoot = new PDFStructTreeRoot();
+        getDocument().assignObjectNumber(structTreeRoot);
+        getDocument().addTrailerObject(structTreeRoot);
+        return structTreeRoot;
     }
 
     /**

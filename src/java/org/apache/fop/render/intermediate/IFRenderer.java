@@ -818,7 +818,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
 
-            currentBPPosition += (int)(bv.getAllocBPD());
+            currentBPPosition += (bv.getAllocBPD());
         }
         viewportDimensionStack.pop();
     }
@@ -886,6 +886,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         // stuff we only need if a link must be created:
         Rectangle ipRect = null;
         AbstractAction action = null;
+        String ptr = (String) ip.getTrait(Trait.PTR); // used for accessibility
         // make sure the rect is determined *before* calling super!
         int ipp = currentIPPosition;
         int bpp = currentBPPosition + ip.getOffset();
@@ -929,6 +930,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         // warn if link trait found but not allowed, else create link
         if (linkTraitFound) {
+            action.setPtr(ptr);  // used for accessibility
             Link link = new Link(action, ipRect);
             this.deferredLinks.add(link);
         }
@@ -963,6 +965,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
+        String ptr = (String)text.getTrait(Trait.PTR); // used for accessibility
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface tf = getTypeface(fontName);
@@ -981,7 +984,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         textUtil.setStartPosition(rx, bl);
         textUtil.setSpacing(text.getTextLetterSpaceAdjust(), text.getTextWordSpaceAdjust());
         super.renderText(text);
-
+        textUtil.setPtr(ptr); // used for accessibility
         textUtil.flush();
         renderTextDecoration(tf, size, text, bl, rx);
     }
@@ -1054,13 +1057,22 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         private static final int INITIAL_BUFFER_SIZE = 16;
         private int[] dx = new int[INITIAL_BUFFER_SIZE];
         private int lastDXPos = 0;
-        private StringBuffer text = new StringBuffer();
+        private final StringBuffer text = new StringBuffer();
         private int startx, starty;
         private int tls, tws;
-        private boolean combined = false;
+        private final boolean combined = false;
+        private String ptr = null; // used for accessibility
 
         void addChar(char ch) {
             text.append(ch);
+        }
+
+        /**
+         * used for accessibility
+         * @param inPtr to be stored
+         */
+        public void setPtr(String inPtr) {
+            ptr = inPtr;
         }
 
         void adjust(int adjust) {
@@ -1105,9 +1117,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                         System.arraycopy(dx, 0, effDX, 0, size);
                     }
                     if (combined) {
-                        painter.drawText(startx, starty, 0, 0, effDX, text.toString());
+                        painter.drawText(startx, starty, 0, 0, effDX, text.toString(), ptr);
                     } else {
-                        painter.drawText(startx, starty, tls, tws, effDX, text.toString());
+                        painter.drawText(startx, starty, tls, tws, effDX, text.toString(), ptr);
                     }
                 } catch (IFException e) {
                     handleIFException(e);
@@ -1118,12 +1130,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void renderImage(Image image, Rectangle2D pos) {
-        drawImage(image.getURL(), pos, image.getForeignAttributes());
+    public void renderImage(Image image, Rectangle2D pos, String ptr) {
+        drawImage(image.getURL(), pos, image.getForeignAttributes(), ptr);
     }
 
     /** {@inheritDoc} */
-    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes, String ptr) {
         Rectangle posInt = new Rectangle(
                 currentIPPosition + (int)pos.getX(),
                 currentBPPosition + (int)pos.getY(),
@@ -1132,7 +1144,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         uri = URISpecification.getURL(uri);
         try {
             establishForeignAttributes(foreignAttributes);
-            painter.drawImage(uri, posInt);
+            painter.drawImage(uri, posInt, ptr);
             resetForeignAttributes();
         } catch (IFException ife) {
             handleIFException(ife);
@@ -1140,7 +1152,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos, String ptr) {
         endTextObject();
         Rectangle posInt = new Rectangle(
                 currentIPPosition + (int)pos.getX(),
@@ -1150,7 +1162,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Document doc = fo.getDocument();
         try {
             establishForeignAttributes(fo.getForeignAttributes());
-            painter.drawImage(doc, posInt);
+            painter.drawImage(doc, posInt, ptr);
             resetForeignAttributes();
         } catch (IFException ife) {
             handleIFException(ife);

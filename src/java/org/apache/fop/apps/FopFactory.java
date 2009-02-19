@@ -99,6 +99,11 @@ public class FopFactory implements ImageContext {
      *  external-graphics.
      */
     private String base = null;
+    
+    /**
+     *  Controls if accessibility is turned on or off
+     */
+    private boolean accessibility = false;
 
     /** The base URL for all hyphen URL resolutions. */
     private String hyphenBase = null;
@@ -181,9 +186,18 @@ public class FopFactory implements ImageContext {
      */
     public FOUserAgent newFOUserAgent() {
         FOUserAgent userAgent = new FOUserAgent(this);
+        userAgent.getRendererOptions().put("accessibility", Boolean.valueOf(this.accessibility));
         return userAgent;
     }
 
+    /**
+     * Used for accessibility to pass value to newFOUserAgent
+     * @param value set through xconf file
+     */
+    void setAccessibility(boolean value) {
+        this.accessibility = value;
+    }
+    
     /**
      * Returns a new {@link Fop} instance. FOP will be configured with a default user agent
      * instance.

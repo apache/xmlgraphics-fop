@@ -42,6 +42,7 @@ public class PDFLink extends PDFObject {
     private float bry;
     private String color;
     private PDFAction action;
+    private Integer structParent;
 
     /**
      * create objects associated with a link annotation (GoToR)
@@ -68,6 +69,15 @@ public class PDFLink extends PDFObject {
         this.action = action;
     }
 
+
+    /**
+     * Used for accessibility
+     * @param mcid of this structParent
+     */
+    public void setStructParent(int mcid) {
+        this.structParent = new Integer(mcid);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -87,6 +97,8 @@ public class PDFLink extends PDFObject {
                    + (brx) + " " + (bry) + " ]\n" + "/C [ "
                    + this.color + " ]\n" + "/Border [ 0 0 0 ]\n" + "/A "
                    + this.action.getAction() + "\n" + "/H /I\n"
+                   + (this.structParent != null
+                           ? "/StructParent " + this.structParent.toString() + "\n" : "")
                    + fFlag + "\n>>\nendobj\n";
         return s;
     }

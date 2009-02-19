@@ -25,10 +25,12 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSelector;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
@@ -504,10 +506,26 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
         TraitSetter.addFontTraits(textArea, font);
         textArea.addTrait(Trait.COLOR, this.foText.getColor());
-
+        textArea.addTrait(Trait.PTR, getPtr());  // used for accessibility
         TraitSetter.addTextDecoration(textArea, this.foText.getTextDecoration());
 
         return textArea;
+    }
+
+    /**
+     * used for accessibility
+     * @return ptr of fobj
+     */
+    private String getPtr() {
+        FObj fobj = this.parentLM.getFObj();
+        if (fobj instanceof org.apache.fop.fo.flow.Block) {
+            return (((org.apache.fop.fo.flow.Block) fobj).getPtr());
+        } else if (fobj instanceof org.apache.fop.fo.flow.Inline) {
+            return (((org.apache.fop.fo.flow.Inline) fobj).getPtr());
+        } else {
+            log.warn("Accessibility: TLM.getPtr-no Ptr found");
+            return "";
+        }
     }
 
     private void addToLetterAdjust(final int index, final int width) {

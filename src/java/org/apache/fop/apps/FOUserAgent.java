@@ -99,6 +99,9 @@ public class FOUserAgent {
     private boolean locatorEnabled = true; // true by default (for error messages).
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
 
+    //TODO Verify that a byte array is the best solution here
+    private byte[] reducedFOTree;  // accessibility: reduced FO
+
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
@@ -153,6 +156,9 @@ public class FOUserAgent {
         setBaseURL(factory.getBaseURL());
         setFontBaseURL(factory.getFontManager().getFontBaseURL());
         setTargetResolution(factory.getTargetResolution());
+        if (this.getRendererOptions().get("accessibility") == null) {
+            this.rendererOptions.put("accessibility", Boolean.FALSE);
+        }
     }
 
     /** @return the associated FopFactory instance */
@@ -196,6 +202,7 @@ public class FOUserAgent {
     public Renderer getRendererOverride() {
         return rendererOverride;
     }
+
 
     /**
      * Sets an explicit FOEventHandler instance which overrides the one
@@ -615,5 +622,34 @@ public class FOUserAgent {
 
     }
 
+    /**
+     * check if accessibility is enabled
+     * @return boolean
+     */
+    public boolean accessibilityEnabled() {
+        Boolean enabled = (Boolean)this.getRendererOptions().get("accessibility");
+        if (enabled != null) {
+            return enabled.booleanValue();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Used for accessibility. Stores the reduced FO tree (the result from the second transform)
+     * for later use.
+     * @param reducedFOTree the result from 2nd transform
+     */
+    public void setReducedFOTree(byte[] reducedFOTree) {
+        this.reducedFOTree = reducedFOTree;
+    }
+
+    /**
+     * Used for accessibility. Returns the reduced FO tree.
+     * @return result from 2nd transform as byte array
+     */
+    public byte[] getReducedFOTree() {
+        return this.reducedFOTree;
+    }
 }
 

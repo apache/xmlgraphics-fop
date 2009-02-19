@@ -146,4 +146,21 @@ public class PDFPage extends PDFResourceContext {
         return this.pageIndex;
     }
 
+    /**
+     * Sets the "StructParents" value.
+     * @param structParents the integer key of this object's entry in the structural parent tree.
+     */
+    public void setStructParents(int structParents) {
+        put("StructParents", structParents);
+    }
+
+    /**
+     * Specifies the tab order for annotations on a page.
+     * @param value one of the allowed values (see PDF 1.5)
+     * @since PDF 1.5
+     */
+    public void setTabs(PDFName value) {
+        put("Tabs", value);
+    }
+
 }

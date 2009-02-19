@@ -42,15 +42,18 @@ import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.render.intermediate.extensions.URIAction;
 import org.apache.fop.render.pdf.PDFDocumentHandler.PageReference;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Implementation of the {@link IFDocumentNavigationHandler} interface for PDF output.
  */
 public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler {
+    private static Log log = LogFactory.getLog(PDFDocumentHandler.class);
+    private final PDFDocumentHandler documentHandler;
 
-    private PDFDocumentHandler documentHandler;
-
-    private Map incompleteActions = new java.util.HashMap();
-    private Map completeActions = new java.util.HashMap();
+    private final Map incompleteActions = new java.util.HashMap();
+    private final Map completeActions = new java.util.HashMap();
 
     /**
      * Default constructor.
@@ -111,6 +114,14 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         PDFLink pdfLink = getPDFDoc().getFactory().makeLink(
                 targetRect2D, pdfAction);
         if (pdfLink != null) {
+          //accessibility: ptr has a value
+            String ptr = link.getAction().getPtr();
+            if (ptr.length() > 0) {
+                this.documentHandler.addLinkToStructElem(ptr, pdfLink);
+                int id = this.documentHandler.getPageLinkCountPlusPageParentKey();
+                pdfLink.setStructParent(id);
+                this.documentHandler.addToParentTree(id, pdfLink );
+            }
             documentHandler.currentPage.addAnnotation(pdfLink);
         }
     }

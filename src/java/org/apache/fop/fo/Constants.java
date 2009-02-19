@@ -771,8 +771,16 @@ public interface Constants {
      * multi-column layouts.
      */
     int PR_X_DISABLE_COLUMN_BALANCING = 273;
+    /** Property constant - FOP proprietary: FOP internal use for accessibility */
+    int PR_X_PTR = 274;
+    /**
+     * Property constant - FOP proprietary: alternative text for e-g and i-f-o.
+     * Used for accessibility.
+     */
+    int PR_X_ALT_TEXT = 275;
+
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 273;
+    int PROPERTY_COUNT = 275;
 
     // compound property constants
 

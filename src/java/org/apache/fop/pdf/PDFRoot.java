@@ -63,7 +63,7 @@ public class PDFRoot extends PDFDictionary {
      */
     public PDFRoot(int objnum, PDFPages pages) {
         super();
-        setObjectNumber(objnum);
+         setObjectNumber(objnum);
         put("Type", new PDFName("Catalog"));
         setRootPages(pages);
     }
@@ -250,6 +250,34 @@ public class PDFRoot extends PDFDictionary {
             throw new NullPointerException("lang must not be null");
         }
         put("Lang", lang);
+    }
+
+    /**
+     * Sets the StructTreeRoot object. Used for accessibility.
+     * @param structTreeRoot of this document
+     */
+    public void setStructTreeRoot(PDFStructTreeRoot structTreeRoot) {
+        if (structTreeRoot == null) {
+            throw new NullPointerException("structTreeRoot must not be null");
+        }
+        put("StructTreeRoot", structTreeRoot);
+    }
+
+    /**
+     * Returns the StructTreeRoot object.
+     * @return the structure tree root (or null if accessibility is not enabled)
+     */
+    public PDFStructTreeRoot getStructTreeRoot() {
+        return (PDFStructTreeRoot)get("StructTreeRoot");
+    }
+
+    /**
+     * Marks this document as conforming to the Tagged PDF conventions.
+     */
+    public void makeTagged() {
+        PDFDictionary dict = new PDFDictionary();
+        dict.put("Marked", Boolean.TRUE);
+        put("MarkInfo", dict);  //new PDFMarkInfo()
     }
 
 }

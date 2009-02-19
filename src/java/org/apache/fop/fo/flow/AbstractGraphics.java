@@ -60,6 +60,7 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
     private int scaling;
     private int textAlign;
     private Length width;
+    private String ptr;   // used for accessibility
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
@@ -94,6 +95,7 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
+        ptr = pList.get(PR_X_PTR).getString();   // used for accessibility
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
@@ -205,6 +207,11 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
     /** @return the "keep-with-previous" property */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
+    }
+
+    /** @return the "foi:ptr" property.  */
+    public String getPtr() {
+        return ptr;
     }
 
     /** @return the graphic's intrinsic width in millipoints */

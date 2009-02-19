@@ -90,6 +90,15 @@ public class FopFactoryConfigurator {
             log.debug("Initializing FopFactory Configuration");
         }
 
+        if (cfg.getChild("accessibility", false) != null) {
+            try {
+                this.factory.setAccessibility(
+                        cfg.getChild("accessibility").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                throw new FOPException(e);
+            }
+        }
+
         // strict configuration
         if (cfg.getChild("strict-configuration", false) != null) {
             try {

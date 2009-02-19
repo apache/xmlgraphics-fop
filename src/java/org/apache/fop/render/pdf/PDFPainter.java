@@ -59,12 +59,18 @@ public class PDFPainter extends AbstractIFPainter {
     /** logging instance */
     private static Log log = LogFactory.getLog(PDFPainter.class);
 
-    private PDFDocumentHandler documentHandler;
+    private final PDFDocumentHandler documentHandler;
 
     /** The current content generator */
     protected PDFContentGenerator generator;
 
-    private PDFBorderPainter borderPainter;
+    private final PDFBorderPainter borderPainter;
+
+    private boolean accessEnabled = false;
+
+    private int mcid; // used for accessibility
+
+    private String structElemType; // used for accessibility
 
     /**
      * Default constructor.
@@ -76,6 +82,7 @@ public class PDFPainter extends AbstractIFPainter {
         this.generator = documentHandler.generator;
         this.borderPainter = new PDFBorderPainter(this.generator);
         this.state = IFState.create();
+        accessEnabled = this.getUserAgent().accessibilityEnabled();
     }
 
     /** {@inheritDoc} */
@@ -122,15 +129,50 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect) throws IFException {
+    public void drawImage(String uri, Rectangle rect, String ptr)
+            throws IFException {
         PDFXObject xobject = getPDFDoc().getXObject(uri);
         if (xobject != null) {
-            placeImage(rect, xobject);
+            if (accessEnabled && ptr.length() > 0) {
+                mcid = this.documentHandler.getMCID();
+                mcid++;                          // fix for Acro Checker
+                this.documentHandler.incMCID();  // simulating a parent text element
+                structElemType = this.documentHandler.getStructElemType(ptr);
+                this.documentHandler.addToTempList(
+                        this.documentHandler.getCurrentParentTreeKey(),
+                        this.documentHandler.getParentTrailerObject(ptr));
+                this.documentHandler.addToTempList(
+                        this.documentHandler.getCurrentParentTreeKey(),
+                        this.documentHandler.getTrailerObject(ptr));
+                placeImageAccess(rect, xobject);
+                this.documentHandler.addChildToStructElemImage(ptr, mcid);
+                this.documentHandler.incMCID();
+            } else {
+                placeImage(rect, xobject);
+            }
             return;
         }
-
-        drawImageUsingURI(uri, rect);
-
+        if (accessEnabled && ptr.length() > 0) {
+            mcid = this.documentHandler.getMCID();
+            mcid++;                          // fix for Acro Checker
+            this.documentHandler.incMCID();  // simulating a parent text element
+            structElemType = this.documentHandler.getStructElemType(ptr);
+            this.documentHandler.addToTempList(
+                    this.documentHandler.getCurrentParentTreeKey(),
+                    this.documentHandler.getParentTrailerObject(ptr));
+            this.documentHandler.addToTempList(
+                    this.documentHandler.getCurrentParentTreeKey(),
+                    this.documentHandler.getTrailerObject(ptr));
+            //PDFRenderingContext pdfContext = new PDFRenderingContext(
+            //        getUserAgent(), generator, this.documentHandler.currentPage, getFontInfo());
+            //pdfContext.setMCID(mcid);
+            //pdfContext.setStructElemType(structElemType);
+            drawImageUsingURI(uri, rect);
+            this.documentHandler.addChildToStructElemImage(ptr, mcid);
+            this.documentHandler.incMCID();
+        } else {
+            drawImageUsingURI(uri, rect);
+        }
         flushPDFDoc();
     }
 
@@ -138,6 +180,8 @@ public class PDFPainter extends AbstractIFPainter {
     protected RenderingContext createRenderingContext() {
         PDFRenderingContext pdfContext = new PDFRenderingContext(
                 getUserAgent(), generator, this.documentHandler.currentPage, getFontInfo());
+        pdfContext.setMCID(mcid);
+        pdfContext.setStructElemType(structElemType);
         return pdfContext;
     }
 
@@ -158,11 +202,43 @@ public class PDFPainter extends AbstractIFPainter {
                           + " cm " + xobj.getName() + " Do\n");
         generator.restoreGraphicsState();
     }
+    /**
+     * Places a previously registered image at a certain place on the page - Accessibility version
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param w width for image
+     * @param h height for image
+     * @param xobj the image XObject
+     */
+    private void placeImageAccess(Rectangle rect, PDFXObject xobj) {
+        generator.saveGraphicsState(structElemType, mcid);
+        generator.add(format(rect.width) + " 0 0 "
+                          + format(-rect.height) + " "
+                          + format(rect.x) + " "
+                          + format(rect.y + rect.height )
+                          + " cm " + xobj.getName() + " Do\n");
+        generator.restoreGraphicsStateAccess();
+    }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect) throws IFException {
-        drawImageUsingDocument(doc, rect);
-
+    public void drawImage(Document doc, Rectangle rect, String ptr) throws IFException {
+        if (accessEnabled && ptr.length() > 0) {
+            mcid = this.documentHandler.getMCID();
+            mcid++;                          // fix for Acro Checker
+            this.documentHandler.incMCID();  // simulating a parent text element
+            structElemType = this.documentHandler.getStructElemType(ptr);
+            this.documentHandler.addToTempList(
+                    this.documentHandler.getCurrentParentTreeKey(),
+                    this.documentHandler.getParentTrailerObject(ptr));
+            this.documentHandler.addToTempList(
+                    this.documentHandler.getCurrentParentTreeKey(),
+                    this.documentHandler.getTrailerObject(ptr));
+            drawImageUsingDocument(doc, rect);
+            this.documentHandler.addChildToStructElemImage(ptr, mcid);
+            this.documentHandler.incMCID();
+        } else {
+            drawImageUsingDocument(doc, rect);
+        }
         flushPDFDoc();
     }
 
@@ -253,10 +329,38 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx,
+            String text, String ptr)
             throws IFException {
-        generator.updateColor(state.getTextColor(), true, null);
-        generator.beginTextObject();
+        if (accessEnabled ) {
+            int mcId;
+            String structElType = "";
+            if (ptr != null && ptr.length() > 0) {
+                mcId = this.documentHandler.getMCID();
+                this.documentHandler.addToTempList(
+                        this.documentHandler.getCurrentParentTreeKey(),
+                        this.documentHandler.getTrailerObject(ptr));
+                structElType = this.documentHandler.getStructElemType(ptr);
+                if (generator.getTextUtil().isInTextObject()) {
+                    generator.separateTextElements(mcId, structElType);
+                }
+                generator.updateColor(state.getTextColor(), true, null);
+                generator.beginTextObjectAccess(mcId, structElType);
+                this.documentHandler.addChildToStructElemText(ptr, mcId);
+                this.documentHandler.incMCID();
+            } else {
+                // <fo:leader leader-pattern="use-content">
+                if (generator.getTextUtil().isInTextObject()) {
+                    generator.separateTextElementFromLeader();
+                }
+                generator.updateColor(state.getTextColor(), true, null);
+                generator.beginLeaderTextObject();
+            }
+        } else {
+            generator.updateColor(state.getTextColor(), true, null);
+            generator.beginTextObject();
+        }
+
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
         //TODO Ignored: state.getFontVariant()
@@ -277,7 +381,7 @@ public class PDFPainter extends AbstractIFPainter {
         PDFTextUtil textutil = generator.getTextUtil();
         textutil.updateTf(fontKey, fontSize, tf.isMultiByte());
 
-        generator.updateCharacterSpacing((float)letterSpacing / 1000f);
+        generator.updateCharacterSpacing(letterSpacing / 1000f);
 
         textutil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, x / 1000f, y / 1000f));
         int l = text.length();

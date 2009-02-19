@@ -30,30 +30,24 @@ import org.apache.fop.fo.UnknownXMLObj;
 import org.apache.fop.fo.extensions.destination.Destination;
 
 /**
- * Element mapping for FOP's proprietary extension to XSL-FO.
+ * Element mapping for FOP's internal extension to XSL-FO.
  */
-public class ExtensionElementMapping extends ElementMapping {
+public class InternalElementMapping extends ElementMapping {
 
     /** The FOP extension namespace URI */
-    public static final String URI = "http://xmlgraphics.apache.org/fop/extensions";
+    public static final String URI = "http://xmlgraphics.apache.org/fop/internal";
 
-    private static final Set propertyAttributes = new java.util.HashSet();
+   private static final Set propertyAttributes = new java.util.HashSet();
 
-    static {
-        //These are FOP's standard extension properties (fox:*)
-        propertyAttributes.add("block-progression-unit");
-        propertyAttributes.add("widow-content-limit");
-        propertyAttributes.add("orphan-content-limit");
-        propertyAttributes.add("internal-destination");
-        propertyAttributes.add("disable-column-balancing");
+   static {
         //These are FOP's extension properties for accessibility
-        propertyAttributes.add("alt");
+        propertyAttributes.add("ptr");
     }
 
     /**
      * Constructor.
      */
-    public ExtensionElementMapping() {
+    public InternalElementMapping() {
         namespaceURI = URI;
     }
 
@@ -63,28 +57,21 @@ public class ExtensionElementMapping extends ElementMapping {
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new HashMap();
-            foObjs.put("outline", new UnknownXMLObj.Maker(URI));
-            foObjs.put("label", new UnknownXMLObj.Maker(URI));
-            foObjs.put("destination", new DestinationMaker());
-            foObjs.put("external-document", new ExternalDocumentMaker());
         }
     }
 
-    static class DestinationMaker extends ElementMapping.Maker {
+    /* static class DestinationMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new Destination(parent);
         }
-    }
+    } */
 
-    static class ExternalDocumentMaker extends ElementMapping.Maker {
-        public FONode make(FONode parent) {
-            return new ExternalDocument(parent);
-        }
-    }
-
-    /** {@inheritDoc} */
+    
+    /**
+     * used internally for accessibility
+     */
     public String getStandardPrefix() {
-        return "fox";
+        return "foi";
     }
 
     /** {@inheritDoc} */

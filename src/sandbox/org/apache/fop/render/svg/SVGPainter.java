@@ -193,7 +193,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect) throws IFException {
+    public void drawImage(String uri, Rectangle rect, String ptr) throws IFException {
         try {
             establish(MODE_NORMAL);
 
@@ -243,7 +243,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect) throws IFException {
+    public void drawImage(Document doc, Rectangle rect, String ptr) throws IFException {
         try {
             establish(MODE_NORMAL);
 
@@ -325,8 +325,10 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
-                throws IFException {
+
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, 
+            String text, String ptr) throws IFException {
+        //Note: ptr is ignored as it is only needed for accessibility
         try {
             establish(MODE_TEXT);
             AttributesImpl atts = new AttributesImpl();

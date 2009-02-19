@@ -461,7 +461,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         double h = bounds.getHeight();
         pageHeight = (int) h;
 
-        this.generator = new PDFContentGenerator(this.pdfDoc, this.ostream, this.currentPage);
+        this.generator = new PDFContentGenerator(this.pdfDoc, this.ostream, this.currentPage,
+                false);
         this.borderPainter = new PDFBorderPainter(this.generator);
 
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFRenderer's
@@ -1073,7 +1074,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     }
 
     /** {@inheritDoc} */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
+    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes, String ptr) {
         endTextObject();
         putImage(url, pos, foreignAttributes);
     }

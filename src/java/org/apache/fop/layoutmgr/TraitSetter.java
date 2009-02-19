@@ -584,6 +584,17 @@ public class TraitSetter {
     }
 
     /**
+     * Adds the ptr trait to the area.
+     * @param area the area to set the traits on
+     * @param ptr string
+     */
+    public static void addPtr(Area area, String ptr) {
+        if (ptr != null && ptr.length() > 0) {
+            area.addTrait(Trait.PTR, ptr);
+        }
+    }
+    
+    /**
      * Sets the producer's ID as a trait on the area. This can be used to track back the
      * generating FO node.
      * @param area the area to set the traits on

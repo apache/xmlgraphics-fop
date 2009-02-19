@@ -834,8 +834,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param url the URI/URL of the image
      * @param pos the position of the image
      * @param foreignAttributes an optional Map with foreign attributes, may be null
+     * @param ptr used for accessibility
      */
-    protected abstract void drawImage(String url, Rectangle2D pos, Map foreignAttributes);
+    protected abstract void drawImage(String url, Rectangle2D pos, Map foreignAttributes, 
+            String ptr);
 
     /**
      * Draw an image at the indicated location.
@@ -843,7 +845,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param pos the position of the image
      */
     protected final void drawImage(String url, Rectangle2D pos) {
-        drawImage(url, pos, null);
+        drawImage(url, pos, null, "");
     }
 
     /**

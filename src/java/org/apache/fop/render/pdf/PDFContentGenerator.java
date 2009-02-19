@@ -50,6 +50,7 @@ public class PDFContentGenerator {
 
     /** the current stream to add PDF commands to */
     private PDFStream currentStream;
+    private boolean accessEnabled; // used for accessibility
 
     /** drawing state */
     protected PDFPaintingState currentState = null;
@@ -63,9 +64,10 @@ public class PDFContentGenerator {
      * @param document the PDF document
      * @param out the output stream the PDF document is generated to
      * @param resourceContext the resource context
+     * @param accessibilityEnabled indicating if accessibility is enabled or not
      */
     public PDFContentGenerator(PDFDocument document, OutputStream out,
-            PDFResourceContext resourceContext) {
+            PDFResourceContext resourceContext, boolean accessibilityEnabled) {
         this.document = document;
         this.outputStream = out;
         this.resourceContext = resourceContext;
@@ -78,6 +80,7 @@ public class PDFContentGenerator {
         };
 
         this.currentState = new PDFPaintingState();
+        this.accessEnabled = accessibilityEnabled;
     }
 
     /**
@@ -153,6 +156,23 @@ public class PDFContentGenerator {
         currentStream.add("q\n");
     }
 
+    /** {@inheritDoc} */
+    protected void saveGraphicsState(String structElemType, int sequenceNum) {
+        endTextObject();
+        currentState.save();
+        startAccessSequence(structElemType, sequenceNum);
+        currentStream.add("q\n");
+    }
+
+    /**
+     * Used for accessibility
+     * @param structElemType Structure Element Type
+     * @param sequenceNum    Sequence number
+     */
+    protected void startAccessSequence(String structElemType, int sequenceNum) {
+        currentStream.add(structElemType + " <</MCID " + String.valueOf(sequenceNum) + ">>\nBDC\n");
+    }
+
     /**
      * Restored the graphics state valid before the previous {@code #saveGraphicsState()}.
      * @param popState true if the state should also be popped, false if only the PDF command
@@ -171,6 +191,35 @@ public class PDFContentGenerator {
         restoreGraphicsState(true);
     }
 
+    /** used for accessibility */
+    protected void restoreGraphicsStateAccess() {
+        endTextObject();
+        currentStream.add("Q\n");
+        currentStream.add("EMC\n");
+        currentState.restore();
+    }
+
+    /**
+     * used for accessibility, separates 2 text elements
+     * @param mcid of new text element
+     * @param structElemType of parent of new text element
+     */
+    protected void separateTextElements(int mcid, String structElemType) {
+        textutil.endTextObject(true);
+        textutil.beginTextObjectAccess(mcid, structElemType);
+    }
+
+    /**
+     * used for accessibility
+     * separates a text element from fo:leader text element
+     */
+    public void separateTextElementFromLeader() {
+        if (!textutil.inArtifactMode()) {
+            textutil.endTextObject(true);
+            textutil.beginArtifactTextObject();
+        }
+    }
+
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
         if (!textutil.isInTextObject()) {
@@ -178,10 +227,30 @@ public class PDFContentGenerator {
         }
     }
 
+    /**
+     * Accessibility beginTextObject
+     * @param mcid of text element
+     * @param structElemType of parent
+     */
+    protected void beginTextObjectAccess(int mcid, String structElemType) {
+        if (!textutil.isInTextObject()) {
+            textutil.beginTextObjectAccess(mcid, structElemType);
+        }
+    }
+
+    /**
+     * Accessibility begin of LeaderTextObject
+     */
+    public void beginLeaderTextObject() {
+        if (!textutil.isInTextObject()) {
+            textutil.beginArtifactTextObject();
+        }
+    }
+
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         if (textutil.isInTextObject()) {
-            textutil.endTextObject();
+            textutil.endTextObject(accessEnabled);
         }
     }
 
@@ -326,5 +395,26 @@ public class PDFContentGenerator {
         restoreGraphicsState();
     }
 
+    /**
+     * Places a previously registered image at a certain place on the page.
+     * Accessibility version
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param w width for image
+     * @param h height for image
+     * @param xobj the image XObject
+     * @param structElemType of this image
+     * @param mcid of this image
+     */
+    public void placeImage(float x, float y, float w, float h, PDFXObject xobj,
+            String structElemType, int mcid) {
+        saveGraphicsState(structElemType, mcid);
+        add(format(w) + " 0 0 "
+                          + format(-h) + " "
+                          + format(x) + " "
+                          + format(y + h)
+                          + " cm\n" + xobj.getName() + " Do\n");
+        restoreGraphicsStateAccess();
+    }
 
 }

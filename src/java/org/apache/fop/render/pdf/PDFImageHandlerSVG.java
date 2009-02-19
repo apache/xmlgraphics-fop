@@ -101,8 +101,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
         float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
-        float sx = pos.width / (float)w;
-        float sy = pos.height / (float)h;
+        float sx = pos.width / w;
+        float sy = pos.height / h;
 
         //Scaling and translation for the bounding box of the image
         AffineTransform scaling = new AffineTransform(
@@ -121,6 +121,11 @@ public class PDFImageHandlerSVG implements ImageHandler {
          */
         generator.comment("SVG setup");
         generator.saveGraphicsState();
+        if (context.getUserAgent().accessibilityEnabled()) {
+            String structElemType = pdfContext.getStructElemType();
+            int sequenceNum = pdfContext.getSequenceNum();
+            generator.startAccessSequence(structElemType, sequenceNum);
+        }
         generator.setColor(Color.black, false);
         generator.setColor(Color.black, true);
 
@@ -168,7 +173,11 @@ public class PDFImageHandlerSVG implements ImageHandler {
             eventProducer.svgRenderingError(this, e, image.getInfo().getOriginalURI());
         }
         generator.getState().restore();
-        generator.restoreGraphicsState();
+        if (context.getUserAgent().accessibilityEnabled()) {
+            generator.restoreGraphicsStateAccess();
+        } else {
+            generator.restoreGraphicsState();
+        }
         generator.comment("SVG end");
     }
 
