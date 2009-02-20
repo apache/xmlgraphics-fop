@@ -623,10 +623,10 @@ public class FOUserAgent {
     }
 
     /**
-     * check if accessibility is enabled
-     * @return boolean
+     * Check if accessibility is enabled.
+     * @return true if accessibility is enabled
      */
-    public boolean accessibilityEnabled() {
+    public boolean isAccessibilityEnabled() {
         Boolean enabled = (Boolean)this.getRendererOptions().get("accessibility");
         if (enabled != null) {
             return enabled.booleanValue();

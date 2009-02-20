@@ -121,7 +121,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
          */
         generator.comment("SVG setup");
         generator.saveGraphicsState();
-        if (context.getUserAgent().accessibilityEnabled()) {
+        if (context.getUserAgent().isAccessibilityEnabled()) {
             String structElemType = pdfContext.getStructElemType();
             int sequenceNum = pdfContext.getSequenceNum();
             generator.startAccessSequence(structElemType, sequenceNum);
@@ -173,7 +173,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
             eventProducer.svgRenderingError(this, e, image.getInfo().getOriginalURI());
         }
         generator.getState().restore();
-        if (context.getUserAgent().accessibilityEnabled()) {
+        if (context.getUserAgent().isAccessibilityEnabled()) {
             generator.restoreGraphicsStateAccess();
         } else {
             generator.restoreGraphicsState();

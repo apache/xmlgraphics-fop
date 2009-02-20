@@ -200,7 +200,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             handler.startPrefixMapping(DocumentNavigationExtensionConstants.PREFIX,
                     DocumentNavigationExtensionConstants.NAMESPACE);
             handler.startElement(EL_DOCUMENT);
-            if (this.getUserAgent().accessibilityEnabled()) {
+            if (this.getUserAgent().isAccessibilityEnabled()) {
                 pageSequenceCounter = 0;
                 DocumentBuilderFactory  factory = DocumentBuilderFactory.newInstance();
                 factory.setNamespaceAware(true);
@@ -269,7 +269,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             }
 
             handler.startElement(EL_PAGE_SEQUENCE, atts);
-            if (this.getUserAgent().accessibilityEnabled()) {
+            if (this.getUserAgent().isAccessibilityEnabled()) {
                 if (doc == null) {
                     doc = parser.parse(
                             new ByteArrayInputStream(this.getUserAgent().getReducedFOTree()));

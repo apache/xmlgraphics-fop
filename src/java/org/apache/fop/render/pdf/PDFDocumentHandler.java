@@ -214,11 +214,21 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         super.startDocument();
         try {
             this.pdfDoc = pdfUtil.setupPDFDocument(this.outputStream);
-            this.accessEnabled = getUserAgent().accessibilityEnabled();
+            this.accessEnabled = getUserAgent().isAccessibilityEnabled();
             if (accessEnabled) {
+                this.pdfDoc.getRoot().makeTagged();
+                log.info("Accessibility is enabled");
+                PDFStructTreeRoot structTreeRoot = this.pdfDoc.getFactory().makeStructTreeRoot();
+                this.pdfDoc.getRoot().setStructTreeRoot(structTreeRoot);
+                PDFStructElem structElemDocument = new PDFStructElem("root", structTreeRoot);
+                this.pdfDoc.assignObjectNumber(structElemDocument);
+                this.pdfDoc.addTrailerObject(structElemDocument);
+                structTreeRoot.addKid(structElemDocument);
+
                 //TODO: make document language variable, see note on wiki page PDF Accessibility
                 //TODO:                and follow-up emails on fop-dev
                 this.pdfDoc.getRoot().setLanguage("en");
+
                 parentTree = new PDFParentTree();
                 pageSequenceCounter = 0;
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -241,7 +251,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     public void endDocument() throws IFException {
         try {
             pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
-            if (getUserAgent().accessibilityEnabled()) {
+            if (getUserAgent().isAccessibilityEnabled()) {
                 PDFNumsArray nums = parentTree.getNums();
                 for (int i = 0; i <= this.parentTreeKey; i++) {
                     PDFArray tArray = new PDFArray();
@@ -288,7 +298,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     public void startPageSequence(String id) throws IFException {
         //TODO page sequence title, country and language
 
-        if (getUserAgent().accessibilityEnabled()) {
+        if (getUserAgent().isAccessibilityEnabled()) {
             try {
                 if (doc == null) {
                     doc = parser.parse(

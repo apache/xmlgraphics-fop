@@ -52,8 +52,6 @@ import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPageLabels;
-import org.apache.fop.pdf.PDFStructElem;
-import org.apache.fop.pdf.PDFStructTreeRoot;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.util.ColorProfileUtil;
 
@@ -76,9 +74,6 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
 
     /** the PDF/X mode (Default: disabled) */
     protected PDFXMode pdfXMode = PDFXMode.DISABLED;
-
-    /** the accessibility mode (Default: false=disabled) */
-    protected boolean accessibility = false;
 
     /** the (optional) encryption parameters */
     protected PDFEncryptionParams encryptionParams;
@@ -174,12 +169,6 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         if (s != null) {
             this.outputProfileURI = s;
         }
-        // used for accessibility
-        setting = userAgent.getRendererOptions().get(ACCESSIBLITY);
-        if (setting != null) {
-            this.accessibility = booleanValueOf(setting);
-        }
-
         setting = userAgent.getRendererOptions().get(KEY_DISABLE_SRGB_COLORSPACE);
         if (setting != null) {
             this.disableSRGBColorSpace = booleanValueOf(setting);
@@ -394,16 +383,6 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         if (pdfAMode.isPDFA1LevelB()) {
             log.debug("PDF/A is active. Conformance Level: " + pdfAMode);
             addPDFA1OutputIntent();
-        }
-        if (this.accessibility) {
-            this.pdfDoc.getRoot().makeTagged();
-            log.info("Accessibility is enabled");
-            PDFStructTreeRoot structTreeRoot = this.pdfDoc.getFactory().makeStructTreeRoot();
-            this.pdfDoc.getRoot().setStructTreeRoot(structTreeRoot);
-            PDFStructElem structElemDocument = new PDFStructElem("root", structTreeRoot);
-            this.pdfDoc.assignObjectNumber(structElemDocument);
-            this.pdfDoc.addTrailerObject(structElemDocument);
-            structTreeRoot.addKid(structElemDocument);
         }
         return this.pdfDoc;
     }

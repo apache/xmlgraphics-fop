@@ -111,7 +111,7 @@ public class Fop {
         if (foTreeBuilder == null) {
             createDefaultHandler();
         }
-        if (this.foUserAgent.accessibilityEnabled()) {
+        if (this.foUserAgent.isAccessibilityEnabled()) {
             return AccessibilityUtil.decorateDefaultHandler(this.foTreeBuilder, foUserAgent);
         } else {
             return this.foTreeBuilder;

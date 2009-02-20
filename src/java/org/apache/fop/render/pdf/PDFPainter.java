@@ -82,7 +82,7 @@ public class PDFPainter extends AbstractIFPainter {
         this.generator = documentHandler.generator;
         this.borderPainter = new PDFBorderPainter(this.generator);
         this.state = IFState.create();
-        accessEnabled = this.getUserAgent().accessibilityEnabled();
+        accessEnabled = this.getUserAgent().isAccessibilityEnabled();
     }
 
     /** {@inheritDoc} */
