@@ -50,15 +50,15 @@
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
-  <xsl:template match="@id">
+  <xsl:template match="fo:*/@id">
     <xsl:param name="run"/>
     <xsl:attribute name="id"><xsl:value-of select="."/>-<xsl:value-of select="$run"/></xsl:attribute>
   </xsl:template>
-  <xsl:template match="@ref-id">
+  <xsl:template match="fo:*/@ref-id">
     <xsl:param name="run"/>
     <xsl:attribute name="ref-id"><xsl:value-of select="."/>-<xsl:value-of select="$run"/></xsl:attribute>
   </xsl:template>
-  <xsl:template match="@internal-destination">
+  <xsl:template match="fo:*/@internal-destination">
     <xsl:param name="run"/>
     <xsl:attribute name="internal-destination"><xsl:value-of select="."/>-<xsl:value-of select="$run"/></xsl:attribute>
   </xsl:template>

@@ -21,10 +21,17 @@ package org.apache.fop.afp.fonts;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.util.StringUtils;
 
@@ -65,6 +72,9 @@ public class CharacterSet {
     /** The encoding used for the code page */
     protected String encoding;
 
+    /** The charset encoder corresponding to this encoding */
+    private CharsetEncoder encoder;
+
     /** The character set relating to the font */
     protected String name;
 
@@ -104,6 +114,8 @@ public class CharacterSet {
         }
         this.codePage = codePage;
         this.encoding = encoding;
+        this.encoder = Charset.forName(encoding).newEncoder();
+        this.encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
         this.path = path;
 
         this.characterSetOrientations = new java.util.HashMap(4);
@@ -304,6 +316,33 @@ public class CharacterSet {
     }
 
     /**
+     * Indicates whether the given char in the character set.
+     * @param c the character to check
+     * @return true if the character is in the character set
+     */
+    public boolean hasChar(char c) {
+        return encoder.canEncode(c);
+    }
+
+    /**
+     * Encodes a character sequence to a byte array.
+     * @param chars the characters
+     * @return the encoded characters
+     * @throws CharacterCodingException if the encoding operation fails
+     */
+    public byte[] encodeChars(CharSequence chars) throws CharacterCodingException {
+        ByteBuffer bb = encoder.encode(CharBuffer.wrap(chars));
+        if (bb.hasArray()) {
+            return bb.array();
+        } else {
+            bb.rewind();
+            byte[] bytes = new byte[bb.remaining()];
+            bb.get(bytes);
+            return bytes;
+        }
+    }
+
+    /**
      * Map a Unicode character to a code point in the font.
      * The code tables are already converted to Unicode therefore
      * we can use the identity mapping.
@@ -312,6 +351,7 @@ public class CharacterSet {
      * @return the mapped character
      */
     public char mapChar(char c) {
+        //TODO This is not strictly correct but we'll let it be for the moment
         return c;
     }
 

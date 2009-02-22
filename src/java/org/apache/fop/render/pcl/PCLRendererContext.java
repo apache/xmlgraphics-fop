@@ -22,6 +22,7 @@ package org.apache.fop.render.pcl;
 import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RendererContext;
 
 /**
@@ -51,16 +52,14 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
 
     /** @return true if the SVG image should be rendered as a bitmap */
     public boolean paintAsBitmap() {
-        QName qName = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
-        return getForeignAttributes() != null
-             && "bitmap".equalsIgnoreCase((String)getForeignAttributes().get(qName));
+        return ImageHandlerUtil.isConversionModeBitmap(getForeignAttributes());
     }
 
     /** @return true if clipping is disabled inside the PCLGraphics2D. */
     public boolean isClippingDisabled() {
-        QName qName = new QName(ExtensionElementMapping.URI, null, "disable-clipping");
         return getForeignAttributes() != null
-             && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
+             && "true".equalsIgnoreCase((String)getForeignAttributes().get(
+                     PCLConstants.DISABLE_CLIPPING));
     }
 
     /**
@@ -68,9 +67,9 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
      * @return true if the background shouldn't be erased
      */
     public boolean isSourceTransparency() {
-        QName qName = new QName(ExtensionElementMapping.URI, null, "source-transparency");
         return getForeignAttributes() != null
-             && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName));
+             && "true".equalsIgnoreCase((String)getForeignAttributes().get(
+                     PCLConstants.SRC_TRANSPARENCY));
     }
 
     /**
@@ -80,11 +79,11 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
      * @return true if an EGB canvas should be used
      */
     public boolean isColorCanvas() {
-        QName qName = new QName(ExtensionElementMapping.URI, null, "color-canvas");
         Boolean prop = (Boolean)context.getProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS);
         return Boolean.TRUE.equals(prop)
             || (getForeignAttributes() != null
-                    && "true".equalsIgnoreCase((String)getForeignAttributes().get(qName)));
+                    && "true".equalsIgnoreCase((String)getForeignAttributes().get(
+                            PCLConstants.COLOR_CANVAS)));
     }
 
 }

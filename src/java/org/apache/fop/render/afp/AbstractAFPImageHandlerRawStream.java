@@ -19,12 +19,13 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 
@@ -32,34 +33,53 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.RenderingContext;
 
 /**
  * A base abstract AFP raw stream image handler
  */
-public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler {
+public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler
+        implements ImageHandler {
 
     /** {@inheritDoc} */
     public AFPDataObjectInfo generateDataObjectInfo(
             AFPRendererImageInfo rendererImageInfo) throws IOException {
         AFPDataObjectInfo dataObjectInfo = super.generateDataObjectInfo(rendererImageInfo);
+        ImageRawStream rawStream = (ImageRawStream) rendererImageInfo.getImage();
         AFPRendererContext rendererContext
             = (AFPRendererContext)rendererImageInfo.getRendererContext();
         AFPInfo afpInfo = rendererContext.getInfo();
 
-        ImageInfo imageInfo = rendererImageInfo.getImageInfo();
-        String mimeType = imageInfo.getMimeType();
-        if (mimeType != null) {
-            dataObjectInfo.setMimeType(mimeType);
-        }
+        updateDataObjectInfo(dataObjectInfo, rawStream, afpInfo.getResourceManager());
+
+        setAdditionalParameters(dataObjectInfo, rawStream);
+        return dataObjectInfo;
+    }
+
+    /**
+     * Sets additional parameters on the image object info being built. By default, this
+     * method does nothing but it can be overridden to provide additional functionality.
+     * @param imageObjectInfo the image object info being built
+     * @param image the image being processed
+     */
+    protected void setAdditionalParameters(AFPDataObjectInfo imageObjectInfo,
+            ImageRawStream image) {
+        //nop
+    }
+
+    private void updateDataObjectInfo(AFPDataObjectInfo dataObjectInfo,
+            ImageRawStream rawStream, AFPResourceManager resourceManager) throws IOException {
+        dataObjectInfo.setMimeType(rawStream.getFlavor().getMimeType());
 
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         if (!resourceInfo.levelChanged()) {
-            resourceInfo.setLevel(afpInfo.getResourceManager().getResourceLevelDefaults()
+            resourceInfo.setLevel(resourceManager.getResourceLevelDefaults()
                     .getDefaultResourceLevel(ResourceObject.TYPE_IMAGE));
         }
 
-        ImageRawStream rawStream = (ImageRawStream) rendererImageInfo.getImage();
         InputStream inputStream = rawStream.createInputStream();
         try {
             dataObjectInfo.setData(IOUtils.toByteArray(inputStream));
@@ -76,15 +96,38 @@ public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler {
         ImageSize imageSize = rawStream.getSize();
         dataObjectInfo.setDataHeightRes((int) (imageSize.getDpiHorizontal() * 10));
         dataObjectInfo.setDataWidthRes((int) (imageSize.getDpiVertical() * 10));
+    }
+
+    /** {@inheritDoc} */
+    public void handleImage(RenderingContext context, Image image, Rectangle pos)
+            throws IOException {
+        AFPRenderingContext afpContext = (AFPRenderingContext)context;
+
+        AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
+
+        // set resource information
+        setResourceInformation(dataObjectInfo,
+                image.getInfo().getOriginalURI(),
+                afpContext.getForeignAttributes());
+
+        // Positioning
+        dataObjectInfo.setObjectAreaInfo(createObjectAreaInfo(afpContext.getPaintingState(), pos));
 
         // set object area info
-        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-        AFPPaintingState paintingState = afpInfo.getPaintingState();
+        //AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
+        AFPPaintingState paintingState = afpContext.getPaintingState();
         int resolution = paintingState.getResolution();
+        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
         objectAreaInfo.setWidthRes(resolution);
         objectAreaInfo.setHeightRes(resolution);
 
-        return dataObjectInfo;
+        // Image content
+        ImageRawStream imageStream = (ImageRawStream)image;
+        updateDataObjectInfo(dataObjectInfo, imageStream, afpContext.getResourceManager());
+        setAdditionalParameters(dataObjectInfo, imageStream);
+
+        // Create image
+        afpContext.getResourceManager().createObject(dataObjectInfo);
     }
 
 }

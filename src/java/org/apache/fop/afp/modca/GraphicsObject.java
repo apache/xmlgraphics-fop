@@ -179,20 +179,20 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /**
-     * Sets whether the following shape is to be filled
+     * Sets whether the following shape is to be filled.
      *
      * @param fill true if the following shape is to be filled
      */
     public void setFill(boolean fill) {
-        setPatternSymbol(fill ?
-                GraphicsSetPatternSymbol.SOLID_FILL :
-                    GraphicsSetPatternSymbol.NO_FILL);
+        setPatternSymbol(fill
+                ? GraphicsSetPatternSymbol.SOLID_FILL
+                : GraphicsSetPatternSymbol.NO_FILL);
     }
 
     /**
-     * Sets the fill pattern of the next shape
+     * Sets the fill pattern of the next shape.
      *
-     * @param the fill pattern of the next shape
+     * @param patternSymbol the fill pattern of the next shape
      */
     public void setPatternSymbol(byte patternSymbol) {
         if (patternSymbol != graphicsState.patternSymbol) {
@@ -332,6 +332,7 @@ public class GraphicsObject extends AbstractDataObject {
      */
     public void newSegment() {
         getData().newSegment();
+        graphicsState.lineWidth = 0; //Looks like a new segment invalidates the graphics state
     }
 
     /** {@inheritDoc} */
@@ -366,7 +367,7 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** the internal graphics state */
-    private class GraphicsState {
+    private static class GraphicsState {
         /** the current color */
         private Color color;
 

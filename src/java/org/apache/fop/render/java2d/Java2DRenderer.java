@@ -123,7 +123,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     /** The 0-based current page number */
     private int currentPageNumber = 0;
 
-    /** true if antialiasing is set */
+    /** true if anti-aliasing is set */
     protected boolean antialiasing = true;
 
     /** true if qualityRendering is set */
@@ -167,12 +167,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         //Don't call super.setupFontInfo() here! Java2D needs a special font setup
         // create a temp Image to test font metrics on
         this.fontInfo = inFontInfo;
-        BufferedImage fontImage = new BufferedImage(100, 100,
-                BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = fontImage.createGraphics();
-        //The next line is important to get accurate font metrics!
-        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
 
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(graphics2D),

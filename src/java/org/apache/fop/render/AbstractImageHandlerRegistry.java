@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.util.Service;
@@ -43,8 +44,8 @@ public abstract class AbstractImageHandlerRegistry {
 
     private static final Comparator HANDLER_COMPARATOR = new Comparator() {
         public int compare(Object o1, Object o2) {
-            ImageHandler h1 = (ImageHandler)o1;
-            ImageHandler h2 = (ImageHandler)o2;
+            ImageHandlerBase h1 = (ImageHandlerBase)o1;
+            ImageHandlerBase h2 = (ImageHandlerBase)o2;
             return h1.getPriority() - h2.getPriority();
         }
     };
@@ -76,8 +77,8 @@ public abstract class AbstractImageHandlerRegistry {
      */
     public void addHandler(String classname) {
         try {
-            ImageHandler handlerInstance
-                = (ImageHandler)Class.forName(classname).newInstance();
+            ImageHandlerBase handlerInstance
+                = (ImageHandlerBase)Class.forName(classname).newInstance();
             addHandler(handlerInstance);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -99,13 +100,13 @@ public abstract class AbstractImageHandlerRegistry {
      * Add an image handler. The handler itself is inspected to find out what it supports.
      * @param handler the ImageHandler instance
      */
-    public synchronized void addHandler(ImageHandler handler) {
+    public synchronized void addHandler(ImageHandlerBase handler) {
         this.handlers.put(handler.getSupportedImageClass(), handler);
 
         //Sorted insert
         ListIterator iter = this.handlerList.listIterator();
         while (iter.hasNext()) {
-            ImageHandler h = (ImageHandler)iter.next();
+            ImageHandlerBase h = (ImageHandlerBase)iter.next();
             if (getHandlerComparator().compare(handler, h) < 0) {
                 iter.previous();
                 break;
@@ -121,7 +122,7 @@ public abstract class AbstractImageHandlerRegistry {
      * @param img the Image to be handled
      * @return the ImageHandler responsible for handling the image or null if none is available
      */
-    public ImageHandler getHandler(Image img) {
+    public ImageHandlerBase getHandler(Image img) {
         return getHandler(img.getClass());
     }
 
@@ -131,11 +132,11 @@ public abstract class AbstractImageHandlerRegistry {
      * @param imageClass the Image subclass for which to get a handler
      * @return the ImageHandler responsible for handling the image or null if none is available
      */
-    public synchronized ImageHandler getHandler(Class imageClass) {
-        ImageHandler handler = null;
+    public synchronized ImageHandlerBase getHandler(Class imageClass) {
+        ImageHandlerBase handler = null;
         Class cl = imageClass;
         while (cl != null) {
-            handler = (ImageHandler)handlers.get(cl);
+            handler = (ImageHandlerBase)handlers.get(cl);
             if (handler != null) {
                 break;
             }
@@ -154,7 +155,7 @@ public abstract class AbstractImageHandlerRegistry {
             List flavors = new java.util.ArrayList();
             Iterator iter = this.handlerList.iterator();
             while (iter.hasNext()) {
-                ImageFlavor[] f = ((ImageHandler)iter.next()).getSupportedImageFlavors();
+                ImageFlavor[] f = ((ImageHandlerBase)iter.next()).getSupportedImageFlavors();
                 for (int i = 0; i < f.length; i++) {
                     flavors.add(f[i]);
                 }
@@ -175,7 +176,7 @@ public abstract class AbstractImageHandlerRegistry {
         Iterator providers = Service.providers(imageHandlerClass);
         if (providers != null) {
             while (providers.hasNext()) {
-                ImageHandler handler = (ImageHandler)providers.next();
+                ImageHandlerBase handler = (ImageHandlerBase)providers.next();
                 try {
                     if (log.isDebugEnabled()) {
                         log.debug("Dynamically adding ImageHandler: "

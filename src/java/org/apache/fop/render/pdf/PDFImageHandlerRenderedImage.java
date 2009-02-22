@@ -23,19 +23,22 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFImage;
-import org.apache.fop.pdf.PDFResourceContext;
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.RendererContext;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFImage;
+import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.RenderingContext;
+
 /**
- * PDFImageHandler implementation which handles RenderedImage instances.
+ * Image handler implementation which handles RenderedImage instances for PDF output.
  */
-public class PDFImageHandlerRenderedImage implements PDFImageHandler {
+public class PDFImageHandlerRenderedImage implements PDFImageHandler, ImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.BUFFERED_IMAGE,
@@ -66,6 +69,24 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
     }
 
     /** {@inheritDoc} */
+    public void handleImage(RenderingContext context, Image image, Rectangle pos)
+                throws IOException {
+        PDFRenderingContext pdfContext = (PDFRenderingContext)context;
+        PDFContentGenerator generator = pdfContext.getGenerator();
+        ImageRendered imageRend = (ImageRendered)image;
+
+        PDFImage pdfimage = new ImageRenderedAdapter(imageRend, image.getInfo().getOriginalURI());
+        PDFXObject xobj = generator.getDocument().addImage(
+                generator.getResourceContext(), pdfimage);
+
+        float x = (float)pos.getX() / 1000f;
+        float y = (float)pos.getY() / 1000f;
+        float w = (float)pos.getWidth() / 1000f;
+        float h = (float)pos.getHeight() / 1000f;
+        generator.placeImage(x, y, w, h, xobj);
+    }
+
+    /** {@inheritDoc} */
     public int getPriority() {
         return 300;
     }
@@ -78,6 +99,12 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler {
     /** {@inheritDoc} */
     public ImageFlavor[] getSupportedImageFlavors() {
         return FLAVORS;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isCompatible(RenderingContext targetContext, Image image) {
+        return (image == null || image instanceof ImageRendered)
+                && targetContext instanceof PDFRenderingContext;
     }
 
 }

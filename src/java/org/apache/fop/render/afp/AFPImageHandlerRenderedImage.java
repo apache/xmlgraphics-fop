@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
@@ -41,13 +43,16 @@ import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
+import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.RenderingContext;
 import org.apache.fop.util.bitmap.BitmapImageUtil;
 
 /**
  * PDFImageHandler implementation which handles RenderedImage instances.
  */
-public class AFPImageHandlerRenderedImage extends AFPImageHandler {
+public class AFPImageHandlerRenderedImage extends AFPImageHandler implements ImageHandler {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(AFPImageHandlerRenderedImage.class);
@@ -67,34 +72,40 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
             = (AFPRendererContext)rendererImageInfo.getRendererContext();
         AFPInfo afpInfo = rendererContext.getInfo();
 
-        AFPResourceInfo resourceInfo = imageObjectInfo.getResourceInfo();
-        if (!resourceInfo.levelChanged()) {
-            resourceInfo.setLevel(afpInfo.getResourceManager().getResourceLevelDefaults()
-                    .getDefaultResourceLevel(ResourceObject.TYPE_IMAGE));
-        }
+        setDefaultResourceLevel(imageObjectInfo, afpInfo.getResourceManager());
 
         AFPPaintingState paintingState = afpInfo.getPaintingState();
+        ImageRendered imageRendered = (ImageRendered) rendererImageInfo.img;
+        Dimension targetSize = new Dimension(afpInfo.getWidth(), afpInfo.getHeight());
+
+        updateDataObjectInfo(imageObjectInfo, paintingState, imageRendered, targetSize);
+        return imageObjectInfo;
+    }
+
+    private AFPDataObjectInfo updateDataObjectInfo(AFPImageObjectInfo imageObjectInfo,
+            AFPPaintingState paintingState, ImageRendered imageRendered, Dimension targetSize)
+            throws IOException {
+
         int resolution = paintingState.getResolution();
         int maxPixelSize = paintingState.getBitsPerPixel();
         if (paintingState.isColorImages()) {
             maxPixelSize *= 3; //RGB only at the moment
         }
-        ImageRendered imageRendered = (ImageRendered) rendererImageInfo.img;
         RenderedImage renderedImage = imageRendered.getRenderedImage();
 
-        ImageInfo imageInfo = rendererImageInfo.getImageInfo();
+        ImageInfo imageInfo = imageRendered.getInfo();
         ImageSize intrinsicSize = imageInfo.getSize();
 
         boolean useFS10 = (maxPixelSize == 1) || BitmapImageUtil.isMonochromeImage(renderedImage);
         boolean usePageSegments = useFS10
-                    && !resourceInfo.getLevel().isInline();
+                    && !imageObjectInfo.getResourceInfo().getLevel().isInline();
 
         ImageSize effIntrinsicSize = intrinsicSize;
         if (usePageSegments) {
             //Resize, optionally resample and convert image
             Dimension resampledDim = new Dimension(
-                    (int)Math.ceil(UnitConv.mpt2px(afpInfo.getWidth(), resolution)),
-                    (int)Math.ceil(UnitConv.mpt2px(afpInfo.getHeight(), resolution)));
+                    (int)Math.ceil(UnitConv.mpt2px(targetSize.getWidth(), resolution)),
+                    (int)Math.ceil(UnitConv.mpt2px(targetSize.getHeight(), resolution)));
 
             imageObjectInfo.setCreatePageSegment(true);
             imageObjectInfo.getResourceInfo().setImageDimension(resampledDim);
@@ -130,6 +141,8 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
         int dataWidth = renderedImage.getWidth();
         imageObjectInfo.setDataWidth(dataWidth);
 
+        //TODO To reduce AFP file size, investigate using a compression scheme.
+        //Currently, all image data is uncompressed.
         ColorModel cm = renderedImage.getColorModel();
         if (log.isTraceEnabled()) {
             log.trace("ColorModel: " + cm);
@@ -209,6 +222,15 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
         return imageObjectInfo;
     }
 
+    private void setDefaultResourceLevel(AFPImageObjectInfo imageObjectInfo,
+            AFPResourceManager resourceManager) {
+        AFPResourceInfo resourceInfo = imageObjectInfo.getResourceInfo();
+        if (!resourceInfo.levelChanged()) {
+            resourceInfo.setLevel(resourceManager.getResourceLevelDefaults()
+                    .getDefaultResourceLevel(ResourceObject.TYPE_IMAGE));
+        }
+    }
+
     /** {@inheritDoc} */
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPImageObjectInfo();
@@ -227,6 +249,37 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler {
     /** {@inheritDoc} */
     public ImageFlavor[] getSupportedImageFlavors() {
         return FLAVORS;
+    }
+
+    /** {@inheritDoc} */
+    public void handleImage(RenderingContext context, Image image, Rectangle pos)
+            throws IOException {
+        AFPRenderingContext afpContext = (AFPRenderingContext)context;
+
+        AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)createDataObjectInfo();
+
+        // set resource information
+        setResourceInformation(imageObjectInfo,
+                image.getInfo().getOriginalURI(),
+                afpContext.getForeignAttributes());
+        setDefaultResourceLevel(imageObjectInfo, afpContext.getResourceManager());
+
+        // Positioning
+        imageObjectInfo.setObjectAreaInfo(createObjectAreaInfo(afpContext.getPaintingState(), pos));
+        Dimension targetSize = pos.getSize();
+
+        // Image content
+        ImageRendered imageRend = (ImageRendered)image;
+        updateDataObjectInfo(imageObjectInfo, afpContext.getPaintingState(), imageRend, targetSize);
+
+        // Create image
+        afpContext.getResourceManager().createObject(imageObjectInfo);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isCompatible(RenderingContext targetContext, Image image) {
+        return (image == null || image instanceof ImageRendered)
+            && targetContext instanceof AFPRenderingContext;
     }
 
 }

@@ -62,14 +62,15 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
      * @return true if the new paint changes the current paint
      */
     public boolean setPaint(Paint p) {
-        Paint paint = ((PDFData)getData()).paint;
+        PDFData data = getPDFData();
+        Paint paint = data.paint;
         if (paint == null) {
             if (p != null) {
-                ((PDFData)getData()).paint = p;
+                data.paint = p;
                 return true;
             }
         } else if (!paint.equals(p)) {
-            ((PDFData)getData()).paint = p;
+            data.paint = p;
             return true;
         }
         return false;
@@ -88,7 +89,7 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
      * @return true if the clip will change the current clip.
      */
     public boolean checkClip(Shape cl) {
-        Shape clip = ((PDFData)getData()).clip;
+        Shape clip = getPDFData().clip;
         if (clip == null) {
             if (cl != null) {
                 return true;
@@ -108,14 +109,37 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
      * @param cl the new clip in the current state
      */
     public void setClip(Shape cl) {
-        Shape clip = ((PDFData)getData()).clip;
+        PDFData data = getPDFData();
+        Shape clip = data.clip;
         if (clip != null) {
             Area newClip = new Area(clip);
             newClip.intersect(new Area(cl));
-            ((PDFData)getData()).clip = new GeneralPath(newClip);
+            data.clip = new GeneralPath(newClip);
         } else {
-            ((PDFData)getData()).clip = cl;
+            data.clip = cl;
         }
+    }
+
+    /**
+     * Sets the character spacing (Tc).
+     * @param value the new value
+     * @return true if the value was changed with respect to the previous value
+     */
+    public boolean setCharacterSpacing(float value) {
+        PDFData data = getPDFData();
+        if (value != data.characterSpacing) {
+            data.characterSpacing = value;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the current character spacing (Tc) value.
+     * @return the Tc value
+     */
+    public float getCharacterSpacing() {
+        return getPDFData().characterSpacing;
     }
 
     /**
@@ -149,8 +173,8 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
                 newState.addValues(state);
             }
         }
-        if (((PDFData)getData()).gstate != null) {
-            newState.addValues(((PDFData)getData()).gstate);
+        if (getPDFData().gstate != null) {
+            newState.addValues(getPDFData().gstate);
         }
         return newState;
     }
@@ -177,32 +201,38 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
         getStateStack().add(copy);
     }
 
+    private PDFData getPDFData() {
+        return (PDFData)getData();
+    }
+
     private class PDFData extends org.apache.fop.util.AbstractPaintingState.AbstractData {
 
         private static final long serialVersionUID = 3527950647293177764L;
 
         private Paint paint = null;
         private Paint backPaint = null;
-        private int lineCap = 0;
-        private int lineJoin = 0;
-        private float miterLimit = 0;
-        private boolean text = false;
-        private int dashOffset = 0;
+        //private int lineCap = 0; //Disabled the ones that are not used, yet
+        //private int lineJoin = 0;
+        //private float miterLimit = 0;
+        //private int dashOffset = 0;
         private Shape clip = null;
         private PDFGState gstate = null;
+
+        //text state
+        private float characterSpacing = 0f;
 
         /** {@inheritDoc} */
         public Object clone() {
             PDFData obj = (PDFData)super.clone();
             obj.paint = this.paint;
             obj.backPaint = this.paint;
-            obj.lineCap = this.lineCap;
-            obj.lineJoin = this.lineJoin;
-            obj.miterLimit = this.miterLimit;
-            obj.text = this.text;
-            obj.dashOffset = this.dashOffset;
+            //obj.lineCap = this.lineCap;
+            //obj.lineJoin = this.lineJoin;
+            //obj.miterLimit = this.miterLimit;
+            //obj.dashOffset = this.dashOffset;
             obj.clip = this.clip;
             obj.gstate = this.gstate;
+            obj.characterSpacing = this.characterSpacing;
             return obj;
         }
 
@@ -211,10 +241,9 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
             return super.toString()
                 + ", paint=" + paint
                 + ", backPaint=" + backPaint
-                + ", lineCap=" + lineCap
-                + ", miterLimit=" + miterLimit
-                + ", text=" + text
-                + ", dashOffset=" + dashOffset
+                //+ ", lineCap=" + lineCap
+                //+ ", miterLimit=" + miterLimit
+                //+ ", dashOffset=" + dashOffset
                 + ", clip=" + clip
                 + ", gstate=" + gstate;
         }

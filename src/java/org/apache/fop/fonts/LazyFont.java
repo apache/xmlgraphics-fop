@@ -132,7 +132,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
                     realFont = FontLoader.loadFont(fontEmbedPath, this.subFontName,
-                            this.embedded, this.encodingMode, resolver);
+                            this.embedded, this.encodingMode, useKerning, resolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;

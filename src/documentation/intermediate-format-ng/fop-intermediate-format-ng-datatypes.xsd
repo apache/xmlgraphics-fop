@@ -22,8 +22,8 @@
   <xs:simpleType name="colorType">
     <xs:restriction base="xs:string"/>
   </xs:simpleType>
-  <xs:simpleType name="pathDataType">
-    <xs:restriction base="xs:string"/>
+  <xs:simpleType name="lengthType">
+    <xs:restriction base="xs:int"/>
   </xs:simpleType>
   <xs:simpleType name="fontStyleType">
     <xs:restriction base="xs:string">
@@ -75,6 +75,32 @@
       <xs:enumeration value="ridge"/>
       <xs:enumeration value="inset"/>
       <xs:enumeration value="outset"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ruleStyle">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="solid"/>
+      <xs:enumeration value="dotted"/>
+      <xs:enumeration value="dashed"/>
+      <xs:enumeration value="double"/>
+      <xs:enumeration value="groove"/>
+      <xs:enumeration value="ridge"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="borderDef">
+    <xs:restriction base="xs:string">
+      <!-- TODO refine me: \w+ will not be good enough for CMYK color, for example
+      <xs:pattern value="\((solid|dotted|dashed|double|groove|ridge|inset|outset),\w+,\d+(,collapse-(inner|outer))?"/>
+      -->
+      <xs:pattern value="\((solid|dotted|dashed|double|groove|ridge|inset|outset),.+)"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="lengthListType">
+    <xs:list itemType="mf:lengthType"/>
+  </xs:simpleType>
+  <xs:simpleType name="rectangleType">
+    <xs:restriction base="mf:lengthListType">
+      <xs:length value="4"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

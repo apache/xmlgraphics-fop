@@ -33,6 +33,7 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
 /**
@@ -40,8 +41,6 @@ import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
  * stored in a DOM.
  */
 public abstract class XMLObj extends FONode implements ObjectBuiltListener {
-
-    private static final String XMLNS_NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
 
     // temp reference for attributes
     private Attributes attr = null;
@@ -116,7 +115,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
     private static HashMap ns = new HashMap();
     static {
-        ns.put("xlink", "http://www.w3.org/1999/xlink");
+        ns.put(XMLConstants.XLINK_PREFIX, XMLConstants.XLINK_NAMESPACE);
     }
 
     /**
@@ -143,7 +142,7 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
             } else {
                 String pref = qname.substring(0, idx);
                 String tail = qname.substring(idx + 1);
-                if (pref.equals("xmlns")) {
+                if (pref.equals(XMLConstants.XMLNS_PREFIX)) {
                     ns.put(tail, rf);
                 } else {
                     element.setAttributeNS((String)ns.get(pref), tail, rf);
@@ -181,8 +180,9 @@ public abstract class XMLObj extends FONode implements ObjectBuiltListener {
 
             element = doc.getDocumentElement();
             buildTopLevel(doc, element);
-            if (!element.hasAttributeNS(XMLNS_NAMESPACE_URI, "xmlns")) {
-                element.setAttributeNS(XMLNS_NAMESPACE_URI, "xmlns",
+            if (!element.hasAttributeNS(
+                    XMLConstants.XMLNS_NAMESPACE_URI, XMLConstants.XMLNS_PREFIX)) {
+                element.setAttributeNS(XMLConstants.XMLNS_NAMESPACE_URI, XMLConstants.XMLNS_PREFIX,
                                 getNamespaceURI());
             }
 

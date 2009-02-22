@@ -24,10 +24,12 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
-import org.apache.xmlgraphics.util.QName;
 
 /**
  * Parses any AFP foreign attributes
@@ -36,13 +38,16 @@ public class AFPForeignAttributeReader {
     private static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** the resource-name attribute */
-    public static final String RESOURCE_NAME = "afp:resource-name";
+    public static final QName RESOURCE_NAME = new QName(
+            AFPElementMapping.NAMESPACE, "afp:resource-name");
 
     /** the resource-level attribute */
-    public static final String RESOURCE_LEVEL = "afp:resource-level";
+    public static final QName RESOURCE_LEVEL = new QName(
+            AFPElementMapping.NAMESPACE, "afp:resource-level");
 
     /** the resource-group-file attribute */
-    public static final String RESOURCE_GROUP_FILE = "afp:resource-group-file";
+    public static final QName RESOURCE_GROUP_FILE = new QName(
+            AFPElementMapping.NAMESPACE, "afp:resource-group-file");
 
     /**
      * Main constructor
@@ -59,8 +64,7 @@ public class AFPForeignAttributeReader {
     public AFPResourceInfo getResourceInfo(Map/*<QName, String>*/ foreignAttributes) {
         AFPResourceInfo resourceInfo = new AFPResourceInfo();
         if (foreignAttributes != null && !foreignAttributes.isEmpty()) {
-            QName resourceNameKey = new QName(AFPElementMapping.NAMESPACE, RESOURCE_NAME);
-            String resourceName = (String)foreignAttributes.get(resourceNameKey);
+            String resourceName = (String)foreignAttributes.get(RESOURCE_NAME);
             if (resourceName != null) {
                 resourceInfo.setName(resourceName);
             }
@@ -81,16 +85,13 @@ public class AFPForeignAttributeReader {
     public AFPResourceLevel getResourceLevel(Map/*<QName, String>*/ foreignAttributes) {
         AFPResourceLevel resourceLevel = null;
         if (foreignAttributes != null && !foreignAttributes.isEmpty()) {
-            QName resourceLevelKey = new QName(AFPElementMapping.NAMESPACE, RESOURCE_LEVEL);
-            if (foreignAttributes.containsKey(resourceLevelKey)) {
-                String levelString = (String)foreignAttributes.get(resourceLevelKey);
+            if (foreignAttributes.containsKey(RESOURCE_LEVEL)) {
+                String levelString = (String)foreignAttributes.get(RESOURCE_LEVEL);
                 resourceLevel = AFPResourceLevel.valueOf(levelString);
                 // if external get resource group file attributes
                 if (resourceLevel != null && resourceLevel.isExternal()) {
-                    QName resourceGroupFileKey = new QName(AFPElementMapping.NAMESPACE,
-                            RESOURCE_GROUP_FILE);
                     String resourceGroupFile
-                        = (String)foreignAttributes.get(resourceGroupFileKey);
+                        = (String)foreignAttributes.get(RESOURCE_GROUP_FILE);
                     if (resourceGroupFile == null) {
                         String msg = RESOURCE_GROUP_FILE + " not specified";
                         log.error(msg);

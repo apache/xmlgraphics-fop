@@ -27,6 +27,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.afp.AFPResourceLevelDefaults;
+import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPFontInfo;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.FopCharacterSet;
@@ -34,17 +35,23 @@ import org.apache.fop.afp.fonts.OutlineFont;
 import org.apache.fop.afp.fonts.RasterFont;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fonts.FontCollection;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.util.LogUtil;
 
 /**
  * AFP Renderer configurator
  */
-public class AFPRendererConfigurator extends PrintRendererConfigurator {
+public class AFPRendererConfigurator extends PrintRendererConfigurator
+            implements IFDocumentHandlerConfigurator {
 
     /**
      * Default constructor
@@ -233,6 +240,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         Configuration cfg = super.getRendererConfig(renderer);
         if (cfg != null) {
             AFPRenderer afpRenderer = (AFPRenderer)renderer;
+
             try {
                 List/*<AFPFontInfo>*/ fontList = buildFontListFromConfiguration(cfg);
                 afpRenderer.setFontList(fontList);
@@ -241,69 +249,109 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
                         userAgent.getFactory().validateUserConfigStrictly());
             }
 
-            // image information
-            Configuration imagesCfg = cfg.getChild("images");
+            configure(afpRenderer, cfg);
+        }
+    }
 
-            // default to grayscale images
-            String imagesMode = imagesCfg.getAttribute("mode", IMAGES_MODE_GRAYSCALE);
-            if (IMAGES_MODE_COLOR.equals(imagesMode)) {
-                afpRenderer.setColorImages(true);
+    private void configure(AFPCustomizable customizable, Configuration cfg) throws FOPException {
+
+        // image information
+        Configuration imagesCfg = cfg.getChild("images");
+
+        // default to grayscale images
+        String imagesMode = imagesCfg.getAttribute("mode", IMAGES_MODE_GRAYSCALE);
+        if (IMAGES_MODE_COLOR.equals(imagesMode)) {
+            customizable.setColorImages(true);
+        } else {
+            customizable.setColorImages(false);
+            // default to 8 bits per pixel
+            int bitsPerPixel = imagesCfg.getAttributeAsInteger("bits-per-pixel", 8);
+            customizable.setBitsPerPixel(bitsPerPixel);
+        }
+
+        // native image support
+        boolean nativeImageSupport = imagesCfg.getAttributeAsBoolean("native", false);
+        customizable.setNativeImagesSupported(nativeImageSupport);
+
+        // renderer resolution
+        Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
+        if (rendererResolutionCfg != null) {
+            customizable.setResolution(rendererResolutionCfg.getValueAsInteger(240));
+        }
+
+        // a default external resource group file setting
+        Configuration resourceGroupFileCfg
+            = cfg.getChild("resource-group-file", false);
+        if (resourceGroupFileCfg != null) {
+            String resourceGroupDest = null;
+            try {
+                resourceGroupDest = resourceGroupFileCfg.getValue();
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e,
+                        userAgent.getFactory().validateUserConfigStrictly());
+            }
+            File resourceGroupFile = new File(resourceGroupDest);
+            if (resourceGroupFile.canWrite()) {
+                customizable.setDefaultResourceGroupFilePath(resourceGroupDest);
             } else {
-                afpRenderer.setColorImages(false);
-                // default to 8 bits per pixel
-                int bitsPerPixel = imagesCfg.getAttributeAsInteger("bits-per-pixel", 8);
-                afpRenderer.setBitsPerPixel(bitsPerPixel);
+                log.warn("Unable to write to default external resource group file '"
+                            + resourceGroupDest + "'");
             }
+        }
 
-            // native image support
-            boolean nativeImageSupport = imagesCfg.getAttributeAsBoolean("native", false);
-            afpRenderer.setNativeImagesSupported(nativeImageSupport);
-
-            // renderer resolution
-            Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
-            if (rendererResolutionCfg != null) {
-                afpRenderer.setResolution(rendererResolutionCfg.getValueAsInteger(240));
-            }
-
-            // a default external resource group file setting
-            Configuration resourceGroupFileCfg
-                = cfg.getChild("resource-group-file", false);
-            if (resourceGroupFileCfg != null) {
-                String resourceGroupDest = null;
+        Configuration defaultResourceLevelCfg = cfg.getChild("default-resource-levels", false);
+        if (defaultResourceLevelCfg != null) {
+            AFPResourceLevelDefaults defaults = new AFPResourceLevelDefaults();
+            String[] types = defaultResourceLevelCfg.getAttributeNames();
+            for (int i = 0, c = types.length; i < c; i++) {
+                String type = types[i];
                 try {
-                    resourceGroupDest = resourceGroupFileCfg.getValue();
+                    String level = defaultResourceLevelCfg.getAttribute(type);
+                    defaults.setDefaultResourceLevel(type, AFPResourceLevel.valueOf(level));
+                } catch (IllegalArgumentException iae) {
+                    LogUtil.handleException(log, iae,
+                            userAgent.getFactory().validateUserConfigStrictly());
                 } catch (ConfigurationException e) {
                     LogUtil.handleException(log, e,
                             userAgent.getFactory().validateUserConfigStrictly());
                 }
-                File resourceGroupFile = new File(resourceGroupDest);
-                if (resourceGroupFile.canWrite()) {
-                    afpRenderer.setDefaultResourceGroupFilePath(resourceGroupDest);
-                } else {
-                    log.warn("Unable to write to default external resource group file '"
-                                + resourceGroupDest + "'");
-                }
             }
-
-            Configuration defaultResourceLevelCfg = cfg.getChild("default-resource-levels", false);
-            if (defaultResourceLevelCfg != null) {
-                AFPResourceLevelDefaults defaults = new AFPResourceLevelDefaults();
-                String[] types = defaultResourceLevelCfg.getAttributeNames();
-                for (int i = 0, c = types.length; i < c; i++) {
-                    String type = types[i];
-                    try {
-                        String level = defaultResourceLevelCfg.getAttribute(type);
-                        defaults.setDefaultResourceLevel(type, AFPResourceLevel.valueOf(level));
-                    } catch (IllegalArgumentException iae) {
-                        LogUtil.handleException(log, iae,
-                                userAgent.getFactory().validateUserConfigStrictly());
-                    } catch (ConfigurationException e) {
-                        LogUtil.handleException(log, e,
-                                userAgent.getFactory().validateUserConfigStrictly());
-                    }
-                }
-                afpRenderer.setResourceLevelDefaults(defaults);
-            }
+            customizable.setResourceLevelDefaults(defaults);
         }
+    }
+
+    /** {@inheritDoc} */
+    public void configure(IFDocumentHandler documentHandler) throws FOPException {
+        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
+        if (cfg != null) {
+            AFPDocumentHandler afpDocumentHandler = (AFPDocumentHandler)documentHandler;
+            configure(afpDocumentHandler, cfg);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
+            throws FOPException {
+        FontManager fontManager = userAgent.getFactory().getFontManager();
+        List fontCollections = new java.util.ArrayList();
+
+        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
+        if (cfg != null) {
+            try {
+                List fontList = buildFontListFromConfiguration(cfg);
+                fontCollections.add(new AFPFontCollection(
+                        userAgent.getEventBroadcaster(), fontList));
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e,
+                        userAgent.getFactory().validateUserConfigStrictly());
+            }
+        } else {
+            fontCollections.add(new AFPFontCollection(userAgent.getEventBroadcaster(), null));
+        }
+
+        fontManager.setup(fontInfo,
+                (FontCollection[])fontCollections.toArray(
+                        new FontCollection[fontCollections.size()]));
+        documentHandler.setFontInfo(fontInfo);
     }
 }

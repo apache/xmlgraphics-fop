@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
@@ -29,12 +30,12 @@ import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPUnitConverter;
-import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.ImageHandlerBase;
 
 /**
  * A base abstract AFP image handler
  */
-public abstract class AFPImageHandler implements ImageHandler {
+public abstract class AFPImageHandler implements ImageHandlerBase {
     private static final int X = 0;
     private static final int Y = 1;
 
@@ -55,33 +56,64 @@ public abstract class AFPImageHandler implements ImageHandler {
         AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
 
         // set resource information
-        Map foreignAttributes = rendererImageInfo.getForeignAttributes();
-        AFPResourceInfo resourceInfo
-            = foreignAttributeReader.getResourceInfo(foreignAttributes);
-        resourceInfo.setUri(rendererImageInfo.getURI());
-        dataObjectInfo.setResourceInfo(resourceInfo);
+        setResourceInformation(dataObjectInfo,
+                rendererImageInfo.getURI(),
+                rendererImageInfo.getForeignAttributes());
 
-        // set object area
-        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
 
         Point origin = rendererImageInfo.getOrigin();
         Rectangle2D position = rendererImageInfo.getPosition();
-        float srcX = origin.x + (float)position.getX();
-        float srcY = origin.y + (float)position.getY();
+        int srcX = Math.round(origin.x + (float)position.getX());
+        int srcY = Math.round(origin.y + (float)position.getY());
+        Rectangle targetRect = new Rectangle(
+                srcX,
+                srcY,
+                (int)Math.round(position.getWidth()),
+                (int)Math.round(position.getHeight()));
 
         AFPRendererContext rendererContext
             = (AFPRendererContext)rendererImageInfo.getRendererContext();
         AFPInfo afpInfo = rendererContext.getInfo();
         AFPPaintingState paintingState = afpInfo.getPaintingState();
+
+        dataObjectInfo.setObjectAreaInfo(createObjectAreaInfo(paintingState, targetRect));
+
+        return dataObjectInfo;
+    }
+
+    /**
+     * Sets resource information on the data object info.
+     * @param dataObjectInfo the data object info instance
+     * @param uri the image's URI (or null if no URI is available)
+     * @param foreignAttributes a Map of foreign attributes (or null)
+     */
+    protected void setResourceInformation(AFPDataObjectInfo dataObjectInfo,
+            String uri, Map foreignAttributes) {
+        AFPResourceInfo resourceInfo
+            = foreignAttributeReader.getResourceInfo(foreignAttributes);
+        resourceInfo.setUri(uri);
+        dataObjectInfo.setResourceInfo(resourceInfo);
+    }
+
+    /**
+     * Creates and returns an {@link AFPObjectAreaInfo} instance for the placement of the image.
+     * @param paintingState the painting state
+     * @param targetRect the target rectangle in which to place the image (coordinates in mpt)
+     * @return the newly created object area info instance
+     */
+    public static AFPObjectAreaInfo createObjectAreaInfo(AFPPaintingState paintingState,
+            Rectangle targetRect) {
+        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
         AFPUnitConverter unitConv = paintingState.getUnitConverter();
-        int[] coords = unitConv.mpts2units(new float[] {srcX, srcY});
+
+        int[] coords = unitConv.mpts2units(new float[] {targetRect.x, targetRect.y});
         objectAreaInfo.setX(coords[X]);
         objectAreaInfo.setY(coords[Y]);
 
-        int width = Math.round(unitConv.mpt2units((float)position.getWidth()));
+        int width = Math.round(unitConv.mpt2units(targetRect.width));
         objectAreaInfo.setWidth(width);
 
-        int height = Math.round(unitConv.mpt2units((float)position.getHeight()));
+        int height = Math.round(unitConv.mpt2units(targetRect.height));
         objectAreaInfo.setHeight(height);
 
         int resolution = paintingState.getResolution();
@@ -89,10 +121,7 @@ public abstract class AFPImageHandler implements ImageHandler {
         objectAreaInfo.setWidthRes(resolution);
 
         objectAreaInfo.setRotation(paintingState.getRotation());
-
-        dataObjectInfo.setObjectAreaInfo(objectAreaInfo);
-
-        return dataObjectInfo;
+        return objectAreaInfo;
     }
 
     /**

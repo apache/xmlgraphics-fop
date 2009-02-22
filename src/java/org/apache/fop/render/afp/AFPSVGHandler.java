@@ -123,7 +123,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
             = RendererContext.wrapRendererContext(rendererContext);
         Dimension imageSize = getImageSize(wrappedContext);
         Graphics2DImagePainter painter
-            = createGrapics2DImagePainter(bridgeContext, root, imageSize);
+            = createGraphics2DImagePainter(bridgeContext, root, imageSize);
 
         // Create AFPObjectAreaInfo
         RendererContextWrapper rctx = RendererContext.wrapRendererContext(rendererContext);
@@ -217,8 +217,8 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         context.setProperty(AFPRendererContextConstants.AFP_GRAYSCALE, Boolean.FALSE);
     }
 
-    /** {@inheritDoc} */
-    protected Graphics2DImagePainter createGrapics2DImagePainter(BridgeContext ctx, GraphicsNode root, Dimension imageSize) {
+    private Graphics2DImagePainter createGraphics2DImagePainter(BridgeContext ctx,
+            GraphicsNode root, Dimension imageSize) {
         Graphics2DImagePainter painter = null;
         if (paintAsBitmap()) {
             // paint as IOCA Image

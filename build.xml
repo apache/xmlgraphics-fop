@@ -592,11 +592,7 @@ list of possible build targets.
       <include name="org/apache/fop/area/AreaTreeControl*"/>
       <include name="org/apache/fop/svg/**"/>
       <include name="org/apache/fop/fonts/**"/>
-      <include name="org/apache/fop/image/FopImag*.class"/>
-      <include name="org/apache/fop/image/Jpeg*"/>
-      <include name="org/apache/fop/image/EPS*"/>
-      <include name="org/apache/fop/image/Abstract*"/>
-      <include name="org/apache/fop/image/analyser/*.class"/>
+      <include name="org/apache/fop/image/loader/batik/BatikImageFlavors*.class"/>
       <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
       <include name="org/apache/fop/util/Color*.class"/>
       <include name="org/apache/fop/util/ASCII*.class"/>
@@ -604,12 +600,14 @@ list of possible build targets.
       <include name="org/apache/fop/util/SubInputStream.class"/>
       <include name="org/apache/fop/util/Finalizable.class"/>
       <include name="org/apache/fop/util/CharUtilities.class"/>
+      <include name="org/apache/fop/util/DecimalFormatCache*.class"/>
     </patternset>
 <!-- PDF transcoder -->
     <patternset>
       <include name="org/apache/fop/render/pdf/**"/>
       <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
       <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
+      <include name="org/apache/fop/render/intermediate/IFDocumentHandlerConfigurator.class"/>
       <include name="org/apache/fop/render/*RendererConfigurator**"/>
       <include name="org/apache/fop/util/AbstractPaintingState**"/>
       <include name="org/apache/fop/pdf/**"/>
@@ -897,25 +895,44 @@ list of possible build targets.
       <test name="org.apache.fop.fotreetest.FOTreeTestSuite" todir="${junit.reports.dir}" outfile="TEST-FO-tree"/>
     </junit>
   </target>
-  <target name="junit-intermediate-format" depends="junit-compile, junit-layout" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
-    <echo message="Running intermediate format tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
-      <sysproperty key="basedir" value="${basedir}"/>
-      <sysproperty key="jawa.awt.headless" value="true"/>
-      <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
-      <sysproperty key="fop.layoutengine.testset" value="standard"/>
-      <formatter type="brief" usefile="false"/>
-      <formatter type="plain" usefile="true"/>
-      <formatter type="xml" usefile="true"/>
-      <classpath>
-        <pathelement location="${build.dir}/test-classes"/>
-        <path refid="libs-build-tools-classpath"/>
-        <fileset dir="build">
-          <include name="fop.jar"/>
-        </fileset>
-      </classpath>
-      <test name="org.apache.fop.intermediate.IntermediateFormatTestSuite" todir="${junit.reports.dir}" outfile="TEST-intermediate-format"/>
-    </junit>
+  <macrodef name="junit-run">
+    <attribute name="title"/>
+    <element name="tests"/>
+    <sequential>
+      <echo message="Running @{title} tests..."/>
+      <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+        <sysproperty key="basedir" value="${basedir}"/>
+        <sysproperty key="jawa.awt.headless" value="true"/>
+        <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
+        <formatter type="brief" usefile="false"/>
+        <formatter type="plain" usefile="true"/>
+        <formatter type="xml" usefile="true"/>
+        <classpath>
+          <pathelement location="${build.dir}/test-classes"/>
+          <path refid="libs-build-tools-classpath"/>
+          <fileset dir="build">
+            <include name="fop.jar"/>
+          </fileset>
+        </classpath>
+        <tests/>
+      </junit>
+    </sequential>
+  </macrodef>
+  <target name="junit-area-tree-xml-format" depends="junit-compile" description="Runs FOP's area tree XML format JUnit tests" if="xmlunit.present">
+    <junit-run title="area tree XML format">
+      <tests>
+        <sysproperty key="fop.layoutengine.testset" value="standard"/>
+        <test name="org.apache.fop.intermediate.AreaTreeXMLFormatTestSuite" todir="${junit.reports.dir}" outfile="TEST-area-tree-xml-format"/>
+      </tests>
+    </junit-run>
+  </target>
+  <target name="junit-intermediate-format" depends="junit-compile" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
+    <junit-run title="intermediate format">
+      <tests>
+        <sysproperty key="fop.layoutengine.testset" value="standard"/>
+        <test name="org.apache.fop.intermediate.IntermediateFormatTestSuite" todir="${junit.reports.dir}" outfile="TEST-intermediate-format"/>
+      </tests>
+    </junit-run>
   </target>
   <target name="junit-text-linebreak" depends="junit-compile" description="Runs FOP's JUnit unicode linebreak tests" if="junit.present">
     <echo message="Running tests for Unicode UAX#14 support"/>
@@ -936,7 +953,7 @@ list of possible build targets.
     </junit>
   </target>
   <target name="junit-reduced" depends="junit-userconfig, junit-basic, junit-transcoder, junit-text-linebreak, junit-fotree"/>
-  <target name="junit-full" depends="junit-reduced, junit-layout, junit-intermediate-format"/>
+  <target name="junit-full" depends="junit-reduced, junit-layout, junit-area-tree-xml-format, junit-intermediate-format"/>
   <target name="junit" depends="junit-full" description="Runs all of FOP's JUnit tests" if="junit.present">
     <fail><condition><or><isset property="fop.junit.error"/><isset property="fop.junit.failure"/><not><isset property="hyphenation.present"/></not></or></condition>
 NOTE:

@@ -23,15 +23,16 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.ImageHandler;
-import org.apache.fop.render.RendererContext;
 import org.apache.xmlgraphics.image.loader.Image;
+
+import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.ImageHandlerBase;
+import org.apache.fop.render.RendererContext;
 
 /**
  * This interface is used for handling all sorts of image type for PDF output.
  */
-public interface PDFImageHandler extends ImageHandler {
+public interface PDFImageHandler extends ImageHandlerBase {
 
     /**
      * Generates the PDF objects for the given {@link Image} instance. If the handler generates

@@ -39,6 +39,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.AbstractGenericSVGHandler;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
@@ -232,8 +233,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         boolean paintAsBitmap = false;
         if (context != null) {
             Map foreign = (Map)context.getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
-            paintAsBitmap = (foreign != null
-                   && "bitmap".equalsIgnoreCase((String)foreign.get(CONVERSION_MODE)));
+            paintAsBitmap = ImageHandlerUtil.isConversionModeBitmap(foreign);
         }
         if (paintAsBitmap) {
             try {

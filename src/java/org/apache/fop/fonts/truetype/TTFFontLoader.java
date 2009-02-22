@@ -55,7 +55,7 @@ public class TTFFontLoader extends FontLoader {
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, FontResolver resolver) {
-        this(fontFileURI, null, true, EncodingMode.AUTO, resolver);
+        this(fontFileURI, null, true, EncodingMode.AUTO, true, resolver);
     }
 
     /**
@@ -65,11 +65,13 @@ public class TTFFontLoader extends FontLoader {
      *          TrueType fonts)
      * @param embedded indicates whether the font is embedded or referenced
      * @param encodingMode the requested encoding mode
+     * @param useKerning true to enable loading kerning info if available, false to disable
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, String subFontName,
-                boolean embedded, EncodingMode encodingMode, FontResolver resolver) {
-        super(fontFileURI, embedded, resolver);
+                boolean embedded, EncodingMode encodingMode, boolean useKerning,
+                FontResolver resolver) {
+        super(fontFileURI, embedded, true, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         if (this.encodingMode == EncodingMode.AUTO) {
@@ -164,7 +166,9 @@ public class TTFFontLoader extends FontLoader {
             copyWidthsSingleByte(ttf);
         }
 
-        copyKerning(ttf, isCid);
+        if (useKerning) {
+            copyKerning(ttf, isCid);
+        }
         if (this.embedded && ttf.isEmbeddable()) {
             returnFont.setEmbedFileName(this.fontFileURI);
         }

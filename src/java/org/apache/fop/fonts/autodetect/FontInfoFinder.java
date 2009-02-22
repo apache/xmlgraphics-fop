@@ -225,7 +225,7 @@ public class FontInfoFinder {
                 }
                 try {
                     TTFFontLoader ttfLoader = new TTFFontLoader(
-                            fontFileURI, fontName, true, EncodingMode.AUTO, resolver);
+                            fontFileURI, fontName, true, EncodingMode.AUTO, true, resolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);

@@ -19,27 +19,39 @@
 
 package org.apache.fop.render;
 
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
+import java.awt.Rectangle;
+import java.io.IOException;
 
-public interface ImageHandler {
+import org.apache.xmlgraphics.image.loader.Image;
 
-    /**
-     * Returns the priority for this image handler. A lower value means higher priority. This
-     * information is used to build the ordered/prioritized list of supported ImageFlavors.
-     * The built-in handlers use priorities between 100 and 999.
-     * @return a positive integer (>0) indicating the priority
-     */
-    int getPriority();
+/**
+ * This interface is a service provider interface for image handlers.
+ */
+public interface ImageHandler extends ImageHandlerBase {
 
     /**
-     * Returns the {@link ImageFlavor}s supported by this instance
-     * @return the supported image flavors
+     * Indicates whether the image handler is compatible with the indicated target represented
+     * by the rendering context object and with the image to be processed. The image is also
+     * passed as a parameter because a handler might not support every subtype of image that is
+     * presented. For example: in the case of {@code ImageXMLDOM}, the image might carry an SVG
+     * or some other XML format. One handler might only handle SVG but no other XML format.
+     * @param targetContext the target rendering context
+     * @param image the image to be processed (or null if only to check based on the rendering
+     *              context)
+     * @return true if this handler is compatible with the target rendering context
      */
-    ImageFlavor[] getSupportedImageFlavors();
+    boolean isCompatible(RenderingContext targetContext, Image image);
 
     /**
-     * Returns the {@link Class} subclass supported by this instance.
-     * @return the image Class type
+     * Handles the given {@link Image} instance painting it at the indicated position in the
+     * output format being generated.
+     * @param context the rendering context
+     * @param image the image to be handled
+     * @param pos the position and scaling of the image relative to the origin point of the
+     *          current viewport (in millipoints)
+     * @throws IOException if an I/O error occurs
      */
-    Class getSupportedImageClass();
+    void handleImage(RenderingContext context, Image image,
+            Rectangle pos) throws IOException;
+
 }

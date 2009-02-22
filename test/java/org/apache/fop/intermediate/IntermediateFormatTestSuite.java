@@ -46,18 +46,18 @@ public class IntermediateFormatTestSuite {
         Iterator i = files.iterator();
         while (i.hasNext()) {
             File f = (File)i.next();
-            addTestCase(suite, f);
+            addIFTestCase(suite, f);
         }
 
         return suite;
     }
 
-    private static void addTestCase(TestSuite suite,
-            final File f) {
-        suite.addTest(new AreaTreeParserTestCase(f) {
+    private static void addIFTestCase(TestSuite suite,
+            final File f) throws IOException {
+        suite.addTest(new IFParserTestCase(f) {
             public void runTest() throws Exception {
                 try {
-                    testParserToAT();
+                    testParserToIntermediateFormat();
                     testParserToPDF();
                 } catch (Exception e) {
                     org.apache.commons.logging.LogFactory.getLog(

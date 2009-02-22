@@ -29,14 +29,16 @@ import org.apache.fop.apps.MimeConstants;
  */
 public class BitmapProducerPDF extends AbstractPSPDFBitmapProducer {
 
-    /** @see org.apache.fop.visual.AbstractPSPDFBitmapProducer#getTargetExtension() */
-    protected String getTargetExtension() {
-        return "pdf";
+    /**
+     * Default constructor.
+     */
+    public BitmapProducerPDF() {
+        this.targetFormat = MimeConstants.MIME_PDF;
     }
 
-    /** @see org.apache.fop.visual.AbstractPSPDFBitmapProducer#getTargetFormat() */
-    protected String getTargetFormat() {
-        return MimeConstants.MIME_PDF;
+    /** {@inheritDoc} */
+    protected String getTargetExtension() {
+        return "pdf";
     }
 
 }

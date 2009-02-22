@@ -114,6 +114,22 @@ public class PCLPageDefinition {
         return null;
     }
 
+    /**
+     * Returns a page definition based on a page format.
+     * @param name the name of the page format (ex. "A4" or "Letter")
+     * @return the page definition or null if no match was found
+     */
+    public static PCLPageDefinition getPageDefinition(String name) {
+        Iterator iter = pageDefinitions.iterator();
+        while (iter.hasNext()) {
+            PCLPageDefinition def = (PCLPageDefinition)iter.next();
+            if (def.getName().equalsIgnoreCase(name)) {
+                return def;
+            }
+        }
+        return null;
+    }
+
     /** @return the default page definition (letter) */
     public static PCLPageDefinition getDefaultPageDefinition() {
         return defaultPageDefinition;

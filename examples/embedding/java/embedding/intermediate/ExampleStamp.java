@@ -28,16 +28,18 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.area.AreaTreeModel;
-import org.apache.fop.area.AreaTreeParser;
-import org.apache.fop.area.RenderPagesModel;
-import org.apache.fop.fonts.FontInfo;
-import org.xml.sax.SAXException;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.IFParser;
+import org.apache.fop.render.intermediate.IFUtil;
 
 import embedding.ExampleObj2XML;
 import embedding.model.ProjectTeam;
@@ -53,30 +55,35 @@ public class ExampleStamp {
 
     /**
      * Stamps an intermediate file and renders it to a PDF file.
-     * @param atfile the intermediate file (area tree XML)
+     * @param iffile the intermediate file (area tree XML)
      * @param stampSheet the stylesheet that does the stamping
      * @param pdffile the target PDF file
      * @throws IOException In case of an I/O problem
      * @throws TransformerException In case of a XSL transformation problem
      * @throws SAXException In case of an XML-related problem
+     * @throws IFException if there was an IF-related error while creating the output file
      */
-    public void stampToPDF(File atfile, File stampSheet, File pdffile)
-            throws IOException, TransformerException, SAXException {
+    public void stampToPDF(File iffile, File stampSheet, File pdffile)
+            throws IOException, TransformerException, SAXException, IFException {
         // Setup output
         OutputStream out = new java.io.FileOutputStream(pdffile);
         out = new java.io.BufferedOutputStream(out);
         try {
-            //Setup fonts and user agent
-            FontInfo fontInfo = new FontInfo();
+            //user agent
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
-            //Construct the AreaTreeModel that will received the individual pages
-            AreaTreeModel treeModel = new RenderPagesModel(userAgent,
-                    MimeConstants.MIME_PDF, fontInfo, out);
+            //Setup target handler
+            String mime = MimeConstants.MIME_PDF + ";mode=painter";
+            IFDocumentHandler targetHandler = fopFactory.getRendererFactory().createDocumentHandler(
+                    userAgent, mime);
 
-            //Iterate over all intermediate files
-            AreaTreeParser parser = new AreaTreeParser();
-            Source src = new StreamSource(atfile);
+            //Setup fonts
+            IFUtil.setupFonts(targetHandler);
+            targetHandler.setResult(new StreamResult(pdffile));
+
+            IFParser parser = new IFParser();
+
+            Source src = new StreamSource(iffile);
             Source xslt = new StreamSource(stampSheet);
 
             //Setup Transformer for XSLT processing
@@ -84,13 +91,10 @@ public class ExampleStamp {
             Transformer transformer = tFactory.newTransformer(xslt);
 
             //Send XSLT result to AreaTreeParser
-            SAXResult res = new SAXResult(parser.getContentHandler(treeModel, userAgent));
+            SAXResult res = new SAXResult(parser.getContentHandler(targetHandler, userAgent));
 
             //Start XSLT transformation and area tree parsing
             transformer.transform(src, res);
-
-            //Signal the end of the processing. The renderer can finalize the target document.
-            treeModel.endDocument();
         } finally {
             out.close();
         }
@@ -102,7 +106,7 @@ public class ExampleStamp {
      */
     public static void main(String[] args) {
         try {
-            System.out.println("FOP ExampleConcat\n");
+            System.out.println("FOP ExampleConcat (for the Intermediate Format)\n");
 
             //Setup directories
             File baseDir = new File(".");
@@ -111,10 +115,10 @@ public class ExampleStamp {
 
             //Setup output file
             File xsltfile = new File(baseDir, "xml/xslt/projectteam2fo.xsl");
-            File atfile = new File(outDir, "team.at.xml");
-            File stampxsltfile = new File(baseDir, "xml/xslt/atstamp.xsl");
-            File pdffile = new File(outDir, "ResultStamped.pdf");
-            System.out.println("Intermediate file : " + atfile.getCanonicalPath());
+            File iffile = new File(outDir, "team.if.xml");
+            File stampxsltfile = new File(baseDir, "xml/xslt/ifstamp.xsl");
+            File pdffile = new File(outDir, "ResultIFStamped.pdf");
+            System.out.println("Intermediate file : " + iffile.getCanonicalPath());
             System.out.println("Stamp XSLT: " + stampxsltfile.getCanonicalPath());
             System.out.println("PDF Output File: " + pdffile.getCanonicalPath());
             System.out.println();
@@ -125,11 +129,11 @@ public class ExampleStamp {
             ExampleConcat concatapp = new ExampleConcat();
             concatapp.convertToIntermediate(
                     team1.getSourceForProjectTeam(),
-                    new StreamSource(xsltfile), atfile);
+                    new StreamSource(xsltfile), iffile);
 
             //Stamp document and produce a PDF from the intermediate format
             ExampleStamp app = new ExampleStamp();
-            app.stampToPDF(atfile, stampxsltfile, pdffile);
+            app.stampToPDF(iffile, stampxsltfile, pdffile);
 
             System.out.println("Success!");
 

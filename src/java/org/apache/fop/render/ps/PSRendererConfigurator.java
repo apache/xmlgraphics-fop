@@ -20,16 +20,21 @@
 package org.apache.fop.render.ps;
 
 import org.apache.avalon.framework.configuration.Configuration;
+
+import org.apache.xmlgraphics.ps.PSGenerator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
-import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
  * Postscript renderer config
  */
-public class PSRendererConfigurator extends PrintRendererConfigurator {
+public class PSRendererConfigurator extends PrintRendererConfigurator
+            implements IFDocumentHandlerConfigurator {
 
     /**
      * Default constructor
@@ -50,23 +55,37 @@ public class PSRendererConfigurator extends PrintRendererConfigurator {
             super.configure(renderer);
 
             PSRenderer psRenderer = (PSRenderer)renderer;
-
-            psRenderer.setAutoRotateLandscape(
-                cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false));
-            Configuration child;
-            child = cfg.getChild("language-level");
-            if (child != null) {
-                psRenderer.setLanguageLevel(child.getValueAsInteger(
-                        PSGenerator.DEFAULT_LANGUAGE_LEVEL));
-            }
-            child = cfg.getChild("optimize-resources");
-            if (child != null) {
-                psRenderer.setOptimizeResources(child.getValueAsBoolean(false));
-            }
-            psRenderer.setSafeSetPageDevice(
-                cfg.getChild("safe-set-page-device").getValueAsBoolean(false));
-            psRenderer.setDSCCompliant(
-                cfg.getChild("dsc-compliant").getValueAsBoolean(true));
+            configure(psRenderer.getPSUtil(), cfg);
         }
     }
+
+    private void configure(PSRenderingUtil psUtil, Configuration cfg) {
+        psUtil.setAutoRotateLandscape(
+            cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false));
+        Configuration child;
+        child = cfg.getChild("language-level");
+        if (child != null) {
+            psUtil.setLanguageLevel(child.getValueAsInteger(
+                    PSGenerator.DEFAULT_LANGUAGE_LEVEL));
+        }
+        child = cfg.getChild("optimize-resources");
+        if (child != null) {
+            psUtil.setOptimizeResources(child.getValueAsBoolean(false));
+        }
+        psUtil.setSafeSetPageDevice(
+            cfg.getChild("safe-set-page-device").getValueAsBoolean(false));
+        psUtil.setDSCComplianceEnabled(
+            cfg.getChild("dsc-compliant").getValueAsBoolean(true));
+    }
+
+    /** {@inheritDoc} */
+    public void configure(IFDocumentHandler documentHandler) throws FOPException {
+        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
+        if (cfg != null) {
+            PSDocumentHandler psDocumentHandler = (PSDocumentHandler)documentHandler;
+            configure(psDocumentHandler.getPSUtil(), cfg);
+        }
+
+    }
+
 }

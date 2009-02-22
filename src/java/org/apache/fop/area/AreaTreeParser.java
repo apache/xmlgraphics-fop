@@ -36,8 +36,23 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.Trait.InternalLink;
@@ -65,16 +80,7 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.ConversionUtils;
 import org.apache.fop.util.DefaultErrorListener;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.util.QName;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * This is a parser for the area tree XML (intermediate format) which is used to reread an area
@@ -245,7 +251,7 @@ public class AreaTreeParser {
                 delegate.startDocument();
                 delegate.startElement(uri, localName, qName, attributes);
             } else {
-                lastAttributes = attributes;
+                lastAttributes = new AttributesImpl(attributes);
                 boolean handled = true;
                 if ("".equals(uri)) {
                     Maker maker = (Maker)makers.get(localName);
@@ -381,12 +387,12 @@ public class AreaTreeParser {
                 if (currentPageViewport != null) {
                     throw new IllegalStateException("currentPageViewport must be null");
                 }
-                Rectangle2D viewArea = getAttributeAsRectangle2D(attributes, "bounds");
-                int pageNumber = getAttributeAsInteger(attributes, "nr", -1);
+                Rectangle2D viewArea = XMLUtil.getAttributeAsRectangle2D(attributes, "bounds");
+                int pageNumber = XMLUtil.getAttributeAsInt(attributes, "nr", -1);
                 String key = attributes.getValue("key");
                 String pageNumberString = attributes.getValue("formatted-nr");
                 String pageMaster = attributes.getValue("simple-page-master-name");
-                boolean blank = getAttributeAsBoolean(attributes, "blank", false);
+                boolean blank = XMLUtil.getAttributeAsBoolean(attributes, "blank", false);
                 currentPageViewport = new PageViewport(viewArea,
                         pageNumber, pageNumberString,
                         pageMaster, blank);
@@ -417,10 +423,10 @@ public class AreaTreeParser {
                 if (rv != null) {
                     throw new IllegalStateException("Current RegionViewport must be null");
                 }
-                Rectangle2D viewArea = getAttributeAsRectangle2D(attributes, "rect");
+                Rectangle2D viewArea = XMLUtil.getAttributeAsRectangle2D(attributes, "rect");
                 rv = new RegionViewport(viewArea);
                 transferForeignObjects(attributes, rv);
-                rv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
+                rv.setClip(XMLUtil.getAttributeAsBoolean(attributes, "clipped", false));
                 setAreaAttributes(attributes, rv);
                 setTraits(attributes, rv, SUBSET_COMMON);
                 setTraits(attributes, rv, SUBSET_BOX);
@@ -485,14 +491,15 @@ public class AreaTreeParser {
                     throw new IllegalStateException("Current BodyRegion must be null");
                 }
                 String regionName = attributes.getValue("name");
-                int columnCount = getAttributeAsInteger(attributes, "columnCount", 1);
-                int columnGap = getAttributeAsInteger(attributes, "columnGap", 0);
+                int columnCount = XMLUtil.getAttributeAsInt(attributes, "columnCount", 1);
+                int columnGap = XMLUtil.getAttributeAsInt(attributes, "columnGap", 0);
                 RegionViewport rv = getCurrentRegionViewport();
                 body = new BodyRegion(Constants.FO_REGION_BODY,
                         regionName, rv, columnCount, columnGap);
                 transferForeignObjects(attributes, body);
                 body.setCTM(getAttributeAsCTM(attributes, "ctm"));
                 setAreaAttributes(attributes, body);
+                setTraits(attributes, body, SUBSET_BORDER_PADDING);
                 rv.setRegionReference(body);
                 currentPageViewport.getPage().setRegionViewport(
                         Constants.FO_REGION_BODY, rv);
@@ -537,8 +544,8 @@ public class AreaTreeParser {
         private class SpanMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                int ipd = getAttributeAsInteger(attributes, "ipd", 0);
-                int columnCount = getAttributeAsInteger(attributes, "columnCount", 1);
+                int ipd = XMLUtil.getAttributeAsInt(attributes, "ipd", 0);
+                int columnCount = XMLUtil.getAttributeAsInt(attributes, "columnCount", 1);
                 BodyRegion body = getCurrentBodyRegion();
                 Span span = new Span(columnCount,
                         body.getColumnGap(), ipd);
@@ -554,7 +561,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 Footnote fn = getCurrentBodyRegion().getFootnote();
                 transferForeignObjects(attributes, fn);
-                fn.setTop(getAttributeAsInteger(attributes, "top-offset", 0));
+                fn.setTop(XMLUtil.getAttributeAsInt(attributes, "top-offset", 0));
                 areaStack.push(fn);
             }
 
@@ -579,18 +586,18 @@ public class AreaTreeParser {
         private class BlockMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                boolean isViewport = getAttributeAsBoolean(attributes,
+                boolean isViewport = XMLUtil.getAttributeAsBoolean(attributes,
                         "is-viewport-area", false);
                 Block block;
                 if (isViewport) {
                     BlockViewport bv = new BlockViewport();
-                    bv.setClip(getAttributeAsBoolean(attributes, "clipped", false));
+                    bv.setClip(XMLUtil.getAttributeAsBoolean(attributes, "clipped", false));
                     bv.setCTM(getAttributeAsCTM(attributes, "ctm"));
                     if (bv.getPositioning() != BlockViewport.RELATIVE) {
                         bv.setXOffset(
-                                getAttributeAsInteger(attributes, "left-position", 0));
+                                XMLUtil.getAttributeAsInt(attributes, "left-position", 0));
                         bv.setYOffset(
-                                getAttributeAsInteger(attributes, "top-position", 0));
+                                XMLUtil.getAttributeAsInt(attributes, "top-position", 0));
                     }
                     block = bv;
                 } else {
@@ -607,10 +614,10 @@ public class AreaTreeParser {
                     block.setPositioning(Block.STACK);
                 }
                 if (attributes.getValue("left-offset") != null) {
-                    block.setXOffset(getAttributeAsInteger(attributes, "left-offset", 0));
+                    block.setXOffset(XMLUtil.getAttributeAsInt(attributes, "left-offset", 0));
                 }
                 if (attributes.getValue("top-offset") != null) {
-                    block.setYOffset(getAttributeAsInteger(attributes, "top-offset", 0));
+                    block.setYOffset(XMLUtil.getAttributeAsInt(attributes, "top-offset", 0));
                 }
                 transferForeignObjects(attributes, block);
                 setAreaAttributes(attributes, block);
@@ -652,7 +659,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 InlineArea inl = new InlineArea();
                 transferForeignObjects(attributes, inl);
-                inl.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                inl.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 setAreaAttributes(attributes, inl);
                 setTraits(attributes, inl, SUBSET_COMMON);
                 setTraits(attributes, inl, SUBSET_BOX);
@@ -672,7 +679,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 InlineParent ip = new InlineParent();
                 transferForeignObjects(attributes, ip);
-                ip.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                ip.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 setAreaAttributes(attributes, ip);
                 setTraits(attributes, ip, SUBSET_COMMON);
                 setTraits(attributes, ip, SUBSET_BOX);
@@ -693,7 +700,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 InlineBlockParent ibp = new InlineBlockParent();
                 transferForeignObjects(attributes, ibp);
-                ibp.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                ibp.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 setAreaAttributes(attributes, ibp);
                 setTraits(attributes, ibp, SUBSET_COMMON);
                 setTraits(attributes, ibp, SUBSET_BOX);
@@ -720,11 +727,11 @@ public class AreaTreeParser {
                 setTraits(attributes, text, SUBSET_BOX);
                 setTraits(attributes, text, SUBSET_COLOR);
                 setTraits(attributes, text, SUBSET_FONT);
-                text.setBaselineOffset(getAttributeAsInteger(attributes, "baseline", 0));
-                text.setOffset(getAttributeAsInteger(attributes, "offset", 0));
-                text.setTextLetterSpaceAdjust(getAttributeAsInteger(attributes,
+                text.setBaselineOffset(XMLUtil.getAttributeAsInt(attributes, "baseline", 0));
+                text.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
+                text.setTextLetterSpaceAdjust(XMLUtil.getAttributeAsInt(attributes,
                         "tlsadjust", 0));
-                text.setTextWordSpaceAdjust(getAttributeAsInteger(attributes,
+                text.setTextWordSpaceAdjust(XMLUtil.getAttributeAsInt(attributes,
                         "twsadjust", 0));
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(text);
@@ -739,7 +746,7 @@ public class AreaTreeParser {
         private class WordMaker extends AbstractMaker {
 
             public void endElement() {
-                int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
+                int offset = XMLUtil.getAttributeAsInt(lastAttributes, "offset", 0);
                 int[] letterAdjust
                         = ConversionUtils.toIntArray(
                             lastAttributes.getValue("letter-adjust"), "\\s");
@@ -758,11 +765,11 @@ public class AreaTreeParser {
         private class SpaceMaker extends AbstractMaker {
 
             public void endElement() {
-                int offset = getAttributeAsInteger(lastAttributes, "offset", 0);
+                int offset = XMLUtil.getAttributeAsInt(lastAttributes, "offset", 0);
                 //TODO the isAdjustable parameter is currently not used/implemented
                 if (content.position() > 0) {
                     content.flip();
-                    boolean adjustable = getAttributeAsBoolean(lastAttributes, "adj", true);
+                    boolean adjustable = XMLUtil.getAttributeAsBoolean(lastAttributes, "adj", true);
                     SpaceArea space = new SpaceArea(content.charAt(0), offset, adjustable);
                     AbstractTextArea text = getCurrentText();
                     space.setParentArea(text);
@@ -794,13 +801,13 @@ public class AreaTreeParser {
                 setTraits(attributes, leader, SUBSET_BOX);
                 setTraits(attributes, leader, SUBSET_COLOR);
                 setTraits(attributes, leader, SUBSET_FONT);
-                leader.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                leader.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 String ruleStyle = attributes.getValue("ruleStyle");
                 if (ruleStyle != null) {
                     leader.setRuleStyle(ruleStyle);
                 }
                 leader.setRuleThickness(
-                        getAttributeAsInteger(attributes, "ruleThickness", 0));
+                        XMLUtil.getAttributeAsInt(attributes, "ruleThickness", 0));
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(leader);
             }
@@ -815,9 +822,9 @@ public class AreaTreeParser {
                 setTraits(attributes, viewport, SUBSET_COMMON);
                 setTraits(attributes, viewport, SUBSET_BOX);
                 setTraits(attributes, viewport, SUBSET_COLOR);
-                viewport.setContentPosition(getAttributeAsRectangle2D(attributes, "pos"));
-                viewport.setClip(getAttributeAsBoolean(attributes, "clip", false));
-                viewport.setOffset(getAttributeAsInteger(attributes, "offset", 0));
+                viewport.setContentPosition(XMLUtil.getAttributeAsRectangle2D(attributes, "pos"));
+                viewport.setClip(XMLUtil.getAttributeAsBoolean(attributes, "clip", false));
+                viewport.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(viewport);
                 areaStack.push(viewport);
@@ -884,7 +891,8 @@ public class AreaTreeParser {
 
             public void startElement(Attributes attributes) {
                 String title = attributes.getValue("title");
-                boolean showChildren = getAttributeAsBoolean(attributes, "show-children", false);
+                boolean showChildren = XMLUtil.getAttributeAsBoolean(
+                        attributes, "show-children", false);
                 String[] linkdata
                         = InternalLink.parseXMLAttribute(attributes.getValue("internal-link"));
                 PageViewport pv = (PageViewport) pageViewportsByKey.get(linkdata[0]);
@@ -933,6 +941,7 @@ public class AreaTreeParser {
             transferForeignObjects(attributes, reg);
             reg.setCTM(getAttributeAsCTM(attributes, "ctm"));
             setAreaAttributes(attributes, reg);
+            setTraits(attributes, reg, SUBSET_BORDER_PADDING);
             rv.setRegionReference(reg);
             currentPageViewport.getPage().setRegionViewport(
                     side, rv);
@@ -987,6 +996,9 @@ public class AreaTreeParser {
             Trait.PADDING_BEFORE, Trait.PADDING_AFTER, Trait.PADDING_START, Trait.PADDING_END,
             Trait.START_INDENT, Trait.END_INDENT,
             Trait.IS_REFERENCE_AREA, Trait.IS_VIEWPORT_AREA};
+        private static final Object[] SUBSET_BORDER_PADDING = new Object[] {
+            Trait.BORDER_BEFORE, Trait.BORDER_AFTER, Trait.BORDER_START, Trait.BORDER_END,
+            Trait.PADDING_BEFORE, Trait.PADDING_AFTER, Trait.PADDING_START, Trait.PADDING_END};
 
         private void setTraits(Attributes attributes, Area area, Object[] traitSubset) {
             for (int i = traitSubset.length; --i >= 0;) {
@@ -1044,9 +1056,9 @@ public class AreaTreeParser {
                             if (repeat != null) {
                                 bkg.setRepeat(repeat);
                             }
-                            bkg.setHoriz(getAttributeAsInteger(attributes,
+                            bkg.setHoriz(XMLUtil.getAttributeAsInt(attributes,
                                     "bkg-horz-offset", 0));
-                            bkg.setVertical(getAttributeAsInteger(attributes,
+                            bkg.setVertical(XMLUtil.getAttributeAsInt(attributes,
                                     "bkg-vert-offset", 0));
                         }
                         area.addTrait(trait, bkg);
@@ -1058,33 +1070,13 @@ public class AreaTreeParser {
                         String fontName = attributes.getValue("font-name");
                         if (fontName != null) {
                             String fontStyle = attributes.getValue("font-style");
-                            int fontWeight = getAttributeAsInteger(
+                            int fontWeight = XMLUtil.getAttributeAsInt(
                                     attributes, "font-weight", Font.WEIGHT_NORMAL);
                             area.addTrait(trait,
                                     FontInfo.createFontKey(fontName, fontStyle, fontWeight));
                         }
                     }
                 }
-            }
-        }
-
-        private static boolean getAttributeAsBoolean(Attributes attributes, String name,
-                boolean defaultValue) {
-            String s = attributes.getValue(name);
-            if (s == null) {
-                return defaultValue;
-            } else {
-                return Boolean.valueOf(s).booleanValue();
-            }
-        }
-
-        private static int getAttributeAsInteger(Attributes attributes, String name,
-                int defaultValue) {
-            String s = attributes.getValue(name);
-            if (s == null) {
-                return defaultValue;
-            } else {
-                return Integer.parseInt(s);
             }
         }
 
@@ -1100,15 +1092,6 @@ public class AreaTreeParser {
             } else {
                 throw new IllegalArgumentException("CTM must be surrounded by square brackets!");
             }
-        }
-
-        private static Rectangle2D getAttributeAsRectangle2D(Attributes attributes, String name) {
-            String s = attributes.getValue(name).trim();
-            double[] values = ConversionUtils.toDoubleArray(s, "\\s");
-            if (values.length != 4) {
-                throw new IllegalArgumentException("Rectangle must consist of 4 double values!");
-            }
-            return new Rectangle2D.Double(values[0], values[1], values[2], values[3]);
         }
 
         private static void transferForeignObjects(Attributes atts, AreaTreeObject ato) {

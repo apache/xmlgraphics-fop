@@ -33,10 +33,12 @@ import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.util.DefaultErrorListener;
 
 /**
  * BitmapProducer implementation that uses the Java2DRenderer to create bitmaps.
@@ -64,13 +66,14 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
     }
 
     /** @see org.apache.fop.visual.BitmapProducer */
-    public BufferedImage produce(File src, ProducerContext context) {
+    public BufferedImage produce(File src, int index, ProducerContext context) {
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
             userAgent.setBaseURL(src.getParentFile().toURL().toString());
 
-            File outputFile = new File(context.getTargetDir(), src.getName() + ".java2d.png");
+            File outputFile = new File(context.getTargetDir(),
+                    src.getName() + "." + index + ".java2d.png");
             OutputStream out = new FileOutputStream(outputFile);
             out = new BufferedOutputStream(out);
             try {
@@ -78,6 +81,7 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
                 SAXResult res = new SAXResult(fop.getDefaultHandler());
 
                 Transformer transformer = getTransformer(context);
+                transformer.setErrorListener(new DefaultErrorListener(log));
                 transformer.transform(new StreamSource(src), res);
             } finally {
                 IOUtils.closeQuietly(out);

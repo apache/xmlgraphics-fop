@@ -28,9 +28,13 @@ import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 
+/**
+ * AFP-specific renderer context class.
+ */
 public class AFPRendererContext extends RendererContext {
 
     /**
@@ -65,8 +69,7 @@ public class AFPRendererContext extends RendererContext {
 
         Map foreignAttributes = (Map)getProperty(RendererContextConstants.FOREIGN_ATTRIBUTES);
         if (foreignAttributes != null) {
-            String conversionMode = (String)foreignAttributes.get(CONVERSION_MODE);
-            boolean paintAsBitmap = BITMAP.equalsIgnoreCase(conversionMode);
+            boolean paintAsBitmap = ImageHandlerUtil.isConversionModeBitmap(foreignAttributes);
             info.setPaintAsBitmap(paintAsBitmap);
 
             AFPForeignAttributeReader foreignAttributeReader

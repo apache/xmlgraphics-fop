@@ -19,7 +19,8 @@
 <document xmlns="http://xmlgraphics.apache.org/fop/intermediate"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://xmlgraphics.apache.org/fop/intermediate fop-intermediate-format-ng.xsd"
-  xmlns:xlink="http://www.w3.org/1999/xlink">
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:nav="http://xmlgraphics.apache.org/fop/intermediate/document-navigation">
   <header>
     <x:xmpmeta xmlns:x="adobe:ns:meta/">
       <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -44,7 +45,7 @@
   </header>
   
   <page-sequence id="ps1">
-    <page index="1" name="1">
+    <page index="0" name="1" width="595275" height="841889">
       <page-header>
         <ps:ps-setup-code xmlns:ps="apache:fop:extensions:postscript">%FOPTestPSSetupCode: General
           setup code here!</ps:ps-setup-code>
@@ -52,20 +53,21 @@
       <content>
         <!-- Note: this is not actual content that is supposed to make any sense.
              It is merely to give you an idea what the content can look like. -->
-        <box transform="translate(5000, 6000)" width="18000" height="10000">
+        <viewport transform="translate(5000, 6000)" width="18000" height="10000">
           <font family="Helvetica" style="normal" weight="400" variant="normal" size="12000"
             color="black"/>
-          <text x="1233 1241 1247 1253 1264" y="803">Hello</text>
-          <draw-rect x="1233" y="1200" width="20000" height="20000" fill="yellow" stroke="none"/>
-          <box transform="translate(1233, 1200)" width="20000" height="20000" clip="true">
+          <text x="1233" y="803">Hello</text>
+          <rect x="1233" y="1200" width="20000" height="20000" fill="yellow"/>
+          <viewport transform="translate(1233, 1200)" width="20000" height="20000" clip-rect="0 0 20000 20000">
             <image xlink:href="myimage.svg" x="0" y="0" width="20000" height="20000"/>
-          </box>
-        </box>
+          </viewport>
+        </viewport>
       </content>
       <page-trailer>
-        <target x="1233" y="803" name="toc"/>
-        <target x="1233" y="1200" name="chapter1"/>
+        <nav:goto-xy id="toc" page-index="0" x="1233" y="803"/>
+        <nav:goto-xy id="chapter1" page-index="0" x="1233" y="1200"/>
       </page-trailer>
     </page>
   </page-sequence>
+  <trailer/>
 </document>

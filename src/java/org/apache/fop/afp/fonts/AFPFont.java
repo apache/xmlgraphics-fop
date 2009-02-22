@@ -97,13 +97,12 @@ public abstract class AFPFont extends Typeface {
      */
     public abstract CharacterSet getCharacterSet(int size);
 
-     /**
-     * Determines whether this font contains a particular character/glyph.
-     * @param c character to check
-     * @return True if the character is supported, False otherwise
+    /**
+     * Indicates if this font may be embedded.
+     * @return True, if embedding is possible/permitted
      */
-    public boolean hasChar(char c) {
-        return true;
+    public boolean isEmbeddable() {
+        return false; //TODO Complete AFP font embedding
     }
 
     /** {@inheritDoc} */

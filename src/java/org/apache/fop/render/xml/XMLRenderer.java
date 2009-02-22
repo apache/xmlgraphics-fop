@@ -82,7 +82,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
-import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
@@ -137,7 +136,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
     }
 
     /** {@inheritDoc} */
-    public void setupFontInfo(FontInfo inFontInfo) {
+    public void setupFontInfo(FontInfo inFontInfo) throws FOPException {
         if (mimic != null) {
             mimic.setupFontInfo(inFontInfo);
         } else {

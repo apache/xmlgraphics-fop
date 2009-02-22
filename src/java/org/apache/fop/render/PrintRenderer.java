@@ -24,6 +24,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.CustomFontCollection;
@@ -34,7 +37,6 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.base14.Base14FontCollection;
-import org.w3c.dom.Document;
 
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
@@ -74,12 +76,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
         return this.embedFontInfoList;
     }
 
-    /**
-     * Set up the font info
-     *
-     * @param inFontInfo  font info to set up
-     */
-    public void setupFontInfo(FontInfo inFontInfo) {
+    /** {@inheritDoc} */
+    public void setupFontInfo(FontInfo inFontInfo) throws FOPException {
         this.fontInfo = inFontInfo;
         FontManager fontManager = userAgent.getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
@@ -96,7 +94,13 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     protected String getInternalFontNameForArea(Area area) {
         FontTriplet triplet = (FontTriplet)area.getTrait(Trait.FONT);
-        return fontInfo.getInternalFontKey(triplet);
+        String key = fontInfo.getInternalFontKey(triplet);
+        if (key == null) {
+            //Find a default fallback font as last resort
+            triplet = new FontTriplet("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
+            key = fontInfo.getInternalFontKey(triplet);
+        }
+        return key;
     }
 
     /**

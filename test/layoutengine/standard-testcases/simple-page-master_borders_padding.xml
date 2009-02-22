@@ -23,6 +23,9 @@
       length evaluation using percentages is possible.
     </p>
   </info>
+  <cfg>
+    <strict-validation>false</strict-validation>
+  </cfg>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
@@ -119,8 +122,8 @@
     
     <eval expected="240000" xpath="//regionBody/@bpda"/>
     <eval expected="240000" xpath="//regionBody/@ipda"/>
-    <eval expected="220000" xpath="//regionBody/@bpda"/>
-    <eval expected="220000" xpath="//regionBody/@ipda"/>
+    <eval expected="220000" xpath="//regionBody/@bpd"/>
+    <eval expected="220000" xpath="//regionBody/@ipd"/>
     <eval expected="(solid,#808066,1000)" xpath="//regionBody/@border-before"/>
     <eval expected="(solid,#808066,3000)" xpath="//regionBody/@border-after"/>
     <eval expected="(solid,#808066,4000)" xpath="//regionBody/@border-start"/>
