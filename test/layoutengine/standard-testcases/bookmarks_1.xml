@@ -43,6 +43,9 @@
             <fo:bookmark-title>Section 2</fo:bookmark-title>
           </fo:bookmark>
         </fo:bookmark>
+        <fo:bookmark internal-destination="bc">
+          <fo:bookmark-title>Fixed Block Container</fo:bookmark-title>
+        </fo:bookmark>
       </fo:bookmark-tree>
       <fo:page-sequence id="page-sequence" master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
@@ -54,6 +57,11 @@
           <fo:block>Blah blah bla.</fo:block>
           <fo:block id="chapter2-sec2" font-weight="bold">Section 2</fo:block>
           <fo:block>Blah blah bla.</fo:block>
+          <fo:block-container absolute-position="fixed" left="3in" top="3in" width="1.5in" height="1in">
+            <fo:block id="bc">
+              Text in a block-container.
+            </fo:block>
+          </fo:block-container>"
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -73,6 +81,30 @@
     <eval expected="(P2,chapter2)" xpath="//bookmarkTree/bookmark[2]/@internal-link"/>
     <eval expected="(P2,chapter2-sec1)" xpath="//bookmarkTree/bookmark[2]/bookmark[1]/@internal-link"/>
     <eval expected="(P2,chapter2-sec2)" xpath="//bookmarkTree/bookmark[2]/bookmark[2]/@internal-link"/>
-    
   </checks>
+  <if-checks xmlns:n="http://xmlgraphics.apache.org/fop/intermediate/document-navigation">
+    <eval expected="show" xpath="//n:bookmark-tree/n:bookmark[1]/@starting-state"/>
+    <eval expected="Chapter 1" xpath="//n:bookmark-tree/n:bookmark[1]/@title"/>
+    <eval expected="0" xpath="//n:bookmark-tree/n:bookmark[1]/n:goto-xy/@page-index"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[1]/n:goto-xy/@x"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[1]/n:goto-xy/@y"/>
+
+    <eval expected="hide" xpath="//n:bookmark-tree/n:bookmark[2]/@starting-state"/>
+    <eval expected="Chapter 2" xpath="//n:bookmark-tree/n:bookmark[2]/@title"/>
+    <eval expected="1" xpath="//n:bookmark-tree/n:bookmark[2]/n:goto-xy/@page-index"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[2]/n:goto-xy/@x"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[2]/n:goto-xy/@y"/>
+
+    <eval expected="show" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/@starting-state"/>
+    <eval expected="Section 1" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/@title"/>
+    <eval expected="1" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@page-index"/>
+    <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@x"/>
+    <eval expected="51680" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@y"/>
+    
+    <eval expected="show" xpath="//n:bookmark-tree/n:bookmark[3]/@starting-state"/>
+    <eval expected="Fixed Block Container" xpath="//n:bookmark-tree/n:bookmark[3]/@title"/>
+    <eval expected="1" xpath="//n:bookmark-tree/n:bookmark[3]/n:goto-xy/@page-index"/>
+    <eval expected="216000" xpath="//n:bookmark-tree/n:bookmark[3]/n:goto-xy/@x"/>
+    <eval expected="216000" xpath="//n:bookmark-tree/n:bookmark[3]/n:goto-xy/@y"/>
+  </if-checks>
 </testcase>

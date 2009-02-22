@@ -22,16 +22,16 @@ package org.apache.fop.render.pcl;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ByteLookupTable;
-import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.awt.image.LookupOp;
+import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -54,6 +54,10 @@ import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
  * This class provides methods for generating PCL print files.
  */
 public class PCLGenerator {
+
+    private static final String US_ASCII = "US-ASCII";
+
+    private static final String ISO_8859_1 = "ISO-8859-1";
 
     /** The ESC (escape) character */
     public static final char ESC = '\033';
@@ -116,6 +120,14 @@ public class PCLGenerator {
         return this.out;
     }
 
+    /**
+     * Returns the currently active text encoding.
+     * @return the text encoding
+     */
+    public String getTextEncoding() {
+        return ISO_8859_1;
+    }
+
     /** @return the maximum resolution to encode bitmap images at */
     public int getMaximumBitmapResolution() {
         return this.maxBitmapResolution;
@@ -128,7 +140,7 @@ public class PCLGenerator {
      */
     public void writeCommand(String cmd) throws IOException {
         out.write(27); //ESC
-        out.write(cmd.getBytes("US-ASCII"));
+        out.write(cmd.getBytes(US_ASCII));
     }
 
     /**
@@ -137,7 +149,7 @@ public class PCLGenerator {
      * @throws IOException In case of an I/O error
      */
     public void writeText(String s) throws IOException {
-        out.write(s.getBytes("ISO-8859-1"));
+        out.write(s.getBytes(ISO_8859_1));
     }
 
     /**
@@ -578,7 +590,7 @@ public class PCLGenerator {
      */
     public static boolean isMonochromeImage(RenderedImage img) {
         return BitmapImageUtil.isMonochromeImage(img);
-    }
+        }
 
     /**
      * Indicates whether an image is a grayscale image.
@@ -587,6 +599,26 @@ public class PCLGenerator {
      */
     public static boolean isGrayscaleImage(RenderedImage img) {
         return BitmapImageUtil.isGrayscaleImage(img);
+    }
+
+    private static int jaiAvailable = -1; //no synchronization necessary, not critical
+
+    /**
+     * Indicates whether JAI is available. JAI has shown to be reliable when dithering a
+     * grayscale or color image to monochrome bitmaps (1-bit).
+     * @return true if JAI is available
+     */
+    public static boolean isJAIAvailable() {
+        if (jaiAvailable < 0) {
+            try {
+                String clName = "javax.media.jai.JAI";
+                Class.forName(clName);
+                jaiAvailable = 1;
+            } catch (ClassNotFoundException cnfe) {
+                jaiAvailable = 0;
+            }
+        }
+        return (jaiAvailable > 0);
     }
 
     private int calculatePCLResolution(int resolution) {
@@ -705,12 +737,22 @@ public class PCLGenerator {
      */
     public void paintBitmap(RenderedImage img, Dimension targetDim, boolean sourceTransparency)
                 throws IOException {
-        double targetResolution = img.getWidth() / UnitConv.mpt2in(targetDim.width);
+        double targetHResolution = img.getWidth() / UnitConv.mpt2in(targetDim.width);
+        double targetVResolution = img.getHeight() / UnitConv.mpt2in(targetDim.height);
+        double targetResolution = Math.max(targetHResolution, targetVResolution);
         int resolution = (int)Math.round(targetResolution);
         int effResolution = calculatePCLResolution(resolution, true);
         Dimension orgDim = new Dimension(img.getWidth(), img.getHeight());
-        Dimension effDim = getAdjustedDimension(orgDim, targetResolution, effResolution);
+        Dimension effDim;
+        if (targetResolution == effResolution) {
+            effDim = orgDim; //avoid scaling side-effects
+        } else {
+            effDim = new Dimension(
+                    (int)Math.ceil(UnitConv.mpt2px(targetDim.width, effResolution)),
+                    (int)Math.ceil(UnitConv.mpt2px(targetDim.height, effResolution)));
+        }
         boolean scaled = !orgDim.equals(effDim);
+        //ImageWriterUtil.saveAsPNG(img, new java.io.File("D:/text-0-org.png"));
 
         boolean monochrome = isMonochromeImage(img);
         if (!monochrome) {
@@ -728,18 +770,26 @@ public class PCLGenerator {
             BufferedImage src = null;
             if (img instanceof BufferedImage && !scaled) {
                 if (!isGrayscaleImage(img) || img.getColorModel().hasAlpha()) {
+                    /* Disabled as this doesn't work reliably, use the fallback below
                     src = new BufferedImage(effDim.width, effDim.height,
                             BufferedImage.TYPE_BYTE_GRAY);
+                    Graphics2D g2d = src.createGraphics();
+                    try {
+                        clearBackground(g2d, effDim);
+                    } finally {
+                        g2d.dispose();
+                    }
                     ColorConvertOp op = new ColorConvertOp(
                             ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
                     op.filter((BufferedImage)img, src);
+                    */
                 } else {
                     src = (BufferedImage)img;
                 }
             }
             if (src == null) {
                 src = BitmapImageUtil.convertToGrayscale(img, effDim);
-            }
+                }
             MonochromeBitmapConverter converter
                 = BitmapImageUtil.createDefaultMonochromeBitmapConverter();
             converter.setHint("quality", "false");
@@ -752,11 +802,27 @@ public class PCLGenerator {
             RenderedImage effImg = img;
             if (scaled) {
                 effImg = BitmapImageUtil.convertToMonochrome(img, effDim);
-            }
+                }
             setSourceTransparencyMode(sourceTransparency);
             selectCurrentPattern(0, 0); //Solid black
             paintMonochromeBitmap(effImg, effResolution);
         }
+    }
+
+    private void clearBackground(Graphics2D g2d, Dimension effDim) {
+        //white background
+        g2d.setBackground(Color.WHITE);
+        g2d.clearRect(0, 0, effDim.width, effDim.height);
+    }
+
+    private int toGray(int rgb) {
+        // see http://www.jguru.com/faq/view.jsp?EID=221919
+        double greyVal = 0.072169d * (rgb & 0xff);
+        rgb >>= 8;
+        greyVal += 0.715160d * (rgb & 0xff);
+        rgb >>= 8;
+        greyVal += 0.212671d * (rgb & 0xff);
+        return (int)greyVal;
     }
 
     /**
@@ -770,79 +836,159 @@ public class PCLGenerator {
         if (!isValidPCLResolution(resolution)) {
             throw new IllegalArgumentException("Invalid PCL resolution: " + resolution);
         }
-        setRasterGraphicsResolution(resolution);
-        writeCommand("*r0f" + img.getHeight() + "t" + img.getWidth() + "s1A");
-        Raster raster = img.getData();
         boolean monochrome = isMonochromeImage(img);
         if (!monochrome) {
             throw new IllegalArgumentException("img must be a monochrome image");
         }
 
-        int x = 0;
-        int y = 0;
-        int imgw = img.getWidth();
-        int imgh = img.getHeight();
-        int bytewidth = (imgw / 8);
-        if ((imgw % 8) != 0) {
-            bytewidth++;
-        }
-        byte ib;
-        byte[] rle = new byte[bytewidth * 2]; //compressed (RLE)
-        byte[] uncompressed = new byte[bytewidth]; //uncompressed
-        int lastcount = -1;
-        byte lastbyte = 0;
-        int rlewidth = 0;
+        setRasterGraphicsResolution(resolution);
+        writeCommand("*r0f" + img.getHeight() + "t" + img.getWidth() + "s1A");
+        Raster raster = img.getData();
 
+        Encoder encoder = new Encoder(img);
         // Transfer graphics data
-        for (y = 0; y < imgh; y++) {
-            ib = 0;
-            for (x = 0; x < imgw; x++) {
-                int sample = raster.getSample(x, y, 0);
-                //Set image bit for black
-                if ((sample == 0)) {
-                    ib |= (1 << (7 - (x % 8)));
-                }
-
-                //RLE encoding
-                if ((x % 8) == 7 || ((x + 1) == imgw)) {
-                    if (rlewidth < bytewidth) {
-                        if (lastcount >= 0) {
-                            if (ib == lastbyte) {
-                                lastcount++;
-                            } else {
-                                rle[rlewidth++] = (byte)(lastcount & 0xFF);
-                                rle[rlewidth++] = lastbyte;
-                                lastbyte = ib;
-                                lastcount = 0;
-                            }
+        int imgw = img.getWidth();
+        IndexColorModel cm = (IndexColorModel)img.getColorModel();
+        if (cm.getTransferType() == DataBuffer.TYPE_BYTE) {
+            DataBufferByte dataBuffer = (DataBufferByte)raster.getDataBuffer();
+            MultiPixelPackedSampleModel packedSampleModel = new MultiPixelPackedSampleModel(
+                    DataBuffer.TYPE_BYTE, img.getWidth(), img.getHeight(), 1);
+            if (img.getSampleModel().equals(packedSampleModel)
+                    && dataBuffer.getNumBanks() == 1) {
+                //Optimized packed encoding
+                byte[] buf = dataBuffer.getData();
+                int scanlineStride = packedSampleModel.getScanlineStride();
+                int idx = 0;
+                int c0 = toGray(cm.getRGB(0));
+                int c1 = toGray(cm.getRGB(1));
+                boolean zeroIsWhite = c0 > c1;
+                for (int y = 0, maxy = img.getHeight(); y < maxy; y++) {
+                    for (int x = 0, maxx = scanlineStride; x < maxx; x++) {
+                        if (zeroIsWhite) {
+                            encoder.add8Bits(buf[idx]);
                         } else {
-                            lastbyte = ib;
-                            lastcount = 0;
+                            encoder.add8Bits((byte)~buf[idx]);
                         }
-                        if (lastcount == 255 || ((x + 1) == imgw)) {
-                            rle[rlewidth++] = (byte)(lastcount & 0xFF);
-                            rle[rlewidth++] = lastbyte;
-                            lastbyte = 0;
-                            lastcount = -1;
-                        }
+                        idx++;
                     }
-                    uncompressed[x / 8] = ib;
-                    ib = 0;
+                    encoder.endLine();
+                }
+            } else {
+                //Optimized non-packed encoding
+                for (int y = 0, maxy = img.getHeight(); y < maxy; y++) {
+                    byte[] line = (byte[])raster.getDataElements(0, y, imgw, 1, null);
+                    for (int x = 0, maxx = imgw; x < maxx; x++) {
+                        encoder.addBit(line[x] == 0);
+                    }
+                    encoder.endLine();
                 }
             }
-            if (rlewidth < bytewidth) {
-                writeCommand("*b1m" + rlewidth + "W");
-                this.out.write(rle, 0, rlewidth);
-            } else {
-                writeCommand("*b0m" + bytewidth + "W");
-                this.out.write(uncompressed);
+        } else {
+            //Safe but slow fallback
+            for (int y = 0, maxy = img.getHeight(); y < maxy; y++) {
+                for (int x = 0, maxx = imgw; x < maxx; x++) {
+                    int sample = raster.getSample(x, y, 0);
+                    encoder.addBit(sample == 0);
+                }
+                encoder.endLine();
             }
-            lastcount = -1;
-            rlewidth = 0;
         }
 
         // End raster graphics
         writeCommand("*rB");
+    }
+
+    private class Encoder {
+
+        private int imgw;
+        private int bytewidth;
+        private byte[] rle; //compressed (RLE)
+        private byte[] uncompressed; //uncompressed
+        private int lastcount = -1;
+        private byte lastbyte = 0;
+        private int rlewidth = 0;
+        private byte ib = 0; //current image bits
+        private int x = 0;
+        private boolean zeroRow = true;
+
+        public Encoder(RenderedImage img) {
+            imgw = img.getWidth();
+            bytewidth = (imgw / 8);
+            if ((imgw % 8) != 0) {
+                bytewidth++;
+            }
+            rle = new byte[bytewidth * 2];
+            uncompressed = new byte[bytewidth];
+        }
+
+        public void addBit(boolean bit) {
+            //Set image bit for black
+            if (bit) {
+                ib |= 1;
+            }
+
+            //RLE encoding
+            if ((x % 8) == 7 || ((x + 1) == imgw)) {
+                finishedByte();
+            } else {
+                ib <<= 1;
+            }
+            x++;
+        }
+
+        public void add8Bits(byte b) {
+            ib = b;
+            finishedByte();
+            x += 8;
+        }
+
+        private void finishedByte() {
+            if (rlewidth < bytewidth) {
+                if (lastcount >= 0) {
+                    if (ib == lastbyte) {
+                        lastcount++;
+                    } else {
+                        rle[rlewidth++] = (byte)(lastcount & 0xFF);
+                        rle[rlewidth++] = lastbyte;
+                        lastbyte = ib;
+                        lastcount = 0;
+                    }
+                } else {
+                    lastbyte = ib;
+                    lastcount = 0;
+                }
+                if (lastcount == 255 || ((x + 1) == imgw)) {
+                    rle[rlewidth++] = (byte)(lastcount & 0xFF);
+                    rle[rlewidth++] = lastbyte;
+                    lastbyte = 0;
+                    lastcount = -1;
+                }
+            }
+            uncompressed[x / 8] = ib;
+            if (ib != 0) {
+                zeroRow = false;
+            }
+            ib = 0;
+        }
+
+        public void endLine() throws IOException {
+            if (zeroRow && PCLGenerator.this.currentSourceTransparency) {
+                writeCommand("*b1Y");
+            } else if (rlewidth < bytewidth) {
+                writeCommand("*b1m" + rlewidth + "W");
+                out.write(rle, 0, rlewidth);
+            } else {
+                writeCommand("*b0m" + bytewidth + "W");
+                out.write(uncompressed);
+            }
+            lastcount = -1;
+            rlewidth = 0;
+            ib = 0;
+            x = 0;
+            zeroRow = true;
+        }
+
+
     }
 
 }

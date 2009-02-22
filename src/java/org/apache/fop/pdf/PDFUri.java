@@ -41,14 +41,22 @@ public class PDFUri extends PDFAction {
      * @return the action to place next to /A within a Link
      */
     public String getAction() {
+        if (hasObjectNumber()) {
+            return referencePDF();
+        } else {
+            return getDictString();
+        }
+    }
+
+    private String getDictString() {
         return "<< /URI (" + uri + ")\n/S /URI >>";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toPDFString() {
-        throw new UnsupportedOperationException("This method should not be called");
+        //TODO Convert this class into a dictionary
+        return getObjectID() + getDictString() + "\nendobj\n";
+        //throw new UnsupportedOperationException("This method should not be called");
     }
 
 }

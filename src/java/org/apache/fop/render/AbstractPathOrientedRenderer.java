@@ -475,7 +475,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         }
     }
 
-    private static final QName FOX_TRANSFORM
+    /** Constant for the fox:transform extension attribute */
+    protected static final QName FOX_TRANSFORM
             = new QName(ExtensionElementMapping.URI, "fox:transform");
 
     /** {@inheritDoc} */

@@ -26,16 +26,17 @@ import java.util.Vector;
 import javax.xml.transform.Result;
 import javax.xml.transform.sax.SAXResult;
 
+import org.xml.sax.SAXException;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
 import org.apache.fop.area.RenderPagesModel;
 import org.apache.fop.fonts.FontInfo;
-import org.xml.sax.SAXException;
 
 /**
- * InputHandler for the area tree XML (intermediate format) as input.
+ * InputHandler for the area tree XML (the old intermediate format) as input.
  */
 public class AreaTreeInputHandler extends InputHandler {
 

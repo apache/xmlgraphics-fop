@@ -166,6 +166,11 @@ public class OutlineFont extends AFPFont {
         return getWidths(1000);
     }
 
+    /** {@inheritDoc} */
+    public boolean hasChar(char c) {
+        return charSet.hasChar(c);
+    }
+
     /**
      * Map a Unicode character to a code point in the font.
      * @param c character to map
@@ -179,4 +184,5 @@ public class OutlineFont extends AFPFont {
     public String getEncodingName() {
         return charSet.getEncoding();
     }
+
 }

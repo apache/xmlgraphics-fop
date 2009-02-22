@@ -26,13 +26,11 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -58,10 +56,10 @@ import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -82,12 +80,12 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
@@ -96,6 +94,7 @@ import org.apache.fop.render.java2d.Base14FontCollection;
 import org.apache.fop.render.java2d.ConfiguredFontCollection;
 import org.apache.fop.render.java2d.FontMetricsMapper;
 import org.apache.fop.render.java2d.InstalledFontCollection;
+import org.apache.fop.render.java2d.Java2DFontMetrics;
 import org.apache.fop.render.java2d.Java2DRenderer;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 import org.apache.fop.traits.BorderProps;
@@ -109,18 +108,13 @@ import org.apache.fop.traits.BorderProps;
 /**
  * Renderer for the PCL 5 printer language. It also uses HP GL/2 for certain graphic elements.
  */
-public class PCLRenderer extends PrintRenderer {
+public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PCLRenderer.class);
 
     /** The MIME type for PCL */
     public static final String MIME_TYPE = MimeConstants.MIME_PCL_ALT;
-
-    private static final QName CONV_MODE
-            = new QName(ExtensionElementMapping.URI, null, "conversion-mode");
-    private static final QName SRC_TRANSPARENCY
-            = new QName(ExtensionElementMapping.URI, null, "source-transparency");
 
     /** The OutputStream to write the PCL stream to */
     protected OutputStream out;
@@ -138,28 +132,10 @@ public class PCLRenderer extends PrintRenderer {
     private java.awt.Color currentFillColor = null;
 
     /**
-     * Controls whether appearance is more important than speed. False can cause some FO feature
-     * to be ignored (like the advanced borders).
+     * Utility class which enables all sorts of features that are not directly connected to the
+     * normal rendering process.
      */
-    private boolean qualityBeforeSpeed = false;
-
-    /**
-     * Controls whether all text should be painted as text. This is a fallback setting in case
-     * the mixture of native and bitmapped text does not provide the necessary quality.
-     */
-    private boolean allTextAsBitmaps = false;
-
-    /**
-     * Controls whether an RGB canvas is used when converting Java2D graphics to bitmaps.
-     * This can be used to work around problems with Apache Batik, for example, but setting
-     * this to true will increase memory consumption.
-     */
-    private final boolean useColorCanvas = false;
-
-    /**
-     * Controls whether the generation of PJL commands gets disabled.
-     */
-    private boolean disabledPJL = false;
+    private PCLRenderingUtil pclUtil;
 
     /** contains the pageWith of the last printed page */
     private long pageWidth = 0;
@@ -172,13 +148,24 @@ public class PCLRenderer extends PrintRenderer {
     public PCLRenderer() {
     }
 
+    /** {@inheritDoc} */
+    public void setUserAgent(FOUserAgent agent) {
+        super.setUserAgent(agent);
+        this.pclUtil = new PCLRenderingUtil(getUserAgent());
+    }
+
+    PCLRenderingUtil getPCLUtil() {
+        return this.pclUtil;
+    }
+
     /**
      * Configures the renderer to trade speed for quality if desired. One example here is the way
      * that borders are rendered.
      * @param qualityBeforeSpeed true if quality is more important than speed
      */
     public void setQualityBeforeSpeed(boolean qualityBeforeSpeed) {
-        this.qualityBeforeSpeed = qualityBeforeSpeed;
+        pclUtil.setRenderingMode(qualityBeforeSpeed
+                ? PCLRenderingMode.QUALITY : PCLRenderingMode.SPEED);
     }
 
     /**
@@ -186,7 +173,7 @@ public class PCLRenderer extends PrintRenderer {
      * @param disable true to disable PJL commands
      */
     public void setPJLDisabled(boolean disable) {
-        this.disabledPJL = disable;
+        pclUtil.setPJLDisabled(disable);
     }
 
     /**
@@ -194,7 +181,16 @@ public class PCLRenderer extends PrintRenderer {
      * @return true if PJL generation is disabled.
      */
     public boolean isPJLDisabled() {
-        return this.disabledPJL;
+        return pclUtil.isPJLDisabled();
+    }
+
+    /**
+     * Controls whether all text should be generated as bitmaps or only text for which there's
+     * no native font.
+     * @param allTextAsBitmaps true if all text should be painted as bitmaps
+     */
+    public void setAllTextAsBitmaps(boolean allTextAsBitmaps) {
+        pclUtil.setAllTextAsBitmaps(allTextAsBitmaps);
     }
 
     /**
@@ -205,12 +201,7 @@ public class PCLRenderer extends PrintRenderer {
         //The PCLRenderer uses the Java2D FontSetup which needs a special font setup
         //create a temp Image to test font metrics on
         fontInfo = inFontInfo;
-        BufferedImage fontImage = new BufferedImage(100, 100,
-                BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = fontImage.createGraphics();
-        //The next line is important to get accurate font metrics!
-        graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
 
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(graphics2D),
@@ -254,125 +245,6 @@ public class PCLRenderer extends PrintRenderer {
         }
     }
 
-    /**
-     * Sets the current font (NOTE: Hard-coded font mappings ATM!)
-     * @param name the font name (internal F* names for now)
-     * @param size the font size
-     * @param text the text to be rendered (used to determine if there are non-printable chars)
-     * @return true if the font can be mapped to PCL
-     * @throws IOException if an I/O problem occurs
-     */
-    public boolean setFont(String name, float size, String text) throws IOException {
-        byte[] encoded = text.getBytes("ISO-8859-1");
-        for (int i = 0, c = encoded.length; i < c; i++) {
-            if (encoded[i] == 0x3F && text.charAt(i) != '?') {
-                return false;
-            }
-        }
-        int fontcode = 0;
-        if (name.length() > 1 && name.charAt(0) == 'F') {
-            try {
-                fontcode = Integer.parseInt(name.substring(1));
-            } catch (Exception e) {
-                log.error(e);
-            }
-        }
-        //Note "(ON" selects ISO 8859-1 symbol set as used by PCLGenerator
-        String formattedSize = gen.formatDouble2(size / 1000);
-        switch (fontcode) {
-        case 1:     // F1 = Helvetica
-            // gen.writeCommand("(8U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b24580T");
-            // Arial is more common among PCL5 printers than Helvetica - so use Arial
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s0b16602T");
-            break;
-        case 2:     // F2 = Helvetica Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s0b16602T");
-            break;
-        case 3:     // F3 = Helvetica Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s3b16602T");
-            break;
-        case 4:     // F4 = Helvetica Bold Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s3b16602T");
-            break;
-        case 5:     // F5 = Times Roman
-            // gen.writeCommand("(8U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b25093T");
-            // Times New is more common among PCL5 printers than Times - so use Times New
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s0b16901T");
-            break;
-        case 6:     // F6 = Times Italic
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s0b16901T");
-            break;
-        case 7:     // F7 = Times Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v0s3b16901T");
-            break;
-        case 8:     // F8 = Times Bold Italic
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s1p" + formattedSize + "v1s3b16901T");
-            break;
-        case 9:     // F9 = Courier
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h0s0b4099T");
-            break;
-        case 10:    // F10 = Courier Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h1s0b4099T");
-            break;
-        case 11:    // F11 = Courier Bold
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h0s3b4099T");
-            break;
-        case 12:    // F12 = Courier Bold Oblique
-
-            gen.writeCommand("(0N");
-            gen.writeCommand("(s0p" + gen.formatDouble2(120.01f / (size / 1000.00f))
-                    + "h1s3b4099T");
-            break;
-        case 13:    // F13 = Symbol
-
-            return false;
-            //gen.writeCommand("(19M");
-            //gen.writeCommand("(s1p" + formattedSize + "v0s0b16686T");
-            // ECMA Latin 1 Symbol Set in Times Roman???
-            // gen.writeCommand("(9U");
-            // gen.writeCommand("(s1p" + formattedSize + "v0s0b25093T");
-            //break;
-        case 14:    // F14 = Zapf Dingbats
-
-            return false;
-            //gen.writeCommand("(14L");
-            //gen.writeCommand("(s1p" + formattedSize + "v0s0b45101T");
-            //break;
-        default:
-            //gen.writeCommand("(0N");
-            //gen.writeCommand("(s" + formattedSize + "V");
-            return false;
-        }
-        return true;
-    }
-
     /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
         log.debug("Rendering areas to PCL...");
@@ -412,15 +284,13 @@ public class PCLRenderer extends PrintRenderer {
         saveGraphicsState();
 
         //Paper source
-        String paperSource = page.getForeignAttributeValue(
-                new QName(PCLElementMapping.NAMESPACE, null, "paper-source"));
+        String paperSource = page.getForeignAttributeValue(PCLElementMapping.PCL_PAPER_SOURCE);
         if (paperSource != null) {
             gen.selectPaperSource(Integer.parseInt(paperSource));
         }
 
         // Is Page duplex?
-        String pageDuplex = page.getForeignAttributeValue(
-                new QName(PCLElementMapping.NAMESPACE, null, "duplex-mode"));
+        String pageDuplex = page.getForeignAttributeValue(PCLElementMapping.PCL_DUPLEX_MODE);
         if (pageDuplex != null) {
             gen.selectDuplexMode(Integer.parseInt(pageDuplex));
         }
@@ -497,70 +367,15 @@ public class PCLRenderer extends PrintRenderer {
     }
 
     private Point2D transformedPoint(int x, int y) {
-        AffineTransform at = graphicContext.getTransform();
-        if (log.isTraceEnabled()) {
-            log.trace("Current transform: " + at);
-        }
-        Point2D.Float orgPoint = new Point2D.Float(x, y);
-        Point2D.Float transPoint = new Point2D.Float();
-        at.transform(orgPoint, transPoint);
-        //At this point we have the absolute position in FOP's coordinate system
-
-        //Now get PCL coordinates taking the current print direction and the logical page
-        //into account.
-        Dimension pageSize = currentPageDefinition.getPhysicalPageSize();
-        Rectangle logRect = currentPageDefinition.getLogicalPageRect();
-        switch (currentPrintDirection) {
-        case 0:
-            transPoint.x -= logRect.x;
-            transPoint.y -= logRect.y;
-            break;
-        case 90:
-            float ty = transPoint.x;
-            transPoint.x = pageSize.height - transPoint.y;
-            transPoint.y = ty;
-            transPoint.x -= logRect.y;
-            transPoint.y -= logRect.x;
-            break;
-        case 180:
-            transPoint.x = pageSize.width - transPoint.x;
-            transPoint.y = pageSize.height - transPoint.y;
-            transPoint.x -= pageSize.width - logRect.x - logRect.width;
-            transPoint.y -= pageSize.height - logRect.y - logRect.height;
-            //The next line is odd and is probably necessary due to the default value of the
-            //Text Length command: "1/2 inch less than maximum text length"
-            //I wonder why this isn't necessary for the 90 degree rotation. *shrug*
-            transPoint.y -= UnitConv.in2mpt(0.5);
-            break;
-        case 270:
-            float tx = transPoint.y;
-            transPoint.y = pageSize.width - transPoint.x;
-            transPoint.x = tx;
-            transPoint.x -= pageSize.height - logRect.y - logRect.height;
-            transPoint.y -= pageSize.width - logRect.x - logRect.width;
-            break;
-        default:
-            throw new IllegalStateException("Illegal print direction: " + currentPrintDirection);
-        }
-        return transPoint;
+        return PCLRenderingUtil.transformedPoint(x, y, graphicContext.getTransform(),
+                currentPageDefinition, currentPrintDirection);
     }
 
     private void changePrintDirection() {
         AffineTransform at = graphicContext.getTransform();
         int newDir;
         try {
-            if (at.getScaleX() == 0 && at.getScaleY() == 0
-                    && at.getShearX() == 1 && at.getShearY() == -1) {
-                newDir = 90;
-            } else if (at.getScaleX() == -1 && at.getScaleY() == -1
-                    && at.getShearX() == 0 && at.getShearY() == 0) {
-                newDir = 180;
-            } else if (at.getScaleX() == 0 && at.getScaleY() == 0
-                    && at.getShearX() == -1 && at.getShearY() == 1) {
-                newDir = 270;
-            } else {
-                newDir = 0;
-            }
+            newDir = PCLRenderingUtil.determinePrintDirection(at);
             if (newDir != this.currentPrintDirection) {
                 this.currentPrintDirection = newDir;
                 gen.changePrintDirection(this.currentPrintDirection);
@@ -657,9 +472,9 @@ public class PCLRenderer extends PrintRenderer {
         try {
 
             final Color col = (Color)text.getTrait(Trait.COLOR);
-            boolean pclFont = allTextAsBitmaps
+            boolean pclFont = pclUtil.isAllTextAsBitmaps()
                     ? false
-                    : setFont(fontname, fontsize, text.getText());
+                    : HardcodedFonts.setFont(gen, fontname, fontsize, text.getText());
             if (pclFont) {
                 //this.currentFill = col;
                 if (col != null) {
@@ -699,7 +514,7 @@ public class PCLRenderer extends PrintRenderer {
                 RendererContext rc = createRendererContext(paintRect.x, paintRect.y,
                         paintRect.width, paintRect.height, null);
                 Map atts = new java.util.HashMap();
-                atts.put(CONV_MODE, "bitmap");
+                atts.put(ImageHandlerUtil.CONVERSION_MODE, ImageHandlerUtil.CONVERSION_MODE_BITMAP);
                 atts.put(SRC_TRANSPARENCY, "true");
                 rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
 
@@ -717,7 +532,7 @@ public class PCLRenderer extends PrintRenderer {
                     public Dimension getImageSize() {
                         return paintRect.getSize();
                     }
-                    
+
                 };
                 g2a.paintImage(painter, rc,
                         paintRect.x, paintRect.y, paintRect.width, paintRect.height);
@@ -1149,7 +964,7 @@ public class PCLRenderer extends PrintRenderer {
         RendererContext context = super.createRendererContext(
                 x, y, width, height, foreignAttributes);
         context.setProperty(PCLRendererContextConstants.PCL_COLOR_CANVAS,
-                Boolean.valueOf(this.useColorCanvas));
+                Boolean.valueOf(pclUtil.isColorCanvasEnabled()));
         return context;
     }
 
@@ -1371,10 +1186,10 @@ public class PCLRenderer extends PrintRenderer {
         if (bpsBefore == null && bpsAfter == null && bpsStart == null && bpsEnd == null) {
             return; //no borders to paint
         }
-        if (qualityBeforeSpeed) {
-            drawQualityBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
-        } else {
+        if (PCLRenderingMode.SPEED == pclUtil.getRenderingMode()) {
             drawFastBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+        } else {
+            drawQualityBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
         }
     }
 
@@ -1450,7 +1265,7 @@ public class PCLRenderer extends PrintRenderer {
         RendererContext rc = createRendererContext(paintRect.x, paintRect.y,
                 paintRect.width, paintRect.height, null);
         Map atts = new java.util.HashMap();
-        atts.put(CONV_MODE, "bitmap");
+        atts.put(ImageHandlerUtil.CONVERSION_MODE, ImageHandlerUtil.CONVERSION_MODE_BITMAP);
         atts.put(SRC_TRANSPARENCY, "true");
         rc.setProperty(RendererContextConstants.FOREIGN_ATTRIBUTES, atts);
 
@@ -1689,16 +1504,5 @@ public class PCLRenderer extends PrintRenderer {
         restoreGraphicsState();
         super.renderLeader(area);
     }
-
-    /**
-     * Controls whether all text should be generated as bitmaps or only text for which there's
-     * no native font.
-     * @param allTextAsBitmaps true if all text should be painted as bitmaps
-     */
-    public void setAllTextAsBitmaps(boolean allTextAsBitmaps) {
-        this.allTextAsBitmaps = allTextAsBitmaps;
-    }
-
-
 
 }

@@ -23,6 +23,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -68,7 +69,7 @@ public abstract class AbstractRendererConfigurator {
      * @param mimeType the MIME type of the renderer
      * @return the requested configuration subtree, null if there's no configuration
      */
-    private Configuration getRendererConfig(String mimeType) {
+    protected Configuration getRendererConfig(String mimeType) {
         Configuration cfg = userAgent.getFactory().getUserConfig();
         if (cfg == null) {
             if (log.isDebugEnabled()) {

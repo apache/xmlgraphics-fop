@@ -222,7 +222,7 @@ public class Java2DGraphicsState {
                 getGraph().setPaint(p);
                 return true;
             }
-        } else if (p.equals(getGraph().getPaint())) {
+        } else if (!p.equals(getGraph().getPaint())) {
             getGraph().setPaint(p);
             return true;
         }
@@ -252,10 +252,12 @@ public class Java2DGraphicsState {
      * according to the rule last-specified-first-applied.
      * @see java.awt.Graphics2D#transform(AffineTransform)
      *
-     * @param tf the transform to concatonate to the current level transform
+     * @param tf the transform to concatenate to the current level transform
      */
     public void transform(AffineTransform tf) {
-        getGraph().transform(tf);
+        if (!tf.isIdentity()) {
+            getGraph().transform(tf);
+        }
     }
 
     /**
@@ -270,7 +272,7 @@ public class Java2DGraphicsState {
 
     /** {@inheritDoc} */
     public String toString() {
-        String s = "AWTGraphicsState " + currentGraphics.toString()
+        String s = "Java2DGraphicsState " + currentGraphics.toString()
                 + ", Stroke (width: " + currentStrokeWidth + " style: "
                 + currentStrokeStyle + "), " + getTransform();
         return s;

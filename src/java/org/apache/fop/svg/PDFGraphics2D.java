@@ -436,6 +436,14 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         }
 
         PDFXObject xObject = this.pdfDoc.addImage(resourceContext, pdfImage);
+        flushPDFDocument();
+
+        AffineTransform at = new AffineTransform();
+        at.translate(x, y);
+        useXObject(xObject, at, width, height);
+    }
+
+    private void flushPDFDocument() {
         if (outputStream != null) {
             try {
                 this.pdfDoc.output(outputStream);
@@ -443,10 +451,6 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 // ignore exception, will be thrown again later
             }
         }
-
-        AffineTransform at = new AffineTransform();
-        at.translate(x, y);
-        useXObject(xObject, at, width, height);
     }
 
     /**
@@ -1044,13 +1048,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             this.pdfDoc.addObject(annots);
         }
 
-        if (outputStream != null) {
-            try {
-                this.pdfDoc.output(outputStream);
-            } catch (IOException ioe) {
-                // ignore exception, will be thrown again later
-            }
-        }
+        flushPDFDocument();
         return true;
     }
 
@@ -1147,26 +1145,14 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 PDFImageXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 maskRef = xobj.referencePDF();
 
-                if (outputStream != null) {
-                    try {
-                        this.pdfDoc.output(outputStream);
-                    } catch (IOException ioe) {
-                        // ignore exception, will be thrown again later
-                    }
-                }
+                flushPDFDocument();
             }
             BitmapImage fopimg;
             fopimg = new BitmapImage("TempImage:" + pctx.toString(),
                                      devW, devH, rgb, maskRef);
             fopimg.setTransparent(new PDFColor(255, 255, 255));
             imageInfo = pdfDoc.addImage(resourceContext, fopimg);
-            if (outputStream != null) {
-                try {
-                    this.pdfDoc.output(outputStream);
-                } catch (IOException ioe) {
-                    // ignore exception, will be thrown again later
-                }
-            }
+            flushPDFDocument();
         }
 
         currentStream.write("q\n");
@@ -1275,13 +1261,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         ImageRendered imgRend = new ImageRendered(info, img, null);
         ImageRenderedAdapter adapter = new ImageRenderedAdapter(imgRend, key);
         PDFXObject xObject = pdfDoc.addImage(resourceContext, adapter);
-        if (outputStream != null) {
-            try {
-                this.pdfDoc.output(outputStream);
-            } catch (IOException ioe) {
-                // ignore exception, will be thrown again later
-            }
-        }
+        flushPDFDocument();
         return xObject;
     }
 

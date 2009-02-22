@@ -21,6 +21,8 @@ package org.apache.fop.svg;
 
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 
+import org.apache.fop.image.loader.batik.BatikImageFlavors;
+
 /**
  * PDF Image Element Bridge class for the &lt;image> element when jpeg images.
  *
@@ -37,10 +39,11 @@ public class PDFImageElementBridge extends AbstractFOPImageElementBridge {
                                                {ImageFlavor.RAW_JPEG,
                                                 ImageFlavor.RAW_CCITTFAX,
                                                 ImageFlavor.GRAPHICS2D,
-                                                ImageFlavor.XML_DOM};
+                                                BatikImageFlavors.SVG_DOM};
 
     /** {@inheritDoc} */
     protected ImageFlavor[] getSupportedFlavours() {
         return supportedFlavors;
     }
+
 }

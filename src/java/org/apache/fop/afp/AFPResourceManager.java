@@ -21,19 +21,32 @@ package org.apache.fop.afp;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.IncludeObject;
+import org.apache.fop.afp.modca.IncludedResourceObject;
 import org.apache.fop.afp.modca.PageSegment;
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;
+import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.SimpleResourceAccessor;
 
 /**
  * Manages the creation and storage of document resources
  */
 public class AFPResourceManager {
+
+    /** logging instance */
+    private static Log log = LogFactory.getLog(AFPResourceManager.class);
+
     /** The AFP datastream (document tree) */
     private DataStream dataStream;
 
@@ -47,8 +60,8 @@ public class AFPResourceManager {
     /** Maintain a reference count of instream objects for referencing purposes */
     private int instreamObjectCount = 0;
 
-    /** a mapping of resourceInfo --> names of includable objects */
-    private final Map/*<AFPResourceInfo,String>*/ includableObjectsMap
+    /** a mapping of resourceInfo --> include name */
+    private final Map/*<AFPResourceInfo,String>*/ includeNameMap
         = new java.util.HashMap()/*<AFPResourceInfo,String>*/;
 
     private Map pageSegmentMap = new java.util.HashMap();
@@ -120,7 +133,7 @@ public class AFPResourceManager {
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         updateResourceInfoUri(resourceInfo);
 
-        String objectName = (String)includableObjectsMap.get(resourceInfo);
+        String objectName = (String)includeNameMap.get(resourceInfo);
         if (objectName != null) {
             // an existing data resource so reference it by adding an include to the current page
             includeObject(dataObjectInfo, objectName);
@@ -156,35 +169,35 @@ public class AFPResourceManager {
         useInclude &= resourceGroup != null;
         if (useInclude) {
 
-            boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
+        boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
 
-            // if it is to reside within a resource group at print-file or external level
-            if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
-                if (usePageSegment) {
-                    String pageSegmentName = "S10" + namedObj.getName().substring(3);
-                    namedObj.setName(pageSegmentName);
-                    PageSegment seg = new PageSegment(pageSegmentName);
-                    seg.addObject(namedObj);
-                    namedObj = seg;
-                }
-
-                // wrap newly created data object in a resource object
-                namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
-            }
-
-            // add data object into its resource group destination
-            resourceGroup.addObject(namedObj);
-
-            // create the include object
-            objectName = namedObj.getName();
+        // if it is to reside within a resource group at print-file or external level
+        if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
             if (usePageSegment) {
-                includePageSegment(dataObjectInfo, objectName);
-                pageSegmentMap.put(resourceInfo, objectName);
-            } else {
-                includeObject(dataObjectInfo, objectName);
-                // record mapping of resource info to data object resource name
-                includableObjectsMap.put(resourceInfo, objectName);
+                String pageSegmentName = "S10" + namedObj.getName().substring(3);
+                namedObj.setName(pageSegmentName);
+                PageSegment seg = new PageSegment(pageSegmentName);
+                seg.addObject(namedObj);
+                namedObj = seg;
             }
+
+            // wrap newly created data object in a resource object
+            namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
+        }
+
+        // add data object into its resource group destination
+        resourceGroup.addObject(namedObj);
+
+        // create the include object
+        objectName = namedObj.getName();
+        if (usePageSegment) {
+            includePageSegment(dataObjectInfo, objectName);
+            pageSegmentMap.put(resourceInfo, objectName);
+        } else {
+            includeObject(dataObjectInfo, objectName);
+            // record mapping of resource info to data object resource name
+            includeNameMap.put(resourceInfo, objectName);
+        }
 
         } else {
             // not to be included so inline data object directly into the current page
@@ -206,10 +219,10 @@ public class AFPResourceManager {
 
     private void includeObject(AFPDataObjectInfo dataObjectInfo,
             String objectName) {
-        IncludeObject includeObject
-            = dataObjectFactory.createInclude(objectName, dataObjectInfo);
-        dataStream.getCurrentPage().addObject(includeObject);
-    }
+            IncludeObject includeObject
+                = dataObjectFactory.createInclude(objectName, dataObjectInfo);
+            dataStream.getCurrentPage().addObject(includeObject);
+        }
 
     private void includePageSegment(AFPDataObjectInfo dataObjectInfo,
             String pageSegmentName) {
@@ -218,6 +231,53 @@ public class AFPResourceManager {
         AbstractPageObject currentPage = dataStream.getCurrentPage();
         boolean createHardPageSegments = true;
         currentPage.createIncludePageSegment(pageSegmentName, x, y, createHardPageSegments);
+    }
+
+    /**
+     * Creates an included resource object by loading the contained object from a file.
+     * @param resourceName the name of the resource
+     * @param basePath the base path in which to look for the resource files
+     * @param resourceObjectType the resource object type ({@link ResourceObject}.*)
+     * @throws IOException if an I/O error occurs while loading the resource
+     */
+    public void createIncludedResource(String resourceName, String basePath,
+                byte resourceObjectType) throws IOException {
+        AFPResourceLevel resourceLevel = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
+        URI uri;
+        try {
+            uri = new URI(resourceName.trim());
+        } catch (URISyntaxException e) {
+            throw new IOException("Could not create URI from resource name: " + resourceName
+                    + " (" + e.getMessage() + ")");
+        }
+
+        AFPResourceInfo resourceInfo = new AFPResourceInfo();
+        resourceInfo.setLevel(resourceLevel);
+        resourceInfo.setName(resourceName);
+        resourceInfo.setUri(uri.toASCIIString());
+
+        String objectName = (String)includeNameMap.get(resourceInfo);
+        if (objectName == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Adding included resource: " + resourceName);
+            }
+            //TODO This works with local filenames only. In the long term, this
+            //should work through FOP's URI resolver.
+            ResourceAccessor accessor = new SimpleResourceAccessor(basePath);
+            IncludedResourceObject resourceContent = new IncludedResourceObject(
+                        resourceName, accessor, uri);
+
+            ResourceObject resourceObject = factory.createResource(resourceName);
+            resourceObject.setDataObject(resourceContent);
+            resourceObject.setType(resourceObjectType);
+
+            ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
+            resourceGroup.addObject(resourceObject);
+            // record mapping of resource info to data object resource name
+            includeNameMap.put(resourceInfo, resourceName);
+        } else {
+            //skip, already created
+        }
     }
 
     /**
@@ -236,4 +296,5 @@ public class AFPResourceManager {
     public AFPResourceLevelDefaults getResourceLevelDefaults() {
         return this.resourceLevelDefaults;
     }
+
 }

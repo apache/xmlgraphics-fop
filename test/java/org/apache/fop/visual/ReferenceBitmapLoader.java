@@ -51,7 +51,7 @@ public class ReferenceBitmapLoader extends AbstractBitmapProducer implements Con
     }
 
     /** @see org.apache.fop.visual.BitmapProducer */
-    public BufferedImage produce(File src, ProducerContext context) {
+    public BufferedImage produce(File src, int index, ProducerContext context) {
         try {
             File bitmap = new File(bitmapDirectory, src.getName() + ".png");
             if (bitmap.exists()) {

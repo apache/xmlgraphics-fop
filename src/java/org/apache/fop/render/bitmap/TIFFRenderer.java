@@ -43,7 +43,6 @@ import org.apache.xmlgraphics.image.writer.MultiImageWriter;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
 /**
@@ -67,19 +66,7 @@ import org.apache.fop.render.java2d.Java2DRenderer;
  * <code>org.apache.fop.render.java2D.Java2DRenderer</code> and just encode
  * rendering results into TIFF format using Batik's image codec
  */
-public class TIFFRenderer extends Java2DRenderer {
-
-    /** The MIME type for tiff-Rendering */
-    public static final String MIME_TYPE = MimeConstants.MIME_TIFF;
-
-    //private static final String COMPRESSION_NONE = "NONE";
-    //private static final String COMPRESSION_JPEG = "JPEG";
-    public static final String COMPRESSION_PACKBITS = "PackBits";
-    //private static final String COMPRESSION_DEFLATE = "Deflate";
-    //private static final String COMPRESSION_LZW = "LZW";
-    //private static final String COMPRESSION_ZLIB = "ZLib";
-    public static final String COMPRESSION_CCITT_T6 = "CCITT T.6"; //CCITT Group 4
-    public static final String COMPRESSION_CCITT_T4 = "CCITT T.4"; //CCITT Group 3
+public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
 
     /** ImageWriter parameters */
     private ImageWriterParams writerParams;

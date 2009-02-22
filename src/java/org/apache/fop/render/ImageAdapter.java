@@ -34,10 +34,10 @@ public interface ImageAdapter {
      * Paints an image at the given position.
      * @param image the image which will be painted
      * @param context the renderer context for the current renderer
-     * @param x X position of the image
-     * @param y Y position of the image
-     * @param width width of the image
-     * @param height height of the image
+     * @param x X position of the image (in millipoints)
+     * @param y Y position of the image (in millipoints)
+     * @param width width of the image (in millipoints)
+     * @param height height of the image (in millipoints)
      * @throws IOException In case of an I/O error while writing the output format
      */
     void paintImage(RenderedImage image,

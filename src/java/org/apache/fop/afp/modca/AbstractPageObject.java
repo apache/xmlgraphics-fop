@@ -35,7 +35,7 @@ import org.apache.fop.afp.fonts.AFPFont;
  * page has a set of data objects associated with it. Each page within a
  * document is independent from any other page, and each must establish its own
  * environment parameters.
- *
+ * <p>
  * The page is the level in the document component hierarchy that is used for
  * printing or displaying a document's content. The data objects contained in
  * the page envelope in the data stream are presented when the page is
@@ -43,12 +43,11 @@ import org.apache.fop.afp.fonts.AFPFont;
  * directs the placement and orientation of the data on the page. In addition,
  * each page contains layout information that specifies the measurement units,
  * page width, and page depth.
- *
+ * <p>
  * A page is initiated by a begin page structured field and terminated by an end
  * page structured field. Structured fields that define objects and active
  * environment groups or that specify attributes of the page may be encountered
  * in page state.
- *
  */
 public abstract class AbstractPageObject extends AbstractNamedAFPObject implements Completable {
 
@@ -202,7 +201,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      *
      * @return the presentation text object
      */
-    private PresentationTextObject getPresentationTextObject() {
+    public PresentationTextObject getPresentationTextObject() {
         if (currentPresentationTextObject == null) {
             PresentationTextObject presentationTextObject
                 = factory.createPresentationTextObject();

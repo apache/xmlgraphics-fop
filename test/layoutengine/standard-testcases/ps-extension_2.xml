@@ -92,4 +92,33 @@
     <eval expected="A4 before page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*[2]"/>
     <eval expected="A4 after page" xpath="/areaTree/pageSequence/pageViewport[@simple-page-master-name='A4' and @nr=3]/page/extension-attachments/child::*[3]"/>
   </checks>
+  <if-checks  xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
+    <eval expected="1" xpath="count(/if:document/if:page-sequence)"/>
+    <eval expected="6" xpath="count(/if:document/if:header/child::*)"/>
+    <eval expected="autofeed"       xpath="/if:document/if:header/child::*[1]/@name"/>
+    <eval expected="header comment 1" xpath="/if:document/if:header/child::*[2]/text()"/>
+    <eval expected="footer comment 1" xpath="/if:document/if:header/child::*[3]/text()"/>
+    <eval expected="header comment 2" xpath="/if:document/if:header/child::*[4]/text()"/>
+    <eval expected="footer comment 2" xpath="/if:document/if:header/child::*[5]/text()"/>
+    
+    <eval expected="3" xpath="count(//if:page[@index=0]/if:page-header/child::*)"/>
+    <eval expected="A4" xpath="//if:page[@index=0]/@page-master-name"/>
+    <eval expected="lower tray" xpath="//if:page[@index=0]/if:page-header/child::*[1]/@name"/>
+    <eval expected="A4 before page" xpath="//if:page[@index=0]/if:page-header/child::*[2]"/>
+    <eval expected="A4 after page" xpath="//if:page[@index=0]/if:page-header/child::*[3]"/>
+    
+    <eval expected="5" xpath="count(//if:page[@index=1]/if:page-header/child::*)"/>
+    <eval expected="A4a" xpath="//if:page[@index=1]/@page-master-name"/>
+    <eval expected="upper tray" xpath="//if:page[@index=1]/if:page-header/child::*[1]/@name"/>
+    <eval expected="A4a before page 1" xpath="//if:page[@index=1]/if:page-header/child::*[2]"/>
+    <eval expected="A4a after page 1" xpath="//if:page[@index=1]/if:page-header/child::*[3]"/>
+    <eval expected="A4a before page 2" xpath="//if:page[@index=1]/if:page-header/child::*[4]"/>
+    <eval expected="A4a after page 2" xpath="//if:page[@index=1]/if:page-header/child::*[5]"/>
+    
+    <eval expected="3" xpath="count(//if:page[@index=2]/if:page-header/child::*)"/>
+    <eval expected="A4" xpath="//if:page[@index=2]/@page-master-name"/>
+    <eval expected="lower tray" xpath="//if:page[@index=2]/if:page-header/child::*[1]/@name"/>
+    <eval expected="A4 before page" xpath="//if:page[@index=2]/if:page-header/child::*[2]"/>
+    <eval expected="A4 after page" xpath="//if:page[@index=2]/if:page-header/child::*[3]"/>
+  </if-checks>  
 </testcase>

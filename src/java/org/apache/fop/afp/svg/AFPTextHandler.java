@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.fonts.AFPFont;
@@ -77,7 +78,6 @@ public class AFPTextHandler implements FOPTextHandler {
      * @return a font reference
      */
     private int registerPageFont(AFPPageFonts pageFonts, String internalFontName, int fontSize) {
-        FontInfo fontInfo = getFontInfo();
         AFPFont afpFont = (AFPFont)fontInfo.getFonts().get(internalFontName);
         // register if necessary
         AFPFontAttributes afpFontAttributes = pageFonts.registerFont(
@@ -101,37 +101,45 @@ public class AFPTextHandler implements FOPTextHandler {
      * {@inheritDoc}
      */
     public void drawString(Graphics2D g, String str, float x, float y) throws IOException {
-        log.debug("drawString() str=" + str + ", x=" + x + ", y=" + y);
-        AFPGraphics2D g2d = (AFPGraphics2D)g;
-        GraphicsObject graphicsObj = g2d.getGraphicsObject();
-        Color color = g2d.getColor();
-
-        // set the color
-        AFPPaintingState paintingState = g2d.getPaintingState();
-        if (paintingState.setColor(color)) {
-            graphicsObj.setColor(color);
+        if (log.isDebugEnabled()) {
+            log.debug("drawString() str=" + str + ", x=" + x + ", y=" + y);
         }
+        if (g instanceof AFPGraphics2D) {
+            AFPGraphics2D g2d = (AFPGraphics2D)g;
+            GraphicsObject graphicsObj = g2d.getGraphicsObject();
+            Color color = g2d.getColor();
 
-        // set the character set
-        int fontReference = 0;
-        AFPPageFonts pageFonts = paintingState.getPageFonts();
-        if (overrideFont != null) {
-            String internalFontName = overrideFont.getFontName();
-            int fontSize = overrideFont.getFontSize();
+            // set the color
+            AFPPaintingState paintingState = g2d.getPaintingState();
+            if (paintingState.setColor(color)) {
+                graphicsObj.setColor(color);
+            }
+
+            // set the character set
+            int fontReference = 0;
+            int fontSize;
+            String internalFontName;
+            AFPPageFonts pageFonts = paintingState.getPageFonts();
+            if (overrideFont != null) {
+                internalFontName = overrideFont.getFontName();
+                fontSize = overrideFont.getFontSize();
+            } else {
+                java.awt.Font awtFont = g2d.getFont();
+                Font fopFont = fontInfo.getFontInstanceForAWTFont(awtFont);
+                internalFontName = fopFont.getFontName();
+                fontSize = fopFont.getFontSize();
+            }
+            fontSize = (int)Math.round(
+                    g2d.convertToAbsoluteLength(fontSize));
             fontReference = registerPageFont(pageFonts, internalFontName, fontSize);
+            graphicsObj.setCharacterSet(fontReference);
+
+            // add the character string
+            graphicsObj.addString(str, Math.round(x), Math.round(y));
         } else {
-            java.awt.Font awtFont = g2d.getFont();
-//            AffineTransform fontTransform = awtFont.getTransform();
-            FontInfo fontInfo = getFontInfo();
-            Font fopFont = fontInfo.getFontInstanceForAWTFont(awtFont);
-            String internalFontName = fopFont.getFontName();
-            int fontSize = fopFont.getFontSize();
-            fontReference = registerPageFont(pageFonts, internalFontName, fontSize);
+            //Inside Batik's SVG filter operations, you won't get an AFPGraphics2D
+            g.drawString(str, x, y);
         }
-        graphicsObj.setCharacterSet(fontReference);
-
-        // add the character string
-        graphicsObj.addString(str, Math.round(x), Math.round(y));
     }
 
     /**

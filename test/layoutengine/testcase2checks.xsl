@@ -22,16 +22,25 @@
 <xsl:variable name="basic-checks" select="document('basic-checks.xml')/checks/*" />
 
 <xsl:template match="testcase">
-  <xsl:apply-templates select="checks" />
-</xsl:template>
-
-<xsl:template match="checks">
   <checks>
-    <xsl:copy-of select="$basic-checks" />
-    <xsl:copy-of select="*" />
+    <xsl:apply-templates select="checks"/>
+    <xsl:apply-templates select="if-checks"/>
   </checks>
 </xsl:template>
 
+<xsl:template match="checks">
+  <at-checks>
+    <xsl:copy-of select="$basic-checks" />
+    <xsl:copy-of select="*" />
+  </at-checks>
+</xsl:template>
+
+<xsl:template match="if-checks">
+  <if-checks>
+    <xsl:copy-of select="*"/>
+  </if-checks>
+</xsl:template>
+  
 <xsl:template match="text()" />
 
 </xsl:stylesheet>

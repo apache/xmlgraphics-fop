@@ -136,7 +136,7 @@ import org.apache.fop.render.afp.extensions.AFPPageSetup;
  * (ie. at the start or end of the page).
  *
  */
-public class AFPRenderer extends AbstractPathOrientedRenderer {
+public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCustomizable {
 
     private static final int X = 0;
     private static final int Y = 1;
@@ -543,6 +543,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         int textWordSpaceAdjust = text.getTextWordSpaceAdjust();
         int textLetterSpaceAdjust = text.getTextLetterSpaceAdjust();
         int textWidth = font.getWidth(' ', fontSize) / 1000;
+        textWidth = 0; //JM, the above is strange
         int variableSpaceCharacterIncrement
             = textWidth + textWordSpaceAdjust + textLetterSpaceAdjust;
 
@@ -679,7 +680,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Sets the rotation to be used for landsacpe pages, valid values are 0, 90,
+     * Sets the rotation to be used for landscape pages, valid values are 0, 90,
      * 180, 270 (default).
      *
      * @param rotation
@@ -689,68 +690,39 @@ public class AFPRenderer extends AbstractPathOrientedRenderer {
         paintingState.setLandscapeRotation(rotation);
     }
 
-    /**
-     * Sets the number of bits used per pixel
-     *
-     * @param bitsPerPixel
-     *            number of bits per pixel
-     */
+    // ---=== AFPCustomizable ===---
+
+    /** {@inheritDoc} */
     public void setBitsPerPixel(int bitsPerPixel) {
         paintingState.setBitsPerPixel(bitsPerPixel);
     }
 
-    /**
-     * Sets whether images are color or not
-     *
-     * @param colorImages
-     *            color image output
-     */
+    /** {@inheritDoc} */
     public void setColorImages(boolean colorImages) {
         paintingState.setColorImages(colorImages);
     }
 
-    /**
-     * Sets whether images are supported natively or not
-     *
-     * @param nativeImages
-     *            native image support
-     */
+    /** {@inheritDoc} */
     public void setNativeImagesSupported(boolean nativeImages) {
         paintingState.setNativeImagesSupported(nativeImages);
     }
 
-    /**
-     * Sets the output/device resolution
-     *
-     * @param resolution
-     *            the output resolution (dpi)
-     */
+    /** {@inheritDoc} */
     public void setResolution(int resolution) {
         paintingState.setResolution(resolution);
     }
 
-    /**
-     * Returns the output/device resolution.
-     *
-     * @return the resolution in dpi
-     */
+    /** {@inheritDoc} */
     public int getResolution() {
         return paintingState.getResolution();
     }
 
-    /**
-     * Sets the default resource group file path
-     * @param filePath the default resource group file path
-     */
+    /** {@inheritDoc} */
     public void setDefaultResourceGroupFilePath(String filePath) {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
     }
 
-    /**
-     * Sets the resource level defaults. The object passed in provides information which resource
-     * level shall be used by default for various kinds of resources.
-     * @param defaults the resource level defaults
-     */
+    /** {@inheritDoc} */
     public void setResourceLevelDefaults(AFPResourceLevelDefaults defaults) {
         resourceManager.setResourceLevelDefaults(defaults);
     }

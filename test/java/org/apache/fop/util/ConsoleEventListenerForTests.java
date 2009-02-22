@@ -28,29 +28,62 @@ import org.apache.fop.events.model.EventSeverity;
 public class ConsoleEventListenerForTests implements EventListener {
 
     private String name;
+    private EventSeverity logLevel;
 
+    /**
+     * Creates a new event listener with console output on severity INFO. This object will
+     * write out the name of the test before the first log message.
+     * @param name the name of the test
+     */
     public ConsoleEventListenerForTests(String name) {
+        this(name, EventSeverity.INFO);
+    }
+
+    /**
+     * Creates a new event listener with console output. This object will
+     * write out the name of the test before the first log message.
+     * @param name the name of the test
+     * @param logLevel the logging level
+     */
+    public ConsoleEventListenerForTests(String name, EventSeverity logLevel) {
         this.name = name;
+        this.logLevel = logLevel;
     }
 
     /** {@inheritDoc} */
     public void processEvent(Event event) {
+        EventSeverity severity = event.getSeverity();
+        if (severity == EventSeverity.FATAL) {
+            log("FATAL", event);
+            return;
+        }
+        if (logLevel == EventSeverity.FATAL) {
+            return;
+        }
+        if (severity == EventSeverity.ERROR) {
+            log("ERROR", event);
+            return;
+        }
+        if (logLevel == EventSeverity.ERROR) {
+            return;
+        }
+        if (severity == EventSeverity.WARN) {
+            log("WARN ", event);
+        }
+        if (logLevel == EventSeverity.WARN) {
+            return;
+        }
+        if (severity == EventSeverity.INFO) {
+            log("INFO ", event);
+        }
+    }
+
+    private void log(String levelString, Event event) {
         if (this.name != null) {
             System.out.println("Test: " + this.name);
             this.name = null;
         }
         String msg = EventFormatter.format(event);
-        EventSeverity severity = event.getSeverity();
-        if (severity == EventSeverity.INFO) {
-            System.out.println("  [INFO ] " + msg);
-        } else if (severity == EventSeverity.WARN) {
-            System.out.println("  [WARN ] " + msg);
-        } else if (severity == EventSeverity.ERROR) {
-            System.out.println("  [ERROR] " + msg);
-        } else if (severity == EventSeverity.FATAL) {
-            System.out.println("  [FATAL] " + msg);
-        } else {
-            assert false;
-        }
+        System.out.println("  [" + levelString + "] " + msg);
     }
 }

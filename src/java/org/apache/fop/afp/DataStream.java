@@ -340,27 +340,7 @@ public class DataStream {
      * @return a point on the current page
      */
     private Point getPoint(int x, int y) {
-        Point p = new Point();
-        int rotation = paintingState.getRotation();
-        switch (rotation) {
-        case 90:
-            p.x = y;
-            p.y = currentPage.getWidth() - x;
-            break;
-        case 180:
-            p.x = currentPage.getWidth() - x;
-            p.y = currentPage.getHeight() - y;
-            break;
-        case 270:
-            p.x = currentPage.getHeight() - y;
-            p.y = x;
-            break;
-        default:
-            p.x = x;
-            p.y = y;
-            break;
-        }
-        return p;
+        return paintingState.getPoint(x, y);
     }
 
     /**

@@ -19,18 +19,38 @@
 
 package org.apache.fop.render.bitmap;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.PrintRendererConfigurator;
+import org.apache.fop.fonts.FontCollection;
+import org.apache.fop.fonts.FontEventAdapter;
+import org.apache.fop.fonts.FontEventListener;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontManager;
+import org.apache.fop.fonts.FontResolver;
+import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
+import org.apache.fop.render.java2d.Base14FontCollection;
+import org.apache.fop.render.java2d.ConfiguredFontCollection;
+import org.apache.fop.render.java2d.InstalledFontCollection;
+import org.apache.fop.render.java2d.Java2DFontMetrics;
+import org.apache.fop.render.java2d.Java2DRenderer;
+import org.apache.fop.render.java2d.Java2DRendererConfigurator;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * TIFF Renderer configurator
  */
-public class TIFFRendererConfigurator extends PrintRendererConfigurator {
+public class TIFFRendererConfigurator extends Java2DRendererConfigurator
+            implements IFDocumentHandlerConfigurator {
 
     /**
      * Default constructor
@@ -52,15 +72,9 @@ public class TIFFRendererConfigurator extends PrintRendererConfigurator {
         if (cfg != null) {
             TIFFRenderer tiffRenderer = (TIFFRenderer)renderer;
             //set compression
-            String name = cfg.getChild("compression").getValue(TIFFRenderer.COMPRESSION_PACKBITS);
+            String name = cfg.getChild("compression").getValue(TIFFConstants.COMPRESSION_PACKBITS);
             //Some compression formats need a special image format:
-            if (name.equalsIgnoreCase(TIFFRenderer.COMPRESSION_CCITT_T6)) {
-                tiffRenderer.setBufferedImageType(BufferedImage.TYPE_BYTE_BINARY);
-            } else if (name.equalsIgnoreCase(TIFFRenderer.COMPRESSION_CCITT_T4)) {
-                tiffRenderer.setBufferedImageType(BufferedImage.TYPE_BYTE_BINARY);
-            } else {
-                tiffRenderer.setBufferedImageType(BufferedImage.TYPE_INT_ARGB);
-            }
+            tiffRenderer.setBufferedImageType(getBufferedImageTypeFor(name));
             if (!"NONE".equalsIgnoreCase(name)) {
                 tiffRenderer.getWriterParams().setCompressionMethod(name);
             }
@@ -70,4 +84,104 @@ public class TIFFRendererConfigurator extends PrintRendererConfigurator {
         }
         super.configure(renderer);
     }
+
+    private int getBufferedImageTypeFor(String compressionName) {
+        if (compressionName.equalsIgnoreCase(TIFFConstants.COMPRESSION_CCITT_T6)) {
+            return BufferedImage.TYPE_BYTE_BINARY;
+        } else if (compressionName.equalsIgnoreCase(TIFFConstants.COMPRESSION_CCITT_T4)) {
+            return BufferedImage.TYPE_BYTE_BINARY;
+        } else {
+            return BufferedImage.TYPE_INT_ARGB;
+        }
+    }
+
+    // ---=== IFDocumentHandler configuration ===---
+
+    /** {@inheritDoc} */
+    public void configure(IFDocumentHandler documentHandler) throws FOPException {
+        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
+        if (cfg != null) {
+            TIFFDocumentHandler tiffHandler = (TIFFDocumentHandler)documentHandler;
+            BitmapRenderingSettings settings = tiffHandler.getSettings();
+            //set compression
+            String name = cfg.getChild("compression").getValue(TIFFConstants.COMPRESSION_PACKBITS);
+            //Some compression formats need a special image format:
+            settings.setBufferedImageType(getBufferedImageTypeFor(name));
+            if (!"NONE".equalsIgnoreCase(name)) {
+                settings.getWriterParams().setCompressionMethod(name);
+            }
+            if (log.isInfoEnabled()) {
+                log.info("TIFF compression set to " + name);
+            }
+
+            boolean transparent = cfg.getChild(
+                    Java2DRenderer.JAVA2D_TRANSPARENT_PAGE_BACKGROUND).getValueAsBoolean(
+                            settings.hasTransparentPageBackground());
+            if (transparent) {
+                settings.setPageBackgroundColor(null);
+            } else {
+                String background = cfg.getChild("background-color").getValue(null);
+                if (background != null) {
+                    settings.setPageBackgroundColor(
+                            ColorUtil.parseColorString(this.userAgent, background));
+                } else {
+                    settings.setPageBackgroundColor(Color.WHITE);
+                }
+            }
+
+            boolean antiAliasing = cfg.getChild("anti-aliasing").getValueAsBoolean(
+                    settings.isAntiAliasingEnabled());
+            settings.setAntiAliasing(antiAliasing);
+
+            String optimization = cfg.getChild("rendering").getValue(null);
+            if ("quality".equalsIgnoreCase(optimization)) {
+                settings.setQualityRendering(true);
+            } else if ("speed".equalsIgnoreCase(optimization)) {
+                settings.setQualityRendering(false);
+            }
+
+            String color = cfg.getChild("color-mode").getValue(null);
+            if (color != null) {
+                if ("rgba".equalsIgnoreCase(color)) {
+                    settings.setBufferedImageType(BufferedImage.TYPE_INT_ARGB);
+                } else if ("rgb".equalsIgnoreCase(color)) {
+                    settings.setBufferedImageType(BufferedImage.TYPE_INT_RGB);
+                } else if ("gray".equalsIgnoreCase(color)) {
+                    settings.setBufferedImageType(BufferedImage.TYPE_BYTE_GRAY);
+                } else if ("binary".equalsIgnoreCase(color)) {
+                    settings.setBufferedImageType(BufferedImage.TYPE_BYTE_BINARY);
+                } else {
+                    throw new FOPException("Invalid value for color-mode: " + color);
+                }
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
+            throws FOPException {
+        FontManager fontManager = userAgent.getFactory().getFontManager();
+
+        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
+
+        List fontCollections = new java.util.ArrayList();
+        fontCollections.add(new Base14FontCollection(graphics2D));
+        fontCollections.add(new InstalledFontCollection(graphics2D));
+
+        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
+        if (cfg != null) {
+            FontResolver fontResolver = new DefaultFontResolver(userAgent);
+            FontEventListener listener = new FontEventAdapter(
+                    userAgent.getEventBroadcaster());
+            List fontList = buildFontList(cfg, fontResolver, listener);
+            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList));
+        }
+
+        fontManager.setup(fontInfo,
+                (FontCollection[])fontCollections.toArray(
+                        new FontCollection[fontCollections.size()]));
+        documentHandler.setFontInfo(fontInfo);
+    }
+
+
 }

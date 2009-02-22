@@ -98,8 +98,9 @@ public interface Renderer {
      * Set up the given FontInfo.
      *
      * @param fontInfo  The font information
+     * @throws FOPException if an error occurs while setting up the font info object
      */
-    void setupFontInfo(FontInfo fontInfo);
+    void setupFontInfo(FontInfo fontInfo) throws FOPException;
 
     /**
      * Reports if out of order rendering is supported. <p>

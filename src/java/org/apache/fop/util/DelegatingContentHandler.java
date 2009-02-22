@@ -38,7 +38,6 @@ import org.xml.sax.ext.LexicalHandler;
  * <p>
  * The ContentHandler is the only instance that is required. All others (DTDHandler,
  * EntityResolver, LexicalHandler and ErrorHandler) may be ignored.
- *
  */
 public class DelegatingContentHandler
         implements EntityResolver, DTDHandler, ContentHandler, LexicalHandler, ErrorHandler {
@@ -54,6 +53,27 @@ public class DelegatingContentHandler
      */
     public DelegatingContentHandler() {
         //nop
+    }
+
+    /**
+     * Convenience constructor. If the given handler also implements any of the EntityResolver,
+     * DTDHandler, LexicalHandler or ErrorHandler interfaces, these are set automatically.
+     * @param handler the content handler to delegate to
+     */
+    public DelegatingContentHandler(ContentHandler handler) {
+        setDelegateContentHandler(handler);
+        if (handler instanceof EntityResolver) {
+            setDelegateEntityResolver((EntityResolver)handler);
+        }
+        if (handler instanceof DTDHandler) {
+            setDelegateDTDHandler((DTDHandler)handler);
+        }
+        if (handler instanceof LexicalHandler) {
+            setDelegateLexicalHandler((LexicalHandler)handler);
+        }
+        if (handler instanceof ErrorHandler) {
+            setDelegateErrorHandler((ErrorHandler)handler);
+        }
     }
 
     /**
@@ -105,10 +125,9 @@ public class DelegatingContentHandler
 
     // ==== EntityResolver
 
-    /**
-     * {@inheritDoc}
-     */
-    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+    /** {@inheritDoc} */
+    public InputSource resolveEntity(String publicId, String systemId)
+            throws SAXException, IOException {
         if (entityResolver != null) {
             return entityResolver.resolveEntity(publicId, systemId);
         } else {
@@ -118,18 +137,14 @@ public class DelegatingContentHandler
 
     // ==== DTDHandler
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void notationDecl(String name, String publicId, String systemId) throws SAXException {
         if (dtdHandler != null) {
             dtdHandler.notationDecl(name, publicId, systemId);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void unparsedEntityDecl(String name, String publicId, String systemId,
             String notationName) throws SAXException {
         if (dtdHandler != null) {
@@ -139,89 +154,65 @@ public class DelegatingContentHandler
 
     // ==== ContentHandler
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setDocumentLocator(Locator locator) {
         delegate.setDocumentLocator(locator);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startDocument() throws SAXException {
         delegate.startDocument();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endDocument() throws SAXException {
         delegate.endDocument();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
         delegate.startPrefixMapping(prefix, uri);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endPrefixMapping(String prefix) throws SAXException {
         delegate.endPrefixMapping(prefix);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startElement(String uri, String localName, String qName,
                 Attributes atts) throws SAXException {
         delegate.startElement(uri, localName, qName, atts);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         delegate.endElement(uri, localName, qName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void characters(char[] ch, int start, int length) throws SAXException {
         delegate.characters(ch, start, length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
         delegate.ignorableWhitespace(ch, start, length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void processingInstruction(String target, String data) throws SAXException {
         delegate.processingInstruction(target, data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void skippedEntity(String name) throws SAXException {
         delegate.skippedEntity(name);
     }
 
     // ==== LexicalHandler
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startDTD(String name, String publicId, String systemId) throws SAXException {
         if (lexicalHandler != null) {
             lexicalHandler.startDTD(name, publicId, systemId);
@@ -229,54 +220,42 @@ public class DelegatingContentHandler
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endDTD() throws SAXException {
         if (lexicalHandler != null) {
             lexicalHandler.endDTD();
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startEntity(String name) throws SAXException {
         if (lexicalHandler != null) {
             lexicalHandler.startEntity(name);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endEntity(String name) throws SAXException {
         if (lexicalHandler != null) {
             lexicalHandler.endEntity(name);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void startCDATA() throws SAXException {
         if (lexicalHandler != null) {
             lexicalHandler.startCDATA();
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void endCDATA() throws SAXException {
         if (lexicalHandler != null) {
             lexicalHandler.endCDATA();
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void comment(char[] ch, int start, int length) throws SAXException {
         if (lexicalHandler != null) {
             lexicalHandler.comment(ch, start, length);
@@ -285,27 +264,21 @@ public class DelegatingContentHandler
 
     // ==== ErrorHandler
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void warning(SAXParseException exception) throws SAXException {
         if (errorHandler != null) {
             errorHandler.warning(exception);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void error(SAXParseException exception) throws SAXException {
         if (errorHandler != null) {
             errorHandler.error(exception);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void fatalError(SAXParseException exception) throws SAXException {
         if (errorHandler != null) {
             errorHandler.fatalError(exception);

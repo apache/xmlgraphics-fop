@@ -21,6 +21,7 @@ package org.apache.fop.render;
 
 // Java
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -111,7 +112,7 @@ public abstract class AbstractRenderer
     private Set warnedXMLHandlers;
 
     /** {@inheritDoc} */
-    public abstract void setupFontInfo(FontInfo fontInfo);
+    public abstract void setupFontInfo(FontInfo fontInfo) throws FOPException;
 
     /** {@inheritDoc} */
     public void setUserAgent(FOUserAgent agent) {
@@ -832,5 +833,35 @@ public abstract class AbstractRenderer
      */
     public String getMimeType() {
         return null;
+    }
+
+    /**
+     * Converts a millipoint-based transformation matrix to points.
+     * @param at a millipoint-based transformation matrix
+     * @return a point-based transformation matrix
+     */
+    protected AffineTransform mptToPt(AffineTransform at) {
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        //Convert to points
+        matrix[4] = matrix[4] / 1000;
+        matrix[5] = matrix[5] / 1000;
+        return new AffineTransform(matrix);
+    }
+
+    /**
+     * Converts a point-based transformation matrix to millipoints.
+     * @param at a point-based transformation matrix
+     * @return a millipoint-based transformation matrix
+     */
+    protected AffineTransform ptToMpt(AffineTransform at) {
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        //Convert to millipoints
+        //Math.round() because things like this can happen: 65.6 * 1000 = 65.599999999999999
+        //which is bad for testing
+        matrix[4] = Math.round(matrix[4] * 1000);
+        matrix[5] = Math.round(matrix[5] * 1000);
+        return new AffineTransform(matrix);
     }
 }

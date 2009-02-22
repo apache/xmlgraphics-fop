@@ -65,4 +65,22 @@
     <eval expected="bla" xpath="/areaTree/pageSequence/pageViewport[@nr=2]/page/extension-attachments/child::*[2]/@name"/>
     <eval expected="%FOPTestPSPageSetupCode: Blah blah!" xpath="/areaTree/pageSequence/pageViewport[@nr=2]/page/extension-attachments/child::*[2]"/>
   </checks>
+  <if-checks  xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
+    <eval expected="3" xpath="count(/if:document/if:header/child::*)"/>
+    <eval expected="%FOPTestPSSetupCode: General setup code here!" xpath="/if:document/if:header/child::*[1]"/>
+    <true xpath="contains(/if:document/if:header/child::*[2], '%FOPTestPSSetupCode: Line 1')"/>
+    <eval expected="multi-line" xpath="/if:document/if:header/child::*[2]/@name"/>
+    
+    <eval expected="2" xpath="count(//if:page[@index=0]/if:page-header/child::*)"/>
+    <eval expected="media-dict" xpath="//if:page[@index=0]/if:page-header/child::*[1]/@name"/>
+    <eval expected="%FOPTestPSPageSetupCode: MediaDict!" xpath="//if:page[@index=0]/if:page-header/child::*[1]"/>
+    <eval expected="bla" xpath="//if:page[@index=0]/if:page-header/child::*[2]/@name"/>
+    <eval expected="%FOPTestPSPageSetupCode: Blah blah!" xpath="//if:page[@index=0]/if:page-header/child::*[2]"/>
+    
+    <eval expected="2" xpath="count(//if:page[@index=1]/if:page-header/child::*)"/>
+    <eval expected="media-dict" xpath="//if:page[@index=1]/if:page-header/child::*[1]/@name"/>
+    <eval expected="%FOPTestPSPageSetupCode: MediaDict!" xpath="//if:page[@index=1]/if:page-header/child::*[1]"/>
+    <eval expected="bla" xpath="//if:page[@index=1]/if:page-header/child::*[2]/@name"/>
+    <eval expected="%FOPTestPSPageSetupCode: Blah blah!" xpath="//if:page[@index=1]/if:page-header/child::*[2]"/>
+  </if-checks>
 </testcase>

@@ -57,6 +57,7 @@ import org.apache.xmlgraphics.java2d.StrokingTextHandler;
 import org.apache.xmlgraphics.java2d.TextHandler;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 import org.apache.xmlgraphics.util.MimeConstants;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.modca.GraphicsObject;
@@ -236,6 +237,32 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         this.gc = gc;
     }
 
+    private int getResolution() {
+        return this.paintingState.getResolution();
+    }
+
+    /**
+     * Converts a length value to an absolute value.
+     * Please note that this only uses the "ScaleY" factor, so this will result
+     * in a bad value should "ScaleX" and "ScaleY" be different.
+     * @param length the length
+     * @return the absolute length
+     */
+    public double convertToAbsoluteLength(double length) {
+        AffineTransform current = getTransform();
+        double mult = getResolution() / (double)UnitConv.IN2PT;
+        double factor = -current.getScaleY() / mult;
+        return length * factor;
+    }
+
+    /** IBM's AFP Workbench paints lines that are wider than expected. We correct manually. */
+    private static final double GUESSED_WIDTH_CORRECTION = 1.7;
+
+    private static final double SPEC_NORMAL_LINE_WIDTH = UnitConv.in2pt(0.01); //"approx" 0.01 inch
+    private static final double NORMAL_LINE_WIDTH
+        = SPEC_NORMAL_LINE_WIDTH * GUESSED_WIDTH_CORRECTION;
+
+
     /**
      * Apply the stroke to the AFP graphics object.
      * This takes the java stroke and outputs the appropriate settings
@@ -249,7 +276,17 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
             // set line width
             float lineWidth = basicStroke.getLineWidth();
-            graphicsObj.setLineWidth(Math.round(lineWidth / 2));
+            if (false) {
+                //Old approach. Retained until verified problems with 1440 resolution
+                graphicsObj.setLineWidth(Math.round(lineWidth / 2));
+            } else {
+                double absoluteLineWidth = lineWidth * Math.abs(getTransform().getScaleY());
+                double multiplier = absoluteLineWidth / NORMAL_LINE_WIDTH;
+                graphicsObj.setLineWidth((int)Math.round(multiplier));
+                //TODO Use GSFLW instead of GSLW for higher accuracy?
+            }
+
+            //No line join, miter limit and end cap support in GOCA. :-(
 
             // set line type/style (note: this is an approximation at best!)
             float[] dashArray = basicStroke.getDashArray();
@@ -689,7 +726,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     /** {@inheritDoc} */
     public void addNativeImage(org.apache.xmlgraphics.image.loader.Image image,
             float x, float y, float width, float height) {
-        log.debug("NYI: addNativeImage() "+ "image=" + image
+        log.debug("NYI: addNativeImage() " + "image=" + image
                 + ",x=" + x + ",y=" + y + ",width=" + width + ",height=" + height);
     }
 

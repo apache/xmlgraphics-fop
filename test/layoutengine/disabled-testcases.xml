@@ -216,11 +216,4 @@
     <description>A soft hyphen should be a preferred as break compared to a
     normal hyphenation point but is not.</description>
   </testcase>
-  <testcase>
-    <name>Borders and padding on page regions</name>
-    <file>simple-page-master_borders_padding.xml</file>
-    <description>Borders and padding on regions are now implemented but 
-    relaxed validation must be switched on, otherwise there is a validation
-    exception.</description>
-  </testcase>
 </disabled-testcases>
