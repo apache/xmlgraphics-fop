@@ -152,6 +152,18 @@
         <td>"height" 11 inches, "width" 8.26 inches</td>
       </tr>
       <tr>
+        <td>prefer-renderer</td>
+        <td>boolean (true, false)</td>
+        <td>
+          By default, FOP prefers the newer output implementations based on the
+          <code>IFDocumentHandler</code> interface. If no such implementation can be found for
+          a given MIME type, it looks for an implementation of the <code>Renderer</code> interface.
+          If necessary, you can invert the lookup order to prefer the Renderer variant over the
+          IFDocumentHandler variant by setting this value to true. 
+        </td>
+        <td>false</td>
+      </tr>
+      <tr>
         <td>use-cache</td>
         <td>boolean (true, false)</td>
         <td>All fonts information that has been gathered as a result of "directory"
