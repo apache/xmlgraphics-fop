@@ -77,10 +77,15 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
         try {
             base = (dir.isDirectory() ? dir.toURI().toURL() : new URL(base)).toExternalForm();
         } catch (MalformedURLException mfue) {
+            String message = mfue.getMessage();
+            if (!dir.isDirectory()) {
+                message = "base " + base + " is not a directory and not a valid URL: " + message;
+                mfue = new MalformedURLException(message);
+            }
             if (throwExceptions) {
                 throw mfue;
-            }
-            log.error(mfue.getMessage());
+            }   
+            log.error(message);
         }
         return base;
     }
