@@ -30,9 +30,8 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
  */
 public class PSDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
-    //TODO Revert to normal MIME after stabilization!
     private static final String[] MIMES = new String[]
-                              {MimeConstants.MIME_POSTSCRIPT + ";mode=painter"};
+                              {MimeConstants.MIME_POSTSCRIPT};
 
     /** {@inheritDoc} */
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {

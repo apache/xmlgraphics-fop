@@ -30,8 +30,7 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
  */
 public class PDFDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
-    //TODO Revert to normal MIME after stabilization!
-    private static final String[] MIMES = new String[] {MimeConstants.MIME_PDF + ";mode=painter"};
+    private static final String[] MIMES = new String[] {MimeConstants.MIME_PDF};
 
     /** {@inheritDoc} */
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
