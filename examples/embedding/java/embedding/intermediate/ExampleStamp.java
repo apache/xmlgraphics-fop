@@ -73,7 +73,7 @@ public class ExampleStamp {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
             //Setup target handler
-            String mime = MimeConstants.MIME_PDF + ";mode=painter";
+            String mime = MimeConstants.MIME_PDF;
             IFDocumentHandler targetHandler = fopFactory.getRendererFactory().createDocumentHandler(
                     userAgent, mime);
 

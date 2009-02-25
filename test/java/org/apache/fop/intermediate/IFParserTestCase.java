@@ -88,7 +88,7 @@ public class IFParserTestCase extends AbstractIntermediateTestCase {
 
     /** {@inheritDoc} */
     protected String getTargetMIME() {
-        return MimeConstants.MIME_PDF + ";mode=painter";
+        return MimeConstants.MIME_PDF;
     }
 
     /** {@inheritDoc} */
