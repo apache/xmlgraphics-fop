@@ -40,7 +40,6 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
-import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -89,11 +88,6 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public String getMimeType() {
         return MimeConstants.MIME_AFP;
-    }
-
-    /** {@inheritDoc} */
-    public void setContext(IFContext context) {
-        super.setContext(context);
     }
 
     /** {@inheritDoc} */
