@@ -344,7 +344,7 @@
         </warning>
       </section>
       <section id="truetype-collections-metrics">
-        <title>TrueType Collections Font Metrics</title>
+        <title>TrueType Collections</title>
         <p>TrueType collections (.ttc files) contain more than one font.
           To create metrics files for these fonts, you must specify which font in the collection should be generated, by using the "-ttcname" option with the TTFReader.</p>
         <p>To get a list of the fonts in a collection, just start the TTFReader as if it were a normal TrueType file (without the -ttcname option).
@@ -356,8 +356,11 @@
         <p>
           Alternatively, the individual sub-fonts of a TrueType Collections can be selected
           using the "sub-font" attribute on the "font" element. That means that generating
-          an XML font metrics file for TrueType collections is not necessary anymore.
+          an XML font metrics file for TrueType collections is not necessary anymore. Example:
         </p>
+        <source><![CDATA[<font embed-url="gulim.ttc" sub-font="GulimChe">
+  <font-triplet name="GulimChe" style="normal" weight="normal"/>
+</font>]]></source>
       </section>
       <section id="register">
         <title>Register Fonts with FOP</title>
