@@ -170,7 +170,7 @@ public class PageSequence extends AbstractPageSequence {
             flowMap.put(((StaticContent)child).getFlowName(), child);
             break;
         default:
-            assert false;
+            super.addChildNode(child);
         }
     }
 

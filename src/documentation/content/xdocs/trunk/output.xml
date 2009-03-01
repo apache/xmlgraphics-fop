@@ -451,10 +451,34 @@ out = proc.getOutputStream();]]></source>
   </section>
   <section id="afp">
     <title>AFP</title>
-    <warning>The AFP Renderer is a new addition (27-Apr-2006) to the sandbox and as such not yet fully tested or feature complete.</warning>
     <p>
       The FOP AFP Renderer deals with creating documents conforming to the IBM AFP document architecture
       also refered to as MO:DCA (Mixed Object Document Content Architecture).
+    </p>
+    <p>
+      The mapping of XSL-FO elements to the major MO:DCA structures is as follows:
+    </p>
+    <table>
+      <tr>
+        <th>XSL-FO element</th>
+        <th>MO:DCA-P object</th>
+      </tr>
+      <tr>
+        <td>fo:root</td>
+        <td>Document</td>
+      </tr>
+      <tr>
+        <td>fo:page-sequence</td>
+        <td>Page Group</td>
+      </tr>
+      <tr>
+        <td>fo:simple-page-master</td>
+        <td>Page</td>
+      </tr>
+    </table>
+    <p>
+      FOP creates exactly one Document per Printfile with an optional Resource Group at the
+      beginning. FOP does not create document indices.
     </p>
     <section id="afp-references">
       <title>References</title>
@@ -687,7 +711,7 @@ out = proc.getOutputStream();]]></source>
                xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
 ]]></source>
       <section id="afp-page-overlay">
-        <title>Page Overlay Extension</title>
+        <title>Page Overlay (IPO) Extension</title>
         <p>The include-page-overlay extension element allows to define on a per simple-page-master basis a page overlay resource. Example:</p>
       <source><![CDATA[
       <fo:layout-master-set>
@@ -701,7 +725,7 @@ out = proc.getOutputStream();]]></source>
         must be known in the AFP processing environment.</p>
       </section>
       <section id="afp-page-segment">
-        <title>Page Segment Extension</title>
+        <title>Page Segment (IPS) Extension</title>
         <p>The include-page-segment extension element allows to define resource substitution for fo:external-graphics elements. 
           Example:</p>
       <source><![CDATA[
@@ -724,7 +748,7 @@ out = proc.getOutputStream();]]></source>
         </p>
       </section>
       <section id="afp-tag-logical-element">
-        <title>Tag Logical Element Extension</title>
+        <title>Tag Logical Element (TLE) Extension</title>
         <p>The tag-logical-element extension element allows to injects TLEs into the AFP output stream. Example:</p>
       <source><![CDATA[
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
@@ -740,9 +764,14 @@ out = proc.getOutputStream();]]></source>
         Multiple tag-logical-element extension elements within a simple-page-master are allowed.
         The name and value attributes are mandatory.
         </p>
+        <note>
+          Currently, TLEs are only possible inside simple-page-master (i.e. on page leve).
+          At this time, it is not possible to add TLE's at page-group level (i.e. as direct child
+          of fo:page-sequence).
+        </note>
       </section>
       <section id="afp-no-operation">
-        <title>No Operation Extension</title>
+        <title>No Operation (NOP) Extension</title>
         <p>The no-operation extension provides the ability to carry up to 32K of comments or any other type
         of unarchitected data into the AFP output stream. Example:</p>
       <source><![CDATA[
@@ -757,6 +786,29 @@ out = proc.getOutputStream();]]></source>
         <p>The no-operation extension element can only occur within a simple-page-master.
         Multiple no-operation extension elements within a simple-page-master are allowed.
         The name attribute is mandatory.
+        </p>
+      </section>
+      <section id="afp-invoke-medium-map">
+        <title>Invoke Medium Map (IMM) Extension</title>
+        <p>
+          The invoke-medium-map extension allows to generate IMM fields (Invoke Medium Map) in the
+          generated AFP output. Example:
+        </p>
+      <source><![CDATA[
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+      [..]
+      <fo:page-sequence master-reference="normal">
+        <afp:invoke-medium-map name="MYMAP"/>
+        <fo:flow flow-name="xsl-region-body">
+          [..]
+]]></source>
+        <p>
+          The invoke-medium-map element is allowed as child of fo:page-sequence (page group
+          level). It is NOT supported on document level (fo:root), yet. FOP also doesn't support
+          specifying medium maps inside XML (using BMM/EMM). It can only reference an existing
+          medium map by name. The medium map has to be constructed through different means and
+          available on the target platform.
         </p>
       </section>
     </section>

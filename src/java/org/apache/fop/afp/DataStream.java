@@ -486,10 +486,10 @@ public class DataStream {
      *            The tag value
      */
     public void createTagLogicalElement(String name, String value) {
-        if (currentPageGroup != null) {
-            currentPageGroup.createTagLogicalElement(name, value);
-        } else {
+        if (currentPage != null) {
             currentPage.createTagLogicalElement(name, value, tleSequence++);
+        } else {
+            currentPageGroup.createTagLogicalElement(name, value);
         }
     }
 

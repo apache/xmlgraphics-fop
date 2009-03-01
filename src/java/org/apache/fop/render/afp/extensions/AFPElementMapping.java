@@ -33,12 +33,6 @@ import org.apache.fop.fo.FONode;
  */
 public class AFPElementMapping extends ElementMapping {
 
-    /** page element */
-    public static final String PAGE = "page";
-
-    /** page group element */
-//    public static final String PAGE_GROUP = "page-group";
-
     /** tag logical element */
     public static final String TAG_LOGICAL_ELEMENT = "tag-logical-element";
 
@@ -51,8 +45,8 @@ public class AFPElementMapping extends ElementMapping {
     /** NOP */
     public static final String NO_OPERATION = "no-operation";
 
-    /** resource information (name, level, dest) */
-//    public static final String RESOURCE_INFO = "resource-info";
+    /** IMM: Invoke Medium Map (on fo:page-sequence) */
+    public static final String INVOKE_MEDIUM_MAP = "invoke-medium-map";
 
     /**
      * The namespace used for AFP extensions
@@ -77,11 +71,6 @@ public class AFPElementMapping extends ElementMapping {
 
         if (foObjs == null) {
             super.foObjs = new java.util.HashMap();
-            foObjs.put(PAGE, new AFPPageSetupMaker());
-//            foObjs.put(
-//              PAGE_GROUP,
-//              new AFPPageGroupMaker()
-//            );
             foObjs.put(
                 TAG_LOGICAL_ELEMENT,
                 new AFPTagLogicalElementMaker());
@@ -94,51 +83,40 @@ public class AFPElementMapping extends ElementMapping {
             foObjs.put(
                 NO_OPERATION,
                 new AFPNoOperationMaker());
-//           foObjs.put(
-//               RESOURCE_INFO,
-//               new AFPResourceInfoMaker());
-        }
-    }
-
-    static class AFPPageSetupMaker extends ElementMapping.Maker {
-        public FONode make(FONode parent) {
-            return new AFPPageSetupElement(parent);
+            foObjs.put(
+                INVOKE_MEDIUM_MAP,
+                new AFPInvokeMediumMapMaker());
         }
     }
 
     static class AFPIncludePageOverlayMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new AFPElement(parent, INCLUDE_PAGE_OVERLAY);
+            return new AFPPageSetupElement(parent, INCLUDE_PAGE_OVERLAY);
         }
     }
 
     static class AFPIncludePageSegmentMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new AFPElement(parent, INCLUDE_PAGE_SEGMENT);
+            return new AFPPageSetupElement(parent, INCLUDE_PAGE_SEGMENT);
         }
     }
 
     static class AFPTagLogicalElementMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new AFPElement(parent, TAG_LOGICAL_ELEMENT);
+            return new AFPPageSetupElement(parent, TAG_LOGICAL_ELEMENT);
         }
     }
 
     static class AFPNoOperationMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new AFPElement(parent, NO_OPERATION);
+            return new AFPPageSetupElement(parent, NO_OPERATION);
         }
     }
 
-//    static class AFPResourceInfoMaker extends ElementMapping.Maker {
-//        public FONode make(FONode parent) {
-//            return new AFPResourceInfoElement(parent);
-//        }
-//    }
+    static class AFPInvokeMediumMapMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new AFPInvokeMediumMapElement(parent);
+        }
+    }
 
-//    static class AFPPageGroupMaker extends ElementMapping.Maker {
-//        public FONode make(FONode parent) {
-//            return new AFPElement(parent, PAGE_GROUP);
-//        }
-//    }
 }

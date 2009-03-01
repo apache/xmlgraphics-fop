@@ -210,6 +210,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (id != null) {
                 atts.addAttribute(XML_NAMESPACE, "id", "xml:id", XMLUtil.CDATA, id);
             }
+            addForeignAttributes(atts);
             handler.startElement(EL_PAGE_SEQUENCE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageSequence()", e);

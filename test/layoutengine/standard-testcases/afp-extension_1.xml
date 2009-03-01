@@ -35,7 +35,8 @@
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
-      <fo:page-sequence master-reference="normal">
+      <fo:page-sequence master-reference="normal" afp:test-ignore="this">
+        <afp:invoke-medium-map name="MYMAP"/>
         <fo:flow flow-name="xsl-region-body">
           <fo:block>Text on page <fo:page-number/>.</fo:block>
           <fo:block break-before="page">Text on page <fo:page-number/>.</fo:block>
@@ -43,7 +44,7 @@
       </fo:page-sequence>
     </fo:root>
   </fo>
-  <checks>
+  <checks xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
     <eval expected="4" xpath="count(/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*)"/>
     <eval expected="O1SAMP1 " xpath="/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*[1]/@name"/>
     <eval expected="S1ISLOGO" xpath="/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*[2]/@name"/>
@@ -52,5 +53,16 @@
     <eval expected="My NOP" xpath="/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*[4]/@name"/>
     
     <eval expected="4" xpath="count(/areaTree/pageSequence/pageViewport[@nr=2]/page/extension-attachments/child::*)"/>
+    
+    <eval expected="1" xpath="count(/areaTree/pageSequence/extension-attachments)"/>
+    <eval expected="MYMAP" xpath="/areaTree/pageSequence/extension-attachments/child::*[1]/@name"/>
+    
+    <!-- This just tests if extension attributes make it through to the PageSequence object. -->
+    <eval expected="this" xpath="/areaTree/pageSequence/@afp:test-ignore"/>
   </checks>
+  <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate"
+        xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+    <eval expected="this" xpath="//if:page-sequence/@afp:test-ignore"/>
+    <eval expected="MYMAP" xpath="//if:page-sequence/afp:invoke-medium-map/@name"/>
+  </if-checks>
 </testcase>

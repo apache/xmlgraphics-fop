@@ -438,7 +438,9 @@ public class XMLRenderer extends AbstractXMLRenderer {
         if (pageSequence.getCountry() != null) {
             addAttribute("country", pageSequence.getCountry());
         }
+        transferForeignObjects(pageSequence);
         startElement("pageSequence", atts);
+        handleExtensionAttachments(pageSequence.getExtensionAttachments());
         LineArea seqTitle = pageSequence.getTitle();
         if (seqTitle != null) {
             startElement("title");
