@@ -63,6 +63,6 @@
   <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate"
         xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
     <eval expected="this" xpath="//if:page-sequence/@afp:test-ignore"/>
-    <eval expected="MYMAP" xpath="//if:page-sequence/afp:invoke-medium-map/@name"/>
+    <eval expected="MYMAP" xpath="//if:page-sequence/afp:invoke-medium-map/@name" xmlns:afp="apache:fop:extensions:afp"/>
   </if-checks>
 </testcase>
