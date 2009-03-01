@@ -55,6 +55,9 @@
   <xs:element name="page-sequence">
     <xs:complexType>
       <xs:sequence>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:any namespace="##other" processContents="lax"/>
+        </xs:choice>
         <xs:element ref="mf:page" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>

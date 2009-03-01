@@ -19,13 +19,15 @@
 
 package org.apache.fop.render.afp.extensions;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.util.ContentHandlerFactory;
-import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.util.ContentHandlerFactory;
+import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
 
 /**
  * ContentHandler (parser) for restoring AFPExtension objects from XML.
@@ -53,8 +55,7 @@ public class AFPExtensionHandler extends DefaultHandler
                     || localName.equals(AFPElementMapping.TAG_LOGICAL_ELEMENT)
                     || localName.equals(AFPElementMapping.INCLUDE_PAGE_OVERLAY)
                     || localName.equals(AFPElementMapping.INCLUDE_PAGE_SEGMENT)
-                    || localName.equals(AFPElementMapping.PAGE)
-                    /*|| localName.equals(AFPElementMapping.PAGE_GROUP)*/) {
+                    || localName.equals(AFPElementMapping.INVOKE_MEDIUM_MAP)) {
                 //handled in endElement
             } else {
                 handled = false;

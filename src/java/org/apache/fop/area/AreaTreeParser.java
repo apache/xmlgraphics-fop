@@ -356,6 +356,7 @@ public class AreaTreeParser {
                 pageSequence.setLanguage(lang);
                 String country = attributes.getValue("country");
                 pageSequence.setCountry(country);
+                transferForeignObjects(attributes, pageSequence);
                 areaStack.push(pageSequence);
             }
         }
@@ -970,7 +971,14 @@ public class AreaTreeParser {
                     this.currentPageViewport.addExtensionAttachment(attachment);
                 }
             } else {
-                log.warn("Don't know how to handle externally generated object: " + obj);
+                Object o = areaStack.peek();
+                if (o instanceof AreaTreeObject && obj instanceof ExtensionAttachment) {
+                    AreaTreeObject ato = (AreaTreeObject)o;
+                    ExtensionAttachment attachment = (ExtensionAttachment)obj;
+                    ato.addExtensionAttachment(attachment);
+                } else {
+                    log.warn("Don't know how to handle externally generated object: " + obj);
+                }
             }
         }
 

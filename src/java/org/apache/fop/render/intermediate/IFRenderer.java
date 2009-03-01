@@ -53,6 +53,7 @@ import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.AreaTreeObject;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BookmarkData;
@@ -500,7 +501,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 documentHandler.endDocumentHeader();
                 this.inPageSequence = true;
             }
+            establishForeignAttributes(pageSequence.getForeignAttributes());
             documentHandler.startPageSequence(null);
+            resetForeignAttributes();
+            processExtensionAttachments(pageSequence);
         } catch (IFException e) {
             handleIFException(e);
         }
@@ -557,13 +561,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             documentHandler.startPageHeader();
 
             //Add page attachments to page header
-            if (page.hasExtensionAttachments()) {
-                for (Iterator iter = page.getExtensionAttachments().iterator();
-                    iter.hasNext();) {
-                    ExtensionAttachment attachment = (ExtensionAttachment) iter.next();
-                    this.documentHandler.handleExtensionObject(attachment);
-                }
-            }
+            processExtensionAttachments(page);
 
             documentHandler.endPageHeader();
             this.painter = documentHandler.startPageContent();
@@ -587,6 +585,16 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             resetForeignAttributes();
         } catch (IFException e) {
             handleIFException(e);
+        }
+    }
+
+    private void processExtensionAttachments(AreaTreeObject area) throws IFException {
+        if (area.hasExtensionAttachments()) {
+            for (Iterator iter = area.getExtensionAttachments().iterator();
+                iter.hasNext();) {
+                ExtensionAttachment attachment = (ExtensionAttachment) iter.next();
+                this.documentHandler.handleExtensionObject(attachment);
+            }
         }
     }
 

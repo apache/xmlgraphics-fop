@@ -59,6 +59,9 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Renderers" dev="JM" type="add">
+        AFP Output: Added support for Invoke Medium Map (IMM). 
+      </action>
+      <action context="Renderers" dev="JM" type="add">
         Introduced a new, additional intermediate format optimized for performance. Please see
         the intermediate format documentation for details.
       </action>

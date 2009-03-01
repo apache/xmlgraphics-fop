@@ -38,6 +38,7 @@ import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -69,7 +70,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private Map/*<String,String>*/pageSegmentMap
         = new java.util.HashMap/*<String,String>*/();
 
-    private boolean inPageHeader;
+    private static final int LOC_ELSEWHERE = 0;
+    private static final int LOC_FOLLOWING_PAGE_SEQUENCE = 1;
+    private static final int LOC_IN_PAGE_HEADER = 2;
+
+    private int location = LOC_ELSEWHERE;
 
     /**
      * Default constructor.
@@ -158,6 +163,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         } catch (IOException ioe) {
             throw new IFException("I/O error in startPageSequence()", ioe);
         }
+        this.location = LOC_FOLLOWING_PAGE_SEQUENCE;
     }
 
     /** {@inheritDoc} */
@@ -180,6 +186,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void startPage(int index, String name, String pageMasterName, Dimension size)
                 throws IFException {
+        this.location = LOC_ELSEWHERE;
         paintingState.clear();
         pageSegmentMap.clear();
 
@@ -202,12 +209,12 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void startPageHeader() throws IFException {
         super.startPageHeader();
-        this.inPageHeader = true;
+        this.location = LOC_IN_PAGE_HEADER;
     }
 
     /** {@inheritDoc} */
     public void endPageHeader() throws IFException {
-        this.inPageHeader = false;
+        this.location = LOC_ELSEWHERE;
         super.endPageHeader();
     }
 
@@ -238,7 +245,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof AFPPageSetup) {
             AFPPageSetup aps = (AFPPageSetup)extension;
-            if (!inPageHeader) {
+            if (this.location != LOC_IN_PAGE_HEADER) {
                 throw new IFException(
                     "AFP page setup extension encountered outside the page header: " + aps, null);
             }
@@ -261,6 +268,17 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 if (content != null) {
                     dataStream.createNoOperation(content);
                 }
+            }
+        } else if (extension instanceof AFPInvokeMediumMap) {
+            if (this.location != LOC_FOLLOWING_PAGE_SEQUENCE) {
+                throw new IFException(
+                    "AFP IMM extension must be between page-sequence and the first page: "
+                        + extension, null);
+            }
+            AFPInvokeMediumMap imm = (AFPInvokeMediumMap)extension;
+            String mediumMap = imm.getName();
+            if (mediumMap != null) {
+                dataStream.createInvokeMediumMap(mediumMap);
             }
         }
     }

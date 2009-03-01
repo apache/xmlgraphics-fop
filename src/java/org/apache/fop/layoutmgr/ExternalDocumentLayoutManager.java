@@ -105,7 +105,9 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
             Dimension intrinsicSize = info.getSize().getDimensionMpt();
             ImageLayout layout = new ImageLayout(getExternalDocument(), this, intrinsicSize);
 
-            areaTreeHandler.getAreaTreeModel().startPageSequence(new PageSequence(null));
+            PageSequence pageSequence = new PageSequence(null);
+            transferExtensions(pageSequence);
+            areaTreeHandler.getAreaTreeModel().startPageSequence(pageSequence);
             if (log.isDebugEnabled()) {
                 log.debug("Starting layout");
             }

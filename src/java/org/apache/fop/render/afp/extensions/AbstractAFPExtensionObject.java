@@ -54,9 +54,7 @@ public abstract class AbstractAFPExtensionObject extends FONode {
         this.name = name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
                 throws ValidationException {
         if (FO_URI.equals(nsURI)) {
@@ -64,32 +62,17 @@ public abstract class AbstractAFPExtensionObject extends FONode {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected void characters(char[] data, int start, int length,
-                                 PropertyList pList, Locator locator) throws FOPException {
-        ((AFPExtensionAttachment)getExtensionAttachment()).setContent(
-                new String(data, start, length));       
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getNamespaceURI() {
         return AFPElementMapping.NAMESPACE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return AFPElementMapping.NAMESPACE_PREFIX;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
@@ -100,26 +83,9 @@ public abstract class AbstractAFPExtensionObject extends FONode {
         } else {
             throw new FOPException(elementName + " must have a name attribute.");
         }
-        if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(elementName)) {
-            attr = attlist.getValue("src");
-            if (attr != null && attr.length() > 0) {
-                extensionAttachment.setValue(attr);
-            } else {
-                throw new FOPException(elementName + " must have a src attribute.");
-            }
-        } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(elementName)) {
-            attr = attlist.getValue("value");
-            if (attr != null && attr.length() > 0) {
-                extensionAttachment.setValue(attr);
-            } else {
-                throw new FOPException(elementName + " must have a value attribute.");
-            }
-        }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
     }
@@ -130,9 +96,7 @@ public abstract class AbstractAFPExtensionObject extends FONode {
      */
     protected abstract ExtensionAttachment instantiateExtensionAttachment();
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public ExtensionAttachment getExtensionAttachment() {
         if (extensionAttachment == null) {
             this.extensionAttachment = (AFPExtensionAttachment)instantiateExtensionAttachment();
@@ -140,9 +104,7 @@ public abstract class AbstractAFPExtensionObject extends FONode {
         return this.extensionAttachment;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getLocalName() {
         return name;
     }
