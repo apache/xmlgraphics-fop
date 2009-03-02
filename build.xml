@@ -358,12 +358,12 @@ list of possible build targets.
       </fileset>
     </eventResourceGenerator>
     <fixcrlf file="${src.java.dir}/org/apache/fop/events/EventFormatter.xml" tab="remove" tablength="2"/>
-    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/render/afp/event-model.xml" translationfile="${src.java.dir}/org/apache/fop/render/afp/AFPEventProducer.xml">
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/afp/event-model.xml" translationfile="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml">
       <fileset dir="${src.java.dir}">
         <include name="org/apache/fop/render/afp/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/render/afp/AFPEventProducer.xml" tab="remove" tablength="2"/>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml" tab="remove" tablength="2"/>
     <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/render/bitmap/event-model.xml" translationfile="${src.java.dir}/org/apache/fop/render/bitmap/BitmapRendererEventProducer.xml">
       <fileset dir="${src.java.dir}">
         <include name="org/apache/fop/render/bitmap/**/*.java"/>
