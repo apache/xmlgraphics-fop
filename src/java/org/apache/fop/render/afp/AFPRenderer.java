@@ -63,8 +63,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentItem;
+import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Image;
@@ -80,6 +80,7 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 
 /**
@@ -213,11 +214,25 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     }
 
     /** {@inheritDoc} */
-    public void startPageSequence(LineArea seqTitle) {
+    public void startPageSequence(PageSequence pageSequence) {
+        super.startPageSequence(pageSequence);
         try {
             dataStream.startPageGroup();
         } catch (IOException e) {
             log.error(e.getMessage());
+        }
+        if (pageSequence.hasExtensionAttachments()) {
+            for (Iterator iter = pageSequence.getExtensionAttachments().iterator();
+                    iter.hasNext();) {
+                ExtensionAttachment attachment = (ExtensionAttachment)iter.next();
+                if (attachment instanceof AFPInvokeMediumMap) {
+                    AFPInvokeMediumMap imm = (AFPInvokeMediumMap)attachment;
+                    String mediumMap = imm.getName();
+                    if (mediumMap != null) {
+                        dataStream.createInvokeMediumMap(mediumMap);
+                    }
+                }
+            }
         }
     }
 
