@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add">
+        AFP Output: Tag Logical Element (TLE) is now also allowed on fo:page-sequence
+        (page group level). 
+      </action>
       <action context="Layout" dev="JM" type="fix">
         Fixed BPD trait and border painting for leaders with leader-pattern="space"
         (and similar cases).  

@@ -231,6 +231,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
                     if (mediumMap != null) {
                         dataStream.createInvokeMediumMap(mediumMap);
                     }
+                } else if (attachment instanceof AFPPageSetup) {
+                    AFPPageSetup aps = (AFPPageSetup)attachment;
+                    String name = aps.getName();
+                    String value = aps.getValue();
+                    dataStream.createTagLogicalElement(name, value);
                 }
             }
         }

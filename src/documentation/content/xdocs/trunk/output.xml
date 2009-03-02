@@ -759,16 +759,18 @@ out = proc.getOutputStream();]]></source>
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
+      [..]
+      <fo:page-sequence master-reference="simple">
+        <afp:tag-logical-element name="foo" value="bar"/>
+        <fo:flow flow-name="xsl-region-body">
+          [..]
 ]]></source>
-        <p>The tag-logical-element extension element can only occur within a simple-page-master.
-        Multiple tag-logical-element extension elements within a simple-page-master are allowed.
-        The name and value attributes are mandatory.
+        <p>
+          The tag-logical-element extension element can appear within a simple-page-master
+          (page level) or it can appear as child of page-sequence (page group level).
+          Multiple tag-logical-element extension elements within a simple-page-master or
+          page-sequence are allowed. The name and value attributes are mandatory.
         </p>
-        <note>
-          Currently, TLEs are only possible inside simple-page-master (i.e. on page leve).
-          At this time, it is not possible to add TLE's at page-group level (i.e. as direct child
-          of fo:page-sequence).
-        </note>
       </section>
       <section id="afp-no-operation">
         <title>No Operation (NOP) Extension</title>
