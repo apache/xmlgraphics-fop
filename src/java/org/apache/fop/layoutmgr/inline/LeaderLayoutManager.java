@@ -120,6 +120,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 org.apache.fop.area.inline.Leader leader
                     = new org.apache.fop.area.inline.Leader();
                 leader.setRuleStyle(fobj.getRuleStyle());
+                leader.setRuleThickness(fobj.getRuleThickness().getValue(this));
                 leaderArea = leader;
             } else {
                 leaderArea = new Space();
