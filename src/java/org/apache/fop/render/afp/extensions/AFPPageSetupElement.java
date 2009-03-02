@@ -53,9 +53,17 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
-            invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
-                "rule.childOfSPM");
+        if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(getLocalName())) {
+            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER
+                    && parent.getNameId() != Constants.FO_PAGE_SEQUENCE) {
+                invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                    "rule.childOfPageSequenceOrSPM");
+            }
+        } else {
+            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
+                invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                    "rule.childOfSPM");
+            }
         }
     }
 

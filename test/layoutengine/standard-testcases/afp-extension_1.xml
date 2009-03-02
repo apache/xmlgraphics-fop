@@ -25,7 +25,8 @@
   </info>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-        xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+        xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp"
+        xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
           <afp:include-page-overlay name="O1SAMP1 "/>
@@ -35,8 +36,9 @@
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
-      <fo:page-sequence master-reference="normal" afp:test-ignore="this">
+      <fo:page-sequence master-reference="normal" fox:test-ignore="this">
         <afp:invoke-medium-map name="MYMAP"/>
+        <afp:tag-logical-element name="foo" value="bar"/>
         <fo:flow flow-name="xsl-region-body">
           <fo:block>Text on page <fo:page-number/>.</fo:block>
           <fo:block break-before="page">Text on page <fo:page-number/>.</fo:block>
@@ -44,7 +46,7 @@
       </fo:page-sequence>
     </fo:root>
   </fo>
-  <checks xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+  <checks xmlns:afp="apache:fop:extensions:afp">
     <eval expected="4" xpath="count(/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*)"/>
     <eval expected="O1SAMP1 " xpath="/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*[1]/@name"/>
     <eval expected="S1ISLOGO" xpath="/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*[2]/@name"/>
@@ -54,15 +56,28 @@
     
     <eval expected="4" xpath="count(/areaTree/pageSequence/pageViewport[@nr=2]/page/extension-attachments/child::*)"/>
     
-    <eval expected="1" xpath="count(/areaTree/pageSequence/extension-attachments)"/>
+    <eval expected="2" xpath="count(/areaTree/pageSequence/extension-attachments/child::*)"/>
     <eval expected="MYMAP" xpath="/areaTree/pageSequence/extension-attachments/child::*[1]/@name"/>
+    <eval expected="bar" xpath="/areaTree/pageSequence/extension-attachments/afp:tag-logical-element[@name = 'foo']/@value"/>
     
     <!-- This just tests if extension attributes make it through to the PageSequence object. -->
-    <eval expected="this" xpath="/areaTree/pageSequence/@afp:test-ignore"/>
+    <eval expected="this" xpath="/areaTree/pageSequence/@fox:test-ignore" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"/>
   </checks>
   <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate"
-        xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
-    <eval expected="this" xpath="//if:page-sequence/@afp:test-ignore"/>
-    <eval expected="MYMAP" xpath="//if:page-sequence/afp:invoke-medium-map/@name" xmlns:afp="apache:fop:extensions:afp"/>
+        xmlns:afp="apache:fop:extensions:afp">
+    <eval expected="4" xpath="count(//if:page[@name = '1']/if:page-header/child::*)"/>
+    <eval expected="O1SAMP1 " xpath="//if:page[@name = '1']/if:page-header/afp:include-page-overlay[1]/@name"/>
+    <eval expected="S1ISLOGO" xpath="//if:page[@name = '1']/if:page-header/afp:include-page-segment[1]/@name"/>
+    <eval expected="The TLE Value" xpath="//if:page[@name = '1']/if:page-header/afp:tag-logical-element[@name = 'The TLE Name']/@value"/>
+    <eval expected="My NOP" xpath="//if:page[@name = '1']/if:page-header/afp:no-operation[1]/@name"/>
+    <eval expected="insert up to 32k of character data here!" xpath="//if:page[@name = '1']/if:page-header/afp:no-operation[1]"/>
+    
+    <eval expected="4" xpath="count(//if:page[@name = '2']/if:page-header/child::*)"/>
+        
+    <eval expected="MYMAP" xpath="//if:page-sequence/afp:invoke-medium-map/@name"/>
+    <eval expected="bar" xpath="//if:page-sequence/afp:tag-logical-element[@name = 'foo']/@value"/>
+
+    <!-- This just tests if extension attributes make it through to the PageSequence object. -->
+    <eval expected="this" xpath="//if:page-sequence/@fox:test-ignore" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"/>
   </if-checks>
 </testcase>

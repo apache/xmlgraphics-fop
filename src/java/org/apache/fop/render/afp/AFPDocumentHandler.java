@@ -245,28 +245,36 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof AFPPageSetup) {
             AFPPageSetup aps = (AFPPageSetup)extension;
-            if (this.location != LOC_IN_PAGE_HEADER) {
-                throw new IFException(
-                    "AFP page setup extension encountered outside the page header: " + aps, null);
-            }
             String element = aps.getElementName();
-            if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
-                String overlay = aps.getName();
-                if (overlay != null) {
-                    dataStream.createIncludePageOverlay(overlay);
+            if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(element)) {
+                if (this.location != LOC_IN_PAGE_HEADER
+                        && this.location != LOC_FOLLOWING_PAGE_SEQUENCE) {
+                    throw new IFException(
+                        "TLE extension must be in the page header or between page-sequence"
+                            + " and the first page: " + aps, null);
                 }
-            } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(element)) {
-                String name = aps.getName();
-                String source = aps.getValue();
-                pageSegmentMap.put(source, name);
-            } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(element)) {
                 String name = aps.getName();
                 String value = aps.getValue();
                 dataStream.createTagLogicalElement(name, value);
-            } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
-                String content = aps.getContent();
-                if (content != null) {
-                    dataStream.createNoOperation(content);
+            } else {
+                if (this.location != LOC_IN_PAGE_HEADER) {
+                    throw new IFException(
+                        "AFP page setup extension encountered outside the page header: " + aps, null);
+                }
+                if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
+                    String overlay = aps.getName();
+                    if (overlay != null) {
+                        dataStream.createIncludePageOverlay(overlay);
+                    }
+                } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(element)) {
+                    String name = aps.getName();
+                    String source = aps.getValue();
+                    pageSegmentMap.put(source, name);
+                } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
+                    String content = aps.getContent();
+                    if (content != null) {
+                        dataStream.createNoOperation(content);
+                    }
                 }
             }
         } else if (extension instanceof AFPInvokeMediumMap) {
