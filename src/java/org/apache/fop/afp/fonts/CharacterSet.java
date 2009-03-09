@@ -27,6 +27,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -114,8 +115,14 @@ public class CharacterSet {
         }
         this.codePage = codePage;
         this.encoding = encoding;
-        this.encoder = Charset.forName(encoding).newEncoder();
-        this.encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
+        try {
+            this.encoder = Charset.forName(encoding).newEncoder();
+            this.encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
+        } catch (UnsupportedCharsetException uce) {
+            //No nio-capable encoder available
+            //This may happen with "Cp500" on Sun Java 1.4.2
+            this.encoder = null;
+        }
         this.path = path;
 
         this.characterSetOrientations = new java.util.HashMap(4);
@@ -321,7 +328,12 @@ public class CharacterSet {
      * @return true if the character is in the character set
      */
     public boolean hasChar(char c) {
-        return encoder.canEncode(c);
+        if (encoder != null) {
+            return encoder.canEncode(c);
+        } else {
+            //Sun Java 1.4.2 compatibility
+            return true;
+        }
     }
 
     /**
@@ -331,14 +343,26 @@ public class CharacterSet {
      * @throws CharacterCodingException if the encoding operation fails
      */
     public byte[] encodeChars(CharSequence chars) throws CharacterCodingException {
-        ByteBuffer bb = encoder.encode(CharBuffer.wrap(chars));
-        if (bb.hasArray()) {
-            return bb.array();
+        if (encoder != null) {
+            ByteBuffer bb = encoder.encode(CharBuffer.wrap(chars));
+            if (bb.hasArray()) {
+                return bb.array();
+            } else {
+                bb.rewind();
+                byte[] bytes = new byte[bb.remaining()];
+                bb.get(bytes);
+                return bytes;
+            }
         } else {
-            bb.rewind();
-            byte[] bytes = new byte[bb.remaining()];
-            bb.get(bytes);
-            return bytes;
+            //Sun Java 1.4.2 compatibility
+            byte[] bytes;
+            try {
+                bytes = chars.toString().getBytes(this.encoding);
+                return bytes;
+            } catch (UnsupportedEncodingException uee) {
+                throw new UnsupportedOperationException(
+                        "Unsupported encoding: " + uee.getMessage());
+            }
         }
     }
 
