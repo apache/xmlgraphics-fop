@@ -48,12 +48,14 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
 import org.apache.fop.area.RenderPagesModel;
+import org.apache.fop.events.model.EventSeverity;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.layoutengine.EvalCheck;
 import org.apache.fop.layoutengine.TrueCheck;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFRenderer;
 import org.apache.fop.render.intermediate.IFSerializer;
+import org.apache.fop.util.ConsoleEventListenerForTests;
 import org.apache.fop.util.DelegatingContentHandler;
 
 /**
@@ -106,9 +108,12 @@ public class IFTester {
         }
     }
 
-    private Document createIF(Document areaTreeXML) throws TransformerException {
+    private Document createIF(File testFile, Document areaTreeXML) throws TransformerException {
         try {
             FOUserAgent ua = fopFactory.newFOUserAgent();
+            ua.setBaseURL(testFile.getParentFile().toURI().toURL().toExternalForm());
+            ua.getEventBroadcaster().addEventListener(
+                    new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
 
             IFRenderer ifRenderer = new IFRenderer();
             ifRenderer.setUserAgent(ua);
@@ -160,7 +165,7 @@ public class IFTester {
      */
     public void doIFChecks(File testFile, Element checksRoot, Document areaTreeXML)
                 throws TransformerException {
-        Document ifDocument = createIF(areaTreeXML);
+        Document ifDocument = createIF(testFile, areaTreeXML);
         if (this.backupDir != null) {
             Transformer transformer = tfactory.newTransformer();
             Source src = new DOMSource(ifDocument);
