@@ -20,6 +20,8 @@
 package org.apache.fop.render.afp;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -33,6 +35,8 @@ import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.FopCharacterSet;
 import org.apache.fop.afp.fonts.OutlineFont;
 import org.apache.fop.afp.fonts.RasterFont;
+import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontCollection;
@@ -85,7 +89,29 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             log.error("Mandatory font configuration element '<afp-font...' is missing");
             return null;
         }
-        String path = afpFontCfg.getAttribute("path", fontPath);
+
+        URI baseURI = null;
+        String uri = afpFontCfg.getAttribute("base-uri", fontPath);
+        if (uri == null) {
+            //Fallback for old attribute which only supports local filenames
+            String path = afpFontCfg.getAttribute("path", fontPath);
+            if (path != null) {
+                File f = new File(path);
+                baseURI = f.toURI();
+            }
+        } else {
+            try {
+                baseURI = new URI(uri);
+            } catch (URISyntaxException e) {
+                log.error("Invalid URI: " + e.getMessage());
+                return null;
+            }
+        }
+        ResourceAccessor accessor = new DefaultFOPResourceAccessor(
+                this.userAgent,
+                this.userAgent.getFactory().getFontManager().getFontBaseURL(),
+                baseURI);
+
         String type = afpFontCfg.getAttribute("type");
         if (type == null) {
             log.error("Mandatory afp-font configuration attribute 'type=' is missing");
@@ -147,7 +173,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     }
                 } else {
                     font.addCharacterSet(size, new CharacterSet(
-                        codepage, encoding, characterset, path));
+                        codepage, encoding, characterset, accessor));
                 }
             }
             return new AFPFontInfo(font, tripletList);
@@ -180,7 +206,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     log.error(msg);
                 }
             } else {
-                characterSet = new CharacterSet(codepage, encoding, characterset, path);
+                characterSet = new CharacterSet(codepage, encoding, characterset, accessor);
             }
             // Create a new font object
             OutlineFont font = new OutlineFont(name, characterSet);

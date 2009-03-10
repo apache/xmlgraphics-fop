@@ -37,7 +37,6 @@ import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.util.ResourceAccessor;
-import org.apache.fop.afp.util.SimpleResourceAccessor;
 
 /**
  * Manages the creation and storage of document resources
@@ -236,11 +235,11 @@ public class AFPResourceManager {
     /**
      * Creates an included resource object by loading the contained object from a file.
      * @param resourceName the name of the resource
-     * @param basePath the base path in which to look for the resource files
+     * @param accessor resource accessor to access the resource with
      * @param resourceObjectType the resource object type ({@link ResourceObject}.*)
      * @throws IOException if an I/O error occurs while loading the resource
      */
-    public void createIncludedResource(String resourceName, String basePath,
+    public void createIncludedResource(String resourceName, ResourceAccessor accessor,
                 byte resourceObjectType) throws IOException {
         AFPResourceLevel resourceLevel = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
         URI uri;
@@ -261,9 +260,6 @@ public class AFPResourceManager {
             if (log.isDebugEnabled()) {
                 log.debug("Adding included resource: " + resourceName);
             }
-            //TODO This works with local filenames only. In the long term, this
-            //should work through FOP's URI resolver.
-            ResourceAccessor accessor = new SimpleResourceAccessor(basePath);
             IncludedResourceObject resourceContent = new IncludedResourceObject(
                         resourceName, accessor, uri);
 

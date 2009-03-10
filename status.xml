@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="add">
+        AFP Fonts: Added support for full URI resolution on configured AFP fonts. 
+      </action>
       <action context="Renderers" dev="JM" type="add">
         AFP Output: Tag Logical Element (TLE) is now also allowed on fo:page-sequence
         (page group level). 
