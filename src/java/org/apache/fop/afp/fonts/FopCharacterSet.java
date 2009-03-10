@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.fonts.Typeface;
 
 /**
@@ -43,7 +44,7 @@ public class FopCharacterSet extends CharacterSet {
         String name,
         Typeface charSet) {
 
-        super(codePage, encoding, name, null);
+        super(codePage, encoding, name, (ResourceAccessor)null);
         this.charSet = charSet;
     }
 

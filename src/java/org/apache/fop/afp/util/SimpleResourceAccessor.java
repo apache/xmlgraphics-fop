@@ -26,7 +26,8 @@ import java.net.URI;
 import java.net.URL;
 
 /**
- * Simple implementation of the {@link ResourceAccessor} interface for access via files.
+ * Simple implementation of the {@link ResourceAccessor} interface for access relative to a
+ * base URI.
  */
 public class SimpleResourceAccessor implements ResourceAccessor {
 
@@ -34,23 +35,40 @@ public class SimpleResourceAccessor implements ResourceAccessor {
 
     /**
      * Creates a new simple resource accessor.
-     * @param basePath the base path to resolve relative URIs to
+     * @param baseURI the base URI to resolve relative URIs against (may be null)
      */
-    public SimpleResourceAccessor(File basePath) {
-        this.baseURI = basePath.toURI();
+    public SimpleResourceAccessor(URI baseURI) {
+        this.baseURI = baseURI;
     }
 
     /**
      * Creates a new simple resource accessor.
-     * @param basePath the base path to resolve relative URIs to
+     * @param baseDir the base directory to resolve relative filenames against (may be null)
      */
-    public SimpleResourceAccessor(String basePath) {
-        this(new File(basePath));
+    public SimpleResourceAccessor(File baseDir) {
+        this(baseDir != null ? baseDir.toURI() : null);
+    }
+
+    /**
+     * Returns the base URI.
+     * @return the base URI (or null if no base URI was set)
+     */
+    public URI getBaseURI() {
+        return this.baseURI;
+    }
+
+    /**
+     * Resolve the given URI against the baseURI.
+     * @param uri the URI to resolve
+     * @return the resolved URI
+     */
+    protected URI resolveAgainstBase(URI uri) {
+        return (getBaseURI() != null ? getBaseURI().resolve(uri) : uri);
     }
 
     /** {@inheritDoc} */
     public InputStream createInputStream(URI uri) throws IOException {
-        URI resolved = this.baseURI.resolve(uri);
+        URI resolved = resolveAgainstBase(uri);
         URL url = resolved.toURL();
         return url.openStream();
     }

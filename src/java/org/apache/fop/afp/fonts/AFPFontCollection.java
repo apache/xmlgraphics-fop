@@ -67,18 +67,14 @@ public class AFPFontCollection implements FontCollection {
                     num++;
                 }
             }
-            if (!fontInfo.hasFont("any", Font.STYLE_NORMAL, Font.WEIGHT_NORMAL)) {
-                eventProducer.warnMissingDefaultFont(this, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            }
-            if (!fontInfo.hasFont("any", Font.STYLE_ITALIC, Font.WEIGHT_NORMAL)) {
-                eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_NORMAL);
-            }
-            if (!fontInfo.hasFont("any", Font.STYLE_NORMAL, Font.WEIGHT_BOLD)) {
-                eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
-            }
-            if (!fontInfo.hasFont("any", Font.STYLE_ITALIC, Font.WEIGHT_BOLD)) {
-                eventProducer.warnMissingDefaultFont(this, Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
-            }
+            checkDefaultFontAvailable(fontInfo, eventProducer,
+                    Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
+            checkDefaultFontAvailable(fontInfo, eventProducer,
+                    Font.STYLE_ITALIC, Font.WEIGHT_NORMAL);
+            checkDefaultFontAvailable(fontInfo, eventProducer,
+                    Font.STYLE_NORMAL, Font.WEIGHT_BOLD);
+            checkDefaultFontAvailable(fontInfo, eventProducer,
+                    Font.STYLE_ITALIC, Font.WEIGHT_BOLD);
         } else {
             eventProducer.warnDefaultFontSetup(this);
 
@@ -87,6 +83,13 @@ public class AFPFontCollection implements FontCollection {
             num = base12FontCollection.setup(num, fontInfo);
         }
         return num;
+    }
+
+    private void checkDefaultFontAvailable(FontInfo fontInfo, AFPEventProducer eventProducer,
+            String style, int weight) {
+        if (!fontInfo.hasFont("any", style, weight)) {
+            eventProducer.warnMissingDefaultFont(this, style, weight);
+        }
     }
 
 }

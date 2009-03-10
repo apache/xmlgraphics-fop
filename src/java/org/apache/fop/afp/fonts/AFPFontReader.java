@@ -19,21 +19,19 @@
 
 package org.apache.fop.afp.fonts;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.AFPConstants;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.afp.util.StructuredFieldReader;
 
 /**
@@ -58,7 +56,7 @@ public final class AFPFontReader {
     /**
      * Static logging instance
      */
-    protected static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp.fonts");
+    protected static final Log log = LogFactory.getLog(AFPFontReader.class);
 
     /**
      * Template used to convert lists to arrays.
@@ -96,7 +94,7 @@ public final class AFPFontReader {
     /**
      * The collection of code pages
      */
-    private final Map/*<String, Map<String, String>>*/ codePages
+    private final Map/*<String, Map<String, String>>*/ codePagesCache
         = new java.util.HashMap/*<String, Map<String, String>>*/();
 
     /**
@@ -108,65 +106,16 @@ public final class AFPFontReader {
      *
      * @throws IOException in the event that an I/O exception of some sort has occurred
      */
-    private InputStream openInputStream(String path, String filename) throws IOException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) {
-            classLoader = AFPFontReader.class.getClassLoader();
+    private InputStream openInputStream(ResourceAccessor accessor, String filename)
+            throws IOException {
+        URI uri;
+        try {
+            uri = new URI(filename.trim());
+        } catch (URISyntaxException e) {
+            throw new FileNotFoundException("Invalid filename: "
+                    + filename + " (" + e.getMessage() + ")");
         }
-
-        URL url = classLoader.getResource(path);
-
-        if (url == null) {
-            try {
-                File file = new File(path);
-                url = file.toURI().toURL();
-                if (url == null) {
-                    String msg = "file not found " + filename + " in classpath: " + path;
-                    log.error(msg);
-                    throw new FileNotFoundException(msg);
-                }
-            } catch (MalformedURLException ex) {
-                String msg = "file not found " + filename + " in classpath: " + path;
-                log.error(msg);
-                throw new FileNotFoundException(msg);
-            }
-        }
-
-        File directory = FileUtils.toFile(url);
-        if (!directory.canRead()) {
-            String msg = "Failed to read directory " + url.getPath();
-            log.error(msg);
-            throw new FileNotFoundException(msg);
-        }
-
-        final String filterpattern = filename.trim();
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.startsWith(filterpattern);
-            }
-        };
-
-        File[] files = directory.listFiles(filter);
-
-        if (files.length < 1) {
-            String msg = "file search for " + filename + " located "
-                + files.length + " files";
-            log.error(msg);
-            throw new FileNotFoundException(msg);
-        } else if (files.length > 1) {
-            String msg = "file search for " + filename + " located "
-                + files.length + " files";
-            log.warn(msg);
-        }
-
-        InputStream inputStream = files[0].toURI().toURL().openStream();
-
-        if (inputStream == null) {
-            String msg = "AFPFontReader:: getInputStream():: file not found for " + filename;
-            log.error(msg);
-            throw new FileNotFoundException(msg);
-        }
-
+        InputStream inputStream = accessor.createInputStream(uri);
         return inputStream;
     }
 
@@ -206,13 +155,14 @@ public final class AFPFontReader {
              * chracter global identifier.
              */
             String codePageId = new String(characterSet.getCodePage());
-            String path = characterSet.getPath();
+            ResourceAccessor accessor = characterSet.getResourceAccessor();
 
-            Map/*<String,String>*/ codePage = (Map/*<String,String>*/)codePages.get(codePageId);
+            Map/*<String,String>*/ codePage
+                = (Map/*<String,String>*/)codePagesCache.get(codePageId);
 
             if (codePage == null) {
-                codePage = loadCodePage(codePageId, characterSet.getEncoding(), path);
-                codePages.put(codePageId, codePage);
+                codePage = loadCodePage(codePageId, characterSet.getEncoding(), accessor);
+                codePagesCache.put(codePageId, codePage);
             }
 
             /**
@@ -222,7 +172,7 @@ public final class AFPFontReader {
              */
             final String characterSetName = characterSet.getName();
 
-            inputStream = openInputStream(path, characterSetName);
+            inputStream = openInputStream(accessor, characterSetName);
 
             StructuredFieldReader structuredFieldReader = new StructuredFieldReader(inputStream);
 
@@ -246,7 +196,8 @@ public final class AFPFontReader {
                 }
 
                 //process D3AC89 Font Position
-                processFontPosition(structuredFieldReader, characterSetOrientations, metricNormalizationFactor);
+                processFontPosition(structuredFieldReader, characterSetOrientations,
+                        metricNormalizationFactor);
 
                 //process D38C89 Font Index (per orientation)
                 for (int i = 0; i < characterSetOrientations.length; i++) {
@@ -274,17 +225,18 @@ public final class AFPFontReader {
      *            the code page identifier
      * @param encoding
      *            the encoding to use for the character decoding
+     * @param accessor the resource accessor
      * @returns a code page mapping
      */
     private Map/*<String,String>*/ loadCodePage(String codePage, String encoding,
-        String path) throws IOException {
+        ResourceAccessor accessor) throws IOException {
 
         // Create the HashMap to store code page information
         Map/*<String,String>*/ codePages = new java.util.HashMap/*<String,String>*/();
 
         InputStream inputStream = null;
         try {
-            inputStream = openInputStream(path, codePage.trim());
+            inputStream = openInputStream(accessor, codePage.trim());
 
             StructuredFieldReader structuredFieldReader = new StructuredFieldReader(inputStream);
             byte[] data = structuredFieldReader.getNext(CHARACTER_TABLE_SF);
