@@ -20,7 +20,7 @@
 package org.apache.fop.config;
 
 /*
- * this font base does not exist and a relative font path is used
+ * This font base does not exist and a relative font path is used.
  */
 public class FontBaseBadTestCase extends BaseDestructiveUserConfigTestCase {
 
@@ -28,14 +28,7 @@ public class FontBaseBadTestCase extends BaseDestructiveUserConfigTestCase {
         super(name);
     }
 
-    public void testUserConfig() throws Exception {
-        // Override this method from the super-class and do nothing as this test doesn't pass ATM
-        // TODO re-enable later
-    }
-
-    /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
-     */
+    /** {@inheritDoc} */
     public String getUserConfigFilename() {
         return "test_fontbase_bad.xconf";
     }
