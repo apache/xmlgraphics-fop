@@ -201,8 +201,6 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             p.setP(0);
         }
 
-        notifyEndOfLayout();
-
         setFinished(true);
         return returnList;
     }
@@ -427,6 +425,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         flush();
 
         curBlockArea = null;
+
+        notifyEndOfLayout();
     }
 
     /** Adds background areas for the column, body and row, if any. */

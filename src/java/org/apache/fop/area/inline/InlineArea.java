@@ -19,6 +19,8 @@
 
 package org.apache.fop.area.inline;
 
+import java.io.Serializable;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Trait;
@@ -35,7 +37,7 @@ public class InlineArea extends Area {
      * that can be used in order to re-compute adjustments when a
      * page-number or a page-number-citation is resolved
      */
-    protected class InlineAdjustingInfo {
+    protected class InlineAdjustingInfo implements Serializable {
         /** stretch of the inline area */
         protected int availableStretch;
         /** shrink of the inline area */
