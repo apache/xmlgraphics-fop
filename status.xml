@@ -58,19 +58,24 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="add" fixes-bug="46828" due-to="Dario Laera">
+        Added the possibility to use CachedRenderPagesModel, to conserve memory in case
+        of large documents with a lot of cross-references (area tree will be serialized to
+        disk to avoid keeping it entirely in memory).
+      </action>
       <action context="Fonts" dev="JM" type="add">
-        AFP Fonts: Added support for full URI resolution on configured AFP fonts. 
+        AFP Fonts: Added support for full URI resolution on configured AFP fonts.
       </action>
       <action context="Renderers" dev="JM" type="add">
         AFP Output: Tag Logical Element (TLE) is now also allowed on fo:page-sequence
-        (page group level). 
+        (page group level).
       </action>
       <action context="Layout" dev="JM" type="fix">
         Fixed BPD trait and border painting for leaders with leader-pattern="space"
-        (and similar cases).  
+        (and similar cases).
       </action>
       <action context="Renderers" dev="JM" type="add">
-        AFP Output: Added support for Invoke Medium Map (IMM). 
+        AFP Output: Added support for Invoke Medium Map (IMM).
       </action>
       <action context="Renderers" dev="JM" type="add">
         Introduced a new, additional intermediate format optimized for performance. Please see
@@ -89,11 +94,11 @@
         code.
       </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="46638">
-        MinOptMaxUtil.toMinOptMax was converting LengthRangeProperty objects into illegal MinOptMax 
+        MinOptMaxUtil.toMinOptMax was converting LengthRangeProperty objects into illegal MinOptMax
         objects (in some cases opt could be inferior to min).
       </action>
       <action context="Layout" dev="VH" type="add" fixes-bug="46315" due-to="Georg Datterl">
-        Added extension to disable column balancing before blocks spanning the whole page, in 
+        Added extension to disable column balancing before blocks spanning the whole page, in
         multiple-column documents.
       </action>
       <action context="Renderers" dev="JM" type="add">

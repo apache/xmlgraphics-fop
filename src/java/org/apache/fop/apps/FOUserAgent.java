@@ -97,6 +97,7 @@ public class FOUserAgent {
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
     private boolean locatorEnabled = true; // true by default (for error messages).
+    private boolean conserveMemoryPolicy = false;
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
 
     /** Producer:  Metadata element for the system/software that produces
@@ -613,6 +614,24 @@ public class FOUserAgent {
             rootListener.processEvent(event);
         }
 
+    }
+
+    /**
+     * Check whether memory-conservation is enabled.
+     *
+     * @return true if FOP is to conserve as much as possible
+     */
+    public boolean isConserveMemoryPolicyEnabled() {
+        return this.conserveMemoryPolicy;
+    }
+
+    /**
+     * Control whether memory-conservation should be enabled
+     *
+     * @param conserveMemoryPolicy the cachingEnabled to set
+     */
+    public void setConserveMemoryPolicy(boolean conserveMemoryPolicy) {
+        this.conserveMemoryPolicy = conserveMemoryPolicy;
     }
 
 }

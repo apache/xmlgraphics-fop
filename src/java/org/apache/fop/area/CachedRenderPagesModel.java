@@ -129,7 +129,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
         try {
             // save page to cache
             ObjectOutputStream tempstream;
-            String fname = "fop-page-" + page.toString() + ".ser";
+            String fname = "fop-page-" + page.getPageIndex() + ".ser";
             File tempFile = new File(baseDir, fname);
             tempFile.deleteOnExit();
             tempstream = new ObjectOutputStream(new BufferedOutputStream(
