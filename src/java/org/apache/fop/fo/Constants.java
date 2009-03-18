@@ -776,27 +776,27 @@ public interface Constants {
 
     // compound property constants
 
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_BLOCK_PROGRESSION_DIRECTION = 1 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_CONDITIONALITY = 2 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_INLINE_PROGRESSION_DIRECTION = 3 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_LENGTH = 4 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_MAXIMUM = 5 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_MINIMUM = 6 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_OPTIMUM = 7 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_PRECEDENCE = 8 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_WITHIN_COLUMN = 9 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_WITHIN_LINE = 10 << COMPOUND_SHIFT;
-    /** Property constant for compund property */
+    /** Property constant for compound property */
     int CP_WITHIN_PAGE = 11 << COMPOUND_SHIFT;
 
     // Enumeration constants
