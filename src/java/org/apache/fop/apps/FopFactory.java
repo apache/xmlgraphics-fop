@@ -264,9 +264,11 @@ public class FopFactory implements ImageContext {
      */
     public Fop newFop(FOUserAgent userAgent) throws FOPException {
         if (userAgent.getRendererOverride() == null
-                && userAgent.getFOEventHandlerOverride() == null) {
-            throw new IllegalStateException("Either the overriding renderer or the overriding"
-                    + " FOEventHandler must be set when this factory method is used!");
+                && userAgent.getFOEventHandlerOverride() == null
+                && userAgent.getDocumentHandlerOverride() == null) {
+            throw new IllegalStateException("An overriding renderer,"
+                    + " FOEventHandler or IFDocumentHandler must be set on the user agent"
+                    + " when this factory method is used!");
         }
         return newFop(null, userAgent);
     }

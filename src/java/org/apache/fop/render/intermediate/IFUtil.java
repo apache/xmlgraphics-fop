@@ -172,4 +172,21 @@ public class IFUtil {
         setupFonts(documentHandler, null);
     }
 
+    /**
+     * Returns the MIME type of the output format that the given document handler is supposed to
+     * handle. If the document handler is an {@link IFSerializer} it returns the MIME type of the
+     * document handler it is mimicking.
+     * @param documentHandler the document handler
+     * @return the effective MIME type
+     */
+    public static String getEffectiveMIMEType(IFDocumentHandler documentHandler) {
+        if (documentHandler instanceof IFSerializer) {
+            IFDocumentHandler mimic = ((IFSerializer)documentHandler).getMimickedDocumentHandler();
+            if (mimic != null) {
+                return mimic.getMimeType();
+            }
+        }
+        return documentHandler.getMimeType();
+    }
+
 }

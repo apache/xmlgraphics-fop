@@ -58,6 +58,7 @@ import org.apache.fop.fonts.autodetect.FontInfoFinder;
 import org.apache.fop.fonts.base14.Base14FontCollection;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.util.LogUtil;
 
 /**
@@ -471,7 +472,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         List fontCollections = new java.util.ArrayList();
         fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
 
-        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
+        Configuration cfg = super.getRendererConfig(IFUtil.getEffectiveMIMEType(documentHandler));
         if (cfg != null) {
             FontResolver fontResolver = new DefaultFontResolver(userAgent);
             FontEventListener listener = new FontEventAdapter(
