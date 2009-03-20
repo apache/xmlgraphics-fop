@@ -37,6 +37,6 @@ public interface FontFinder {
      * @throws IOException
      *             In case of an I/O problem
      */
-    List find() throws IOException;
+    List/*<URL>*/ find() throws IOException;
 
 }
