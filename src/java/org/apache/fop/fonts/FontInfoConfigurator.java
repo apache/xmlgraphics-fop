@@ -74,9 +74,6 @@ public class FontInfoConfigurator {
      * @throws FOPException if an exception occurs while processing the configuration
      */
     public void configure(List/*<EmbedFontInfo>*/ fontInfoList) throws FOPException {
-        FontCache fontCache = fontManager.getFontCache();
-        String fontBaseURL = fontManager.getFontBaseURL();
-
         Configuration fonts = cfg.getChild("fonts", false);
         if (fonts != null) {
             long start = 0;
@@ -98,6 +95,7 @@ public class FontInfoConfigurator {
             addDirectories(fonts, fontAdder, fontInfoList);
             
             // Add configured fonts to FontInfo
+            FontCache fontCache = fontManager.getFontCache();
             addFonts(fonts, fontCache, fontInfoList);
 
             // Update referenced fonts (fonts which are not to be embedded)
