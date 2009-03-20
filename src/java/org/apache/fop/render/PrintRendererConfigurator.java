@@ -100,17 +100,12 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         }
 
         boolean strict = factory.validateUserConfigStrictly();
-        FontCache fontCache = fontManager.getFontCache();
 
         //Read font configuration
         FontInfoConfigurator fontInfoConfigurator
             = new FontInfoConfigurator(cfg, fontManager, fontResolver, listener, strict);
         List/*<EmbedFontInfo>*/ fontInfoList = new java.util.ArrayList/*<EmbedFontInfo>*/();
         fontInfoConfigurator.configure(fontInfoList);
-
-        if (fontCache != null && fontCache.hasChanged()) {
-            fontCache.save();
-        }
         return fontInfoList;
     }
     
