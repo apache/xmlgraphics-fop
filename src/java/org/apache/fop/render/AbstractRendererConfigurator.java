@@ -20,31 +20,22 @@
 package org.apache.fop.render;
 
 import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Abstract base classes for renderer-related configurator classes. This class basically just
  * provides an accessor to the specific renderer configuration object.
  */
-public abstract class AbstractRendererConfigurator {
+public abstract class AbstractRendererConfigurator extends AbstractConfigurator {
 
-    /** logger instance */
-    protected static Log log = LogFactory.getLog(AbstractRendererConfigurator.class);
-
-    /** fop factory configuration */
-    protected FOUserAgent userAgent = null;
-
+    private static final String TYPE = "renderer";
+    
     /**
      * Default constructor
      * @param userAgent user agent
      */
     public AbstractRendererConfigurator(FOUserAgent userAgent) {
-        super();
-        this.userAgent = userAgent;
+        super(userAgent);
     }
 
     /**
@@ -53,15 +44,7 @@ public abstract class AbstractRendererConfigurator {
      * @return the requested configuration subtree, null if there's no configuration
      */
     protected Configuration getRendererConfig(Renderer renderer) {
-        String mimeType = renderer.getMimeType();
-        if (mimeType == null) {
-            if (log.isInfoEnabled()) {
-                log.info("renderer mimeType is null");
-            }
-            return null;
-        }
-
-        return getRendererConfig(mimeType);
+        return super.getConfig(renderer.getMimeType());
     }
 
     /**
@@ -70,31 +53,14 @@ public abstract class AbstractRendererConfigurator {
      * @return the requested configuration subtree, null if there's no configuration
      */
     protected Configuration getRendererConfig(String mimeType) {
-        Configuration cfg = userAgent.getFactory().getUserConfig();
-        if (cfg == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("userconfig is null");
-            }
-            return null;
-        }
-
-        Configuration userRendererConfig = null;
-
-        Configuration[] cfgs
-            = cfg.getChild("renderers").getChildren("renderer");
-        for (int i = 0; i < cfgs.length; ++i) {
-            Configuration child = cfgs[i];
-            try {
-                if (child.getAttribute("mime").equals(mimeType)) {
-                    userRendererConfig = child;
-                    break;
-                }
-            } catch (ConfigurationException e) {
-                // silently pass over configurations without mime type
-            }
-        }
-        log.debug((userRendererConfig == null ? "No u" : "U")
-                  + "ser configuration found for MIME type " + mimeType);
-        return userRendererConfig;
+        return super.getConfig(mimeType);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
+        return TYPE;
+    }
+
 }

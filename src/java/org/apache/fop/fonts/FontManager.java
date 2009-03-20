@@ -20,6 +20,8 @@
 package org.apache.fop.fonts;
 
 import java.net.MalformedURLException;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -185,5 +187,28 @@ public class FontManager {
      */
     public Matcher getReferencedFontsMatcher() {
         return this.referencedFontsMatcher;
+    }
+
+    /**
+     * Updates the referenced font list
+     * @param fontInfoList a font info list
+     */
+    public void updateReferencedFonts(List fontInfoList) {
+        Matcher matcher = getReferencedFontsMatcher();
+        if (matcher == null) {
+            return; //No referenced fonts
+        }
+        Iterator iter = fontInfoList.iterator();
+        while (iter.hasNext()) {
+            EmbedFontInfo fontInfo = (EmbedFontInfo)iter.next();
+            Iterator triplets = fontInfo.getFontTriplets().iterator();
+            while (triplets.hasNext()) {
+                FontTriplet triplet = (FontTriplet)triplets.next();
+                if (matcher.matches(triplet)) {
+                    fontInfo.setEmbedded(false);
+                    break;
+                }
+            }
+        }
     }
 }
