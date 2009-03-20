@@ -100,7 +100,12 @@ public class FontInfoConfigurator {
 
             // Update referenced fonts (fonts which are not to be embedded)
             fontManager.updateReferencedFonts(fontInfoList);
-            
+
+            // Update font cache if it has changed
+            if (fontCache != null && fontCache.hasChanged()) {
+                fontCache.save();
+            }
+
             if (log.isDebugEnabled()) {
                 log.debug("Finished font configuration in "
                         + (System.currentTimeMillis() - start) + "ms");
