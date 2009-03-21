@@ -41,7 +41,7 @@ public class AFPExtensionHandler extends DefaultHandler
     private StringBuffer content = new StringBuffer();
     private Attributes lastAttributes;
 
-    private AFPPageSetup returnedObject;
+    private AFPExtensionAttachment returnedObject;
     private ObjectBuiltListener listener;
 
     /** {@inheritDoc} */
@@ -75,17 +75,24 @@ public class AFPExtensionHandler extends DefaultHandler
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (AFPPageSetup.CATEGORY.equals(uri)) {
-            this.returnedObject = new AFPPageSetup(localName);
+            AFPPageSetup pageSetupExtn = null;
+            if (localName.equals(AFPElementMapping.INVOKE_MEDIUM_MAP)) {
+                this.returnedObject = new AFPInvokeMediumMap();
+            }
+            else {
+                pageSetupExtn = new AFPPageSetup(localName);
+                this.returnedObject = pageSetupExtn; 
+            }
             String name = lastAttributes.getValue("name");
             if (name != null) {
                 returnedObject.setName(name);
             }
             String value = lastAttributes.getValue("value");
-            if (value != null) {
-                returnedObject.setValue(value);
+            if (value != null && pageSetupExtn != null) {
+                pageSetupExtn.setValue(value);
             }
-            if (content.length() > 0) {
-                returnedObject.setContent(content.toString());
+            if (content.length() > 0 && pageSetupExtn != null) {
+                pageSetupExtn.setContent(content.toString());
                 content.setLength(0); //Reset text buffer (see characters())
             }
         }
