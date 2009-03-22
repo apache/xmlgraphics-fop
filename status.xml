@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="add">
+        Added a command-line tool to list all configured fonts
+        (org.apache.fop.tools.fontlist.FontListMain).
+      </action>
       <action context="Code" dev="AD" type="add" fixes-bug="46828" due-to="Dario Laera">
         Added the possibility to use CachedRenderPagesModel, to conserve memory in case
         of large documents with a lot of cross-references (area tree will be serialized to
