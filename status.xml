@@ -58,6 +58,12 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="46489">
+        Fixed a bug when combining a forced break with a "last" page-master. The restart
+        of the algorithm would start at the index of the penalty corresponding to the last
+        page-break. This has been changed to the index of the first element after the last
+        page-break.
+      </action>
       <action context="Fonts" dev="JM" type="add">
         Added a command-line tool to list all configured fonts
         (org.apache.fop.tools.fontlist.FontListMain).

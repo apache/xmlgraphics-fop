@@ -273,7 +273,8 @@ public class PageBreaker extends AbstractBreaker {
             //Get page break from which we restart
             PageBreakPosition pbp = (PageBreakPosition)
                     alg.getPageBreaks().get(restartPoint - 1);
-            newStartPos = pbp.getLeafPos();
+            //Set starting position to the first element *after* the page-break
+            newStartPos = pbp.getLeafPos() + 1;
             //Handle page break right here to avoid any side-effects
             if (newStartPos > 0) {
                 handleBreakTrait(Constants.EN_PAGE);
@@ -306,16 +307,15 @@ public class PageBreaker extends AbstractBreaker {
                     1, true, BreakingAlgorithm.ALL_BREAKS);
         AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
                 + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
+        //Make sure we only add the areas we haven't added already
+        effectiveList.ignoreAtStart = newStartPos;
         boolean replaceLastPage
                 = iOptPageCount <= pslm.getCurrentPV().getBodyRegion().getColumnCount();
         if (replaceLastPage) {
             //Replace last page
             pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
-            //Make sure we only add the areas we haven't added already
-            effectiveList.ignoreAtStart = newStartPos;
             addAreas(algRestart, iOptPageCount, originalList, effectiveList);
         } else {
-            effectiveList.ignoreAtStart = newStartPos;
             addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
             //Add blank last page
             pageProvider.setLastPageIndex(currentPageNum + 1);
@@ -430,8 +430,8 @@ public class PageBreaker extends AbstractBreaker {
                         childLC);
             }
             // set the offset from the top margin
-            Footnote parentArea = (Footnote) pslm.getCurrentPV().getBodyRegion().getFootnote();
-            int topOffset = (int) pslm.getCurrentPV().getBodyRegion().getBPD() - parentArea.getBPD();
+            Footnote parentArea = pslm.getCurrentPV().getBodyRegion().getFootnote();
+            int topOffset = pslm.getCurrentPV().getBodyRegion().getBPD() - parentArea.getBPD();
             if (separatorArea != null) {
                 topOffset -= separatorArea.getBPD();
             }
@@ -451,7 +451,7 @@ public class PageBreaker extends AbstractBreaker {
     /** {@inheritDoc} */
     protected void observeElementList(List elementList) {
         ElementListObserver.observe(elementList, "breaker",
-                ((PageSequence)pslm.getFObj()).getId());
+                pslm.getFObj().getId());
     }
 
     /**
