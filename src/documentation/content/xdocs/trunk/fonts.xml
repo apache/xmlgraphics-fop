@@ -545,5 +545,13 @@
       </ul>
       <p>Character-by-Character is NOT yet supported!</p>
     </section>
+    <section id="font-list">
+      <title>Font List Command-Line Tool</title>
+      <p>
+        FOP contains a small command-line tool that lets you generate a list of all configured
+        fonts. Its class name is: <code>org.apache.fop.tools.fontlist.FontListMain</code>.
+        Run it with the "-?" parameter to get help for the various options.
+      </p>
+    </section>
   </body>
 </document>
