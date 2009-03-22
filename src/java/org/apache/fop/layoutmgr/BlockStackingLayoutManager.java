@@ -347,18 +347,19 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
                 return returnList;
             } else {
-                if (prevLM != null) {
-                    // there is a block handled by prevLM
-                    // before the one handled by curLM
-                    addInBetweenBreak(contentList, context, childLC);
-                }
                 if (returnedList == null || returnedList.isEmpty()) {
                     //Avoid NoSuchElementException below (happens with empty blocks)
                     continue;
                 }
+                if (prevLM != null
+                        && !ElementListUtils.startsWithForcedBreak(returnedList)) {
+                    // there is a block handled by prevLM before the one
+                    // handled by curLM, and the one handled
+                    // by the current LM does not begin with a break
+                    addInBetweenBreak(contentList, context, childLC);
+                }
                 contentList.addAll(returnedList);
-                if (((ListElement) ListUtil.getLast(returnedList))
-                        .isForcedBreak()) {
+                if (ElementListUtils.endsWithForcedBreak(returnedList)) {
                     // a descendant of this block has break-after
                     if (curLM.isFinished() && !hasNextChildLM()) {
                         forcedBreakAfterLast = (BreakElement) ListUtil
