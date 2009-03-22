@@ -84,11 +84,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             int disableColumnBalancing = EN_FALSE;
             if (curLM instanceof BlockLayoutManager) {
                 span = ((BlockLayoutManager)curLM).getBlockFO().getSpan();
-                disableColumnBalancing = ((BlockLayoutManager) curLM).getBlockContainerFO()
+                disableColumnBalancing = ((BlockLayoutManager) curLM).getBlockFO()
                         .getDisableColumnBalancing();
             } else if (curLM instanceof BlockContainerLayoutManager) {
-                span = ((BlockContainerLayoutManager)curLM).getBlockFO()
-                        .getSpan();
+                span = ((BlockContainerLayoutManager)curLM).getBlockContainerFO().getSpan();
                 disableColumnBalancing = ((BlockContainerLayoutManager) curLM).getBlockContainerFO()
                         .getDisableColumnBalancing();
             }
