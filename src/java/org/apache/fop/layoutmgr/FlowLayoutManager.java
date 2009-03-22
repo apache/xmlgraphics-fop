@@ -83,13 +83,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             int span = EN_NONE;
             int disableColumnBalancing = EN_FALSE;
             if (curLM instanceof BlockLayoutManager) {
-                span = ((BlockLayoutManager)curLM).getBlockFO().getSpan();
-                disableColumnBalancing = ((BlockLayoutManager) curLM).getBlockFO()
-                        .getDisableColumnBalancing();
+                span = ((BlockLayoutManager)curLM).getSpan();
+                disableColumnBalancing = ((BlockLayoutManager) curLM).getDisableColumnBalancing();
             } else if (curLM instanceof BlockContainerLayoutManager) {
-                span = ((BlockContainerLayoutManager)curLM).getBlockContainerFO().getSpan();
-                disableColumnBalancing = ((BlockContainerLayoutManager) curLM)
-                        .getBlockContainerFO().getDisableColumnBalancing();
+                span = ((BlockContainerLayoutManager)curLM).getSpan();
+                disableColumnBalancing = ((BlockContainerLayoutManager) curLM).getDisableColumnBalancing();
             }
 
             int currentSpan = context.getCurrentSpan();
@@ -130,24 +128,23 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 returnList.addAll(returnedList);
                 SpaceResolver.resolveElementList(returnList);
                 return returnList;
-            } else {
-                if (returnList.size() > 0) {
+            } else if (returnedList.size() > 0) {
+                if (returnList.size() > 0
+                        && !ElementListUtils.startsWithForcedBreak(returnedList)) {
                     addInBetweenBreak(returnList, context, childLC);
                 }
-                if (returnedList.size() > 0) {
-                    returnList.addAll(returnedList);
-                    if (ElementListUtils.endsWithForcedBreak(returnList)) {
-                        if (curLM.isFinished() && !hasNextChildLM()) {
-                            //If the layout manager is finished at this point, the pending
-                            //marks become irrelevant.
-                            childLC.clearPendingMarks();
-                            //setFinished(true);
-                            break;
-                        }
-                        // a descendant of this flow has break-after
-                        SpaceResolver.resolveElementList(returnList);
-                        return returnList;
+                returnList.addAll(returnedList);
+                if (ElementListUtils.endsWithForcedBreak(returnList)) {
+                    if (curLM.isFinished() && !hasNextChildLM()) {
+                        //If the layout manager is finished at this point, the pending
+                        //marks become irrelevant.
+                        childLC.clearPendingMarks();
+                        //setFinished(true);
+                        break;
                     }
+                    // a descendant of this flow has break-after
+                    SpaceResolver.resolveElementList(returnList);
+                    return returnList;
                 }
             }
 

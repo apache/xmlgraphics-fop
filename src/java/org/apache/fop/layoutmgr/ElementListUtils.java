@@ -194,6 +194,16 @@ public final class ElementListUtils {
     }
 
     /**
+     * Indicates whether the given element list starts with a forced break.
+     * @param elems the element list
+     * @return true if the list starts with a forced break
+     */
+    public static boolean startsWithForcedBreak(List elems) {
+        return !elems.isEmpty()
+            && ((ListElement) elems.get(0)).isForcedBreak();
+    }
+
+    /**
      * Indicates whether the given element list ends with a penalty with a non-infinite penalty
      * value.
      * @param elems the element list
