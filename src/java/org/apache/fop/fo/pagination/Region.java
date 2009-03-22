@@ -26,6 +26,7 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -128,6 +129,24 @@ public abstract class Region extends FObj {
                 || name.equals("xsl-region-after")
                 || name.equals("xsl-before-float-separator")
                 || name.equals("xsl-footnote-separator"));
+    }
+
+    /**
+     * Get the page-width context
+     * @param lengthBase    the lengthBase to use for resolving percentages
+     * @return  context for the width of the page-reference-area
+     */
+    protected PercentBaseContext getPageWidthContext(int lengthBase) {
+        return layoutMaster.getPageWidthContext(lengthBase);
+    }
+
+    /**
+     * Get the page-width context
+     * @param lengthBase    the lengthBase to use for resolving percentages
+     * @return  context for the width of the page-reference-area
+     */
+    protected PercentBaseContext getPageHeightContext(int lengthBase) {
+        return layoutMaster.getPageHeightContext(lengthBase);
     }
 
     /** {@inheritDoc} */
