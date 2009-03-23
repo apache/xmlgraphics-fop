@@ -25,83 +25,59 @@
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="OTCTermsheetPageMasterFrontPage" page-width="210mm" page-height="297mm" margin-bottom="12.7mm" margin-right="12.7mm" margin-top="12.7mm" margin-left="12.7mm">
-          <fo:region-body margin-bottom="30mm" margin-top="42.3mm" region-name="PageBody"/>
-          <fo:region-before region-name="PageHeaderFrontPage" extent="42.3mm"/>
-          <fo:region-after precedence="true" region-name="PageFooter" extent="30mm"/>
+        <fo:simple-page-master master-name="FrontPage"
+          page-width="210mm" page-height="297mm" margin="12.7mm">
+          <fo:region-body/>
         </fo:simple-page-master>
-        <fo:simple-page-master master-name="OTCTermsheetPageMasterFollowing" page-width="210mm" page-height="297mm" margin-bottom="12.7mm" margin-right="12.7mm" margin-top="12.7mm" margin-left="12.7mm">
-          <fo:region-body margin-bottom="30mm" margin-top="20mm" region-name="PageBody"/>
-          <fo:region-before region-name="PageHeaderFollowing" extent="20mm"/>
-          <fo:region-after precedence="true" region-name="PageFooter" extent="30mm"/>
+        <fo:simple-page-master master-name="Following"
+          page-width="210mm" page-height="297mm" margin="12.7mm">
+          <fo:region-body/>
         </fo:simple-page-master>
-        <fo:page-sequence-master master-name="OTCTermsheetPageSeq">
+        <fo:page-sequence-master master-name="pages">
           <fo:repeatable-page-master-alternatives>
-            <fo:conditional-page-master-reference page-position="first" master-reference="OTCTermsheetPageMasterFrontPage"/>
-            <fo:conditional-page-master-reference page-position="rest" master-reference="OTCTermsheetPageMasterFollowing"/>
-            <fo:conditional-page-master-reference page-position="last" master-reference="OTCTermsheetPageMasterFollowing"/>				
+            <fo:conditional-page-master-reference page-position="first" 
+              master-reference="FrontPage"/>
+            <fo:conditional-page-master-reference page-position="rest" 
+              master-reference="Following"/>
+            <fo:conditional-page-master-reference page-position="last" 
+              master-reference="Following"/>				
           </fo:repeatable-page-master-alternatives>
         </fo:page-sequence-master>
       </fo:layout-master-set>
-      <fo:page-sequence initial-page-number="1" force-page-count="no-force" master-reference="OTCTermsheetPageSeq">
-        <fo:flow flow-name="PageBody" font-family="Times New Roman" font-size="10pt" line-height="12pt">
+      <fo:page-sequence master-reference="pages">
+        <fo:flow flow-name="xsl-region-body">
           <fo:block>
             <fo:table table-layout="fixed" width="100%">
-              <fo:table-column column-width="proportional-column-width(32.36)" column-number="1"/>
-              <fo:table-column column-width="proportional-column-width(67.64)" column-number="2"/>
+              <fo:table-column column-width="proportional-column-width(30)"/>
+              <fo:table-column column-width="proportional-column-width(70)"/>
               <fo:table-body>
                 <fo:table-row>
                   <fo:table-cell padding="4pt">
-                    <fo:block>
-                      <fo:block>
-                        <fo:inline color="#6D6E71">Some text</fo:inline>
-                      </fo:block>
-                    </fo:block>
+                    <fo:block color="#6D6E71">Some text</fo:block>
                   </fo:table-cell>
                   <fo:table-cell padding="4pt">
-                    <fo:block>
-                      <fo:block text-align="justify">More text before break. More text before break. More text before break.</fo:block>
-                      <fo:block>
-                        <fo:leader/>
-                      </fo:block>
-                    </fo:block>
+                    <fo:block>More text before break. More text before break. More text before 
+                      break.</fo:block>
                   </fo:table-cell>
                 </fo:table-row>
               </fo:table-body>
             </fo:table>
             <fo:table table-layout="fixed" width="100%">
-              <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
               <fo:table-body>
                 <fo:table-row>
                   <fo:table-cell padding="4pt">
-                    <fo:block>
-                      <fo:block id="the-block" line-height="14pt" color="#6D6E71" font-size="11pt" font-family="Arial" text-align="left" page-break-before="always">TEXT AFTER BREAK</fo:block>
-                      <fo:block>
-                        <fo:leader/>
-                      </fo:block>
-                    </fo:block>
+                    <fo:block id="the-block" color="#6D6E71" page-break-before="always">TEXT AFTER 
+                      BREAK</fo:block>
                   </fo:table-cell>
                 </fo:table-row>
               </fo:table-body>
             </fo:table>
             <fo:table table-layout="fixed" width="100%">
-              <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
               <fo:table-body>
                 <fo:table-row>
                   <fo:table-cell padding="4pt">
-                    <fo:block>
-                      <fo:block>
-                        <fo:leader/>
-                      </fo:block>
-                      <fo:block>
-                        <fo:leader/>
-                      </fo:block>
-                      <fo:block text-align="justify">blah blah blah</fo:block>
-                      <fo:block>
-                        <fo:leader/>
-                      </fo:block>
-                      <fo:block text-align="justify">blah blah blah</fo:block>
-                    </fo:block>
+                    <fo:block>blah blah blah</fo:block>
+                    <fo:block>blah blah blah</fo:block>
                   </fo:table-cell>
                 </fo:table-row>
               </fo:table-body>
