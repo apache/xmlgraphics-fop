@@ -199,8 +199,7 @@ public final class ElementListUtils {
      * @return true if the list starts with a forced break
      */
     public static boolean startsWithForcedBreak(List elems) {
-        return !elems.isEmpty()
-            && ((ListElement) elems.get(0)).isForcedBreak();
+        return !elems.isEmpty() && ((ListElement) elems.get(0)).isForcedBreak();
     }
 
     /**
