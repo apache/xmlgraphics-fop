@@ -21,6 +21,7 @@ package org.apache.fop.apps;
 
 // Java
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ import org.apache.fop.events.EventListener;
 import org.apache.fop.events.FOPEventListenerProxy;
 import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
@@ -83,9 +85,6 @@ public class FOUserAgent {
      *  external-graphics.
      */
     private String base = null;
-
-    /** The base URL for all font URL resolutions. */
-    private String fontBase = null;
 
     /** A user settable URI Resolver */
     private URIResolver uriResolver = null;
@@ -152,7 +151,6 @@ public class FOUserAgent {
         }
         this.factory = factory;
         setBaseURL(factory.getBaseURL());
-        setFontBaseURL(factory.getFontManager().getFontBaseURL());
         setTargetResolution(factory.getTargetResolution());
     }
 
@@ -345,11 +343,16 @@ public class FOUserAgent {
     }
 
     /**
-     * sets font base URL
+     * Sets font base URL.
      * @param fontBaseUrl font base URL
+     * @deprecated Use {@link FontManager#setFontBaseURL(String)} instead.
      */
     public void setFontBaseURL(String fontBaseUrl) {
-        this.fontBase = fontBaseUrl;
+        try {
+            getFactory().getFontManager().setFontBaseURL(fontBaseUrl);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     /**
@@ -484,8 +487,13 @@ public class FOUserAgent {
     // ---------------------------------------------- environment-level stuff
     //                                                (convenience access to FopFactory methods)
 
-    /** @return the font base URL */
+    /**
+     * Returns the font base URL.
+     * @return the font base URL
+     * @deprecated Use {@link FontManager#getFontBaseURL()} instead. This method is not used by FOP.
+     */
     public String getFontBaseURL() {
+        String fontBase = getFactory().getFontManager().getFontBaseURL();
         return fontBase != null ? fontBase : getBaseURL();
     }
 
