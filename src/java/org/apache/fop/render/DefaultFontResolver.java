@@ -41,7 +41,7 @@ public class DefaultFontResolver implements FontResolver {
 
     /** {@inheritDoc} */
     public Source resolve(String href) {
-        return userAgent.resolveURI(href, userAgent.getFontBaseURL());
+        return userAgent.resolveURI(href, userAgent.getFactory().getFontManager().getFontBaseURL());
     }
 
 }
