@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="46882" due-to="Yegor Kozlov">
+        Fixed the handling of CMYK colors in PDFGraphics2D.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="46489">
         Fixed a bug when combining a forced break with a "last" page-master. The restart
         of the algorithm would start at the index of the penalty corresponding to the last

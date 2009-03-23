@@ -59,6 +59,15 @@ import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.PatternPaint;
+
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageSize;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
+import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
+import org.apache.xmlgraphics.java2d.GraphicContext;
+
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
@@ -83,13 +92,6 @@ import org.apache.fop.render.pdf.ImageRawCCITTFaxAdapter;
 import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
 import org.apache.fop.util.ColorExt;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageSize;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
-import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
-import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
-import org.apache.xmlgraphics.java2d.GraphicContext;
 
 /**
  * PDF Graphics 2D.
@@ -741,13 +743,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 throw new PDFConformanceException(
                         "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.");
             }
-            float[] cComps = c.getColorComponents(new float[3]);
-            double[] cmyk = new double[3];
-            for (int i = 0; i < 3; i++) {
-                // convert the float elements to doubles for pdf
-                cmyk[i] = cComps[i];
-            }
-            PDFColor currentColour = new PDFColor(cmyk[0], cmyk[1], cmyk[2], cmyk[3]);
+            PDFColor currentColour = new PDFColor(c);
             currentStream.write(currentColour.getColorSpaceOut(fill));
         } else if (c.getColorSpace().getType()
                    == ColorSpace.TYPE_2CLR) {
