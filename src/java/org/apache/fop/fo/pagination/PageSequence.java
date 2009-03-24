@@ -24,10 +24,8 @@ import java.util.Map;
 
 import org.xml.sax.Locator;
 
-import org.apache.batik.css.engine.value.svg.OpacityManager;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
