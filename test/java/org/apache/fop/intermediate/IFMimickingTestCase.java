@@ -31,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -40,6 +41,7 @@ import org.apache.fop.events.EventFormatter;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFSerializer;
 
 /**
@@ -47,15 +49,42 @@ import org.apache.fop.render.intermediate.IFSerializer;
  */
 public class IFMimickingTestCase extends TestCase {
 
-    /**
-     * Tests IF document handler mimicking.
-     * @throws Exception if an error occurs
-     */
-    public void testMimicking() throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance();
+    private FopFactory fopFactory;
+
+    /** {@inheritDoc} */
+    protected void setUp() throws Exception {
+        super.setUp();
+        fopFactory = FopFactory.newInstance();
         File configFile = new File("test/test-no-xml-metrics.xconf");
         fopFactory.setUserConfig(configFile);
+    }
 
+    /**
+     * Tests IF document handler mimicking with PDF output.
+     * @throws Exception if an error occurs
+     */
+    public void testMimickingPDF() throws Exception {
+        doTestMimicking(MimeConstants.MIME_PDF);
+    }
+
+    /**
+     * Tests IF document handler mimicking with PostScript output.
+     * @throws Exception if an error occurs
+     */
+    public void testMimickingPS() throws Exception {
+        doTestMimicking(MimeConstants.MIME_POSTSCRIPT);
+    }
+
+    /**
+     * Tests IF document handler mimicking with TIFF output.
+     * @throws Exception if an error occurs
+     */
+    public void testMimickingTIFF() throws Exception {
+        doTestMimicking(MimeConstants.MIME_TIFF);
+    }
+
+    private void doTestMimicking(String mime) throws FOPException, IFException,
+            TransformerException {
         //Set up XMLRenderer to render to a DOM
         DOMResult domResult = new DOMResult();
 
@@ -73,7 +102,7 @@ public class IFMimickingTestCase extends TestCase {
 
         //Create an instance of the target renderer so the XMLRenderer can use its font setup
         IFDocumentHandler targetHandler = userAgent.getRendererFactory().createDocumentHandler(
-                userAgent, MimeConstants.MIME_PDF);
+                userAgent, mime);
 
         //Setup painter
         IFSerializer serializer = new IFSerializer();

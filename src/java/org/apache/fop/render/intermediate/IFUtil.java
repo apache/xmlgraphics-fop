@@ -153,6 +153,13 @@ public class IFUtil {
         if (fontInfo == null) {
             fontInfo = new FontInfo();
         }
+        if (documentHandler instanceof IFSerializer) {
+            IFSerializer serializer = (IFSerializer)documentHandler;
+            if (serializer.getMimickedDocumentHandler() != null) {
+                //Use the mimicked document handler's configurator to set up fonts
+                documentHandler = serializer.getMimickedDocumentHandler();
+            }
+        }
         IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
         if (configurator != null) {
             configurator.setupFontInfo(documentHandler, fontInfo);
