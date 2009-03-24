@@ -24,8 +24,10 @@ import java.util.Map;
 
 import org.xml.sax.Locator;
 
+import org.apache.batik.css.engine.value.svg.OpacityManager;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 
@@ -48,7 +50,7 @@ public class PageSequence extends AbstractPageSequence {
     // the set of flows includes StaticContent flows also
 
     /** Map of flows to their flow name (flow-name, Flow) */
-    private Map flowMap;
+    private Map/*<String, Flow>*/ flowMap;
 
     /**
      * The currentSimplePageMaster is either the page master for the
@@ -93,21 +95,52 @@ public class PageSequence extends AbstractPageSequence {
         }
     }
 
+    /**
+     * Returns the simple page master related to this page sequence
+     * @return the simple page master related to this page sequence
+     */
+    public SimplePageMaster getSimplePageMaster() {
+        return getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
+    }
+
+    /**
+     * Returns true if this page sequence has a simple page master
+     * @return true if this page sequence has a simple page master
+     */
+    public boolean hasSimplePageMaster() {
+        return getSimplePageMaster() != null;
+    }
+
+    /**
+     * Returns the page sequence master related to this page sequence
+     * @return the page sequence master related to this page sequence
+     */
+    public PageSequenceMaster getPageSequenceMaster() {
+        return getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
+    }
+
+    /**
+     * Returns true if this page sequence has a page sequence master
+     * @return true if this page sequence has a page sequence master
+     */
+    public boolean hasPageSequenceMaster() {
+        return getPageSequenceMaster() != null;
+    }
+
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        flowMap = new java.util.HashMap();
+        flowMap = new java.util.HashMap/*<String, Flow>*/();
 
-        this.simplePageMaster = getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
-        if (this.simplePageMaster == null) {
-            this.pageSequenceMaster
-                    = getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
-            if (this.pageSequenceMaster == null) {
-                getFOValidationEventProducer().masterNotFound(this, getName(),
-                        masterReference, getLocator());
-            }
+        if (hasSimplePageMaster()) {
+            this.simplePageMaster = getSimplePageMaster();
+        } else if (hasPageSequenceMaster()) {
+            this.pageSequenceMaster = getPageSequenceMaster();
+        } else {
+            getFOValidationEventProducer().masterNotFound(this, getName(),
+                    masterReference, getLocator());
         }
-
+        
         getFOEventHandler().startPageSequence(this);
     }
 
