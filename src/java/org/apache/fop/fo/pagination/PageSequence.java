@@ -93,52 +93,21 @@ public class PageSequence extends AbstractPageSequence {
         }
     }
 
-    /**
-     * Returns the simple page master related to this page sequence
-     * @return the simple page master related to this page sequence
-     */
-    public SimplePageMaster getSimplePageMaster() {
-        return getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
-    }
-
-    /**
-     * Returns true if this page sequence has a simple page master
-     * @return true if this page sequence has a simple page master
-     */
-    public boolean hasSimplePageMaster() {
-        return getSimplePageMaster() != null;
-    }
-
-    /**
-     * Returns the page sequence master related to this page sequence
-     * @return the page sequence master related to this page sequence
-     */
-    public PageSequenceMaster getPageSequenceMaster() {
-        return getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
-    }
-
-    /**
-     * Returns true if this page sequence has a page sequence master
-     * @return true if this page sequence has a page sequence master
-     */
-    public boolean hasPageSequenceMaster() {
-        return getPageSequenceMaster() != null;
-    }
-
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         flowMap = new java.util.HashMap/*<String, Flow>*/();
 
-        if (hasSimplePageMaster()) {
-            this.simplePageMaster = getSimplePageMaster();
-        } else if (hasPageSequenceMaster()) {
-            this.pageSequenceMaster = getPageSequenceMaster();
-        } else {
-            getFOValidationEventProducer().masterNotFound(this, getName(),
-                    masterReference, getLocator());
+        this.simplePageMaster
+            = getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
+        if (simplePageMaster == null) {
+            this.pageSequenceMaster
+                = getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
+            if (pageSequenceMaster == null) {
+                getFOValidationEventProducer().masterNotFound(this, getName(),
+                        masterReference, getLocator());
+            }
         }
-        
         getFOEventHandler().startPageSequence(this);
     }
 
