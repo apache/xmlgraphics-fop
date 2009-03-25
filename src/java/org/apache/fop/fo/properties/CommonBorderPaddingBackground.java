@@ -651,6 +651,14 @@ public class CommonBorderPaddingBackground {
     }
 
     /**
+     * Returns the "background-color" property.
+     * @return the "background-color" property.
+     */
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    /**
      * Returns the "background-attachment" property.
      * @return the "background-attachment" property.
      */
