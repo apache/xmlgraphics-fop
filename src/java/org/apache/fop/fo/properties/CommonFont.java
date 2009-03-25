@@ -170,6 +170,16 @@ public final class CommonFont {
         return fontWeight.getEnum();
     }
 
+    /** @return the "font-size" property. */
+    public Length getFontSize() {
+        return fontSize;
+    }
+
+    /** @return the "font-size-adjust" property. */
+    public Numeric getFontSizeAdjust() {
+        return fontSizeAdjust;
+    }
+
     /**
      * Create and return an array of <code>FontTriplets</code> based on
      * the properties stored in the instance variables.

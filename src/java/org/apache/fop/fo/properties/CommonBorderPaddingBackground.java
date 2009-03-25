@@ -650,6 +650,70 @@ public class CommonBorderPaddingBackground {
                 || borderInfo[START] != null || borderInfo[END] != null);
     }
 
+    /**
+     * Returns the "background-attachment" property.
+     * @return the "background-attachment" property.
+     */
+    public int getBackgroundAttachment() {
+        return backgroundAttachment;
+    }
+
+    /**
+     * Returns the "background-image" property.
+     * @return the "background-image" property.
+     */
+    public String getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    /**
+     * Returns the "background-repeat" property.
+     * @return the "background-repeat" property.
+     */
+    public int getBackgroundRepeat() {
+        return backgroundRepeat;
+    }
+
+    /**
+     * Returns the "background-position-horizontal" property.
+     * @return the "background-position-horizontal" property.
+     */
+    public Length getBackgroundPositionHorizontal() {
+        return backgroundPositionHorizontal;
+    }
+
+    /**
+     * Returns the "background-position-vertical" property.
+     * @return the "background-position-vertical" property.
+     */
+    public Length getBackgroundPositionVertical() {
+        return backgroundPositionVertical;
+    }
+
+    /**
+     * Returns the background image info
+     * @return the background image info
+     */
+    public ImageInfo getBackgroundImageInfo() {
+        return backgroundImageInfo;
+    }
+
+    /**
+     * Returns the border info
+     * @return the border info
+     */
+    public BorderInfo[] getBorderInfo() {
+        return borderInfo;
+    }
+
+    /**
+     * Returns the padding
+     * @return the padding
+     */
+    public CondLengthProperty[] getPadding() {
+        return padding;
+    }
+
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (this == obj) {
