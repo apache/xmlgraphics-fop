@@ -19,9 +19,9 @@
 
 package org.apache.fop.threading;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 
 /**
@@ -31,12 +31,12 @@ public interface FOProcessor {
 
     /**
      * Process a file.
-     * @param in the InputStream for the FO or XML file
+     * @param src the Source for the FO or XML file
      * @param templates a JAXP Templates object for an XSLT transformation or null
      * @param out the OutputStream for the target file
      * @throws Exception if an error occurs
      */
-    void process(InputStream in, Templates templates, OutputStream out)
+    void process(Source src, Templates templates, OutputStream out)
             throws Exception;
 
     /**
