@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
 
 /**
  * Renderer that prints through java.awt.PrintJob.
@@ -69,11 +68,6 @@ public class PrintRenderer extends PageableRenderer {
         this();
         this.printerJob = printerJob;
         printerJob.setPageable(this);
-    }
-
-    /** {@inheritDoc} */
-    public String getMimeType() {
-        return MimeConstants.MIME_FOP_PRINT;
     }
 
     private void initializePrinterJob() {
