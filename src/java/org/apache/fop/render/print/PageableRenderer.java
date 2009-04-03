@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
@@ -73,6 +74,11 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
      * Creates a new PageableRenderer.
      */
     public PageableRenderer() {
+    }
+
+    /** {@inheritDoc} */
+    public String getMimeType() {
+        return MimeConstants.MIME_FOP_PRINT;
     }
 
     /** {@inheritDoc} */

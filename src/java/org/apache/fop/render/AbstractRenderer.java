@@ -828,15 +828,6 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * Get the MIME type of the renderer.
-     *
-     * @return   The MIME type of the renderer
-     */
-    public String getMimeType() {
-        return null;
-    }
-
-    /**
      * Converts a millipoint-based transformation matrix to points.
      * @param at a millipoint-based transformation matrix
      * @return a point-based transformation matrix
