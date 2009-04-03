@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed a bug that left the PrintRenderer unconfigured even if a configuration was
+        specified for "application/X-fop-print". 
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="46882" due-to="Yegor Kozlov">
         Fixed the handling of CMYK colors in PDFGraphics2D.
       </action>
