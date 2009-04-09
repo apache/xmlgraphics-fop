@@ -84,7 +84,7 @@ public class PDFImageHandlerRawJPEG implements PDFImageHandler, ImageHandler {
         float h = (float)pos.getHeight() / 1000f;
         if (context.getUserAgent().isAccessibilityEnabled()) {
             String structElemType = pdfContext.getStructElemType();
-            if (structElemType.length() > 0) {
+            if (structElemType != null && structElemType.length() > 0) {
                 int sequenceNum = pdfContext.getSequenceNum();
                 generator.placeImage(x, y, w, h, xobj, structElemType, sequenceNum);
             } else {
