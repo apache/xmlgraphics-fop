@@ -59,7 +59,7 @@ public abstract class LengthProperty extends Property
                 //Assume pixels (like in HTML) when there's no unit
                 return FixedLength.getInstance(
                         p.getNumeric().getNumericValue(), "px",
-                        propertyList.getFObj().getUserAgent().getSourceResolution() / 72.0f);
+                        propertyList.getFObj().getUserAgent().getTargetResolution() / 72.0f);
             }
             Length val = p.getLength();
             if (val != null) {

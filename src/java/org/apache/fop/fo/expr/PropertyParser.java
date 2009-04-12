@@ -99,7 +99,7 @@ public final class PropertyParser extends PropertyTokenizer {
     /**
      * Private constructor. Called by the static parse() method.
      * @param propExpr The specified value (attribute on the xml element).
-     * @param propInfo A PropertyInfo object representing the context in
+     * @param pInfo A PropertyInfo object representing the context in
      * which the property expression is to be evaluated.
      */
     private PropertyParser(String propExpr, PropertyInfo pInfo) {
@@ -310,12 +310,12 @@ public final class PropertyParser extends PropertyTokenizer {
                                     propInfo.currentFontSize());
             } else {
                 if ("px".equals(unitPart)) {
-                    //pass the ratio between source-resolution and
+                    //pass the ratio between target-resolution and
                     //the default resolution of 72dpi
                     prop = FixedLength.getInstance(
                             numPart, unitPart,
                             propInfo.getPropertyList().getFObj()
-                                    .getUserAgent().getSourceResolution() / 72.0f);
+                                    .getUserAgent().getTargetResolution() / 72.0f);
                 } else {
                     //use default resolution of 72dpi
                     prop = FixedLength.getInstance(numPart, unitPart);
