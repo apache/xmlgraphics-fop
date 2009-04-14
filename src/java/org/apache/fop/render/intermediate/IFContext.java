@@ -110,18 +110,37 @@ public class IFContext {
         setForeignAttributes(null);
     }
 
+    /**
+     * Sets the structure pointer for the following painted marks. This method is used when
+     * accessibility features are enabled.
+     * @param ptr the structure pointer
+     */
     public void setStructurePointer(String ptr) {
         this.structurePointer = ptr;
     }
 
+    /**
+     * Resets the current structure pointer.
+     * @see #setStructurePointer(String)
+     */
     public void resetStructurePointer() {
         setStructurePointer(null);
     }
 
+    /**
+     * Returns the current structure pointer.
+     * @return the structure pointer (or null if no pointer is active)
+     * @see #setStructurePointer(String)
+     */
     public String getStructurePointer() {
         return this.structurePointer;
     }
 
+    /**
+     * Indicates whether a structure pointer is available.
+     * @return true if there's a structure pointer
+     * @see #setStructurePointer(String)
+     */
     public boolean hasStructurePointer() {
         return (this.structurePointer != null) && (structurePointer.length() > 0);
     }
