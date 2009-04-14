@@ -2521,7 +2521,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         addPropertyMaker("foi:ptr", m);
 
-        // fox:alt, used for accessibility
+        // fox:alt-text, used for accessibility
         m = new StringProperty.Maker(PR_X_ALT_TEXT);
         m.setInherited(false);
         m.setDefault("");
