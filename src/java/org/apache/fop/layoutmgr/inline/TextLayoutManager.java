@@ -506,7 +506,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
         TraitSetter.addFontTraits(textArea, font);
         textArea.addTrait(Trait.COLOR, this.foText.getColor());
-        textArea.addTrait(Trait.PTR, getPtr());  // used for accessibility
+        TraitSetter.addPtr(textArea, getPtr()); // used for accessibility
         TraitSetter.addTextDecoration(textArea, this.foText.getTextDecoration());
 
         return textArea;
