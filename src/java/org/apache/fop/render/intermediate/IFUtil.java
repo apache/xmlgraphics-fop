@@ -153,6 +153,13 @@ public class IFUtil {
         if (fontInfo == null) {
             fontInfo = new FontInfo();
         }
+        if (documentHandler instanceof IFSerializer) {
+            IFSerializer serializer = (IFSerializer)documentHandler;
+            if (serializer.getMimickedDocumentHandler() != null) {
+                //Use the mimicked document handler's configurator to set up fonts
+                documentHandler = serializer.getMimickedDocumentHandler();
+            }
+        }
         IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
         if (configurator != null) {
             configurator.setupFontInfo(documentHandler, fontInfo);
@@ -170,6 +177,23 @@ public class IFUtil {
      */
     public static void setupFonts(IFDocumentHandler documentHandler) throws FOPException {
         setupFonts(documentHandler, null);
+    }
+
+    /**
+     * Returns the MIME type of the output format that the given document handler is supposed to
+     * handle. If the document handler is an {@link IFSerializer} it returns the MIME type of the
+     * document handler it is mimicking.
+     * @param documentHandler the document handler
+     * @return the effective MIME type
+     */
+    public static String getEffectiveMIMEType(IFDocumentHandler documentHandler) {
+        if (documentHandler instanceof IFSerializer) {
+            IFDocumentHandler mimic = ((IFSerializer)documentHandler).getMimickedDocumentHandler();
+            if (mimic != null) {
+                return mimic.getMimeType();
+            }
+        }
+        return documentHandler.getMimeType();
     }
 
 }
