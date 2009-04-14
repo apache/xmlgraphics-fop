@@ -360,7 +360,10 @@ public class IFParser implements IFConstants {
 
             public void startElement(Attributes attributes) throws IFException {
                 String id = attributes.getValue("id");
+                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                establishForeignAttributes(foreignAttributes);
                 documentHandler.startPageSequence(id);
+                resetForeignAttributes();
             }
 
             public void endElement() throws IFException {
