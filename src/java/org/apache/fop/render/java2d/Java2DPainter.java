@@ -156,7 +156,7 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, String ptr) throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
         drawImageUsingURI(uri, rect);
     }
 
@@ -168,7 +168,7 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, String ptr) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         drawImageUsingDocument(doc, rect);
     }
 
@@ -208,7 +208,7 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text, String ptr)
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
             throws IFException {
         g2dState.updateColor(state.getTextColor());
         FontTriplet triplet = new FontTriplet(

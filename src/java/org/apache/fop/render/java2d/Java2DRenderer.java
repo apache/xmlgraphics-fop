@@ -875,7 +875,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                                                       ImageFlavor.XML_DOM};
 
     /** {@inheritDoc} */
-    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes, String ptr) {
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
 
         int x = currentIPPosition + (int)Math.round(pos.getX());
         int y = currentBPPosition + (int)Math.round(pos.getY());

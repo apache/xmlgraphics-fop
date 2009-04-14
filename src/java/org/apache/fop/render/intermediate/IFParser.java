@@ -173,6 +173,14 @@ public class IFParser implements IFConstants {
             documentHandler.getContext().resetForeignAttributes();
         }
 
+        private void establishStructurePointer(String ptr) {
+            documentHandler.getContext().setStructurePointer(ptr);
+        }
+
+        private void resetStructurePointer() {
+            documentHandler.getContext().resetStructurePointer();
+        }
+
         /** {@inheritDoc} */
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                     throws SAXException {
@@ -482,7 +490,9 @@ public class IFParser implements IFConstants {
                 int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
                 String ptr = lastAttributes.getValue("ptr"); // used for accessibility
-                painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString(), ptr);
+                establishStructurePointer(ptr);
+                painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
+                resetStructurePointer();
             }
 
             public boolean ignoreCharacters() {
@@ -578,9 +588,10 @@ public class IFParser implements IFConstants {
                 Map foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
                 String ptr = lastAttributes.getValue("ptr"); // used for accessibility
+                establishStructurePointer(ptr);
                 if (foreignObject != null) {
                     painter.drawImage(foreignObject,
-                            new Rectangle(x, y, width, height), ptr);
+                            new Rectangle(x, y, width, height));
                     foreignObject = null;
                 } else {
                     String uri = lastAttributes.getValue(
@@ -588,9 +599,10 @@ public class IFParser implements IFConstants {
                     if (uri == null) {
                         throw new IFException("xlink:href is missing on image", null);
                     }
-                    painter.drawImage(uri, new Rectangle(x, y, width, height), ptr);
+                    painter.drawImage(uri, new Rectangle(x, y, width, height));
                 }
                 resetForeignAttributes();
+                resetStructurePointer();
                 inForeignObject = false;
             }
 

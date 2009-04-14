@@ -267,7 +267,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (id != null) {
                 atts.addAttribute(XML_NAMESPACE, "id", "xml:id", XMLUtil.CDATA, id);
             }
-
+            addForeignAttributes(atts);
             handler.startElement(EL_PAGE_SEQUENCE, atts);
             if (this.getUserAgent().isAccessibilityEnabled()) {
                 if (doc == null) {
@@ -463,7 +463,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, String ptr) throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, XLINK_HREF, uri);
@@ -472,6 +472,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
+            String ptr = getContext().getStructurePointer();
             if (ptr != null) {
                 addAttribute(atts, "ptr", ptr);  // used for accessibility
             }
@@ -493,7 +494,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, String ptr) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x", Integer.toString(rect.x));
@@ -501,6 +502,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
+            String ptr = getContext().getStructurePointer();
             if (ptr != null) {
                 addAttribute(atts, "ptr", ptr);  // used for accessibility
             }
@@ -602,7 +604,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text, String ptr) throws IFException {
+            int[] dx, String text) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
@@ -617,6 +619,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (dx != null) {
                 addAttribute(atts, "dx", IFUtil.toString(dx));
             }
+            String ptr = getContext().getStructurePointer();
             if (ptr != null) {
                 addAttribute(atts, "ptr", ptr);  // used for accessibility
             }

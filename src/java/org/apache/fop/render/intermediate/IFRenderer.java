@@ -53,6 +53,7 @@ import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.AreaTreeObject;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BookmarkData;
@@ -500,7 +501,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 documentHandler.endDocumentHeader();
                 this.inPageSequence = true;
             }
+            establishForeignAttributes(pageSequence.getForeignAttributes());
             documentHandler.startPageSequence(null);
+            resetForeignAttributes();
+            processExtensionAttachments(pageSequence);
         } catch (IFException e) {
             handleIFException(e);
         }
@@ -557,13 +561,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             documentHandler.startPageHeader();
 
             //Add page attachments to page header
-            if (page.hasExtensionAttachments()) {
-                for (Iterator iter = page.getExtensionAttachments().iterator();
-                    iter.hasNext();) {
-                    ExtensionAttachment attachment = (ExtensionAttachment) iter.next();
-                    this.documentHandler.handleExtensionObject(attachment);
-                }
-            }
+            processExtensionAttachments(page);
 
             documentHandler.endPageHeader();
             this.painter = documentHandler.startPageContent();
@@ -590,12 +588,30 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
+    private void processExtensionAttachments(AreaTreeObject area) throws IFException {
+        if (area.hasExtensionAttachments()) {
+            for (Iterator iter = area.getExtensionAttachments().iterator();
+                iter.hasNext();) {
+                ExtensionAttachment attachment = (ExtensionAttachment) iter.next();
+                this.documentHandler.handleExtensionObject(attachment);
+            }
+        }
+    }
+
     private void establishForeignAttributes(Map foreignAttributes) {
         documentHandler.getContext().setForeignAttributes(foreignAttributes);
     }
 
     private void resetForeignAttributes() {
         documentHandler.getContext().resetForeignAttributes();
+    }
+
+    private void establishStructurePointer(String ptr) {
+        documentHandler.getContext().setStructurePointer(ptr);
+    }
+
+    private void resetStructurePointer() {
+        documentHandler.getContext().resetStructurePointer();
     }
 
     /** {@inheritDoc} */
@@ -818,17 +834,20 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
 
-            currentBPPosition += (bv.getAllocBPD());
+            currentBPPosition += bv.getAllocBPD();
         }
         viewportDimensionStack.pop();
     }
 
     /** {@inheritDoc} */
     public void renderViewport(Viewport viewport) {
+        String ptr = (String) viewport.getTrait(Trait.PTR);
+        establishStructurePointer(ptr);
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
         viewportDimensionStack.push(dim);
         super.renderViewport(viewport);
         viewportDimensionStack.pop();
+        resetStructurePointer();
     }
 
     /** {@inheritDoc} */
@@ -966,6 +985,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
         String ptr = (String)text.getTrait(Trait.PTR); // used for accessibility
+        establishStructurePointer(ptr);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface tf = getTypeface(fontName);
@@ -984,9 +1004,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         textUtil.setStartPosition(rx, bl);
         textUtil.setSpacing(text.getTextLetterSpaceAdjust(), text.getTextWordSpaceAdjust());
         super.renderText(text);
-        textUtil.setPtr(ptr); // used for accessibility
+
         textUtil.flush();
         renderTextDecoration(tf, size, text, bl, rx);
+        resetStructurePointer();
     }
 
     /** {@inheritDoc} */
@@ -1061,18 +1082,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         private int startx, starty;
         private int tls, tws;
         private final boolean combined = false;
-        private String ptr = null; // used for accessibility
 
         void addChar(char ch) {
             text.append(ch);
-        }
-
-        /**
-         * used for accessibility
-         * @param inPtr to be stored
-         */
-        public void setPtr(String inPtr) {
-            ptr = inPtr;
         }
 
         void adjust(int adjust) {
@@ -1117,9 +1129,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                         System.arraycopy(dx, 0, effDX, 0, size);
                     }
                     if (combined) {
-                        painter.drawText(startx, starty, 0, 0, effDX, text.toString(), ptr);
+                        painter.drawText(startx, starty, 0, 0, effDX, text.toString());
                     } else {
-                        painter.drawText(startx, starty, tls, tws, effDX, text.toString(), ptr);
+                        painter.drawText(startx, starty, tls, tws, effDX, text.toString());
                     }
                 } catch (IFException e) {
                     handleIFException(e);
@@ -1130,12 +1142,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void renderImage(Image image, Rectangle2D pos, String ptr) {
-        drawImage(image.getURL(), pos, image.getForeignAttributes(), ptr);
+    public void renderImage(Image image, Rectangle2D pos) {
+        drawImage(image.getURL(), pos, image.getForeignAttributes());
     }
 
     /** {@inheritDoc} */
-    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes, String ptr) {
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         Rectangle posInt = new Rectangle(
                 currentIPPosition + (int)pos.getX(),
                 currentBPPosition + (int)pos.getY(),
@@ -1144,7 +1156,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         uri = URISpecification.getURL(uri);
         try {
             establishForeignAttributes(foreignAttributes);
-            painter.drawImage(uri, posInt, ptr);
+            painter.drawImage(uri, posInt);
             resetForeignAttributes();
         } catch (IFException ife) {
             handleIFException(ife);
@@ -1152,7 +1164,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void renderForeignObject(ForeignObject fo, Rectangle2D pos, String ptr) {
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         endTextObject();
         Rectangle posInt = new Rectangle(
                 currentIPPosition + (int)pos.getX(),
@@ -1162,7 +1174,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Document doc = fo.getDocument();
         try {
             establishForeignAttributes(fo.getForeignAttributes());
-            painter.drawImage(doc, posInt, ptr);
+            painter.drawImage(doc, posInt);
             resetForeignAttributes();
         } catch (IFException ife) {
             handleIFException(ife);

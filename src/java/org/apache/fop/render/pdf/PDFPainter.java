@@ -129,11 +129,12 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, String ptr)
+    public void drawImage(String uri, Rectangle rect)
             throws IFException {
         PDFXObject xobject = getPDFDoc().getXObject(uri);
         if (xobject != null) {
-            if (accessEnabled && ptr.length() > 0) {
+            if (accessEnabled && getContext().hasStructurePointer()) {
+                String ptr = getContext().getStructurePointer();
                 mcid = this.documentHandler.getMCID();
                 mcid++;                          // fix for Acro Checker
                 this.documentHandler.incMCID();  // simulating a parent text element
@@ -152,7 +153,8 @@ public class PDFPainter extends AbstractIFPainter {
             }
             return;
         }
-        if (accessEnabled && ptr.length() > 0) {
+        if (accessEnabled && getContext().hasStructurePointer()) {
+            String ptr = getContext().getStructurePointer();
             mcid = this.documentHandler.getMCID();
             mcid++;                          // fix for Acro Checker
             this.documentHandler.incMCID();  // simulating a parent text element
@@ -221,8 +223,9 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, String ptr) throws IFException {
-        if (accessEnabled && ptr.length() > 0) {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
+        if (accessEnabled && getContext().hasStructurePointer()) {
+            String ptr = getContext().getStructurePointer();
             mcid = this.documentHandler.getMCID();
             mcid++;                          // fix for Acro Checker
             this.documentHandler.incMCID();  // simulating a parent text element
@@ -330,9 +333,10 @@ public class PDFPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx,
-            String text, String ptr)
+            String text)
             throws IFException {
-        if (accessEnabled ) {
+        if (accessEnabled) {
+            String ptr = getContext().getStructurePointer();
             int mcId;
             String structElType = "";
             if (ptr != null && ptr.length() > 0) {

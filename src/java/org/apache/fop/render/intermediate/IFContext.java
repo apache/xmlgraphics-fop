@@ -43,6 +43,8 @@ public class IFContext {
     /** foreign attributes: Map<QName, Object> */
     private Map foreignAttributes = Collections.EMPTY_MAP;
 
+    private String structurePointer;
+
     /**
      * Main constructor.
      * @param ua the user agent
@@ -106,6 +108,22 @@ public class IFContext {
      */
     public void resetForeignAttributes() {
         setForeignAttributes(null);
+    }
+
+    public void setStructurePointer(String ptr) {
+        this.structurePointer = ptr;
+    }
+
+    public void resetStructurePointer() {
+        setStructurePointer(null);
+    }
+
+    public String getStructurePointer() {
+        return this.structurePointer;
+    }
+
+    public boolean hasStructurePointer() {
+        return (this.structurePointer != null) && (structurePointer.length() > 0);
     }
 
 }

@@ -345,7 +345,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     }
 
     /** {@inheritDoc} */
-    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes, String ptr) {
+    protected void drawImage(String uri, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
         int x = currentIPPosition + (int)Math.round(pos.getX());
         int y = currentBPPosition + (int)Math.round(pos.getY());
@@ -1233,7 +1233,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
      * {@inheritDoc}
      */
     public void renderImage(Image image, Rectangle2D pos) {
-        drawImage(image.getURL(), pos, image.getForeignAttributes(), "");
+        drawImage(image.getURL(), pos, image.getForeignAttributes());
     }
 
     /**

@@ -154,7 +154,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect, String ptr) throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
         drawImageUsingURI(uri, rect);
     }
 
@@ -176,7 +176,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(Document doc, Rectangle rect, String ptr) throws IFException {
+    public void drawImage(Document doc, Rectangle rect) throws IFException {
         drawImageUsingDocument(doc, rect);
     }
 
@@ -312,9 +312,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text, String ptr)
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
                 throws IFException {
-        //Note: ptr is ignored as it is only needed for accessibility
         try {
             FontTriplet triplet = new FontTriplet(
                     state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
@@ -475,7 +474,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                 Java2DPainter painter = new Java2DPainter(g2d,
                         getContext(), parent.getFontInfo(), state);
                 try {
-                    painter.drawText(x, y, letterSpacing, wordSpacing, dx, text, "");
+                    painter.drawText(x, y, letterSpacing, wordSpacing, dx, text);
                 } catch (IFException e) {
                     //This should never happen with the Java2DPainter
                     throw new RuntimeException("Unexpected error while painting text", e);

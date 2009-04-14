@@ -1074,7 +1074,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     }
 
     /** {@inheritDoc} */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes, String ptr) {
+    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         endTextObject();
         putImage(url, pos, foreignAttributes);
     }

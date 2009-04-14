@@ -28,6 +28,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.CTM;
@@ -37,7 +39,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.txt.border.AbstractBorderElement;
 import org.apache.fop.render.txt.border.BorderManager;
-import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * Renderer that renders areas to plain text.
@@ -443,7 +444,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes, String ptr) {
+    protected void drawImage(String url, Rectangle2D pos, Map foreignAttributes) {
         //No images are painted here
     }
 
