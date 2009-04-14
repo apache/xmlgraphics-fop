@@ -38,9 +38,9 @@ import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
-import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -70,7 +70,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private Map/*<String,String>*/pageSegmentMap
         = new java.util.HashMap/*<String,String>*/();
 
-    private boolean inPageHeader;
+    private static final int LOC_ELSEWHERE = 0;
+    private static final int LOC_FOLLOWING_PAGE_SEQUENCE = 1;
+    private static final int LOC_IN_PAGE_HEADER = 2;
+
+    private int location = LOC_ELSEWHERE;
 
     /**
      * Default constructor.
@@ -89,11 +93,6 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public String getMimeType() {
         return MimeConstants.MIME_AFP;
-    }
-
-    /** {@inheritDoc} */
-    public void setContext(IFContext context) {
-        super.setContext(context);
     }
 
     /** {@inheritDoc} */
@@ -164,6 +163,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         } catch (IOException ioe) {
             throw new IFException("I/O error in startPageSequence()", ioe);
         }
+        this.location = LOC_FOLLOWING_PAGE_SEQUENCE;
     }
 
     /** {@inheritDoc} */
@@ -186,6 +186,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void startPage(int index, String name, String pageMasterName, Dimension size)
                 throws IFException {
+        this.location = LOC_ELSEWHERE;
         paintingState.clear();
         pageSegmentMap.clear();
 
@@ -208,12 +209,12 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void startPageHeader() throws IFException {
         super.startPageHeader();
-        this.inPageHeader = true;
+        this.location = LOC_IN_PAGE_HEADER;
     }
 
     /** {@inheritDoc} */
     public void endPageHeader() throws IFException {
-        this.inPageHeader = false;
+        this.location = LOC_ELSEWHERE;
         super.endPageHeader();
     }
 
@@ -244,29 +245,48 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof AFPPageSetup) {
             AFPPageSetup aps = (AFPPageSetup)extension;
-            if (!inPageHeader) {
-                throw new IFException(
-                    "AFP page setup extension encountered outside the page header: " + aps, null);
-            }
             String element = aps.getElementName();
-            if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
-                String overlay = aps.getName();
-                if (overlay != null) {
-                    dataStream.createIncludePageOverlay(overlay);
+            if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(element)) {
+                if (this.location != LOC_IN_PAGE_HEADER
+                        && this.location != LOC_FOLLOWING_PAGE_SEQUENCE) {
+                    throw new IFException(
+                        "TLE extension must be in the page header or between page-sequence"
+                            + " and the first page: " + aps, null);
                 }
-            } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(element)) {
-                String name = aps.getName();
-                String source = aps.getValue();
-                pageSegmentMap.put(source, name);
-            } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(element)) {
                 String name = aps.getName();
                 String value = aps.getValue();
                 dataStream.createTagLogicalElement(name, value);
-            } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
-                String content = aps.getContent();
-                if (content != null) {
-                    dataStream.createNoOperation(content);
+            } else {
+                if (this.location != LOC_IN_PAGE_HEADER) {
+                    throw new IFException(
+                        "AFP page setup extension encountered outside the page header: " + aps, null);
                 }
+                if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
+                    String overlay = aps.getName();
+                    if (overlay != null) {
+                        dataStream.createIncludePageOverlay(overlay);
+                    }
+                } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(element)) {
+                    String name = aps.getName();
+                    String source = aps.getValue();
+                    pageSegmentMap.put(source, name);
+                } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
+                    String content = aps.getContent();
+                    if (content != null) {
+                        dataStream.createNoOperation(content);
+                    }
+                }
+            }
+        } else if (extension instanceof AFPInvokeMediumMap) {
+            if (this.location != LOC_FOLLOWING_PAGE_SEQUENCE) {
+                throw new IFException(
+                    "AFP IMM extension must be between page-sequence and the first page: "
+                        + extension, null);
+            }
+            AFPInvokeMediumMap imm = (AFPInvokeMediumMap)extension;
+            String mediumMap = imm.getName();
+            if (mediumMap != null) {
+                dataStream.createInvokeMediumMap(mediumMap);
             }
         }
     }

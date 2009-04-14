@@ -25,12 +25,13 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontInfoConfigurator;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.pdf.PDFRendererConfigurator;
 
 /**
@@ -61,15 +62,19 @@ public class PDFDocumentGraphics2DConfigurator {
             //TODO Make use of fontBaseURL, font substitution and referencing configuration
             //Requires a change to the expected configuration layout
 
-            List/*<EmbedFontInfo>*/ embedFontInfoList
-                = PrintRendererConfigurator.buildFontListFromConfiguration(
-                    cfg, fontResolver, false, fontManager, null);
             //TODO Wire in the FontEventListener
+            final FontEventListener listener = null;
+            final boolean strict = false;
+            FontInfoConfigurator fontInfoConfigurator
+                = new FontInfoConfigurator(cfg, fontManager, fontResolver, listener, strict);
+            List/*<EmbedFontInfo>*/ fontInfoList = new java.util.ArrayList/*<EmbedFontInfo>*/();
+            fontInfoConfigurator.configure(fontInfoList);
+
             if (fontManager.useCache()) {
                 fontManager.getFontCache().save();
             }
             FontInfo fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo, embedFontInfoList, fontResolver);
+            FontSetup.setup(fontInfo, fontInfoList, fontResolver);
             graphics.setFontInfo(fontInfo);
         } catch (FOPException e) {
             throw new ConfigurationException("Error while setting up fonts", e);

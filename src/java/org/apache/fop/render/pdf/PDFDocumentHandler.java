@@ -279,6 +279,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 pdfDoc.outputTrailer(this.outputStream);
             }
             this.pdfDoc = null;
+
             pdfResources = null;
             this.generator = null;
             currentContext = null;

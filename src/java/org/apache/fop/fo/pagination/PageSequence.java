@@ -48,7 +48,7 @@ public class PageSequence extends AbstractPageSequence {
     // the set of flows includes StaticContent flows also
 
     /** Map of flows to their flow name (flow-name, Flow) */
-    private Map flowMap;
+    private Map/*<String, Flow>*/ flowMap;
 
     /**
      * The currentSimplePageMaster is either the page master for the
@@ -96,18 +96,18 @@ public class PageSequence extends AbstractPageSequence {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        flowMap = new java.util.HashMap();
+        flowMap = new java.util.HashMap/*<String, Flow>*/();
 
-        this.simplePageMaster = getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
-        if (this.simplePageMaster == null) {
+        this.simplePageMaster
+            = getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
+        if (simplePageMaster == null) {
             this.pageSequenceMaster
-                    = getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
-            if (this.pageSequenceMaster == null) {
+                = getRoot().getLayoutMasterSet().getPageSequenceMaster(masterReference);
+            if (pageSequenceMaster == null) {
                 getFOValidationEventProducer().masterNotFound(this, getName(),
                         masterReference, getLocator());
             }
         }
-
         getFOEventHandler().startPageSequence(this);
     }
 
@@ -170,7 +170,7 @@ public class PageSequence extends AbstractPageSequence {
             flowMap.put(((StaticContent)child).getFlowName(), child);
             break;
         default:
-            assert false;
+            super.addChildNode(child);
         }
     }
 

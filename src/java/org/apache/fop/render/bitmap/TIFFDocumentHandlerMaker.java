@@ -30,8 +30,7 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
  */
 public class TIFFDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
-    //TODO Revert to normal MIME after stabilization!
-    private static final String[] MIMES = new String[] {MimeConstants.MIME_TIFF + ";mode=painter"};
+    private static final String[] MIMES = new String[] {MimeConstants.MIME_TIFF};
 
     /** {@inheritDoc} */
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {

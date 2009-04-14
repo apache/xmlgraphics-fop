@@ -159,14 +159,11 @@ public class PDFImageXObject extends PDFXObject {
     }
 
     /**
-     * This sets up the default filters for XObjects. It uses the PDFImage
-     * instance to determine what default filters to apply.
      * {@inheritDoc}
+     * This class uses the PDFImage instance to determine the default filter.
      */
-    protected void setupFilterList() {
-        addDefaultFilter(pdfimage.getFilterHint());
-        super.setupFilterList();
+    protected String getDefaultFilterName() {
+        return pdfimage.getFilterHint();
     }
-
 
 }

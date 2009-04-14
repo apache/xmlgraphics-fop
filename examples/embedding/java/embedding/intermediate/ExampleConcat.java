@@ -92,7 +92,7 @@ public class ExampleConcat {
         //Create an instance of the target document handler so the IFSerializer
         //can use its font setup
         IFDocumentHandler targetHandler = userAgent.getRendererFactory().createDocumentHandler(
-                userAgent, MimeConstants.MIME_PDF + ";mode=painter");
+                userAgent, MimeConstants.MIME_PDF);
 
         //Create the IFSerializer to write the intermediate format
         IFSerializer ifSerializer = new IFSerializer();
@@ -150,7 +150,7 @@ public class ExampleConcat {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
             //Setup target handler
-            String mime = MimeConstants.MIME_PDF + ";mode=painter";
+            String mime = MimeConstants.MIME_PDF;
             IFDocumentHandler targetHandler = fopFactory.getRendererFactory().createDocumentHandler(
                     userAgent, mime);
 

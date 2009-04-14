@@ -29,6 +29,8 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -192,6 +194,44 @@ public class SimplePageMaster extends FObj {
     protected void addRegion(Region region) {
         String key = String.valueOf(region.getNameId());
         regions.put(key, region);
+    }
+
+    /**
+     * Gets the context for the width of the page-reference-area,
+     * taking into account the reference-orientation.
+     *
+     * @param lengthBase    the lengthBase to use to resolve percentages
+     * @return context for the width of the page-reference-area
+     */
+    protected final PercentBaseContext getPageWidthContext(int lengthBase) {
+        return (this.referenceOrientation.getValue() % 180 == 0)
+                ? new SimplePercentBaseContext(
+                        null,
+                        lengthBase,
+                        this.getPageWidth().getValue())
+                : new SimplePercentBaseContext(
+                        null,
+                        lengthBase,
+                        this.getPageHeight().getValue());
+    }
+
+    /**
+     * Gets the context for the height of the page-reference-area,
+     * taking into account the reference-orientation.
+     *
+     * @param lengthBase    the lengthBase to use to resolve percentages
+     * @return the context for the height of the page-reference-area
+     */
+    protected final PercentBaseContext getPageHeightContext(int lengthBase) {
+        return (this.referenceOrientation.getValue() % 180 == 0)
+                ? new SimplePercentBaseContext(
+                        null,
+                        lengthBase,
+                        this.getPageHeight().getValue())
+                : new SimplePercentBaseContext(
+                        null,
+                        lengthBase,
+                        this.getPageWidth().getValue());
     }
 
     /**

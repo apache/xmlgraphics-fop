@@ -130,7 +130,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @throws IOException io exception
      * {@inheritDoc}
      */
-    public List find() throws IOException {
+    public List/*<URL>*/ find() throws IOException {
         final FontFinder fontDirFinder;
         final String osName = System.getProperty("os.name");
         if (osName.startsWith("Windows")) {
@@ -142,8 +142,8 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
                 fontDirFinder = new UnixFontDirFinder();
             }
         }
-        List fontDirs = fontDirFinder.find();
-        List results = new java.util.ArrayList();
+        List/*<URL>*/ fontDirs = fontDirFinder.find();
+        List/*<URL>*/ results = new java.util.ArrayList/*<URL>*/();
         for (Iterator iter = fontDirs.iterator(); iter.hasNext();) {
             final File dir = (File)iter.next();
             super.walk(dir, results);

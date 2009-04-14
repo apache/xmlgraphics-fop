@@ -19,20 +19,25 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.AFPConstants;
+import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.SimpleResourceAccessor;
 import org.apache.fop.afp.util.StringUtils;
 
 /**
@@ -79,7 +84,7 @@ public class CharacterSet {
     protected String name;
 
     /** The path to the installed fonts */
-    protected String path;
+    private ResourceAccessor accessor;
 
     /** Indicator as to whether to metrics have been loaded */
     private boolean isMetricsLoaded = false;
@@ -98,8 +103,23 @@ public class CharacterSet {
      * @param encoding the encoding of the font
      * @param name the character set name
      * @param path the path to the installed afp fonts
+     * @deprecated Please use {@link #CharacterSet(String, String, String, URI)} instead.
      */
     public CharacterSet(String codePage, String encoding, String name, String path) {
+        this(codePage, encoding, name,
+                new SimpleResourceAccessor(path != null ? new File(path) : null));
+    }
+
+    /**
+     * Constructor for the CharacterSetMetric object, the character set is used
+     * to load the font information from the actual AFP font.
+     *
+     * @param codePage the code page identifier
+     * @param encoding the encoding of the font
+     * @param name the character set name
+     * @param accessor the resource accessor to load resource with
+     */
+    public CharacterSet(String codePage, String encoding, String name, ResourceAccessor accessor) {
         if (name.length() > MAX_NAME_LEN) {
             String msg = "Character set name '" + name + "' must be a maximum of "
                 + MAX_NAME_LEN + " characters";
@@ -114,9 +134,15 @@ public class CharacterSet {
         }
         this.codePage = codePage;
         this.encoding = encoding;
-        this.encoder = Charset.forName(encoding).newEncoder();
-        this.encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
-        this.path = path;
+        try {
+            this.encoder = Charset.forName(encoding).newEncoder();
+            this.encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
+        } catch (UnsupportedCharsetException uce) {
+            //No nio-capable encoder available
+            //This may happen with "Cp500" on Sun Java 1.4.2
+            this.encoder = null;
+        }
+        this.accessor = accessor;
 
         this.characterSetOrientations = new java.util.HashMap(4);
     }
@@ -195,12 +221,11 @@ public class CharacterSet {
     }
 
     /**
-     * Returns the path where the font resources are installed
-     *
-     * @return the path where the font resources are installed
+     * Returns the resource accessor to load the font resources with.
+     * @return the resource accessor to load the font resources with
      */
-    public String getPath() {
-        return path;
+    public ResourceAccessor getResourceAccessor() {
+        return this.accessor;
     }
 
     /**
@@ -321,7 +346,12 @@ public class CharacterSet {
      * @return true if the character is in the character set
      */
     public boolean hasChar(char c) {
-        return encoder.canEncode(c);
+        if (encoder != null) {
+            return encoder.canEncode(c);
+        } else {
+            //Sun Java 1.4.2 compatibility
+            return true;
+        }
     }
 
     /**
@@ -331,14 +361,26 @@ public class CharacterSet {
      * @throws CharacterCodingException if the encoding operation fails
      */
     public byte[] encodeChars(CharSequence chars) throws CharacterCodingException {
-        ByteBuffer bb = encoder.encode(CharBuffer.wrap(chars));
-        if (bb.hasArray()) {
-            return bb.array();
+        if (encoder != null) {
+            ByteBuffer bb = encoder.encode(CharBuffer.wrap(chars));
+            if (bb.hasArray()) {
+                return bb.array();
+            } else {
+                bb.rewind();
+                byte[] bytes = new byte[bb.remaining()];
+                bb.get(bytes);
+                return bytes;
+            }
         } else {
-            bb.rewind();
-            byte[] bytes = new byte[bb.remaining()];
-            bb.get(bytes);
-            return bytes;
+            //Sun Java 1.4.2 compatibility
+            byte[] bytes;
+            try {
+                bytes = chars.toString().getBytes(this.encoding);
+                return bytes;
+            } catch (UnsupportedEncodingException uee) {
+                throw new UnsupportedOperationException(
+                        "Unsupported encoding: " + uee.getMessage());
+            }
         }
     }
 

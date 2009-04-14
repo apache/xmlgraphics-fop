@@ -61,6 +61,8 @@ public class FopFactoryConfigurator {
     /** Defines the default target resolution (72dpi) for FOP */
     public static final float DEFAULT_TARGET_RESOLUTION = 72.0f; //dpi
 
+    private static final String PREFER_RENDERER = "prefer-renderer";
+
     /** logger instance */
     private final Log log = LogFactory.getLog(FopFactoryConfigurator.class);
 
@@ -179,6 +181,16 @@ public class FopFactoryConfigurator {
                     pageConfig.getAttribute("width", FopFactoryConfigurator.DEFAULT_PAGE_WIDTH));
             if (log.isInfoEnabled()) {
                 log.info("Default page-width set to: " + factory.getPageWidth());
+            }
+        }
+
+        // prefer Renderer over IFDocumentHandler
+        if (cfg.getChild(PREFER_RENDERER, false) != null) {
+            try {
+                factory.getRendererFactory().setRendererPreferred(
+                        cfg.getChild(PREFER_RENDERER).getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, strict);
             }
         }
 

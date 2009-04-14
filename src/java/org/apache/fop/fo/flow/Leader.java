@@ -73,6 +73,7 @@ public class Leader extends InlineLevel {
         leaderLength = pList.get(PR_LEADER_LENGTH).getLengthRange();
         leaderPattern = pList.get(PR_LEADER_PATTERN).getEnum();
         leaderPatternWidth = pList.get(PR_LEADER_PATTERN_WIDTH).getLength();
+        ruleThickness = pList.get(PR_RULE_THICKNESS).getLength();
         switch(leaderPattern) {
         case EN_SPACE:
             // use Space
@@ -81,7 +82,6 @@ public class Leader extends InlineLevel {
             // the following properties only apply
             // for leader-pattern = "rule"
             ruleStyle = pList.get(PR_RULE_STYLE).getEnum();
-            ruleThickness = pList.get(PR_RULE_THICKNESS).getLength();
             break;
         case EN_DOTS:
             break;

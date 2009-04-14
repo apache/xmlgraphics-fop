@@ -49,6 +49,7 @@ import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -342,12 +343,13 @@ public class AFPPainter extends AbstractIFPainter {
             try {
                 //Embed fonts (char sets and code pages)
                 //TODO This should be moved to a place where it has less performance impact
-                if (charSet.getPath() != null) {
+                if (charSet.getResourceAccessor() != null) {
+                    ResourceAccessor accessor = charSet.getResourceAccessor();
                     documentHandler.getResourceManager().createIncludedResource(
-                            charSet.getName(), charSet.getPath(),
+                            charSet.getName(), accessor,
                             ResourceObject.TYPE_FONT_CHARACTER_SET);
                     documentHandler.getResourceManager().createIncludedResource(
-                            charSet.getCodePage(), charSet.getPath(),
+                            charSet.getCodePage(), accessor,
                             ResourceObject.TYPE_CODE_PAGE);
                 }
             } catch (IOException ioe) {

@@ -110,6 +110,8 @@ public class CommandLineOptions {
     private Map renderingOptions = new java.util.HashMap();
     /* target resolution (for the user agent) */
     private int targetResolution = 0;
+    /* control memory-conservation policy */
+    private boolean conserveMemoryPolicy = false;
 
     private FopFactory factory = FopFactory.newInstance();
     private FOUserAgent foUserAgent;
@@ -168,6 +170,7 @@ public class CommandLineOptions {
                 }
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
+                foUserAgent.setConserveMemoryPolicy(conserveMemoryPolicy);
             } else {
                 return false;
             }
@@ -268,6 +271,8 @@ public class CommandLineOptions {
                 setLogOption("debug", "debug");
             } else if (args[i].equals("-r")) {
                 factory.setStrictValidation(false);
+            } else if (args[i].equals("-conserve")) {
+                conserveMemoryPolicy = true;
             } else if (args[i].equals("-dpi")) {
                 i = i + parseResolution(args, i);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
@@ -1134,6 +1139,8 @@ public class CommandLineOptions {
             + "  -a                enables accessibility features (Tagged PDF etc., default off)\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
+            + "  -conserve         Enable memory-conservation policy (trades memory-consumption for disk I/O)"
+            + "                    (Note: currently only influences whether the area tree is serialized.)"
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
             + "                    (use '-' for infile to pipe input from stdin)\n"

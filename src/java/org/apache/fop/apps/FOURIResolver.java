@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -32,8 +34,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.xmlgraphics.util.io.Base64EncodeStream;
 import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 
@@ -74,15 +78,31 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
             base += "/";
         }
         File dir = new File(base);
-        try {
-            base = (dir.isDirectory() ? dir.toURI().toURL() : new URL(base)).toExternalForm();
-        } catch (MalformedURLException mfue) {
-            if (throwExceptions) {
-                throw mfue;
+        if (dir.isDirectory()) {
+            return dir.toURI().toASCIIString();
+        } else {
+            URI baseURI;
+            try {
+                baseURI = new URI(base);
+                String scheme = baseURI.getScheme();
+                boolean directoryExists = true;
+                if ("file".equals(scheme)) {
+                    dir = FileUtils.toFile(baseURI.toURL());
+                    directoryExists = dir.isDirectory();
+                }
+                if (scheme == null || !directoryExists) {
+                    String message = "base " + base + " is not a valid directory";
+                    if (throwExceptions) {
+                        throw new MalformedURLException(message);
+                    }
+                    log.error(message);
+                }
+                return baseURI.toASCIIString();
+            } catch (URISyntaxException e) {
+                //TODO not ideal: our base URLs are actually base URIs.
+                throw new MalformedURLException(e.getMessage());
             }
-            log.error(mfue.getMessage());
         }
-        return base;
     }
 
     /**

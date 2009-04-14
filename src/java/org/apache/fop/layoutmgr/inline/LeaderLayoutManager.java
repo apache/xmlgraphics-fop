@@ -121,16 +121,15 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                     = new org.apache.fop.area.inline.Leader();
                 leader.setRuleStyle(fobj.getRuleStyle());
                 leader.setRuleThickness(fobj.getRuleThickness().getValue(this));
-                leader.setBPD(fobj.getRuleThickness().getValue(this));
                 leaderArea = leader;
             } else {
                 leaderArea = new Space();
-                leaderArea.setBPD(1);
             }
+            leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
             leaderArea.addTrait(Trait.COLOR, fobj.getColor());
         } else if (fobj.getLeaderPattern() == EN_SPACE) {
             leaderArea = new Space();
-            leaderArea.setBPD(1);
+            leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
         } else if (fobj.getLeaderPattern() == EN_DOTS) {
             TextArea t = new TextArea();
             char dot = '.'; // userAgent.getLeaderDotCharacter();
@@ -198,7 +197,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             } else {
                 //Content collapsed to nothing, so use a space
                 leaderArea = new Space();
-                leaderArea.setBPD(1);
+                leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
             }
         }
         TraitSetter.setProducerID(leaderArea, fobj.getId());

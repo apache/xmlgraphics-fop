@@ -22,37 +22,34 @@ package org.apache.fop.render.afp.extensions;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
- * This class extends the org.apache.fop.extensions.ExtensionObj class. The
- * object faciliates extraction of elements from formatted objects based on
- * the static list as defined in the AFPElementMapping implementation.
- * <p/>
+ * This class represents an AFP-specific extension element to embed Invoke Medium Map (IMM)
+ * fields at the beginning of a page group. The element is optional and expected as a direct child
+ * of an fo:page-sequence.
  */
-public class AFPElement extends AbstractAFPExtensionObject {
+public class AFPInvokeMediumMapElement extends AbstractAFPExtensionObject {
 
     /**
-     * Constructs an AFP object (called by Maker).
-     *
+     * Constructs the AFP extension object (called by Maker).
      * @param parent the parent formatting object
-     * @param name the name of the afp element
      */
-    public AFPElement(FONode parent, String name) {
-        super(parent, name);
+    public AFPInvokeMediumMapElement(FONode parent) {
+        super(parent, AFPElementMapping.INVOKE_MEDIUM_MAP);
     }
 
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
-            throw new ValidationException(getName() + " must be a child of fo:simple-page-master.");
+        if (parent.getNameId() != Constants.FO_PAGE_SEQUENCE) {
+            invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                "rule.childOfPageSequence");
         }
     }
 
-    /** {@inheritDoc} */    
+    /** {@inheritDoc} */
     protected ExtensionAttachment instantiateExtensionAttachment() {
-        return new AFPPageSetup(getLocalName());
+        return new AFPInvokeMediumMap();
     }
 }

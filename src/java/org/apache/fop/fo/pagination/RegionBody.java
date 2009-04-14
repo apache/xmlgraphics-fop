@@ -27,7 +27,7 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -106,24 +106,8 @@ public class RegionBody extends Region {
          * Also the values are resolved relative to the page size
          * and reference orientation.
          */
-        SimplePercentBaseContext pageWidthContext;
-        SimplePercentBaseContext pageHeightContext;
-        if (spm.getReferenceOrientation() % 180 == 0) {
-            pageWidthContext = new SimplePercentBaseContext(null,
-                                                            LengthBase.CONTAINING_BLOCK_WIDTH,
-                                                            spm.getPageWidth().getValue());
-            pageHeightContext = new SimplePercentBaseContext(null,
-                                                             LengthBase.CONTAINING_BLOCK_WIDTH,
-                                                             spm.getPageHeight().getValue());
-        } else {
-            // invert width and height since top left are rotated by 90 (cl or ccl)
-            pageWidthContext = new SimplePercentBaseContext(null,
-                                                            LengthBase.CONTAINING_BLOCK_WIDTH,
-                                                            spm.getPageHeight().getValue());
-            pageHeightContext = new SimplePercentBaseContext(null,
-                                                             LengthBase.CONTAINING_BLOCK_WIDTH,
-                                                             spm.getPageWidth().getValue());
-        }
+        PercentBaseContext pageWidthContext = getPageWidthContext(LengthBase.CONTAINING_BLOCK_WIDTH);
+        PercentBaseContext pageHeightContext = getPageHeightContext(LengthBase.CONTAINING_BLOCK_WIDTH);
 
         int start;
         int end;

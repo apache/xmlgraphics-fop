@@ -451,10 +451,34 @@ out = proc.getOutputStream();]]></source>
   </section>
   <section id="afp">
     <title>AFP</title>
-    <warning>The AFP Renderer is a new addition (27-Apr-2006) to the sandbox and as such not yet fully tested or feature complete.</warning>
     <p>
       The FOP AFP Renderer deals with creating documents conforming to the IBM AFP document architecture
       also refered to as MO:DCA (Mixed Object Document Content Architecture).
+    </p>
+    <p>
+      The mapping of XSL-FO elements to the major MO:DCA structures is as follows:
+    </p>
+    <table>
+      <tr>
+        <th>XSL-FO element</th>
+        <th>MO:DCA-P object</th>
+      </tr>
+      <tr>
+        <td>fo:root</td>
+        <td>Document</td>
+      </tr>
+      <tr>
+        <td>fo:page-sequence</td>
+        <td>Page Group</td>
+      </tr>
+      <tr>
+        <td>fo:simple-page-master</td>
+        <td>Page</td>
+      </tr>
+    </table>
+    <p>
+      FOP creates exactly one Document per Printfile with an optional Resource Group at the
+      beginning. FOP does not create document indices.
     </p>
     <section id="afp-references">
       <title>References</title>
@@ -512,8 +536,8 @@ out = proc.getOutputStream();]]></source>
 <source><![CDATA[      <!-- This is an example of mapping actual IBM raster fonts / code pages to a FOP font -->
         <font>
         <!-- The afp-font element defines the IBM code page, the matching Java encoding and the
-             path to the font -->
-        <afp-font type="raster" codepage="T1V10500" encoding="Cp500" path="fonts/ibm">
+             base URI for the font -->
+        <afp-font type="raster" codepage="T1V10500" encoding="Cp500" base-uri="fonts/ibm/">
           <!-- For a raster font a separate element for each font size is required providing
                the font size and the corresponding IBM Character set name -->
           <afp-raster-font size="7" characterset="C0N20070"/>
@@ -539,15 +563,24 @@ out = proc.getOutputStream();]]></source>
       However, the characterset definition is now required within the afp-font element.</p>
 <source><![CDATA[      <font>
           <afp-font type="outline" codepage="T1V10500" encoding="Cp500" characterset="CZH200  "
-             path="fonts/ibm" />
+             base-uri="file:/fonts/ibm" />
           <font-triplet name="sans-serif" style="normal" weight="normal"/>
           <font-triplet name="Helvetica" style="normal" weight="normal"/>
           <font-triplet name="any" style="normal" weight="normal"/>
       </font>
 ]]></source>
+      <p>
+        If "base-uri" is missing or a relative URI, the fonts are resolved relative to
+        the font base URI specified in the configuration (or on the FopFactory).
+      </p>
+      <note>
+        Previously, the location of the font files was given by the "path" attribute. This is still
+        supported for the time being, but you should move to using the more flexible "base-uri"
+        attribute so you can profit from the power of URI resolvers.
+      </note>
       <p>Experimentation has shown that the font metrics for the FOP built-in Base14 fonts are actually
       very similar to some of the IBM outline and raster fonts. In cases were the IBM font files are not
-      available the path attribute in the afp-font element can be replaced by a base14-font attribute 
+      available the base-uri attribute in the afp-font element can be replaced by a base14-font attribute 
       giving the name of the matching Base14 font. In this case the AFP Renderer will take the
       font metrics from the built-in font.</p>
 <source><![CDATA[      <!-- The following are examples of defining outline fonts based on FOP built-in
@@ -687,7 +720,7 @@ out = proc.getOutputStream();]]></source>
                xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
 ]]></source>
       <section id="afp-page-overlay">
-        <title>Page Overlay Extension</title>
+        <title>Page Overlay (IPO) Extension</title>
         <p>The include-page-overlay extension element allows to define on a per simple-page-master basis a page overlay resource. Example:</p>
       <source><![CDATA[
       <fo:layout-master-set>
@@ -701,7 +734,7 @@ out = proc.getOutputStream();]]></source>
         must be known in the AFP processing environment.</p>
       </section>
       <section id="afp-page-segment">
-        <title>Page Segment Extension</title>
+        <title>Page Segment (IPS) Extension</title>
         <p>The include-page-segment extension element allows to define resource substitution for fo:external-graphics elements. 
           Example:</p>
       <source><![CDATA[
@@ -724,7 +757,7 @@ out = proc.getOutputStream();]]></source>
         </p>
       </section>
       <section id="afp-tag-logical-element">
-        <title>Tag Logical Element Extension</title>
+        <title>Tag Logical Element (TLE) Extension</title>
         <p>The tag-logical-element extension element allows to injects TLEs into the AFP output stream. Example:</p>
       <source><![CDATA[
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
@@ -735,14 +768,21 @@ out = proc.getOutputStream();]]></source>
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
+      [..]
+      <fo:page-sequence master-reference="simple">
+        <afp:tag-logical-element name="foo" value="bar"/>
+        <fo:flow flow-name="xsl-region-body">
+          [..]
 ]]></source>
-        <p>The tag-logical-element extension element can only occur within a simple-page-master.
-        Multiple tag-logical-element extension elements within a simple-page-master are allowed.
-        The name and value attributes are mandatory.
+        <p>
+          The tag-logical-element extension element can appear within a simple-page-master
+          (page level) or it can appear as child of page-sequence (page group level).
+          Multiple tag-logical-element extension elements within a simple-page-master or
+          page-sequence are allowed. The name and value attributes are mandatory.
         </p>
       </section>
       <section id="afp-no-operation">
-        <title>No Operation Extension</title>
+        <title>No Operation (NOP) Extension</title>
         <p>The no-operation extension provides the ability to carry up to 32K of comments or any other type
         of unarchitected data into the AFP output stream. Example:</p>
       <source><![CDATA[
@@ -757,6 +797,29 @@ out = proc.getOutputStream();]]></source>
         <p>The no-operation extension element can only occur within a simple-page-master.
         Multiple no-operation extension elements within a simple-page-master are allowed.
         The name attribute is mandatory.
+        </p>
+      </section>
+      <section id="afp-invoke-medium-map">
+        <title>Invoke Medium Map (IMM) Extension</title>
+        <p>
+          The invoke-medium-map extension allows to generate IMM fields (Invoke Medium Map) in the
+          generated AFP output. Example:
+        </p>
+      <source><![CDATA[
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+      [..]
+      <fo:page-sequence master-reference="normal">
+        <afp:invoke-medium-map name="MYMAP"/>
+        <fo:flow flow-name="xsl-region-body">
+          [..]
+]]></source>
+        <p>
+          The invoke-medium-map element is allowed as child of fo:page-sequence (page group
+          level). It is NOT supported on document level (fo:root), yet. FOP also doesn't support
+          specifying medium maps inside XML (using BMM/EMM). It can only reference an existing
+          medium map by name. The medium map has to be constructed through different means and
+          available on the target platform.
         </p>
       </section>
     </section>

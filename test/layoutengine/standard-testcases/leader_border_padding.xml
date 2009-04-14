@@ -130,7 +130,9 @@
     <eval expected="360000" xpath="//flow/block[4]/lineArea/@ipd"/>
     <eval expected="34000" xpath="//flow/block[4]/lineArea/space/@ipd"/>
     <eval expected="36000" xpath="//flow/block[4]/lineArea/space/@ipda"/>
-    <eval expected="8615" xpath="//flow/block[4]/lineArea/space/@offset"/>
+    <eval expected="1000" xpath="//flow/block[4]/lineArea/space/@bpd"/>
+    <eval expected="3000" xpath="//flow/block[4]/lineArea/space/@bpda"/>
+    <eval expected="7616" xpath="//flow/block[4]/lineArea/space/@offset"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[4]/lineArea/space/@border-after"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[4]/lineArea/space/@border-before"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[4]/lineArea/space/@border-end"/>
@@ -192,7 +194,9 @@
     <eval expected="360000" xpath="//flow/block[9]/lineArea/@ipd"/>
     <eval expected="16000" xpath="//flow/block[9]/lineArea/space/@ipd"/>
     <eval expected="36000" xpath="//flow/block[9]/lineArea/space/@ipda"/>
-    <eval expected="8615" xpath="//flow/block[9]/lineArea/space/@offset"/>
+    <eval expected="1000" xpath="//flow/block[9]/lineArea/space/@bpd"/>
+    <eval expected="21000" xpath="//flow/block[9]/lineArea/space/@bpda"/>
+    <eval expected="7616" xpath="//flow/block[9]/lineArea/space/@offset"/>
     <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[9]/lineArea/space/@border-after"/>
     <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[9]/lineArea/space/@border-before"/>
     <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[9]/lineArea/space/@border-end"/>
@@ -262,7 +266,9 @@
     <eval expected="360000" xpath="//flow/block[14]/lineArea/@ipd"/>
     <eval expected="24000" xpath="//flow/block[14]/lineArea/space/@ipd"/>
     <eval expected="36000" xpath="//flow/block[14]/lineArea/space/@ipda"/>
-    <eval expected="8615" xpath="//flow/block[14]/lineArea/space/@offset"/>
+    <eval expected="1000" xpath="//flow/block[14]/lineArea/space/@bpd"/>
+    <eval expected="9000" xpath="//flow/block[14]/lineArea/space/@bpda"/>
+    <eval expected="7616" xpath="//flow/block[14]/lineArea/space/@offset"/>
     <eval expected="(solid,#ff0000,3000)" xpath="//flow/block[14]/lineArea/space/@border-after"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[14]/lineArea/space/@border-before"/>
     <eval expected="(solid,#ff0000,2000)" xpath="//flow/block[14]/lineArea/space/@border-end"/>

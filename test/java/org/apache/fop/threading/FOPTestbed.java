@@ -20,9 +20,9 @@
 package org.apache.fop.threading;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,6 +41,8 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.io.output.NullOutputStream;
 
 /**
  * Testbed for multi-threading tests. The class can run a configurable set of task a number of
@@ -55,13 +57,17 @@ public class FOPTestbed extends AbstractLogEnabled
     private File outputDir;
     private Configuration fopCfg;
     private FOProcessor foprocessor;
+    private boolean writeToDevNull;
 
     private int counter = 0;
+
+    private List results = Collections.synchronizedList(new java.util.LinkedList());
 
     /** {@inheritDoc} */
     public void configure(Configuration configuration) throws ConfigurationException {
         this.threads = configuration.getChild("threads").getValueAsInteger(10);
         this.outputDir = new File(configuration.getChild("output-dir").getValue());
+        this.writeToDevNull = configuration.getChild("devnull").getValueAsBoolean(false);
         Configuration tasks = configuration.getChild("tasks");
         this.repeat = tasks.getAttributeAsInteger("repeat", 1);
         Configuration[] entries = tasks.getChildren("task");
@@ -85,11 +91,12 @@ public class FOPTestbed extends AbstractLogEnabled
         this.counter = 0;
 
         //Initialize threads
+        ThreadGroup workerGroup = new ThreadGroup("FOP workers");
         List threadList = new java.util.LinkedList();
         for (int ti = 0; ti < this.threads; ti++) {
             TaskRunner runner = new TaskRunner();
             ContainerUtil.enableLogging(runner, getLogger());
-            Thread thread = new Thread(runner);
+            Thread thread = new Thread(workerGroup, runner, "Worker- " + ti);
             threadList.add(thread);
         }
 
@@ -112,7 +119,38 @@ public class FOPTestbed extends AbstractLogEnabled
                 //ignore
             }
         }
-        getLogger().info("Stress test duration: " + (System.currentTimeMillis() - start) + "ms");
+        long duration = System.currentTimeMillis() - start;
+
+        report(duration);
+    }
+
+    private void report(long duration) {
+        int count = this.results.size();
+        int failures = 0;
+        long bytesWritten = 0;
+        System.out.println("Report on " + count + " tasks:");
+        Iterator iter = this.results.iterator();
+        while (iter.hasNext()) {
+            Result res = (Result)iter.next();
+            if (res.failure != null) {
+                System.out.println("FAIL: " + (res.end - res.start) + " " + res.task);
+                System.out.println("  -> " + res.failure.getMessage());
+                failures++;
+            } else {
+                System.out.println("good: " + (res.end - res.start) + " " + res.filesize
+                        + " " + res.task);
+                bytesWritten += res.filesize;
+            }
+        }
+        System.out.println("Stress test duration: " + duration + "ms");
+        if (failures > 0) {
+            System.out.println(failures + " failures of " + count + " documents!!!");
+        } else {
+            float mb = 1024f * 1024f;
+            System.out.println("Bytes written: " + (bytesWritten / mb) + " MB, "
+                    + (bytesWritten * 1000 / duration) + " bytes / sec");
+            System.out.println("NO failures with " + count + " documents.");
+        }
     }
 
     private class TaskRunner extends AbstractLogEnabled implements Runnable {
@@ -222,28 +260,60 @@ public class FOPTestbed extends AbstractLogEnabled
 
         public void execute() throws Exception {
             getLogger().info("Processing: " + def);
-            DecimalFormat df = new DecimalFormat("00000");
-            File outfile = new File(outputDir, df.format(num) + fop.getTargetFileExtension());
-            OutputStream out = new java.io.FileOutputStream(outfile);
+            long start = System.currentTimeMillis();
             try {
-                InputStream in;
-                Templates templates;
-
-                if (def.getFO() != null) {
-                    in = new java.io.FileInputStream(new File(def.getFO()));
-                    templates = null;
+                DecimalFormat df = new DecimalFormat("00000");
+                File outfile = new File(outputDir, df.format(num) + fop.getTargetFileExtension());
+                OutputStream out;
+                if (writeToDevNull) {
+                    out = new NullOutputStream();
                 } else {
-                    in = new java.io.FileInputStream(new File(def.getXML()));
-                    templates = def.getTemplates();
+                    out = new java.io.FileOutputStream(outfile);
+                    out = new java.io.BufferedOutputStream(out);
                 }
+                CountingOutputStream cout = new CountingOutputStream(out);
                 try {
-                    fop.process(in, templates, out);
+                    Source src;
+                    Templates templates;
+
+                    if (def.getFO() != null) {
+                        src = new StreamSource(new File(def.getFO()));
+                        templates = null;
+                    } else {
+                        src = new StreamSource(new File(def.getXML()));
+                        templates = def.getTemplates();
+                    }
+                    fop.process(src, templates, cout);
                 } finally {
-                    IOUtils.closeQuietly(in);
+                    IOUtils.closeQuietly(cout);
                 }
-            } finally {
-                IOUtils.closeQuietly(out);
+                results.add(new Result(def, start, System.currentTimeMillis(),
+                        cout.getByteCount()));
+            } catch (Exception e) {
+                results.add(new Result(def, start, System.currentTimeMillis(), e));
+                throw e;
             }
+        }
+    }
+
+    private static class Result {
+
+        private TaskDef task;
+        private long start;
+        private long end;
+        private long filesize;
+        private Throwable failure;
+
+        public Result(TaskDef task, long start, long end, long filesize) {
+            this(task, start, end, null);
+            this.filesize = filesize;
+        }
+
+        public Result(TaskDef task, long start, long end, Throwable failure) {
+            this.task = task;
+            this.start = start;
+            this.end = end;
+            this.failure = failure;
         }
     }
 

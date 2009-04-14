@@ -124,7 +124,11 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     protected void setupModel(FOUserAgent userAgent, String outputFormat,
             OutputStream stream) throws FOPException {
-        this.model = new RenderPagesModel(userAgent, outputFormat, fontInfo, stream);
+        if (userAgent.isConserveMemoryPolicyEnabled()) {
+            this.model = new CachedRenderPagesModel(userAgent, outputFormat, fontInfo, stream);
+        } else {
+            this.model = new RenderPagesModel(userAgent, outputFormat, fontInfo, stream);
+        }
     }
 
     /**
@@ -442,7 +446,6 @@ public class AreaTreeHandler extends FOEventHandler {
 
         /**
          * Default constructor
-         * @param areaTreeHandler area tree handler
          */
         protected Statistics() {
             this.runtime = Runtime.getRuntime();

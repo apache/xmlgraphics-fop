@@ -19,37 +19,91 @@
 
 package org.apache.fop.render.afp.extensions;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
- * Extension element for afp:ps-page-setup-code.
+ * This class extends the org.apache.fop.extensions.ExtensionObj class. The
+ * object faciliates extraction of elements from formatted objects based on
+ * the static list as defined in the AFPElementMapping implementation.
+ * <p/>
  */
 public class AFPPageSetupElement extends AbstractAFPExtensionObject {
 
     /**
-     * Main constructor
-     * @param parent parent FO node
+     * Constructs an AFP object (called by Maker).
+     *
+     * @param parent the parent formatting object
+     * @param name the name of the afp element
      */
-    public AFPPageSetupElement(FONode parent) {
-        super(parent, "page");
+    public AFPPageSetupElement(FONode parent, String name) {
+        super(parent, name);
+    }
+
+    private AFPPageSetup getPageSetupAttachment() {
+        return (AFPPageSetup)getExtensionAttachment();
     }
 
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
-            throw new ValidationException(getName() + " must be a child of fo:simple-page-master.");
+        if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(getLocalName())) {
+            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER
+                    && parent.getNameId() != Constants.FO_PAGE_SEQUENCE) {
+                invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                    "rule.childOfPageSequenceOrSPM");
+            }
+        } else {
+            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
+                invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
+                    "rule.childOfSPM");
+            }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    protected void characters(char[] data, int start, int length,
+                                 PropertyList pList, Locator locator) throws FOPException {
+        StringBuffer sb = new StringBuffer();
+        AFPPageSetup pageSetup = getPageSetupAttachment();
+        if (pageSetup.getContent() != null) {
+            sb.append(pageSetup.getContent());
+        }
+        sb.append(data, start, length);
+        pageSetup.setContent(sb.toString());
+    }
+
+    /** {@inheritDoc} */
+    public void processNode(String elementName, Locator locator,
+                            Attributes attlist, PropertyList propertyList)
+                                throws FOPException {
+        super.processNode(elementName, locator, attlist, propertyList);
+        AFPPageSetup pageSetup = getPageSetupAttachment();
+        if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(elementName)) {
+            String attr = attlist.getValue("src");
+            if (attr != null && attr.length() > 0) {
+                pageSetup.setValue(attr);
+            } else {
+                throw new FOPException(elementName + " must have a src attribute.");
+            }
+        } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(elementName)) {
+            String attr = attlist.getValue("value");
+            if (attr != null && attr.length() > 0) {
+                pageSetup.setValue(attr);
+            } else {
+                throw new FOPException(elementName + " must have a value attribute.");
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
     protected ExtensionAttachment instantiateExtensionAttachment() {
-        return new AFPPageSetup(this.name);
+        return new AFPPageSetup(getLocalName());
     }
 }

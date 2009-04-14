@@ -26,7 +26,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
+import org.apache.fop.area.AreaTreeObject;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
@@ -266,8 +268,10 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             childLMs = new java.util.ArrayList(10);
         }
         childLMs.add(lm);
-        log.trace(this.getClass().getName()
-                  + ": Adding child LM " + lm.getClass().getName());
+        if (log.isTraceEnabled()) {
+            log.trace(this.getClass().getName()
+                    + ": Adding child LM " + lm.getClass().getName());
+        }
     }
 
     /**
@@ -300,6 +304,13 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return pos;
     }
 
+    private void verifyNonNullPosition(Position pos) {
+        if (pos == null || pos.getIndex() < 0) {
+            throw new IllegalArgumentException(
+                    "Only non-null Positions with an index can be checked");
+        }
+    }
+
     /**
      * Indicates whether the given Position is the first area-generating Position of this LM.
      * @param pos the Position (must be one with a position index)
@@ -307,9 +318,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      */
     public boolean isFirst(Position pos) {
         //log.trace("isFirst() smallestPosNumberChecked=" + smallestPosNumberChecked + " " + pos);
-        if (pos == null || pos.getIndex() < 0) {
-            throw new IllegalArgumentException("Only non-null Positions with an index can be checked");
-        }
+        verifyNonNullPosition(pos);
         if (pos.getIndex() == this.smallestPosNumberChecked) {
             return true;
         } else if (pos.getIndex() < this.smallestPosNumberChecked) {
@@ -326,10 +335,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * @return True if it is the last Position
      */
     public boolean isLast(Position pos) {
-        //log.trace("isLast() lastGenPos=" + lastGeneratedPosition + " " + pos);
-        if (pos == null || pos.getIndex() < 0) {
-            throw new IllegalArgumentException("Only non-null Positions with an index can be checked");
-        }
+        verifyNonNullPosition(pos);
         return (pos.getIndex() == this.lastGeneratedPosition
                 && isFinished());
     }
@@ -338,9 +344,29 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * Transfers foreign attributes from the formatting object to the area.
      * @param targetArea the area to set the attributes on
      */
-    protected void transferForeignAttributes(Area targetArea) {
+    protected void transferForeignAttributes(AreaTreeObject targetArea) {
         Map atts = fobj.getForeignAttributes();
         targetArea.setForeignAttributes(atts);
+    }
+
+    /**
+     * Transfers extension attachments from the formatting object to the area.
+     * @param targetArea the area to set the extensions on
+     */
+    protected void transferExtensionAttachments(AreaTreeObject targetArea) {
+        if (fobj.hasExtensionAttachments()) {
+            targetArea.setExtensionAttachments(fobj.getExtensionAttachments());
+        }
+    }
+
+    /**
+     * Transfers extensions (foreign attributes and extension attachments) from
+     * the formatting object to the area.
+     * @param targetArea the area to set the extensions on
+     */
+    protected void transferExtensions(AreaTreeObject targetArea) {
+        transferForeignAttributes(targetArea);
+        transferExtensionAttachments(targetArea);
     }
 
     /**

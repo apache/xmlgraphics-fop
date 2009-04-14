@@ -21,6 +21,8 @@ package org.apache.fop.area;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,7 @@ import org.w3c.dom.Document;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
@@ -48,6 +51,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
@@ -68,6 +72,7 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
@@ -149,6 +154,7 @@ public class AreaTreeParser {
         private Stack delegateStack = new Stack();
         private ContentHandler delegate;
         private DOMImplementation domImplementation;
+        private Locator locator;
 
 
         public Handler(AreaTreeModel treeModel, FOUserAgent userAgent,
@@ -221,6 +227,15 @@ public class AreaTreeParser {
 
         private Viewport getCurrentViewport() {
             return (Viewport)findAreaType(Viewport.class);
+        }
+
+        /** {@inheritDoc} */
+        public void setDocumentLocator(Locator locator) {
+            this.locator = locator;
+        }
+
+        private Locator getLocator() {
+            return this.locator;
         }
 
         /** {@inheritDoc} */
@@ -356,6 +371,7 @@ public class AreaTreeParser {
                 pageSequence.setLanguage(lang);
                 String country = attributes.getValue("country");
                 pageSequence.setCountry(country);
+                transferForeignObjects(attributes, pageSequence);
                 areaStack.push(pageSequence);
             }
         }
@@ -970,8 +986,15 @@ public class AreaTreeParser {
                     this.currentPageViewport.addExtensionAttachment(attachment);
                 }
             } else {
+                Object o = areaStack.peek();
+                if (o instanceof AreaTreeObject && obj instanceof ExtensionAttachment) {
+                    AreaTreeObject ato = (AreaTreeObject)o;
+                    ExtensionAttachment attachment = (ExtensionAttachment)obj;
+                    ato.addExtensionAttachment(attachment);
+                } else {
                 log.warn("Don't know how to handle externally generated object: " + obj);
             }
+        }
         }
 
         private void setAreaAttributes(Attributes attributes, Area area) {
@@ -1048,8 +1071,21 @@ public class AreaTreeParser {
                                     = userAgent.getImageSessionContext();
                                 ImageInfo info = manager.getImageInfo(uri, sessionContext);
                                 bkg.setImageInfo(info);
-                            } catch (Exception e) {
-                                log.error("Background image not available: " + uri, e);
+                            } catch (ImageException e) {
+                                ResourceEventProducer eventProducer
+                                    = ResourceEventProducer.Provider.get(
+                                        this.userAgent.getEventBroadcaster());
+                                eventProducer.imageError(this, uri, e, getLocator());
+                            } catch (FileNotFoundException fnfe) {
+                                ResourceEventProducer eventProducer
+                                    = ResourceEventProducer.Provider.get(
+                                        this.userAgent.getEventBroadcaster());
+                                eventProducer.imageNotFound(this, uri, fnfe, getLocator());
+                            } catch (IOException ioe) {
+                                ResourceEventProducer eventProducer
+                                    = ResourceEventProducer.Provider.get(
+                                        this.userAgent.getEventBroadcaster());
+                                eventProducer.imageIOError(this, uri, ioe, getLocator());
                             }
 
                             String repeat = attributes.getValue("bkg-repeat");

@@ -51,6 +51,8 @@ public class RendererFactory {
     private Map eventHandlerMakerMapping = new java.util.HashMap();
     private Map documentHandlerMakerMapping = new java.util.HashMap();
 
+    private boolean rendererPreferred = false;
+
     /**
      * Main constructor.
      */
@@ -58,6 +60,26 @@ public class RendererFactory {
         discoverRenderers();
         discoverFOEventHandlers();
         discoverDocumentHandlers();
+    }
+
+    /**
+     * Controls whether a {@link Renderer} is preferred over a {@link IFDocumentHandler} if
+     * both are available for the same MIME type.
+     * @param value true to prefer the {@link Renderer},
+     *                  false to prefer the {@link IFDocumentHandler}.
+     */
+    public void setRendererPreferred(boolean value) {
+        this.rendererPreferred = value;
+    }
+
+    /**
+     * Indicates whether a {@link Renderer} is preferred over a {@link IFDocumentHandler} if
+     * both are available for the same MIME type.
+     * @return true if the {@link Renderer} is preferred,
+     *                  false if the {@link IFDocumentHandler} is preferred.
+     */
+    public boolean isRendererPreferred() {
+        return this.rendererPreferred;
     }
 
     /**
@@ -236,27 +258,54 @@ public class RendererFactory {
         } else if (userAgent.getRendererOverride() != null) {
             return userAgent.getRendererOverride();
         } else {
-            AbstractRendererMaker maker = getRendererMaker(outputFormat);
-            if (maker != null) {
-                Renderer rend = maker.makeRenderer(userAgent);
-                rend.setUserAgent(userAgent);
-                RendererConfigurator configurator = maker.getConfigurator(userAgent);
-                if (configurator != null) {
-                    configurator.configure(rend);
+            Renderer renderer;
+            if (isRendererPreferred()) {
+                //Try renderer first
+                renderer = tryRendererMaker(userAgent, outputFormat);
+                if (renderer == null) {
+                    renderer = tryIFDocumentHandlerMaker(userAgent, outputFormat);
                 }
-                return rend;
             } else {
-                AbstractIFDocumentHandlerMaker documentHandlerMaker
-                    = getDocumentHandlerMaker(outputFormat);
-                if (documentHandlerMaker != null) {
-                    IFDocumentHandler documentHandler = createDocumentHandler(
-                            userAgent, outputFormat);
-                    return createRendererForDocumentHandler(documentHandler);
-                } else {
-                    throw new UnsupportedOperationException(
-                            "No renderer for the requested format available: " + outputFormat);
+                //Try document handler first
+                renderer = tryIFDocumentHandlerMaker(userAgent, outputFormat);
+                if (renderer == null) {
+                    renderer = tryRendererMaker(userAgent, outputFormat);
                 }
             }
+            if (renderer == null) {
+                throw new UnsupportedOperationException(
+                        "No renderer for the requested format available: " + outputFormat);
+            }
+            return renderer;
+        }
+    }
+
+    private Renderer tryIFDocumentHandlerMaker(FOUserAgent userAgent, String outputFormat)
+            throws FOPException {
+        AbstractIFDocumentHandlerMaker documentHandlerMaker
+            = getDocumentHandlerMaker(outputFormat);
+        if (documentHandlerMaker != null) {
+            IFDocumentHandler documentHandler = createDocumentHandler(
+                    userAgent, outputFormat);
+            return createRendererForDocumentHandler(documentHandler);
+        } else {
+            return null;
+        }
+    }
+
+    private Renderer tryRendererMaker(FOUserAgent userAgent, String outputFormat)
+                throws FOPException {
+        AbstractRendererMaker maker = getRendererMaker(outputFormat);
+        if (maker != null) {
+            Renderer rend = maker.makeRenderer(userAgent);
+            rend.setUserAgent(userAgent);
+            RendererConfigurator configurator = maker.getConfigurator(userAgent);
+            if (configurator != null) {
+                configurator.configure(rend);
+            }
+            return rend;
+        } else {
+            return null;
         }
     }
 
@@ -327,6 +376,9 @@ public class RendererFactory {
      */
     public IFDocumentHandler createDocumentHandler(FOUserAgent userAgent, String outputFormat)
                     throws FOPException {
+        if (userAgent.getDocumentHandlerOverride() != null) {
+            return userAgent.getDocumentHandlerOverride();
+        }
         AbstractIFDocumentHandlerMaker maker = getDocumentHandlerMaker(outputFormat);
         if (maker == null) {
             throw new UnsupportedOperationException(

@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Represents a page sequence in the area tree.
  */
-public class PageSequence {
+public class PageSequence extends AreaTreeObject {
 
     private List pages = new java.util.ArrayList();
     private LineArea title;
