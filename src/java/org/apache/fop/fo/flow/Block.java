@@ -21,6 +21,8 @@ package org.apache.fop.fo.flow;
 
 import java.awt.Color;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
@@ -38,13 +40,13 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.xml.sax.Locator;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
  /**
   * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_block">
   * <code>fo:block object</code></a>.
   */
-public class Block extends FObjMixed implements BreakPropertySet {
+public class Block extends FObjMixed implements BreakPropertySet, StructurePointerPropertySet {
 
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
@@ -173,11 +175,11 @@ public class Block extends FObjMixed implements BreakPropertySet {
         return breakAfter;
     }
 
-    /** @return the "foi:ptr" property.  */
+    /** {@inheritDoc} */
     public String getPtr() {
         return ptr;
     }
-    
+
     /** @return the "break-before" property. */
     public int getBreakBefore() {
         return breakBefore;

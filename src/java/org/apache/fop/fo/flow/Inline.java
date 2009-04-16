@@ -26,12 +26,13 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_inline">
  * <code>fo:inline</code></a> formatting object.
  */
-public class Inline extends InlineLevel {
+public class Inline extends InlineLevel implements StructurePointerPropertySet {
     // The value of properties relevant for fo:inline.
     // See also superclass InlineLevel
     private Length alignmentAdjust;
@@ -146,7 +147,7 @@ public class Inline extends InlineLevel {
         return dominantBaseline;
     }
 
-    /** @return the "foi:ptr" property.  */
+    /** {@inheritDoc} */
     public String getPtr() {
         return ptr;
     }

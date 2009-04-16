@@ -29,6 +29,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_instream-foreign-object">
@@ -36,7 +37,8 @@ import org.apache.fop.fo.properties.SpaceProperty;
  * and <a href="http://www.w3.org/TR/xsl/#fo_external-graphic">
  * <code>fo:external-graphic</code></a> flow formatting objects.
  */
-public abstract class AbstractGraphics extends FObj implements GraphicsProperties {
+public abstract class AbstractGraphics extends FObj
+        implements GraphicsProperties, StructurePointerPropertySet {
 
     // The value of properties relevant for fo:instream-foreign-object
     // and external-graphics.
@@ -209,7 +211,7 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         return keepWithPrevious;
     }
 
-    /** @return the "foi:ptr" property.  */
+    /** {@inheritDoc} */
     public String getPtr() {
         return ptr;
     }

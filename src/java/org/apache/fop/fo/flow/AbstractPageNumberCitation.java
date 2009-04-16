@@ -21,8 +21,8 @@ package org.apache.fop.fo.flow;
 
 import java.awt.Color;
 
-import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
@@ -35,6 +35,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation">
@@ -42,7 +43,8 @@ import org.apache.fop.fo.properties.SpaceProperty;
  * <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation-last">
  * <code>fo:page-number-citation-last</code></a> objects.
  */
-public abstract class AbstractPageNumberCitation extends FObj {
+public abstract class AbstractPageNumberCitation extends FObj
+            implements StructurePointerPropertySet {
 
     // The value of properties relevant for fo:page-number-citation(-last).
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
@@ -140,11 +142,11 @@ public abstract class AbstractPageNumberCitation extends FObj {
         return textDecoration;
     }
 
-    /** @return the "foi:ptr" property.  */
+    /** {@inheritDoc} */
     public String getPtr() {
         return ptr;
     }
-    
+
     /** @return the "alignment-adjust" property */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;

@@ -38,12 +38,13 @@ import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_character">
  * <code>fo:character</code></a> object.
  */
-public class Character extends FObj {
+public class Character extends FObj implements StructurePointerPropertySet {
     // The value of properties relevant for fo:character.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
@@ -209,7 +210,7 @@ public class Character extends FObj {
         return keepWithPrevious;
     }
 
-    /** @return the "foi:ptr" property.  */
+    /** {@inheritDoc} */
     public String getPtr() {
         return ptr;
     }

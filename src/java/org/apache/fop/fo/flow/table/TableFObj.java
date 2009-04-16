@@ -19,6 +19,9 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
@@ -33,14 +36,13 @@ import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
-import org.xml.sax.Locator;
-import org.xml.sax.Attributes;
 
 /**
  * Common base class for table-related FOs
  */
-public abstract class TableFObj extends FObj {
+public abstract class TableFObj extends FObj implements StructurePointerPropertySet {
 
     private Numeric borderAfterPrecedence;
     private Numeric borderBeforePrecedence;
@@ -237,11 +239,11 @@ public abstract class TableFObj extends FObj {
         }
     }
 
-    /** @return the "foi:ptr" property.  */
+    /** {@inheritDoc} */
     public String getPtr() {
         return ptr;
     }
-    
+
     /**
      * Prepares the borders of this element if the collapsing-border model is in use.
      * Conflict resolution with parent elements is done where applicable.

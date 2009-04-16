@@ -159,11 +159,6 @@ public class BasicLink extends Inline {
         return this.showDestination;
     }
 
-    /** @return the "foi:ptr" property.  */
-    public String getPtr() {
-        return super.getPtr();
-    }
-
     /** {@inheritDoc} */
     public String getLocalName() {
         return "basic-link";

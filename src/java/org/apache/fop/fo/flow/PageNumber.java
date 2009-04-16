@@ -34,12 +34,13 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-number">
  * <code>fo:page-number</code></a> object.
  */
-public class PageNumber extends FObj {
+public class PageNumber extends FObj implements StructurePointerPropertySet {
     // The value of properties relevant for fo:page-number.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
@@ -167,7 +168,7 @@ public class PageNumber extends FObj {
         return lineHeight;
     }
 
-    /** @return the "foi:ptr" property.  */
+    /** {@inheritDoc} */
     public String getPtr() {
         return ptr;
     }
