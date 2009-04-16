@@ -366,7 +366,6 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void startPageTrailer() throws IFException {
         try {
             handler.startElement(EL_PAGE_TRAILER);
-            commitNavigation();
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageTrailer()", e);
         }
@@ -375,6 +374,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void endPageTrailer() throws IFException {
         try {
+            commitNavigation();
             handler.endElement(EL_PAGE_TRAILER);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageTrailer()", e);
