@@ -185,7 +185,6 @@ public class IFParser implements IFConstants {
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                     throws SAXException {
             if (delegate != null) {
-                //delegateStack.push(qName);
                 delegateDepth++;
                 delegate.startElement(uri, localName, qName, attributes);
             } else {
@@ -202,8 +201,6 @@ public class IFParser implements IFConstants {
                         } catch (IFException ife) {
                             handleIFException(ife);
                         }
-                    } else if ("extension-attachments".equals(localName)) {
-                        //TODO implement me
                     } else {
                         handled = false;
                     }

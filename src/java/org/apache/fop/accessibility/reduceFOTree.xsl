@@ -75,11 +75,11 @@
         </xsl:element>
     </xsl:template>
     
+    <!-- the following nodes are being ignored/filtered -->
     
+    <xsl:template match="text()"/>
     
-    <xsl:template match="text()"></xsl:template>
-    
-    <xsl:template match="fo:layout-master-set|comment() | processing-instruction() | fo:simple-page-master | fo:table-column | fo:leader | fo:retrieve-marker "/>
+    <xsl:template match="fo:layout-master-set | comment() | processing-instruction() | fo:simple-page-master | fo:table-column | fo:leader | fo:retrieve-marker "/>
 
     <xsl:template match="svg:svg | svg | fo:inline-container | fo:float | fo:bidi-override"/>
     
