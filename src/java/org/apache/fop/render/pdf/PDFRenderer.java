@@ -461,8 +461,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         double h = bounds.getHeight();
         pageHeight = (int) h;
 
-        this.generator = new PDFContentGenerator(this.pdfDoc, this.ostream, this.currentPage,
-                false);
+        this.generator = new PDFContentGenerator(this.pdfDoc, this.ostream, this.currentPage);
         this.borderPainter = new PDFBorderPainter(this.generator);
 
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFRenderer's

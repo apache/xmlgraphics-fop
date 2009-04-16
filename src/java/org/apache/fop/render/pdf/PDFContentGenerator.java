@@ -50,13 +50,13 @@ public class PDFContentGenerator {
 
     /** the current stream to add PDF commands to */
     private PDFStream currentStream;
-    private boolean accessEnabled; // used for accessibility
 
     /** drawing state */
     protected PDFPaintingState currentState = null;
     /** Text generation utility holding the current font status */
     protected PDFTextUtil textutil;
 
+    private boolean inMarkedContentSequence;
     private boolean inArtifactMode;
 
     /**
@@ -65,10 +65,9 @@ public class PDFContentGenerator {
      * @param document the PDF document
      * @param out the output stream the PDF document is generated to
      * @param resourceContext the resource context
-     * @param accessibilityEnabled indicating if accessibility is enabled or not
      */
     public PDFContentGenerator(PDFDocument document, OutputStream out,
-            PDFResourceContext resourceContext, boolean accessibilityEnabled) {
+            PDFResourceContext resourceContext) {
         this.document = document;
         this.outputStream = out;
         this.resourceContext = resourceContext;
@@ -81,7 +80,6 @@ public class PDFContentGenerator {
         };
 
         this.currentState = new PDFPaintingState();
-        this.accessEnabled = accessibilityEnabled;
     }
 
     /**
@@ -173,6 +171,7 @@ public class PDFContentGenerator {
      * @param sequenceNum    Sequence number
      */
     protected void beginMarkedContentSequence(String structElemType, int sequenceNum) {
+        assert !this.inMarkedContentSequence;
         assert !this.inArtifactMode;
         if (structElemType != null) {
             currentStream.add(structElemType + " <</MCID " + String.valueOf(sequenceNum) + ">>\n"
@@ -181,10 +180,12 @@ public class PDFContentGenerator {
             currentStream.add("/Artifact\nBMC\n");
             this.inArtifactMode = true;
         }
+        this.inMarkedContentSequence = true;
     }
 
     private void endMarkedContentSequence() {
         currentStream.add("EMC\n");
+        this.inMarkedContentSequence = false;
         this.inArtifactMode = false;
     }
 
@@ -210,7 +211,9 @@ public class PDFContentGenerator {
     protected void restoreGraphicsStateAccess() {
         endTextObject();
         currentStream.add("Q\n");
-        endMarkedContentSequence();
+        if (this.inMarkedContentSequence) {
+            endMarkedContentSequence();
+        }
         currentState.restore();
     }
 
@@ -265,7 +268,9 @@ public class PDFContentGenerator {
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         if (textutil.isInTextObject()) {
-            endMarkedContentSequence();
+            if (this.inMarkedContentSequence) {
+                endMarkedContentSequence();
+            }
             textutil.endTextObject();
         }
     }
