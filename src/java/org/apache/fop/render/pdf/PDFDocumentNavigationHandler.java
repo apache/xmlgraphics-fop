@@ -25,6 +25,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFactory;
@@ -41,9 +44,6 @@ import org.apache.fop.render.intermediate.extensions.Link;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.render.intermediate.extensions.URIAction;
 import org.apache.fop.render.pdf.PDFDocumentHandler.PageReference;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of the {@link IFDocumentNavigationHandler} interface for PDF output.
@@ -116,7 +116,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         if (pdfLink != null) {
           //accessibility: ptr has a value
             String ptr = link.getAction().getPtr();
-            if (ptr.length() > 0) {
+            if (ptr != null && ptr.length() > 0) {
                 this.documentHandler.addLinkToStructElem(ptr, pdfLink);
                 int id = this.documentHandler.getPageLinkCountPlusPageParentKey();
                 pdfLink.setStructParent(id);
