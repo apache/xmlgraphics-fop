@@ -135,19 +135,9 @@ public class PDFPainter extends AbstractIFPainter {
         if (xobject != null) {
             if (accessEnabled && getContext().hasStructurePointer()) {
                 String ptr = getContext().getStructurePointer();
-                mcid = this.documentHandler.getMCID();
-                mcid++;                          // fix for Acro Checker
-                this.documentHandler.incMCID();  // simulating a parent text element
-                structElemType = this.documentHandler.getStructElemType(ptr);
-                this.documentHandler.addToTempList(
-                        this.documentHandler.getCurrentParentTreeKey(),
-                        this.documentHandler.getParentTrailerObject(ptr));
-                this.documentHandler.addToTempList(
-                        this.documentHandler.getCurrentParentTreeKey(),
-                        this.documentHandler.getTrailerObject(ptr));
+                prepareImageMCID(ptr);
                 placeImageAccess(rect, xobject);
-                this.documentHandler.addChildToStructElemImage(ptr, mcid);
-                this.documentHandler.incMCID();
+                addImageMCID(ptr);
             } else {
                 placeImage(rect, xobject);
             }
@@ -155,27 +145,36 @@ public class PDFPainter extends AbstractIFPainter {
         }
         if (accessEnabled && getContext().hasStructurePointer()) {
             String ptr = getContext().getStructurePointer();
-            mcid = this.documentHandler.getMCID();
-            mcid++;                          // fix for Acro Checker
-            this.documentHandler.incMCID();  // simulating a parent text element
-            structElemType = this.documentHandler.getStructElemType(ptr);
+            prepareImageMCID(ptr);
+            drawImageUsingURI(uri, rect);
+            addImageMCID(ptr);
+        } else {
+            drawImageUsingURI(uri, rect);
+        }
+        flushPDFDoc();
+    }
+
+    private void prepareImageMCID(String ptr) {
+        mcid = this.documentHandler.getMCID();
+        mcid++;                          // fix for Acro Checker
+        this.documentHandler.incMCID();  // simulating a parent text element
+        structElemType = this.documentHandler.getStructElemType(ptr);
+        if (structElemType != null) {
             this.documentHandler.addToTempList(
                     this.documentHandler.getCurrentParentTreeKey(),
                     this.documentHandler.getParentTrailerObject(ptr));
             this.documentHandler.addToTempList(
                     this.documentHandler.getCurrentParentTreeKey(),
                     this.documentHandler.getTrailerObject(ptr));
-            //PDFRenderingContext pdfContext = new PDFRenderingContext(
-            //        getUserAgent(), generator, this.documentHandler.currentPage, getFontInfo());
-            //pdfContext.setMCID(mcid);
-            //pdfContext.setStructElemType(structElemType);
-            drawImageUsingURI(uri, rect);
+        }
+    }
+
+    private void addImageMCID(String ptr) {
+        if (this.structElemType != null) {
             this.documentHandler.addChildToStructElemImage(ptr, mcid);
             this.documentHandler.incMCID();
-        } else {
-            drawImageUsingURI(uri, rect);
         }
-        flushPDFDoc();
+        //If structElemType is null, it means "Artifact" mode (ex. leader with use-content).
     }
 
     /** {@inheritDoc} */
@@ -226,19 +225,9 @@ public class PDFPainter extends AbstractIFPainter {
     public void drawImage(Document doc, Rectangle rect) throws IFException {
         if (accessEnabled && getContext().hasStructurePointer()) {
             String ptr = getContext().getStructurePointer();
-            mcid = this.documentHandler.getMCID();
-            mcid++;                          // fix for Acro Checker
-            this.documentHandler.incMCID();  // simulating a parent text element
-            structElemType = this.documentHandler.getStructElemType(ptr);
-            this.documentHandler.addToTempList(
-                    this.documentHandler.getCurrentParentTreeKey(),
-                    this.documentHandler.getParentTrailerObject(ptr));
-            this.documentHandler.addToTempList(
-                    this.documentHandler.getCurrentParentTreeKey(),
-                    this.documentHandler.getTrailerObject(ptr));
+            prepareImageMCID(ptr);
             drawImageUsingDocument(doc, rect);
-            this.documentHandler.addChildToStructElemImage(ptr, mcid);
-            this.documentHandler.incMCID();
+            addImageMCID(ptr);
         } else {
             drawImageUsingDocument(doc, rect);
         }
@@ -338,13 +327,13 @@ public class PDFPainter extends AbstractIFPainter {
         if (accessEnabled) {
             String ptr = getContext().getStructurePointer();
             int mcId;
-            String structElType = "";
+            String structElType = null;
             if (ptr != null && ptr.length() > 0) {
                 mcId = this.documentHandler.getMCID();
+                structElType = this.documentHandler.getStructElemType(ptr);
                 this.documentHandler.addToTempList(
                         this.documentHandler.getCurrentParentTreeKey(),
                         this.documentHandler.getTrailerObject(ptr));
-                structElType = this.documentHandler.getStructElemType(ptr);
                 if (generator.getTextUtil().isInTextObject()) {
                     generator.separateTextElements(mcId, structElType);
                 }
@@ -354,6 +343,7 @@ public class PDFPainter extends AbstractIFPainter {
                 this.documentHandler.incMCID();
             } else {
                 // <fo:leader leader-pattern="use-content">
+                // Leader content is marked as "/Artifact"
                 if (generator.getTextUtil().isInTextObject()) {
                     generator.separateTextElementFromLeader();
                 }

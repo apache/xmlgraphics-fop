@@ -124,7 +124,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
         if (context.getUserAgent().isAccessibilityEnabled()) {
             String structElemType = pdfContext.getStructElemType();
             int sequenceNum = pdfContext.getSequenceNum();
-            generator.startAccessSequence(structElemType, sequenceNum);
+            generator.beginMarkedContentSequence(structElemType, sequenceNum);
         }
         generator.setColor(Color.black, false);
         generator.setColor(Color.black, true);

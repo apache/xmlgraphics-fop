@@ -520,15 +520,19 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
      * @param mcid sequence number within page
      */
     void addChildToStructElemText(String ptr, int mcid) {
-        PDFDictionary dict = new PDFDictionary();
-        dict.put("Type", new PDFName("MCR"));
-        dict.put("Pg", this.currentPage);
-        dict.put("MCID", mcid);
         PDFStructElem tempStructElem = (PDFStructElem) structTreeMap.get(ptr);
-        tempStructElem.addKid(dict);
-        if (!tempStructElem.getLevel1()) {
-            addMeToParent(tempStructElem);
+        if (tempStructElem != null) {
+            PDFDictionary dict = new PDFDictionary();
+            dict.put("Type", new PDFName("MCR"));
+            dict.put("Pg", this.currentPage);
+            dict.put("MCID", mcid);
+            tempStructElem.addKid(dict);
+            if (!tempStructElem.getLevel1()) {
+                addMeToParent(tempStructElem);
+            }
         }
+        //tempStructElem is null, for example inside fo:leaders in which case
+        //the text shall be marked as artifact
     }
 
     /**

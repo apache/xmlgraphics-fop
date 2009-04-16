@@ -57,6 +57,7 @@ public class PDFContentGenerator {
     /** Text generation utility holding the current font status */
     protected PDFTextUtil textutil;
 
+    private boolean inArtifactMode;
 
     /**
      * Main constructor. Creates a new PDF stream and additional helper classes for text painting
@@ -160,17 +161,31 @@ public class PDFContentGenerator {
     protected void saveGraphicsState(String structElemType, int sequenceNum) {
         endTextObject();
         currentState.save();
-        startAccessSequence(structElemType, sequenceNum);
+        beginMarkedContentSequence(structElemType, sequenceNum);
         currentStream.add("q\n");
     }
 
     /**
-     * Used for accessibility
+     * Begins a new marked content sequence (BDC or BMC). If the parameter structElemType is null,
+     * the sequenceNum is ignored and instead of a BDC with the MCID as parameter, an "Artifact"
+     * and a BMC command is generated.
      * @param structElemType Structure Element Type
      * @param sequenceNum    Sequence number
      */
-    protected void startAccessSequence(String structElemType, int sequenceNum) {
-        currentStream.add(structElemType + " <</MCID " + String.valueOf(sequenceNum) + ">>\nBDC\n");
+    protected void beginMarkedContentSequence(String structElemType, int sequenceNum) {
+        assert !this.inArtifactMode;
+        if (structElemType != null) {
+            currentStream.add(structElemType + " <</MCID " + String.valueOf(sequenceNum) + ">>\n"
+                    + "BDC\n");
+        } else {
+            currentStream.add("/Artifact\nBMC\n");
+            this.inArtifactMode = true;
+        }
+    }
+
+    private void endMarkedContentSequence() {
+        currentStream.add("EMC\n");
+        this.inArtifactMode = false;
     }
 
     /**
@@ -195,7 +210,7 @@ public class PDFContentGenerator {
     protected void restoreGraphicsStateAccess() {
         endTextObject();
         currentStream.add("Q\n");
-        currentStream.add("EMC\n");
+        endMarkedContentSequence();
         currentState.restore();
     }
 
@@ -205,8 +220,10 @@ public class PDFContentGenerator {
      * @param structElemType of parent of new text element
      */
     protected void separateTextElements(int mcid, String structElemType) {
-        textutil.endTextObject(true);
-        textutil.beginTextObjectAccess(mcid, structElemType);
+        textutil.endTextObject();
+        endMarkedContentSequence();
+        beginMarkedContentSequence(structElemType, mcid);
+        textutil.beginTextObject();
     }
 
     /**
@@ -214,9 +231,8 @@ public class PDFContentGenerator {
      * separates a text element from fo:leader text element
      */
     public void separateTextElementFromLeader() {
-        if (!textutil.inArtifactMode()) {
-            textutil.endTextObject(true);
-            textutil.beginArtifactTextObject();
+        if (!inArtifactMode) {
+            separateTextElements(0, null);
         }
     }
 
@@ -234,7 +250,8 @@ public class PDFContentGenerator {
      */
     protected void beginTextObjectAccess(int mcid, String structElemType) {
         if (!textutil.isInTextObject()) {
-            textutil.beginTextObjectAccess(mcid, structElemType);
+            beginMarkedContentSequence(structElemType, mcid);
+            textutil.beginTextObject();
         }
     }
 
@@ -242,15 +259,14 @@ public class PDFContentGenerator {
      * Accessibility begin of LeaderTextObject
      */
     public void beginLeaderTextObject() {
-        if (!textutil.isInTextObject()) {
-            textutil.beginArtifactTextObject();
-        }
+        beginTextObjectAccess(0, null);
     }
 
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         if (textutil.isInTextObject()) {
-            textutil.endTextObject(accessEnabled);
+            endMarkedContentSequence();
+            textutil.endTextObject();
         }
     }
 
