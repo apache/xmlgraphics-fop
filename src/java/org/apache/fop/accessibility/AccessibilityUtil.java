@@ -36,12 +36,23 @@ import org.apache.fop.apps.FOUserAgent;
  */
 public class AccessibilityUtil {
 
+    /** Constant string for the rendering options key to enable accessibility features. */
+    public static final String ACCESSIBILITY = "accessibility";
+
     private static SAXTransformerFactory tfactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     private static Templates addPtrTemplates;
     private static Templates reduceFOTemplates;
 
+    /**
+     * Decorates the given {@link DefaultHandler} so the structure tree used for accessibility
+     * features can be branched off the main content stream.
+     * @param handler the handler to decorate
+     * @param userAgent the user agent
+     * @return the decorated handler
+     * @throws FOPException if an error occurs setting up the decoration
+     */
     public static DefaultHandler decorateDefaultHandler(DefaultHandler handler,
             FOUserAgent userAgent) throws FOPException {
         DefaultHandler transformNode = new TransformerNodeEndProcessing(

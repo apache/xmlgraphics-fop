@@ -41,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 
+import org.apache.fop.accessibility.AccessibilityUtil;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontCache;
@@ -99,7 +100,7 @@ public class FopFactory implements ImageContext {
      *  external-graphics.
      */
     private String base = null;
-    
+
     /**
      *  Controls if accessibility is turned on or off
      */
@@ -186,7 +187,8 @@ public class FopFactory implements ImageContext {
      */
     public FOUserAgent newFOUserAgent() {
         FOUserAgent userAgent = new FOUserAgent(this);
-        userAgent.getRendererOptions().put("accessibility", Boolean.valueOf(this.accessibility));
+        userAgent.getRendererOptions().put(AccessibilityUtil.ACCESSIBILITY,
+                Boolean.valueOf(this.accessibility));
         return userAgent;
     }
 
@@ -197,7 +199,7 @@ public class FopFactory implements ImageContext {
     void setAccessibility(boolean value) {
         this.accessibility = value;
     }
-    
+
     /**
      * Returns a new {@link Fop} instance. FOP will be configured with a default user agent
      * instance.

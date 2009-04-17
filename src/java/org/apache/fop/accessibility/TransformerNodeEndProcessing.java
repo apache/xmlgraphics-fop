@@ -20,7 +20,6 @@
 package org.apache.fop.accessibility;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import javax.xml.parsers.SAXParser;
@@ -34,6 +33,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -60,25 +61,6 @@ class TransformerNodeEndProcessing extends TransformerNode {
     public TransformerNodeEndProcessing(Templates xsltTemplates, DefaultHandler fopHandler,
             FOUserAgent userAgent) throws FOPException {
         super(xsltTemplates);
-        delegateHandler = fopHandler;
-        this.userAgent = userAgent;
-        Result res1 = new StreamResult(enrichedFOBuffer);
-        super.initResult(res1);
-    }
-
-    /**
-     * Do a transform, but perform special processing at the end for the access
-     * stuff.
-     *
-     * @param xsltFile Transform to do.
-     * @param fopHandler Used in the end processing
-     * @param userAgent the userAgent
-     * @throws FOPException if transform fails
-     */
-
-    public TransformerNodeEndProcessing(Source xsltFile, DefaultHandler fopHandler,
-            FOUserAgent userAgent) throws FOPException {
-        super(xsltFile);
         delegateHandler = fopHandler;
         this.userAgent = userAgent;
         Result res1 = new StreamResult(enrichedFOBuffer);

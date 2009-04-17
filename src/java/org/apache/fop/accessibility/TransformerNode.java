@@ -19,17 +19,12 @@
 
 package org.apache.fop.accessibility;
 
-import java.io.File;
-
 import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -45,70 +40,6 @@ import org.apache.fop.apps.FOPException;
 class TransformerNode extends DefaultHandler {
 
     private TransformerHandler transformerHandler;
-
-    /**
-     * happens after setParams have been broadcast.
-     *
-     * @param downstreamHandler
-     *            the handler passed in
-     * @param xsltFile
-     *            for transform
-     * @throws FOPException
-     *             for general errors
-     */
-    public TransformerNode(DefaultHandler downstreamHandler, File xsltFile) throws FOPException {
-        try {
-            TransformerFactory transFact = TransformerFactory.newInstance();
-            SAXTransformerFactory saxTFactory = ((SAXTransformerFactory)transFact);
-            StreamSource ss = new StreamSource(xsltFile);
-            transformerHandler = saxTFactory.newTransformerHandler(ss);
-            SAXResult saxResult = new SAXResult();
-            saxResult.setHandler(downstreamHandler);
-            transformerHandler.setResult(saxResult);
-        } catch (TransformerConfigurationException t) {
-            throw new FOPException(t);
-        }
-    }
-
-    /**
-     *
-     * @param result
-     *            of transform
-     * @param xsltFile
-     *            for transform
-     * @throws FOPException
-     *             for general errors
-     */
-    public TransformerNode(Result result, File xsltFile) throws FOPException {
-        try {
-            TransformerFactory transFact = TransformerFactory.newInstance();
-            SAXTransformerFactory saxTFactory = ((SAXTransformerFactory)transFact);
-            StreamSource ss = new StreamSource(xsltFile);
-            transformerHandler = saxTFactory.newTransformerHandler(ss);
-            transformerHandler.setResult(result);
-        } catch (TransformerConfigurationException t) {
-            throw new FOPException(t);
-        }
-    }
-
-    /**
-     * This is part of a two phase construction. Call this, then call
-     * initResult.
-     *
-     * @param xsltFile
-     *            for transform
-     * @throws FOPException
-     *             for general errors
-     */
-    public TransformerNode(Source xsltFile) throws FOPException {
-        try {
-            TransformerFactory transFact = TransformerFactory.newInstance();
-            SAXTransformerFactory saxTFactory = ((SAXTransformerFactory)transFact);
-            transformerHandler = saxTFactory.newTransformerHandler(xsltFile);
-        } catch (TransformerConfigurationException t) {
-            throw new FOPException(t);
-        }
-    }
 
     /**
      * This is part of a two phase construction. Call this, then call
@@ -142,81 +73,59 @@ class TransformerNode extends DefaultHandler {
     /******************** start of ContentHandler ***************************/
     /** {@inheritDoc} */
     public void setDocumentLocator(Locator locator) {
-        if (transformerHandler != null) {
-            transformerHandler.setDocumentLocator(locator);
-        }
+        transformerHandler.setDocumentLocator(locator);
     }
 
     /** {@inheritDoc} */
     public void startDocument() throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.startDocument();
-        }
+        transformerHandler.startDocument();
     }
 
     /** {@inheritDoc} */
     public void endDocument() throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.endDocument();
-        }
+        transformerHandler.endDocument();
     }
 
     /** {@inheritDoc} */
     public void processingInstruction(String target, String data) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.processingInstruction(target, data);
-        }
+        transformerHandler.processingInstruction(target, data);
     }
 
     /** {@inheritDoc} */
     public void startElement(String uri, String local, String raw, Attributes attrs)
             throws SAXException {
         AttributesImpl ai = new AttributesImpl(attrs);
-        if (transformerHandler != null) {
-            transformerHandler.startElement(uri, local, raw, ai);
-        }
+        transformerHandler.startElement(uri, local, raw, ai);
     }
 
     /** {@inheritDoc} */
     public void characters(char[] ch, int start, int length) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.characters(ch, start, length);
-        }
+        transformerHandler.characters(ch, start, length);
     }
 
     /** {@inheritDoc} */
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.ignorableWhitespace(ch, start, length);
-        }
+        transformerHandler.ignorableWhitespace(ch, start, length);
     }
 
     /** {@inheritDoc} */
     public void endElement(String uri, String local, String raw) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.endElement(uri, local, raw);
-        }
+        transformerHandler.endElement(uri, local, raw);
     }
 
     /** {@inheritDoc} */
     public void skippedEntity(String string) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.skippedEntity(string);
-        }
+        transformerHandler.skippedEntity(string);
     }
 
     /** {@inheritDoc} */
     public void startPrefixMapping(String string, String string1) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.startPrefixMapping(string, string1);
-        }
+        transformerHandler.startPrefixMapping(string, string1);
     }
 
     /** {@inheritDoc} */
     public void endPrefixMapping(String string) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.endPrefixMapping(string);
-        }
+        transformerHandler.endPrefixMapping(string);
     }
 
     /***************************** LexicalHandlerImpl **************************/
@@ -231,9 +140,7 @@ class TransformerNode extends DefaultHandler {
      *             - if parser fails
      */
     public void startDTD(String name, String pid, String lid) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.startDTD(name, pid, lid);
-        }
+        transformerHandler.startDTD(name, pid, lid);
     }
 
     /**
@@ -243,9 +150,7 @@ class TransformerNode extends DefaultHandler {
      *             - if parser fails
      */
     public void endDTD() throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.endDTD();
-        }
+        transformerHandler.endDTD();
     }
 
     /**
@@ -257,9 +162,7 @@ class TransformerNode extends DefaultHandler {
      *             - if parser fails
      */
     public void startEntity(String string) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.startEntity(string);
-        }
+        transformerHandler.startEntity(string);
     }
 
     /**
@@ -271,9 +174,7 @@ class TransformerNode extends DefaultHandler {
      *             - if paser fails
      */
     public void endEntity(String string) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.endEntity(string);
-        }
+        transformerHandler.endEntity(string);
     }
 
     /**
@@ -283,9 +184,7 @@ class TransformerNode extends DefaultHandler {
      *             - parser fails
      */
     public void startCDATA() throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.startCDATA();
-        }
+        transformerHandler.startCDATA();
     }
 
     /**
@@ -295,9 +194,7 @@ class TransformerNode extends DefaultHandler {
      *             - if paser fails
      */
     public void endCDATA() throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.endCDATA();
-        }
+        transformerHandler.endCDATA();
     }
 
     /**
@@ -312,9 +209,7 @@ class TransformerNode extends DefaultHandler {
      *             - if paser fails
      */
     public void comment(char[] charArray, int int1, int int2) throws SAXException {
-        if (transformerHandler != null) {
-            transformerHandler.comment(charArray, int1, int2);
-        }
+        transformerHandler.comment(charArray, int1, int2);
     }
 
     /******************** End of Lexical Handler ***********************/

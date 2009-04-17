@@ -36,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.Version;
+import org.apache.fop.accessibility.AccessibilityUtil;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -333,7 +334,7 @@ public class CommandLineOptions {
             } else if (args[i].equals("-if")) {
                 i = i + parseIntermediateFormatOption(args, i);
             } else if (args[i].equals("-a")) {
-                this.renderingOptions.put("accessibility", Boolean.TRUE);
+                this.renderingOptions.put(AccessibilityUtil.ACCESSIBILITY, Boolean.TRUE);
             } else if (args[i].equals("-v")) {
                 printVersion();
                 return false;

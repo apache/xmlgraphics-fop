@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.pdf;
 
+
 /**
  * Constants used for configuring PDF output.
  */
@@ -49,6 +50,4 @@ public interface PDFConfigurationConstants {
      * PDF/X profile is active).
      */
     String KEY_DISABLE_SRGB_COLORSPACE = "disable-srgb-colorspace";
-    /** PDF Accessibility */
-    String ACCESSIBLITY = "accessibility";
 }
