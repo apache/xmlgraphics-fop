@@ -37,6 +37,7 @@ import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
+import org.apache.fop.accessibility.AccessibilityUtil;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAMode;
@@ -109,7 +110,7 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
 
     private void initialize() {
         PDFEncryptionParams params
-        = (PDFEncryptionParams)userAgent.getRendererOptions().get(ENCRYPTION_PARAMS);
+            = (PDFEncryptionParams)userAgent.getRendererOptions().get(ENCRYPTION_PARAMS);
         if (params != null) {
             this.encryptionParams = params; //overwrite if available
         }
@@ -160,6 +161,10 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         String s = (String)userAgent.getRendererOptions().get(PDF_A_MODE);
         if (s != null) {
             this.pdfAMode = PDFAMode.valueOf(s);
+        }
+        if (this.pdfAMode.isPDFA1LevelA()) {
+            //Enable accessibility if PDF/A-1a is enabled because it requires tagged PDF.
+            userAgent.getRendererOptions().put(AccessibilityUtil.ACCESSIBILITY, Boolean.TRUE);
         }
         s = (String)userAgent.getRendererOptions().get(PDF_X_MODE);
         if (s != null) {

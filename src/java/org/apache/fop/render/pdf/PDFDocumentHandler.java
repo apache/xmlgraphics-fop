@@ -306,8 +306,15 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         if (getUserAgent().isAccessibilityEnabled()) {
             try {
                 if (this.pdfDoc.getRoot().getLanguage() == null) {
-                    //No language has been set on the first page-sequence, so fall back to "en".
-                    this.pdfDoc.getRoot().setLanguage("en");
+                    String fallbackLanguage;
+                    if (this.pdfDoc.getProfile().getPDFAMode().isPDFA1LevelA()) {
+                        //According to Annex B of ISO-19005-1:2005(E), section B.2
+                        fallbackLanguage = "x-unknown";
+                    } else {
+                        //No language has been set on the first page-sequence, so fall back to "en".
+                        fallbackLanguage = "en";
+                    }
+                    this.pdfDoc.getRoot().setLanguage(fallbackLanguage);
                 }
 
                 if (reducedFOTree == null) {
