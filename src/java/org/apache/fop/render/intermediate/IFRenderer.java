@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
@@ -493,6 +494,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         try {
             if (this.inPageSequence) {
                 documentHandler.endPageSequence();
+                documentHandler.getContext().setLanguage(null);
             } else {
                 if (this.documentMetadata == null) {
                     this.documentMetadata = createDefaultDocumentMetadata();
@@ -502,12 +504,24 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 this.inPageSequence = true;
             }
             establishForeignAttributes(pageSequence.getForeignAttributes());
+            documentHandler.getContext().setLanguage(toLocale(pageSequence));
             documentHandler.startPageSequence(null);
             resetForeignAttributes();
             processExtensionAttachments(pageSequence);
         } catch (IFException e) {
             handleIFException(e);
         }
+    }
+
+    private Locale toLocale(PageSequence pageSequence) {
+        if (pageSequence.getLanguage() != null) {
+            if (pageSequence.getCountry() != null) {
+                return new Locale(pageSequence.getLanguage(), pageSequence.getCountry());
+            } else {
+                return new Locale(pageSequence.getLanguage());
+            }
+        }
+        return null;
     }
 
     private Metadata createDefaultDocumentMetadata() {

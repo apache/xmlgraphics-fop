@@ -20,6 +20,7 @@
 package org.apache.fop.render.intermediate;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.xmlgraphics.util.QName;
@@ -42,6 +43,8 @@ public class IFContext {
 
     /** foreign attributes: Map<QName, Object> */
     private Map foreignAttributes = Collections.EMPTY_MAP;
+
+    private Locale language;
 
     private String structurePointer;
 
@@ -108,6 +111,22 @@ public class IFContext {
      */
     public void resetForeignAttributes() {
         setForeignAttributes(null);
+    }
+
+    /**
+     * Sets the currently applicable language.
+     * @param lang the language
+     */
+    public void setLanguage(Locale lang) {
+        this.language = lang;
+    }
+
+    /**
+     * Returns the currently applicable language.
+     * @return the language (or null if the language is undefined)
+     */
+    public Locale getLanguage() {
+        return this.language;
     }
 
     /**

@@ -85,6 +85,7 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.ConversionUtils;
 import org.apache.fop.util.DefaultErrorListener;
+import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -1134,7 +1135,7 @@ public class AreaTreeParser {
             for (int i = 0, c = atts.getLength(); i < c; i++) {
                 String ns = atts.getURI(i);
                 if (ns.length() > 0) {
-                    if ("http://www.w3.org/2000/xmlns/".equals(ns)) {
+                    if (XMLConstants.XMLNS_NAMESPACE_URI.equals(ns)) {
                         continue;
                     }
                     QName qname = new QName(ns, atts.getQName(i));

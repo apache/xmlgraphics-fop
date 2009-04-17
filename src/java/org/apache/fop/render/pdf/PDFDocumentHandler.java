@@ -70,6 +70,7 @@ import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * {@code IFDocumentHandler} implementation that produces PDF.
@@ -82,7 +83,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** the following variables are used for accessibility */
     private int pageSequenceCounter;
     private DocumentBuilder parser = null;
-    private Document doc = null;
+    private Document reducedFOTree = null;
     private Map structElemType = new HashMap();
     private boolean accessEnabled = false;
     private int parentTreeKey = -1;
@@ -226,10 +227,6 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 this.pdfDoc.addTrailerObject(structElemDocument);
                 structTreeRoot.addKid(structElemDocument);
 
-                //TODO: make document language variable, see note on wiki page PDF Accessibility
-                //TODO:                and follow-up emails on fop-dev
-                this.pdfDoc.getRoot().setLanguage("en");
-
                 parentTree = new PDFParentTree();
                 pageSequenceCounter = 0;
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -271,7 +268,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 getStructTreeRoot().addParentTree(parentTree);
                 pdfDoc.outputTrailer(this.outputStream);
                 parser = null;
-                doc = null;
+                reducedFOTree = null;
                 structElemType = null;
                 parentTree = null;
                 structTreeMap = null;
@@ -298,17 +295,31 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void startPageSequence(String id) throws IFException {
-        //TODO page sequence title, country and language
+        //TODO page sequence title
+
+        if (this.pdfDoc.getRoot().getLanguage() == null
+                && getContext().getLanguage() != null) {
+            //No document-level language set, so we use the first page-sequence's language
+            this.pdfDoc.getRoot().setLanguage(XMLUtil.toRFC3066(getContext().getLanguage()));
+        }
 
         if (getUserAgent().isAccessibilityEnabled()) {
             try {
-                if (doc == null) {
-                    doc = parser.parse(
+                if (this.pdfDoc.getRoot().getLanguage() == null) {
+                    //No language has been set on the first page-sequence, so fall back to "en".
+                    this.pdfDoc.getRoot().setLanguage("en");
+                }
+
+                if (reducedFOTree == null) {
+                    reducedFOTree = parser.parse(
                             new ByteArrayInputStream(this.getUserAgent().getReducedFOTree()));
                 }
                 PDFStructElem parent = (PDFStructElem)getStructTreeRoot().getFirstChild();
                 PDFStructElem structElemPart = new PDFStructElem(parent,
                         FOToPDFRoleMap.mapFormattingObject("page-sequence", parent));
+                if (getContext().getLanguage() != null) {
+                    structElemPart.setLanguage(getContext().getLanguage());
+                }
                 this.pdfDoc.assignObjectNumber(structElemPart);
                 this.pdfDoc.addTrailerObject(structElemPart);
                 parent.addKid(structElemPart);
@@ -320,7 +331,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                         "http://www.w3.org/1999/XSL/Format");
                 xpath.setNamespaceContext(namespaceContext);
 
-                NodeList nodes = (NodeList) xpath.evaluate(xpathExpr, doc,
+                NodeList nodes = (NodeList) xpath.evaluate(xpathExpr, reducedFOTree,
                         XPathConstants.NODESET);
 
                 for (int i = 0, n = nodes.getLength(); i < n; i++) {

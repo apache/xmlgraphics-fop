@@ -25,6 +25,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -72,6 +73,15 @@ public class IFParser implements IFConstants {
 
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+
+    private static Set handledNamespaces = new java.util.HashSet();
+
+    static {
+        handledNamespaces.add(XMLNS_NAMESPACE_URI);
+        handledNamespaces.add(XML_NAMESPACE);
+        handledNamespaces.add(NAMESPACE);
+        handledNamespaces.add(XLINK_NAMESPACE);
+    }
 
     /**
      * Parses an intermediate file and paints it.
@@ -357,6 +367,11 @@ public class IFParser implements IFConstants {
 
             public void startElement(Attributes attributes) throws IFException {
                 String id = attributes.getValue("id");
+                String xmllang = attributes.getValue(XML_NAMESPACE, "lang");
+                if (xmllang != null) {
+                    documentHandler.getContext().setLanguage(
+                            XMLUtil.convertRFC3066ToLocale(xmllang));
+                }
                 Map foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
                 documentHandler.startPageSequence(id);
@@ -365,6 +380,7 @@ public class IFParser implements IFConstants {
 
             public void endElement() throws IFException {
                 documentHandler.endPageSequence();
+                documentHandler.getContext().setLanguage(null);
             }
 
         }
@@ -643,11 +659,7 @@ public class IFParser implements IFConstants {
             for (int i = 0, c = atts.getLength(); i < c; i++) {
                 String ns = atts.getURI(i);
                 if (ns.length() > 0) {
-                    if ("http://www.w3.org/2000/xmlns/".equals(ns)) {
-                        continue;
-                    } else if (NAMESPACE.equals(ns)) {
-                        continue;
-                    } else if (XLINK_NAMESPACE.equals(ns)) {
+                    if (handledNamespaces.contains(ns)) {
                         continue;
                     }
                     if (foreignAttributes == null) {

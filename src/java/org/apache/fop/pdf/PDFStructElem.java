@@ -19,6 +19,10 @@
 
 package org.apache.fop.pdf;
 
+import java.util.Locale;
+
+import org.apache.fop.util.XMLUtil;
+
 /**
  * Class representing a PDF Structure Element.
  */
@@ -143,5 +147,30 @@ public class PDFStructElem extends PDFDictionary {
      */
     public PDFName getStructureType() {
         return (PDFName)get("S");
+    }
+
+    /**
+     * Sets the language of this structure element.
+     * @param language the language (as defined in the section about
+     *                          "Natural Language Specification")
+     */
+    public void setLanguage(String language) {
+        put("Lang", language);
+    }
+
+    /**
+     * Sets the language of this structure element.
+     * @param language the language
+     */
+    public void setLanguage(Locale language) {
+        setLanguage(XMLUtil.toRFC3066(language));
+    }
+
+    /**
+     * Returns the language of this structure element.
+     * @return the language (or null if no language was specified)
+     */
+    public String getLanguage() {
+        return (String)get("Lang");
     }
 }
