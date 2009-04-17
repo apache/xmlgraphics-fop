@@ -36,48 +36,56 @@ public class FOToPDFRoleMap {
     private static final PDFName THEAD = new PDFName("THead");
 
     static {
-        addSimpleMapping("block", new PDFName("P"));
-        addSimpleMapping("block-container", new PDFName("Div"));
+        addMapping("block",                     "P");
+        addMapping("block-container",           "Div");
 
         PDFName st = new PDFName("Span");
-        addSimpleMapping("inline", st);
-        addSimpleMapping("wrapper", st);
-        addSimpleMapping("character", st);
+        addMapping("inline",                    st);
+        addMapping("wrapper",                   st);
+        addMapping("character",                 st);
 
-        addSimpleMapping("root", new PDFName("Document"));
-        addSimpleMapping("page-sequence", new PDFName("Part"));
-        addSimpleMapping("flow", new PDFName("Sect"));
-        addSimpleMapping("static-content", new PDFName("Sect"));
+        addMapping("root",                      "Document");
+        addMapping("page-sequence",             "Part");
+        addMapping("flow",                      "Sect");
+        addMapping("static-content",            "Sect");
 
         st = new PDFName("Quote");
-        addSimpleMapping("page-number", st);
-        addSimpleMapping("page-number-citation", st);
-        addSimpleMapping("page-number-citation-last", st);
+        addMapping("page-number",               st);
+        addMapping("page-number-citation",      st);
+        addMapping("page-number-citation-last", st);
 
         st = new PDFName("Figure");
-        addSimpleMapping("external-graphic", st);
-        addSimpleMapping("instream-foreign-object", st);
+        addMapping("external-graphic",          st);
+        addMapping("instream-foreign-object",   st);
 
-        addSimpleMapping("table", new PDFName("Table"));
-        addSimpleMapping("table-body", new PDFName("TBody"));
-        addSimpleMapping("table-header", THEAD);
-        addSimpleMapping("table-footer", TFOOT);
-        addSimpleMapping("table-row", new PDFName("TR"));
-        STANDARD_MAPPINGS.put("table-cell", new TableCellMapper());
+        addMapping("table",                     "Table");
+        addMapping("table-body",                "TBody");
+        addMapping("table-header",              THEAD);
+        addMapping("table-footer",              TFOOT);
+        addMapping("table-row",                 "TR");
+        addMapping("table-cell",                new TableCellMapper());
 
-        addSimpleMapping("list-block", new PDFName("L"));
-        addSimpleMapping("list-item", new PDFName("LI"));
-        addSimpleMapping("list-item-label", new PDFName("Lbl"));
-        addSimpleMapping("list-item-body", new PDFName("LBody"));
+        addMapping("list-block",                "L");
+        addMapping("list-item",                 "LI");
+        addMapping("list-item-label",           "Lbl");
+        addMapping("list-item-body",            "LBody");
 
-        addSimpleMapping("basic-link", new PDFName("Link"));
-        addSimpleMapping("footnote", new PDFName("Note"));
-        addSimpleMapping("footnote-body", new PDFName("Sect"));
-        addSimpleMapping("marker", new PDFName("Private"));
+        addMapping("basic-link",                "Link");
+        addMapping("footnote",                  "Note");
+        addMapping("footnote-body",             "Sect");
+        addMapping("marker",                    "Private");
     }
 
-    private static void addSimpleMapping(String fo, PDFName structureType) {
-        STANDARD_MAPPINGS.put(fo, new SimpleMapper(structureType));
+    private static void addMapping(String fo, String pdfName) {
+        addMapping(fo, new PDFName(pdfName));
+    }
+
+    private static void addMapping(String fo, PDFName pdfName) {
+        addMapping(fo, new SimpleMapper(pdfName));
+    }
+
+    private static void addMapping(String fo, Mapper mapper) {
+        STANDARD_MAPPINGS.put(fo, mapper);
     }
 
     /**
