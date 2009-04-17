@@ -220,7 +220,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 log.info("Accessibility is enabled");
                 PDFStructTreeRoot structTreeRoot = this.pdfDoc.getFactory().makeStructTreeRoot();
                 this.pdfDoc.getRoot().setStructTreeRoot(structTreeRoot);
-                PDFStructElem structElemDocument = new PDFStructElem("root", structTreeRoot);
+                PDFStructElem structElemDocument = new PDFStructElem(structTreeRoot,
+                        FOToPDFRoleMap.mapFormattingObject("root", structTreeRoot));
                 this.pdfDoc.assignObjectNumber(structElemDocument);
                 this.pdfDoc.addTrailerObject(structElemDocument);
                 structTreeRoot.addKid(structElemDocument);
@@ -306,7 +307,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                             new ByteArrayInputStream(this.getUserAgent().getReducedFOTree()));
                 }
                 PDFStructElem parent = (PDFStructElem)getStructTreeRoot().getFirstChild();
-                PDFStructElem structElemPart = new PDFStructElem("page-sequence", parent);
+                PDFStructElem structElemPart = new PDFStructElem(parent,
+                        FOToPDFRoleMap.mapFormattingObject("page-sequence", parent));
                 this.pdfDoc.assignObjectNumber(structElemPart);
                 this.pdfDoc.addTrailerObject(structElemPart);
                 parent.addKid(structElemPart);
@@ -325,8 +327,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                     Node node = nodes.item(i);
                     if (node.getNodeName().equals("fo:flow")
                             || node.getNodeName().equals("fo:static-content")) {
-                        PDFStructElem structElemSect = new PDFStructElem(
-                                node.getLocalName(), structElemPart);
+                        PDFStructElem structElemSect = new PDFStructElem(structElemPart,
+                                FOToPDFRoleMap.mapFormattingObject(node.getLocalName(),
+                                        structElemPart));
                         this.pdfDoc.assignObjectNumber(structElemSect);
                         this.pdfDoc.addTrailerObject(structElemSect);
                         structElemPart.addKid(structElemSect);
@@ -590,7 +593,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             ptr = "";
         }
         String s = me.getLocalName();
-        PDFStructElem structElem = new PDFStructElem(s, parent);
+        PDFStructElem structElem = new PDFStructElem(parent,
+                FOToPDFRoleMap.mapFormattingObject(s, parent));
         this.pdfDoc.assignObjectNumber(structElem);
         this.pdfDoc.addTrailerObject(structElem);
         if (depth == 1) {

@@ -25,81 +25,21 @@ package org.apache.fop.pdf;
 public class PDFStructElem extends PDFDictionary {
 
     private PDFObject parentObject = null;
-    private String source = "";
     private boolean level1 = false;
 
     /**
      * Create the /StructTreeRoot dictionary
-     * @param fo passed in fo object
      * @param parent Parent of this PDFStructElem
+     * @param structureType the structure type for the element
      */
-    public PDFStructElem(String fo, PDFObject parent) {
+    public PDFStructElem(PDFObject parent, PDFName structureType) {
         super();
         if (parent instanceof PDFStructElem) {
             parentObject = (PDFStructElem) parent;
         }
         put("Type", new PDFName("StructElem"));
-        source = fo;
-        //TODO Move this into the render/pdf package. The PDF library shall not contain FO knowledge
-        if ("block".equals(fo)) {
-            put("S", new PDFName("P"));
-        } else if ("inline".equals(fo) || "wrapper".equals(fo) || "character".equals(fo)) {
-            put("S", new PDFName("Span"));
-        } else if ("table-cell".equals(fo)) {
-            PDFStructElem grandParent = (PDFStructElem)
-                ((PDFStructElem)parent).getParentStructElem();
-            String s = grandParent.getSource();
-            if ("table-header".equals(s)) {
-                put("S", new PDFName("TH"));
-            } else {
-                put("S", new PDFName("TD"));
-            }
-        } else if ("table-row".equals(fo)) {
-            put("S", new PDFName("TR"));
-        } else if ("root".equals(fo)) {
-            put("S", new PDFName("Document"));
-        } else if ("page-sequence".equals(fo)) {
-            put("S", new PDFName("Part"));
-        } else if ("flow".equals(fo) || "static-content".equals(fo)) {
-            put("S", new PDFName("Sect"));
-        }   else if ("page-number".equals(fo) || "page-number-citation".equals(fo)
-                || "page-number-citation-last".equals(fo)) {
-            put("S", new PDFName("Quote"));
-        } else if ("external-graphic".equals(fo) || "instream-foreign-object".equals(fo)) {
-            put("S", new PDFName("Figure"));
-        } else if ("table".equals(fo)) {
-            put("S", new PDFName("Table"));
-        } else if ("table-body".equals(fo)) {
-            put("S", new PDFName("TBody"));
-        } else if ("table-header".equals(fo)) {
-            put("S", new PDFName("THead"));
-        } else if ("table-footer".equals(fo)) {
-            put("S", new PDFName("TFoot"));
-        }  else if ("list-block".equals(fo)) {
-            put("S", new PDFName("L"));
-        } else if ("list-item".equals(fo)) {
-            put("S", new PDFName("LI"));
-        } else if ("list-item-label".equals(fo)) {
-            put("S", new PDFName("Lbl"));
-        } else if ("list-item-body".equals(fo)) {
-            put("S", new PDFName("LBody"));
-        } else if ("block-container".equals(fo)) {
-            put("S", new PDFName("Div"));
-        } else if ("basic-link".equals(fo)) {
-            put("S", new PDFName("Link"));
-        } else if ("footnote".equals(fo)) {
-            put("S", new PDFName("Note"));
-        } else if ("footnote-body".equals(fo)) {
-            put("S", new PDFName("Sect"));
-        } else if ("marker".equals(fo)) {
-            put("S", new PDFName("Private"));
-        }  else {
-            log.error("Accessibility: PDFStructElem constructor is missing: " + fo);
-        }
+        setStructureType(structureType);
         setParent(parent);
-        if (!"external-graphic".equals(fo) && !"instream-foreign-object".equals(fo)) {
-            put("K", new PDFArray());
-        }
     }
 
     /**
@@ -138,14 +78,6 @@ public class PDFStructElem extends PDFDictionary {
     }
 
     /**
-     * Get the source of this StructElem
-     * @return the source
-     */
-    public String getSource() {
-        return source;
-    }
-
-    /**
      * The kids of this StructElem
      * @return the kids
      */
@@ -158,18 +90,23 @@ public class PDFStructElem extends PDFDictionary {
      * @param kid to be added
      */
     public void addKid(PDFObject kid) {
-        getKids().add(kid);
+        PDFArray kids = getKids();
+        if (kids == null) {
+            kids = new PDFArray();
+            put("K", kids);
+        }
+        kids.add(kid);
     }
 
     /**
-     * Add a kid, but only if it does not already exist
+     * Add a kid, but only if it does not already exist.
      * @param kid to be added
      * @return true if kid did not already exist
      */
     public boolean addUniqueKid(PDFObject kid) {
         PDFArray mArray = getKids();
-        if (!mArray.contains(kid)) {
-            getKids().add(kid);
+        if (mArray == null || !mArray.contains(kid)) {
+            addKid(kid);
             return true;
         } else {
             return false;
@@ -177,8 +114,7 @@ public class PDFStructElem extends PDFDictionary {
     }
 
     /**
-     * Add kid referenced through mcid integer
-     * used fo:external-graphic
+     * Add kid referenced through mcid integer. Used for images.
      * @param mcid of this kid
      */
     public void addMCIDKid(int mcid) {
@@ -193,4 +129,19 @@ public class PDFStructElem extends PDFDictionary {
         put("Pg", (PDFObject) pageObject);
     }
 
+    /**
+     * Sets the structure type (the "S" entry).
+     * @param type the structure type
+     */
+    public void setStructureType(PDFName type) {
+        put("S", type);
+    }
+
+    /**
+     * Returns the structure type of this structure element.
+     * @return the structure type
+     */
+    public PDFName getStructureType() {
+        return (PDFName)get("S");
+    }
 }
