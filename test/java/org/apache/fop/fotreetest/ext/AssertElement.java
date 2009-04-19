@@ -41,7 +41,10 @@ import org.xml.sax.Locator;
 public class AssertElement extends TestObj {
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Creates a new AssertElement instance that is a child
+     * of the given {@link FONode}
+     *
+     * @param   parent  the parent {@link FONode}
      */
     public AssertElement(FONode parent) {
         super(parent);
@@ -58,6 +61,7 @@ public class AssertElement extends TestObj {
 
         ResultCollector collector = ResultCollector.getInstance();
         String propName = attlist.getValue("property");
+        String expected = attlist.getValue("expected");        
         String component = null;
         int dotIndex = propName.indexOf('.');
         if (dotIndex >= 0) {
@@ -66,8 +70,7 @@ public class AssertElement extends TestObj {
         }
         int propID = FOPropertyMapping.getPropertyId(propName);
         if (propID < 0) {
-            collector.notifyException(new IllegalArgumentException(
-                    "Property not found: " + propName));
+            collector.notifyAssertionFailure("Property not found: " + propName);
         } else {
             Property prop;
             prop = propertyList.getParentPropertyList().get(propID);
@@ -94,21 +97,20 @@ public class AssertElement extends TestObj {
             }
             String s;
             if (prop instanceof PercentLength) {
-                s = ((PercentLength)prop).getString();
+                s = prop.getString();
             } else {
                 s = String.valueOf(prop);
             }
-            String expected = attlist.getValue("expected");
             if (!expected.equals(s)) {
-                collector.notifyException(
-                    new IllegalStateException(locator.getSystemId()
+                collector.notifyAssertionFailure(
+                    locator.getSystemId()
                         + "\nProperty '" + propName
                         + "' expected to evaluate to '" + expected
                         + "' but got '" + s
                         + "'\n(test:assert in "
                         + propertyList.getParentFObj().getName()
                         + " at line #" + locator.getLineNumber()
-                        + ", column #" + locator.getColumnNumber() + ")\n"));
+                        + ", column #" + locator.getColumnNumber() + ")\n");
             }
         }
 
@@ -120,4 +122,3 @@ public class AssertElement extends TestObj {
     }
 
 }
-
