@@ -19,6 +19,12 @@
 
 package org.apache.fop.fo.expr;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
@@ -30,10 +36,6 @@ import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.StringProperty;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Class to parse XSL-FO property expressions.
@@ -312,10 +314,11 @@ public final class PropertyParser extends PropertyTokenizer {
                 if ("px".equals(unitPart)) {
                     //pass the ratio between target-resolution and
                     //the default resolution of 72dpi
+                    float resolution = propInfo.getPropertyList().getFObj()
+                            .getUserAgent().getSourceResolution();
                     prop = FixedLength.getInstance(
                             numPart, unitPart,
-                            propInfo.getPropertyList().getFObj()
-                                    .getUserAgent().getTargetResolution() / 72.0f);
+                             UnitConv.IN2PT / resolution);
                 } else {
                     //use default resolution of 72dpi
                     prop = FixedLength.getInstance(numPart, unitPart);
