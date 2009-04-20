@@ -26,9 +26,11 @@ import org.apache.batik.bridge.Bridge;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgent;
-import org.apache.fop.fonts.FontInfo;
+
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+
+import org.apache.fop.fonts.FontInfo;
 
 /**
  * A FOP base implementation of a Batik BridgeContext.
@@ -49,8 +51,6 @@ public abstract class AbstractFOPBridgeContext extends BridgeContext {
      * @param loader the Document Loader to use for referenced documents.
      * @param fontInfo the font list for the text painter, may be null
      *                 in which case text is painted as shapes
-     * @param linkTransform AffineTransform to properly place links,
-     *                      may be null
      * @param imageManager an image manager
      * @param imageSessionContext an image session context
      * @param linkTransform AffineTransform to properly place links,
