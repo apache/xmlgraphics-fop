@@ -707,8 +707,13 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         if (s == null) {
             return;
         }
-        preparePainting();
         PathIterator iter = s.getPathIterator(IDENTITY_TRANSFORM);
+        if (iter.isDone()) {
+            // no segments available. Not worth doing anything
+            return;
+        }
+        preparePainting();
+
         processPathIterator(iter);
         // clip area
         currentStream.write("W\n");

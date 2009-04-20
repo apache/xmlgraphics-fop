@@ -58,7 +58,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Renderers" dev="JM" type="add">
+      <action context="Renderers" dev="JM" type="update" fixes-bug="47031" due-to="Francois Fernandes">
+        PDFGraphics2D.writeClip doesn't generate a clip command anymore when the clip path
+        is empty. 
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="47000">
         Added a custom text painter for rendering SVG text using text operators when rendering
         to PostScript or EPS. Text is no longer painted as shapes, thus creating much smaller files. 
       </action>
