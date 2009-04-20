@@ -88,6 +88,15 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
      */
     protected abstract AbstractPSDocumentGraphics2D createDocumentGraphics2D();
 
+    /** {@inheritDoc} */
+    protected boolean getAutoFontsDefault() {
+        //Currently set to false because auto-fonts requires a lot of memory in the PostScript
+        //case: All fonts (even the unsupported TTF fonts) need to be loaded and TrueType loading
+        //is currently very memory-intensive. At default JVM memory settings, this woudl result
+        //in OutOfMemoryErrors otherwise.
+        return false;
+    }
+
     /**
      * Transcodes the specified Document as an image in the specified output.
      *

@@ -135,6 +135,14 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
     }
 
     /**
+     * Returns the default value for the KEY_AUTO_FONTS value.
+     * @return the default value
+     */
+    protected boolean getAutoFontsDefault() {
+        return true;
+    }
+
+    /**
      * Returns the effective configuration for the transcoder.
      * @return the effective configuration
      */
@@ -142,7 +150,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
         Configuration effCfg = this.cfg;
         if (effCfg == null) {
             //By default, enable font auto-detection if no cfg is given
-            boolean autoFonts = true;
+            boolean autoFonts = getAutoFontsDefault();
             if (hints.containsKey(KEY_AUTO_FONTS)) {
                 autoFonts = ((Boolean)hints.get(KEY_AUTO_FONTS)).booleanValue();
             }
