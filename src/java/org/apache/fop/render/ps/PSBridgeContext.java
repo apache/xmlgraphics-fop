@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.svg;
+package org.apache.fop.render.ps;
 
 import java.awt.geom.AffineTransform;
 
@@ -31,11 +31,12 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.svg.AbstractFOPBridgeContext;
 
 /**
- * BridgeContext which registers the custom bridges for PDF output.
+ * BridgeContext which registers the custom bridges for PostScript output.
  */
-public class PDFBridgeContext extends AbstractFOPBridgeContext {
+public class PSBridgeContext extends AbstractFOPBridgeContext {
 
     /**
      * Constructs a new bridge context.
@@ -48,7 +49,7 @@ public class PDFBridgeContext extends AbstractFOPBridgeContext {
      * @param linkTransform AffineTransform to properly place links,
      *                      may be null
      */
-    public PDFBridgeContext(UserAgent userAgent, DocumentLoader documentLoader,
+    public PSBridgeContext(UserAgent userAgent, DocumentLoader documentLoader,
             FontInfo fontInfo, ImageManager imageManager,
             ImageSessionContext imageSessionContext,
             AffineTransform linkTransform) {
@@ -64,25 +65,9 @@ public class PDFBridgeContext extends AbstractFOPBridgeContext {
      * @param imageManager an image manager
      * @param imageSessionContext an image session context
      */
-    public PDFBridgeContext(UserAgent userAgent, FontInfo fontInfo,
+    public PSBridgeContext(UserAgent userAgent, FontInfo fontInfo,
             ImageManager imageManager, ImageSessionContext imageSessionContext) {
         super(userAgent, fontInfo, imageManager, imageSessionContext);
-    }
-
-    /**
-     * Constructs a new bridge context.
-     * @param userAgent the user agent
-     * @param fontInfo the font list for the text painter, may be null
-     *                 in which case text is painted as shapes
-     * @param imageManager an image manager
-     * @param imageSessionContext an image session context
-     * @param linkTransform AffineTransform to properly place links,
-     *                      may be null
-     */
-    public PDFBridgeContext(SVGUserAgent userAgent, FontInfo fontInfo,
-            ImageManager imageManager, ImageSessionContext imageSessionContext,
-            AffineTransform linkTransform) {
-        super(userAgent, fontInfo, imageManager, imageSessionContext, linkTransform);
     }
 
     /** {@inheritDoc} */
@@ -90,43 +75,35 @@ public class PDFBridgeContext extends AbstractFOPBridgeContext {
         super.registerSVGBridges();
 
         if (fontInfo != null) {
-            TextPainter textPainter = new PDFTextPainter(fontInfo);
-            SVGTextElementBridge textElementBridge = new PDFTextElementBridge(textPainter);
+            TextPainter textPainter = new PSTextPainter(fontInfo);
+            SVGTextElementBridge textElementBridge = new PSTextElementBridge(textPainter);
             putBridge(textElementBridge);
 
             //Batik flow text extension (may not always be available)
             //putBridge(new PDFBatikFlowTextElementBridge(fontInfo);
             putElementBridgeConditional(
-                    "org.apache.fop.svg.PDFBatikFlowTextElementBridge",
+                    "org.apache.fop.render.ps.PSBatikFlowTextElementBridge",
                     "org.apache.batik.extension.svg.BatikFlowTextElementBridge");
 
             //SVG 1.2 flow text support
             //putBridge(new PDFSVG12TextElementBridge(fontInfo)); //-->Batik 1.7
             putElementBridgeConditional(
-                    "org.apache.fop.svg.PDFSVG12TextElementBridge",
+                    "org.apache.fop.render.ps.PSSVG12TextElementBridge",
                     "org.apache.batik.bridge.svg12.SVG12TextElementBridge");
 
             //putBridge(new PDFSVGFlowRootElementBridge(fontInfo));
             putElementBridgeConditional(
-                    "org.apache.fop.svg.PDFSVGFlowRootElementBridge",
+                    "org.apache.fop.render.ps.PSSVGFlowRootElementBridge",
                     "org.apache.batik.bridge.svg12.SVGFlowRootElementBridge");
         }
 
-        PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
-        if (linkTransform != null) {
-            pdfAElementBridge.setCurrentTransform(linkTransform);
-        } else {
-            pdfAElementBridge.setCurrentTransform(new AffineTransform());
-        }
-        putBridge(pdfAElementBridge);
-
-        putBridge(new PDFImageElementBridge());
+        //putBridge(new PSImageElementBridge()); //TODO uncomment when implemented
     }
 
     // Make sure any 'sub bridge contexts' also have our bridges.
     //TODO There's no matching method in the super-class here
     public BridgeContext createBridgeContext() {
-        return new PDFBridgeContext(getUserAgent(), getDocumentLoader(),
+        return new PSBridgeContext(getUserAgent(), getDocumentLoader(),
                                     fontInfo,
                                     getImageManager(),
                                     getImageSessionContext(),

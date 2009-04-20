@@ -19,6 +19,19 @@
 
 package org.apache.fop.svg;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.DOMImplementation;
+
+import org.xml.sax.EntityResolver;
+
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.avalon.framework.configuration.DefaultConfiguration;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
@@ -28,11 +41,16 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.keys.BooleanKey;
+import org.apache.batik.transcoder.keys.FloatKey;
+import org.apache.batik.util.ParsedURL;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
-import org.w3c.dom.DOMImplementation;
-import org.xml.sax.EntityResolver;
+
+import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 /**
  * This is the common base class of all of FOP's transcoders.
@@ -40,10 +58,23 @@ import org.xml.sax.EntityResolver;
 public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
 
     /**
+     * The key is used to specify the resolution for on-the-fly images generated
+     * due to complex effects like gradients and filters.
+     */
+    public static final TranscodingHints.Key KEY_DEVICE_RESOLUTION = new FloatKey();
+
+    /**
      * The key to specify whether to stroke text instead of using text
      * operations.
      */
     public static final TranscodingHints.Key KEY_STROKE_TEXT = new BooleanKey();
+
+    /**
+     * The key is used to specify whether the available fonts should be automatically
+     * detected. The alternative is to configure the transcoder manually using a configuration
+     * file.
+     */
+    public static final TranscodingHints.Key KEY_AUTO_FONTS = new BooleanKey();
 
     /** The value to turn on text stroking. */
     public static final Boolean VALUE_FORMAT_ON = Boolean.TRUE;
@@ -58,6 +89,9 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
 
     private Log logger;
     private EntityResolver resolver;
+    private Configuration cfg = null;
+    private ImageManager imageManager;
+    private ImageSessionContext imageSessionContext;
 
     /**
      * Constructs a new FOP-style transcoder.
@@ -80,7 +114,8 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
     }
 
     /**
-     * @param logger
+     * Sets the logger.
+     * @param logger the logger
      */
     public void setLogger(Log logger) {
         this.logger = logger;
@@ -92,6 +127,35 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
      */
     public void setEntityResolver(EntityResolver resolver) {
         this.resolver = resolver;
+    }
+
+    /** {@inheritDoc} */
+    public void configure(Configuration cfg) throws ConfigurationException {
+        this.cfg = cfg;
+    }
+
+    /**
+     * Returns the effective configuration for the transcoder.
+     * @return the effective configuration
+     */
+    protected Configuration getEffectiveConfiguration() {
+        Configuration effCfg = this.cfg;
+        if (effCfg == null) {
+            //By default, enable font auto-detection if no cfg is given
+            boolean autoFonts = true;
+            if (hints.containsKey(KEY_AUTO_FONTS)) {
+                autoFonts = ((Boolean)hints.get(KEY_AUTO_FONTS)).booleanValue();
+            }
+            if (autoFonts) {
+                DefaultConfiguration c = new DefaultConfiguration("cfg");
+                DefaultConfiguration fonts = new DefaultConfiguration("fonts");
+                c.addChild(fonts);
+                DefaultConfiguration autodetect = new DefaultConfiguration("auto-detect");
+                fonts.addChild(autodetect);
+                effCfg = c;
+            }
+        }
+        return effCfg;
     }
 
     /**
@@ -140,6 +204,71 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
             stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
         }
         return stroke;
+    }
+
+    /**
+     * Returns the device resolution that has been set up.
+     * @return the device resolution (in dpi)
+     */
+    protected float getDeviceResolution() {
+        if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
+            return ((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue();
+        } else {
+            return 72;
+        }
+    }
+
+    /**
+     * Returns the ImageManager to be used by the transcoder.
+     * @return the image manager
+     */
+    protected ImageManager getImageManager() {
+        return this.imageManager;
+    }
+
+    /**
+     * Returns the ImageSessionContext to be used by the transcoder.
+     * @return the image session context
+     */
+    protected ImageSessionContext getImageSessionContext() {
+        return this.imageSessionContext;
+    }
+
+    /**
+     * Sets up the image infrastructure (the image loading framework).
+     * @param baseURI the base URI of the current document
+     */
+    protected void setupImageInfrastructure(final String baseURI) {
+        final ImageContext imageContext = new ImageContext() {
+            public float getSourceResolution() {
+                return 25.4f / userAgent.getPixelUnitToMillimeter();
+            }
+        };
+        this.imageManager = new ImageManager(imageContext);
+        this.imageSessionContext = new AbstractImageSessionContext() {
+
+            public ImageContext getParentContext() {
+                return imageContext;
+            }
+
+            public float getTargetResolution() {
+                return getDeviceResolution();
+            }
+
+            public Source resolveURI(String uri) {
+                System.out.println("resolve " + uri);
+                try {
+                    ParsedURL url = new ParsedURL(baseURI, uri);
+                    InputStream in = url.openStream();
+                    StreamSource source = new StreamSource(in, url.toString());
+                    return source;
+                } catch (IOException ioe) {
+                    userAgent.displayError(ioe);
+                    return null;
+                }
+            }
+
+        };
     }
 
     // --------------------------------------------------------------------

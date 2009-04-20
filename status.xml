@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add">
+        Added a custom text painter for rendering SVG text using text operators when rendering
+        to PostScript or EPS. Text is no longer painted as shapes, thus creating much smaller files. 
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed a bug that left the PrintRenderer unconfigured even if a configuration was
         specified for "application/X-fop-print". 

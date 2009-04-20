@@ -28,20 +28,18 @@ import java.io.OutputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
 
-import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 
-import org.apache.xmlgraphics.java2d.TextHandler;
 import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
-import org.apache.xmlgraphics.ps.PSGenerator;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.svg.AbstractFOPTranscoder;
+import org.apache.fop.svg.PDFDocumentGraphics2DConfigurator;
 
 /**
  * This class enables to transcode an input to a PostScript document.
@@ -72,8 +70,10 @@ import org.apache.fop.svg.AbstractFOPTranscoder;
  */
 public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
 
-    private final   Configuration                cfg      = null;
+    /** the root Graphics2D instance for generating PostScript */
     protected AbstractPSDocumentGraphics2D graphics = null;
+
+    private FontInfo fontInfo;
 
     /**
      * Constructs a new <tt>AbstractPSTranscoder</tt>.
@@ -82,6 +82,10 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         super();
     }
 
+    /**
+     * Creates the root Graphics2D instance for generating PostScript.
+     * @return the root Graphics2D
+     */
     protected abstract AbstractPSDocumentGraphics2D createDocumentGraphics2D();
 
     /**
@@ -98,11 +102,13 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
 
         graphics = createDocumentGraphics2D();
         if (!isTextStroked()) {
-            FontInfo fontInfo = new FontInfo();
-            //TODO Do custom font configuration here somewhere/somehow
-            FontSetup.setup(fontInfo);
-            PSGenerator generator = graphics.getPSGenerator();
-            graphics.setCustomTextHandler(new NativeTextHandler(graphics, fontInfo));
+            try {
+                this.fontInfo = PDFDocumentGraphics2DConfigurator.createFontInfo(
+                        getEffectiveConfiguration());
+                graphics.setCustomTextHandler(new NativeTextHandler(graphics, fontInfo));
+            } catch (FOPException fe) {
+                throw new TranscoderException(fe);
+            }
         }
 
         super.transcode(document, uri, output);
@@ -146,21 +152,15 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
 
     /** {@inheritDoc} */
     protected BridgeContext createBridgeContext() {
-
-        BridgeContext ctx = new BridgeContext(userAgent);
-        if (!isTextStroked()) {
-            TextHandler handler = graphics.getCustomTextHandler();
-            if (handler instanceof NativeTextHandler) {
-                NativeTextHandler nativeTextHandler = (NativeTextHandler)handler;
-                PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
-                ctx.setTextPainter(textPainter);
-                ctx.putBridge(new PSTextElementBridge(textPainter));
-            }
-        }
-
-        //ctx.putBridge(new PSImageElementBridge());
-        return ctx;
+        //For compatibility with Batik 1.6
+        return createBridgeContext("1.x");
     }
 
+    /** {@inheritDoc} */
+    public BridgeContext createBridgeContext(String version) {
+        BridgeContext ctx = new PSBridgeContext(userAgent, (isTextStroked() ? null : fontInfo),
+                getImageManager(), getImageSessionContext());
+        return ctx;
+    }
 
 }

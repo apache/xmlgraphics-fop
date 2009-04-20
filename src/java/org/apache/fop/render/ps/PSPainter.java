@@ -350,7 +350,6 @@ public class PSPainter extends AbstractIFPainter {
             //TODO Opportunity for font caching if font state is more heavily used
             String fontKey = getFontInfo().getInternalFontKey(triplet);
             int sizeMillipoints = state.getFontSize();
-            float fontSize = sizeMillipoints / 1000f;
 
             // This assumes that *all* CIDFonts use a /ToUnicode mapping
             Typeface tf = getTypeface(fontKey);
@@ -360,9 +359,7 @@ public class PSPainter extends AbstractIFPainter {
             }
             Font font = getFontInfo().getFontInstance(triplet, sizeMillipoints);
 
-            PSResource res = this.documentHandler.getPSResourceForFontKey(fontKey);
-            generator.useFont("/" + res.getName(), fontSize);
-            generator.getResourceTracker().notifyResourceUsageOnPage(res);
+            useFont(fontKey, sizeMillipoints);
 
             generator.writeln("1 0 0 -1 " + formatMptAsPt(generator, x)
                     + " " + formatMptAsPt(generator, y) + " Tm");
