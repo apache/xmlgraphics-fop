@@ -141,12 +141,25 @@ implements Streamable {
 
     /** {@inheritDoc} */
     protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os)
-    throws IOException {
+            throws IOException {
+        writeObjects(objects, os, false);
+    }
+
+    /**
+     * Writes a collection of {@link AbstractAFPObject}s to the AFP Datastream.
+     *
+     * @param objects a list of AFPObjects
+     * @param os The stream to write to
+     * @param forceWrite true if writing should happen in any case
+     * @throws java.io.IOException an I/O exception of some sort has occurred.
+     */
+    protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os,
+            boolean forceWrite) throws IOException {
         if (objects != null && objects.size() > 0) {
             Iterator it = objects.iterator();
             while (it.hasNext()) {
                 AbstractAFPObject ao = (AbstractAFPObject)it.next();
-                if (canWrite(ao)) {
+                if (forceWrite || canWrite(ao)) {
                     ao.writeToStream(os);
                     it.remove();
                 } else {

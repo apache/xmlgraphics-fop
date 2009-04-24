@@ -212,6 +212,17 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
     }
 
     /**
+     * Returns the list of {@link TagLogicalElement}s.
+     * @return the TLEs
+     */
+    protected List getTagLogicalElements() {
+        if (tagLogicalElements == null) {
+            this.tagLogicalElements = new java.util.ArrayList/*<TagLogicalElement>*/();
+        }
+        return this.tagLogicalElements;
+    }
+
+    /**
      * Creates a TagLogicalElement on the page.
      *
      * @param name
@@ -223,10 +234,8 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      */
     public void createTagLogicalElement(String name, String value, int tleID) {
         TagLogicalElement tle = new TagLogicalElement(name, value, tleID);
-        if (tagLogicalElements == null) {
-            tagLogicalElements = new java.util.ArrayList/*<TagLogicalElement>*/();
-        }
-        tagLogicalElements.add(tle);
+        List list = getTagLogicalElements();
+        list.add(tle);
     }
 
     /**
