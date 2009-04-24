@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix">
+        Bugfix: footnotes occurring within the forced height of a table row did not appear on the 
+        output
+      </action>
       <action context="Renderers" dev="JM" type="update" fixes-bug="47031" due-to="Francois Fernandes">
         PDFGraphics2D.writeClip doesn't generate a clip command anymore when the clip path
         is empty. 
