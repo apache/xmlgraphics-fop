@@ -20,6 +20,7 @@
 package org.apache.fop.afp.ptoca;
 
 import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -314,19 +315,38 @@ public abstract class PtocaBuilder implements PtocaConstants {
             return;
         }
         newControlSequence();
-        writeByte(0x00); // Reserved; must be zero
-        writeByte(0x01); // Color space - 0x01 = RGB
-        writeByte(0x00); // Reserved; must be zero
-        writeByte(0x00); // Reserved; must be zero
-        writeByte(0x00); // Reserved; must be zero
-        writeByte(0x00); // Reserved; must be zero
-        writeByte(8); // Number of bits in component 1
-        writeByte(8); // Number of bits in component 2
-        writeByte(8); // Number of bits in component 3
-        writeByte(0); // Number of bits in component 4
-        writeByte(col.getRed()); // Red intensity
-        writeByte(col.getGreen()); // Green intensity
-        writeByte(col.getBlue()); // Blue intensity
+        if (col.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x04); // Color space - 0x04 = CMYK
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(8); // Number of bits in component 1
+            writeByte(8); // Number of bits in component 2
+            writeByte(8); // Number of bits in component 3
+            writeByte(8); // Number of bits in component 4
+            float[] comps = col.getColorComponents(null);
+            assert comps.length == 4;
+            for (int i = 0; i < 4; i++) {
+                int component = Math.round(comps[i] * 256);
+                writeByte(component);
+            }
+        } else {
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x01); // Color space - 0x01 = RGB
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(8); // Number of bits in component 1
+            writeByte(8); // Number of bits in component 2
+            writeByte(8); // Number of bits in component 3
+            writeByte(0); // Number of bits in component 4
+            writeByte(col.getRed()); // Red intensity
+            writeByte(col.getGreen()); // Green intensity
+            writeByte(col.getBlue()); // Blue intensity
+        }
         commit(chained(SEC));
         this.currentColor = col;
     }
