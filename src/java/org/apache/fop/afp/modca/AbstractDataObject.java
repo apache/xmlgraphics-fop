@@ -34,7 +34,8 @@ import org.apache.fop.afp.Startable;
  * Abstract base class used by the ImageObject and GraphicsObject which both
  * have define an ObjectEnvironmentGroup
  */
-public abstract class AbstractDataObject extends AbstractNamedAFPObject implements Startable, Completable {
+public abstract class AbstractDataObject extends AbstractNamedAFPObject
+        implements Startable, Completable {
 
     /** the object environment group */
     protected ObjectEnvironmentGroup objectEnvironmentGroup = null;
@@ -81,14 +82,14 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject implemen
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         AFPResourceLevel resourceLevel = resourceInfo.getLevel();
         ObjectAreaPosition objectAreaPosition = null;
+        int rotation = objectAreaInfo.getRotation();
         if (resourceLevel.isInline()) {
             int x = objectAreaInfo.getX();
             int y = objectAreaInfo.getY();
-            int rotation = objectAreaInfo.getRotation();
             objectAreaPosition = factory.createObjectAreaPosition(x, y, rotation);
         } else {
             // positional values are specified in the oaOffset of the include object
-            objectAreaPosition = factory.createObjectAreaPosition(0, 0, 0);
+            objectAreaPosition = factory.createObjectAreaPosition(0, 0, rotation);
         }
         objectAreaPosition.setReferenceCoordinateSystem(
                 ObjectAreaPosition.REFCSYS_PAGE_SEGMENT_RELATIVE);
