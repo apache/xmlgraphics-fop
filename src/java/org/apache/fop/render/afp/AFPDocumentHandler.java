@@ -25,10 +25,13 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.fop.afp.AFPDitheredRectanglePainter;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.AbstractAFPPainter;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
@@ -75,6 +78,9 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private static final int LOC_IN_PAGE_HEADER = 2;
 
     private int location = LOC_ELSEWHERE;
+
+    /** the shading mode for filled rectangles */
+    private AFPShadingMode shadingMode = AFPShadingMode.COLOR;
 
     /**
      * Default constructor.
@@ -123,6 +129,16 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     AFPResourceManager getResourceManager() {
         return this.resourceManager;
+    }
+
+    AbstractAFPPainter createRectanglePainter() {
+        if (AFPShadingMode.DITHERED.equals(this.shadingMode)) {
+            return new AFPDitheredRectanglePainter(
+                    getPaintingState(), getDataStream(), getResourceManager());
+        } else {
+            return new AFPRectanglePainter(
+                    getPaintingState(), getDataStream());
+        }
     }
 
     /** {@inheritDoc} */
@@ -306,6 +322,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void setNativeImagesSupported(boolean nativeImages) {
         paintingState.setNativeImagesSupported(nativeImages);
+    }
+
+    /** {@inheritDoc} */
+    public void setShadingMode(AFPShadingMode shadingMode) {
+        this.shadingMode = shadingMode;
     }
 
     /** {@inheritDoc} */

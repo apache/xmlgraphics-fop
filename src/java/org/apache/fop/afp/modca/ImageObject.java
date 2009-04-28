@@ -28,7 +28,6 @@ import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.ioca.ImageSegment;
-import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
 
 /**
  * An IOCA Image Data Object
@@ -66,10 +65,6 @@ public class ImageObject extends AbstractDataObject {
         int dataWidth = imageObjectInfo.getDataWidth();
         int dataHeight = imageObjectInfo.getDataHeight();
 
-//        AFPObjectAreaInfo objectAreaInfo = dataObjectInfo.getObjectAreaInfo();
-//        int widthRes = objectAreaInfo.getWidthRes();
-//        int heightRes = objectAreaInfo.getHeightRes();
-
         int dataWidthRes = imageObjectInfo.getDataWidthRes();
         int dataHeightRes = imageObjectInfo.getDataWidthRes();
         ImageDataDescriptor imageDataDescriptor
@@ -79,7 +74,7 @@ public class ImageObject extends AbstractDataObject {
         }
         getObjectEnvironmentGroup().setDataDescriptor(imageDataDescriptor);
         getObjectEnvironmentGroup().setMapImageObject(
-                new MapImageObject(MappingOptionTriplet.SCALE_TO_FILL));
+                new MapImageObject(dataObjectInfo.getMappingOption()));
 
         getImageSegment().setImageSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
     }

@@ -50,9 +50,14 @@ public class MappingOptionTriplet extends AbstractTriplet {
      */
     public static final byte CENTER_AND_TRIM = 0x30;
 
-//    public static final byte MIGRATION_MAPPING_1 = 0x41;
-//    public static final byte MIGRATION_MAPPING_2 = 0x42;
-//    public static final byte MIGRATION_MAPPING_3 = 0x50;
+    /** Migration mapping option: Image point-to-pel. */
+    public static final byte IMAGE_POINT_TO_PEL = 0x41;
+
+    /** Migration mapping option: Image point-to-pel with double dot. */
+    public static final byte IMAGE_POINT_TO_PEL_DOUBLE_DOT = 0x42;
+
+    /** Migration mapping option: Replicate and trim. */
+    public static final byte REPLICATE_AND_TRIM = 0x50;
 
     /** the data object is centred, aspect ratio is not always preserved */
     public static final byte SCALE_TO_FILL = 0x60;

@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add">
+        Added setting to enable dithered painting of filled rectangles in AFP and PCL.
+      </action>
       <action context="Layout" dev="VH" type="fix">
         Bugfix: footnotes occurring within the forced height of a table row did not appear on the 
         output

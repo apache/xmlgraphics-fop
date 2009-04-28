@@ -19,6 +19,8 @@
 
 package org.apache.fop.afp;
 
+import java.io.IOException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -48,6 +50,7 @@ public abstract class AbstractAFPPainter {
      * Paints the painting item
      *
      * @param paintInfo the painting information
+     * @throws IOException if an I/O error occurs
      */
-    public abstract void paint(PaintingInfo paintInfo);
+    public abstract void paint(PaintingInfo paintInfo) throws IOException;
 }

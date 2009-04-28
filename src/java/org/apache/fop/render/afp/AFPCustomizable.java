@@ -51,6 +51,12 @@ public interface AFPCustomizable {
     void setNativeImagesSupported(boolean nativeImages);
 
     /**
+     * Sets the shading mode for painting filled rectangles.
+     * @param shadingMode the shading mode
+     */
+    void setShadingMode(AFPShadingMode shadingMode);
+
+    /**
      * Sets the output/device resolution
      *
      * @param resolution
