@@ -680,6 +680,20 @@ out = proc.getOutputStream();]]></source>
       Support for native image formats (e.g. JPEG, GIF) is not always available on printer implementations
       so by default this configuration option is set to "false".</p>
       </section>
+      <section id="afp-shading-config">
+        <title>Shading</title>
+        <p>
+          By default, filled rectangles are painted using their given color using a PTOCA I-axis rule
+          (DIR). But not all environments handle these colors correctly. That's why a setting is
+          supported that paints the rectangles using an ordered dither pattern (bi-level) with
+          an inline IOCA FS10 image that is used together with the "replicate and trim" mapping.
+          The optional "shading" element can be used to control the shading mode. Its default value
+          is "color". To enable the dithered mode, use "dithered". Example: 
+        </p>
+      <source><![CDATA[
+      <shading>dithered</shading>
+]]></source>
+      </section>
       <section id="afp-resource-group-file">
       <title>Resource Group File</title>
       <p>By default the AFP Renderer will place all data resource objects such as images within

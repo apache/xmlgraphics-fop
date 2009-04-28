@@ -299,6 +299,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         boolean nativeImageSupport = imagesCfg.getAttributeAsBoolean("native", false);
         customizable.setNativeImagesSupported(nativeImageSupport);
 
+        // shading (filled rectangles)
+        Configuration shadingCfg = cfg.getChild("shading");
+        AFPShadingMode shadingMode = AFPShadingMode.valueOf(
+                shadingCfg.getValue(AFPShadingMode.COLOR.getName()));
+        customizable.setShadingMode(shadingMode);
+
         // renderer resolution
         Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
         if (rendererResolutionCfg != null) {

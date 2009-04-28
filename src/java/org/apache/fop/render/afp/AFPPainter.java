@@ -35,8 +35,8 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPPaintingState;
-import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.AbstractAFPPainter;
 import org.apache.fop.afp.BorderPaintingInfo;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.RectanglePaintingInfo;
@@ -79,7 +79,7 @@ public class AFPPainter extends AbstractIFPainter {
     /** the border painter */
     private AFPBorderPainterAdapter borderPainter;
     /** the rectangle painter */
-    private AFPRectanglePainter rectanglePainter;
+    private AbstractAFPPainter rectanglePainter;
 
     /** unit converter */
     private final AFPUnitConverter unitConv;
@@ -94,7 +94,7 @@ public class AFPPainter extends AbstractIFPainter {
         this.state = IFState.create();
         this.borderPainter = new AFPBorderPainterAdapter(
                 new AFPBorderPainter(getPaintingState(), getDataStream()));
-        this.rectanglePainter = new AFPRectanglePainter(getPaintingState(), getDataStream());
+        this.rectanglePainter = documentHandler.createRectanglePainter();
         this.unitConv = getPaintingState().getUnitConverter();
     }
 
@@ -222,7 +222,11 @@ public class AFPPainter extends AbstractIFPainter {
             }
             RectanglePaintingInfo rectanglePaintInfo = new RectanglePaintingInfo(
                     toPoint(rect.x), toPoint(rect.y), toPoint(rect.width), toPoint(rect.height));
-            rectanglePainter.paint(rectanglePaintInfo);
+            try {
+                rectanglePainter.paint(rectanglePaintInfo);
+            } catch (IOException ioe) {
+                throw new IFException("IO error while painting rectangle", ioe);
+            }
         }
     }
 

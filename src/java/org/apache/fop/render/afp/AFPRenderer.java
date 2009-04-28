@@ -43,6 +43,7 @@ import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPDitheredRectanglePainter;
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPRectanglePainter;
@@ -50,6 +51,7 @@ import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.AbstractAFPPainter;
 import org.apache.fop.afp.BorderPaintingInfo;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.RectanglePaintingInfo;
@@ -167,7 +169,10 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** the image handler registry */
     private final AFPImageHandlerRegistry imageHandlerRegistry;
 
-    private AFPRectanglePainter rectanglePainter;
+    private AbstractAFPPainter rectanglePainter;
+
+    /** the shading mode for filled rectangles */
+    private AFPShadingMode shadingMode = AFPShadingMode.COLOR;
 
     /**
      * Constructor for AFPRenderer.
@@ -201,9 +206,19 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
 
         this.dataStream = resourceManager.createDataStream(paintingState, outputStream);
         this.borderPainter = new AFPBorderPainter(paintingState, dataStream);
-        this.rectanglePainter = new AFPRectanglePainter(paintingState, dataStream);
+        this.rectanglePainter = createRectanglePainter();
 
         dataStream.startDocument();
+    }
+
+    AbstractAFPPainter createRectanglePainter() {
+        if (AFPShadingMode.DITHERED.equals(this.shadingMode)) {
+            return new AFPDitheredRectanglePainter(
+                    this.paintingState, this.dataStream, this.resourceManager);
+        } else {
+            return new AFPRectanglePainter(
+                    this.paintingState, this.dataStream);
+        }
     }
 
     /** {@inheritDoc} */
@@ -362,7 +377,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** {@inheritDoc} */
     public void fillRect(float x, float y, float width, float height) {
         RectanglePaintingInfo rectanglePaintInfo = new RectanglePaintingInfo(x, y, width, height);
-        rectanglePainter.paint(rectanglePaintInfo);
+        try {
+            rectanglePainter.paint(rectanglePaintInfo);
+        } catch (IOException ioe) {
+            //TODO not ideal, but the AFPRenderer is legacy
+            throw new RuntimeException("I/O error while painting a filled rectangle", ioe);
+        }
     }
 
     /** {@inheritDoc} */
@@ -725,6 +745,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** {@inheritDoc} */
     public void setNativeImagesSupported(boolean nativeImages) {
         paintingState.setNativeImagesSupported(nativeImages);
+    }
+
+    /** {@inheritDoc} */
+    public void setShadingMode(AFPShadingMode shadingMode) {
+        this.shadingMode = shadingMode;
     }
 
     /** {@inheritDoc} */
