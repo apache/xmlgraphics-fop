@@ -435,8 +435,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void endPageContent() throws IFException {
         try {
-            //Show page
-            gen.writeln("showpage");
+            gen.showPage();
         } catch (IOException ioe) {
             throw new IFException("I/O error in endPageContent()", ioe);
         }

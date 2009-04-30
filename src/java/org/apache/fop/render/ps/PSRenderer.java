@@ -933,7 +933,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         super.renderPage(page);
 
         //Show page
-        writeln("showpage");
+        gen.showPage();
         gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
         if (page.hasExtensionAttachments()) {
             List extensionAttachments = page.getExtensionAttachments();

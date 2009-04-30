@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Bugfix: reset graphic state when a page is finished in PostScript.
+      </action>
       <action context="Renderers" dev="JM" type="add">
         Added setting to enable dithered painting of filled rectangles in AFP and PCL.
       </action>
