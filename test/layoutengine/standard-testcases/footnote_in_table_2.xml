@@ -171,14 +171,18 @@
     <eval expected="(3) Third footnote from the table."  xpath="//pageSequence[1]//footnote/block[3]"/>
 
     <eval expected="1" xpath="count(//pageSequence[2]/pageViewport[1]//footnote/block)"/>
+    <eval expected="Cell 1.2(1)." xpath="//pageSequence[2]/pageViewport[1]//regionBody//block[2]/block[3]/block[2]"/>
     <eval expected="(1) First footnote from the table."  xpath="//pageSequence[2]/pageViewport[1]//footnote/block[1]"/>
     <eval expected="2" xpath="count(//pageSequence[2]/pageViewport[2]//footnote/block)"/>
     <eval expected="(2) Second footnote from the table." xpath="//pageSequence[2]/pageViewport[2]//footnote/block[1]"/>
     <eval expected="(3) Third footnote from the table."  xpath="//pageSequence[2]/pageViewport[2]//footnote/block[2]"/>
 
+    <eval expected="Cell 1.1(2)" xpath="//pageSequence[3]/pageViewport[1]//regionBody//block[2]/block[2]/block[3]"/>
+    <eval expected="Cell 1.2(1)." xpath="//pageSequence[3]/pageViewport[1]//regionBody//block[2]/block[3]/block[2]"/>
     <eval expected="2" xpath="count(//pageSequence[3]/pageViewport[1]//footnote/block)"/>
     <eval expected="(1) First footnote from the table."  xpath="//pageSequence[3]/pageViewport[1]//footnote/block[1]"/>
     <eval expected="(2) Second footnote from the table." xpath="//pageSequence[3]/pageViewport[1]//footnote/block[2]"/>
+    <eval expected="Cell(3) 2.2" xpath="//pageSequence[3]/pageViewport[2]//regionBody//block[1]/block[3]/block[1]"/>
     <eval expected="1" xpath="count(//pageSequence[3]/pageViewport[2]//footnote/block)"/>
     <eval expected="(3) Third footnote from the table."  xpath="//pageSequence[3]/pageViewport[2]//footnote/block[1]"/>
   </checks>
