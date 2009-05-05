@@ -557,6 +557,10 @@ fopFactory.setUserConfig(new File("C:/Temp/mycfg.xml"));]]></source>
         Fine-tune your stylesheet to make the XSLT process more efficient and to create XSL-FO that can
         be processed by FOP more efficiently. Less is more: Try to make use of property inheritance where possible.
       </li>
+      <li>
+        Document Layout in FOP is processed at page sequence level, so try to break up the content of your documents
+        into as many page sequences as possible to reduce memory consumption.
+      </li>
     </ul>
   </section>
   <section id="multithreading">
