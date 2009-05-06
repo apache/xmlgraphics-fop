@@ -558,8 +558,7 @@ fopFactory.setUserConfig(new File("C:/Temp/mycfg.xml"));]]></source>
         be processed by FOP more efficiently. Less is more: Try to make use of property inheritance where possible.
       </li>
       <li>
-        Document Layout in FOP is processed at page sequence level, so try to break up the content of your documents
-        into as many page sequences as possible to reduce memory consumption.
+        You may also wish to consider trying to reduce <a href="http://xmlgraphics.apache.org/fop/trunk/running.html#memory">memory usage</a>.
       </li>
     </ul>
   </section>
