@@ -45,6 +45,7 @@ public class UserConfigTestSuite {
         suite.addTest(new TestSuite(FontsDirectoryRecursiveTestCase.class));
         suite.addTest(new TestSuite(FontsAutoDetectTestCase.class));
         suite.addTest(new TestSuite(FontsSubstitutionTestCase.class));
+        suite.addTest(new TestSuite(FOURIResolverTestCase.class));
         //$JUnit-END$
         return suite;
     }

@@ -68,6 +68,8 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
      * @throws MalformedURLException if there's a problem with a file URL
      */
     public String checkBaseURL(String base) throws MalformedURLException {
+        // replace back slash with forward slash to ensure windows file:/// URLS are supported
+        base = base.replace('\\', '/');
         if (!base.endsWith("/")) {
             // The behavior described by RFC 3986 regarding resolution of relative
             // references may be misleading for normal users:
