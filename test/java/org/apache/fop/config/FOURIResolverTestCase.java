@@ -39,6 +39,7 @@ public class FOURIResolverTestCase extends TestCase {
         System.out.println(resolver.checkBaseURL("./test/config"));
         System.out.println(resolver.checkBaseURL("file:test/config"));
         System.out.println(resolver.checkBaseURL("fantasy:myconfig"));
+        System.out.println(resolver.checkBaseURL("file:test\\config\\"));
         try {
             resolver.checkBaseURL("./doesnotexist");
             fail("Expected an exception for a inexistent base directory");
