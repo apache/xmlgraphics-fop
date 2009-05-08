@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Images" dev="JM" type="fix">
+        Bugfix: use the effective color profile supplied by the ImageEncodingHelper, instead of the 
+        original one.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Bugfix: reset graphic state when a page is finished in PostScript.
       </action>

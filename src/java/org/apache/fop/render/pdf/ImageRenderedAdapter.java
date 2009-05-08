@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.pdf;
 import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
@@ -97,9 +99,19 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
+    protected ICC_Profile getEffectiveICCProfile() {
+        ColorSpace cs = getImageColorSpace();
+        if (cs instanceof ICC_ColorSpace) {
+            ICC_ColorSpace iccSpace = (ICC_ColorSpace)cs;
+            return iccSpace.getProfile();
+        } else {
+            return null;
+        }
+    }
+
+    /** {@inheritDoc} */
     public void setup(PDFDocument doc) {
         RenderedImage ri = getImage().getRenderedImage();
-        ColorModel cm = getEffectiveColorModel();
 
         super.setup(doc);
 
