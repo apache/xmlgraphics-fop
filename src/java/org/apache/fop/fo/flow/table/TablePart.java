@@ -70,6 +70,13 @@ public abstract class TablePart extends TableCellContainer {
     }
 
     /** {@inheritDoc} */
+    protected Object clone() {
+        TablePart clone = (TablePart) super.clone();
+        clone.rowGroups = new LinkedList(rowGroups);
+        return clone;
+    }
+
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         super.bind(pList);

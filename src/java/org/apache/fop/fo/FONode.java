@@ -23,12 +23,11 @@ package org.apache.fop.fo;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.helpers.LocatorImpl;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
@@ -90,23 +89,19 @@ public abstract class FONode implements Cloneable {
      */
     public FONode clone(FONode cloneparent, boolean removeChildren)
                 throws FOPException {
-        try {
-            FONode foNode = (FONode) clone();
-            foNode.parent = cloneparent;
-            foNode.siblings = null;
-            return foNode;
-        } catch (CloneNotSupportedException cnse) {
-            return null;
-        }
+        FONode foNode = (FONode) clone();
+        foNode.parent = cloneparent;
+        foNode.siblings = null;
+        return foNode;
     }
 
-    /**
-     * Perform a shallow cloning operation
-     *
-     * {@inheritDoc}
-     */
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    /** {@inheritDoc} */
+    protected Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Can't happen
+        }
     }
 
     /**

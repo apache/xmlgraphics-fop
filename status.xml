@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="47101">
+        Bugfix: The cells of a table inside a marker were duplicated at every marker retrieval.
+      </action>
       <action context="Images" dev="JM" type="fix">
         Bugfix: use the effective color profile supplied by the ImageEncodingHelper, instead of the 
         original one.
