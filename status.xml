@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="VH" type="fix">
+        Changed meaning of ‘-v’ option to ‘verbose’, which will print FOP’s version and proceed. 
+        Added a ‘-version’ option to simply print the version then exit, following Java practices.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="47101">
         Bugfix: The cells of a table inside a marker were duplicated at every marker retrieval.
       </action>
