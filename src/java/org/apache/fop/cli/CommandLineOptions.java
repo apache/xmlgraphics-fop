@@ -30,10 +30,9 @@ import java.util.Vector;
 
 import javax.swing.UIManager;
 
-import org.xml.sax.SAXException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.SAXException;
 
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
@@ -333,8 +332,8 @@ public class CommandLineOptions {
             } else if (args[i].equals("-if")) {
                 i = i + parseIntermediateFormatOption(args, i);
             } else if (args[i].equals("-v")) {
+                /* Currently just print the version */
                 printVersion();
-                return false;
             } else if (args[i].equals("-param")) {
                   if (i + 2 < args.length) {
                       String name = args[++i];
@@ -357,6 +356,9 @@ public class CommandLineOptions {
                 getPDFEncryptionParams().setAllowEditContent(false);
             } else if (args[i].equals("-noannotations")) {
                 getPDFEncryptionParams().setAllowEditAnnotations(false);
+            } else if (args[i].equals("-version")) {
+                printVersion();
+                return false;
             } else if (!isOption(args[i])) {
                 i = i + parseUnknownOption(args, i);
             } else {
@@ -1119,6 +1121,7 @@ public class CommandLineOptions {
               "\nUSAGE\nfop [options] [-fo|-xml] infile [-xsl file] "
                     + "[-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at [mime]|-print] <outfile>\n"
             + " [OPTIONS]  \n"
+            + "  -version          print FOP version and exit\n"
             + "  -d                debug mode   \n"
             + "  -x                dump configuration settings  \n"
             + "  -q                quiet mode  \n"
@@ -1127,7 +1130,7 @@ public class CommandLineOptions {
             + "  -r                relaxed/less strict validation (where available)\n"
             + "  -dpi xxx          target resolution in dots per inch (dpi) where xxx is a number\n"
             + "  -s                for area tree XML, down to block areas only\n"
-            + "  -v                to show FOP version being used\n\n"
+            + "  -v                run in verbose mode (currently simply print FOP version and continue)\n\n"
             + "  -o [password]     PDF file will be encrypted with option owner password\n"
             + "  -u [password]     PDF file will be encrypted with option user password\n"
             + "  -noprint          PDF file will be encrypted without printing permission\n"
@@ -1136,8 +1139,8 @@ public class CommandLineOptions {
             + "  -noannotations    PDF file will be encrypted without edit annotation permission\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
-            + "  -conserve         Enable memory-conservation policy (trades memory-consumption for disk I/O)"
-            + "                    (Note: currently only influences whether the area tree is serialized.)"
+            + "  -conserve         Enable memory-conservation policy (trades memory-consumption for disk I/O)\n"
+            + "                    (Note: currently only influences whether the area tree is serialized.)\n\n"
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
             + "                    (use '-' for infile to pipe input from stdin)\n"
