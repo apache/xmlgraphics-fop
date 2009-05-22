@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="VH" type="fix" fixes-bug="47232" due-to="Maxim Wirt">
+        Bugfix: for the last character of a Type1 font, always a width of 0 was returned.
+      </action>
       <action context="Code" dev="VH" type="fix">
         Changed meaning of ‘-v’ option to ‘verbose’, which will print FOP’s version and proceed. 
         Added a ‘-version’ option to simply print the version then exit, following Java practices.
