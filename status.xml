@@ -58,18 +58,21 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="46960">
+        Bugfix: previously retrieved markers were not cleared if the new marker was empty.
+      </action>
       <action context="Fonts" dev="VH" type="fix" fixes-bug="47232" due-to="Maxim Wirt">
         Bugfix: for the last character of a Type1 font, always a width of 0 was returned.
       </action>
       <action context="Code" dev="VH" type="fix">
-        Changed meaning of ‘-v’ option to ‘verbose’, which will print FOP’s version and proceed. 
+        Changed meaning of ‘-v’ option to ‘verbose’, which will print FOP’s version and proceed.
         Added a ‘-version’ option to simply print the version then exit, following Java practices.
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="47101">
         Bugfix: The cells of a table inside a marker were duplicated at every marker retrieval.
       </action>
       <action context="Images" dev="JM" type="fix">
-        Bugfix: use the effective color profile supplied by the ImageEncodingHelper, instead of the 
+        Bugfix: use the effective color profile supplied by the ImageEncodingHelper, instead of the
         original one.
       </action>
       <action context="Renderers" dev="JM" type="fix">
@@ -79,20 +82,20 @@
         Added setting to enable dithered painting of filled rectangles in AFP and PCL.
       </action>
       <action context="Layout" dev="VH" type="fix">
-        Bugfix: footnotes occurring within the forced height of a table row did not appear on the 
+        Bugfix: footnotes occurring within the forced height of a table row did not appear on the
         output
       </action>
       <action context="Renderers" dev="JM" type="update" fixes-bug="47031" due-to="Francois Fernandes">
         PDFGraphics2D.writeClip doesn't generate a clip command anymore when the clip path
-        is empty. 
+        is empty.
       </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="47000">
         Added a custom text painter for rendering SVG text using text operators when rendering
-        to PostScript or EPS. Text is no longer painted as shapes, thus creating much smaller files. 
+        to PostScript or EPS. Text is no longer painted as shapes, thus creating much smaller files.
       </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed a bug that left the PrintRenderer unconfigured even if a configuration was
-        specified for "application/X-fop-print". 
+        specified for "application/X-fop-print".
       </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="46882" due-to="Yegor Kozlov">
         Fixed the handling of CMYK colors in PDFGraphics2D.
