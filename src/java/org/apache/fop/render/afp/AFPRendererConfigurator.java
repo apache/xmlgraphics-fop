@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -150,7 +151,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     "Mandatory afp-raster-font configuration attribute 'characterset=' is missing");
                     return null;
                 }
-                int size = rasterCfg.getAttributeAsInteger("size");
+                float size = rasterCfg.getAttributeAsFloat("size");
+                int sizeMpt = (int)(size * 1000);
                 String base14 = rasterCfg.getAttribute("base14-font", null);
 
                 if (base14 != null) {
@@ -159,7 +161,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                             + base14);
                         try {
                             Typeface tf = (Typeface)clazz.newInstance();
-                            font.addCharacterSet(size, new FopCharacterSet(
+                            font.addCharacterSet(sizeMpt, new FopCharacterSet(
                                 codepage, encoding, characterset, tf));
                         } catch (Exception ie) {
                             String msg = "The base 14 font class " + clazz.getName()
@@ -172,7 +174,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                         log.error(msg);
                     }
                 } else {
-                    font.addCharacterSet(size, new CharacterSet(
+                    font.addCharacterSet(sizeMpt, new CharacterSet(
                         codepage, encoding, characterset, accessor));
                 }
             }
@@ -318,16 +320,21 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             String resourceGroupDest = null;
             try {
                 resourceGroupDest = resourceGroupFileCfg.getValue();
+                if (resourceGroupDest != null) {
+                    File resourceGroupFile = new File(resourceGroupDest);
+                    resourceGroupFile.createNewFile();
+                    if (resourceGroupFile.canWrite()) {
+                        customizable.setDefaultResourceGroupFilePath(resourceGroupDest);
+                    } else {
+                        log.warn("Unable to write to default external resource group file '"
+                                    + resourceGroupDest + "'");
+                    }
+                }
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e,
                         userAgent.getFactory().validateUserConfigStrictly());
-            }
-            File resourceGroupFile = new File(resourceGroupDest);
-            if (resourceGroupFile.canWrite()) {
-                customizable.setDefaultResourceGroupFilePath(resourceGroupDest);
-            } else {
-                log.warn("Unable to write to default external resource group file '"
-                            + resourceGroupDest + "'");
+            } catch (IOException ioe) {
+                throw new FOPException("Could not create default external resource group file", ioe);
             }
         }
 
