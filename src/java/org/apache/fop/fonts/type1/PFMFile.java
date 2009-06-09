@@ -481,7 +481,13 @@ public class PFMFile {
      * @return The width of a character.
      */
     public int getCharWidth(short which) {
-        return extentTable[which - dfFirstChar];
+        if (extentTable != null) {
+            return extentTable[which - dfFirstChar];
+        } else {
+            //Fixed-width font (PFM may have no extent table)
+            //we'll just use the average width
+            return this.dfAvgWidth;
+        }
     }
 
 }

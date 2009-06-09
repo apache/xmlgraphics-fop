@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="CB" type="fix">
+        Bugfix: support PFM Files with no extent table.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="46960">
         Bugfix: previously retrieved markers were not cleared if the new marker was empty.
       </action>
