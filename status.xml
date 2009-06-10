@@ -58,7 +58,7 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Code" dev="CB" type="fix">
+      <action context="Fonts" dev="CB" type="fix">
         Bugfix: support PFM Files with no extent table.
       </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="46960">
