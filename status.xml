@@ -58,6 +58,14 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AD" type="add">
+        AFP Renderer Raster Fonts:
+        <ul>
+          <li>added support for fractional font-sizes in the configuration.</li>
+          <li>selection of the smaller font-size, in case two possible fallbacks have the
+              same difference to a requested size.</li>
+        </ul>
+      </action>
       <action context="Fonts" dev="CB" type="fix">
         Bugfix: support PFM Files with no extent table.
       </action>
