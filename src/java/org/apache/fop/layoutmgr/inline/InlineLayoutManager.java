@@ -248,8 +248,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         List returnList = new LinkedList();
         KnuthSequence lastSequence = null;
 
-        SpaceSpecifier leadingSpace = context.getLeadingSpace();
-
         if (fobj instanceof Title) {
             alignmentContext = new AlignmentContext(font,
                                     lineHeight.getOptimum(this).getLength().getValue(this),
@@ -274,14 +272,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             if (getSpaceStart() != null) {
                 context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart(), this));
             }
-
-            // Check for "fence"
-            if (hasLeadingFence(!context.isFirstArea())) {
-                // Reset leading space sequence for child areas
-                leadingSpace = new SpaceSpecifier(false);
-            }
-            // Reset state variables
-            clearPrevIPD(); // Clear stored prev content dimensions
         }
 
         StringBuffer trace = new StringBuffer("InlineLM:");

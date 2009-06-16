@@ -169,11 +169,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private AlignmentContext alignmentContext = null;
 
     private List knuthParagraphs = null;
-    private int iReturnedLBP = 0;
-
-    //     parameters of Knuth's algorithm:
-    // penalty value for flagged penalties
-    private int flaggedPenalty = 50;
 
     private LineLayoutPossibilities lineLayouts;
     private List lineLayoutsList;
@@ -318,11 +313,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private int activePossibility;
         private int addedPositions;
         private int textIndent;
-        private int fillerMinWidth;
         private int lineHeight;
         private int lead;
         private int follow;
-        private int maxDiff;
         private static final double MAX_DEMERITS = 10e6;
 
         public LineBreakingAlgorithm (int pageAlign,
@@ -333,22 +326,17 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             super(textAlign, textAlignLast, first, false, maxFlagCount);
             pageAlignment = pageAlign;
             textIndent = indent;
-            fillerMinWidth = fillerWidth;
             lineHeight = lh;
             lead = ld;
             follow = fl;
             thisLLM = llm;
             activePossibility = -1;
-            maxDiff = fobj.getWidows() >= fobj.getOrphans()
-                    ? fobj.getWidows()
-                    : fobj.getOrphans();
         }
 
         public void updateData1(int lineCount, double demerits) {
             lineLayouts.addPossibility(lineCount, demerits);
-            if (super.log.isTraceEnabled()) {
-                super.log.trace(
-                        "Layout possibility in " + lineCount + " lines; break at position:");
+            if (log.isTraceEnabled()) {
+                log.trace("Layout possibility in " + lineCount + " lines; break at position:");
             }
         }
 
@@ -582,8 +570,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         context.setAlignmentContext(alignmentContext);
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
-
-        clearPrevIPD();
 
         //PHASE 1: Create Knuth elements
         if (knuthParagraphs == null) {
