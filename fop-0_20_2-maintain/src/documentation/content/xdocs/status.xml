@@ -1,0 +1,114 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<!-- Status -->
+
+<document>
+    <header>
+        <title>FOP Status</title>
+        <subtitle>Current Status of FOP</subtitle>
+    </header>
+
+    <body>
+  <section>
+    <title>Status</title>
+<p>[last updated 20th November 2002]</p>
+        <figure width="585" height="175" src="images/track.png" alt="Planning and branches of FOP development" />
+<p>
+This is the development status of FOP. A branch has been created for
+maintenance releases while the development is done to address various
+performance and design issues.
+</p>
+  </section>
+
+  <section>
+    <title>Development Status</title>
+<p>
+Development for 1.0DR1 is addressing the design issues for layout and
+performance. The new design focusing on making it possible to be conformant
+to the spec and be able to handle large documents. The development effort
+is roughly 50% towards a developers release.
+</p>
+<p>
+The developers release should have the following: similar functionality
+to previous FOP releases, a rough API and a suitable design for
+developers to work on more functionality.
+</p>
+<p>
+The timing of these events depends on progress made so it is not possible
+to predict any dates.
+</p>
+<p><strong>Binaries</strong></p>
+    <table>
+      <tr><td>fop.jar</td><td>1,962 kb</td></tr>
+      <tr><td>hyphention (in fop.jar)</td><td>717 kb</td></tr>
+      <tr><td>batik.jar</td><td>2,164 kb</td></tr>
+      <tr><td>bsf.jar</td><td>106 kb</td></tr>
+      <tr><td>xalan.jar</td><td>883 kb</td></tr>
+      <tr><td>xerces.jar</td><td>1,809 kb</td></tr>
+    </table>
+
+<p><strong>Lines of code</strong> using "find . -iname "*.java" | xargs cat | wc -l"</p>
+    <table>
+      <tr><td>org.apache.fop.*</td><td>67479</td></tr>
+      <tr><td>org.apache.fop.fo.*</td><td>13186 (20%)</td></tr>
+      <tr><td>org.apache.fop.layoutmgr.*</td><td>7913 (12%)</td></tr>
+      <tr><td>org.apache.fop.area.*</td><td>3722 (5.5%)</td></tr>
+      <tr><td>org.apache.fop.render.*</td><td>8210 (12%)</td></tr>
+      <tr><td>org.apache.fop.pdf.*</td><td>9481 (14%)</td></tr>
+    </table>
+
+<p><strong>Files</strong> using "find . -iname "*.java" | wc -l"</p>
+    <table>
+      <tr><td>org.apache.fop.*</td><td>442</td></tr>
+      <tr><td>org.apache.fop.fo.*</td><td>125 (28%)</td></tr>
+      <tr><td>org.apache.fop.layoutmgr.*</td><td>35 (8%)</td></tr>
+      <tr><td>org.apache.fop.area.*</td><td>37 (8%)</td></tr>
+      <tr><td>org.apache.fop.render.*</td><td>39 (9%)</td></tr>
+    </table>
+
+  </section>
+
+  <section>
+    <title>Maintenance Status</title>
+<p>
+Latest maintenance release will be FOP 0.20.5 on TBA.
+See <link href="relnotes.html">release notes</link> for more
+details. Releases will be made periodically to address minor bugs
+and compatibility.
+</p>
+
+<p><strong>Binaries</strong></p>
+    <table>
+      <tr><td>fop.jar</td><td>1,992 kb</td></tr>
+      <tr><td>hyphention (in fop.jar)</td><td>746 kb</td></tr>
+      <tr><td>batik.jar</td><td>2,119 kb</td></tr>
+      <tr><td>bsf.jar</td><td>106 kb</td></tr>
+      <tr><td>xalan.jar</td><td>1,007 kb</td></tr>
+      <tr><td>xercesImpl.jar</td><td>813 kb</td></tr>
+      <tr><td>xml-apis.jar</td><td>112 kb</td></tr>
+    </table>
+
+<p><strong>Lines of code</strong> using "find . -iname "*.java" | xargs cat | wc -l"</p>
+    <table>
+      <tr><td>org.apache.fop.*</td><td>69610</td></tr>
+      <tr><td>org.apache.fop.fo.*</td><td>14660 (21%)</td></tr>
+      <tr><td>org.apache.fop.layout.*</td><td>7154 (10%)</td></tr>
+      <tr><td>org.apache.fop.render.*</td><td>16260 (23%)</td></tr>
+      <tr><td>org.apache.fop.pdf.*</td><td>7938 (11%)</td></tr>
+    </table>
+
+<p><strong>Files</strong> using "find . -iname "*.java" | wc -l"</p>
+    <table>
+      <tr><td>org.apache.fop.*</td><td>394</td></tr>
+      <tr><td>org.apache.fop.fo.*</td><td>122 (31%)</td></tr>
+      <tr><td>org.apache.fop.layout.*</td><td>49 (12%)</td></tr>
+      <tr><td>org.apache.fop.render.*</td><td>48 (12%)</td></tr>
+      <tr><td>org.apache.fop.pdf.*</td><td>50 (13%)</td></tr>
+    </table>
+
+  </section>
+    </body>
+</document>
+

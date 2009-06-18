@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="simplePM"
+                      page-height="25cm" 
+                      page-width="20cm"
+                      margin-top="1cm" 
+                      margin-bottom="1cm" 
+                      margin-left="1.5cm" 
+                      margin-right="1.5cm">
+          <fo:region-before extent="2.5cm"/>
+          <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+          <fo:region-after extent="2.5cm"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:page-sequence master-reference="simplePM">
+        <fo:flow flow-name="xsl-region-body">
+            <fo:block letter-spacing="normal"> 
+                This text is normally spaced.
+                This text is normally spaced. 
+                This text is normally spaced. 
+                This text is normally spaced. 
+                This text is normally spaced. 
+            </fo:block>
+
+      
+            <fo:block letter-spacing="1pt">  
+                This text has inter-character intervals increased by 1pt.  
+                This text has inter-character intervals increased by 1pt. 
+                This text has inter-character intervals increased by 1pt.  
+                This text has inter-character intervals increased by 1pt.
+            </fo:block>
+
+
+            <fo:block letter-spacing="8pt">  
+                This text has inter-character intervals increased by 8pt.  
+                This text has inter-character intervals increased by 8pt.  
+                This text has inter-character intervals increased by 8pt.  
+                This text has inter-character intervals increased by 8pt.
+            </fo:block>
+      
+            <fo:block letter-spacing="0pt">  
+                This text has inter-character intervals increased by 0pt (i.e. normally spaced).  
+                This text has inter-character intervals increased by 0pt (i.e. normally spaced).  
+                This text has inter-character intervals increased by 0pt (i.e. normally spaced).  
+                This text has inter-character intervals increased by 0pt (i.e. normally spaced).
+            </fo:block>
+
+            <fo:block letter-spacing="-1pt">  
+                This text has inter-character intervals increased by reduced by -1pt.
+                This text has inter-character intervals increased by reduced by -1pt.
+                This text has inter-character intervals increased by reduced by -1pt.
+                This text has inter-character intervals increased by reduced by -1pt.
+            </fo:block>
+
+        </fo:flow>
+    </fo:page-sequence>
+</fo:root>

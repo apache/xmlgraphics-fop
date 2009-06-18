@@ -1,0 +1,56 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>Standard FOP Extensions</title>
+  </header>
+  <body>
+    <p>By "extension", we mean any data that can be placed in the input XML document that is not addressed by the XSL-FO standard.
+By having a mechanism for supporting extensions, FOP is able to add features that are not covered in the specification.</p>
+      <p>The extensions documented here are included with FOP, and are automatically available to you. If you wish to add an extension of your own to FOP, please see the <link href="dev/extensions.html">Developers' Extension Page</link>.</p>
+    <note>All extensions required the correct use of an appropriate namespace in your input document.</note>
+      <section id="svg">
+        <title>SVG</title>
+        <p>
+Please see the <link href="graphics.html#svg">SVG documentation</link> for more details.
+        </p>
+      </section>
+      <section id="bookmarks">
+        <title>PDF Bookmarks</title>
+        <p>
+To use this standard FOP extension, you need to add a namespace entry for
+http://xml.apache.org/fop/extensions on the root element.
+        </p>
+        <p>
+You can provide outlines inside the root object (but outside any
+page-sequences or other formatting objects). Here's an example of an outline
+entry:
+        </p>
+        <source>
+<![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+               xmlns:fox="http://xml.apache.org/fop/extensions">
+  <fox:outline internal-destination="sec3">
+    <fox:label>Running FOP</fox:label>
+
+    <fox:outline internal-destination="sec3-1">
+      <fox:label>Prerequisites</fox:label>
+    </fox:outline>
+  <fox:outline>
+</fo:root>]]></source>
+        <p>
+It works similarly to a basic-link. There is also an external-destination
+property, but it isn't supported currently. See the pdfoutline.fo file in
+examples/fo/basic for a more complete example.
+        </p>
+      </section>
+      <section id="table-continue-label">
+        <title>Continued-label (for table-header/-footer</title>
+        <p>
+Please see examples/fo/basic/contlabel.fo
+        </p>
+      </section>
+  </body>
+</document>
+

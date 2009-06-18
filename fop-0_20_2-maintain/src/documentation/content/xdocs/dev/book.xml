@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-cocoon2/src/documentation/xdocs/dtd/book-cocoon-v10.dtd">
+
+<book software="FOP"
+      title="FOP"
+      copyright="@year@ The Apache Software Foundation"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <menu label="Introduction">
+      <menu-item label="Basics" href="index.html"/>
+    </menu>
+    <menu label="Design">
+      <!--<menu-item label="Resolved" href="../design/index.html"/>-->
+      <menu-item label="Resolved" href="http://xml.apache.org/fop/design/index.html"/>      
+      <external label="Unresolved (Wiki)" href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"/>
+      <menu-item label="SVG" href="svg.html"/>
+      <menu-item label="Fonts" href="fonts.html"/>
+      <menu-item label="Extensions" href="extensions.html"/>
+    </menu>
+    <menu label="Develop">
+      <menu-item label="API Doc" href="api-doc.html"></menu-item>
+      <menu-item label="Walk-Thru" href="implement.html"/>
+      <external label="Patch queue" href="http://nagoya.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;namedcmd=Fop+all&amp;newqueryname=fop+patch+queue&amp;tofooter=1&amp;order=Reuse+same+sort+as+last+time"/>
+      <menu-item label="Conventions" href="conventions.html"/>
+    </menu>
+    <menu label="Test">
+      <menu-item label="Testing" href="testing.html"/>
+    </menu>
+    <menu label="Deploy">
+      <menu-item label="Doc Mgmt" href="doc.html"/>
+      <menu-item label="Release" href="release.html"/>
+      <external label="Bugs" href="http://nagoya.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.component"/>
+    </menu>
+    <menu label="Resources">
+      <menu-item label="FAQs" href="faq.html"/>
+      <menu-item label="Tools" href="tools.html"/>
+      <external label="ViewCVS" href="http://cvs.apache.org/viewcvs.cgi/xml-fop"/>
+    </menu>
+    <menu label="SubPackages">
+      <menu-item label="RTFlib" href="rtflib.html"></menu-item>
+    </menu>
+</book>

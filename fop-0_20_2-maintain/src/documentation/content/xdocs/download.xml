@@ -1,0 +1,45 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>FOP: Downloading A Distribution</title>
+  </header>
+  <body>
+  <section id="dist-type">
+    <title>Binary or Source?</title>
+    <p>Most FOP users will want to download the latest binary distribution, which is ready to run "out of the box."
+However, a source distribution will be preferable if you fall into one of the following categories:</p>
+    <ul>
+      <li>You wish to modify FOP.</li>
+      <li>You wish to use a version more recent than the latest release. For example, if you have read on the user mailing list that a bug has been fixed or a feature added that you are eager to try, you might download a source distribution from the CVS repository so that you don't have to wait for the next release.</li>
+      <li>You wish to build a local copy of the API documentation (javadocs).</li>
+    </ul>
+  </section>
+  <section id="binary">
+    <title>Binary Download</title>
+    <p>Binary distributions include "-bin" in their names, and can be downloaded from the <link href="http://xml.apache.org/dist/fop/">FOP Distribution</link> directory.
+    </p>
+    <note>We're in the process of moving the download location. Please download the
+      latest release candidate from a
+      <link href="http://www.apache.org/dyn/closer.cgi/xml/fop">mirror</link>.
+    </note>
+  </section>
+  <section id="source">
+    <title>Source Download</title>
+    <p>You must first determine which of the two main development branches you wish to download, "maintenance" or "redesign".
+See <link href="dev/index.html">Development Introduction</link> for more details on the choices, and for the CVS tags to use when downloading the "maintenance" branch.</p>
+    <p>There are three ways to obtain a source distribution. Please note that they are listed from least current to most current:</p>
+    <ul>
+      <li>Download a released version from the <link href="http://xml.apache.org/dist/fop/">FOP Distribution</link> directory. Source distributions include "-src" in their names. Please note that official releases currently are <em>only</em> made from the "maintenance" branch.</li>
+      <li>Download a CVS snapshot from the cvs files <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>. These snapshots are built approximately every six hours, and have the GMT of their creation time embedded in their names. Please note that CVS snapshots are made only for the "redesign" branch.</li>
+      <li>Download directly from the CVS repository.
+Anyone can do this using the <link href="http://xml.apache.org/cvs.html#AnonCVS">Anonymous CVS Server</link>. By default, the CVS code is up-to-the-minute, the same code that the developers are modifying. See the <link href="dev/tools.html#cvs">CVS section of Developer Tools</link> for more information on using CVS.</li>
+    </ul>
+    <p>With any source distribution, you will need to <link href="compiling.html">Build FOP</link> from the source files.</p>
+</section>
+    </body>
+</document>
+
+<!-- Last Line of $RCSfile$ -->

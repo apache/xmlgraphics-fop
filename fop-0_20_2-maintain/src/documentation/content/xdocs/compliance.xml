@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE compliance PUBLIC "-//APACHE//DTD Compliance V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/src/documentation/resources/schema/dtd/compliance-v10.dtd?rev=1.6">
+
+<compliance>
+  <head>
+    <title>FOP 0.20.4 Standards Compliance</title>
+    <subtitle>Progress Report on Standard Features Implemented</subtitle>
+  </head>
+  <body>
+    <standard name="W3C XSL-FO 1.0 Standard" baseURL="http://www.w3.org/TR/xsl" compliance-level-1-desc="Basic" compliance-level-2-desc="Extended" compliance-level-3-desc="Complete" ref-name="fo">
+      <explanatory>
+        <p>One of FOP's design goals is conformance to the W3C XSL-FO 1.0 standard, which specifies three levels of "conformance": basic, extended, and complete.
+Although FOP does not currently conform to any of these levels, it is nevertheless a useful work-in-progress for many applications.
+The information presented here demonstrates FOP's progress toward the goal of conformance, which progress consists of implementation of specific objects and properties in the standard.
+The information presented is useful not only to the developers as a sort of "to do" list, but also for setting proper expectations for users and potential users.</p>
+        <p>In the tables below, blue indicates support at the specified level of conformance, and red indicates a lack of support.</p>
+      </explanatory>
+      <level-1 name="XSL-FO Object Support" citation="§6" extURL="slice6.html#fo-section" compliance-item-desc="Object Name" ref-name="object">
+        <explanatory>
+          <p>The following is a summary of FOP's current support for the standard XSL-FO objects.</p>
+        </explanatory>
+        <level-2 name="Declarations and Pagination and Layout Formatting Objects" citation="§6.4" extURL="slice6.html#section-N10029-Declarations-and-Pagination-and-Layout-Formatting-Objects" ref-name="decl">
+          <level-3 name="root" citation="§6.4.2" extURL="slice6.html#fo_root" compliance-level="1" comply="yes"/>
+          <level-3 name="declarations" citation="§6.4.3" extURL="slice6.html#fo_declarations" compliance-level="1" comply="no"/>
+          <level-3 name="color-profile" citation="§6.4.4" extURL="slice6.html#fo_color-profile" compliance-level="2" comply="no"/>
+          <level-3 name="page-sequence" citation="§6.4.5" extURL="slice6.html#fo_page-sequence" compliance-level="1" comply="yes"/>
+          <level-3 name="layout-master-set" citation="§6.4.6" extURL="slice6.html#fo_layout-master-set" compliance-level="1" comply="yes"/>
+          <level-3 name="page-sequence-master" citation="§6.4.7" extURL="slice6.html#fo_page-sequence-master" compliance-level="1" comply="yes"/>
+          <level-3 name="single-page-master-reference" citation="§6.4.8" extURL="slice6.html#fo_single-page-master-reference" compliance-level="1" comply="yes"/>
+          <level-3 name="repeatable-page-master-reference" citation="§6.4.9" extURL="slice6.html#fo_repeatable-page-master-reference" compliance-level="1" comply="yes"/>
+          <level-3 name="repeatable-page-master-alternatives" citation="§6.4.10" extURL="slice6.html#fo_repeatable-page-master-alternatives" compliance-level="2" comply="yes"/>
+          <level-3 name="conditional-page-master-reference" citation="§6.4.11" extURL="slice6.html#fo_conditional-page-master-reference" compliance-level="2" comply="yes"/>
+          <level-3 name="simple-page-master" citation="§6.4.12" extURL="slice6.html#fo_simple-page-master" compliance-level="1" comply="yes"/>
+          <level-3 name="region-body" citation="§6.4.13" extURL="slice6.html#fo_region-body" compliance-level="1" comply="yes"/>
+          <level-3 name="region-before" citation="§6.4.14" extURL="slice6.html#fo_region-before" compliance-level="2" comply="yes"/>
+          <level-3 name="region-after" citation="§6.4.15" extURL="slice6.html#fo_region-after" compliance-level="2" comply="yes"/>
+          <level-3 name="region-start" citation="§6.4.16" extURL="slice6.html#fo_region-start" compliance-level="2" comply="yes"/>
+          <level-3 name="region-end" citation="§6.4.17" extURL="slice6.html#fo_region-end" compliance-level="2" comply="yes"/>
+          <level-3 name="flow" citation="§6.4.18" extURL="slice6.html#fo_flow" compliance-level="1" comply="yes"/>
+          <level-3 name="static-content" citation="§6.4.19" extURL="slice6.html#fo_static-content" compliance-level="2" comply="yes"/>
+          <level-3 name="title" citation="§6.4.20" extURL="slice6.html#fo_title" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Block Formatting Objects" citation="§6.5" extURL="slice6.html#section-N12764-Block-level-Formatting-Objects" ref-name="block">
+          <level-3 name="block" citation="§6.5.2" extURL="slice6.html#fo_block" compliance-level="1" comply="yes"/>
+          <level-3 name="block-container" citation="§6.5.3" extURL="slice6.html#fo_block-container" compliance-level="2" comply="partial"/>
+        </level-2>
+        <level-2 name="Inline Formatting Objects" citation="§6.6" extURL="slice6.html#section-N13277-Inline-level-Formatting-Objects" ref-name="inline">
+          <level-3 name="bidi-override" citation="§6.6.2" extURL="slice6.html#fo_bidi-override" compliance-level="2" comply="no"/>
+          <level-3 name="character" citation="§6.6.3" extURL="slice6.html#fo_character" compliance-level="1" comply="yes"/>
+          <level-3 name="initial-property-set" citation="§6.6.4" extURL="slice6.html#fo_initial-property-set" compliance-level="2" comply="no"/>
+          <level-3 name="external-graphic" citation="§6.6.5" extURL="slice6.html#fo_external-graphic" compliance-level="1" comply="yes"/>
+          <level-3 name="instream-foreign-object" citation="§6.6.6" extURL="slice6.html#fo_instream-foreign-object" compliance-level="2" comply="yes"/>
+          <level-3 name="inline" citation="§6.6.7" extURL="slice6.html#fo_inline" compliance-level="1" comply="yes"/>
+          <level-3 name="inline-container" citation="§6.6.8" extURL="slice6.html#fo_inline-container" compliance-level="2" comply="no"/>
+          <level-3 name="leader" citation="§6.6.9" extURL="slice6.html#fo_leader" compliance-level="1" comply="partial"/>
+          <level-3 name="page-number" citation="§6.6.10" extURL="slice6.html#fo_page-number" compliance-level="1" comply="yes"/>
+          <level-3 name="page-number-citation" citation="§6.6.11" extURL="slice6.html#fo_page-number-citation" compliance-level="2" comply="partial">
+            <comment>Only works for table of contents without any problems. The case
+where the page number doesn't fit on a line isn't handled, and any text on
+the same line and after the page-number might not appear exactly where you
+want it to.</comment>
+          </level-3>
+        </level-2>
+        <level-2 name="Table Formatting Objects" citation="§6.7" extURL="slice6.html#section-N15442-Formatting-Objects-for-Tables" ref-name="table">
+          <level-3 name="table-and-caption" citation="§6.7.2" extURL="slice6.html#fo_table-and-caption" compliance-level="1" comply="no"/>
+          <level-3 name="table" citation="§6.7.3" extURL="slice6.html#fo_table" compliance-level="1" comply="yes"/>
+          <level-3 name="table-column" citation="§6.7.4" extURL="slice6.html#fo_table-column" compliance-level="1" comply="yes">
+            <comment>you must explicitly specify column widths</comment>
+          </level-3>
+          <level-3 name="table-caption" citation="§6.7.5" extURL="slice6.html#fo_table-caption" compliance-level="2" comply="no"/>
+          <level-3 name="table-header" citation="§6.7.6" extURL="slice6.html#fo_table-header" compliance-level="1" comply="yes"/>
+          <level-3 name="table-footer" citation="§6.7.7" extURL="slice6.html#fo_table-footer" compliance-level="2" comply="yes"/>
+          <level-3 name="table-body" citation="§6.7.8" extURL="slice6.html#fo_table-body" compliance-level="1" comply="yes"/>
+          <level-3 name="table-row" citation="§6.7.9" extURL="slice6.html#fo_table-row" compliance-level="1" comply="yes"/>
+          <level-3 name="table-cell" citation="§6.7.10" extURL="slice6.html#fo_table-cell" compliance-level="1" comply="yes">
+            <comment>must contain block-level FOs (cannot contain straight character data)</comment>
+          </level-3>
+        </level-2>
+        <level-2 name="List Formatting Objects" citation="§6.8" extURL="slice6.html#section-N17076-Formatting-Objects-for-Lists" ref-name="list">
+          <level-3 name="list-block" citation="§6.8.2" extURL="slice6.html#fo_list-block" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item" citation="§6.8.3" extURL="slice6.html#fo_list-item" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item-body" citation="§6.8.4" extURL="slice6.html#fo_list-item-body" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item-label" citation="§6.8.5" extURL="slice6.html#fo_list-item-label" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Link and Multi Formatting Objects" citation="§6.9" extURL="slice6.html#section-N17805-Dynamic-Effects:-Link-and-Multi-Formatting-Objects" ref-name="link">
+          <level-3 name="basic-link" citation="§6.9.2" extURL="slice6.html#fo_basic-link" compliance-level="2" comply="yes">
+            <comment>both internal and external supported</comment>
+          </level-3>
+          <level-3 name="multi-switch" citation="§6.9.3" extURL="slice6.html#fo_multi-switch" compliance-level="2" comply="no"/>
+          <level-3 name="multi-case" citation="§6.9.4" extURL="slice6.html#fo_multi-case" compliance-level="1" comply="no"/>
+          <level-3 name="multi-toggle" citation="§6.9.5" extURL="slice6.html#fo_multi-toggle" compliance-level="2" comply="no"/>
+          <level-3 name="multi-properties" citation="§6.9.6" extURL="slice6.html#fo_multi-properties" compliance-level="2" comply="no"/>
+          <level-3 name="multi-property-set" citation="§6.9.7" extURL="slice6.html#fo_multi-property-set" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Out-of-line Formatting Objects" citation="§6.10" extURL="slice6.html#section-N18509-Out-of-Line-Formatting-Objects" ref-name="outofline">
+          <level-3 name="float" citation="§6.10.2" extURL="slice6.html#fo_float" compliance-level="2" comply="no"/>
+          <level-3 name="footnote" citation="§6.10.3" extURL="slice6.html#fo_footnote" compliance-level="2" comply="yes"/>
+          <level-3 name="footnote-body" citation="§6.10.4" extURL="slice6.html#fo_footnote-body" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Other Formatting Objects" citation="§6.11" extURL="slice6.html#section-N19019-Other-Formatting-Objects" ref-name="other">
+          <level-3 name="wrapper" citation="§6.11.2" extURL="slice6.html#fo_wrapper" compliance-level="1" comply="yes"/>
+          <level-3 name="marker" citation="§6.11.3" extURL="slice6.html#fo_marker" compliance-level="2" comply="yes"/>
+          <level-3 name="retrieve-marker" citation="§6.11.4" extURL="slice6.html#fo_retrieve-marker" compliance-level="2" comply="yes"/>
+        </level-2>
+      </level-1>
+      <level-1 name="XSL-FO Property Support" citation="§7" extURL="slice7.html#pr-section" compliance-item-desc="Property Name" ref-name="property">
+        <explanatory>
+          <p>The following is a summary of FOP's current support for the standard XSL-FO properties. Please note that a number of properties and categories of properties are not supported because they do not apply to documents in visual formats.</p>
+        </explanatory>
+        <level-2 name="Common Accessibility Properties" citation="§7.4" extURL="slice7.html#common-accessibility-properties" ref-name="commonaccess">
+          <level-3 name="source-document" citation="§7.4.1" extURL="slice7.html#source-document" compliance-level="1" comply="na"/>
+          <level-3 name="role" citation="§7.4.2" extURL="slice7.html#role" compliance-level="1" comply="na"/>
+        </level-2>
+        <level-2 name="Common Absolute Position Properties" citation="§7.5" extURL="slice7.html#common-absolute-position-properties" ref-name="commonabspos">
+          <level-3 name="absolute-position" citation="§7.5.1" extURL="slice7.html#absolute-position" compliance-level="3" comply="no"/>
+          <level-3 name="top" citation="§7.5.2" extURL="slice7.html#top" compliance-level="2" comply="yes"/>
+          <level-3 name="right" citation="§7.5.3" extURL="slice7.html#right" compliance-level="2" comply="yes"/>
+          <level-3 name="bottom" citation="§7.5.4" extURL="slice7.html#bottom" compliance-level="2" comply="yes"/>
+          <level-3 name="left" citation="§7.5.5" extURL="slice7.html#left" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Aural Properties" citation="§7.6" extURL="slice7.html#common-aural-properties" ref-name="commonaural">
+          <level-3 name="azimuth" citation="§7.6.1" extURL="slice7.html#azimuth" compliance-level="1" comply="na"/>
+          <level-3 name="cue-after" citation="§7.6.2" extURL="slice7.html#cue-after" compliance-level="1" comply="na"/>
+          <level-3 name="cue-before" citation="§7.6.3" extURL="slice7.html#cue-before" compliance-level="1" comply="na"/>
+          <level-3 name="elevation" citation="§7.6.4" extURL="slice7.html#elevation" compliance-level="1" comply="na"/>
+          <level-3 name="pause-after" citation="§7.6.5" extURL="slice7.html#pause-after" compliance-level="1" comply="na"/>
+          <level-3 name="pause-before" citation="§7.6.6" extURL="slice7.html#pause-before" compliance-level="1" comply="na"/>
+          <level-3 name="pitch" citation="§7.6.7" extURL="slice7.html#pitch" compliance-level="1" comply="na"/>
+          <level-3 name="pitch-range" citation="§7.6.8" extURL="slice7.html#pitch-range" compliance-level="1" comply="na"/>
+          <level-3 name="play-during" citation="§7.6.9" extURL="slice7.html#play-during" compliance-level="1" comply="na"/>
+          <level-3 name="richness" citation="§7.6.10" extURL="slice7.html#richness" compliance-level="1" comply="na"/>
+          <level-3 name="speak" citation="§7.6.11" extURL="slice7.html#speak" compliance-level="1" comply="na"/>
+          <level-3 name="speak-header" citation="§7.6.12" extURL="slice7.html#speak-header" compliance-level="1" comply="na"/>
+          <level-3 name="speak-numeral" citation="§7.6.13" extURL="slice7.html#speak-numeral" compliance-level="1" comply="na"/>
+          <level-3 name="speak-punctuation" citation="§7.6.14" extURL="slice7.html#speak-punctuation" compliance-level="1" comply="na"/>
+          <level-3 name="speech-rate" citation="§7.6.15" extURL="slice7.html#speech-rate" compliance-level="1" comply="na"/>
+          <level-3 name="stress" citation="§7.6.16" extURL="slice7.html#stress" compliance-level="1" comply="na"/>
+          <level-3 name="voice-family" citation="§7.6.17" extURL="slice7.html#voice-family" compliance-level="1" comply="na"/>
+          <level-3 name="volume" citation="§7.6.18" extURL="slice7.html#volume" compliance-level="1" comply="na"/>
+        </level-2>
+        <level-2 name="Common Border, Padding, and Background Properties" citation="§7.7" extURL="slice7.html#common-border-padding-and-background-properties" ref-name="commonenv">
+          <level-3 name="background-attachment" citation="§7.7.1" extURL="slice7.html#background-attachment" compliance-level="2" comply="no"/>
+          <level-3 name="background-color" citation="§7.7.2" extURL="slice7.html#background-color" compliance-level="1" comply="yes"/>
+          <level-3 name="background-image" citation="§7.7.3" extURL="slice7.html#background-image" compliance-level="2" comply="yes"/>
+          <level-3 name="background-repeat" citation="§7.7.4" extURL="slice7.html#background-repeat" compliance-level="2" comply="no"/>
+          <level-3 name="background-position-horizontal" citation="§7.7.5" extURL="slice7.html#background-position-horizontal" compliance-level="2" comply="no"/>
+          <level-3 name="background-position-vertical" citation="§7.7.6" extURL="slice7.html#background-position-vertical" compliance-level="2" comply="no"/>
+          <level-3 name="border-before-color" citation="§7.7.7" extURL="slice7.html#border-before-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-before-style" citation="§7.7.8" extURL="slice7.html#border-before-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-before-width" citation="§7.7.9" extURL="slice7.html#border-before-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-after-color" citation="§7.7.10" extURL="slice7.html#border-after-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-after-style" citation="§7.7.11" extURL="slice7.html#border-after-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-after-width" citation="§7.7.12" extURL="slice7.html#border-after-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-start-color" citation="§7.7.13" extURL="slice7.html#border-start-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-start-style" citation="§7.7.14" extURL="slice7.html#border-start-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-start-width" citation="§7.7.15" extURL="slice7.html#border-start-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-end-color" citation="§7.7.16" extURL="slice7.html#border-end-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-end-style" citation="§7.7.17" extURL="slice7.html#border-end-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-end-width" citation="§7.7.18" extURL="slice7.html#border-end-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-top-color" citation="§7.7.19" extURL="slice7.html#border-top-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-top-style" citation="§7.7.20" extURL="slice7.html#border-top-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-top-width" citation="§7.7.21" extURL="slice7.html#border-top-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-bottom-color" citation="§7.7.22" extURL="slice7.html#border-bottom-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-bottom-style" citation="§7.7.23" extURL="slice7.html#border-bottom-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-bottom-width" citation="§7.7.24" extURL="slice7.html#border-bottom-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-left-color" citation="§7.7.25" extURL="slice7.html#border-left-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-left-style" citation="§7.7.26" extURL="slice7.html#border-left-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-left-width" citation="§7.7.27" extURL="slice7.html#border-left-width" compliance-level="1" comply="yes"/>
+          <level-3 name="border-right-color" citation="§7.7.28" extURL="slice7.html#border-right-color" compliance-level="1" comply="yes"/>
+          <level-3 name="border-right-style" citation="§7.7.29" extURL="slice7.html#border-right-style" compliance-level="1" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-right-width" citation="§7.7.30" extURL="slice7.html#border-right-width" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-before" citation="§7.7.31" extURL="slice7.html#padding-before" compliance-level="1" comply="yes">
+            <comment>only one value allowed</comment>
+            <comment>only implemented for blocks</comment>
+            <comment>can't be used to make extra space (use indents + spaces instead)</comment>
+            <comment>can be used to control how much the background-color extends beyond the content rectangle</comment>
+          </level-3>
+          <level-3 name="padding-after" citation="§7.7.32" extURL="slice7.html#padding-after" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-start" citation="§7.7.33" extURL="slice7.html#padding-start" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-end" citation="§7.7.34" extURL="slice7.html#padding-end" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-top" citation="§7.7.35" extURL="slice7.html#padding-top" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-bottom" citation="§7.7.36" extURL="slice7.html#padding-bottom" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-left" citation="§7.7.37" extURL="slice7.html#padding-left" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-right" citation="§7.7.38" extURL="slice7.html#padding-right" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+        </level-2>
+        <level-2 name="Common Font Properties" citation="§7.8" extURL="slice7.html#common-font-properties" ref-name="commonfont">
+          <level-3 name="font-family" citation="§7.8.2" extURL="slice7.html#font-family" compliance-level="1" comply="yes">
+          	<comment>font-family lists are not supported, use a single font-family name</comment>
+          </level-3>
+          <level-3 name="font-selection-strategy" citation="§7.8.3" extURL="slice7.html#font-selection-strategy" compliance-level="3" comply="no"/>
+          <level-3 name="font-size" citation="§7.8.4" extURL="slice7.html#font-size" compliance-level="1" comply="yes"/>
+          <level-3 name="font-stretch" citation="§7.8.5" extURL="slice7.html#font-stretch" compliance-level="2" comply="no"/>
+          <level-3 name="font-size-adjust" citation="§7.8.6" extURL="slice7.html#font-size-adjust" compliance-level="2" comply="no"/>
+          <level-3 name="font-style" citation="§7.8.7" extURL="slice7.html#font-style" compliance-level="1" comply="yes"/>
+          <level-3 name="font-variant" citation="§7.8.8" extURL="slice7.html#font-variant" compliance-level="1" comply="no"/>
+          <level-3 name="font-weight" citation="§7.8.9" extURL="slice7.html#font-weight" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Hyphenation Properties" citation="§7.9" extURL="slice7.html#common-hyphenation-properties" ref-name="commonhyphen">
+          <level-3 name="country" citation="§7.9.1" extURL="slice7.html#country" compliance-level="2" comply="yes"/>
+          <level-3 name="language" citation="§7.9.2" extURL="slice7.html#language" compliance-level="2" comply="yes"/>
+          <level-3 name="script" citation="§7.9.3" extURL="slice7.html#script" compliance-level="2" comply="no"/>
+          <level-3 name="hyphenate" citation="§7.9.4" extURL="slice7.html#hyphenate" compliance-level="2" comply="yes"/>
+          <level-3 name="hyphenation-character" citation="§7.9.5" extURL="slice7.html#hyphenation-character" compliance-level="2" comply="yes"/>
+          <level-3 name="hyphenation-push-character-count" citation="§7.9.6" extURL="slice7.html#hyphenation-push-character-count" compliance-level="2" comply="yes"/>
+          <level-3 name="hyphenation-remain-character-count" citation="§7.9.7" extURL="slice7.html#hyphenation-remain-character-count" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Margin Properties - Block" citation="§7.10" extURL="slice7.html#common-margin-properties-block" ref-name="commonmarginblock">
+          <level-3 name="margin-top" citation="§7.10.1" extURL="slice7.html#margin-top" compliance-level="1" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="margin-bottom" citation="§7.10.2" extURL="slice7.html#margin-bottom" compliance-level="1" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="margin-left" citation="§7.10.3" extURL="slice7.html#margin-left" compliance-level="1" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="margin-right" citation="§7.10.4" extURL="slice7.html#margin-right" compliance-level="1" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="space-before" citation="§7.10.5" extURL="slice7.html#space-before" compliance-level="1" comply="partial">
+            <comment>space-before.optimum supported</comment>
+          </level-3>
+          <level-3 name="space-after" citation="§7.10.6" extURL="slice7.html#space-after" compliance-level="1" comply="partial">
+            <comment>space-after.optimum supported</comment>
+          </level-3>
+          <level-3 name="start-indent" citation="§7.10.7" extURL="slice7.html#start-indent" compliance-level="1" comply="yes"/>
+          <level-3 name="end-indent" citation="§7.10.8" extURL="slice7.html#end-indent" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Common Margin Properties - Inline" citation="§7.11" extURL="slice7.html#common-margin-properties-inline" ref-name="commonmargininline">
+          <level-3 name="space-end" citation="§7.11.1" extURL="slice7.html#space-end" compliance-level="1" comply="no"/>
+          <level-3 name="space-start" citation="§7.11.2" extURL="slice7.html#space-start" compliance-level="1" comply="no"/>
+        </level-2>
+        <level-2 name="Common Relative Position Properties" citation="§7.12" extURL="slice7.html#common-relative-position-properties" ref-name="commonrelpos">
+          <level-3 name="relative-position" citation="§7.12.1" extURL="slice7.html#relative-position" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Area Alignment Properties" citation="§7.13" extURL="slice7.html#area-alignment" ref-name="areaalign">
+          <level-3 name="alignment-adjust" citation="§7.13.1" extURL="slice7.html#alignment-adjust" compliance-level="1" comply="no"/>
+          <level-3 name="alignment-baseline" citation="§7.13.2" extURL="slice7.html#alignment-baseline" compliance-level="1" comply="no"/>
+          <level-3 name="baseline-shift" citation="§7.13.3" extURL="slice7.html#baseline-shift" compliance-level="1" comply="no"/>
+          <level-3 name="display-align" citation="§7.13.4" extURL="slice7.html#display-align" compliance-level="2" comply="partial">
+            <comment>Implemented only for table-cell and block-container.</comment>
+            <comment>For table-cell, the "height" attribute must be set for the parent table-row; setting the height of the table or the table-cell results in vertical centering having no effect.
+</comment>
+          </level-3>
+          <level-3 name="dominant-baseline" citation="§7.13.5" extURL="slice7.html#dominant-baseline" compliance-level="1" comply="no"/>
+          <level-3 name="relative-align" citation="§7.13.6" extURL="slice7.html#relative-align" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Area Dimension Properties" citation="§7.14" extURL="slice7.html#section-N36094-Area-Dimension-Properties" ref-name="areadim">
+          <level-3 name="block-progression-dimension" citation="§7.14.1" extURL="slice7.html#block-progression-dimension" compliance-level="1" comply="no"/>
+          <level-3 name="content-height" citation="§7.14.2" extURL="slice7.html#content-height" compliance-level="2" comply="no"/>
+          <level-3 name="content-width" citation="§7.14.3" extURL="slice7.html#content-width" compliance-level="2" comply="no"/>
+          <level-3 name="height" citation="§7.14.4" extURL="slice7.html#height" compliance-level="1" comply="yes"/>
+          <level-3 name="inline-progression-dimension" citation="§7.14.5" extURL="slice7.html#inline-progression-dimension" compliance-level="1" comply="no"/>
+          <level-3 name="max-height" citation="§7.14.6" extURL="slice7.html#max-height" compliance-level="3" comply="no"/>
+          <level-3 name="max-width" citation="§7.14.7" extURL="slice7.html#max-width" compliance-level="3" comply="no"/>
+          <level-3 name="min-height" citation="§7.14.8" extURL="slice7.html#min-height" compliance-level="3" comply="no"/>
+          <level-3 name="min-width" citation="§7.14.9" extURL="slice7.html#min-width" compliance-level="3" comply="no"/>
+          <level-3 name="scaling" citation="§7.14.10" extURL="slice7.html#scaling" compliance-level="2" comply="no"/>
+          <level-3 name="scaling-method" citation="§7.14.11" extURL="slice7.html#scaling-method" compliance-level="2" comply="no"/>
+          <level-3 name="width" citation="§7.14.12" extURL="slice7.html#width" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Block and Line-related Properties" citation="§7.15" extURL="slice7.html#section-N38191-Block-and-Line-related-Properties" ref-name="blockandline">
+          <level-3 name="hyphenation-keep" citation="§7.15.1" extURL="slice7.html#hyphenation-keep" compliance-level="2" comply="no"/>
+          <level-3 name="hyphenation-ladder-count" citation="§7.15.2" extURL="slice7.html#hyphenation-ladder-count" compliance-level="2" comply="no"/>
+          <level-3 name="last-line-end-indent" citation="§7.15.3" extURL="slice7.html#last-line-end-indent" compliance-level="2" comply="no"/>
+          <level-3 name="line-height" citation="§7.15.4" extURL="slice7.html#line-height" compliance-level="1" comply="yes"/>
+          <level-3 name="line-height-shift-adjustment" citation="§7.15.5" extURL="slice7.html#line-height-shift-adjustment" compliance-level="2" comply="no"/>
+          <level-3 name="line-stacking-strategy" citation="§7.15.6" extURL="slice7.html#line-stacking-strategy" compliance-level="1" comply="no"/>
+          <level-3 name="linefeed-treatment" citation="§7.15.7" extURL="slice7.html#linefeed-treatment" compliance-level="2" comply="no"/>
+          <level-3 name="white-space-treatment" citation="§7.15.8" extURL="slice7.html#white-space-treatment" compliance-level="2" comply="no"/>
+          <level-3 name="text-align" citation="§7.15.9" extURL="slice7.html#text-align" compliance-level="1" comply="partial">
+            <comment>Only start, end, center and justify are supported</comment>
+          </level-3>
+          <level-3 name="text-align-last" citation="§7.15.10" extURL="slice7.html#text-align-last" compliance-level="2" comply="partial">
+            <comment>Only start, end, center and justify are supported</comment>
+          </level-3>
+          <level-3 name="text-indent" citation="§7.15.11" extURL="slice7.html#text-indent" compliance-level="1" comply="yes"/>
+          <level-3 name="white-space-collapse" citation="§7.15.12" extURL="slice7.html#white-space-collapse" compliance-level="2" comply="yes"/>
+          <level-3 name="wrap-option" citation="§7.15.13" extURL="slice7.html#wrap-option" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Character Properties" citation="§7.16" extURL="slice7.html#section-N40545-Character-Properties" ref-name="char">
+          <level-3 name="character" citation="§7.16.1" extURL="slice7.html#character" compliance-level="1" comply="yes"/>
+          <level-3 name="letter-spacing" citation="§7.16.2" extURL="slice7.html#letter-spacing" compliance-level="2" comply="yes"/>
+          <level-3 name="suppress-at-line-break" citation="§7.16.3" extURL="slice7.html#suppress-at-line-break" compliance-level="2" comply="no"/>
+          <level-3 name="text-decoration" citation="§7.16.4" extURL="slice7.html#text-decoration" compliance-level="2" comply="yes"/>
+          <level-3 name="text-shadow" citation="§7.16.5" extURL="slice7.html#text-shadow" compliance-level="2" comply="no"/>
+          <level-3 name="text-transform" citation="§7.16.6" extURL="slice7.html#text-transform" compliance-level="2" comply="no"/>
+          <level-3 name="treat-as-word-space" citation="§7.16.7" extURL="slice7.html#treat-as-word-space" compliance-level="2" comply="no"/>
+          <level-3 name="word-spacing" citation="§7.16.8" extURL="slice7.html#word-spacing" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Color-related Properties" citation="§7.17" extURL="slice7.html#section-N42081-Color-related-Properties" ref-name="color">
+          <level-3 name="color" citation="§7.17.1" extURL="slice7.html#color" compliance-level="1" comply="yes"/>
+          <level-3 name="color-profile-name" citation="§7.17.2" extURL="slice7.html#color-profile-name" compliance-level="2" comply="no"/>
+          <level-3 name="rendering-intent" citation="§7.17.3" extURL="slice7.html#rendering-intent" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Float-related Properties" citation="§7.18" extURL="slice7.html#section-N42546-Float-related-Properties" ref-name="float">
+          <level-3 name="clear" citation="§7.18.1" extURL="slice7.html#clear" compliance-level="2" comply="no"/>
+          <level-3 name="float" citation="§7.18.2" extURL="slice7.html#float" compliance-level="2" comply="no"/>
+          <level-3 name="intrusion-displace" citation="§7.18.3" extURL="slice7.html#intrusion-displace" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Keeps and Breaks Properties" citation="§7.19" extURL="slice7.html#section-N43268-Keeps-and-Breaks-Properties" ref-name="keepsbreaks">
+          <level-3 name="break-after" citation="§7.19.1" extURL="slice7.html#break-after" compliance-level="1" comply="yes"/>
+          <level-3 name="break-before" citation="§7.19.2" extURL="slice7.html#break-before" compliance-level="1" comply="yes"/>
+          <level-3 name="keep-together" citation="§7.19.3" extURL="slice7.html#keep-together" compliance-level="2" comply="partial">
+            <comment>works only in table rows</comment>
+          </level-3>
+          <level-3 name="keep-with-next" citation="§7.19.4" extURL="slice7.html#keep-with-next" compliance-level="1" comply="partial">
+            <comment>works only in table rows</comment>
+          </level-3>
+          <level-3 name="keep-with-previous" citation="§7.19.5" extURL="slice7.html#keep-with-previous" compliance-level="1" comply="partial">
+            <comment>works only in table rows</comment>
+          </level-3>
+          <level-3 name="orphans" citation="§7.19.6" extURL="slice7.html#orphans" compliance-level="1" comply="no"/>
+          <level-3 name="widows" citation="§7.19.7" extURL="slice7.html#widows" compliance-level="1" comply="no"/>
+        </level-2>
+        <level-2 name="Layout-related Properties" citation="§7.20" extURL="slice7.html#section-N44408-Layout-related-Properties" ref-name="layout">
+          <level-3 name="clip" citation="§7.20.1" extURL="slice7.html#clip" compliance-level="2" comply="no"/>
+          <level-3 name="overflow" citation="§7.20.2" extURL="slice7.html#overflow" compliance-level="1" comply="no"/>
+          <level-3 name="reference-orientation" citation="§7.20.3" extURL="slice7.html#reference-orientation" compliance-level="2" comply="no">
+            <comment>Workaround for page-orientation (portrait vs. landscape) is to swap the page-width and page-height properties.</comment>
+            <comment>Workaround for block-container is to use SVG.</comment>
+          </level-3>
+          <level-3 name="span" citation="§7.20.4" extURL="slice7.html#span" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Leader and Rule Properties" citation="§7.21" extURL="slice7.html#section-N45132-Leader-and-Rule-Properties" ref-name="leader">
+          <level-3 name="leader-alignment" citation="§7.21.1" extURL="slice7.html#leader-alignment" compliance-level="2" comply="yes">
+            <comment>not value &quot;page&quot;</comment>
+          </level-3>
+          <level-3 name="leader-pattern" citation="§7.21.2" extURL="slice7.html#leader-pattern" compliance-level="1" comply="yes">
+            <comment>not value &quot;use-content&quot;</comment>
+          </level-3>
+          <level-3 name="leader-pattern-width" citation="§7.21.3" extURL="slice7.html#leader-pattern-width" compliance-level="2" comply="yes"/>
+          <level-3 name="leader-length" citation="§7.21.4" extURL="slice7.html#leader-length" compliance-level="1" comply="yes">
+            <comment>leader-length.minimum is not used at all</comment>
+          </level-3>
+          <level-3 name="rule-style" citation="§7.21.5" extURL="slice7.html#rule-style" compliance-level="1" comply="yes"/>
+          <level-3 name="rule-thickness" citation="§7.21.6" extURL="slice7.html#rule-thickness" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Properties for Dynamic Effects Formatting Objects" citation="§7.22" extURL="slice7.html#section-N46115-Properties-for-Dynamic-Effects-Formatting-Objects" ref-name="dynamiceffects">
+          <level-3 name="active-state" citation="§7.22.1" extURL="slice7.html#active-state" compliance-level="2" comply="no"/>
+          <level-3 name="auto-restore" citation="§7.22.2" extURL="slice7.html#auto-restore" compliance-level="2" comply="no"/>
+          <level-3 name="case-name" citation="§7.22.3" extURL="slice7.html#case-name" compliance-level="2" comply="no"/>
+          <level-3 name="case-title" citation="§7.22.4" extURL="slice7.html#case-title" compliance-level="2" comply="no"/>
+          <level-3 name="destination-placement-offset" citation="§7.22.5" extURL="slice7.html#destination-placement-offset" compliance-level="2" comply="no"/>
+          <level-3 name="external-destination" citation="§7.22.6" extURL="slice7.html#external-destination" compliance-level="2" comply="yes"/>
+          <level-3 name="indicate-destination" citation="§7.22.7" extURL="slice7.html#indicate-destination" compliance-level="2" comply="no"/>
+          <level-3 name="internal-destination" citation="§7.22.8" extURL="slice7.html#internal-destination" compliance-level="2" comply="yes"/>
+          <level-3 name="show-destination" citation="§7.22.9" extURL="slice7.html#show-destination" compliance-level="2" comply="no"/>
+          <level-3 name="starting-state" citation="§7.22.10" extURL="slice7.html#starting-state" compliance-level="2" comply="no"/>
+          <level-3 name="switch-to" citation="§7.22.11" extURL="slice7.html#switch-to" compliance-level="2" comply="no"/>
+          <level-3 name="target-presentation-context" citation="§7.22.12" extURL="slice7.html#target-presentation-context" compliance-level="2" comply="no"/>
+          <level-3 name="target-processing-context" citation="§7.22.13" extURL="slice7.html#target-processing-context" compliance-level="2" comply="no"/>
+          <level-3 name="target-stylesheet" citation="§7.22.14" extURL="slice7.html#target-stylesheet" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Properties for Markers" citation="§7.23" extURL="slice7.html#section-N48193-Properties-for-Markers" ref-name="markers">
+          <level-3 name="marker-class-name" citation="§7.23.1" extURL="slice7.html#marker-class-name" compliance-level="2" comply="no"/>
+          <level-3 name="retrieve-class-name" citation="§7.23.2" extURL="slice7.html#retrieve-class-name" compliance-level="2" comply="no"/>
+          <level-3 name="retrieve-position" citation="§7.23.3" extURL="slice7.html#retrieve-position" compliance-level="2" comply="no"/>
+          <level-3 name="retrieve-boundary" citation="§7.23.4" extURL="slice7.html#retrieve-boundary" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Properties for Number to String Conversion" citation="§7.24" extURL="slice7.html#section-N48804-Properties-for-Number-to-String-Conversion" ref-name="numberstring">
+          <level-3 name="format" citation="§7.24.1" extURL="slice7.html#format" compliance-level="1" comply="no"/>
+          <level-3 name="grouping-separator" citation="§7.24.2" extURL="slice7.html#grouping-separator" compliance-level="2" comply="no"/>
+          <level-3 name="grouping-size" citation="§7.24.3" extURL="slice7.html#grouping-size" compliance-level="2" comply="no"/>
+          <level-3 name="letter-value" citation="§7.24.4" extURL="slice7.html#letter-value" compliance-level="1" comply="no"/>
+        </level-2>
+        <level-2 name="Pagination and Layout Properties" citation="§7.25" extURL="slice7.html#section-N49321-Pagination-and-Layout-Properties" ref-name="pagination">
+          <level-3 name="blank-or-not-blank" citation="§7.25.1" extURL="slice7.html#blank-or-not-blank" compliance-level="2" comply="yes"/>
+          <level-3 name="column-count" citation="§7.25.2" extURL="slice7.html#column-count" compliance-level="2" comply="yes"/>
+          <level-3 name="column-gap" citation="§7.25.3" extURL="slice7.html#column-gap" compliance-level="2" comply="yes"/>
+          <level-3 name="extent" citation="§7.25.4" extURL="slice7.html#extent" compliance-level="2" comply="yes"/>
+          <level-3 name="flow-name" citation="§7.25.5" extURL="slice7.html#flow-name" compliance-level="1" comply="yes"/>
+          <level-3 name="force-page-count" citation="§7.25.6" extURL="slice7.html#force-page-count" compliance-level="2" comply="no"/>
+          <level-3 name="initial-page-number" citation="§7.25.7" extURL="slice7.html#initial-page-number" compliance-level="1" comply="yes"/>
+          <level-3 name="master-name" citation="§7.25.8" extURL="slice7.html#master-name" compliance-level="1" comply="yes"/>
+          <level-3 name="master-reference" citation="§7.25.9" extURL="slice7.html#master-reference" compliance-level="1" comply="yes"/>
+          <level-3 name="maximum-repeats" citation="§7.25.10" extURL="slice7.html#maximum-repeats" compliance-level="2" comply="yes"/>
+          <level-3 name="media-usage" citation="§7.25.11" extURL="slice7.html#media-usage" compliance-level="2" comply="no"/>
+          <level-3 name="odd-or-even" citation="§7.25.12" extURL="slice7.html#odd-or-even" compliance-level="2" comply="yes"/>
+          <level-3 name="page-height" citation="§7.25.13" extURL="slice7.html#page-height" compliance-level="1" comply="yes"/>
+          <level-3 name="page-position" citation="§7.25.14" extURL="slice7.html#page-position" compliance-level="2" comply="partial">
+          	<comment>"last" isn't implemented!</comment>
+          </level-3>
+          <level-3 name="page-width" citation="§7.25.15" extURL="slice7.html#page-width" compliance-level="1" comply="yes"/>
+          <level-3 name="precedence" citation="§7.25.16" extURL="slice7.html#precedence" compliance-level="2" comply="no"/>
+          <level-3 name="region-name" citation="§7.25.17" extURL="slice7.html#region-name" compliance-level="1" comply="yes"/>
+        </level-2>
+        <level-2 name="Table Properties" citation="§7.26" extURL="slice7.html#section-N52000-Table-Properties" ref-name="table">
+          <level-3 name="border-after-precedence" citation="§7.26.1" extURL="slice7.html#border-after-precedence" compliance-level="1" comply="no"/>
+          <level-3 name="border-before-precedence" citation="§7.26.2" extURL="slice7.html#border-before-precedence" compliance-level="1" comply="no"/>
+          <level-3 name="border-collapse" citation="§7.26.3" extURL="slice7.html#border-collapse" compliance-level="2" comply="no"/>
+          <level-3 name="border-end-precedence" citation="§7.26.4" extURL="slice7.html#border-end-precedence" compliance-level="1" comply="no"/>
+          <level-3 name="border-separation" citation="§7.26.5" extURL="slice7.html#border-separation" compliance-level="2" comply="no"/>
+          <level-3 name="border-start-precedence" citation="§7.26.6" extURL="slice7.html#border-start-precedence" compliance-level="1" comply="no"/>
+          <level-3 name="caption-side" citation="§7.26.7" extURL="slice7.html#caption-side" compliance-level="3" comply="no"/>
+          <level-3 name="column-number" citation="§7.26.8" extURL="slice7.html#column-number" compliance-level="1" comply="no"/>
+          <level-3 name="column-width" citation="§7.26.9" extURL="slice7.html#column-width" compliance-level="1" comply="partial">
+          <comment>"percentage" not implemented. Workaround is to use the XSL-FO "proportional-column-width" function.</comment>
+          </level-3>
+          <level-3 name="empty-cells" citation="§7.26.10" extURL="slice7.html#empty-cells" compliance-level="2" comply="no"/>
+          <level-3 name="ends-row" citation="§7.26.11" extURL="slice7.html#ends-row" compliance-level="2" comply="no"/>
+          <level-3 name="number-columns-repeated" citation="§7.26.12" extURL="slice7.html#number-columns-repeated" compliance-level="1" comply="no"/>
+          <level-3 name="number-columns-spanned" citation="§7.26.13" extURL="slice7.html#number-columns-spanned" compliance-level="1" comply="yes"/>
+          <level-3 name="number-rows-spanned" citation="§7.26.14" extURL="slice7.html#number-rows-spanned" compliance-level="1" comply="yes"/>
+          <level-3 name="starts-row" citation="§7.26.15" extURL="slice7.html#starts-row" compliance-level="2" comply="no"/>
+          <level-3 name="table-layout" citation="§7.26.16" extURL="slice7.html#table-layout" compliance-level="2" comply="no"/>
+          <level-3 name="table-omit-footer-at-break" citation="§7.26.17" extURL="slice7.html#table-omit-footer-at-break" compliance-level="2" comply="yes"/>
+          <level-3 name="table-omit-header-at-break" citation="§7.26.18" extURL="slice7.html#table-omit-header-at-break" compliance-level="2" comply="yes"/>
+        </level-2>
+        <level-2 name="Writing-mode-related Properties" citation="§7.27" extURL="slice7.html#writing-mode-related" ref-name="writingmode">
+          <level-3 name="direction" citation="§7.27.1" extURL="slice7.html#direction" compliance-level="1" comply="no"/>
+          <level-3 name="glyph-orientation-horizontal" citation="§7.27.2" extURL="slice7.html#glyph-orientation-horizontal" compliance-level="2" comply="no"/>
+          <level-3 name="glyph-orientation-vertical" citation="§7.27.3" extURL="slice7.html#glyph-orientation-vertical" compliance-level="2" comply="no"/>
+          <level-3 name="text-altitude" citation="§7.27.4" extURL="slice7.html#text-altitude" compliance-level="2" comply="no"/>
+          <level-3 name="text-depth" citation="§7.27.5" extURL="slice7.html#text-depth" compliance-level="2" comply="no"/>
+          <level-3 name="unicode-bidi" citation="§7.27.6" extURL="slice7.html#unicode-bidi" compliance-level="2" comply="no"/>
+          <level-3 name="writing-mode" citation="§7.27.7" extURL="slice7.html#writing-mode" compliance-level="1" comply="no"/>
+        </level-2>
+        <level-2 name="Miscellaneous Properties" citation="§7.28" extURL="slice7.html#section-N56509-Miscellaneous-Properties" ref-name="misc">
+          <level-3 name="content-type" citation="§7.28.1" extURL="slice7.html#content-type" compliance-level="2" comply="no"/>
+          <level-3 name="id" citation="§7.28.2" extURL="slice7.html#id" compliance-level="1" comply="yes"/>
+          <level-3 name="provisional-label-separation" citation="§7.28.3" extURL="slice7.html#provisional-label-separation" compliance-level="1" comply="yes"/>
+          <level-3 name="provisional-distance-between-starts" citation="§7.28.4" extURL="slice7.html#provisional-distance-between-starts" compliance-level="1" comply="yes"/>
+          <level-3 name="ref-id" citation="§7.28.5" extURL="slice7.html#ref-id" compliance-level="2" comply="yes"/>
+          <level-3 name="score-spaces" citation="§7.28.6" extURL="slice7.html#score-spaces" compliance-level="2" comply="no"/>
+          <level-3 name="src" citation="§7.28.7" extURL="slice7.html#src" compliance-level="1" comply="yes"/>
+          <level-3 name="visibility" citation="§7.28.8" extURL="slice7.html#visibility" compliance-level="2" comply="no"/>
+          <level-3 name="z-index" citation="§7.28.9" extURL="slice7.html#z-index" compliance-level="2" comply="no"/>
+        </level-2>
+        <level-2 name="Shorthand Properties" citation="§7.29" extURL="slice7.html#section-N57854-Shorthand-Properties" ref-name="shorthand">
+          <level-3 name="background" citation="§7.29.1" extURL="slice7.html#background" compliance-level="3" comply="no"/>
+          <level-3 name="background-position" citation="§7.29.2" extURL="slice7.html#background-position" compliance-level="3" comply="no"/>
+          <level-3 name="border" citation="§7.29.3" extURL="slice7.html#border" compliance-level="3" comply="no"/>
+          <level-3 name="border-bottom" citation="§7.29.4" extURL="slice7.html#border-bottom" compliance-level="3" comply="yes"/>
+          <level-3 name="border-color" citation="§7.29.5" extURL="slice7.html#border-color" compliance-level="3" comply="yes">
+            <comment>only one value allowed</comment>
+          </level-3>
+          <level-3 name="border-left" citation="§7.29.6" extURL="slice7.html#border-left" compliance-level="3" comply="yes"/>
+          <level-3 name="border-right" citation="§7.29.7" extURL="slice7.html#border-right" compliance-level="3" comply="yes"/>
+          <level-3 name="border-style" citation="§7.29.8" extURL="slice7.html#border-style" compliance-level="3" comply="yes">
+          	<comment>only "solid" works</comment>
+          </level-3>
+          <level-3 name="border-spacing" citation="§7.29.9" extURL="slice7.html#border-spacing" compliance-level="3" comply="no"/>
+          <level-3 name="border-top" citation="§7.29.10" extURL="slice7.html#border-top" compliance-level="3" comply="yes"/>
+          <level-3 name="border-width" citation="§7.29.11" extURL="slice7.html#border-width" compliance-level="3" comply="yes"/>
+          <level-3 name="cue" citation="§7.29.12" extURL="slice7.html#cue" compliance-level="3" comply="no"/>
+          <level-3 name="font" citation="§7.29.13" extURL="slice7.html#font" compliance-level="3" comply="no"/>
+          <level-3 name="margin" citation="§7.29.14" extURL="slice7.html#margin" compliance-level="3" comply="partial">
+            <comment>only on pages and regions</comment>
+          </level-3>
+          <level-3 name="padding" citation="§7.29.15" extURL="slice7.html#padding" compliance-level="3" comply="partial">
+            <comment>only one value allowed</comment>
+            <comment>only implemented for blocks</comment>
+            <comment>can't be used to make extra space (use indents + spaces instead)</comment>
+            <comment>can be used to control how much the background-color extends beyond the content rectangle</comment>
+          </level-3>
+          <level-3 name="page-break-after" citation="§7.29.16" extURL="slice7.html#page-break-after" compliance-level="3" comply="no"/>
+          <level-3 name="page-break-before" citation="§7.29.17" extURL="slice7.html#page-break-before" compliance-level="3" comply="no"/>
+          <level-3 name="page-break-inside" citation="§7.29.18" extURL="slice7.html#page-break-inside" compliance-level="3" comply="no"/>
+          <level-3 name="pause" citation="§7.29.19" extURL="slice7.html#pause" compliance-level="3" comply="no"/>
+          <level-3 name="position" citation="§7.29.20" extURL="slice7.html#position" compliance-level="3" comply="partial">
+            <comment>&quot;inherit&quot; not handled</comment>
+          </level-3>
+          <level-3 name="size" citation="§7.29.21" extURL="slice7.html#size" compliance-level="3" comply="no"/>
+          <level-3 name="vertical-align" citation="§7.29.22" extURL="slice7.html#vertical-align" compliance-level="3" comply="no"/>
+          <level-3 name="white-space" citation="§7.29.23" extURL="slice7.html#white-space" compliance-level="3" comply="no"/>
+          <level-3 name="xml:lang" citation="§7.29.24" extURL="slice7.html#xml:lang" compliance-level="3" comply="no"/>
+        </level-2>
+      </level-1>
+    </standard>
+  </body>
+</compliance>
+

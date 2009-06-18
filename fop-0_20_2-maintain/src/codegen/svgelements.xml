@@ -1,0 +1,1355 @@
+<?xml version="1.0" ?>
+<!--
+
+This file provides all the information for the svg elements and
+attributes. The information corresponds to the svg dtd.
+
+This information is used to create the code for the svg elements
+and the property mappings.
+
+-->
+<elements prefix="svg" ns="http://www.w3.org/2000/svg">
+    <commonAttributes ref="stdAttrs">
+        <attribute>id</attribute>
+        <attribute>class</attribute>
+    </commonAttributes>
+    <commonAttributes ref="langSpaceAttrs">
+        <attribute>xml:lang</attribute>
+        <attribute>xml:space</attribute>
+    </commonAttributes>
+    <commonAttributes ref="testAttrs">
+        <attribute>requiredFeatures</attribute>
+        <attribute>requiredExtensions</attribute>
+        <attribute>systemLanguage</attribute>
+    </commonAttributes>
+     <commonAttributes ref="xlinkRefAttrs">
+        <attribute>xmlns:xlink</attribute>
+        <attribute>xlink:type</attribute>
+        <attribute>xlink:role</attribute>
+        <attribute>xlink:arcrole</attribute>
+        <attribute>xlink:title</attribute>
+        <attribute>xlink:show</attribute>
+        <attribute>xlink:actuate</attribute>
+    </commonAttributes>
+    <commonAttributes ref="graphicsElementEvents">
+        <attribute>onfocusin</attribute>
+        <attribute>onfocusout</attribute>
+        <attribute>onactivate</attribute>
+        <attribute>onclick</attribute>
+        <attribute>onmousedown</attribute>
+        <attribute>onmouseup</attribute>
+        <attribute>onmouseover</attribute>
+        <attribute>onmousemove</attribute>
+        <attribute>onmouseout</attribute>
+        <attribute>onload</attribute>
+   </commonAttributes>
+    <commonAttributes ref="documentEvents">
+        <attribute>onunload</attribute>
+        <attribute>onabort</attribute>
+        <attribute>onerror</attribute>
+        <attribute>onresize</attribute>
+        <attribute>onscroll</attribute>
+        <attribute>onzoom</attribute>
+    </commonAttributes>
+    <commonAttributes ref="animationEvents">
+        <attribute>onbegin</attribute>
+        <attribute>onend</attribute>
+        <attribute>onrepeat</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-All">
+        <includeAttributes ref="PresentationAttributes-Containers"/>
+        <includeAttributes ref="PresentationAttributes-feFlood"/>
+        <includeAttributes ref="PresentationAttributes-FillStroke"/>
+        <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+        <includeAttributes ref="PresentationAttributes-Gradients"/>
+        <includeAttributes ref="PresentationAttributes-Graphics"/>
+        <includeAttributes ref="PresentationAttributes-Images"/>
+        <includeAttributes ref="PresentationAttributes-LightingEffects"/>
+        <includeAttributes ref="PresentationAttributes-Markers"/>
+        <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+        <includeAttributes ref="PresentationAttributes-TextElements"/>
+        <includeAttributes ref="PresentationAttributes-Viewports"/>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Containers">
+        <attribute>enable-background</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-feFlood">
+        <attribute>flood-color</attribute>
+        <attribute>flood-opacity</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-FillStroke">
+        <attribute>fill</attribute>
+        <attribute>fill-opacity</attribute>
+        <attribute>fill-rule</attribute>
+        <attribute>stroke</attribute>
+        <attribute>stroke-dasharray</attribute>
+        <attribute>stroke-dashoffset</attribute>
+        <attribute>stroke-linecap</attribute>
+        <attribute>stroke-linejoin</attribute>
+        <attribute>stroke-miterlimit</attribute>
+        <attribute>stroke-opacity</attribute>
+        <attribute>stroke-width</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-FontSpecification">
+        <attribute>font-family</attribute>
+        <attribute>font-size</attribute>
+        <attribute>font-size-adjust</attribute>
+        <attribute>font-stretch</attribute>
+        <attribute>font-style</attribute>
+        <attribute>font-variant</attribute>
+        <attribute>font-weight</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Gradients">
+        <attribute>stop-color</attribute>
+        <attribute>stop-opacity</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Graphics">
+        <attribute>clip-path</attribute>
+        <attribute>clip-rule</attribute>
+        <attribute>color</attribute>
+        <attribute>color-interpolation</attribute>
+        <attribute>color-rendering</attribute>
+        <attribute>cursor</attribute>
+        <attribute>display</attribute>
+        <attribute>filter</attribute>
+        <attribute>image-rendering</attribute>
+        <attribute>mask</attribute>
+        <attribute>opacity</attribute>
+        <attribute>pointer-events</attribute>
+        <attribute>space-rendering</attribute>
+        <attribute>text-rendering</attribute>
+        <attribute>visibility</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Images">
+        <attribute>color-profile</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-LightingEffects">
+        <attribute>lighting-color</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Markers">
+        <attribute>marker-start</attribute>
+        <attribute>marker-mid</attribute>
+        <attribute>marker-end</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-TextContentElements">
+        <attribute>alignment-baseline</attribute>
+        <attribute>baseline-shift</attribute>
+        <attribute>direction</attribute>
+        <attribute>glyph-orientation-horizontal</attribute>
+        <attribute>glyph-orientation-vertical</attribute>
+        <attribute>kerning</attribute>
+        <attribute>letter-spacing</attribute>
+        <attribute>text-decoration</attribute>
+        <attribute>unicode-bidi</attribute>
+        <attribute>word-spacing</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-TextElements">
+        <attribute>writing-mode</attribute>
+        <attribute>text-anchor</attribute>
+        <attribute>dominant-baseline</attribute>
+    </commonAttributes>
+    <commonAttributes ref="PresentationAttributes-Viewports">
+        <attribute>clip</attribute>
+        <attribute>overflow</attribute>
+    </commonAttributes>
+    <commonAttributes ref="filter_primitive_attributes">
+        <attribute>x</attribute>
+        <attribute>y</attribute>
+        <attribute>width</attribute>
+        <attribute>height</attribute>
+        <attribute>result</attribute>
+    </commonAttributes>
+    <commonAttributes ref="filter_primitive_attributes_with_in">
+        <includeAttributes ref="filter_primitive_attributes"/>
+        <attribute>in</attribute>
+    </commonAttributes>
+    <commonAttributes ref="component_transfer_function_attributes">
+        <attribute>type</attribute>
+        <attribute>tableValues</attribute>
+        <attribute>slope</attribute>
+        <attribute>intercept</attribute>
+        <attribute>amplitude</attribute>
+        <attribute>exponent</attribute>
+        <attribute>offset</attribute>
+    </commonAttributes>
+    <commonAttributes ref="animElementAttrs">
+        <includeAttributes ref="xlinkRefAttrs"/>
+        <attribute>xlink:href</attribute>
+    </commonAttributes>
+    <commonAttributes ref="animAttributeAttrs">
+        <attribute>attributeName</attribute>
+        <attribute>attributeType</attribute>
+    </commonAttributes>
+    <commonAttributes ref="animTargetAttrs">
+        <includeAttributes ref="xlinkRefAttrs"/>
+        <attribute>xlink:href</attribute>
+        <attribute>attributeName</attribute>
+        <attribute>attributeType</attribute>
+    </commonAttributes>
+    <commonAttributes ref="animTimingAttrs">
+        <attribute>begin</attribute>
+        <attribute>dur</attribute>
+        <attribute>end</attribute>
+        <attribute>min</attribute>
+        <attribute>max</attribute>
+        <attribute>restart</attribute>
+        <attribute>repeatCount</attribute>
+        <attribute>repeatDur</attribute>
+        <attribute>fill</attribute>
+    </commonAttributes>
+    <commonAttributes ref="animValueAttrs">
+        <attribute>calcMode</attribute>
+        <attribute>values</attribute>
+        <attribute>keyTimes</attribute>
+        <attribute>keySplines</attribute>
+        <attribute>from</attribute>
+        <attribute>to</attribute>
+        <attribute>by</attribute>
+    </commonAttributes>
+    <commonAttributes ref="animAdditionAttrs">
+        <attribute>additive</attribute>
+        <attribute>accumulate</attribute>
+    </commonAttributes>
+    <element>
+        <tagname>a</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>xmlns:xlink</attribute>
+            <attribute>xlink:type</attribute>
+            <attribute>xlink:role</attribute>
+            <attribute>xlink:arcrole</attribute>
+            <attribute>xlink:title</attribute>
+            <attribute>xlink:show</attribute>
+            <attribute>xlink:actuate</attribute>
+            <attribute>xlink:href</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>target</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>circle</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>cx</attribute>
+            <attribute>cy</attribute>
+            <attribute>r</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>altGlyph</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>xlink:href</attribute>
+            <attribute>glyphRef</attribute>
+            <attribute>format</attribute>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>dx</attribute>
+            <attribute>dy</attribute>
+            <attribute>rotate</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>altGlyphDef</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>altGlyphItem</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>animate</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <includeAttributes ref="animationEvents"/>
+            <includeAttributes ref="animElementAttrs"/>
+            <includeAttributes ref="animAttributeAttrs"/>
+            <includeAttributes ref="animTimingAttrs"/>
+            <includeAttributes ref="animValueAttrs"/>
+            <includeAttributes ref="animAdditionAttrs"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>animateColor</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <includeAttributes ref="animationEvents"/>
+            <includeAttributes ref="animElementAttrs"/>
+            <includeAttributes ref="animAttributeAttrs"/>
+            <includeAttributes ref="animTimingAttrs"/>
+            <includeAttributes ref="animValueAttrs"/>
+            <includeAttributes ref="animAdditionAttrs"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>animateMotion</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <includeAttributes ref="animationEvents"/>
+            <includeAttributes ref="animElementAttrs"/>
+            <includeAttributes ref="animTimingAttrs"/>
+            <attribute>calcMode</attribute>
+            <attribute>values</attribute>
+            <attribute>keyTimes</attribute>
+            <attribute>keySplines</attribute>
+            <attribute>from</attribute>
+            <attribute>to</attribute>
+            <attribute>by</attribute>
+            <includeAttributes ref="animAdditionAttrs"/>
+            <attribute>path</attribute>
+            <attribute>keyPoints</attribute>
+            <attribute>rotate</attribute>
+            <attribute>origin</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>animateTransform</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <includeAttributes ref="animationEvents"/>
+            <includeAttributes ref="animElementAttrs"/>
+            <includeAttributes ref="animAttributeAttrs"/>
+            <includeAttributes ref="animTimingAttrs"/>
+            <includeAttributes ref="animValueAttrs"/>
+            <includeAttributes ref="animAdditionAttrs"/>
+            <attribute>type</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>clipPath</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="PresentationAttributes-TextElements"/>
+            <attribute>transform</attribute>
+            <attribute>clipPathUnits</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>color-profile</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <attribute>local</attribute>
+            <attribute>name</attribute>
+            <attribute>rendering-intent</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>cursor</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>defs</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <attribute>transform</attribute>
+        </attributes>
+    </element>
+    <element addText="true">
+        <tagname>desc</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="StructuredText"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>ellipse</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>cx</attribute>
+            <attribute>cy</attribute>
+            <attribute>rx</attribute>
+            <attribute>ry</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feBlend</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>in2</attribute>
+            <attribute>mode</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feColorMatrix</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>type</attribute>
+            <attribute>values</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feComponentTransfer</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feComposite</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>in2</attribute>
+            <attribute>operator</attribute>
+            <attribute>k1</attribute>
+            <attribute>k2</attribute>
+            <attribute>k3</attribute>
+            <attribute>k4</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feConvolveMatrix</tagname>
+        <attributes>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>order</attribute>
+            <attribute>kernelMatrix</attribute>
+            <attribute>divisor</attribute>
+            <attribute>bias</attribute>
+            <attribute>targetX</attribute>
+            <attribute>targetY</attribute>
+            <attribute>edgeMode</attribute>
+            <attribute>kernelUnitLength</attribute>
+            <attribute>preserveAlpha</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feDistantLight</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>azimuth</attribute>
+            <attribute>elevation</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feDiffuseLighting</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-LightingEffects"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>surfaceScale</attribute>
+            <attribute>diffuseConstant</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feDisplacementMap</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>in2</attribute>
+            <attribute>scale</attribute>
+            <attribute>xChannelSelector</attribute>
+            <attribute>yChannelSelector</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feFlood</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-feFlood"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feFuncR</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="component_transfer_function_attributes"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feFuncG</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="component_transfer_function_attributes"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feFuncB</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="component_transfer_function_attributes"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feFuncA</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="component_transfer_function_attributes"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feGaussianBlur</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>stdDeviation</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feOffset</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>fePointLight</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>z</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feImage</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="filter_primitive_attributes"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feMerge</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feMergeNode</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>in</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feMorphology</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>operator</attribute>
+            <attribute>radius</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feOffset</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>dx</attribute>
+            <attribute>dy</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feSpecularLighting</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-LightingEffects"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+            <attribute>surfaceScale</attribute>
+            <attribute>specularConstant</attribute>
+            <attribute>specularExponent</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feSpotLight</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>z</attribute>
+            <attribute>pointsAtX</attribute>
+            <attribute>pointsAtY</attribute>
+            <attribute>pointsAtZ</attribute>
+            <attribute>specularExponent</attribute>
+            <attribute>limitingConeAngle</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feTile</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes_with_in"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>feTurbulence</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="filter_primitive_attributes"/>
+            <attribute>baseFrequency</attribute>
+            <attribute>numOctaves</attribute>
+            <attribute>seed</attribute>
+            <attribute>stitchTiles</attribute>
+            <attribute>type</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>filter</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>filterUnits</attribute>
+            <attribute>primitiveUnits</attribute>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
+            <attribute>filterRes</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>font</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>horiz-origin-x</attribute>
+            <attribute>horiz-origin-y</attribute>
+            <attribute>horiz-adv-x</attribute>
+            <attribute>vert-origin-x</attribute>
+            <attribute>vert-origin-y</attribute>
+            <attribute>vert-adv-y</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>font-face</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>font-family</attribute>
+            <attribute>font-style</attribute>
+            <attribute>font-variant</attribute>
+            <attribute>font-weight</attribute>
+            <attribute>font-stretch</attribute>
+            <attribute>font-size</attribute>
+            <attribute>unicode-range</attribute>
+            <attribute>units-per-em</attribute>
+            <attribute>panose-1</attribute>
+            <attribute>stemv</attribute>
+            <attribute>stemh</attribute>
+            <attribute>slope</attribute>
+            <attribute>cap-height</attribute>
+            <attribute>x-height</attribute>
+            <attribute>accent-height</attribute>
+            <attribute>ascent</attribute>
+            <attribute>descent</attribute>
+            <attribute>widths</attribute>
+            <attribute>bbox</attribute>
+            <attribute>ideographic</attribute>
+            <attribute>alphabetic</attribute>
+            <attribute>mathematical</attribute>
+            <attribute>hanging</attribute>
+            <attribute>v-ideographic</attribute>
+            <attribute>v-alphabetic</attribute>
+            <attribute>v-mathematical</attribute>
+            <attribute>v-hanging</attribute>
+            <attribute>underline-position</attribute>
+            <attribute>underline-thickness</attribute>
+            <attribute>strikethrough-position</attribute>
+            <attribute>strikethrough-thickness</attribute>
+            <attribute>overline-position</attribute>
+            <attribute>overline-thickness</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>font-face-src</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>font-face-uri</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>font-face-format</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>string</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>font-face-name</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>name</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>foreignObject</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
+            <includeAttributes ref="StructuredText"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>definition-src</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>g</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>style</attribute>
+            <attribute>transform</attribute>
+            <attribute>class</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>glyph</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>unicode</attribute>
+            <attribute>glyph-name</attribute>
+            <attribute>d</attribute>
+            <attribute>orientation</attribute>
+            <attribute>arabic-form</attribute>
+            <attribute>lang</attribute>
+            <attribute>horiz-adv-x</attribute>
+            <attribute>vert-origin-x</attribute>
+            <attribute>vert-origin-y</attribute>
+            <attribute>vert-adv-y</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>glyphRef</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <attribute>glyphRef</attribute>
+            <attribute>format</attribute>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>dx</attribute>
+            <attribute>dy</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>hkern</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>u1</attribute>
+            <attribute>g1</attribute>
+            <attribute>u2</attribute>
+            <attribute>g2</attribute>
+            <attribute>k</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>image</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-Images"/>
+            <includeAttributes ref="PresentationAttributes-Viewports"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <attribute>transform</attribute>
+            <attribute>preserveAspectRatio</attribute>
+            <attribute>xlink:href</attribute>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>line</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-Markers"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>x1</attribute>
+            <attribute>x2</attribute>
+            <attribute>y1</attribute>
+            <attribute>y2</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>linearGradient</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-Gradients"/>
+            <attribute>gradientUnits</attribute>
+            <attribute>gradientTransform</attribute>
+            <attribute>class</attribute>
+            <attribute>x1</attribute>
+            <attribute>y1</attribute>
+            <attribute>x2</attribute>
+            <attribute>y2</attribute>
+            <attribute>spreadMethod</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>marker</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>viewBox</attribute>
+            <attribute>preserveAspectRatio</attribute>
+            <attribute>refX</attribute>
+            <attribute>refY</attribute>
+            <attribute>markerUnits</attribute>
+            <attribute>markerWidth</attribute>
+            <attribute>markerHeight</attribute>
+            <attribute>orient</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>mask</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>transform</attribute>
+            <attribute>maskUnits</attribute>
+            <attribute>maskContentUnits</attribute>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>metadata</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+        </attributes>
+    </element>
+    <element>
+        <tagname>missing-glyph</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>d</attribute>
+            <attribute>horiz-adv-x</attribute>
+            <attribute>vert-origin-x</attribute>
+            <attribute>vert-origin-y</attribute>
+            <attribute>vert-adv-y</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>mpath</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <attribute>externalResourcesRequired</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>path</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-Markers"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>style</attribute>
+            <attribute>transform</attribute>
+            <attribute>class</attribute>
+            <attribute>d</attribute>
+            <attribute>pathLength</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>pattern</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>viewBox</attribute>
+            <attribute>preserveAspectRatio</attribute>
+            <attribute>xlink:href</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>patternUnits</attribute>
+            <attribute>patternContentUnits</attribute>
+            <attribute>patternTransform</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>polygon</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-Markers"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>points</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>polyline</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-Markers"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>points</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>radialGradient</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>style</attribute>
+            <attribute>class</attribute>
+            <includeAttributes ref="PresentationAttributes-Gradients"/>
+            <attribute>gradientTransform</attribute>
+            <attribute>xlink:href</attribute>
+            <attribute>cx</attribute>
+            <attribute>cy</attribute>
+            <attribute>r</attribute>
+            <attribute>fx</attribute>
+            <attribute>fy</attribute>
+            <attribute>gradientUnits</attribute>
+            <attribute>spreadMethod</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>rect</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
+            <attribute>rx</attribute>
+            <attribute>ry</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>set</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <includeAttributes ref="animationEvents"/>
+            <includeAttributes ref="animElementAttrs"/>
+            <includeAttributes ref="animAttributeAttrs"/>
+            <includeAttributes ref="animTimingAttrs"/>
+            <attribute>to</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>script</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>type</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>stop</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-Gradients"/>
+            <attribute>offset</attribute>
+        </attributes>
+    </element>
+    <element addText="true">
+        <tagname>style</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>xml:space</attribute>
+            <attribute>type</attribute>
+            <attribute>media</attribute>
+            <attribute>title</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>svg</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <includeAttributes ref="documentEvents"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <attribute>viewBox</attribute>
+            <attribute>preserveAspectRatio</attribute>
+            <attribute>zoomAndPan</attribute>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
+            <attribute>contentScriptType</attribute>
+            <attribute>contentStyleType</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>switch</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="PresentationAttributes-all"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <attribute>transform</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>symbol</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <attribute>viewBox</attribute>
+            <attribute>preserveAspectRatio</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>tref</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>dx</attribute>
+            <attribute>dy</attribute>
+            <attribute>rotate</attribute>
+            <attribute>textLength</attribute>
+            <attribute>lengthAdjust</attribute>
+        </attributes>
+    </element>
+    <element addText="true">
+        <tagname>tspan</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>dx</attribute>
+            <attribute>dy</attribute>
+            <attribute>rotate</attribute>
+            <attribute>textLength</attribute>
+            <attribute>lengthAdjust</attribute>
+        </attributes>
+    </element>
+    <element addText="true">
+        <tagname>text</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="PresentationAttributes-TextElements"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>textLength</attribute>
+            <attribute>lengthAdjust</attribute>
+        </attributes>
+    </element>
+    <element addText="true">
+        <tagname>textPath</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <attribute>xlink:href</attribute>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>startOffset</attribute>
+            <attribute>textLength</attribute>
+            <attribute>lengthAdjust</attribute>
+            <attribute>method</attribute>
+            <attribute>spacing</attribute>
+        </attributes>
+    </element>
+    <element addText="true">
+        <tagname>title</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="StructuredText"/>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>use</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="xlinkRefAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <includeAttributes ref="graphicsElementEvents"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <attribute>transform</attribute>
+            <attribute>xlink:href</attribute>
+            <attribute>x</attribute>
+            <attribute>y</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>vkern</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>u1</attribute>
+            <attribute>g1</attribute>
+            <attribute>u2</attribute>
+            <attribute>g2</attribute>
+            <attribute>k</attribute>
+        </attributes>
+    </element>
+    <element>
+        <tagname>view</tagname>
+        <attributes>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>viewBox</attribute>
+            <attribute>preserveAspectRatio</attribute>
+            <attribute>zoomAndPan</attribute>
+            <attribute>viewTarget</attribute>
+        </attributes>
+    </element>
+</elements>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="simplePM"
+                      page-height="25cm" 
+                      page-width="20cm"
+                      margin-top="1cm" 
+                      margin-bottom="1cm" 
+                      margin-left="1.5cm" 
+                      margin-right="1.5cm">
+          <fo:region-before extent="2.5cm"/>
+          <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+          <fo:region-after extent="2.5cm"/>
+        </fo:simple-page-master>
+      <fo:simple-page-master master-name="no-overflow"
+                    page-height="25cm"
+                    page-width="20cm"
+                    margin-top="1cm"
+                    margin-bottom="1cm"
+                    margin-left="1.5cm"
+                    margin-right="1.5cm">
+        <fo:region-before extent="2.5cm"/>
+        <fo:region-body overflow="hidden" margin-top="3cm" margin-bottom="3cm"/>
+        <fo:region-after extent="2.5cm"/>
+      </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:page-sequence master-reference="simplePM">
+        <fo:flow flow-name="xsl-region-body">
+      <fo:block>
+This test is to check a number of different possibilities when dealing with
+text being wrapped at the end of an area.
+      </fo:block>
+            <fo:block wrap-option="no-wrap">
+                <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+                <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+                <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+                <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+                
+                <fo:block space-before.optimum="1cm" wrap-option="wrap">
+                    <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+                    <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+                    <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+                </fo:block>
+                This is simple fo block.This is simple fo block.This is simple fo block.This is simple fo block.
+                This is simple fo block.This is simple fo block.This is simple fo block.This is simple fo block.
+            </fo:block>
+      <fo:block space-before.optimum="10pt">
+Some examples in a table.
+      </fo:block>
+<fo:table border-style="solid" border-width="1pt" border-color="blue">
+<fo:table-column column-width="50pt"/>
+<fo:table-body>
+<fo:table-row>
+<fo:table-cell>
+      <fo:block>
+a normal paragraph with spaces and normal words
+      </fo:block>
+</fo:table-cell>
+</fo:table-row>
+<fo:table-row>
+<fo:table-cell>
+      <fo:block wrap-option="no-wrap" space-before.optimum="5pt">
+a normal paragraph with spaces and normal words
+      </fo:block>
+</fo:table-cell>
+</fo:table-row>
+<fo:table-row>
+<fo:table-cell>
+      <fo:block space-before.optimum="5pt">
+areallylongwordwhichisreallymanywords
+      </fo:block>
+</fo:table-cell>
+</fo:table-row>
+<fo:table-row>
+<fo:table-cell>
+      <fo:block wrap-option="no-wrap" space-before.optimum="5pt">
+areallylongwordwhichisreallymanywords
+      </fo:block>
+</fo:table-cell>
+</fo:table-row>
+<fo:table-row>
+<fo:table-cell>
+      <fo:block space-before.optimum="5pt"
+                language="en"
+                country="GB"
+                hyphenate="true"
+                hyphenation-push-character-count="2"
+                hyphenation-remain-character-count="2">
+words with hypenation the activated when doing lots of wrapping
+      </fo:block>
+</fo:table-cell>
+</fo:table-row>
+<fo:table-row>
+<fo:table-cell>
+      <fo:block space-before.optimum="5pt"
+                language="en"
+                country="GB"
+                hyphenate="true"
+                hyphenation-push-character-count="2"
+                hyphenation-remain-character-count="2">
+interdependancy is a nice long word
+      </fo:block>
+</fo:table-cell>
+</fo:table-row>
+<fo:table-row>
+<fo:table-cell>
+      <fo:block space-before.optimum="5pt"
+                wrap-option="no-wrap"
+                language="en"
+                country="UK"
+                hyphenate="true"
+                hyphenation-push-character-count="2"
+                hyphenation-remain-character-count="2">
+words with hypenation the activated when not doing lots of wrapping
+      </fo:block>
+</fo:table-cell>
+</fo:table-row>
+</fo:table-body>
+</fo:table>
+        </fo:flow>
+    </fo:page-sequence>
+  <fo:page-sequence master-reference="no-overflow">
+      <fo:flow flow-name="xsl-region-body">
+      <fo:block wrap-option="no-wrap">
+        <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+        <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+        <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+        <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+
+        <fo:block space-before.optimum="1cm" wrap-option="wrap">
+          <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+          <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+          <fo:inline>This is a simple fo block.This is a simple fo block.This is a simple fo block.</fo:inline>
+        </fo:block>
+        This is simple fo block.This is simple fo block.This is simple fo block.This is simple fo block.
+        This is simple fo block.This is simple fo block.This is simple fo block.This is simple fo block.
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

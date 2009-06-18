@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="simplePM"
+                      page-height="25cm" 
+                      page-width="20cm"
+                      margin-top="1cm" 
+                      margin-bottom="1cm" 
+                      margin-left="1.5cm" 
+                      margin-right="1.5cm">
+          <fo:region-before extent="2.5cm"/>
+          <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+          <fo:region-after extent="2.5cm"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:page-sequence master-reference="simplePM">
+        <fo:flow flow-name="xsl-region-body">
+            <fo:block> 
+                <fo:inline word-spacing="normal">In this text, spaces between words are normal.</fo:inline>   
+                <fo:inline word-spacing="normal">In this text, spaces between words are normal.</fo:inline>   
+                <fo:inline word-spacing="normal">In this text, spaces between words are normal.</fo:inline>   
+                <fo:inline word-spacing="normal">In this text, spaces between words are normal.</fo:inline>   
+                <fo:inline word-spacing="normal">In this text, spaces between words are normal.</fo:inline>   
+            </fo:block>
+
+            <fo:block space-before.optimum="1cm"> 
+                <fo:inline word-spacing="2pt">In this text, spaces between words are increased by 2pt.</fo:inline>                  <fo:inline word-spacing="2pt">In this text, spaces between words are increased by 2pt.</fo:inline>                  <fo:inline word-spacing="2pt">In this text, spaces between words are increased by 2pt.</fo:inline>                  <fo:inline word-spacing="2pt">In this text, spaces between words are increased by 2pt.</fo:inline>                  <fo:inline word-spacing="2pt">In this text, spaces between words are increased by 2pt.</fo:inline>              </fo:block>
+
+            <fo:block space-before.optimum="1cm"> 
+                <fo:inline word-spacing="6pt">In this text, spaces between words are increased by 6pt.</fo:inline>  
+                <fo:inline word-spacing="6pt">In this text, spaces between words are increased by 6pt.</fo:inline>  
+                <fo:inline word-spacing="6pt">In this text, spaces between words are increased by 6pt.</fo:inline>  
+                <fo:inline word-spacing="6pt">In this text, spaces between words are increased by 6pt.</fo:inline>  
+                <fo:inline word-spacing="6pt">In this text, spaces between words are increased by 6pt.</fo:inline>  
+            </fo:block>
+                      
+            <fo:block space-before.optimum="1cm"> 
+                <fo:inline word-spacing="0pt">In this text, spaces between words are increased by 0pt (i.e. normally spaced).</fo:inline>  
+                <fo:inline word-spacing="0pt">In this text, spaces between words are increased by 0pt (i.e. normally spaced).</fo:inline>  
+                <fo:inline word-spacing="0pt">In this text, spaces between words are increased by 0pt (i.e. normally spaced).</fo:inline>  
+                <fo:inline word-spacing="0pt">In this text, spaces between words are increased by 0pt (i.e. normally spaced).</fo:inline>  
+                <fo:inline word-spacing="0pt">In this text, spaces between words are increased by 0pt (i.e. normally spaced).</fo:inline>  
+            </fo:block>
+      
+            <fo:block space-before.optimum="1cm">  
+                <fo:inline word-spacing="-2pt">In this text, spaces between words are reduced by -2pt</fo:inline>                   <fo:inline word-spacing="-2pt">In this text, spaces between words are reduced by -2pt</fo:inline>                   <fo:inline word-spacing="-2pt">In this text, spaces between words are reduced by -2pt</fo:inline>                   <fo:inline word-spacing="-2pt">In this text, spaces between words are reduced by -2pt</fo:inline>                   <fo:inline word-spacing="-2pt">In this text, spaces between words are reduced by -2pt</fo:inline>               </fo:block>
+        </fo:flow>
+    </fo:page-sequence>
+</fo:root>

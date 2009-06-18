@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+<document>
+  <header>
+    <title>FOP Development: Release Mechanics</title>
+  </header>
+  <body>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>This page documents the process of creating a FOP release.
+FOP releases are coordinated by one member of the team (currently Christian Geisert), so others do not ordinarily need to use this information.
+The purpose of documenting it here is to facilitate consistency, ensure that the process is captured, and to allow others to comment on the process.</p>
+      <p>The checklist below was assembled from Christian Geisert's notes. It will be expanded in the future as he has time.</p>
+    </section>
+    <section id="checklist">
+      <title>Checklist</title>
+      <ul>
+        <li>Determine whether this is a Release Candidate or a Release.</li>
+        <li>Determine whether further testing is required.</li>
+        <li>Edit release notes, and commit any changes.</li>
+        <li>Update version number in build.xml, and commit the change.</li>
+        <li>Tag the source tree with the release ID. For example, if the release is 0.20.5rc3:
+          <code>cvs tag fop-0_20_5rc3</code></li>
+        <li>Make a fresh checkout with the just created tag:
+          <code>cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co -r 
+fop-0_20_5rc3 xml-fop</code></li>
+        <li>Copy jimi and jai to lib/ (jimi-1.0.jar, jai_core.jar, jai_codec.jar)</li>
+        <li>Copy jce-jdk13-119.jar from <link href="http://www.bouncycastle.org/latest_releases.html">
+          from http://www.bouncycastle.org/latest_releases.html</link> to lib/</li>
+        <li>Run build[.sh] dist. Use jdk1.3. A Forrest installation is needed.</li>
+        <li>Create signatures. Don't forget to upload your KEY:
+          <code>gpg -a -b --force-v3-sigs fop-0.20.5rc3-bin.tar.gz etc.</code></li>
+        <li>Upload to www.apache.org. (An account on daedalus is needed):
+          <code>scp fop-0.20.5rc3*.tar.gz* 
+chrisg@www.apache.org:/www/www.apache.org/dist/xml/fop/</code></li>
+        <li>Check permissions:
+          <code>chmod 664 ... ; chgrp xml ...</code></li>
+        <li>Add MD5 sums: <code>md5 fop-0.20.5rc3-bin.tar.gz &gt;
+          fop-0.20.5rc3-bin.tar.gz.md5</code></li>
+        <li>Make a test download.</li>
+        <li>Wait 24 hours (for the mirrors to catch up).</li>
+        <li>Post announcements on fop-dev and fop-user mailing lists.</li>
+        <li>Add bugzilla entry for the new release id.</li>
+      </ul>
+    </section>
+    <section id="other-checklists">
+      <title>Resources</title>
+      <p>The following is a sample of some other project release checlists, which might be consulted for ideas:</p>
+      <ul>
+        <li><jump href="http://cvs.apache.org/viewcvs.cgi/xml-batik/MAINTAIN?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">Batik</jump></li>
+        <li><jump href="http://cvs.apache.org/viewcvs.cgi/ant/ReleaseInstructions?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">Ant</jump></li>
+        <li><jump href="http://jakarta.apache.org/cactus/participating/release_checklist.html">Cactus</jump></li>
+      </ul>
+      <p>Following are links with information about mirroring:</p>
+      <ul>
+        <li><jump href="http://apache.bilkent.edu.tr/dev/mirrors.html">Apache Mirroring</jump></li>
+        <li>Stefan Bodewig's <jump href="http://cvs.apache.org/~bodewig/mirror.html">Making your Downloads Mirrorable</jump></li>
+      </ul>
+    </section>
+  </body>
+</document>

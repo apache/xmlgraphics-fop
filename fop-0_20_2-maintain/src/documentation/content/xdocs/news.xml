@@ -1,0 +1,130 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>News</title>
+  </header>
+  <body>
+    <section>
+      <title>29 June 2003 - New Committer</title>
+      <p>Welcome Glen Mazza!</p>
+    </section>
+    <section>
+      <title>23 May 2003 - FOP 0.20.5 Release Candidate 3 available</title>
+      <p>
+      See the full text of the <link
+      href="http://archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=5429">announcement</link>.
+      </p>
+    </section>
+    <section>
+      <title>18 February 2003 - FOP 0.20.5 Release Candidate 2 available</title>
+      <p>
+      See the full text of the <link
+      href="http://archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=4509">announcement</link>.
+      </p>
+    </section>
+    <section>
+      <title>2 February 2003 - New XML PMC</title>
+      <p>
+      Jeremias Maerki and Peter B. West are now representing FOP on the XML PMC.
+      </p>
+    </section>
+    <section>
+      <title>28 January 2003 - FOP logo contest</title>
+      <p>We are looking for a new logo. FOP <link href="logocontest.html">logo
+      contest</link> is started!</p>
+    </section>
+    <section>
+      <title>23 December 2002 - Official FOP Wiki</title>
+      <p>
+      See <link href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"
+      >FOP project pages</link> at the ApacheWiki.
+      </p>
+    </section>
+    <section>
+      <title>10 December 2002 - FOP 0.20.5 Release Candidate available</title>
+      <p>
+      See the full text of the <link
+      href="http://marc.theaimsgroup.com/?l=fop-user&amp;m=103954279712704&amp;w=2"
+      >announcement</link>.
+      </p>
+    </section>
+    <section>
+      <title>23 November 2002 - EXLSFO project has been created</title>
+      <p>
+      The EXSLFO project is a community effort to define functional extensions
+      to thet XSL Formatting Objects specification. See the
+      <link href="http://exslfo.sourceforge.net">EXSLFO website</link> for details.
+      </p>
+    </section>
+    <section>
+      <title>22 November 2002 - New Committer</title>
+  <p>Welcome Victor Mote!</p>
+ </section>
+    <section>
+      <title>9 November 2002 - New Committer</title>
+  <p>Welcome Oleg Tkachenko!</p>
+ </section>
+    <section>
+      <title>7 July 2002 FOP 0.20.4 released</title>
+      <p>
+  Changes since 0.20.3 include:
+      </p>
+      <ul>
+  <li>Support for background-image</li>
+  <li>
+    FOP should now work with any JAXP1.1 compliant
+    parser/transformer
+  </li>
+  <li>
+    The following JARs have been updated: Xerces to version
+    2.0.1, Xalan to version 2.3.1 and Batik to version 1.5beta2.
+  </li>
+  <li>FOP has been compiled with Jimi support</li>
+  <li>
+    Logging has been changed from LogKit to Avalon's Logger
+    Interface
+  </li>
+  <li>New hyphenation patterns: turkish, portuguese and czech</li>
+  <li>FOP should now work on a EBCDIC machine</li>
+  <li>
+    Support for comma-separated values for the font-family
+    property
+  </li>
+  <li>Russian and Czech messages for AWTViewer</li>
+      </ul>
+      <p>For details see CHANGES file:<br/><link href=
+      "http://cvs.apache.org/viewcvs.cgi/xml-fop/CHANGES?rev=1.10.2.21"
+      >http://cvs.apache.org/viewcvs.cgi/xml-fop/CHANGES?rev=1.10.2.21</link>
+      </p>
+      <p>
+  See also the full text of the <link href=
+  "http://marc.theaimsgroup.com/?l=fop-dev&amp;m=102607087326357&amp;w=4"
+  >announcement</link>.
+      </p>
+    </section>
+    <section>
+      <title>13 June 2002 FOP 0.20.4 Release Candidate available</title>
+      <p>
+  See the full text of the <link href=
+  "http://marc.theaimsgroup.com/?l=fop-dev&amp;m=102398470424177&amp;w=4"
+  >announcement</link>.
+      </p>
+    </section>
+    <section>
+      <title>19 April 2002 - New Committers</title>
+  <p>Welcome Jeremias Maerki, Joerg Pietschmann and Peter B. West!</p>
+ </section>
+<section>
+  <title>11 March 2002 - FOP 0.20.3 released</title>
+  <p>This is a maintenance release, the first version which supports the XSL-FO
+   Recommendation syntax. See the
+   <link href="http://marc.theaimsgroup.com/?l=xml-apache-announce&amp;m=101588818821794">
+   announcement</link> for more information.</p>
+ </section>
+
+    </body>
+</document>
+

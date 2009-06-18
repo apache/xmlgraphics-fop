@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/tab-cocoon-v10.dtd">
+
+<tabs software="FOP"
+      title="FOP"
+      copyright="@year@ The Apache Software Foundation"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+  
+  <tab label="Home" dir=""/>
+  <tab label="Development" dir="dev/"/>
+  <!--
+  <tab label="Design" dir="design/"/>
+  <tab label="Alt Design" dir="design/alt.design/"/>
+  -->
+</tabs>

@@ -1,0 +1,156 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+<!-- FOP Relevant Specifications and links -->
+<document>
+  <header>
+    <title>FOP: Other Resources</title>
+    <subtitle>Resources useful for developing and using FOP</subtitle>
+  </header>
+  <body>
+    <section id="specs">
+      <title>Specifications</title>
+      <section id="specs-xslfo">
+        <title>XSL-FO</title>
+        <ul>
+          <li><jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Recommendation (15 October 2001)</jump></li>
+          <li><jump href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial DTD for the XSL-FO Recommendation</jump> provided by N. Grigoriev from RenderX.</li>
+        </ul>
+      </section>
+      <section id="specs-xslt">
+        <title>XSLT</title>
+        <ul>
+          <li><jump href="http://www.w3.org/TR/xslt">XSLT Recommendation</jump></li>
+        </ul>
+      </section>
+      <section id="specs-xml">
+        <title>XML</title>
+        <ul>
+          <li><jump href="http://www.w3.org/TR/REC-xml">XML Recommendation</jump></li>
+          <li><jump href="http://sax.sourceforge.net/">Simple API for XML (SAX)</jump></li>
+          <li><jump href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</jump></li>
+          <li><jump href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</jump></li>
+        </ul>
+      </section>
+      <section id="specs-java">
+        <title>Java</title>
+        <ul>
+          <li><jump href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</jump></li>
+        </ul>
+      </section>
+      <section id="specs-pdf">
+        <title>PDF</title>
+        <ul>
+          <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</jump>
+         </li>
+        </ul>
+      </section>
+      <section id="specs-other">
+        <title>Other</title>
+        <ul>
+          <li><jump href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</jump></li>
+        </ul>
+      </section>
+    </section>
+    <section id="documents">
+      <title>Books, Tutorials, Articles</title>
+      <section id="documents-xslfo">
+        <title>XSL-FO</title>
+        <ul>
+          <li>[online book] <jump href="http://www.ibiblio.org/xml/books/bible2/chapters/ch18.html">The XML Bible</jump>, by Elliotte Rusty Harold. Chapter 18 of XSL Formatting Objects</li>
+          <li>[online article] <jump href="http://www.sun.com/software/xml/developers/slides-dtd/">Using Formatting Objects with the Slides DTD</jump>, by Paul Sandoz.</li>
+          <li>[online article] <jump href="http://www.xml.com/pub/a/2001/01/17/xsl-fo/index.html">Using XSL Formatting Objects</jump>, by J. David Eisenberg.</li>
+          <li>[online reference] <jump href="http://zvon.org/xxl/xslfoReference/Output/index.html">XSL FO reference</jump>, by Miloslav Nic.</li>
+          <li>[online book] <jump href="http://www.dpawson.co.uk/xsl/sect3/bk/index.html">An introduction to XSL Formatting Objects</jump>, by Dave Pawson. See hardcopy version below.</li>
+          <li>[book] <jump href="http://www.oreilly.com/catalog/xslfo">XSL-FO</jump>, by Dave Pawson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00355-2. See online version above.</li>
+          <li>[book] <jump href="http://www.phptr.com/browse/product.asp?product_id={CEA527AF-412D-49DA-8C1F-46E0A519B8D8}">Definitive XSL-FO</jump>, by G. Ken Holman, Prentice Hall PTR, 2003, ISBN 0-131-40374-5.</li>
+          <li>[book] <jump href="http://www.sams.com/catalog/product.asp?product_id={F7ADFA46-6AF1-497C-9163-0D6337F727B3}">XSL Formatting Objects Developer's Handbook</jump>, by Doug Lovell, Sams, 2002, ISBN 0-672-32281-1.</li>
+          <li>[book] <jump href="http://www.cranesoftwrights.com/training/index.htm#pfux">Practical Formatting Using XSLFO</jump>, Crane Softwrights Ltd., 2003, ISBN 1-894049-11-X.</li>
+        </ul>
+      </section>
+      <section id="documents-xslt">
+        <title>XSLT</title>
+        <ul>
+          <li>[book] <jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
+          <li>[book] <jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
+          <li>[book] <jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
+          <li>[article] <jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSL FAQ</jump>.</li>
+         <li>[book] <jump href="http://www.oreilly.com/catalog/xpathpointer">XPath and XPointer: Locating Content in XML Documents</jump>, by John E. Simpson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00291-2.</li>
+          <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0471416207,00.html">XSL Essentials</jump>, by Michael Fitzgerald, John Wiley &amp; Sons, 2001, ISBN 0-471-41620-7.</li>
+          <li>[book] <jump href="http://www.oreilly.com/catalog/javaxslt">Java and XSLT</jump>, by Eric M. Burke, O'Reilly &amp; Associates, 2001, ISBN 0-596-00143-6.</li>
+        </ul>
+      </section>
+      <section id="documents-xml">
+        <title>XML</title>
+        <ul>
+          <li>[online book] <jump href="http://www.ibiblio.org/xml/books/bible2">The XML Bible</jump>, by Elliotte Rusty Harold. See hardcopy version below.</li>
+          <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0764547607,00.html">The XML Bible</jump>, by Elliotte Rusty Harold, John Wiley &amp; Sons, ISBN 0-764-54760-7. See online version above.</li>
+          <li>[online resource] A great number of additional XML-related books and articles can be found at the <jump href="http://xml.oreilly.com">O'Reilly XML Site</jump>.</li>
+        </ul>
+      </section>
+      <section id="documents-java">
+        <title>Java</title>
+        <ul>
+          <li>[online resource] A great number of Java-related books and articles can be found at the <jump href="http://java.oreilly.com">O'Reilly Java Site</jump>.</li>
+        </ul>
+      </section>
+      <section id="documents-pdf">
+        <title>PDF</title>
+        <ul>
+          <li>[online resource] Links to the various PDF file format specifications and numerous other documents can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat/docs.jsp#filefmtspecs">Acrobat 5.0 SDK Documentation</jump>.</li>
+          <li>[online resource] A list of PDF technical resources can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat/technotes.jsp">Acrobat/PDF Technical Notes</jump></li>
+          <li>[online resource] A list of Acrobat and PDF developer resources can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat">Resources for Developers</jump>.</li>
+        </ul>
+      </section>
+      <section id="documents-ps">
+        <title>PostScript</title>
+        <ul>
+          <li>[online resource] A list of PostScript-related technical resources can be found at Adobe Solutions Network, <jump href="http://partners.adobe.com/asn/tech/ps/technotes.jsp">PostScript Language Technical Notes</jump></li>
+          <li>[online resource] Additional PostScript-related developer resources can be found at Adobe Solutions Network, <jump href="http://partners.adobe.com/asn/tech/ps/index.jsp">PostScript SDK Archive</jump>.</li>
+        </ul>
+      </section>
+    </section>
+    <section id="products">
+      <title>Related/Useful Products</title>
+      <section id="products-fop-add-ons">
+        <title>FOP add-ons</title>
+        <ul>
+          <li>[software] TIFFRenderer is a renderer for outputting multi-page TIFF: <jump href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</jump> (MPL)</li>
+          <li>[software] AFP Renderer / Batch Assembler for FOP: <jump href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</jump> (open source, license unclear)</li>
+          <li>[software] The <jump href="http://mogwai.sourceforge.net">Mogwai Project</jump> includes a renderer for FOP that generates output for Okidata dot matrix printers (GPL).</li>
+          <li>[software] <jump href="http://www.krysalis.org/barcode">Krysalis Barcode</jump> is a barcode generator which can be used with FOP (Apache-style license).</li>
+        </ul>        
+      </section>
+      <section id="products-pdf">
+        <title>PDF post-processors</title>
+        <ul>
+          <li>[software] <jump href="http://www.lowagie.com/iText">iText</jump> (MPL and LGPL)</li>
+          <li>[software] <jump href="http://www.etymon.com/pjc">PJ Classic</jump> by Etymon (GPL)</li>
+          <li>[software] <jump href="http://www.etymon.com/pjx">PJ Professional</jump> by Etymon (commercial)</li>
+        </ul>
+      </section>
+      <section id="products-editors">
+        <title>XSL-FO editors</title>
+        <ul>
+          <li>[software] <jump href="http://foa.sourceforge.net/">FOA (Formatting Objects Authoring)</jump> (MPL)</li>
+          <li>[software] <jump href="http://www.scruffyware.com/products/foeditor/">FOEditor</jump> by Scruffy Software (Shareware)</li>
+          <li>[software] <jump href="http://www.scriptura-xsl.com">Scriptura</jump> by Inventive Designers (commercial)</li>
+          <li>[software] <jump href="http://www.xslfast.com">XSLfast</jump> by jCatalog Software AG (commercial)</li>
+          <li>[software] <jump href="http://www.rubico.com/styler">XML Report Styler</jump> by Rubico (commercial)</li>
+        </ul>
+      </section>
+      <section id="products-other">
+        <title>Other products</title>
+        <ul>
+          <li>[software] <jump href="http://html2fo.sourceforge.net/">html2fo</jump> is a converter from HTML to XSL-FO (GPL).</li>
+          <li>[software] <jump href="http://wh2fo.sourceforge.net/">wh2fo</jump> is a converter from Word HTML to XSL-FO (MPL).</li>
+          <li>[software] <jump href="http://www.rtf2fo.com">RTF2FO</jump> is a converter from RTF to XSL-FO by Novosoft (commercial).</li>
+          <li> [software] <jump href="http://www.vbxml.com/xpathvisualizer">The XPath Visualizer</jump>.
+Web site says: "This is a full blown Visual XPath Interpreter for the evaluation of any XPath expression and visual presentation of the resulting nodeset or scalar value."
+Requires Internet Explorer 5+.
+(freeware)</li>
+        </ul>
+      </section>
+    </section>
+  </body>
+</document>

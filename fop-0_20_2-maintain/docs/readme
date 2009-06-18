@@ -1,0 +1,7 @@
+Content of the directory xml-fop/docs
+
+xslfoRef.xml  a short xsl:fo reference
+xml2pdf.xsl   a stylesheet, to convert xslfoRef.xml to pdf
+
+documentation is in build/site/index.html
+

@@ -1,0 +1,38 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+<document id="logocontest">
+	<header>
+		<title>Logo Contest</title>
+	</header>
+	<body>
+		<p>FOP needs a new logo and so we've decided to hold an open logo contest. We invite all members of 
+		the FOP community as well as any other interested parties to participate as contestants or by expressing 
+		your opinion through voting. We have set up <link href="http://vote.sparklit.com/web_poll.spark/714566">Web Poll</link> where you can see
+		contestant logos and vote your favorite.</p>
+		<section>
+			<title>The rules</title>
+			<p>The rules are simple:</p>
+			<ul>
+				<li>Everyone can participate as a contestant</li>
+				<li>Everyone can vote, but only FOP Team will choose the winner</li>
+				<li>No reward except for pride</li>
+				<li>The winner image is donated to Apache, but the authorship is preserved</li>
+				<li>The final result should be in SVG format</li>
+				<li>Reasonable size for logo</li>
+				<li>Deadline for submitting logos and voting: 28 February 2003</li>
+			</ul>
+		</section>
+		<section>
+			<title>How to participate</title>
+			<p>Submit your image or link to it at the <link href="maillist.html#fop-user">fop-user</link> mail list.
+			 Vote for the logo you like the most at FOP logo contest <link href="http://vote.sparklit.com/web_poll.spark/714566">Web Poll</link>.
+			</p>
+		</section>
+		<section>
+			<title>Credits</title>
+			<p>We would like to thank the <link href="http://ant.apache.org">Ant</link> and 
+			<link href="http://jakarta.apache.org/poi/index.html">POI</link> teams for their ideas on how to make this logo contest.</p>
+		</section>
+	</body>
+</document>

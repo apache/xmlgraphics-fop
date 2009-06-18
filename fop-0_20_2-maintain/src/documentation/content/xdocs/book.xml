@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-cocoon2/src/documentation/xdocs/dtd/book-cocoon-v10.dtd">
+
+
+      <book software="FOP"
+        title="FOP"
+        copyright="@year@ The Apache Software Foundation"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+
+        <menu label="Home">
+          <menu-item label="Introduction" href="index.html"/>
+        </menu>
+
+        <menu label="Using FOP">
+          <menu-item label="Release Notes" href="relnotes.html"/>
+          <menu-item label="Download" href="download.html"/>
+          <menu-item label="Build" href="compiling.html"/>
+          <menu-item label="Configure" href="configuration.html"/>
+          <menu-item label="Run" href="running.html"/>
+          <menu-item label="Embed" href="embedding.html"/>
+          <menu-item label="Servlets" href="servlets.html"/>
+          <menu-item label="Ant task" href="anttask.html"/>
+        </menu>
+
+        <menu label="Features">
+          <menu-item label="Compliance" href="compliance.html"/>
+          <menu-item label="Output Targets" href="output.html"/>
+          <menu-item label="PDF encryption" href="pdfencryption.html"/>
+          <menu-item label="Graphics" href="graphics.html"/>
+          <menu-item label="Fonts" href="fonts.html"/>
+          <menu-item label="Hyphenation" href="hyphenation.html"/>
+          <menu-item label="Extensions" href="extensions.html"/>
+        </menu>
+
+        <menu label="Resources">
+          <menu-item label="Getting Help" href="gethelp.html"/>
+          <menu-item label="FAQs" href="faq.html"/>
+          <menu-item label="XSL-FO" href="fo.html"/>
+          <menu-item label="Examples" href="examples.html"/>
+          <menu-item label="Mailing Lists" href="maillist.html"/>
+          <menu-item label="Bugs" href="bugs.html"/>
+          <menu-item label="License" href="license.html"/>
+          <menu-item label="Other" href="resources.html"/>
+        </menu>
+
+        <menu label="Project">
+          <menu-item label="News" href="news.html"/>
+          <menu-item label="Logo contest" href="logocontest.html"/>
+          <menu-item label="Status" href="status.html"/>
+          <!--
+          <menu-item label="Changes" href="changes.html"/>
+          <menu-item label="Todo" href="todo.html"/>
+          -->
+          <menu-item label="Team" href="team.html"/>
+        </menu>
+
+    </book>

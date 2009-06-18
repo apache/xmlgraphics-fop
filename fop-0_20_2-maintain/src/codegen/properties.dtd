@@ -1,0 +1,312 @@
+<!-- $Id$ -->
+<!--
+DTD for foproperties.xml and svgproperties.xml
+-->
+
+<!DOCTYPE property-list [   
+<!ELEMENT property-list (generic-property-list?,  element-property-list*) >
+     
+<!-- This defines properties which are generic: meaning they are valid for
+     any formatting object in the namespace associated with this properties
+     file.
+-->
+<!ELEMENT generic-property-list (property+) >
+   
+<!-- This defines properties which are specific to a particular element.
+     The elements are specified in one or more localname elements. This
+     will generate code which can be used to set up element-specific
+     mappings for the PropertyListBuilder object.
+-->
+<!ELEMENT element-property-list (localname+, property+) >
+<!ELEMENT localname (#PCDATA) >
+     
+<!-- Define a single property in the current namespace -->
+<!ELEMENT property (name, (use-generic | datatype), class-name?, inherited?,
+	 default?, enumeration?, datatype-conversion*, compound?,
+	 keyword-equiv*, percent-ok?, auto-ok?, derive?, corresponding? ) >
+     
+<!-- If type is set to "ref", then this is not a new property definition,
+     but rather a reference to a property allready defined (should be in
+     another namespace). The "family" attribute then indicates in which
+     other property family the referenced attribute is defined. This is
+     used to let SVG reuse font-related properties defined in FO.
+     The family attribute is ignored if type isn't "ref".
+     If type = "generic", this is not a "real" property but rather a
+     template on which one or usually several other properties are
+     based. This reduces typing in the properties files and can reduce the
+     number and size of property classes created.
+-->
+<!ATTLIST property
+   type   (ref|generic|normal) "normal"
+   family (fo|svg) "fo"
+>
+<!-- Sub-elements of property. -->
+<!-- This gives the name of the attribute used to specify values for this
+     property in input FO or SVG files. It MUST be specified.
+-->     
+<!ELEMENT name (#PCDATA) >
+     
+<!-- This gives the class name of the Java class which will be created to
+     represent values for this property. It doesn't need to be specified if
+     it can be deduced from the "name". The rule is that the first letter
+     of the property name and any name following a "-" are capitalized and
+     the "-" characters are removed. If you want to force a name, use the
+     class-name sub-element.
+-->     
+<!ELEMENT class-name (#PCDATA) >
+     
+<!-- This indicates that this property is based on a generic property
+     datatype. This may be one hand-coded, such as SVGLengthProperty, or it
+     may be one which is created by a generic property definition in the
+     properties.xml file being processed. The content of this element is
+     the CLASSNAME of the generic property (NOTE: not its name). A property
+     can be based on a generic property and still override certain aspects
+     such as the default value, simply by specifying the appropriate
+     sub-elements.
+     If the "ispropclass" attribute = "true", then the contents of the
+     use-generic element is the name of a hard-coded Property subclass
+     and not of a generated Property.Maker subclass. This is currently
+     only used for the SVG properties, because they don't have a
+     rule-based relationship between the actual Property class name
+     and the name of the datatype stored by objects of that class.
+-->     
+<!ELEMENT use-generic (#PCDATA) >
+<!ATTLIST use-generic
+	ispropclass (true | false ) "false"
+>
+
+<!-- This indicates whether the property is inherited or not. Use the value
+     true for inherited and false for non-inherited. If the attribute
+     "type" is set to "specified", the specified rather than the computed
+     value of the property is inherited. An example is line-height, which
+     if specified using relative units or a percent, is recalculated
+     relative to the FONTSIZE of the current FO.
+-->     
+<!ELEMENT inherited (#PCDATA) >
+<!ATTLIST inherited
+	type	(specified | computed) "computed"
+>
+     
+<!-- This gives the datatype of the stored property values. It shouldn't be
+     specified if the property has a use-generic element. The value of this
+     element should be the name of either a basic Java class (String,
+     Integer) or a class defined as a FOP or SVG datatype (eg. ColorType).
+     NOTE: the value "Enum" is special and indicates an enumerated
+     datatype, stored as a Java "int". There is an EnumProperty class, but
+     no corresponding Enum class.
+-->     
+<!ELEMENT datatype (#PCDATA) >
+
+<!-- This element is used to specify the allowable values for enumerated
+     datatypes (<datatype>Enum</datatype>). Each value sub-element
+     specifies a possible value for the property. The "const" attribute for
+     each value is used to generate a public static constant value in the
+     class which can be referenced in code to test the property value. It
+     must be a legal Java identifier. By convention, use all caps.
+-->     
+<!ELEMENT enumeration (value+) >
+<!ELEMENT value (#PCDATA) >
+<!ATTLIST value 
+	const	CDATA	#REQUIRED
+>
+          
+<!-- This gives the default value for a property if it is not specified on
+     a given FO. (The spec calls this the "initial" value.)
+
+     It may also be used to specify a default value for a particular
+     component of a compound property. This is used to give each component
+     its initial value if components are only partially specified in the
+     FO file.
+
+     NOTE: It should be an expression which can be parsed to give a legal
+     value for the property! This can't be checked by the generating
+     script, so if there is a problem, it will only be seen at runtime.
+     If the attribute "contextdep" is present and set to "true", the
+     generated code for the Maker will create a new Property object each
+     time it is asked to make the default value. Otherwise (the usual
+     case), it will only make one Property object with the default value
+     and return it on each call. Context-dependent default values include
+     those specified with relative units (eg. 1em).
+
+     The "subproperty" attribute can be used on properties which are
+     based on generic property specifications to specify a default value
+     for a particular component. For example, the border-end-width property
+     is based on GenericCondBorderWidth and specifies a specific default
+     for the "conditionality" component.
+-->     
+<!ELEMENT default (#PCDATA) >
+<!ATTLIST default
+	contextdep	(true | false) "false"
+	subproperty	CDATA #IMPLIED
+>
+	
+
+<!-- The datatype-conversion element(s) specify how to handle property
+     values which can be specified in several ways. For example, the
+     line-height property can be specified as a Length, or as a number or
+     as a percent, which are both interpreted as being a factor of the
+     current font-size. The datatype for this property is Length. The
+     datatype-conversion element is used to handle the cases in which the
+     Property parser returns a type which is not a Length. Each element
+     tests it against a possible property type. The content gives the
+     actual code which should be inserted in the generated class in order
+     to correctly initialize the property value.
+     NOTE: the use of this for Color properties is rather a hack. All color
+     properties can be specified by a large number of keywords. To be
+     consistent with my logic we should use the keyword-equiv element. But
+     that was a lot of work. So for now, if the value evaluates to a String
+     and not to a ColorType, the datatype-conversion just uses it to
+     directly initialize a ColorType object.
+-->
+<!ELEMENT datatype-conversion (#PCDATA) >
+
+<!-- The attribute from-type gives a possible property datatype, such as
+     Number or String. The varname gives the name of a variable which can
+     be used in the content of the datatype-conversion element. If the type
+     of the variable is not the same as from-type, it may be specified with
+     the attribute vartype.
+
+     An example of usage is from the line-height property. This should be
+     a Length object, but may be specified as a Number, which is interpreted
+     as though it were a percentage of the current font-size.
+-->
+<!ATTLIST datatype-conversion
+    from-type    CDATA   #REQUIRED
+    vartype      CDATA   #IMPLIED
+    varname      CDATA   #REQUIRED
+>
+
+<!-- The compound element indicates that the property is a "compound"
+     property as defined in the XSL specification. It is specified as one
+     or more individual attributes whose names are built up from the base
+     property name and the name of a compoent. Each "subproperty" element
+     describes a component of a compound property.
+     An example is space-before.
+-->
+<!ELEMENT compound (subproperty+) >
+     
+<!-- Describe one component of a compound property. Only the name and the
+     datatype should be specified. For example, in the space-before
+     property, the optimum component has the name optimum and the datatype
+     Length.
+-->
+<!ELEMENT subproperty (name, datatype, auto-ok?, default?, corresponding?,
+   enumeration?, keyword-equiv? ) >
+
+<!-- This element which may be repeated, specifies keyword shorthands for
+     non-enumerated properties. For example, the border-width family of
+     properties can be specified either by a Length (eg. 1pt) or by one of
+     the keywords "thin", "medium", or "thick", each of which corresponds
+     to a "user-agent specific value" (XSL Spec.) These values are defined
+     by the keyword-equiv element. The "match" attribute gives the string
+     keyword value and the content is the replacement value, which should
+     be able to be evaluated to produce an object of the property's
+     datatype (such as Length). An example is:
+        <keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
+     The "eval" attribute indicates whether the specified value must be
+     "parsed" using the Property parser or whether it can be used to
+     directly construct an object of the appropriate datatype. The default
+     is to evaluate the specified value (like the default specification).
+-->
+<!ELEMENT keyword-equiv (#PCDATA) >
+<!ATTLIST keyword-equiv
+	match	CDATA   #REQUIRED
+	eval	(true|false) "true"
+>
+
+<!-- This element if present indicates that percent specifications are
+     allowed as property values. The attribute "base" indicates how the
+     actual value is calculated.
+     FONTSIZE - the value is a percent of the current font-size
+     INH-FONTSIZE - the value is a percent of the inherited
+     font-size. This is necessary because font-size itself can be specified
+     as a percent!
+     CONTAINING-BOX - the value is a percent of the appropriate
+     dimension of the containing box of this FO.
+     If none of these is specified, the content of the element is
+     assumed to be a Java expression which can be used to calculate an
+     absolute value. This expression can assume that the variables
+     propertyList and fo are in scope and refer to the FO on which the
+     property was specified as a percent.
+-->
+<!ELEMENT   percent-ok (#PCDATA) >
+<!ATTLIST   percent-ok
+	 base	(FONTSIZE | INH-FONTSIZE | CONTAINING-BOX) #IMPLIED
+>
+
+<!-- This element if present indicates that a value of "auto" for a Length
+     specification is allowed. If "auto" is specified, a LengthProperty object
+     is created which holds a Length object of type "AUTO".
+-->
+<!ELEMENT   auto-ok EMPTY >
+     
+<!-- This element if present indicates that the value of the property may
+     be computed (derived) from other properties if it isn't specified. It
+     assumes that the property is an Enum datatype. (Currently only used
+     for text-align-last.)
+     The "from" attribute gives the name of the property from which this
+     property is derived.
+     Each "if" sub-element specifies a possible value. The "match"
+     attribute is compared with the value of the "derive-from" property. If
+     it is equal, the value of the current property is set to the value
+     specified by the content of the "if" element.
+-->
+<!ELEMENT   derive (if+) >
+<!ATTLIST   derive
+	from	CDATA	#REQUIRED
+>
+<!ELEMENT   if (#PCDATA) >
+<!ATTLIST   if
+	match	CDATA	#REQUIRED
+>
+
+<!-- This element indicates that the value of the property is the same as
+     that of a "corresponding" absolute or writing-mode-relative property.
+     if the "use-if-specified" attribute has the value "true", then the
+     corresponding property value takes precedence over the property on
+     which it is specified. To be conformant to the specification, all the
+     the "absolute" versions of properties have precedence.
+     Example: if a get() call is made on padding-end for a FO using lr-tb
+     writing-mode, then the padding-right property will be used if it is
+     specified, even if padding-end is actually specified.
+     However, if a get() is made on padding-right, the value of padding-end
+     will only be used if padding-right isn't specified on the FO.
+-->
+
+<!ELEMENT   corresponding (propval, propexpr?) >
+<!ATTLIST   corresponding
+    use-if-specified (true|false) "false"
+>
+
+<!-- If the value must be calculated using several other properties, the
+     propexpr element may be used. Then only example I know of are the
+     indent properties which are calculated based on the margin-* values
+     if those are specified, plus the corresponding padding and border-width
+     values.
+-->
+<!ELEMENT   propexpr (propval | #PCDATA)+ >
+
+<!-- The name of the corresponding property is given in the propval element.
+     The conversion between absolute and relative property names is
+     made using wmrel2abs or wm2bs2rel elements, intermixed with text.
+     For example, for the property "padding-left", the corresponding
+     property is "padding-start" if the inline progression direction is
+     left to right. This is expressed in the properties file with the
+     expression "padding-<wmabs2rel dir='LEFT'/>". The wmabs2rel element
+     is replaced by the writing-mode relative direction which corresponds
+     to the absolute direction LEFT using the writing-mode in effect for the
+     flow object where this property is specified.
+-->
+<!ELEMENT   propval (wmrel2abs | wmabs2rel | #PCDATA)+ >
+
+<!ELEMENT   wmrel2abs EMPTY>
+<!ATTLIST   wmrel2abs 
+  dir (BEFORE | AFTER | START | END | BLOCKPROGDIM | INLINEPROGDIM)
+  #REQUIRED
+>
+
+<!ELEMENT   wmabs2rel EMPTY>
+<!ATTLIST   wmabs2rel
+  dir (TOP | BOTTOM | LEFT | RIGHT | HEIGHT | WIDTH )  #REQUIRED
+>
+

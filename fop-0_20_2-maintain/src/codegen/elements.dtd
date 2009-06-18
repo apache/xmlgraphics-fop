@@ -1,0 +1,20 @@
+<!-- $Id$ -->
+<!--
+DTD for svgelements.xml
+-->
+
+<!DOCTYPE elements [
+<!ELEMENT elements (commonAttributes+, element+) >
+<!ATTLIST elements
+    prefix CDATA #REQUIRED
+    ns CDATA #REQUIRED>
+<!ELEMENT element (tagname, attributes) >
+<!ELEMENT tagname (#PCDATA) >
+<!ELEMENT attributes ((attribute | includeAttributes)+) >
+<!ELEMENT commonAttributes ((attribute | includeAttributes)+) >
+<!ATTLIST commonAttributes
+    ref CDATA #REQUIRED>
+<!ELEMENT attribute (#PCDATA) >
+<!ELEMENT includeAttributes (#PCDATA) >
+<!ATTLIST includeAttributes
+    ref CDATA #REQUIRED>

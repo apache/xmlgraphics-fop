@@ -1,0 +1,48 @@
+<HTML>
+<TITLE>FOP Overview</TITLE>
+<BODY>
+<P>The main purpose of FOP is to render XSL-FO documents into a variety of
+output formats, including PDF, text, MIF, Postscript, and others. This process
+requires two conversions as the data moves through the following three
+stages:
+<OL>
+  <LI>XSL-FO document (input). This document should conform to the XSL
+    standard (currently version 1.0). It is a description of the general
+    formatting requirements of the document.</LI>
+  <LI>Area Tree document (intermediate). This document is a model of the
+    specific, paginated layout that fulfills the general requirements of the
+    input XSL-FO document, and conforms to the constraints of the XSL
+    standard. It is transitory.</LI>
+  <LI>Rendered document (output). This document implements a specific file
+    format to serialize the Area Tree document.</LI>
+</OL>
+
+<P>As a convenience to users, FOP can also manage the following ancillary
+processes:</P>
+
+<UL>
+  <LI> (upstream, external) conversion of a semantic XML document into an
+    XSL-FO document by invoking an XSLT transformation.</LI>
+  <LI> (downstream, internal) display of the modeled paginated document in
+    a viewer.</LI>
+</UL>
+
+<P>To get an overview of the FOP process, begin with the class
+<A HREF="org/apache/fop/apps/Driver.html">org.apache.fop.apps.Driver</A>.</P>
+
+<H3>Developer Information</H3>
+<UL>
+  <LI>The current development platform is Java 1.3. There are minor
+    source code changes required to compile with Java 1.4. See the <A
+    HREF="http://xml.apache.org/fop/relnotes.html" TARGET="_blank">Release
+    Notes</A> for details.</LI>
+  <LI>For javadoc documentation that references external standards (such as
+    the W3C XSL standard), such standards will be opened in a different
+    browser instance. Following additional references to the same standard
+    will update the same browser, but you will not see that update unless that
+    browser window is open on your desktop -- in other words, if that browser
+    is minimized, it will look like nothing happened.</LI>
+</UL>
+
+</BODY>
+</HTML>

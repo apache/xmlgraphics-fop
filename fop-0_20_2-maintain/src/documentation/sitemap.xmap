@@ -1,0 +1,895 @@
+<?xml version="1.0"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+<!-- =========================== Components ================================ -->
+   <map:components>
+      <map:generators default="file">
+         <map:generator name="file" src="org.apache.cocoon.generation.FileGenerator" label="content" />
+
+         <map:generator name="directory" src="org.apache.cocoon.generation.DirectoryGenerator" label="content" />
+
+         <map:generator name="html" src="org.apache.cocoon.generation.HTMLGenerator" label="content" />
+
+         <map:generator name="libre" src="org.apache.forrest.yer.use.cocoon.HierarchyGenerator" label="content" />
+
+         <map:generator name="nekodtd" src="org.apache.forrest.components.generator.XNIConfigurableFileGenerator" label="content" />
+
+         <map:generator name="textparser" src="org.apache.cocoon.generation.TextParserGenerator" label="content" />
+
+<!-- FIXME: Change this once better view handling is implemented -->
+         <map:generator name="file-nolabel" src="org.apache.cocoon.generation.FileGenerator" />
+      </map:generators>
+
+      <map:transformers default="xslt">
+         <map:transformer name="idgen" src="org.apache.cocoon.transformation.IdGeneratorTransformer">
+            <element>//*[local-name() = 'section']</element>
+            <id>title/text()</id>
+         </map:transformer>
+
+         <map:transformer name="linkrewriter" src="org.apache.cocoon.transformation.LinkRewriterTransformer">
+            <input-module name="linkmap" src="{src}" reloadable="true" />
+            <input-module name="site">
+               <input-module name="linkmap" src="{src}" reloadable="true" />
+               <prefix>/site//</prefix>
+               <suffix>/@href</suffix>
+            </input-module>
+         </map:transformer>
+
+         <map:transformer name="xpath" logger="sitemap.transformer.xpath" src="org.apache.cocoon.transformation.XPathTransformer" />
+
+         <map:transformer name="xslt" src="org.apache.cocoon.transformation.TraxTransformer" logger="sitemap.transformer.xsltc" pool-max="32" pool-min="8" pool-grow="2">
+            <use-request-parameters>false</use-request-parameters>
+            <use-browser-capabilities-db>false</use-browser-capabilities-db>
+            <use-deli>false</use-deli>
+<!-- transformer-factory>com.icl.saxon.TransformerFactoryImpl</transformer-factory -->
+<!-- transformer-factory>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</transformer-factory -->
+         </map:transformer>
+
+         <map:transformer name="xinclude" src="org.apache.cocoon.transformation.XIncludeTransformer" logger="sitemap.transformer.xinclude" pool-grow="2" pool-max="16" pool-min="2" />
+      </map:transformers>
+
+      <map:readers default="resource">
+         <map:reader name="resource" src="org.apache.cocoon.reading.ResourceReader" />
+      </map:readers>
+
+      <map:serializers default="html">
+         <map:serializer name="html" mime-type="text/html" src="org.apache.cocoon.serialization.HTMLSerializer">
+            <doctype-public>-//W3C//DTD HTML 4.01 Transitional//EN</doctype-public>
+            <doctype-system>http://www.w3.org/TR/html4/loose.dtd</doctype-system>
+            <encoding>ISO-8859-1</encoding>
+         </map:serializer>
+
+         <map:serializer name="xml" mime-type="text/xml" src="org.apache.cocoon.serialization.XMLSerializer">
+            <encoding>ISO-8859-1</encoding>
+         </map:serializer>
+
+         <map:serializer name="rss091" mime-type="text/xml" src="org.apache.cocoon.serialization.XMLSerializer">
+            <doctype-public>-//Netscape Communications//DTD RSS 0.91//EN</doctype-public>
+            <doctype-system>http://my.netscape.com/publish/formats/rss-0.91.dtd</doctype-system>
+            <encoding>ISO-8859-1</encoding>
+         </map:serializer>
+
+         <map:serializer name="fo2pdf" src="org.apache.cocoon.serialization.FOPSerializer" mime-type="application/pdf" />
+
+         <map:serializer name="links" src="org.apache.cocoon.serialization.LinkSerializer">
+            <encoding>ISO-8859-1</encoding>
+         </map:serializer>
+
+         <map:serializer name="svg2jpeg" mime-type="image/jpeg" src="org.apache.cocoon.serialization.SVGSerializer">
+            <parameter name="quality" type="float" value="1.0" />
+         </map:serializer>
+
+         <map:serializer name="svg2png" mime-type="image/png" src="org.apache.cocoon.serialization.SVGSerializer" />
+<!-- ========================== FOP Additions ========================== -->
+
+         <map:serializer name="svg2pdf" mime-type="application/pdf"       src="org.apache.cocoon.serialization.SVGSerializer">
+           <parameter name="transcoder" value="org.apache.fop.svg.PDFTranscoder"/>
+    </map:serializer>
+<!-- ======================= End FOP Additions ======================== -->
+      </map:serializers>
+
+      <map:matchers default="wildcard">
+         <map:matcher name="wildcard" src="org.apache.cocoon.matching.WildcardURIMatcher" />
+      </map:matchers>
+
+<!--
+  <map:selectors default="skin-parameter">
+    <map:selector name="request-parameter" logger="sitemap.selector.request-parameter"
+                 src="org.apache.cocoon.selection.RequestParameterSelector">
+      <parameter-name>skin</parameter-name>
+    </map:selector>
+    <map:selector name="style-parameter" logger="sitemap.selector.request-parameter"
+                 src="org.apache.cocoon.selection.RequestParameterSelector">
+      <parameter-name>style</parameter-name>
+    </map:selector>
+
+  </map:selectors>
+-->
+      <map:actions>
+<!-- <map:action logger="sitemap.action.request" name="request" src="org.apache.cocoon.acting.RequestParamAction"/> -->
+         <map:action logger="sitemap.action.resource-exists" name="resource-exists" src="org.apache.cocoon.acting.ResourceExistsAction" />
+
+         <map:action logger="sitemap.action.sourcetype" name="sourcetype" src="org.apache.forrest.components.sourcetype.SourceTypeAction">
+            <sourcetype name="document-v11">
+               <document-declaration public-id="-//APACHE//DTD Documentation V1.1//EN" />
+            </sourcetype>
+
+            <sourcetype name="howto-v10">
+               <document-declaration public-id="-//APACHE//DTD How-to V1.0//EN" />
+            </sourcetype>
+
+            <sourcetype name="docbook-v4.2">
+               <document-declaration public-id="-//OASIS//DTD DocBook XML V4.2//EN" />
+            </sourcetype>
+
+            <sourcetype name="sdocbook-v1.0">
+               <document-declaration public-id="-//OASIS//DTD Simplified DocBook XML V1.0//EN" />
+            </sourcetype>
+         </map:action>
+      </map:actions>
+
+      <map:selectors>
+         <map:selector logger="sitemap.selector.parameter" name="parameter" src="org.apache.cocoon.selection.ParameterSelector" />
+      </map:selectors>
+
+<!--
+     The different pipeline implementations
+     @todo use map:pipe and map:pipes with next cocoon CVS update
+  -->
+      <map:pipelines default="caching">
+         <map:pipeline name="caching" src="org.apache.cocoon.components.pipeline.impl.CachingProcessingPipeline" />
+         <map:pipeline name="noncaching" src="org.apache.cocoon.components.pipeline.impl.NonCachingProcessingPipeline" />
+
+<!-- The following two can be used for profiling:
+     <map:pipeline name="profile-caching" src="org.apache.cocoon.components.profiler.ProfilingCachingProcessingPipeline"/>
+     <map:pipeline name="profile-noncaching" src="org.apache.cocoon.components.profiler.ProfilingNonCachingProcessingPipeline"/>
+     -->
+      </map:pipelines>
+   </map:components>
+
+<!-- =========================== Views =================================== -->
+   <map:views>
+      <map:view name="content" from-label="content">
+         <map:serialize type="xml" />
+      </map:view>
+
+      <map:view name="pretty-content" from-label="content">
+         <map:transform src="library/xslt/simple-xml2html.xsl" />
+         <map:serialize type="html" />
+      </map:view>
+
+      <map:view name="links" from-position="last">
+         <map:transform src="library/xslt/filterlinks.xsl" />
+         <map:serialize type="links" />
+      </map:view>
+   </map:views>
+
+   <map:resources>
+      <map:resource name="skinit">
+         <map:transform src="skins/{forrest:skin}/xslt/html/{type}.xsl">
+         <map:parameter name="notoc" value="{notoc}" />
+<!-- For backwards-compat with 0.2 - 0.4 skins -->
+         <map:parameter name="isfaq" value="{notoc}" />
+         <map:parameter name="nopdf" value="{nopdf}" />
+         <map:parameter name="path" value="{path}" />
+<!-- Can set an alternative project skinconfig here
+             <map:parameter name="config-file" value="../../../../skinconf.xml"/>
+             -->
+         </map:transform>
+
+         <map:serialize />
+      </map:resource>
+
+      <map:resource name="book">
+         <map:act type="resource-exists">
+<!-- If a hand-created book.xml exists, use it -->
+            <map:parameter name="url" value="content/xdocs/{dir}book.xml" />
+            <map:generate src="content/xdocs/{../dir}book.xml" />
+            <map:transform type="linkrewriter" src="cocoon:/{../dir}linkmap" />
+            <map:call resource="skinit">
+               <map:parameter name="type" value="book2menu" />
+               <map:parameter name="path" value="{../path}" />
+            </map:call>
+         </map:act>
+
+<!-- If no book.xml, generate it from the linkmap. -->
+         <map:generate src="cocoon:/{dir}linkmap/{dir}" />
+<!-- The above generates the subset of the linkmap relevant to our
+              directory. -->
+         <map:transform src="library/xslt/site2book.xsl" />
+         <map:call resource="skinit">
+            <map:parameter name="type" value="book2menu" />
+            <map:parameter name="path" value="{path}" />
+         </map:call>
+      </map:resource>
+
+      <map:resource name="skin-read">
+         <map:read src="skins/{forrest:skin}/{path}" mime-type="{mime-type}" />
+      </map:resource>
+
+<!-- Checks the document type of the resource passed in the "src" parameter
+       and converts it to document if necessary -->
+      <map:resource name="transform-to-document">
+         <map:transform type="xinclude" />
+         <map:transform type="linkrewriter" src="{linkmap}" />
+         <map:act type="sourcetype" src="{src}">
+            <map:select type="parameter">
+               <map:parameter name="parameter-selector-test" value="{sourcetype}" />
+
+               <map:when test="howto-v10">
+                  <map:transform src="library/xslt/howto2document.xsl" label="content" />
+               </map:when>
+
+               <map:when test="docbook-v4.2">
+                  <map:transform src="library/xslt/docbook2document.xsl" label="content" />
+               </map:when>
+
+               <map:when test="sdocbook-v1.0">
+                  <map:transform src="library/xslt/docbook2document.xsl" label="content" />
+               </map:when>
+
+               <map:otherwise />
+            </map:select>
+         </map:act>
+         <map:transform type="idgen" />
+      </map:resource>
+   </map:resources>
+
+<!-- =========================== Pipelines ================================= -->
+   <map:pipelines>
+<!-- Utility Pipeline that creates the grammer for the Chaperon Wiki -->
+      <map:pipeline internal-only="true">
+<!-- IMPORTANT! This pipeline sould be cachable -->
+         <map:match pattern="chaperon/*.grm">
+            <map:generate type="textparser" src="chaperon/{1}.rgrm">
+               <map:parameter name="grammar" value="chaperon/grammars/rgrm.grm" />
+            </map:generate>
+            <map:transform src="chaperon/stylesheets/rgrm2grm.xsl" />
+            <map:serialize type="xml" />
+         </map:match>
+      </map:pipeline>
+
+<!-- Pipeline that manages the internal URI space
+       For the external URI space manager, see the next pipeline.
+       Set it to internal-only="true" in production environment -->
+      <map:pipeline internal-only="false">
+         <map:match pattern="**tab-**.xml">
+            <map:generate src="content/xdocs/tabs.xml" />
+            <map:transform type="linkrewriter" src="cocoon:/linkmap" />
+            <map:call resource="skinit">
+               <map:parameter name="type" value="tab2menu" />
+               <map:parameter name="path" value="{2}" />
+            </map:call>
+         </map:match>
+
+         <map:match pattern="**book-**/*.xml">
+            <map:call resource="book">
+               <map:parameter name="dir" value="{2}/" />
+               <map:parameter name="path" value="{2}/{3}.xml" />
+            </map:call>
+         </map:match>
+
+         <map:match pattern="**book-**.xml">
+            <map:call resource="book">
+               <map:parameter name="dir" value="" />
+               <map:parameter name="path" value="{2}.xml" />
+            </map:call>
+         </map:match>
+
+         <map:match pattern="body-todo.xml">
+            <map:generate type="file-nolabel" src="status.xml" />
+            <map:transform type="linkrewriter" src="cocoon:/linkmap" />
+            <map:transform src="library/xslt/todo2document.xsl" label="content" />
+            <map:call resource="skinit">
+               <map:parameter name="type" value="document2html" />
+               <map:parameter name="path" value="/todo.xml" />
+            </map:call>
+         </map:match>
+
+         <map:match pattern="body-forrest-issues.xml">
+            <map:generate type="file-nolabel" src="http://issues.cocoondev.org/jira/secure/IssueNavigator.jspa?pid=10000&amp;resolutionIds=-1&amp;view=rss&amp;reset=true" />
+            <map:transform src="library/xslt/rssissues2document.xsl" label="content" />
+            <map:transform type="idgen" />
+            <map:call resource="skinit">
+               <map:parameter name="type" value="document2html" />
+               <map:parameter name="nopdf" value="true" />
+               <map:parameter name="path" value="/forrest-issues.xml" />
+            </map:call>
+         </map:match>
+
+         <map:match pattern="body-changes.xml">
+            <map:generate type="file-nolabel" src="status.xml" />
+            <map:transform type="linkrewriter" src="cocoon:/linkmap" />
+            <map:transform src="library/xslt/changes2document.xsl" label="content" />
+            <map:call resource="skinit">
+               <map:parameter name="type" value="document2html" />
+               <map:parameter name="path" value="/changes.xml" />
+            </map:call>
+         </map:match>
+
+         <map:match pattern="body-**/faq.xml">
+            <map:generate type="file-nolabel" src="content/xdocs/{1}/faq.xml" />
+            <map:transform type="linkrewriter" src="cocoon:/{1}/linkmap" />
+            <map:transform src="library/xslt/faq2document.xsl" label="content" />
+            <map:call resource="skinit">
+              <map:parameter name="type" value="document2html" />
+              <map:parameter name="path" value="{1}/faq.xml" />
+              <map:parameter name="notoc" value="true" />
+            </map:call>
+         </map:match>
+
+         <map:match pattern="body-faq.xml">
+            <map:generate type="file-nolabel" src="content/xdocs/faq.xml" />
+            <map:transform type="linkrewriter" src="cocoon:/linkmap" />
+            <map:transform src="library/xslt/faq2document.xsl" label="content" />
+            <map:call resource="skinit">
+              <map:parameter name="type" value="document2html" />
+              <map:parameter name="path" value="faq.xml" />
+              <map:parameter name="notoc" value="true" />
+            </map:call>
+         </map:match>
+
+	 <!-- ========================== FOP Additions ========================== -->
+
+         <map:match pattern="body-compliance.xml">
+           <map:generate type="file-nolabel" src="content/xdocs/compliance.xml"/>
+           <map:transform src="resources/stylesheets/compliance2html.xsl"/>
+           <map:serialize type="xml"/>
+         </map:match>
+
+<!-- ======================== End FOP Additions ======================== -->
+
+<!-- index pages for contribution categories -->
+         <map:match pattern="body-community/*/index.xml">
+            <map:generate src="content/xdocs/community/{1}/index.xml" />
+            <map:transform type="linkrewriter" src="cocoon:/community/{1}/linkmap" />
+            <map:transform type="idgen" />
+            <map:call resource="skinit">
+               <map:parameter name="type" value="document2html" />
+               <map:parameter name="path" value="community/{1}/index" />
+            </map:call>
+         </map:match>
+
+<!-- no special transformation, yet, for revision pages -->
+         <map:match pattern="body-community**revision-*.xml">
+            <map:generate src="content/xdocs/community{1}revision-{2}.xml" />
+            <map:transform type="linkrewriter" src="cocoon:/community/{1}/linkmap" />
+            <map:transform type="idgen" />
+            <map:call resource="skinit">
+               <map:parameter name="type" value="document2html" />
+               <map:parameter name="path" value="community/{1}/revision-{2}" />
+            </map:call>
+         </map:match>
+
+<!-- all contribution docs -->
+         <map:match pattern="body-community/*/*/**.xml">
+            <map:aggregate element="all">
+               <map:part src="content/xdocs/community/{1}/{2}/{3}.xml" />
+               <map:part src="cocoon:/revisions-community/{1}/{2}/{3}" />
+            </map:aggregate>
+            <map:transform type="linkrewriter" src="cocoon:/community/{1}/{2}/linkmap" />
+            <map:transform type="idgen" />
+            <map:transform src="library/xslt/{1}2document.xsl" label="content" />
+            <map:call resource="skinit">
+               <map:parameter name="type" value="document2html" />
+               <map:parameter name="path" value="community/{1}/{2}/{3}.xml" />
+            </map:call>
+         </map:match>
+
+<!-- revisions only implemented for community pages -->
+         <map:match pattern="revisions-community/*/*/**">
+            <map:generate type="directory" src="content/xdocs/community/{1}/{2}">
+               <map:parameter name="dateFormat" value="yyyy-MM-dd hh:mm" />
+            </map:generate>
+            <map:transform src="library/xslt/directory2revisions.xsl" label="content">
+               <map:parameter name="use-request-parameters" value="true" />
+               <map:parameter name="page" value="{3}" />
+            </map:transform>
+            <map:serialize type="xml" />
+         </map:match>
+
+<!-- HTML DTD Documentation generation pipeline, makes use of NekoDTD tool -->
+         <map:match pattern="body-**.dtdx.xml">
+            <map:generate type="nekodtd" src="resources/schema/dtd/{1}.dtd">
+               <map:parameter name="config-class" value="org.cyberneko.dtd.DTDConfiguration" />
+            </map:generate>
+            <map:transform src="library/xslt/dtdx2flat.xsl" />
+            <map:transform src="library/xslt/flat2document.xsl" />
+            <map:transform type="idgen" />
+            <map:call resource="skinit">
+              <map:parameter name="type" value="document2html" />
+              <map:parameter name="isfaq" value="true" />
+              <map:parameter name="notoc" value="true" />
+              <map:parameter name="path" value="{1}.dtdx.xml" />
+            </map:call>
+         </map:match>
+
+
+
+<!-- Generates body HTML for files in subdirs -->
+         <map:match pattern="body-**/*.xml">
+<!-- if the file is present as ihtml, convert to doc-v11... -->
+            <map:act type="resource-exists">
+               <map:parameter name="url" value="content/xdocs/{1}/{2}.ihtml" />
+               <map:generate src="content/xdocs/{../1}/{../2}.ihtml" type="html" />
+               <map:transform src="library/xslt/html2document.xsl" />
+               <map:transform type="linkrewriter" src="cocoon:/{../1}/linkmap" />
+               <map:transform type="idgen" />
+               <map:call resource="skinit">
+                  <map:parameter name="type" value="document2html" />
+                  <map:parameter name="path" value="{../1}/{../2}.xml" />
+               </map:call>
+            </map:act>
+
+<!-- if the file is present as html, give that to the user... -->
+            <map:act type="resource-exists">
+               <map:parameter name="url" value="content/xdocs/{1}/{2}.ehtml" />
+               <map:generate src="content/xdocs/{../1}/{../2}.ehtml" />
+               <map:transform src="library/xslt/html2htmlbody.xsl" />
+               <map:transform type="linkrewriter" src="cocoon:/{../1}/linkmap" />
+               <map:serialize type="xml" />
+            </map:act>
+
+<!-- if the file is present as .cwiki, give that to the user... -->
+            <map:act type="resource-exists">
+               <map:parameter name="url" value="content/xdocs/{1}/{2}.cwiki" />
+               <map:generate src="content/xdocs/{../1}/{../2}.cwiki" type="textparser">
+                  <map:parameter name="grammar" value="chaperon/grammars/wiki.grm" />
+
+                  <map:parameter name="includeignorabletokens" value="true" />
+               </map:generate>
+               <map:transform src="library/xslt/wiki2htmlpage.xsl" />
+               <map:transform src="library/xslt/wiki2html.xsl" />
+               <map:transform src="library/xslt/html2document.xsl" />
+               <map:transform type="linkrewriter" src="cocoon:/{../1}/linkmap" />
+               <map:transform type="idgen" />
+               <map:call resource="skinit">
+                  <map:parameter name="type" value="document2html" />
+                  <map:parameter name="path" value="{../1}/{../2}.xml" />
+               </map:call>
+            </map:act>
+
+            <map:generate src="content/xdocs/{1}/{2}.xml" />
+            <map:call resource="transform-to-document">
+               <map:parameter name="src" value="content/xdocs/{1}/{2}.xml" />
+               <map:parameter name="linkmap" value="cocoon:/{1}/linkmap" />
+            </map:call>
+
+            <map:call resource="skinit">
+               <map:parameter name="type" value="document2html" />
+               <map:parameter name="path" value="{1}/{2}.xml" />
+            </map:call>
+         </map:match>
+
+<!-- Generates body HTML for root-level files -->
+         <map:match pattern="body-**.xml">
+<!-- if the file is present as ihtml, give that to the user... -->
+            <map:act type="resource-exists">
+               <map:parameter name="url" value="content/xdocs/{1}.ihtml" />
+               <map:generate src="content/xdocs/{../1}.ihtml" type="html" />
+               <map:transform src="library/xslt/html2document.xsl" />
+               <map:transform type="linkrewriter" src="cocoon:/linkmap" />
+               <map:transform type="idgen" />
+               <map:call resource="skinit">
+                  <map:parameter name="type" value="document2html" />
+                  <map:parameter name="path" value="{../1}.xml" />
+               </map:call>
+            </map:act>
+
+
+
+<!-- if the file is present as html, give that to the user... -->
+            <map:act type="resource-exists">
+               <map:parameter name="url" value="content/xdocs/{1}.ehtml" />
+               <map:generate src="content/xdocs/{../1}.ehtml" />
+               <map:transform src="library/xslt/html2htmlbody.xsl" />
+               <map:transform type="linkrewriter" src="cocoon:/linkmap" />
+               <map:serialize type="xml" />
+            </map:act>
+
+<!-- if the file is present as .cwiki, give that to the user... -->
+            <map:act type="resource-exists">
+               <map:parameter name="url" value="content/xdocs/{1}.cwiki" />
+
+               <map:generate src="content/xdocs/{../1}.cwiki" type="textparser">
+                  <map:parameter name="grammar" value="chaperon/grammars/wiki.grm" />
+                  <map:parameter name="includeignorabletokens" value="true" />
+               </map:generate>
+               <map:transform src="library/xslt/wiki2htmlpage.xsl" />
+               <map:transform src="library/xslt/wiki2html.xsl" />
+               <map:transform src="library/xslt/html2document.xsl" />
+               <map:transform type="linkrewriter" src="cocoon:/linkmap" />
+               <map:transform type="idgen" />
+               <map:call resource="skinit">
+                  <map:parameter name="type" value="document2html" />
+                  <map:parameter name="path" value="{../1}.xml" />
+               </map:call>
+            </map:act>
+
+            <map:generate src="content/xdocs/{1}.xml" />
+            <map:call resource="transform-to-document">
+               <map:parameter name="src" value="content/xdocs/{1}.xml" />
+               <map:parameter name="linkmap" value="cocoon:/linkmap" />
+            </map:call>
+
+            <map:call resource="skinit">
+               <map:parameter name="type" value="document2html" />
+               <map:parameter name="path" value="{1}.xml" />
+            </map:call>
+         </map:match>
+      </map:pipeline>
+
+      <map:pipeline>
+         <map:match pattern="abs-linkmap">
+            <map:generate src="content/xdocs/site.xml" />
+            <map:transform src="library/xslt/absolutize-linkmap.xsl" />
+            <map:serialize type="xml" />
+         </map:match>
+
+         <map:match pattern="abs-linkmap/**">
+            <map:generate src="cocoon:/abs-linkmap" />
+            <map:transform type="xpath">
+               <map:parameter name="include" value="//*[@href='{1}']" />
+            </map:transform>
+            <map:serialize type="xml" />
+         </map:match>
+
+         <map:match pattern="**linkmap">
+            <map:generate src="cocoon:/abs-linkmap" />
+            <map:transform src="library/xslt/relativize-linkmap.xsl">
+               <map:parameter name="path" value="{0}" />
+            </map:transform>
+            <map:serialize type="xml" />
+         </map:match>
+
+<!-- This derivation of '**linkmap' is used when generating book.xml from a
+   site.xml.  The /** suffix identifies a @href prefix which all nodes in the
+   returned subtree must have. -->
+         <map:match pattern="**linkmap/**">
+            <map:generate src="cocoon:/abs-linkmap/{2}" />
+            <map:transform src="library/xslt/relativize-linkmap.xsl">
+               <map:parameter name="path" value="{1}linkmap" />
+            </map:transform>
+            <map:serialize type="xml" />
+         </map:match>
+      </map:pipeline>
+
+      <map:pipeline internal-only="false">
+<!-- ========================== FOP Additions ========================== -->
+
+   <map:match pattern="*/svg/*.svg">
+    <map:read src="content/xdocs/{1}/svg/{2}.svg" mime-type="image/svg"/>
+   </map:match>
+   <map:match pattern="*/svg/*.png">
+    <map:generate src="content/xdocs/{1}/svg/{2}.svg"/>
+    <map:serialize type="svg2png"/>
+   </map:match>
+   <map:match pattern="*/svg/*.pdf">
+    <map:generate src="content/xdocs/{1}/svg/{2}.svg"/>
+    <map:serialize type="svg2pdf"/>
+   </map:match>
+
+   <map:match pattern="fo/*.fo">
+    <map:read src="content/xdocs/fo/{1}.fo" mime-type="text/xml"/>
+   </map:match>
+   <map:match pattern="fo/*.fo.pdf">
+    <map:generate src="content/xdocs/fo/{1}.fo"/>
+    <map:serialize type="fo2pdf"/>
+   </map:match>
+   <map:match pattern="**/fo/*.fo">
+    <map:read src="content/xdocs/{1}/fo/{2}.fo" mime-type="text/xml"/>
+   </map:match>
+   <map:match pattern="**/fo/*.fo.pdf">
+    <map:generate src="content/xdocs/{1}/fo/{2}.fo"/>
+    <map:serialize type="fo2pdf"/>
+   </map:match>
+   <map:match pattern="compliance.pdf">
+    <map:generate type="file-nolabel" src="content/xdocs/compliance.xml"/>
+    <map:transform src="resources/stylesheets/compliance2fo.xsl" label="content"/>
+    <map:serialize type="fo2pdf"/>
+   </map:match>
+
+<!-- ======================= End FOP Additions ======================== -->
+
+<!-- ======================    editor    ============================== -->
+         <map:match pattern="edit**">
+            <map:mount uri-prefix="edit" src="editor.xmap" check-reload="yes" />
+         </map:match>
+
+<!-- ==================   External URI-space    ========================= -->
+         <map:match pattern="">
+            <map:redirect-to uri="{request:contextPath}/index.html" />
+         </map:match>
+
+
+         <map:match pattern="**">
+
+<!-- Generates printerfriendly HTML from the body (link rewriting) -->
+<!-- NKB disabled temporarily till errors are fixed
+         <map:match pattern="printer-friendly/**.html">
+            <map:generate src="cocoon://body-{1}.xml"/>
+            <map:serialize/>
+         </map:match>
+
+         <map:match pattern="**/printer-friendly/*.html">
+            <map:generate src="cocoon://body-{1}/{2}.xml"/>
+            <map:serialize/>
+         </map:match>
+-->
+<!-- Generates source HTML from the body (link rewriting) -->
+<!-- NKB disabled temporarily till errors are fixed
+         <map:match pattern="doc-source/**.html">
+            <map:generate src="content/xdocs/{1}.xml"/>
+            <map:serialize type="xml"/>
+         </map:match>
+
+         <map:match pattern="**/doc-source/*.html">
+            <map:generate src="content/xdocs/{1}/{2}.xml"/>
+            <map:serialize type="xml"/>
+         </map:match>
+-->
+
+<!-- if the file is present verbatim as content, give that to the user... -->
+            <map:act type="resource-exists">
+               <map:parameter name="url" value="content/{1}" />
+               <map:match pattern="**.html">
+<!--
+        Use this instead if you don't want JTidy to clean up your HTML
+        <map:read src="content/{0}" mime-type="text/html"/>
+        -->
+                  <map:generate type="html" src="content/{1}.html" />
+                  <map:serialize type="html" />
+               </map:match>
+
+               <map:match pattern="**.xml">
+                  <map:generate type="file" src="content/{1}.xml" />
+                  <map:serialize type="xml" />
+               </map:match>
+
+               <map:match pattern="skin/**.css">
+                  <map:read src="content/{1}.css" mime-type="text/css" />
+               </map:match>
+
+               <map:match pattern="**.js">
+                  <map:read src="content/{1}.js" mime-type="application/javascript" />
+               </map:match>
+
+               <map:match pattern="**.gif">
+                  <map:read src="content/{1}.gif" mime-type="image/gif" />
+               </map:match>
+
+               <map:match pattern="**.png">
+                  <map:read src="content/{1}.png" mime-type="image/png" />
+               </map:match>
+
+               <map:match pattern="**.jpg">
+                  <map:read src="content/{1}.jpg" mime-type="image/jpeg" />
+               </map:match>
+
+               <map:match pattern="**.jpeg">
+                  <map:read src="content/{1}.jpeg" mime-type="image/jpeg" />
+               </map:match>
+
+               <map:match pattern="**.pdf">
+                  <map:read src="content/{1}.pdf" mime-type="application/pdf" />
+               </map:match>
+
+               <map:match pattern="**.swf">
+                  <map:read src="content/{1}.swf" mime-type="application/x-shockwave-flash" />
+               </map:match>
+
+               <map:match pattern="**">
+                  <map:read src="content/{1}" mime-type="application/unknown" />
+               </map:match>
+            </map:act>
+
+
+<!-- ... otherwise try to generate it using these rules.  -->
+            <map:match pattern="apachestats">
+               <map:generate type="html" src="http://www.apache.org/~rubys/stats/xml.apache.org/">
+                  <map:parameter name="xpath" value="/html/body//a[contains(@href,'.xml')]" />
+               </map:generate>
+
+               <map:serialize type="xml" />
+            </map:match>
+
+            <map:match pattern="*.html">
+               <map:aggregate element="site">
+                  <map:part src="cocoon:/book-{1}.xml" />
+                  <map:part src="cocoon:/tab-{1}.xml" />
+                  <map:part src="cocoon:/body-{1}.xml" label="content" />
+               </map:aggregate>
+
+               <map:call resource="skinit">
+                  <map:parameter name="type" value="site2xhtml" />
+                  <map:parameter name="path" value="{0}" />
+               </map:call>
+            </map:match>
+
+            <map:match pattern="**/*.html">
+               <map:aggregate element="site">
+                  <map:part src="cocoon:/{1}/book-{1}/{2}.xml" />
+
+                  <map:part src="cocoon:/{1}/tab-{1}/{2}.xml" />
+
+                  <map:part src="cocoon:/body-{1}/{2}.xml" label="content" />
+               </map:aggregate>
+
+               <map:call resource="skinit">
+                  <map:parameter name="type" value="site2xhtml" />
+                  <map:parameter name="path" value="{0}" />
+               </map:call>
+            </map:match>
+
+            <map:match pattern="*.dtdx.pdf">
+               <map:generate type="nekodtd" src="resources/schema/dtd/{1}.dtd">
+                  <map:parameter name="config-class" value="org.cyberneko.dtd.DTDConfiguration" />
+               </map:generate>
+               <map:transform src="library/xslt/dtdx2flat.xsl" />
+               <map:transform src="library/xslt/flat2document.xsl" />
+               <map:transform src="skins/{forrest:skin}/xslt/fo/document2fo.xsl" />
+               <map:serialize type="fo2pdf" />
+            </map:match>
+
+            <map:match pattern="**/*.dtdx.pdf">
+               <map:generate type="nekodtd" src="resources/schema/dtd/{2}.dtd">
+                  <map:parameter name="config-class" value="org.cyberneko.dtd.DTDConfiguration" />
+               </map:generate>
+               <map:transform src="library/xslt/dtdx2flat.xsl" />
+               <map:transform src="library/xslt/flat2document.xsl" />
+               <map:transform src="skins/{forrest:skin}/xslt/fo/document2fo.xsl" />
+               <map:serialize type="fo2pdf" />
+            </map:match>
+
+            <map:match pattern="changes.pdf">
+               <map:generate type="file-nolabel" src="status.xml" />
+               <map:transform src="library/xslt/changes2document.xsl" label="content" />
+               <map:transform src="skins/forrest-site/xslt/fo/document2fo.xsl" />
+               <map:serialize type="fo2pdf" />
+            </map:match>
+
+            <map:match pattern="changes.rss">
+               <map:generate type="file-nolabel" src="status.xml" />
+               <map:transform src="library/xslt/changes2rss.xsl" label="content" />
+               <map:serialize type="rss091" />
+            </map:match>
+
+            <map:match pattern="todo.pdf">
+               <map:generate type="file-nolabel" src="status.xml" />
+               <map:transform src="library/xslt/todo2document.xsl" label="content" />
+               <map:transform src="skins/forrest-site/xslt/fo/document2fo.xsl" />
+               <map:serialize type="fo2pdf" />
+            </map:match>
+
+            <map:match pattern="faq.pdf">
+               <map:generate type="file-nolabel" src="content/xdocs/faq.xml" />
+               <map:transform src="library/xslt/faq2document.xsl" label="content" />
+               <map:transform src="skins/forrest-site/xslt/fo/document2fo.xsl" />
+               <map:serialize type="fo2pdf" />
+            </map:match>
+
+<!-- ========================= FOP Additions ========================== -->
+
+   <map:match pattern="**/faq.pdf">
+    <map:generate type="file-nolabel" src="content/xdocs/{1}/faq.xml"/>
+    <map:transform src="library/xslt/faq2document.xsl" label="content"/>
+    <map:transform src="skins/forrest-site/xslt/fo/document2fo.xsl"/>
+    <map:serialize type="fo2pdf"/>
+   </map:match>
+
+<!-- ======================= End FOP Additions ======================== -->
+
+            <map:match pattern="**.pdf">
+               <map:generate src="content/xdocs/{1}.xml" />
+               <map:call resource="transform-to-document">
+                  <map:parameter name="src" value="content/xdocs/{1}.xml" />
+                  <map:parameter name="linkmap" value="cocoon:/linkmap" />
+               </map:call>
+               <map:transform src="skins/{forrest:skin}/xslt/fo/document2fo.xsl" />
+               <map:serialize type="fo2pdf" />
+            </map:match>
+
+<!-- ================  Directory redirects   =========================== -->
+<!-- Redirect any request for a directory to the directory's index.html file  -->
+            <map:match pattern="**/">
+               <map:redirect-to uri="{request:contextPath}/{1}/index.html" />
+            </map:match>
+
+<!-- ================  Libre   =========================== -->
+            <map:match pattern="libre">
+               <map:generate type="libre" src="content/xdocs">
+                  <map:parameter name="depth" value="-1" />
+               </map:generate>
+
+               <map:serialize type="xml" />
+            </map:match>
+
+<!-- ================  Static  =========================== -->
+            <map:match pattern="skin/**.js">
+               <map:call resource="skin-read">
+                  <map:parameter name="path" value="scripts/{1}.js" />
+                  <map:parameter name="mime-type" value="application/javascript" />
+               </map:call>
+            </map:match>
+
+            <map:match pattern="**/skin/**.js">
+               <map:call resource="skin-read">
+                  <map:parameter name="path" value="scripts/{2}.js" />
+                  <map:parameter name="mime-type" value="application/javascript" />
+               </map:call>
+            </map:match>
+
+            <map:match pattern="**.js">
+               <map:read src="resources/scripts/{1}.js" mime-type="application/javascript" />
+            </map:match>
+
+            <map:match pattern="skin/**.css">
+               <map:call resource="skin-read">
+                  <map:parameter name="path" value="css/{1}.css" />
+                  <map:parameter name="mime-type" value="text/css" />
+               </map:call>
+            </map:match>
+
+            <map:match pattern="**/skin/**.css">
+               <map:call resource="skin-read">
+                  <map:parameter name="path" value="css/{2}.css" />
+                  <map:parameter name="mime-type" value="text/css" />
+               </map:call>
+            </map:match>
+
+            <map:match pattern="**.css">
+               <map:read src="resources/css/{1}.css" mime-type="text/css" />
+            </map:match>
+
+            <map:match pattern="skin/images/**.*">
+               <map:call resource="skin-read">
+                  <map:parameter name="path" value="images/{1}.{2}" />
+                  <map:parameter name="mime-type" value="image/{2}" />
+               </map:call>
+            </map:match>
+
+<!-- WARNING: You are strongly advised not to make use of this target, as it
+   leads to browsers having to cache multiple copies of the images, one per
+   directory. See the forrest-site skin XSLTs for an example of how to make
+   all image references use the 'skin/images/**.*' rule above -->
+            <map:match pattern="**/skin/images/**.*">
+               <map:call resource="skin-read">
+                  <map:parameter name="path" value="images/{2}.{3}" />
+                  <map:parameter name="mime-type" value="image/{3}" />
+               </map:call>
+            </map:match>
+
+<!-- DS: handles images local to a contributor directory -->
+            <map:match pattern="**my-images/**.*">
+               <map:read src="content/xdocs/{1}my-images/{2}.{3}" mime-type="image/{3}" />
+            </map:match>
+
+            <map:match pattern="images/**.png">
+               <map:act type="resource-exists">
+                  <map:parameter name="url" value="resources/images/{1}.svg" />
+                  <map:generate src="resources/images/{../1}.svg" />
+                  <map:serialize type="svg2png" />
+               </map:act>
+
+               <map:read src="resources/images/{1}.png" mime-type="image/png" />
+            </map:match>
+
+            <map:match pattern="images/**.*">
+               <map:read src="resources/images/{1}.{2}" mime-type="image/{2}" />
+            </map:match>
+
+<!-- WARNING: See above: this target should not be made use of -->
+            <map:match pattern="**/images/**.*">
+               <map:read src="resources/images/{2}.{3}" mime-type="image/{3}" />
+            </map:match>
+
+            <map:match pattern="**favicon.ico">
+               <map:call resource="skin-read">
+                  <map:parameter name="path" value="images/favicon.ico" />
+                  <map:parameter name="mime-type" value="image/x-ico" />
+               </map:call>
+            </map:match>
+         </map:match>
+      </map:pipeline>
+   </map:pipelines>
+</map:sitemap>
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<property-list family="Extension">
+  <generic-property-list>
+    <property>
+      <name>external-destination</name>
+      <inherited>false</inherited>
+      <datatype>String</datatype>
+      <default></default>
+    </property>
+    <property>
+      <name>internal-destination</name>
+      <inherited>false</inherited>
+      <datatype>String</datatype>
+      <default></default>
+    </property>
+    <property>
+      <name>destination-name</name>
+      <inherited>false</inherited>
+      <datatype>String</datatype>
+      <default></default>
+    </property>
+  </generic-property-list>
+</property-list>
