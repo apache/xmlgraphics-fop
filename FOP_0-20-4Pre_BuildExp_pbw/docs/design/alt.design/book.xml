@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<book title="FOP New Design Notes" copyright="2001-2002 The Apache Software Foundation">
+  <external href="http://xml.apache.org/fop/"  label="About FOP"/>
+  <separator/>
+  <external href="../index.html"      label="NEW DESIGN" />
+  <separator/>
+  <page id="index" label="co-routines" source="coroutines.xml"/>
+  <page id="galleys" label="galleys" source="galleys.xml"/>
+  <page id="footnotes" label="footnotes" source="footnotes.xml"/>
+  <page id="keeps" label="keeps" source="keeps.xml"/>
+  <page id="spaces" label="space-specifiers" source="spaces.xml"/>
+  <separator/>
+  <page id="alt.properties" label="alt.properties"  source="alt.properties.xml"/>
+  <page id="classes-overview" label="Classes overview"  source="classes-overview.xml"/>
+  <page id="properties-classes" label="Properties classes"  source="properties-classes.xml"/>
+  <page id="Properties" label="Properties"  source="Properties.png.xml"/>
+  <page id="PropertyConsts" label="PropertyConsts"  source="PropertyConsts.png.xml"/>
+  <page id="PropNames" label="PropNames"  source="PropNames.png.xml"/>
+  <page id="AbsolutePosition" label="AbsolutePosition"  source="AbsolutePosition.png.xml"/>
+  <page id="VerticalAlign" label="VerticalAlign"  source="VerticalAlign.png.xml"/>
+  <page id="BorderCommonStyle" label="BorderCommonStyle"  source="BorderCommonStyle.png.xml"/>
+  <separator/>
+  <page id="xml-parsing" label="XML parsing"  source="xml-parsing.xml"/>
+  <separator/>
+  <page id="property-parsing" label="Property parsing"  source="propertyExpressions.xml"/>
+  <separator/>
+  <page id="compound-properties" label="Compound properties"  source="compound-properties.xml"/>
+  <page id="traits" label="Traits"  source="traits.xml"/>
+</book>

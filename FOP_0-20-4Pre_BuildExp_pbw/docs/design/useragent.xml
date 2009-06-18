@@ -1,0 +1,176 @@
+<?xml version="1.0" standalone="no"?>
+
+<document>
+    <header>
+        <title>FO User Agent</title>
+        <subtitle>Design of FO User Agent</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Purpose">
+<p>
+Technically the user agent is FOP in the role of determining the
+output format and when resolving various attributes. The user
+agent is represented by a class that is available to others to
+specify how FOP should behave.
+  </p>
+  <p>
+The user agent is used by the formatting process to determine
+certain user definable values.
+  </p>
+  <p>
+It will enable the customisation of values for generating and
+rendering the document.
+  </p>
+  <p>
+The user agent must be available to the layout processor and
+the renderer. Users can supply their own user agent or use
+the default one for a particular renderer.
+  </p>
+  <p>
+The user agent needs to be made available to the property
+resolution layout process and the renderer.
+   </p>
+
+  <p>
+Standard Features:
+       <ul>
+       <li><p>
+error handling, what to do if fo markup is invalid
+       </p></li>
+       <li><p>
+auto overflow value and handling error-if-overflow
+       </p></li>
+       <li><p>
+adjusting length values (eg. for borders) to renderable values
+       </p></li>
+       <li><p>
+available fonts
+       </p></li>
+       <li><p>
+converting cm/in to pt (dpi)
+       </p></li>
+       <li><p>
+active state for multi properties
+       </p></li>
+       <li><p>
+title, used to identify a set of pages (in a page sequence)
+       </p></li>
+       <li><p>
+the width (in inline-progression-dimension) of a character with
+treat-word-as-space true
+       </p></li>
+       <li><p>
+maximum space used by conditional areas from region-reference-area
+       </p></li>
+       <li><p>
+if there should be "hot links" to before floats or footnotes
+       </p></li>
+       <li><p>
+when to clear side floats if space in inline-progression-dimension
+is not enough
+       </p></li>
+       <li><p>
+placement of left over footnotes on a page with a region-body
+       </p></li>
+       <li><p>
+using color property as border colour
+       </p></li>
+       <li><p>
+interpretting all border styles (except outset) as solid
+       </p></li>
+       <li><p>
+thin, medium and thick values for border width
+       </p></li>
+       <li><p>
+initial font-family value
+       </p></li>
+       <li><p>
+absolute font sizes (eg, xx-small, x-small etc.)
+       </p></li>
+       <li><p>
+relative font sizes (eg. larger, smaller)
+       </p></li>
+       <li><p>
+small caps simulation
+       </p></li>
+       <li><p>
+font weight mapping
+       </p></li>
+       <li><p>
+baseline info for a font if not available
+       </p></li>
+       <li><p>
+determining sub/superscript when another baseline is dominant
+       </p></li>
+       <li><p>
+scaling method for external-graphic and instream-foreign-object
+       </p></li>
+       <li><p>
+the width of a replaced element
+       </p></li>
+       <li><p>
+"normal" line height value
+       </p></li>
+       <li><p>
+text alignment (stretching the line with letter and word spacing)
+       </p></li>
+       <li><p>
+text transform
+       </p></li>
+       <li><p>
+initial color
+       </p></li>
+       <li><p>
+rendering intent of auto
+       </p></li>
+       <li><p>
+dot character for leader
+       </p></li>
+       <li><p>
+line breaking with leaders, use optimum length when breaking the line
+       </p></li>
+       <li><p>
+page height/width of auto
+       </p></li>
+       <li><p>
+left and right caption widths
+       </p></li>
+       <li><p>
+glyph orientation vertical of auto
+       </p></li>
+       <li><p>
+rendering processor of content-type (mime type)
+       </p></li>
+       </ul>
+  </p>
+
+  <p>
+Interactive Features:
+       <ul>
+       <li><p>
+inline and block scroll amount
+       </p></li>
+       <li><p>
+dynamic effects, links and property sets
+       </p></li>
+       <li><p>
+initial "pause-after", "pause-before" and "voice-family" value
+       </p></li>
+       <li><p>
+treating fixed as scroll on background attachement
+       </p></li>
+       <li><p>
+media usage of auto
+       </p></li>
+       </ul>
+  </p>
+
+  </s1>
+
+    </body>
+</document>
+

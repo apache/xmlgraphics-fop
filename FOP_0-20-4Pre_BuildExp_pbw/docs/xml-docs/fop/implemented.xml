@@ -1,0 +1,235 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- What's Implemented? -->
+
+<s1 title="Features">
+  <s2 title="What's Implemented?">
+      <p>The following formatting objects and properties of the XSL-FO 1.0
+         W3C Recommandation are implemented. Please have also a look at the 
+         section on <jump href="limitations.html">limitations</jump>.
+      </p>
+  </s2>
+  <s2 title="1) Formatting Objects">
+    <p>This section follows the table "B Formatting Object Summary" in the xsl:fo specification. At the 
+       end of each sub-section you find listed what is not implemented.</p>
+
+    <s3 title="B.1 Declaration and Pagination and Layout Formatting Objects">
+      <ul>
+        <li>root</li>
+        <li>page-sequence</li>
+        <li>page-sequence-master</li>
+        <li>single-page-master-reference</li>
+        <li>repeatable-page-master-reference</li>
+        <li>repeatable-page-master-alternatives</li>
+        <li>conditional-page-master-reference</li>
+        <li>layout-master-set</li>
+        <li>simple-page-master</li>
+        <li>region-body</li>
+        <li>region-before</li>
+        <li>region-after</li>
+        <li>region-start</li>
+        <li>region-end</li>
+        <li>flow</li>
+        <li>static-content</li>
+      </ul>
+      <p>Not implemented: declarations, color-profile, title</p>
+    </s3>
+
+    <s3 title="B.2 Block Formatting Objects">
+      <ul>
+        <li>block</li>
+        <li>block-container (limited)</li>
+      </ul>
+    </s3>
+
+    <s3 title="B.3 Inline Formatting Objects">
+      <ul>
+        <li>character</li>
+        <li>external-graphic</li>
+        <li>inline</li>
+        <li>instream-foreign-object</li>
+        <li>leader</li>
+        <li>page-number </li>
+        <li>page-number-citation, see <jump href="limitations.html">limitations</jump></li>
+      </ul>
+      <p>Not implemented: bidi-override, initial-property-set, inline-container</p>
+    </s3>
+
+    <s3 title="B.4 Table Formatting Objects">
+      <ul>
+        <li>table</li>
+        <li>table-body</li>
+        <li>table-cell</li>
+        <li>table-column</li>
+        <li>table-footer</li>
+        <li>table-header</li>
+        <li>table-row</li>
+      </ul>
+      <p>Not implemented: table-and-caption, table-caption </p> 
+    </s3>
+
+    <s3 title="B.5 List Formatting Objects">
+      <ul>
+        <li>list-block </li>
+        <li>list-item </li>
+        <li>list-item-body </li>
+        <li>list-item-label </li>
+      </ul>
+    </s3>
+
+    <s3 title="B.6 Link and Multi Formatting Objects">
+      <ul>
+        <li>basic-link (internal and external)</li>
+      </ul>
+      <p>Not implemented: multi-switch, multi-case, multi-toggle,
+         multi-properties, multi-property-set</p>
+    </s3>
+
+    <s3 title="B.7 Out-of-line Formatting Objects">
+      <ul>
+        <li>footnote</li>
+        <li>footnote-body</li>
+      </ul>
+      <p>Not implemented: float</p>
+    </s3>
+
+    <s3 title="B.8 Other Formatting Objects">
+      <ul>
+        <li>wrapper</li>
+        <li>marker, retrieve marker</li>
+      </ul>
+    </s3>
+  </s2>
+
+  <s2 title="2) Properties">
+  <p>Property values can be computed. Compound properties are also understood by Fop.</p>
+    <ul>
+      <li>background-color </li>
+      <li>blank-or-not-blank</li>
+      <li>border-after-color</li>
+      <li>border-after-style</li>
+      <li>border-after-width</li>
+      <li>border-before-color</li>
+      <li>border-before-style</li>
+      <li>border-before-width</li>
+      <li>border-bottom</li>
+      <li>border-bottom-color</li>
+      <li>border-bottom-style</li>
+      <li>border-bottom-width</li>
+      <li>border-color (only one value allowed) </li>
+      <li>border-end-color</li>
+      <li>border-end-style</li>
+      <li>border-end-width</li>
+      <li>border-left</li>
+      <li>border-left-color</li>
+      <li>border-left-style</li>
+      <li>border-left-width</li>
+      <li>border-right</li>
+      <li>border-right-color</li>
+      <li>border-right-style</li>
+      <li>border-right-width</li>
+      <li>border-start-color</li>
+      <li>border-start-style</li>
+      <li>border-start-width</li>
+      <li>border-style</li>
+      <li>border-top</li>
+      <li>border-top-color</li>
+      <li>border-top-style</li>
+      <li>border-top-width</li>
+      <li>border-width</li>
+      <li>bottom</li>
+      <li>break-after </li>
+      <li>break-before </li>
+      <li>character</li>
+      <li>color </li>
+      <li>column-count</li>
+      <li>column-gap</li>
+      <li>column-width </li>
+      <li>country</li>
+      <li>end-indent </li>
+      <li>extent </li>
+      <li>external-destination</li>
+      <li>flow-name </li>
+      <li>font-family </li>
+      <li>font-size </li>
+      <li>font-style </li>
+      <li>font-weight </li>
+      <li>height</li>
+      <li>hyphenate</li>
+      <li>hyphenation-character</li>
+      <li>hyphenation-push-character-count</li>
+      <li>hyphenation-remain-character-count</li>
+      <li>id</li>
+      <li>initial-page-number</li>
+      <li>internal-destination</li>
+      <li>keep-with-next (broken)</li>
+      <li>language</li>
+      <li>leader-alignment (not value "page")</li>
+      <li>leader-length (see limitations)</li>
+      <li>leader-pattern (not value "use-content")</li>
+      <li>leader-pattern-width</li>
+      <li>left</li>
+      <li>line-height </li>
+      <li>margin-bottom (only on pages and regions) </li>
+      <li>margin-left (only on pages and regions) </li>
+      <li>margin-right (only on pages and regions) </li>
+      <li>margin-top (only on pages and regions) </li>
+      <li>master-name </li>
+      <li>master-reference </li>
+      <li>maximum-repeats</li>
+      <li>number-columns-spanned</li>
+      <li>odd-or-even</li>
+      <li>padding (only one value allowed) </li>
+      <li>padding-after</li>
+      <li>padding-before</li>
+      <li>padding-bottom </li>
+      <li>padding-end</li>
+      <li>padding-left  </li>
+      <li>padding-right  </li>
+      <li>padding-start</li>
+      <li>padding-top  </li>
+      <li>page-height </li>
+      <li>page-position</li>
+      <li>page-width </li>
+      <li>position (allowed values: "static" (default),"relative", "absolute", fixed ) </li>
+      <li>provisional-distance-between-starts </li>
+      <li>provisional-label-separation </li>
+      <li>ref-id </li>
+      <li>region-name</li>
+      <li>right</li>
+      <li>rule-style</li>
+      <li>rule-thickness </li>
+      <li>space-after.optimum </li>
+      <li>space-before.optimum </li>
+      <li>span</li>
+      <li>src </li>
+      <li>start-indent </li>
+      <li>table-omit-footer-at-break</li>
+      <li>table-omit-header-at-break</li> 
+      <li>text-align </li>
+      <li>text-align-last </li>
+      <li>text-decoration</li>
+      <li>text-indent </li>
+      <li>top</li>
+      <li>white-space-collapse</li>
+      <li>width</li>
+      <li>wrap-option</li>
+    </ul>
+    <p>All other properties are not implemented.</p>
+  </s2>
+
+  <s2 title="3)SVG Support">
+<p>
+FOP uses <jump href="http://xml.apache.org/batik/">Batik</jump> directly for its SVG support. Therefore FOP supports the same
+elements and properties as are supported by Batik. As FOP is designed for
+rendering to a static medium then only static SVG is rendered.
+</p>
+<p>
+Due to some limitations in PDF some SVG images, particularly ones with effects
+or transparency, may not come out correctly. The images should still be rendered
+correctly for the AWT and Print renderers.
+</p>
+  </s2>
+</s1>
+

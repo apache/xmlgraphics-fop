@@ -1,0 +1,56 @@
+**** COMMITTERS **** 
+
+Arved Sandstrom (release coordinator) 
+James Tauber (started it all and wrote most of the code) 
+
+Kelly Campbell
+Steven Coffman
+Bertrand Delacretaz
+Tore Engvig
+Christian Geisert
+Stanislav Gorkhover
+Fotis Jannidis 
+Karen Lease
+Keiron Liddle
+Jeremias Maerki
+Jordan Naftolin
+Joerg Pietschmann
+Eric Schaeffer 
+Jon Smirl 
+Art Welch
+Peter B. West
+
+Initial development of new layout managers, area tree and renderers.
+Altered xml handling.
+Added User Agent.
+Made the image package thread safe and now has a caching system.
+Added extension example, of the type xml->svg.
+
+
+**** THINGS WORKED ON *****
+
+layout manager design
+documentation - design and developers understanding
+maintenance branch
+
+**** THINGS TO DO ****
+
+1)
+The main list of things that need to be done.
+
+- design of line area handling.
+- design of flow layout handling, breaks keeps, spacing etc.
+- integrating Avalon and Fop
+
+2)
+These should be done with the aim of getting to basic conformance.
+
+- Implement all remaining formatting objects
+- improve property handling for types not currently supported (eg. 'large' font)
+- implement all required properties
+
+3)
+Nail down external interfaces (the main part is fairly stable).
+Setting base directory, using config, logging, extensions etc.
+
+

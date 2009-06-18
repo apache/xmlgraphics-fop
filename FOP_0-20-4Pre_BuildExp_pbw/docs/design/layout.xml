@@ -1,0 +1,438 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>Layout</title>
+        <subtitle>Layout Process in FOP</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="FO Layout">
+<p>
+The aim of the layout system is to be self contained and allow for
+easy changes or extensions for future development. For example the
+line breaking should be decided at a particular point in the process
+that makes it easier to handle other languages.
+  </p>
+  <p>
+The layout begins once the hierarchy of FO objects has been constructed.
+Note: it may be possible to start immediately after a block formatting
+object has been added to the flow but this is not currently in the scope
+of the layout. It is also possible to layout all pages in a page sequence
+after each page sequence has been added from the xml.
+  </p>
+  <p>
+The layout process is handled by a set of layout managers. The block
+level layout managers are used to create the block areas which are
+added to the region area of a page.
+  </p>
+<s2 title="Layout Managers">
+  <p>
+The layout managers are set up from the hierarchy of the formatting
+object tree. A manager represents a hierachy of area producing objects.
+A manager is able to handle the block area(s) that it creates and
+organise or split areas for page breaks.
+  </p>
+  <p>
+Normally any object that creates a block area will have an associated
+layout manager. Other cases are tables and lists, these objects will
+also have layout managers that will manager the group of layout managers
+that make up the object.
+  </p>
+  <p>
+A layout manager is also able to determine height (min/max/optimum)
+and keep status. This will be used when organising the layout on
+a page. The manager will be able to determine the next place a break
+can be made and then be able to organise the height.
+  </p>
+  <p>
+A layout manager is essentially a bridge between the formatting objects
+and the area tree. It will keep a list of line areas inside block areas.
+Each line area will contain a list of inline areas that is able to be
+adjusted if the need arises.
+  </p>
+  <p>
+The objects in the area tree that are organised by the manager will mostly
+contain the information about there layout such as spacing and keeps, this
+information will be thrown away once the layout for a page is finalised.
+   </p>
+  </s2>
+<s2 title="Creating Managers">
+  <p>
+The managers are created by the page sequence. The top level manager
+is the Page manager. This asks the flow to add all managers in this
+page sequence.
+  </p>
+  <p>
+For block level objects they have a layout manager. Neutral objects
+don't represent any areas but are used to contain a block level
+area and as such these objects will ask the appropriate child to
+create a layout manager.
+  </p>
+  <p>
+Any nested block areas or inline areas may be handled by the layout
+manager at a later stage.
+   </p>
+  </s2>
+<s2 title="Using Managers">
+  <p>
+Block area layout managers are used to create a block area, other block
+level managers may ask their child layout managers to create block areas
+which are then added to the area tree (subset).
+  </p>
+  <p>
+A manager is used to add areas to a page until the page is full,
+then the manages contain all the information necessary to make
+the decision about page break and spacing. A manager can split an
+area that it has created will keep a status about what has been
+added to the current area tree.
+   </p>
+  </s2>
+<s2 title="Page Layout">
+  <p>
+Once the Page layout manager, belonging to the page sequence, is ready
+then we can start laying out each page. The page sequence will create
+the current page to put the page data, the next page and if it exists
+a last page.
+  </p>
+  <p>
+The current page will have the areas added to it from the block layout
+managers. The next page will be used when splitting a block that goes
+over the page break. Note: any page break overrides the layout decided
+here. The last page will be necessary if the last block area is added
+to this page. The size of the last page will be considered and the
+areas will be added to the last page instead.
+  </p>
+  <p>
+The first step is to add areas to the current page until the area is full
+and the lines of the last block area contain at least n(orphans) and at least
+n(orphans) + n(widows) in total. This will only be relevant for areas at
+the start or end of a particular reference area.
+   </p>
+  <p>
+   <image src="page.svg"/>
+  </p>
+  <p>
+The spacing between the areas (including spacing in block areas inside
+an inline-container) will be set to the minimum values. This will allow
+the page to have at least all the information it needs to organise the
+page properly.
+  </p>
+  <p>
+This should handle the situation where there are keeps on some
+block areas that go over the end of the page better. It is possible that
+fitting the blocks on the page using a spacing between min and optimum
+would give a closer value to the optimum than putting the blocks on the
+next page and the spacing being between optimum and max. So if the objects
+are placed first at optimum then you will need to keep going to see if
+there is a lower keep further on that has a spacing that is closer to the
+optimum.
+  </p>
+  <p>
+The spacing and keep information is stored so that the area positions
+and sizes can be adjusted.
+  </p>
+  </s2>
+<s2 title="Balancing Page">
+  <p>
+The page is vertically justified so that it distributes the areas
+on the page for the best result when considering keeps and spacing.
+  </p> 
+  </s2>
+<s2 title="Finding Break">
+  <p>
+First the keeps are checked. The available space on the page may have
+changed due to the presence of before floats or footnotes. The page break
+will need to be at a height &lt;= the available space on the page.
+  </p>
+  <p> 
+A page break should be made at the first available position that
+has the lowest keep value when searching from the bottom. Once the first
+possible break is found then the next possible break, with equally low
+keep value, is considered. If the height of the page is closer to the
+optimal spacing then this break will be used instead.
+  </p>
+  <p>
+Keep values include implicit and explicit values when trying to
+split a block area into more than one area. Implicit keeps may
+be such things as widows/orphans.
+  </p>
+  <p>
+If the page contains before floats or footnotes then as each area or line
+area is removed the float/footnote should also be removed. This will 
+change the available space and is a one way operation. The footnote
+should be removed first as a footnote may be placed on the next page. 
+The lowest keep value may need to be reassessed as each conditional
+area is removed.
+  </p>
+  <p>
+The before float and footnote regions are managed so that the separator
+regions will be present if it contains at least one area.
+  </p>
+  </s2>
+<s2 title="Optimising">
+  <p>
+Once the areas for the page are finalised then the spacing will
+need to be adjusted. The available height on the page is compared
+with the min and max spacing. All of the spacing in all the areas
+on the page is then adjusted by the appropriate percentage value.
+  </p>
+  </s2>
+<s2 title="Multi-Column Pages">
+  <p>
+In the case of multi-column pages the column breaks and eventually
+the page break must be found in a slightly different way.
+  </p>
+  <p>
+The columns need to be layed out completely from first to last but
+this can only be done after a rough estimate of all the elements
+on the page in case of before floats or footnotes.
+  </p>
+  <p>
+So first the complete page is layed out with all columns filled
+with areas and the spacing at a minimum. Then if there are any
+before floats or footnotes then the availabe space is adjusted.
+Then each the best break is found for each column starting from
+the first column. If any before floats or footnotes are removed
+as a result of the new breaks and optimised spacing then all the
+columns should still be layed out for the same column height.
+  </p>
+  </s2>
+<s2 title="Completing Page">
+  <p>
+After the region body has been finished the static areas can be
+layed out. The width of the static area is set and the height is
+inifinite, that is all block areas should be placed in the area
+and their visibility is controlled be other factors.
+  </p>
+  <p> 
+The area tree for the region body will contain the information
+about markers that may be necessary for the retrieve marker.
+  </p>
+  <p>
+The ordering of the area tree must be adjusted so that the areas are
+before, start, body, end and after in that order. The body region
+should be in the order before float, main then footnote.
+  </p>
+  </s2>
+<s2 title="Line Areas">
+  <p>
+Creating a line areas uses a similair concept. Each inline area
+is placed across the available space until there is no room left.
+The line is then split by considering all keeps and spacing.
+  </p>
+  <p>
+Each word (group of adjacent character inline areas) will have keeps
+based on hyphenation. The line break is at the lowest keep value
+starting from the end of the line.
+  </p>
+  <p>
+Once a line has been layed out for a particular width
+then that line is fixed for the page (except for unresolved
+page references).
+  </p>
+  </s2>
+<s2 title="Before Floats and Footnotes">
+  <p>
+The before float region and footnote region are handled by the page
+layoutmanger. These regions will handle the addition and removal
+of the separator regions when before floats/footnotes area added
+and removed.
+  </p>
+  </s2>
+<s2 title="Side Floats">
+  <p>
+If a float anchor is present in a particular line area then the available
+space for that line (and other in the block) will be reduced. The side float
+adds to the height of the block area and this height also depends
+on the clear value of subsequent blocks. The keep status of the block is
+also effected as there must be enough space on the page to fit the
+side float.
+  </p>
+  <p>
+<image src="float.svg"/>
+  </p>
+  </s2>
+<s2 title="Unresolved Areas">
+  <p>
+Once the layout of the page is complete there may be unresolved areas.
+  </p>
+  <p>
+Page number citations and links may require following pages to be
+layed out before they can be resolved. These will remain in the
+area tree as unresolved areas.
+  </p>
+  <p>
+As each page is completed the list of unresolved id's will be checked
+and if the id can be resolved it will be. Once all id's are resolved
+then the page can be rendered.
+  </p>
+  <p>
+Each page contains a map of all unresolved id's and the corresponding
+areas.
+  </p>
+  <p>
+In the case of page number citations. The areas reserves the equivalent
+of 3 number nines in the current font. When the area is resolved
+then the area is adjusted to its proper size and the line area is
+re-aligned to accomodate the change.
+  </p>
+  </s2>
+<s2 title="ID and Link Areas">
+  <p>
+Any formatting object that has an ID or any inline link defines an area
+that will be required when rendering and resolving id references.
+  </p>
+  <p>
+This area is stored in the parent area and may be a shape that exists
+in more than one page, for example over a page break. This shape consists
+of the boundary of all inline (or block) areas that the shape is defined
+for.
+  </p>
+  </s2>
+<s2 title="Inline Areas">
+  <p>
+This is the definition of all inline areas that will exist in the
+area.
+  </p>
+  </s2>
+<s2 title="Fixed Areas">
+  <p>
+instream-foreign-object, external-graphic, inline-container
+  </p>
+  <p>
+These areas have a fixed width and height. They also have a viewport.
+  </p>
+  </s2>
+<s2 title="Stretch Areas">
+  <p>
+leader, inline space
+  </p>
+  <p>
+These areas have a fixed height but the width may vary.
+  </p>
+  </s2>
+<s2 title="Character Areas">
+  <p>
+character
+  </p>
+  <p>
+This is an simple character that has fixed properties according to
+the current font. There are implicit keeps with adjacent characters.
+  </p>
+  </s2>
+<s2 title="Anchor Areas">
+  <p>
+float anchor, footnote anchor
+  </p>
+  <p>
+This area has no size. It keeps the position for footnotes and floats
+and has a keep with the associated inline area.
+  </p>
+  </s2>
+<s2 title="Unresolved Page Numbers">
+  <p>
+page-number-citation
+  </p>
+  <p>
+A page number area that needs resolving, behaves as a character and
+has the space of 3 normal characters reserved. The size will adjust
+when the value is resolved.
+  </p>
+  </s2>
+<s2 title="Block Areas">
+  <p>
+The block area has info about the following:
+       <itemizedlist>
+       <listitem><para>
+all anchors including which lines they are on
+       </para></listitem>
+       <listitem><para>
+unresolved page references with line info
+       </para></listitem>
+       <listitem><para>
+id and link areas
+       </para></listitem>
+       <listitem><para>
+height (min/max/optimum) or area including floats
+       </para></listitem>
+       <listitem><para>
+holds space before/after and keep information
+       </para></listitem>
+       <listitem><para>
+widows and orphans
+       </para></listitem>
+       </itemizedlist>
+  </p>
+  <p>
+Once the layout has been finalised then this information can be
+discarded.
+  </p>
+  </s2>
+<s2 title="Page Areas">
+  <p>
+Contains inforamtion about all the block areas in the body,
+before area and footer area.
+  </p>
+  <p>
+Has a list of the unresolved page references and a list of id refences
+that can be used to obtain the area associated with that id.
+  </p>
+  </s2>
+<s2 title="Test Cases">
+  <p>
+Here a few layout possibilities areas explored to determine how the
+layout process will handle these situations.
+  </p>
+<s3 title="Simple Pages">
+  <p>
+All blocks (including nested) are placed on the page with minimum spacing
+and the last block has the minimum number of lines past the page end.
+The lowest keep value is then found within the body area limits. Then the next
+equally low keep is found to determine if the spacing will be closer to
+the optimum values.
+  </p>
+  </s3>
+<s3 title="Before Floats/Footnotes">
+  <p>
+After filling the page with the block areas then the new body height
+is used to find the best position to break. Before each line area or block
+area is remove any associated before floats and footnotes are removed.
+This will then adjust the available space on the page and may allow
+for a different breaking point. Areas are removed towards the new
+breaking point until the areas fit on the page. When finding the
+optimum spacing the removal of before floats and footnotes must also
+be considered.
+  </p>
+  </s3>
+<s3 title="Multicolumn">
+  <p>
+First the page is filled with all columns for the intial page area.
+Then each column is adjusted for the new height starting from the
+first column. The best break for the column is found then the next
+column is considered, any left over areas a pre-pended to the next
+column. Once all the columns are finished then all the columns are
+adjusted to fit in the same height columns. This handles the situation
+where before floats or footnotes may have been removed.
+  </p>
+  </s3>
+<s3 title="Last Page">
+  <p>
+If in the process of adding areas to a page it is found that there
+are no more areas in the flow then this page will need to be changed to
+the last page (if applicable). The areas are then placed on a last
+page.
+  </p>
+  </s3>
+  </s2>
+
+  </s1>
+
+    </body>
+</document>
+

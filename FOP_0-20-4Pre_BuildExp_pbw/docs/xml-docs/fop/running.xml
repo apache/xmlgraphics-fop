@@ -1,0 +1,75 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Running FOP -->
+
+<s1 title="Running FOP">
+  <s2 title="Prerequisites">
+    <p>Following software must be installed:</p>
+    <p>a) Java 1.2.x or later</p>
+    <p>b) All libraries you need are part of the Fop distribution and 
+          can be found in the xml-fop/lib directory. Look at the batch/shell script fop.bat/fop.sh 
+          to see, how Fop can be invoked easily. These libraries are included:
+          <ul>
+            <li>An XML parser which supports SAX and DOM like 
+                <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump>. 
+                (Xerces is the default xml parser)
+            </li>
+            <li>An XSLT processor (Xalan is included)
+            </li>
+            <li>The SVG library batik.jar is the library from the <jump href="http://xml.apache.org/batik/">batik project</jump> at xml.apache.org.
+            </li>
+          </ul>
+    </p>
+  </s2>
+
+  <s2 title="Starting FOP as an standalone application">
+    <p><code>Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-svg|-at|-print] &lt;outfile></code></p>
+     <p>[OPTIONS]<br/>
+     <source>
+      -d          debug mode<br/>
+      -x          dump configuration settings<br/>
+      -q          quiet mode<br/>
+      -c cfg.xml  use additional configuration file cfg.xml<br/>
+      -l lang     the language to use for user information<br/></source>
+    </p>
+    <p>[INPUT]<br/>
+    <source>
+      infile            xsl:fo input file (the same as the next)<br/>
+      -fo  infile       xsl:fo input file<br/>
+      -xml infile       xml input file, must be used together with -xsl<br/>
+      -xsl stylesheet   xslt stylesheet<br/></source>
+    </p>
+
+    <p>[OUTPUT]<br/>
+    <source>
+      outfile           input will be rendered as pdf file into outfile<br/>
+      -pdf outfile      input will be rendered as pdf file (outfile req'd)<br/>
+      -awt              input will be displayed on screen<br/>
+      -mif outfile      input will be rendered as mif file (outfile req'd)<br/>
+      -pcl outfile      input will be rendered as pcl file (outfile req'd)<br/>
+      -txt outfile      input will be rendered as text file (outfile req'd)<br/>
+      -svg outfile      input will be rendered as an svg slides file (outfile req'd)
+      -at outfile       representation of area tree as XML (outfile req'd)
+      -print            input file will be rendered and sent to the printer<br/>
+                        see options with "-print help"<br/></source>
+    </p>
+
+    <p>[Examples]<br/>
+    <source>
+      Fop foo.fo foo.pdf<br/>
+      Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)<br/>
+      Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf<br/>
+      Fop foo.fo -mif foo.mif<br/>
+      Fop foo.fo -print or Fop -print foo.fo<br/>
+      Fop foo.fo -awt<br/></source>
+    </p>
+  </s2>
+
+  <s2 title="Problems">
+    <p>If you have problems running FOP, please have a look at the <jump href="gethelp.html">"How to get Help" page</jump>.</p>
+  </s2>
+</s1>
+
+
+

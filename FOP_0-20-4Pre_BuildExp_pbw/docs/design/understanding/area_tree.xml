@@ -1,0 +1,117 @@
+<?xml version="1.0" standalone="no"?>
+<!-- Overview -->
+<document> 
+  <header> 
+	 <title>Area Tree</title> 
+	 <subtitle>All you wanted to know about the Area Tree !</subtitle> 
+	 <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
+	 </authors> 
+  </header> 
+  <body><s1 title="Area Tree"> 
+<s2 title="Area Tree">
+<p>The Area Tree is an internal representation of the result document. This
+is a set of java classes that can put together a set of objects that
+represent the pages and their contents.</p>
+<p>This information is created by the layout managers and is rendered to the
+output using a renderer.</p>
+<p>The Area Tree follows the description of the area tree in the XSL:FO
+specification.</p>
+<p>The Area Tree consists of a set of pages, the actual implemenation places 
+these in
+a set of page sequences.</p></s2>
+
+<s2 title="Pages">
+<p>A page consists of a page+viewport pair.</p>
+<p>The PageViewPort and Page with the regions is created by the
+LayoutMasterSet. The contents are then placed by the layout managers. Once
+the layout of a page is complete then it is added to the Area Tree.</p>
+<p>Inside the page is a set of RegionViewport+Region pairs for each region on 
+the page.</p></s2>
+
+
+<s2 title="Blocks">
+<p>Block level areas contain either other blocks or line areas (which is a
+special block area).</p><p>
+A block is either positoned or stacked with other block areas.</p>
+</s2>
+
+<s2 title="Inline Areas">
+<p>Inline areas are stacked in a line area. Inline areas are objects such as
+character, viewport, inline-container, leader and space. A special inline
+area Word is also used for a group of consecutive characters.</p>
+<p>The image and instream foreign object areas are placed inside a viewport.
+The leader (with use content) and unresolved page number areas are
+resolved to other inline areas.</p>
+<p>Once a LineArea is filled with inline areas then the inline areas need to 
+be aligned and adjusted to fill the line properly.</p></s2>
+
+
+<s2 title="Traits">
+
+<p>A trait is information associated with an area. This could be information
+such as text colour or is-first.</p>
+<p>Traits provide information about an area. The traits are derived from
+properties on the formatting object or are generated during the layout
+process. Many of the layout traits do not have actual values but can be
+derived from the Area Tree. Other traits that apply when rendering the
+areas are set on the area. Since setting the same value on every area
+would use a lot of memory then the traits are derived from default or
+parent values.</p>
+<p>A dominant trait on a block area is set, for example font colour, so that
+every line area with the same dominant value can derive it. The text
+inline areas then get the font colour set on the inline area or from the
+line area or from the block area.</p></s2>
+
+
+<s2 title="Forward References">
+<p>The Area Tree maintains a set of mappings from the reference to pages.</p>
+<p>The PageViewPort holds the list of forward references that need resolving
+so that if a references is resolved during layout the page can be easily
+found and then fixed. Once all the forward references are resolved then
+the page is ready to be rendered.</p>
+<p>To layout a page any areas that cannot be resolved need to reserve space. 
+Once the inline area is resolved then the complete line should be adjusted 
+to accomodate any change in space used by the area.</p></s2>
+
+
+<s2 title="Caching">
+<p>We may need to cache pages due to forward references or when keeping all
+pages.</p>
+<p>This is done by serializing the Page. The PageViewport is retained to be
+used as a key for page references and backward references.
+The Page is serialized to an object stream and then all of the page
+contents are released. The Page is then recoved by reading from the object
+stream.</p>
+<p>The PageViewport retains information about id areas for easy access.</p>
+</s2>
+
+<s2 title="Extensions">
+<p>The Area Tree holds the Output Document extensions. This is information
+such as pdf bookmarks or other output document specific information that
+is not handled by XSL:FO.</p>
+<p>It is also possible to create custom areas that extend a normal area. The
+actual data that is rendered could be set in a different way or depend on
+resolving a forward reference.</p>
+</s2>
+
+<s2 title="Area Tree Handlers">
+<p>To handle different situations the handler for the Area Tree handles each
+page as it is added.</p><p>
+The RenderPagesModel sends the page directly to the renderer if the page
+is ready to be rendered. Once a page is rendered it is discarded.
+The StorePagesModel stores all the pages so that any page can be later
+accessed.</p>
+<p>The Area Tree retains the concept of page sequences (this is not in the
+area tree in the spec) so that this information can be passed to the
+renderer. This is useful for setting the title and organising the groups 
+of page sequences.</p></s2>
+
+
+<s2 title="Associated Tasks">
+<ul><li>Sort out extensions concept, access to AreaTree.</li>
+<li>Sort out trait handling.</li>
+<li>Caching implementation.</li></ul></s2>
+
+
+  </s1> 
+  </body></document>

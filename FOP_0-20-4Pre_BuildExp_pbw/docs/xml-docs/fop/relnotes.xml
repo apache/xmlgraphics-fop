@@ -1,0 +1,45 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>Release Notes</title>
+        <subtitle>Fop 0.20.3</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="FOP 0.20.3">
+  <p>Important Information:
+    <ul>
+       <li>This version supports the
+         <jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
+         W3C Recommendation</jump> syntax. So don't forget to update your 
+         Stylesheets:
+         <p>Just rename the <code>master-name</code> property to <code>master-reference</code>
+         on <code>fo:page-sequence</code>, <code>fo:single-page-master-reference</code>,
+         <code>fo:repeatable-page-master-reference</code> and
+         <code>fo:conditional-page-master-reference</code>.</p></li>
+       <li>JDK 1.2 (or later) is required</li>
+       <li>Jimi has been removed for licensing reasons
+         <p>If you need PNG support you have to download 
+           <jump href="http://java.sun.com/products/jimi/">Jimi</jump>,
+           copy it to lib/ and build FOP yourself</p></li>
+      <li>Building under JDK 1.4:
+        <p>You need to add a method in
+         <code>src/org/apache/fop/svg/PDFGraphics2D.java</code>
+         (search for jdk1.4 and remove the comments)
+        </p> 
+       </li>
+       <li>
+       	<p>For a more detailed list of changes, see the CHANGES file in the root of the FOP distribution.</p>
+       </li>
+      </ul>
+    </p>
+ </s1>
+
+    </body>
+</document>
+

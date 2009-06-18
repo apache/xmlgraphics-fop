@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<book title="FOP Design" copyright="1999-2002 The Apache Software Foundation">
+  <external href="http://xml.apache.org/fop/"  label="About FOP"/>
+  <separator/>
+  <external href="../index.html"      label="NEW DESIGN" />
+  <page id="index"          label="Uderstanding"      source="understanding.xml"/>
+  <separator/>
+  <page id="xml_parsing"          label="XML Parsing"      source="xml_parsing.xml"/>
+  <page id="fo_tree"          label="FO Tree"      source="fo_tree.xml"/>
+  <page id="properties"          label="Properties"      source="properties.xml"/>
+  <page id="layout_managers"          label="Layout Managers"      source="layout_process.xml"/>
+  <page id="layout_process"          label="Layout Process"      source="layout_process.xml"/>
+  <page id="handling_attributes"          label="Handling Attributes"      source="handling_attributes.xml"/>
+  <page id="area_tree"          label="Area Tree"      source="area_tree.xml"/>
+  <page id="renderers"          label="Renderers"      source="renderers.xml"/>
+  <separator/>
+  <page id="images"          label="Images"      source="images.xml"/>
+  <page id="pdf_library"          label="PDF Library"      source="pdf_library.xml"/>
+  <page id="svg"          label="SVG"      source="svg.xml"/>
+  <separator/>
+  <page id="status"          label="Status"      source="status.xml"/>
+</book>

@@ -1,0 +1,97 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Testing FOP -->
+
+<s1 title="Testing FOP">
+  <s2 title="Running and Using Tests">
+    <p>
+Testing is an important part of getting FOP to operate correctly and conform to the
+necessary standards.
+    </p>
+    <p>
+A testing system has been set up that works with as a build target when developing
+with FOP. A developer can run the tests after making changes to the code, the aim
+is to have the tests run to verfiy that nothing working has been broken.
+    </p>
+    <p>
+To setup the testing the developer must place a reference fop.jar in the
+"&lt;cvs_repository>/test/reference/" directory. This jar will be dynamically
+loaded to create the reference output.
+    </p>
+  </s2>
+
+  <s2 title="W3C TestSuite">
+    <p>
+The testing is set up so that you can download the testsuite from
+<jump href="http://www.w3.org/Style/XSL/TestSuite/">http://www.w3.org/Style/XSL/TestSuite/</jump>,
+unzip the file into the base directory of FOP.
+Then you can uncomment the lines in the build.xml file in the test target and it
+will run through all the tests in the testsuite distribution.
+    </p>
+  </s2>
+
+  <s2 title="Writing a Test">
+    <p>
+A test belongs to one of a few catagories. A basic test should excercise one
+element in a number of situations such as changing a property. This should have
+at least one normal value, one border value and one invalid value. If the property
+can be of different types then this should also be included.
+    </p>
+    <p>
+A bug test is a test that is specifically aimed at a problem with FOP. That is, the test
+is not excercising the specification but rather a problem with FOP in handling a particular
+situation that is not exposed with the other testing.
+    </p>
+    <p>
+A system test is one that tests the abitlity of FOP to handle a number of different
+elements together.
+    </p>
+    <p>
+A test can consist of a complete fo document or a part of the document such as
+some elements that will be placed into the flow of a standard document.
+    </p>
+
+  </s2>
+  <s2 title="Submitting a Test">
+    <p>
+If you have a test which you think would be useful you should supply the
+test and a diff to the appropriate test suite xml file. Make sure that the
+test works as would be expected against the current build.
+    </p>
+  </s2>
+
+  <s2 title="How Testing Works">
+    <p>
+The tests are stored in the "&lt;cvs_repository>/test" directory.
+    </p>
+    <p>
+You can run the tests by specifying the build target "test" ie: <br/>
+<code>build.sh test</code>
+    </p>
+    <p>
+This will then compare the current code in the local src directory to a specified
+release of FOP. Any differences between the current code and the output from
+the reference version will be reported. If the test previously passed then the
+test run will have failed.
+    </p>
+    <p>
+The testing is done by reading a test suite xml file, which corresponds to the
+standard testsuite.dtd supplied from w3c. This xml file contains a test xml
+file and an xsl file (which may simply copy the file). It also contains information
+such as if the test has passed and any comments.
+    </p>
+    <p>
+For FOP the testing is done by rendering all the testing documents using the
+XML renderer. The XML files are then compared to see if there are any differences.
+    </p>
+  </s2>
+
+  <s2 title="SVG Testing">
+    <p>
+The testing of SVG is not part of this testing system. SVG is tested for its rendering
+accuracy by using the transcoding mechanism via Batik. So that the only part that needs
+testing is how the SVG image is embedded inside the flow of the fo document.
+    </p>
+  </s2>
+</s1>
+

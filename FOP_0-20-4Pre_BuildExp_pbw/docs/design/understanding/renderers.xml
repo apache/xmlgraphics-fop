@@ -1,0 +1,115 @@
+<?xml version="1.0" standalone="no"?>
+<!-- Overview -->
+<document> 
+  <header> 
+	 <title>Renderers</title> 
+	 <subtitle>All you wanted to know about the Renderers !</subtitle> 
+	 <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
+	 </authors> 
+  </header> 
+  <body><s1 title="Renderers"> 
+
+<s2 title="Renderers">
+
+
+<p>A renderer is used to convert the Area Tree into the output document.
+The renderer is given the tree one page at a time. All pages are supplied
+in the order they appear in the document. In order to save memory it is
+possble to render the pages out of order. Any page that is not reeady to
+be rendered is setup by the renderer first so that it can reserve a space
+or reference for when the page is ready to be rendered.</p>
+<p>The AbstractRenderer does most of the work to iterate through the area 
+tree parts. This means that the most renderers simply need to implement 
+the specific parts with inserting text, images and lines. The methods can 
+easily be overridden to handle things in a different way or do some extra 
+processing.</p></s2>
+
+
+<s2 title="Fonts">
+<p>The fonts are setup by the renderer being used. The font metrics are used 
+during the layout process to determine the size of characters.</p>
+</s2>
+
+<s2 title="Render Context">
+<p>The render context is used by handlers. It contains information about the 
+current state of the renderer. Such as the page, the position and any 
+other miscellanous objects that are required to draw into the page.</p></s2>
+
+
+<s2 title="XML Handling">
+
+<p>A document may contain information in the form of XML for an image or
+instream foreign object. This XML is handled
+through the user agent. A standard extension for PDF is the SVG handler.</p><p>
+If there is XML in the SVG namespace it is given to the handler which
+renders the SVG into the pdf document at the given location.
+This separation means that other XML handlers can easily be added.</p></s2>
+
+
+<s2 title="Extensions">
+<p>Document level extensions are handled with an extension handler. This
+handles the information from the AreaTree and adds renders it to the
+document. An example is the pdf bookmarks. This information first needs to
+have all references resolved. Then the extension handler is ready to put
+the information into the pdf document.</p></s2>
+
+
+<s2 title="Types">
+
+
+<s3 title="PDF">
+<p>This uses the PDFDocument classes to create a PDF document. This supports
+out of order rendering as it is possible to reserve a pdf page object that
+can be later filled. Most of the work is to insert text or create lines.
+SVG is handled by the XML handler that uses the PDFGraphics2D and batik to
+draw the svg into the pdf page.</p><p>
+This also allows for font embedding.</p>
+</s3>
+<s3 title="SVG">
+<p>This creates a single svg document that contains all the pages rendered
+with page sequences horizontally and pages vertically. This also adds
+links between the pages so that it can be viewed by clicking on the page
+to go to the next page.</p></s3>
+
+<s3 title="TXT">
+<p>This simply outputs to a text document.</p></s3>
+<s3 title="AWT">
+<p>This draws the pages into an AWT graphic.</p></s3>
+
+<s3 title="PS and PCL">
+<p>Similar to PDF.</p></s3>
+
+<s3 title="XML">
+<p>Creates an XML file that represents the AreaTree.</p>
+</s3>
+<s3 title="Print">
+<p>This prints the document using the java printing facitlities. The AWT
+rendering is used to draw the pages onto the printjob.
+</p></s3>
+<s3 title="RTF and MIF">
+<p>These formats do not use this rendering mechanism.</p></s3>
+</s2>
+
+<s2 title="Adding a Renderer">
+<p>It is also possible to add other renderers. The renderer simply needs to
+implement the Renderer interface. The AbstractRenderer does most of what
+is needed so it is better to extend this. This means that you only need to
+implement the basic functionality such as text and lines.
+</p></s2>
+
+<s2 title="Multiple Renderers">
+<p>The layout of the document depends mainly on the font being used.
+If two renderers have the same font metrics then it is possible to render
+the Area Tree in each renderer. This can be handled by the AreaTree
+Handler.</p></s2>
+
+
+<s2 title="Associated Tasks">
+
+<ul><li>Sort out multiple renderers concept.</li></ul>
+</s2>
+
+</s1>
+
+
+  </body></document>

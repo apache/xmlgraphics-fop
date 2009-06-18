@@ -1,0 +1,1 @@
+Put servlet.jar (Version 2.2 or higher) in this directory!

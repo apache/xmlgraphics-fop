@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!--
+<!DOCTYPE document SYSTEM "../xml-docs/dtd/document-v10.dtd">
+-->
+
+<document>
+  <header>
+    <title>..fo.PropNames diagram</title>
+    <authors>
+      <person id="pbw" name="Peter B. West"
+	      email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <!-- one of (anchor s1) -->
+    <s1 title="PropNames.class">
+      <figure src="PropNames.png" alt="PropNames.class diagram"/>
+    </s1>
+  </body>
+</document>

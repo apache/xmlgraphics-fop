@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+
+  <!-- defines the layout master -->
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="first" 
+                           page-height="29.7cm" page-width="21cm" 
+                           margin-top="1cm" 
+                           margin-bottom="2cm" 
+                           margin-left="2.5cm" 
+                           margin-right="2.5cm">
+      <fo:region-body margin-top="3cm"/>
+      <fo:region-before extent="3cm"/>
+      <fo:region-after extent="1.5cm"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <!-- starts actual layout -->
+  <fo:page-sequence master-reference="first">
+
+  <!-- Inserts a header with the page number -->
+  <fo:static-content flow-name="xsl-region-before">
+    <fo:block text-align="end" font-size="10pt" font-family="serif" line-height="14pt">
+          XSL-FO Example: simple list - p. <fo:page-number/>
+    </fo:block>
+  </fo:static-content>
+
+  <fo:flow flow-name="xsl-region-body">
+
+      <!-- title -->
+      <fo:block font-size="14pt" 
+                font-family="sans-serif" 
+                line-height="18pt" 
+                space-before.optimum="3pt" 
+                space-after.optimum="3pt" 
+                font-weight="bold" 
+                start-indent="15pt">
+          Validity Constraint: Standalone Document Declaration
+      </fo:block>
+
+      <!-- normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt" 
+                space-after.optimum="3pt" >
+          The standalone document declaration must have the value "no" if 
+          any external markup declarations contain declarations of:
+      </fo:block>
+
+      <!-- list -->
+      <fo:list-block>
+        
+        <!-- list item -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              attributes with default values, if elements to which these attributes apply appear in the document without specifications of values for these attributes, or 
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list item -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              entities (other than amp, lt, gt, apos, quot), if references to those entities appear in the document, or 
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              attributes with values subject to normalization, where the attribute appears in the document with a value which will
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              change as a result of normalization, or 
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              element types with element content, if white space occurs directly within any instance of those types. 
+               <fo:list-block>
+                 <fo:list-item>
+                   <fo:list-item-label end-indent="label-end()">
+                     <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+                   </fo:list-item-label>
+                   <fo:list-item-body start-indent="body-start()">
+                     <fo:block>This is the first item of a nested list</fo:block>
+                   </fo:list-item-body>
+                 </fo:list-item>
+                 <fo:list-item>
+                   <fo:list-item-label end-indent="label-end()">
+                     <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+                   </fo:list-item-label>
+                   <fo:list-item-body start-indent="body-start()">
+                     <fo:block>This is the second item of a nested list</fo:block>
+                   </fo:list-item-body>
+                 </fo:list-item>
+                 <fo:list-item>
+                   <fo:list-item-label end-indent="label-end()">
+                     <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+                   </fo:list-item-label>
+                   <fo:list-item-body start-indent="body-start()">
+                     <fo:block>This is the third item of a nested list</fo:block>
+                   </fo:list-item-body>
+                 </fo:list-item>
+                 <fo:list-item>
+                   <fo:list-item-label end-indent="label-end()">
+                     <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+                   </fo:list-item-label>
+                   <fo:list-item-body start-indent="body-start()">
+                     <fo:block>This is the fourth item of a nested list</fo:block>
+                   </fo:list-item-body>
+                 </fo:list-item>
+                 <fo:list-item>
+                   <fo:list-item-label end-indent="label-end()">
+                     <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+                   </fo:list-item-label>
+                   <fo:list-item-body start-indent="body-start()">
+                     <fo:block>This is the fifth item of a nested list</fo:block>
+                   </fo:list-item-body>
+                 </fo:list-item>
+               </fo:list-block>
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+      </fo:list-block>
+      <!-- end list -->
+
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+
+

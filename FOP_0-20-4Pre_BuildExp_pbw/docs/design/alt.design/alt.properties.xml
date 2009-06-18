@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!--
+<!DOCTYPE document SYSTEM "../../xml-docs/dtd/document-v10.dtd">
+-->
+<document>
+  <header>
+    <title>Implementing Properties</title>
+    <authors>
+       <person id="pbw" name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <!-- one of (anchor s1) -->
+    <s1 title="An alternative properties implementation">
+      <note>
+	The following discussion focusses on the relationship between
+	Flow Objects in the Flow Object tree, and properties.  There
+	is no (or only passing) discussion of the relationship between
+	properties and traits, and by extension, between properties
+	and the Area tree.  The discussion is illustrated with some
+	pseudo-UML diagrams.
+      </note>
+      <p>
+	Property handling is complex and expensive. Varying numbers of
+	properties apply to individual Flow Objects
+	<strong>(FOs)</strong> in the <strong>FO
+	tree </strong> but any property may effectively be
+	assigned a value on any element of the tree.  If that property
+	is inheritable, its defined value will then be available to
+	any children of the defining FO.
+      </p>
+      <note>
+	<em>(XSL 1.0 Rec)</em> <strong>5.1.4 Inheritance</strong>
+	...The inheritable properties can be placed on any formatting
+	object.
+      </note>
+      <p>
+	Even if the value is not inheritable, it may be accessed by
+	its children through the <code>inherit</code> keyword or the
+	<code>from-parent()</code> core function, and potentially by
+	any of its descendents through the
+	<code>from-nearest-specified-value()</code> core function.
+      </p>
+      <p>
+	In addition to the assigned values of properties, almost every
+	property has an <strong>initial value</strong> which is used
+	when no value has been assigned.
+      </p>
+      <s2 title="The history problem">
+      <p>
+	The difficulty and expense of handling properties comes from
+	this univeral inheritance possibility.  The list of properties
+	which are assigned values on any particular <em>FO</em>
+	element will not generally be large, but a current value is
+	required for each property which applies to the <em>FO</em>
+	being processed.
+      </p>
+      <p>
+	The environment from which these values may be selected
+	includes, for each <em>FO</em>, for each applicable property,
+	the value assigned on this <em>FO</em>, the value which
+	applied to the parent of this <em>FO</em>, the nearest value
+	specified on an ancestor of this element, and the initial
+	value of the property.
+      </p>
+      </s2>
+      <s2 title="Data requirement and structure">
+	<p>
+	  This determines the minimum set of properties and associated
+	  property value assignments that is necessary for the
+	  processing of any individual <em>FO</em>.  Implicit in this
+	  set is the set of properties and associated values,
+	  effective on the current <em>FO</em>, that were assigned on
+	  that <em>FO</em>.
+	</p>
+	<p>
+	  This minimum requirement - the initial value, the
+	  nearest ancestor specified value, the parent computed value
+	  and the value assigned to the current element -
+	  suggests a stack implementation.
+	</p>
+      </s2>
+      <s2 title="Stack considerations">
+	<p>
+	  One possibility is to push to the stack only a minimal set
+	  of required elements.  When a value is assigned, the
+	  relevant form or forms of that value (specified, computed,
+	  actual) are pushed onto the stack.  As long as each
+	  <em>FO</em> maintains a list of the properties which were
+	  assigned from it, the value can be popped when the focus of
+	  FO processing retreats back up the <em>FO</em> tree.
+	</p>
+	<p>
+	  The complication is that, for elements which are not
+	  automatically inherited, when an <em>FO</em> is encountered
+	  which does <strong>not</strong> assign a value to the
+	  property, the initial value must either be already at the
+	  top of the stack or be pushed onto the stack.
+	</p>
+	<p>
+	  As a first approach, the simplest procedure may be to push a
+	  current value onto the stack for every element - initial
+	  values for non-inherited properties and the parental value
+	  otherwise.  Then perform any processing of assigned values.
+	  This simplifies program logic at what is hopefully a small
+	  cost in memory and processing time.  It may be tuned in a
+	  later iteration.
+	</p>
+	<s3 title="Stack implementation">
+	  <p>
+	    Initial attempts at this implementation have used
+	    <code>LinkedList</code>s as the stacks, on the assumption
+	    that
+	  </p>
+	  <sl>
+	    <!-- one of (dl sl ul ol li) -->
+	    <li>random access would not be required</li>
+	    <li>
+	      pushing and popping of list elements requires nearly
+	      constant (low) time
+	    </li>
+	    <li> no penalty for first addition to an empty list</li>
+	    <li>efficient access to both bottom and top of stack</li>
+	  </sl>
+	  <p>
+	    However, it may be required to perform stack access
+	    operations from an arbitrary place on the stack, in which
+	    case it would probably be more efficient to use
+	    <code>ArrayList</code>s instead.
+	  </p>
+	</s3>
+      </s2>
+      <s2 title="Class vs instance">
+	<p>
+	  An individual stack would contain values for a particular
+	  property, and the context of the stack is the property class
+	  as a whole.  The property instances would be represented by
+	  the individual values on the stack.  If properties are to be
+	  represented as instantiations of the class, the stack
+	  entries would presumably be references to, or at least
+	  referenced from, individual property objects.  However, the
+	  most important information about individual property
+	  instances is the value assigned, and the relationship of
+	  this property object to its ancestors and its descendents.
+	  Other information would include the ownership of a property
+	  instance by a particular <em>FO</em>, and, in the other
+	  direction, the membership of the property in the set of
+	  properties for which an <em>FO</em> has defined values.
+	</p>
+	<p>
+	  In the presence of a stack, however, none of this required
+	  information mandates the instantiation of properties.  All
+	  of the information mentioned so far can be effectively
+	  represented by a stack position and a link to an
+	  <em>FO</em>.  If the property stack is maintained in
+	  parallel with a stack of <em>FOs</em>, even that link is
+	  implicit in the stack position.
+	</p>
+      </s2>
+      <p>
+	<strong>Next:</strong> <link href= "classes-overview.html"
+	>property classes overview.</link>
+      </p>
+    </s1>
+  </body>
+</document>

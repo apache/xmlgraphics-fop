@@ -1,0 +1,118 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>FOP</title>
+        <subtitle>XSL Formatter - Renderer in Java</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="FOP">
+<p>
+        <figure width="300" height="100" src="title.jpg" alt="FOP Title" />
+</p>
+    <p>FOP (Formatting Objects Processor) is the world's first print formatter driven by XSL formatting
+       objects and the world's first output independent formatter. It is a
+       Java application that reads a formatting object tree and then
+       renders the resulting pages to a specified output. <jump href="output.html">Output formats</jump>
+       currently supported are PDF, PCL, PS, SVG, XML (area tree representation),
+       Print, AWT, MIF and TXT.
+       The primary output target is PDF.
+    </p>
+<p>
+        <figure width="480" height="260" src="document.jpg" alt="Render Diagram" />
+</p>
+    <p>The latest version of Fop is 0.20.3 and it supports the
+       <jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
+       W3C Recommendation</jump>.
+       You can <jump href="download.html">download</jump> 
+       Fop including a precompiled version, the source code and many example files to 
+       get you started. Pointers to introductions into xsl:fo can be found in the
+       <jump href="resources.html">resources</jump> section. Please be aware, that 
+       Fop is at the moment not a full implementation of the basic conformance level
+       of the xsl:fo standard. You can find a list of supported flow objects and properties
+       in the section <jump href="implemented.html">Features</jump> and in section 
+       <jump href="limitations.html">Limitations</jump> in what way this support is 
+       limited. 
+    </p>
+    <p>FOP is part of Apache's XML project. The homepage of FOP is 
+       <jump href="http://xml.apache.org/fop">http://xml.apache.org/fop</jump>.
+       Here you can find information about using and developing with FOP.
+    </p>
+    <p>Users can subscribe to fop-user@xml.apache.org by sending an email
+        to <jump href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</jump>
+        this is where user specific topics are discussed.
+     </p>
+  </s1>
+
+  <s1 title="Formatting">
+<p>
+        <figure width="480" height="260" src="layout.jpg" alt="Formatting Diagram" />
+</p>
+<p>
+This image is a demonstration of a two page document. The xml data on the left
+is formatted into the two pages on the right. The document contains static areas
+that appear on every page, an external graphic in this case an svg document.
+There is a footnote on the first page and a table that goes across both pages.
+</p>
+<p>
+The advantage of XSL is the ability to take an XML document and to format
+the information into a page layout. The XML document can be generated
+in any way, the most common would be to use XSLT. FOP takes the XML
+and formats the data into pages. The pages are then rendered to the
+requested output.
+</p>
+<p>
+This is a real document. The image was created by rendering the document
+to the svg renderer then putting the rendered pages into an svg document
+along with the xml.
+</p>
+  </s1>
+  <s1 title="Status">
+<p>
+        <figure width="585" height="175" src="track.png" alt="Planning and branches of FOP development" />
+</p>
+<p>
+This is the development status of FOP. A branch has been created for
+maintenance releases while the development is done to address various
+performance and design issues.
+</p>
+<p>
+Maintenance releases will be done as necessary. Another maintenance release
+is planned for the near future to provide some fixes and to provide
+compatibilty with <jump href="http://xml.apache.org/batik/">Batik</jump>
+version 1.5 beta2. Other changes are: new hyphentaion patterns, changed
+to use Avalon Logger interface and added background image support.
+</p>
+<p>
+Development for 1.0DR1 is addressing the design issues for layout and
+performance. This is focusing on making it possible to be conformant
+to the spec and be able to handle large documents. This is roughly
+30% towards a developers release that should have: similar functionality to
+previous FOP releases, a rough API and a suitable design for developers
+to work on more functionality.
+</p>
+  </s1>
+  <s1 title="FOP Objectives">
+    <p>The goals of the Apache XML FOP Project are to deliver an XSL FO->PDF formatter that is compliant to at least the Basic
+       conformance level described in the W3C Recommendation from 15 October 2001, and that complies with the 11 March 1999 Portable Document
+       Format Specification (Version 1.3) from Adobe Systems. 
+    </p>
+
+    <p>Conformance to the XML 1.0 Recommendation, XSLT 1.0 Recommendation and the XML Namespaces Recommendation is
+       understood. Other relevant documents, such as the XPath and XLink Working Drafts, are referenced as necessary. The FOP
+       Project will attempt to use the latest version of evolving specifications.
+    </p>
+
+   <p>To reach this aim currently the layout system is being redesigned to
+better handle the formatting of all different types of formatting objects.
+   </p>
+  </s1>
+
+    </body>
+</document>
+

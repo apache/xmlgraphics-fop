@@ -1,0 +1,117 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>FOP Design</title>
+        <subtitle>Design Approach to FOP</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Introduction">
+<p>
+This is the design for the external interface when FOP is to be embedded
+inside another java application.
+  </p>
+  <p>
+Common places where FOP is embedded is in a report production application
+of a server side application such as <jump href="http://xml.apache.org/cocoon/index.html">Cocoon</jump>.
+   </p>
+  </s1>
+<s1 title="Settings">
+<s2 title="User Agent">
+<p>
+The user agent is responsible for supplying user or context
+specific information. The list of user agent values can be found on the
+<jump href="useragent.html">User Agent</jump> page.
+   </p>
+  </s2>
+<s2 title="Logging">
+<p>
+<ul>
+<li>logging level</li>
+<li>logging messages of various levels</li>
+<li>error handling</li>
+<li>Logging setup (LogKit, Log4J, JDK14Logging)</li>
+</ul>
+   </p>
+  </s2>
+<s2 title="XML input">
+<p>
+<ul>
+<li>various ways to supply FOP with the xsl:fo file, fo, xml+xsl</li>
+<li>sax handler</li>
+</ul>
+   </p>
+  </s2>
+<s2 title="general options">
+<p>
+<ul>
+<li>base directory</li>
+<li>uri resolvers</li>
+<li>which implementation of a particular</li>
+<li>LayoutManager to use</li>
+</ul>
+   </p>
+  </s2>
+<s2 title="Rendering Options">
+<p>
+<ul>
+<li>embedding fonts</li>
+<li>compression in pdf</li>
+<li>image embedding</li>
+</ul>
+</p>
+<p>
+for the PS renderer (eventually):
+<ul>
+<li>PostScript Level</li>
+<li>PPD to use</li>
+<li>binary/ascii switch</li>
+</ul>
+   </p>
+  </s2>
+<s2 title="User Agent">
+<p>
+Output from FOP:
+- Generation statistics: Number of pages total, Number of pages of each
+  page-sequence, page-master used for each page (could be used to
+  control the paper bin to get paper from, important for me in
+  conjunction with PS Renderer).
+   </p>
+  </s2>
+<s2 title="Setting Up">
+<p>
+The Driver handles the XML input.
+The user agent information is through the FOUserAgent.
+We could handle logging through the user agent.
+Options could also be handled through the user agent, using mime type 
+selection for renderer options.
+</p>
+  </s2>
+<s2 title="Others">
+<p>
+render to more than one renderer at once (maybe not from the command line). Two independent
+sources have asked me in the last few weeks if this works. I must say
+that this would be nice, since I could generate a PDF for the archive
+and the PS for the printer in one run. It would probably be faster than
+converting the PDF to PostScript afterwards.
+</p>
+<p>
+I want to note that several code pieces for resolving URLs and/or
+file locations are scattered all over FOP and Batik. Replacing
+them all with an URIResolver invocation would unify behaviour and
+remove redundancies. I'd also recommend to lift the default
+URIResolver implementation from Saxon, it seems to tolerate the
+usual abuse better than everything else i came across elsewere.
+   </p>
+  </s2>
+</s1>
+
+    </body>
+</document>
+

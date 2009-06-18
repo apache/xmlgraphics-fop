@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<document>
+  <header> 
+   <title>FO Tree</title> 
+   <subtitle>All you wanted to know about FO Tree !</subtitle> 
+   <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
+   </authors> 
+  </header> 
+<body><s1 title="FO Tree">
+      <p>
+        The FO Tree is a representation of the XSL:FO document. This
+        represents the <strong>Objectify</strong> step from the
+        spec. The <strong>Refinement</strong> step is part of reading
+        and using the properties which may happen immediately or
+        during the layout process.
+      </p>
+
+
+
+<p>Each xml element is represented by a java object. For pagination the
+classes are in <code>org.apache.fop.fo.pagination.*</code>, for elements in the flow
+they are in <code>org.apache.fop.fo.flow.*</code> and some others are in
+<code>org.apache.fop.fo.*.</code></p>
+
+
+
+<p>The base class for all objects in the tree is FONode. The base class for
+all FO Objects is FObj.</p>
+
+
+
+<p>(insert diagram here)</p>
+
+
+
+<p>There is a class for each element in the FO set. An object is created for
+each element in the FO Tree. This object holds the properties for the FO
+Object.</p>
+
+
+
+      <p>
+        When the object is created it is setup. It is given its
+        element name, the FOUserAgent - for resolving properties
+        etc. - the logger and the attributes. The methods
+        <code>handleAttributes()</code> and
+        <code>setuserAgent()</code>, common to <code>FONode</code>,
+        are used in this process. The object will then be given any
+        text data or child elements.  Then the <code>end()</code>
+        method is called.  The end method is used by a number of
+        elements to indicate that it can do certain processing since
+        all the children have been added.
+      </p>
+
+
+
+<p>Some validity checking is done during these steps. The user can be warned of the error and processing can continue if possible.
+</p>
+
+
+      <p>
+        The FO Tree is simply a heirarchy of java objects that
+        represent the fo elements from xml. The traversal is done by
+        the layout or structure process only in the flow elements.
+      </p>
+
+
+
+<s2 title="Properties">
+
+
+
+<p>The XML attributes on each element are passed to the object. The objects
+that represent FO objects then convert the attributes into properties.
+</p>
+
+
+<p>Since properties can be inherited the PropertyList class handles resolving
+properties for a particular element.
+All properties are specified in an XML file. Classes are created
+automatically during the build process.
+</p>
+
+
+<p>(insert diagram here)</p>
+
+
+
+<p>In some cases the element may be moved to have a different parent, for
+example markers, or the inheritance could be different, for example
+initial property set.</p></s2>
+
+
+
+
+<s2 title="Foreign XML">
+
+
+<p>The base class for foreign XML is XMLObj. This class handles creating a
+DOM Element and the setting of attributes. It also can create a DOM
+Document if it is a top level element, class XMLElement.
+This class must be extended for the namespace of the XML elements. For
+unknown namespaces the class is UnknowXMLObj.</p>
+
+
+
+<p>(insert diagram here)</p>
+
+
+
+<p>If some special processing is needed then the top level element can extend
+the XMLObj. For example the SVGElement makes the special DOM required for
+batik and gets the size of the svg.
+</p>
+
+
+<p>Foreign XML will usually be in an fo:instream-foreign-object, the XML will
+be passed to the render as a DOM where the render will be able to handle
+it. Other XML from an unknwon namespace will be ignored.
+</p>
+
+
+<p>By using element mappings it is possible to read other XML and either</p>
+<ul><li>set information on the area tree</li>
+<li>create pseudo FO Objects that create areas in the area tree</li>
+<li>create FO Objects</li></ul>
+</s2>
+
+
+
+<s2 title="Unknown Elements">
+<p>If an element is in a known namespace but the element is unknown then an
+Unknown object is created. This is mainly to provide information to the
+user.
+This could happen if the fo document contains an element from a different
+version or the element is misspelt.</p>
+</s2>
+
+
+<s2 title="Page Masters">
+        <p>
+          The first elements in a document are the elements for the
+          page master setup. This is usually only a small number and
+          will be used throughout the document to create new pages.
+          These elements are kept as a factory to create the page and
+          appropriate regions whenever a new page is requested by the
+          layout. The objects in the FO Tree that represent these
+          elements are themselves the factory. The root element keeps
+          these objects as a factory for the page sequences.
+        </p>
+</s2>
+
+
+<s2 title="Flow">
+<p>The elements that are in the flow of the document are a set of elements
+that is needed for the layout process. Each element is important in the
+creation of areas.</p>
+</s2>
+
+
+
+<s2 title="Other Elements">
+
+
+
+        <p>
+          The remaining FO Objects are things like page-sequence,
+          title and color-profile. These are handled by their parent
+          element; i.e. the root looks after the declarations and the
+          declarations maintains a list of colour profiles.  The
+          page-sequences are direct descendents of root.
+        </p>
+      </s2>
+
+
+
+<s2 title="Associated Tasks">
+
+
+
+<ul><li>Create diagrams</li>
+<li>Setup all properties and elements for XSL:FO</li>
+<li>Setup user agent for property resolution</li>
+<li>Verify all XML is handled appropriately</li></ul></s2></s1></body></document>

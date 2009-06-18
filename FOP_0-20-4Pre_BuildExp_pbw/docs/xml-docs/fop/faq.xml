@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<!DOCTYPE faqs SYSTEM "../dtd/faq-v10.dtd">
+<faqs title="Frequently Asked Questions">
+<faq>
+    <question>About the FAQ</question>
+		<answer>
+      <p>
+       Here we have some answers to common questions about FOP. This only covers
+       general information about getting started with FOP and pointers to more
+       information. 
+      </p>
+      <p>
+For up to date information or more details please visit the Fop FAQ site.
+<jump href="http://www.OWAL.co.uk/cgi-bin/fopfaq.cgi">http://www.OWAL.co.uk/cgi-bin/fopfaq.cgi</jump>
+      </p>
+      <p>
+Any problems with the FAQ itself or new answers for the FAQ should be mailed 
+to info@OWAL.co.uk
+      </p>
+      <p>
+More general questions about FOP should be directed to one of the mailing 
+lists.
+      </p>
+  </answer>
+</faq>
+<faq>
+    <question>What is FOP?</question>
+    <answer>
+      <p>
+        FOP is a print formatter for XSL formatting objects.
+      </p>
+      <p>
+        It can be used to render an XML file containing XSL formatting objects
+        into a page layout. The main target is PDF but other rendering targets
+        are supported, such as AWT, PCL, text and direct printing.
+      </p>
+  </answer>
+</faq>
+<faq>
+    <question>How does FOP interact with other Apache Projects?</question>
+    <answer>
+      <p>
+        FOP is distributed with <jump href="http://xml.apache.org/cocoon">Cocoon</jump> as a PDF serializer for XSL (FO) documents.
+      </p>
+      <p>
+        <jump href="http://xml.apache.org/batik">Batik</jump> can be used with FOP to <jump href="http://xml.apache.org/batik/svgrasterizer.html">transcode an SVG image</jump> into a PDF document.
+        The mime type for PDF is "application/pdf".
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>What is XSL (FO)?</question>
+    <answer>
+      <p>
+XSL is an XML format that is used to specify a pagination and other
+styling for page layout output. XSL can be used in conjunction with
+XSLT to convert from any XML format into a paginated layout ready for
+printing or displaying.
+      </p>
+      <p>
+XSL defines a set of formatting objects in xml that describes the
+way pages are set up. The contents of the pages are filled from
+flows which. There can be static flows that appear on every page
+and the main flow which fills the body of the page.
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>What can I do with FOP?</question>
+    <answer>
+      <p>
+FOP is an application or library that converts an XSL FO document
+into the paginated output. It is possible to render the output
+to different targets, the main target is PDF. FOP can be run from
+the command line or embedded into your Java application.
+      </p>
+      <p>
+The XSL FO can be delivered to FOP with XML(XSL FO), XML+XSL or
+SAX events.
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>How can I contribute?</question>
+    <answer>
+      <p>
+There is always plenty of things to do.
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>How do I author XSL documents?</question>
+    <answer>
+      <p>
+Often XSL FO is created from XML and XSLT. There are some
+standard XML markups such as Docbook that can be converted
+into XSL FO and other XML formats.
+      </p>
+      <p>
+There are some XSL authoring tools that may help you to
+author XSL FO documents or the XML and XSLT documents.
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>How can I insert special character "X"?</question>
+    <answer>
+      <p>
+All the characters you need are available at
+<jump href="http://www.unicode.org/charts/">http://www.unicode.org/charts/</jump>.
+If you need a character it will be there. Once you have found the hex
+or decimal code for the character then you can use this in you xml
+document. It will be in the form &amp;#&lt;decimal value&gt;; or 
+&amp;#x&lt;hex value&gt;;.
+      </p>
+      <p>
+You must have a font that supports the character you need otherwise
+it will replace it with a "#" in the output.
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>How can I see a demo?</question>
+    <answer>
+      <p>
+        There will be a Java Webstart demo sometime in the future.
+This will use the AWT viewer to display FO documents.
+      </p>
+  </answer>
+</faq>
+
+</faqs>
+

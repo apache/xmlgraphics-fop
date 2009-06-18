@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+	    <fo:simple-page-master master-name="simplePM"
+	                  page-height="25cm" 
+	                  page-width="20cm"
+	                  margin-top="1cm" 
+	                  margin-bottom="1cm" 
+	                  margin-left="1.5cm" 
+	                  margin-right="1.5cm">
+	      <fo:region-before extent="2.5cm"/>
+	      <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+	      <fo:region-after extent="2.5cm"/>
+	    </fo:simple-page-master>
+	</fo:layout-master-set>
+
+	<fo:page-sequence master-name="simplePM">
+	    <fo:flow flow-name="xsl-region-body">
+			<fo:block>
+				default:
+			</fo:block>
+			<fo:block text-align="center">
+				This is a simple fo text in FOP default font.
+			</fo:block>
+			<fo:block>
+				sans-serif:
+			</fo:block>
+			<fo:block text-align="center" font-family="sans-serif">
+				This is a simple fo text in sans-serif font.
+			</fo:block>
+
+			<fo:block>
+				monospace:
+			</fo:block>
+			<fo:block text-align="center" font-family="monospace">
+				This is a simple fo text in monospace font.
+			</fo:block>
+
+			<fo:block>
+				Courier:
+			</fo:block>
+			<fo:block text-align="center" font-family="Courier">
+				This is a simple fo text in Courier font.
+			</fo:block>
+
+			<fo:block>
+				Helvetica:
+			</fo:block>
+			<fo:block text-align="center" font-family="Helvetica">
+				This is a simple fo text in Helvetica font.
+			</fo:block>
+
+			<fo:block>
+				Symbol:
+			</fo:block>
+			<fo:block text-align="center" font-family="Symbol">
+				This is a simple fo text in Symbol font.
+			</fo:block>
+
+			<fo:block>
+				Times Roman:
+			</fo:block>
+			<fo:block text-align="center" font-family="Times Roman">
+				This is a simple fo text in Times Roman font.
+			</fo:block>
+
+			<fo:block>
+				ZapfDingbats:
+			</fo:block>
+			<fo:block text-align="center" font-family="ZapfDingbats">
+				This is a simple fo text in ZapfDingBats font.
+			</fo:block>
+			
+		</fo:flow>
+	</fo:page-sequence>
+</fo:root>

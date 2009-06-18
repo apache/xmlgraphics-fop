@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!-- Overview -->
+<document> 
+  <header> 
+   <title>Understanding FOP Design</title> 
+   <subtitle>Tutorial series about Design Approach to FOP</subtitle> 
+   <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
+   </authors> 
+  </header> 
+  <body>
+<s1 title="Understanding">
+      <note>
+          The content of this <strong>Understanding series</strong>
+          was all taken from the interactive fop development mailing
+          list discussion . <br/> We strongly advise you to join this
+          mailing list and ask question about this series there. <br/>
+          You can subscribe to fop-dev@xml.apache.org by sending an
+          email to <link href=
+          "mailto:fop-dev-subscribe@xml.apache.org"
+          >fop-dev-subscribe@xml.apache.org</link>.  <br/> You will
+          find more information about how to get involved <link href=
+          "http://xml.apache.org/fop/involved.html"
+          >there</link>.<br/> You can also read the <link href=
+          "http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2"
+          >archive</link> of the discussion list fop-dev to get an
+          idea of the issues being discussed.
+      </note>
+      <s2 title="Introduction">
+        <p>
+          Welcome to the understanding series. This will be
+          a series of notes for developers to understand how FOP
+          works. We will
+          attempt to clarify the processes involved to go from xml(fo)
+          to pdf or other formats. Some areas will get more
+          complicated as we proceed.
+        </p>
+      </s2>
+  
+  
+    <s2 title="Overview"> 
+      <p>FOP takes an xml file does its magic and then writes a document to a
+       stream.</p> 
+      <p>xml -&gt; [FOP] -&gt; document</p> 
+      <p>The document could be pdf, ps etc. or directed to a printer or the
+       screen. The principle remains the same. The xml document must be in the XSL:FO
+       format.</p> 
+      <p>For convenience we provide a mechanism to handle XML+XSL as
+       input.</p> 
+      <p>The xml document is always handled internally as SAX. The SAX events
+       are used to read the elements, attributes and text data of the FO document.
+       After the manipulation of the data the renderer writes out the pages in the
+       appropriate format. It may write as it goes, a page at a time or the whole
+       document at once. Once finished the document should contain all the data in the
+       chosen format ready for whatever use.</p></s2> 
+    <s2 title="Stages"><p>The fo data goes through a few stages. Each piece
+       of data will generally go through the process in the same way but some
+       information may be used a number of times or in a different order. To reduce
+       memory one stage will start before the previous is completed.</p> 
+      <p>SAX Handler -&gt; FO Tree -&gt; Layout Managers -&gt; Area Tree
+       -&gt; Render -&gt; document</p> 
+      <p>In the case of rtf, mif etc. <br/>SAX Handler -&gt; FO Tree -&gt;
+       Structure Renderer -&gt; document</p> 
+      <p>The FO Tree is constructed from the xml document. It is an internal
+       representation of the xml document and it is like a DOM with some differences.
+       The Layout Managers use the FO Tree do their layout stuff and create an Area
+       Tree. The Area Tree is a representation of the final result. It is a
+       representation of a set of pages containing the text and other graphics. The
+       Area Tree is then given to a Renderer. The Renderer can read the Area Tree and
+       convert the information into the render format. For example the PDF Renderer
+       creates a PDF Document. For each page in the Area Tree the renderer creates a
+       PDF Page and places the contents of the page into the PDF Page. Once a PDF Page
+       is complete then it can be written to the output stream.</p> 
+      <p>For the structure documents the Structure listener will read
+       directly from the FO Tree and create the document. These documents do not need
+       the layout process or the Area Tree.</p></s2> 
+    <s2 title="Associated Tasks"><p>Verify Structure Listener
+       concept.</p></s2> 
+    <s2 title="Further Topics"> 
+      <ul><li>XML parsing</li> 
+       <li>FO Tree</li> 
+       <li>Properties</li> 
+       <li>Layout Managers</li> 
+       <li>Layout Process</li> 
+       <li>Handling Attributes</li> 
+       <li>Area Tree</li> 
+       <li>Renderers</li> 
+       <li>Images</li> 
+       <li>PDF Library</li> 
+       <li>SVG</li> 
+      </ul> 
+    </s2> 
+    
+   </s1>  </body></document>
+

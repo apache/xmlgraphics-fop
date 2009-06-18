@@ -1,0 +1,28 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>Design Status</title>
+        <subtitle>Current Status of FOP and Design</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Status">
+<p>
+Currently some of FOP is being re-written so that the layout can be handled
+properly without the problems that have been encountered and to make
+it possible to handle keeps/breaks and spacing better.
+  </p>
+<p>
+
+  </p>
+  </s1>
+
+    </body>
+</document>
+

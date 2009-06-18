@@ -1,0 +1,85 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- getting involved -->
+
+<document>
+    <header>
+        <title>Getting Involved</title>
+        <subtitle>How to Get Involved in FOP</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Getting involved">
+  <p>
+There are many different levels where people can get involved. The
+development of FOP and the related plans and tasks are discussed on
+the dev mailing list. Users can help or get issues resolved by
+contributing information and examples to the developers.
+</p>
+
+  <s2 title="Get familiar with the Fop related standards">
+  <p>
+At the moment Fop is mainly a tool to render XSL:FO files to pdf.
+Therefore if you want to contribute to Fop you should become
+familiar with these standards. You can find links under
+<jump href="resources.html">Resources</jump>.
+</p>
+  </s2>
+  <s2 title="Fop's Design">
+    <p>
+The design for FOP is specified under the
+<jump href="design/index.html">Design</jump> section.
+    </p>
+    <p>
+This is where the information on how FOP is developed and designed
+internally will be kept.
+    </p>
+  </s2>
+
+  <s2 title="Subscribe to the fop developers list">
+  <p>You can subscribe to fop-dev@xml.apache.org by sending an email 
+        to <jump href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</jump></p>
+  <p>Sending bug reports and feature requests to the list is a welcome and important contribution to 
+     developing Fop.  </p>
+  <p>Read also the <jump href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">archive</jump> 
+     of the discussion list fop-dev to get an idea of the issues being discussed. </p>
+  </s2>
+  <s2 title="Look at the developer's code using cvs">
+  <p>Between releases the newest code can be accessed via cvs. To do this you need to install a cvs 
+     client on your computer, if it is not already there. An explanation how to connect to the 
+     Fop source repository can be found at <jump href="http://xml.apache.org/cvs.html">http://xml.apache.org/cvs.html</jump>. 
+     An introduction into cvs and the cvs manual can be found in the 
+     <jump href="http://xml.apache.org/library.html">reference library</jump>.</p>
+  <p>All changes to the code repository are sent to a special mailing list. After a cvs commit the diffs are automatically sent to this list. You can subscribe 
+     to fop-cvs@xml.apache.org by sending an email to <jump href="mailto:fop-cvs-subscribe@xml.apache.org">
+     fop-cvs-subscribe@xml.apache.org</jump>. If you want to contribute to the development of Fop you should subscribe, 
+     because it is important that you follow changes being made. </p>
+  </s2>
+  <s2 title="Contributing code, tests and documentation">
+  <p>If you want to contribute code (p.e. a bugfix), a test or documentation (p.e. an additional example), please do the following: </p>
+  <p>1) Make sure your code doesn't break the existing one and that Fop still compiles.</p>
+  <p>2) Create a file which shows the differences to the existing code.</p>
+  <p>3) Send this file as an <strong>Attachment</strong> to <jump href="mailto:fop-dev@xml.apache.org">fop-dev@xml.apache.org.</jump></p>
+  <p>One of the committers will test your code and commit it to the code repository.</p>
+  <p>If you have a test or useful bug test you should <jump href="testing.html">read this page</jump>.</p>
+  <p>BTW: The Apache project knows different roles for contributors, namely 'users', 'developers', 'committers' and the 'Project 
+     Management Committee' (An explanation of these roles can be found <jump href="http://xml.apache.org/roles.html">here</jump>).</p>
+  </s2>
+
+  <s2 title="Coding Conventions">
+  <p>As mentioned in <jump href="http://xml.apache.org/source.html">Apache XML Project Guidelines</jump>,
+  <em>all Java Language source code in the repository must be written in conformance to the
+  <jump href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">Code Conventions
+  for the Java Programming Language</jump> as published by Sun</em>. Additionally we agreed on 4
+  spaces (no tabs) for indenting.</p>
+  <p>If you don't like those conventions, just use your own standards while developing and reformat the source before
+  committing with a tool like <jump href="http://astyle.sourceforge.net/">astyle</jump> (Artistic Style).
+  </p>
+  </s2>
+
+</s1>
+    </body>
+</document>
+

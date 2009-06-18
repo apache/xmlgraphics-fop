@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!--
+<!DOCTYPE document SYSTEM "../xml-docs/dtd/document-v10.dtd">
+-->
+
+<document>
+  <header>
+    <title>Property Expression Parsing</title>
+    <authors>
+       <person id="pbw" name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <!-- one of (anchor s1) -->
+    <s1 title="Property expression parsing">
+      <note>
+	The following discussion of the experiments with alternate
+	property expression parsing is very much a work in progress,
+	and subject to sudden changes.
+      </note>
+      <p>
+	The parsing of property value expressions is handled by two
+	closely related classes: <code>PropertyTokenizer</code> and its
+	subclass, <code>PropertyParser</code>.
+	<code>PropertyTokenizer</code>, as the name suggests, handles
+	the tokenizing of the expression, handing <em>tokens</em>
+	back to its subclass,
+	<code>PropertyParser</code>. <code>PropertyParser</code>, in
+	  turn, returns a <code>PropertyValueList</code>, a list of
+	<code>PropertyValue</code>s. 
+      </p>
+      <p>
+	The tokenizer and parser rely in turn on the datatype
+	definition from the <code>org.apache.fop.datatypes</code>
+	package and the datatype <code>static final int</code>
+	constants from <code>PropertyConsts</code>.
+      </p>
+      <s2 title="Data types">
+	<p>
+	  The data types currently defined in
+	  <code>org.apache.fop.datatypes</code> include:
+	</p>
+	<table>
+	  <tr><th colspan="2">Numbers and lengths</th></tr>
+	  <tr>
+	    <th>Numeric</th>
+	    <td colspan="3">
+	      The fundamental numeric data type.  <em>Numerics</em> of
+	      various types are constructed by the classes listed
+	      below.
+	    </td>
+	  </tr>
+	  <tr>
+	    <td/>
+	    <th colspan="3">Constructor classes for <em>Numeric</em></th>
+	  </tr>
+	  <tr>
+	    <td/><td>Angle</td>
+	    <td colspan="2">In degrees(deg), gradients(grad) or
+	      radians(rad)</td>
+	  </tr>
+	  <tr>
+	    <td/><td>Ems</td>
+	    <td colspan="2">Relative length in <em>ems</em></td>
+	  </tr>
+	  <tr>
+	    <td/><td>Frequency</td>
+	    <td colspan="2">In hertz(Hz) or kilohertz(kHz)</td>
+	  </tr>
+	  <tr>
+	    <td/><td>IntegerType</td><td/>
+	  </tr>
+	  <tr>
+	    <td/><td>Length</td>
+	    <td colspan="2">In centimetres(cm), millimetres(mm),
+	      inches(in), points(pt), picas(pc) or pixels(px)</td>
+	  </tr>
+	  <tr>
+	    <td/><td>Percentage</td><td/>
+	  </tr>
+	  <tr>
+	    <td/><td>Time</td>
+	    <td>In seconds(s) or milliseconds(ms)</td>
+	  </tr>
+	  <tr><th colspan="2">Strings</th></tr>
+	  <tr>
+	    <th>StringType</th>
+	    <td colspan="3">
+	      Base class for data types which result in a <em>String</em>.
+	    </td>
+	  </tr>
+	  <tr>
+	    <td/><th>Literal</th>
+	    <td colspan="2">
+	      A subclass of <em>StringType</em> for literals which
+	      exceed the constraints of an <em>NCName</em>.
+	    </td>
+	  </tr>
+	  <tr>
+	    <td/><th>MimeType</th>
+	    <td colspan="2">
+	      A subclass of <em>StringType</em> for literals which
+	      represent a mime type.
+	    </td>
+	  </tr>
+	  <tr>
+	    <td/><th>UriType</th>
+	    <td colspan="2">
+	      A subclass of <em>StringType</em> for literals which
+	      represent a URI, as specified by the argument to
+	      <em>url()</em>.
+	    </td>
+	  </tr>
+	  <tr>
+	    <td/><th>NCName</th>
+	    <td colspan="2">
+	      A subclass of <em>StringType</em> for literals which
+	      meet the constraints of an <em>NCName</em>.
+	    </td>
+	  </tr>
+	  <tr>
+	    <td/><td/><th>Country</th>
+	    <td>An RFC 3066/ISO 3166 country code.</td>
+	  </tr>
+	  <tr>
+	    <td/><td/><th>Language</th>
+	    <td>An RFC 3066/ISO 639 language code.</td>
+	  </tr>
+	  <tr>
+	    <td/><td/><th>Script</th>
+	    <td>An ISO 15924 script code.</td>
+	  </tr>
+	  <tr><th colspan="2">Enumerated types</th></tr>
+	  <tr>
+	    <th>EnumType</th>
+	    <td colspan="3">
+	      An integer representing one of the tokens in a set of
+	      enumeration values.
+	    </td>
+	  </tr>
+	  <tr>
+	    <td/><th>MappedEnumType</th>
+	    <td colspan="2">
+	      A subclass of <em>EnumType</em>.  Maintains a
+	      <em>String</em> with the value to which the associated
+	      "raw" enumeration token maps.  E.g., the
+	      <em>font-size</em> enumeration value "medium" maps to
+	      the <em>String</em> "12pt".
+	    </td>
+	  </tr>
+	  <tr><th colspan="2">Colors</th></tr>
+	  <tr>
+	    <th>ColorType</th>
+	    <td colspan="3">
+	      Maintains a four-element array of float, derived from
+	      the name of a standard colour, the name returned by a
+	      call to <em>system-color()</em>, or an RGB
+	      specification.
+	    </td>
+	  </tr>
+	  <tr><th colspan="2">Fonts</th></tr>
+	  <tr>
+	    <th>FontFamilySet</th>
+	    <td colspan="3">
+	      Maintains an array of <em>String</em>s containing a
+	      prioritized list of possibly generic font family names.
+	    </td>
+	  </tr>
+	  <tr><th colspan="2">Pseudo-types</th></tr>
+	  <tr>
+	    <td colspan="4">
+	      A variety of pseudo-types have been defined as
+	      convenience types for frequently appearing enumeration
+	      token values, or for other special purposes.
+	    </td>
+	  </tr>
+	  <tr>
+	    <th>Inherit</th>
+	    <td colspan="3">
+	      For values of <em>inherit</em>.
+	    </td>
+	  </tr>
+	  <tr>
+	    <th>Auto</th>
+	    <td colspan="3">
+	      For values of <em>auto</em>.
+	    </td>
+	  </tr>
+	  <tr>
+	    <th>None</th>
+	    <td colspan="3">
+	      For values of <em>none</em>.
+	    </td>
+	  </tr>
+	  <tr>
+	    <th>Bool</th>
+	    <td colspan="3">
+	      For values of <em>true/false</em>.
+	    </td>
+	  </tr>
+	  <tr>
+	    <th>FromNearestSpecified</th>
+	    <td colspan="3">
+	      Created to ensure that, when associated with
+	      a shorthand, the <em>from-nearest-specified-value()</em>
+	      core function is the sole component of the expression.
+	    </td>
+	  </tr>
+	  <tr>
+	    <th>FromParent</th>
+	    <td colspan="3">
+	      Created to ensure that, when associated with
+	      a shorthand, the <em>from-parent()</em>
+	      core function is the sole component of the expression.
+	    </td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Tokenizer">
+	<p>
+	  The tokenizer returns one of the following token
+	  values:
+	</p>
+	<source>
+    static final int
+                 EOF = 0
+             ,NCNAME = 1
+           ,MULTIPLY = 2
+               ,LPAR = 3
+               ,RPAR = 4
+            ,LITERAL = 5
+      ,FUNCTION_LPAR = 6
+               ,PLUS = 7
+              ,MINUS = 8
+                ,MOD = 9
+                ,DIV = 10
+              ,COMMA = 11
+            ,PERCENT = 12
+          ,COLORSPEC = 13
+              ,FLOAT = 14
+            ,INTEGER = 15
+    ,ABSOLUTE_LENGTH = 16
+    ,RELATIVE_LENGTH = 17
+               ,TIME = 18
+               ,FREQ = 19
+              ,ANGLE = 20
+            ,INHERIT = 21
+               ,AUTO = 22
+               ,NONE = 23
+               ,BOOL = 24
+                ,URI = 25
+           ,MIMETYPE = 26
+            // NO_UNIT is a transient token for internal use only.  It is
+            // never set as the end result of parsing a token.
+            ,NO_UNIT = 27
+                     ;
+	</source>
+	<p>
+	  Most of these tokens are self-explanatory, but a few need
+	  further comment.
+	</p>
+	<dl>
+	  <dt>AUTO</dt>
+	  <dd>
+	    Because of its frequency of occurrence, and the fact that
+	    it is always the <em>initial value</em> for any property
+	    which supports it, AUTO has been promoted into a
+	    pseudo-type with its on datatype class.  Therefore, it is
+	    also reported as a token.
+	  </dd>
+	  <dt>NONE</dt>
+	  <dd>
+	    Similarly to AUTO, NONE has been promoted to a pseudo-type
+	    because of its frequency.
+	  </dd>
+	  <dt>BOOL</dt>
+	  <dd>
+	    There is a <em>de facto</em> boolean type buried in the
+	    enumeration types for many of the properties.  It had been
+	    specified as a type in its own right in this code.
+	  </dd>
+	  <dt>MIMETYPE</dt>
+	  <dd>
+	    The property <code>content-type</code> introduces this
+	    complication.  It can have two values of the form
+	    <strong>content-type:</strong><em>mime-type</em>
+	    (e.g. <code>content-type="content-type:xml/svg"</code>) or
+	    <strong>namespace-prefix:</strong><em>prefix</em>
+	    (e.g. <code>content-type="namespace-prefix:svg"</code>).  The
+	      experimental code reduces these options to the payload
+	      in each case: an <code>NCName</code> in the case of a
+	    namespace prefix, and a MIMETYPE in the case of a
+	    content-type specification.  <code>NCName</code>s cannot
+	    contain a "/". 
+	  </dd>
+	</dl>
+      </s2>
+      <s2 title="Parser">
+	<p>
+	  The parser retuns a <code>PropertyValueList</code>,
+	  necessary because of the possibility that a list of
+	  <code>PropertyValue</code> elements may be returned from the
+	  expressions of soem properties.
+	</p>
+	<p>
+	  <code>PropertyValueList</code>s may contain
+	  <code>PropertyValue</code>s or other
+	  <code>PropertyValueList</code>s.  This latter provision is
+	  necessitated for the peculiar case of of
+	  <em>text-shadow</em>, which may contain whitespace separated
+	  sublists of either two or three elements, separated from one
+	  another by commas.  To accommodate this peculiarity, comma
+	  separated elements are added to the top-level list, while
+	  whitespace separated values are always collected into
+	  sublists to be added to the top-level list.
+	</p>
+	<p>
+	  Other special cases include the processing of the core
+	  functions <code>from-parent()</code> and
+	  <code>from-nearest-specified-value()</code> when these
+	  function calls are assigned to a shorthand property, or used
+	  with a shorthand property name as an argument.  In these
+	  cases, the function call must be the sole component of the
+	  expression.  The pseudo-element classes
+	  <code>FromParent</code> and
+	  <code>FromNearestSpecified</code> are generated in these
+	  circumstances so that an exception will be thrown if they
+	  are involved in expression evaluation with other
+	  components. (See Rec. Section 5.10.4 Property Value
+	  Functions.)
+	</p>
+	<p>
+	  The experimental code is a simple extension of the existing
+	  parser code, which itself borrowed heavily from James
+	  Clark's XT processor.
+	</p>
+      </s2>
+    </s1>
+  </body>
+</document>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE testsuite  SYSTEM "testsuite.dtd">
+<testsuite profile="Basic Conformance Tests">
+   <testcases profile="Example">
+      <testcases profile="simpleblock" > 
+         <test id="1" interaction="none" fo="block" xml="xml/1.xml" xsl="xsl/doc.xsl" level="basic">
+simple test
+</test>
+      <testresult id="1" agreement="full">
+      </testresult>
+      </testcases>
+      </testcases>
+   <testcases profile="Block Objects">
+      <testcases profile="alignment" >
+         <test id="bbo1a1" interaction="none" fo="block" xml="xml/bbo1a1.xml" xsl="xsl/doc.xsl" level="basic">
+all sorts of alignment for blocks
+</test>
+      <testresult id="bbo1a1" agreement="issues">
+      </testresult>
+      </testcases>
+      <testcases profile="keeps breaks" >
+         <test id="bbo1b1" interaction="none" fo="block" xml="xml/bbo1b1.xml" xsl="xsl/doc.xsl" level="basic">
+keeps and breaks for blocks
+</test>
+      <testresult id="bbo1b1" agreement="issues">
+      </testresult>
+      </testcases>
+      </testcases>
+</testsuite>

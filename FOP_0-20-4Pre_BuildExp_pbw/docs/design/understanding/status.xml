@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="no"?>
+<!-- Overview -->
+<document> 
+  <header> 
+	 <title>Tutorial series Status</title> 
+	 <subtitle>Current Status of tutorial about FOP and Design</subtitle> 
+	 <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
+	 </authors> 
+  </header> 
+  <body><s1 title="Tutorial series Status"> <p>Peter said : Do we have a volunteer to track
+		  Keiron's tutorials and turn them into web page documentation?</p> <p><strong>The answer is yes
+		  we have, but the work is on progress !</strong></p> <note>Keiron has recently extended
+		  the documentation generation on the CVS trunk to make this process a bit
+		  easier. Keiron tells Peter that Apache is readying a major overhaul of its web
+		  site and xml-&gt;html generation, but that should not deter us from proceeding
+		  with documentation.</note></s1> 
+  </body></document>

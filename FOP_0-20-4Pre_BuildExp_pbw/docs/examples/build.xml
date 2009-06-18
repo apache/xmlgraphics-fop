@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!-- =========================================================================== -->
+<project default="newPDF" basedir=".">
+	<!-- =================================================================== -->
+	<!-- Initialization target                                               -->
+	<!-- =================================================================== -->
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="tests"/>
+		<property name="referenceDir" value="reference"/>
+		<property name="testDir" value="tests"/>
+		<property name="foDir" value="fo"/>
+		<taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
+		<taskdef name="compare" classname="org.apache.fop.tools.anttasks.Compare"/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Help on usage                                                       -->
+	<!-- =================================================================== -->
+	<target name="usage">
+		<echo message=""/>
+		<echo message=""/>
+		<echo message="USAGE of runtests"/>
+		<echo message="-------------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message=" available targets are:"/>
+		<echo message=""/>
+		<echo message="   newPDF  --> generates new PDF test files (default)"/>
+		<echo message="   newPS  --> generates new PostScript test files"/>
+		<echo message="   newAT  --> generates new AreaTree (XML) test files"/>
+		<echo message="   comparePDF  --> generates new PDF test files and compares them to reference files"/>
+		<echo message="   referencePDF --> generates new reference PDF files"/>
+		<echo message=" See the comments inside the build.xml file for more details."/>
+		<echo message="-------------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message=""/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Produces new test PDF files                                         -->
+	<!-- =================================================================== -->
+	<target name="newPDF" depends="init">
+		<fop format="application/pdf" outdir="${testDir}" messagelevel="debug"
+                    basedir="./fo">
+			<fileset dir="${foDir}">
+				<include name="**/*.fo"/>
+			</fileset>
+		</fop>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Produces new test ps files                                         -->
+	<!-- =================================================================== -->
+	<target name="newPS" depends="init">
+		<fop format="application/postscript" outdir="${testDir}">
+			<fileset dir="${foDir}">
+				<include name="**/*.fo"/>
+			</fileset>
+		</fop>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Produces new test areatree files                                         -->
+	<!-- =================================================================== -->
+	<target name="newAT" depends="init">
+		<fop format="text/xml" outdir="${testDir}">
+			<fileset dir="${foDir}">
+				<include name="**/*.fo"/>
+			</fileset>
+		</fop>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Compares new test pdf files to reference pdf files                  -->
+	<!-- =================================================================== -->
+	<target name="comparePDF" depends="newPDF">
+		<compare referenceDirectory="${referenceDir}" testDirectory="${testDir}" filenames="normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf,bordershorthand.pdf,character.pdf,corresprop.pdf,hyphen.pdf,inhprop.pdf,instream.pdf,leader.pdf,newlinktest.pdf,normalex.pdf,pdfoutline.pdf,simple.pdf,textdeko.pdf,tableunits.pdf"/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Produces new reference pdf files                                         -->
+	<!-- =================================================================== -->
+	<target name="referencePDF" depends="init">
+		<fop format="application/pdf" outdir="${referenceDir}" basedir="./fo">
+			<fileset dir="${foDir}">
+				<include name="**/*.fo"/>
+			</fileset>
+		</fop>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Starts the test                                                     -->
+	<!-- =================================================================== -->
+	<target name="runtest" depends="comparePDF">
+		<echo message="Running Fop tests"/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Clean targets                                                       -->
+	<!-- =================================================================== -->
+	<target name="clean" depends="init">
+		<delete dir="${testDir}"/>
+	</target>
+
+</project>
+<!-- End of file -->

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<!-- ======================================================================= 
+
+    Instructions for building the buildtools.jar:
+
+ Classpath should contain the following:
+   Xerces 1.4.x
+   Xalan  2.x
+   xml-fop/lib/ant.jar
+
+  Run "ant -f buildtools.xml" to build a new version of the buildtools jar
+
+======================================================================= -->
+   
+
+<project default="buildtools" basedir=".">
+  <target name="init">
+   <property name="src.dir" value="./src"/>
+   <property name="build.src" value="./lib/src"/>
+   <property name="build.dest" value="./lib/classes"/>
+
+   <property name="tools" value="org/apache/fop/tools"/>
+   <property name="hyph"  value="org/apache/fop/layout/hyphenation"/>
+   <property name="buildtools.jar" value="./lib/buildtools.jar"/>
+
+   <property name="trax" value="TraxTransform.java"/>
+
+   <available property="trax.present" classname="javax.xml.transform.Transformer"/>
+   </target>
+
+   <target name="compile" depends="init,prepare.src">
+     <mkdir dir="${build.dest}"/>
+     <javac srcdir="${build.src}"
+	    destdir="${build.dest}"/>
+     
+   </target>
+
+   <target name="buildtools" depends="clean,init,compile">
+     <echo message="Creating the jar file ${buildtools.jar}"/>
+     <jar jarfile="${buildtools.jar}"
+	  basedir="${build.dest}"
+	  includes="${tools}/**,${hyph}/**"/>
+   </target>
+
+   <target name="prepare.src" depends="prepare.trax">
+     <copy todir="${build.src}">
+       <fileset dir="${src.dir}"
+	        includes="${tools}/**,${hyph}/**"
+	        excludes="${tools}/anttasks/Fop.java,${tools}/TestConverter.java,${tools}/AreaTreeBuilder.java,${hyph}/Hyphenator.java,**/${trax}"/>
+     </copy>
+   </target>
+
+   <target name="prepare.trax" if="trax.present">
+     <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
+     <copy todir="${build.src}">
+       <fileset dir="${src.dir}"
+	        includes="**/${trax}"/>
+     </copy>
+   </target>
+
+   <target name="clean" depends="init">
+     <delete dir="${build.src}"/>
+     <delete dir="${build.dest}"/>
+   </target>
+
+</project>

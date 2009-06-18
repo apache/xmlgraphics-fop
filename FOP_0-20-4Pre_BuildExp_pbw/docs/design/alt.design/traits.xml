@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!--
+<!DOCTYPE document SYSTEM "../../xml-docs/dtd/document-v10.dtd">
+-->
+
+<document>
+  <header>
+    <title>Traits</title>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <s1 title="Traits">
+      <table>
+        <tr>
+          <th>Trait</th>
+          <th>Applies to</th>
+          <th>Refs</th>
+          <th>Derived from</th>
+        </tr>
+        <tr>
+          <th>Common Traits</th>
+        </tr>
+        <tr>
+          <td>block-progression-direction</td>
+          <td>All areas</td>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-common"
+		  >4.2.2 Common Traits</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
+            >7.27.7 writing-mode</link>
+          </td>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#reference-orientation"
+            >7.27.7 reference-orientation</link>
+          </td>
+        </tr>
+        <tr>
+          <td>inline-progression-direction</td>
+          <td>All areas</td>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-common"
+            >4.2.2 Common Traits</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
+            >7.27.7 writing-mode</link>
+          </td>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#reference-orientation"
+            >7.27.7 reference-orientation</link>
+          </td>
+        </tr>
+        <tr>
+          <td>shift-direction</td>
+          <td>Inline areas</td>
+        </tr>
+        <tr>
+          <td>glyph-orientation</td>
+          <td>Glyph-areas</td>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-common"
+            >4.2.2 Common Traits</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-glyph"
+            >4.6.2 Glyph-areas</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-linebuild"
+            >4.7.2 Line-building</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#rend-intrinsic"
+            >4.9.5 Intrinsic Marks</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#font-model"
+            >7.8.1 Fonts and Font Data</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#writing-mode-related"
+            >7.27 Writing-mode-related Properties</link>
+          </td>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#glyph-orientation-horizontal"
+            >7.27.2 glyph-orientation-horizontal</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#glyph-orientation-vertical"
+            >7.27.3 glyph-orientation-vertical</link><br/>
+             <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#direction"
+            >7.27.1 direction</link><br/>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice7.html#writing-mode"
+            >7.27.7 writing-mode</link>
+          </td>
+        </tr>
+        <tr>
+          <td>is-reference-area</td>
+          <td>All areas</td>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice5.html#section-N6691-Non-property-Based-Trait-Generation"
+            >5.6 Non-property Based Trait Generation</link>
+          </td>
+          <td>
+	    Set "true" on:<br/>
+            simple-page-master<br/>
+            title<br/>
+            region-body<br/>
+            region-before<br/>
+            region-after<br/>
+            region-start<br/>
+            region-end<br/>
+            block-container<br/>
+            inline-container<br/>
+            table<br/>
+            table-caption<br/>
+            table-cell
+	  </td>
+        </tr>
+        <tr>
+          <td>is-viewport-area</td>
+          <td></td>
+          <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-common"
+            >4.2.2 Common Traits</link>
+          </td>
+        </tr>
+        <tr>
+          <td>top-position</td>
+        </tr>
+        <tr>
+          <td>bottom-position</td>
+        </tr>
+        <tr>
+          <td>left-position</td>
+        </tr>
+        <tr>
+          <td>right-position</td>
+        </tr>
+        <tr>
+          <td>left-offset</td>
+        </tr>
+        <tr>
+          <td>top-offset</td>
+        </tr>
+        <tr>
+          <td>is-first</td>
+        </tr>
+        <tr>
+          <td>is-last</td>
+        </tr>
+        <tr>
+          <td>generated-by</td>
+        </tr>
+        <tr>
+          <td>returned-by</td>
+        </tr>
+        <tr>
+          <td>nominal-font</td>
+        </tr>
+        <tr>
+          <td>blink</td>
+          <td></td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>underline-score</td>
+          <td></td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>underline-score-color</td>
+          <td></td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>overline-score</td>
+          <td></td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>overline-score-color</td>
+          <td></td>
+          
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>through-score</td>
+          <td></td>
+          
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>through-score-color</td>
+          <td></td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice5.html#refine-text-decoration"
+              >5.5.6 Text-decoration Property
+            </link>
+          </td>
+          <td>
+            <link href=
+              "http://www.w3.org/TR/xsl/slice7.html#text-decoration"
+              >7.16.4 "text-decoration"
+            </link>
+          </td>
+        </tr>
+	<tr>
+	  <th>Other Indirectly Derived Traits</th>
+	</tr>
+	<tr>
+	  <td>alignment-point</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+	<tr>
+	  <td>alignment-baseline</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+	<tr>
+	  <td>baseline-shift</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+	<tr>
+	  <td>dominant-baseline-identifier</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+	<tr>
+	  <td>actual-baseline-table</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+	<tr>
+	  <td>start-intrusion-adjustment</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+	<tr>
+	  <td>end-intrusion-adjustment</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+	<tr>
+	  <td>page-number</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+	<tr>
+	  <td>script</td>
+	  <td/>
+	  <td>
+            <link href=
+            "http://www.w3.org/TR/xsl/slice4.html#area-intro"
+            >4.1 Introduction</link>
+	  </td>
+	</tr>
+      </table>
+    </s1>
+  </body>
+</document>

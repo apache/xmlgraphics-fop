@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+
+<!-- ===========================================================================
+
+============================================================================ -->
+
+<project default="package" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <property name="Name" value="Plan"/>
+    <property name="name" value="plan"/>
+    <property name="version" value="0.1-CVS"/>
+    <filter  token="version" value="${version}"/>
+    <property name="year" value="2002"/>
+
+    <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
+
+    <property name="build.compiler" value="classic"/>
+    <property name="debug" value="off"/>
+    <property name="optimize" value="on"/>
+    <property name="deprecation" value="off"/>
+
+    <property name="src.dir" value="./src"/>
+    <property name="lib.dir" value="./lib"/>
+    <property name="packages" value="org.apache.fop.*"/>
+
+    <property name="build.dir" value="./build"/>
+    <property name="build.src" value="./build/src"/>
+    <property name="build.dest" value="./build/classes"/>
+
+    <property name="resource.dir" value="resources"/>
+    <property name="plan.dir" value="org/apache/fop/plan"/>
+
+    <property name="xslt" value="org.apache.xalan.xslt.Process"/>
+
+    <property name="main.class" value="org.apache.fop.plan.Main"/>
+    <property name="runtime.classpath" value="fop.jar xerces-1.4.3.jar xalan-2.4D11.jar batik.jar"/>
+   
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="${Name} Build file"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   package   --> generates the ${name}.jar file (default)"/>
+    <echo message="   compile   --> compiles the source code"/>
+    <echo message="   clean     --> cleans up the directory"/>
+    <echo message="   site      --> generates the ${Name} web site (not yet implemented)"/>
+    <echo message=""/>
+    <echo message=" See the comments inside the build.xml file for more details."/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the build directory                                        -->
+  <!-- =================================================================== -->
+  <target name="prepare" depends="init">
+    <!-- create directories -->
+    <echo message="Preparing the build directories"/>
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.src}"/>
+    <mkdir dir="${build.src}/${plan.dir}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the source code                                            -->
+  <!-- =================================================================== -->
+  <target name="prepare-src" depends="prepare">
+    <!-- copy src files -->
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}" 
+         excludes="**/Makefile*, **/package.html"/>
+    </copy>
+    <copy todir="${build.dest}/">
+      <fileset dir="${resource.dir}"/>
+    </copy>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the source directory                                       -->
+  <!-- =================================================================== -->
+  <target name="compile" depends="prepare-src">
+    <echo message="Compiling the sources "/>
+    <!-- create directories -->
+    <mkdir dir="${build.dest}"/>
+
+    <javac srcdir="${build.src}"
+           destdir="${build.dest}"
+           debug="${debug}"
+           deprecation="${deprecation}"
+           optimize="${optimize}"
+           excludes=""/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the class package                                           -->
+  <!-- =================================================================== -->
+  <target name="package" depends="compile">
+    <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+
+    <jar jarfile="${build.dir}/${name}.jar"
+         basedir="${build.dest}"
+         includes="**">
+    <manifest> 
+        <attribute name="Main-Class" value="${main.class}"/>
+        <attribute name="Class-Path" value="${runtime.classpath}"/>
+        <attribute name="Implementation-Title" value="${Name}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}])"/>
+    </manifest>
+    </jar>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <delete dir="${build.dir}"/>
+  </target>
+
+</project>
+

@@ -1,0 +1,17 @@
+Content of the directory xml-fop/docs
+
+xslfoRef.xml  a short xsl:fo reference
+xml2pdf.xsl   a stylesheet, to convert xslfoRef.xml to pdf
+
+html-docs     Fop documentation in html files
+xml-docs      Fop documentation in xml files and a script to create pdf documentation
+
+design        UML diagrams showing the Fop design
+graphics      some graphics used by the examples and test files
+examples      a lot of xs:fo example files 
+examples/fo   some simple examples to get you started
+examples/
+  pagination  some simple and some not so simple examples how to use the
+              new page layout tags in xsl:fo
+examples/svg  some example documents of how to use svg in fop
+

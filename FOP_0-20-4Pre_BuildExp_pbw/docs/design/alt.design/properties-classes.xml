@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!--
+<!DOCTYPE document SYSTEM "../xml-docs/dtd/document-v10.dtd">
+-->
+
+<document>
+  <header>
+    <title>Properties$classes</title>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <!-- one of (anchor s1) -->
+    <s1 title="fo.Properties and the nested properties classes">
+      <figure src="PropertyClasses.png" alt="Nested property and
+	      top-level classes"/>
+      <s2 title="Nested property classes">
+	<p>
+	  Given the intention that individual properties have only a
+	  <em>virtual</em> instantiation in the arrays of
+	  <code>PropertyConsts</code>, these classes are intended to
+	  remain as repositories of static data and methods.  The name
+	  of each property is entered in the
+	  <code>PropNames.propertyNames</code> array of
+	  <code>String</code>s, and each has a unique integer constant
+	  defined, corresponding to the offset of the property name in
+	  that array.
+	</p>
+	<s3 title="Fields common to all classes">
+	  <dl>
+	    <dt><code>final int dataTypes</code></dt>
+	    <dd>
+	      This field defines the allowable data types which may be
+	      assigned to the property.  The value is chosen from the
+	      data type constants defined in <code>Properties</code>, and
+	      may consist of more than one of those constants,
+	      bit-ORed together.
+	    </dd>
+	    <dt><code>final int traitMapping</code></dt>
+	    <dd>
+	      This field defines the mapping of properties to traits
+	      in the <code>Area tree</code>. The value is chosen from the
+	      trait mapping constants defined in <code>Properties</code>,
+	      and may consist of more than one of those constants,
+	      bit-ORed together.
+	    </dd>
+	    <dt><code>final int initialValueType</code></dt>
+	    <dd>
+	      This field defines the data type of the initial value
+	      assigned to the property.  The value is chosen from the
+	      initial value type constants defined in
+	      <code>Properties</code>.
+	    </dd>
+	    <dt><code>final int inherited</code></dt>
+	    <dd>
+	      This field defines the kind of inheritance applicable to
+	      the property.  The value is chosen from the inheritance
+	      constants defined in <code>Properties</code>.
+	    </dd>
+	  </dl>
+	</s3>
+	<s3 title="Datatype dependent fields">
+	  <dl>
+	    <dt>Enumeration types</dt>
+	    <dd>
+	      <strong><code>final String[] enums</code></strong><br/>
+	      This array contains the <code>NCName</code>  text
+	      values of the enumeration.  In the current
+	      implementation, it always contains a null value at
+	      <code>enum[0]</code>.<br/> <br/>
+
+	      <strong><code>final String[]
+	      enumValues</code></strong><br/> When the number of
+	      enumeration values is small,
+	      <code>enumValues</code>  is a reference to the
+	      <code>enums</code>  array.<br/> <br/>
+
+	      <strong><code>final HashMap
+	      enumValues</code></strong><br/> When the number of
+	      enumeration values is larger,
+	      <code>enumValues</code>  is a
+	      <code>HashMap</code>  statically initialized to
+	      contain the integer constant values corresponding to
+	      each text value, indexed by the text
+	      value.<br/> <br/>
+
+	      <strong><code>final int</code></strong> 
+	      <em><code>enumeration-constants</code></em><br/> A
+	      unique integer constant is defined for each of the
+	      possible enumeration values.<br/> <br/>
+	    </dd>
+	    <dt>Many types: 
+	      <code>final</code>  <em>datatype</em> 
+	      <code>initialValue</code></dt>
+	    <dd>
+	      When the initial datatype does not have an implicit
+	      initial value (as, for example, does type
+	      <code>AUTO</code>) the initial value for the property is
+	      assigned to this field.  The type of this field will
+	      vary according to the <code>initialValueType</code> 
+	      field.
+	    </dd>
+	    <dt>AUTO: <code>PropertyValueList auto(property,
+	      list)></code></dt>
+	    <dd>
+	      When <em>AUTO</em>  is a legal value type, the
+	      <code>auto()</code>  method must be defined in the property
+	      class.<br/>
+	      <em>NOT YET IMPLEMENTED.</em>
+	    </dd>
+	    <dt>COMPLEX: <code>PropertyValueList complex(property,
+	      list)></code></dt>
+	    <dd>
+	      <em>COMPLEX</em>  is specified as a value type when complex
+	      conditions apply to the selection of a value type, or
+	      when lists of values are acceptable.  To process and
+	      validate such a property value assignment, the
+	      <code>complex()</code>  method must be defined in the
+	      property class.
+	    </dd>
+	  </dl>
+	</s3>
+      </s2>
+      <s2 title="Nested property pseudo-classes">
+	<p>
+	  The property pseudo-classes are classes, like
+	  <code>ColorCommon</code>  which contain values, particularly
+	  <em>enums</em>, which are common to a number of actual
+	  properties.
+	</p>
+      </s2>
+      <p>
+	<strong>Previous:</strong> <link href= "classes-overview.html"
+	>property classes overview.</link>
+      </p>
+    </s1>
+  </body>
+</document>

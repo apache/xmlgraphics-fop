@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Compiling FOP -->
+
+<s1 title="Compiling FOP">
+    <p>Compilation is started by executing build, either as a batch file on win32 (build.bat) or as a shell script on unix. Before you
+       can start one of these scripts, you have to setup your classpath and the environment variable JAVA_HOME (see below).</p>
+     <p> The compilation uses Ant, 
+       a replacement of make (you can find more information about Ant at 
+       <jump href="http://jakarta.apache.org/ant/">jakarta.apache.org</jump>).
+        build.xml is the replacement of makefile. Look there for detailed information on the build
+        process and different targets. </p>
+       <p>A help screen is shown by calling "build usage".</p>
+       <p>If you only want to use Fop, you don't need to build it. A fop.jar comes with the distribution.</p>
+   <s2 title="Setting up your classpath">
+     <p><note>You don't have to setup your classpath; all libraries needed to compile Fop are coming with 
+              the distribution and are referenced by the build script, so you only need to care about them, 
+              if you build Fop in any other way. See build.bat/build.sh for details. </note></p>
+    </s2>
+    <s2 title="Setting of JAVA_HOME">
+      <p>You have to set the enviroment variable JAVA_HOME. It must point to your local JDK 
+      root directory. This is true, even if you use JDK 1.2 or above, which normally don't need this 
+      setting. It is used by Ant, the compilation software.</p>
+    </s2>
+  <s2 title="Problems">
+    <p>If you have problems compiling Fop, please try this first: </p>
+    <ul>
+      <li>delete the build directory completely and try a new build from scratch</li>
+      <li>check, whether you have an older version of xerces.jar, xalan.jar, batik.jar somewhere in 
+          you classpath.</li>
+      </ul>
+      <p>If you still have problems, please look at the
+         page <jump href="bugs.html">bugs</jump>, for further help.</p>
+  </s2>
+</s1>

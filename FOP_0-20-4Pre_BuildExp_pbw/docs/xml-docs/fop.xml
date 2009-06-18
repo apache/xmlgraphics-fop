@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<book title="FOP XSL-FO documentation" copyright="1999-2002 The Apache Software Foundation">
+	<external href="http://xml.apache.org/" label="Home"/>
+	<separator/>
+	<page id="index" label="About FOP" source="fop/readme.xml"/>
+	<page id="news" label="News" source="fop/news.xml"/>
+	<page id="download" label="Download" source="fop/download.xml"/>
+	<page id="relnotes" label="Release Notes" source="fop/relnotes.xml"/>
+	<page id="gethelp" label="How to get Help" source="fop/gethelp.xml"/>
+	<separator/>
+	<page id="running" label="Running FOP" source="fop/running.xml"/>
+	<page id="embedding" label="Embedding" source="fop/embedding.xml"/>
+	<page id="output" label="Output Formats" source="fop/output.xml"/>
+	<page id="implemented" label="Features" source="fop/implemented.xml"/>
+	<page id="todo" label="TODO" source="fop/todo.xml"/>
+	<page id="limitations" label="Limitations" source="fop/limitations.xml"/>
+	<page id="examples" label="Examples" source="fop/examples.xml"/>
+	<separator/>
+	<page id="svg" label="SVG" source="fop/svg.xml"/>
+	<page id="extensions" label="Extensions" source="fop/extensions.xml"/>
+	<page id="fonts" label="Fonts" source="fop/fonts.xml"/>
+	<page id="config" label="Configuration" source="fop/configuration.xml"/>
+	<separator/>
+	<external href="design/index.html" label="NEW DESIGN"/>
+	<page id="involved" label="Getting involved" source="fop/involved.xml"/>
+	<page id="compiling" label="Compiling" source="fop/compiling.xml"/>
+	<page id="testing" label="Testing" source="fop/testing.xml"/>
+	<separator/>
+	<faqs id="faq" label="FAQ" source="fop/faq.xml"/>
+	<page id="bugs" label="Bugs" source="fop/bugs.xml"/>
+	<page id="resources" label="Resources" source="fop/resources.xml"/>
+	<page id="license" label="License" source="fop/license.xml"/>
+</book>

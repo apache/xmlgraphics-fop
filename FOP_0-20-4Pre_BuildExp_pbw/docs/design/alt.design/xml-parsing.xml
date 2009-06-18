@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!--
+<!DOCTYPE document SYSTEM "../xml-docs/dtd/document-v10.dtd">
+-->
+
+<document>
+  <header>
+    <title>Integrating XML Parsing</title>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <!-- one of (anchor s1) -->
+    <s1 title="An alternative parser integration">
+      <p>
+	This note proposes an alternative method of integrating the
+	output of the SAX parsing of the Flow Object (FO) tree into
+	FOP processing.  The pupose of the proposed changes is to
+	provide for better decomposition of the process of analysing
+	and rendering an fo tree such as is represented in the output
+	from initial (XSLT) processing of an XML source document.
+      </p>
+      <s2 title="Structure of SAX parsing">
+	<p>
+	  Figure 1 is a schematic representation of the process of SAX
+	  parsing of an input source.  SAX parsing involves the
+	  registration, with an object implementing the
+	  <code>XMLReader</code> interface, of a
+	  <code>ContentHandler</code> which contains a callback
+	  routine for each of the event types encountered by the
+	  parser, e.g., <code>startDocument()</code>,
+	  <code>startElement()</code>, <code>characters()</code>,
+	  <code>endElement()</code> and <code>endDocument()</code>.
+	  Parsing is initiated by a call to the <code>parser()</code>
+	  method of the <code>XMLReader</code>.  Note that the call to
+	  <code>parser()</code> and the calls to individual callback
+	  methods are synchronous: <code>parser()</code> will only
+	  return when the last callback method returns, and each
+	  callback must complete before the next is called.<br/><br/>
+	  <strong>Figure 1</strong>
+	</p>
+	<figure src="SAXParsing.png" alt="SAX parsing schematic"/>
+	<p>
+	  In the process of parsing, the hierarchical structure of the
+	  original FO tree is flattened into a number of streams of
+	  events of the same type which are reported in the sequence
+	  in which they are encountered.  Apart from that, the API
+	  imposes no structure or constraint which expresses the
+	  relationship between, e.g., a startElement event and the
+	  endElement event for the same element.  To the extent that
+	  such relationship information is required, it must be
+	  managed by the callback routines.
+	</p>
+	<p>
+	  The most direct approach here is to build the tree
+	  "invisibly"; to bury within the callback routines the
+	  necessary code to construct the tree.  In the simplest case,
+	  the whole of the FO tree is built within the call to
+	  <code>parser()</code>, and that in-memory tree is subsequently
+	  processed to (a) validate the FO structure, and (b)
+	  construct the Area tree.  The problem with this approach is
+	  the potential size of the FO tree in memory.  FOP has
+	  suffered from this problem in the past.
+	</p>
+      </s2>
+      <s2 title="Cluttered callbacks">
+	<p>
+	  On the other hand, the callback code may become increasingly
+	  complex as tree validation and the triggering of the Area
+	  tree processing and subsequent rendering is moved into the
+	  callbacks, typically the <code>endElement()</code> method.
+	  In order to overcome acute memory problems, the FOP code was
+	  recently modified in this way, to trigger Area tree building
+	  and rendering in the <code>endElement()</code> method, when
+	  the end of a page-sequence was detected.
+	</p>
+	<p>
+	  The drawback with such a method is that it becomes difficult
+	  to detemine the order of events and the circumstances in
+	  which any particular processing events are triggered.  When
+	  the processing events are inherently self-contained, this is
+	  irrelevant.  But the more complex and context-dependent the
+	  relationships are among the processing elements, the more
+	  obscurity is engendered in the code by such "side-effect"
+	  processing.
+	</p>
+      </s2>
+      <s2 title="From passive to active parsing">
+	<p>
+	  In order to solve the simultaneous problems of exposing the
+	  structure of the processing and minimising in-memory
+	  requirements, the experimental code separates the parsing of
+	  the input source from the building of the FO tree and all
+	  downstream processing.  The callback routines become
+	  minimal, consisting of the creation and buffering of
+	  <code>XMLEvent</code> objects as a <em>producer</em>.  All
+	  of these objects are effectively merged into a single event
+	  stream, in strict event order, for subsequent access by the
+	  FO tree building process, acting as a
+	  <em>consumer</em>.  In itself, this does not reduce the
+	  footprint.  This occurs when the approach is generalised to
+	  modularise FOP processing.<br/><br/> <strong>Figure 2</strong>
+	</p>
+	<figure src="XML-event-buffer.png" alt="XML event buffer"/>
+	<p>
+	  The most useful change that this brings about is the switch
+	  from <em>passive</em> to <em>active</em> XML element
+	  processing.  The process of parsing now becomes visible to
+	  the controlling process.  All local validation requirements,
+	  all object and data structure building, is initiated by the
+	  process(es) <em>get</em>ting from the queue - in the case
+	  above, the FO tree builder.
+	</p>
+      </s2>
+      <s2 title="XMLEvent methods">
+	<anchor id="XMLEvent-methods"/>
+	<p>
+	  The experimental code uses a class <strong>XMLEvent</strong>
+	  to provide the objects which are placed in the queue.
+	  <em>XMLEvent</em> includes a variety of methods to access
+	  elements in the queue.  Namespace URIs encountered in
+	  parsing are maintined in a <code>static</code>
+	  <code>HashMap</code> where they are associated with a unique
+	  integer index.  This integer value is used in the signature
+	  of some of the access methods.
+	</p>
+	<dl>
+	  <dt>XMLEvent getEvent(SyncedCircularBuffer events)</dt>
+	  <dd>
+	    This is the basis of all of the queue access methods.  It
+	    returns the next element from the queue, which may be a
+	    pushback element.
+	  </dd>
+	  <dt>XMLEvent getEndDocument(events)</dt>
+	  <dd>
+	    <em>get</em>  and discard elements from the queue
+	    until an ENDDOCUMENT element is found and returned.
+	  </dd>
+	  <dt> XMLEvent expectEndDocument(events)</dt>
+	  <dd>
+	    If the next element on the queue is an ENDDOCUMENT event,
+	    return it.  Otherwise, push the element back and throw an
+	    exception.  Each of the <em>get</em>  methods (except
+	    <em>getEvent()</em>  itself) has a corresponding
+	    <em>expect</em>  method.
+	  </dd>
+	  <dt>XMLEvent get/expectStartElement(events)</dt>
+	  <dd> Return the next STARTELEMENT event from the queue.</dd>
+	  <dt>XMLEvent get/expectStartElement(events, String
+	    qName)</dt>
+	  <dd>
+	    Return the next STARTELEMENT with a QName matching
+	    <em>qName</em>.
+	  </dd>
+	  <dt>
+	    XMLEvent get/expectStartElement(events, int uriIndex,
+	    String localName)
+	  </dt>
+	  <dd>
+	    Return the next STARTELEMENT with a URI indicated by the
+	    <em>uriIndex</em> and a local name matching <em>localName</em>.
+	  </dd>
+	  <dt>
+	    XMLEvent get/expectStartElement(events, LinkedList list)
+	  </dt>
+	  <dd>
+	    <em>list</em>  contains instances of the nested class
+	    <code>UriLocalName</code>, which hold a
+	    <em>uriIndex</em>  and a <em>localName</em>.  Return
+	    the next STARTELEMENT with a URI indicated by the
+	    <em>uriIndex</em>  and a local name matching
+	    <em>localName</em>  from any element of
+	    <em>list</em>.
+	  </dd>
+	  <dt>XMLEvent get/expectEndElement(events)</dt>
+	  <dd>Return the next ENDELEMENT.</dd>
+	  <dt>XMLEvent get/expectEndElement(events, qName)</dt>
+	  <dd>Return the next ENDELEMENT with QName
+	    <em>qname</em>.</dd>
+	  <dt>XMLEvent get/expectEndElement(events, uriIndex, localName)</dt>
+	  <dd>
+	    Return the next ENDELEMENT with a URI indicated by the
+	    <em>uriIndex</em>  and a local name matching
+	    <em>localName</em>.
+	  </dd>
+	  <dt>
+	    XMLEvent get/expectEndElement(events, XMLEvent event)
+	  </dt>
+	  <dd>
+	    Return the next ENDELEMENT with a URI matching the
+	    <em>uriIndex</em>  and <em>localName</em> 
+	    matching those in the <em>event</em>  argument.  This
+	    is intended as a quick way to find the ENDELEMENT matching
+	    a previously returned STARTELEMENT.
+	  </dd>
+	  <dt>XMLEvent get/expectCharacters(events)</dt>
+	  <dd>Return the next CHARACTERS event.</dd>
+	</dl>
+      </s2>
+      <s2 title="FOP modularisation">
+	<p>
+	  This same principle can be extended to the other major
+	  sub-systems of FOP processing.  In each case, while it is
+	  possible to hold a complete intermediate result in memory,
+	  the memory costs of that approach are too high.  The
+	  sub-systems - xml parsing, FO tree construction, Area tree
+	  construction and rendering - must run in parallel if the
+	  footprint is to be kept manageable.  By creating a series of
+	  producer-consumer pairs linked by synchronized buffers,
+	  logical isolation can be achieved while rates of processing
+	  remain coupled.  By introducing feedback loops conveying
+	  information about the completion of processing of the
+	  elements, sub-systems can dispose of or precis those
+	  elements without having to be tightly coupled to downstream
+	  processes.<br/><br/>
+	  <strong>Figure 3</strong>
+	</p>
+	<figure src="processPlumbing.png" alt="FOP modularisation"/>
+      </s2>
+    </s1>
+  </body>
+</document>

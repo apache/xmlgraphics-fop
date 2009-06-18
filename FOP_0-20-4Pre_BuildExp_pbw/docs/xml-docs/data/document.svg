@@ -1,0 +1,164 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20001102//EN"
+	"http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd">
+<svg width="480" height="240">
+	<filter id="Drop_Shadow" filterUnits="objectBoundingBox" x="-10%" y="-10%"
+		width="150%" height="150%">
+		<feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blurredAlpha"/>
+		<feOffset in="blurredAlpha" dx="3" dy="3" result="offsetBlurredAlpha"/>
+		<feFlood result="flooded" style="flood-color:rgb(0,0,0);flood-opacity:0.65"/>
+		<feComposite in="flooded" operator="in" in2="offsetBlurredAlpha"
+			result="coloredShadow"/>
+		<feComposite in="SourceGraphic" in2="coloredShadow" operator="over"/>
+	</filter>
+	<rect x="5" y="3" width="171" height="226" rx="0" ry="0" style="filter:url(#Drop_Shadow);stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;
+		stroke-opacity:1;stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(234,228,214);opacity:1;
+		"/>
+	<g style="filter:url(#Drop_Shadow)" transform="matrix(0.5 0 0 0.6 6 10)">
+		<text><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+]]></text>
+		<text y="10"><![CDATA[
+<root xmlns="http://www.w3.org/1999/XSL/Format">
+]]></text>
+		<text y="20" x="8"><![CDATA[
+  <layout-master-set>
+]]></text>
+		<text y="30" x="16"><![CDATA[
+    <simple-page-master master-name="simple"
+]]></text>
+		<text y="40" x="61"><![CDATA[
+                  page-height="29.7cm"
+]]></text>
+		<text y="50" x="61"><![CDATA[
+                  page-width="21cm"
+]]></text>
+		<text y="60" x="61"><![CDATA[
+                  margin-top="1cm"
+]]></text>
+		<text y="70" x="61"><![CDATA[
+                  margin-bottom="2cm"
+]]></text>
+		<text y="80" x="61"><![CDATA[
+                  margin-left="2.5cm"
+]]></text>
+		<text y="90" x="61"><![CDATA[
+                  margin-right="2.5cm">
+]]></text>
+		<text y="100" x="24"><![CDATA[
+      <region-body margin-top="3cm"/>
+]]></text>
+		<text y="110" x="24"><![CDATA[
+      <region-before extent="3cm"/>
+]]></text>
+		<text y="120" x="24"><![CDATA[
+      <region-after extent="1.5cm"/>
+]]></text>
+		<text y="130" x="16"><![CDATA[
+    </simple-page-master>
+]]></text>
+		<text y="140" x="8"><![CDATA[
+  </layout-master-set>
+]]></text>
+		<text y="150" x="8"><![CDATA[
+  <page-sequence master-name="simple">
+]]></text>
+		<text y="160" x="24"><![CDATA[
+    <flow flow-name="xsl-region-body">
+]]></text>
+		<text y="170" x="32"><![CDATA[
+      <block font-size="18pt"
+]]></text>
+		<text y="180" x="70"><![CDATA[
+            font-family="sans-serif"
+]]></text>
+		<text y="190" x="70"><![CDATA[
+            line-height="24pt"
+]]></text>
+		<text y="200" x="70"><![CDATA[
+            space-after.optimum="15pt"
+]]></text>
+		<text y="210" x="70"><![CDATA[
+            background-color="blue"
+]]></text>
+		<text y="220" x="70"><![CDATA[
+            color="white"
+]]></text>
+		<text y="230" x="70"><![CDATA[
+            text-align="center"
+]]></text>
+		<text y="240" x="70"><![CDATA[
+            padding-top="3pt">
+]]></text>
+		<text y="250" x="40"><![CDATA[
+        Fop
+]]></text>
+		<text y="260" x="32"><![CDATA[
+      </block>
+]]></text>
+		<text y="270" x="32"><![CDATA[
+      <block font-size="12pt"
+]]></text>
+		<text y="280" x="70"><![CDATA[
+                font-family="sans-serif"
+]]></text>
+		<text y="290" x="70"><![CDATA[
+                line-height="15pt"
+]]></text>
+		<text y="300" x="70"><![CDATA[
+                space-after.optimum="3pt"
+]]></text>
+		<text y="310" x="70"><![CDATA[
+                text-align="justify">
+]]></text>
+		<text y="320" x="40"><![CDATA[
+          A simple fo document.
+]]></text>
+		<text y="330" x="32"><![CDATA[
+      </block>
+]]></text>
+		<text y="340" x="24"><![CDATA[
+    </flow>
+]]></text>
+		<text y="350" x="8"><![CDATA[
+  </page-sequence>
+]]></text>
+		<text y="360"><![CDATA[
+</root>
+]]></text>
+	</g>
+	<text x="183" y="106" style="font-family:Arial;font-size:30;stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(0,0,0);opacity:1;filter:url(#Drop_Shadow)">Render</text>
+	<g transform="matrix(0.287395 0 0 0.268409 300 5)" style="font-size:12;fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:1">
+		<g>
+			<g style="fill:rgb(255,255,255)">
+				<rect width="595" x="0" height="842" y="0" style="filter:url(#Drop_Shadow);stroke:none"/>
+			</g>
+			<g>
+				<rect width="597" x="-1" height="844" y="-1" style="fill:none"/>
+				<line y2="844" x1="597" x2="597" y1="0" style="fill:none"/>
+				<line y2="845" x1="598" x2="598" y1="1" style="fill:none"/>
+				<line y2="844" x1="0" x2="597" y1="844" style="fill:none"/>
+				<line y2="845" x1="1" x2="598" y1="845" style="fill:none"/>
+				<rect x="71" y="113" width="453" height="27" style="fill:none;stroke:rgb(0,0,255)"/>
+				<rect x="71" y="113" width="453" height="27" style="fill:rgb(0,0,255);stroke:none"/>
+			</g>
+			<g style="fill:rgb(255,255,255);font-size:18;font-family:sans-serif;stroke:rgb(255,255,255);
+				">
+				<text x="272" y="133" style="stroke:none">Fop</text>
+				<text x="71" y="166" style="fill:rgb(0,0,0);stroke:none">A</text>
+				<text x="94" y="166" style="fill:rgb(0,0,0);stroke:none">simple</text>
+				<text x="158" y="166" style="fill:rgb(0,0,0);stroke:none">fo</text>
+				<text x="185" y="166" style="fill:rgb(0,0,0);stroke:none">document.</text>
+			</g>
+		</g>
+	</g>
+	<rect x="186" y="124" width="81" height="14" rx="0" ry="0" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:0;stroke:rgb(45,59,143);
+		fill-opacity:1;fill:rgb(238,179,36);opacity:1"/>
+	<path d="M289.5 131 L263 118 L263 144 z" style="stroke-miterlimit:4;stroke-linejoin:miter;stroke-width:1;stroke-opacity:0;stroke:rgb(0,0,0);
+		fill-opacity:1;fill:rgb(238,179,36);opacity:1"/>
+
+<use x="455" y="215" width="20" height="20" xlink:href="logo.svg#FOP_Mark"/>
+
+</svg>
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id: AbsolutePosition.png.xml,v 1.1 2002-01-05 14:46:32+10 pbw
+Exp pbw $ -->
+<!--
+<!DOCTYPE document SYSTEM "../xml-docs/dtd/document-v10.dtd">
+-->
+<document>
+  <header>
+    <title>AbsolutePosition diagram</title>
+    <authors>
+      <person id="pbw" name="Peter B. West"
+	      email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <!-- one of (anchor s1) -->
+    <s1 title="Properties$AbsolutePosition">
+      <figure src="AbsolutePosition.png" alt="AbsolutePosition diagram"/>
+    </s1>
+  </body>
+</document>
