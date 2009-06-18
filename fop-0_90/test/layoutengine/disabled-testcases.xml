@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<disabled-testcases>
+  <testcase>
+    <name>block-container reference-orientation bug36391</name>
+    <file>block-container_reference-orientation_bug36391.xml</file>
+    <description></description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=36391</reference>
+  </testcase>
+  <testcase>
+    <name>block-container space-before space-after_3</name>
+    <file>block-container_space-before_space-after_3.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block font-stretch</name>
+    <file>block_font-stretch.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block linefeed-treatment</name>
+    <file>block_linefeed-treatment.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block padding 2</name>
+    <file>block_padding_2.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block space-before space-after 8</name>
+    <file>block_space-before_space-after_8.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block white-space-collapse 2</name>
+    <file>block_white-space-collapse_2.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block white-space-treatment 1</name>
+    <file>block_white-space-treatment_1.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block white-space-treatment 2</name>
+    <file>block_white-space-treatment_2.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block word-spacing</name>
+    <file>block_word-spacing.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>block word-spacing text-align justify</name>
+    <file>block_word-spacing_text-align_justify.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>external-graphic oversized</name>
+    <file>external-graphic_oversized.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>external-graphic src uri</name>
+    <file>external-graphic_src_uri.xml</file>
+    <description>Doesn't work behind a proxy requiring authorization.</description>
+  </testcase>
+  <testcase>
+    <name>footnote space-resolution</name>
+    <file>footnote_space-resolution.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>inline block keep-together</name>
+    <file>inline-block_keep-together.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>inline block nested 3</name>
+    <file>inline_block_nested_3.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>inline-container block nested</name>
+    <file>inline-container_block_nested.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>inline-container border padding</name>
+    <file>inline-container_border_padding.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>inline letter-spacing</name>
+    <file>inline_letter-spacing.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>inline word-spacing</name>
+    <file>inline_word-spacing.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>inline word-spacing text-align justify</name>
+    <file>inline_word-spacing_text-align_justify.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>leader alignment</name>
+    <file>leader-alignment.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>leader leader-pattern use-content_bug</name>
+    <file>leader_leader-pattern_use-content_bug.xml</file>
+    <description></description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=</reference>
+  </testcase>
+  <testcase>
+    <name>list-block keep-with-previous</name>
+    <file>list-block_keep-with-previous.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>list-item block keep-with-previous</name>
+    <file>list-item_block_keep-with-previous.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>marker bug</name>
+    <file>marker_bug.xml</file>
+    <description></description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=</reference>
+  </testcase>
+  <testcase>
+    <name>page-breaking 4</name>
+    <file>page-breaking_4.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>page-breaking 6</name>
+    <file>page-breaking_6.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>page-height indefinite simple</name>
+    <file>page-height_indefinite_simple.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>page-number-citation background-image</name>
+    <file>page-number-citation_background-image.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>page-number-citation complex 1</name>
+    <file>page-number-citation_complex_1.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>page-number-citation complex 2</name>
+    <file>page-number-citation_complex_2.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>page-number initial-page-number 2</name>
+    <file>page-number_initial-page-number_2.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>region-body column-count footnote</name>
+    <file>region-body_column-count_footnote.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>region-body column-count bug36356</name>
+    <file>region-body_column-count_bug36356.xml</file>
+    <description></description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=36356</reference>
+  </testcase>
+  <testcase>
+    <name>table-body background-image</name>
+    <file>table-body_background-image.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table border-collapse collapse 1</name>
+    <file>table_border-collapse_collapse_1.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table border-collapse collapse 2</name>
+    <file>table_border-collapse_collapse_2.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table border padding</name>
+    <file>table_border_padding.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table-cell block keep-with-previous</name>
+    <file>table-cell_block_keep-with-previous.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table-cell_border padding_conditionality</name>
+    <file>table-cell_border_padding_conditionality.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table-column first-row-width</name>
+    <file>table-column_first-row-width.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table-header background-image</name>
+    <file>table-header_background-image.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table-row keep-with-previous</name>
+    <file>table-row_keep-with-previous.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table table-layout fixed 2</name>
+    <file>table_table-layout_fixed_2.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>table border-width conditionality</name>
+    <file>table_border-width_conditionality.xml</file>
+    <description></description>
+  </testcase>
+</disabled-testcases>

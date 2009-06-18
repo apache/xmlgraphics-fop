@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<status>
+
+  <developers>
+    <!-- Maintained in src/documentation/content/xdocs/team.xml -->
+  </developers>
+
+  <todo>
+    <!-- See Bugzilla and http://wiki.apache.org/xmlgraphics-fop/FOPProjectTasks -->
+  </todo>
+
+  <changes>
+    <release version="FOP Trunk">
+      <action context="Code" dev="[dev]" type="update">
+        [your text here]
+      </action>
+    </release>
+    <release version="0.90alpha1" date="Nov 2005">
+      <action context="Code" dev="all" type="update">
+        <strong>Complete redesign of the FOP codebase</strong> in the period between Dec 2001 and Nov 2005. 
+        There are just too many changes to list here. If you like to know details, run 
+        <code>"svn log --verbose http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/"</code>.
+      </action>
+    </release>
+    <release version="0.20.5" date="18 July 2003">
+      <action context="Code" dev="all" type="update">
+        For the change log for the maintenance branch 
+        (where FOP 0.20.5 came from), please see the "CHANGES" file in the distribution, or 
+        <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/branches/fop-0_20_2-maintain/CHANGES?view=markup">the CHANGES file in the SVN repository</a>.
+      </action>
+    </release>
+  </changes>
+
+</status>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Upgrading from an Earlier Version of Apache FOP</title>
+    <version>$Revision$</version>
+  </header>
+  <body>
+    <section id="important">
+      <title>Important!</title>
+      <p>
+        If you're planning to upgrade to the latest FOP version there are a few very important things 
+        to consider:
+      </p>
+      <ul>
+        <li>
+          More than half of the codebase has been rewritten over the last three years. The code is 
+          new and not as stable as version 0.20.5.
+        </li>
+        <li>
+          The API of FOP has changed considerably and is not backwards-compatible with version 0.20.5.
+        </li>
+        <li>
+          The new API is not stable, yet. Please be aware that further changes might still occur!
+        </li>
+        <li>
+          The configuration file format has changed (see the <a href="configuration.html">Configuration page</a> for details).
+        </li>
+        <li>
+          <p>
+            The new code is much more strict about the interpretation of the XSL-FO 1.0 specification.
+            Things that worked fine in version 0.20.5 might start to produce warnings or even errors
+            now. FOP 0.20.5 contains many bugs which have been corrected in the new code.
+          </p>
+          <note label="An example">
+            While FOP 0.20.5 allowed you to have empty <code>fo:table-cell</code> elements, the new code
+            will complain about that (unless relaxed validation is enabled) because the specification
+            demands at least one block-level element (<code>(%block;)+</code>, see XSL-FO 1.0, 6.7.10)
+            inside an <code>fo:table-cell</code> element.
+          </note>
+        </li>
+        <li>
+          Extensions written for version 0.20.5 will not work with the new code!
+        </li>
+        <li>
+          The PCL Renderer and the MIF Handler have not been resurrected, yet! They are currently non-functional
+          and hope for someone to step up and reimplement them.
+        </li>
+        <li>
+          By looking at the <a href="../compliance.html">Compliance page</a> you might get the impression
+          that the new code is much more advanced than version 0.20.5. That's true but there are still
+          a few things that may not be handled as gracefully by the new code as by version 0.20.5.
+        </li>
+      </ul>
+      <p>
+        So, please evaluate carefully before messing up your production environment! Actually we do 
+        recommend against using the FOP development version in a production system.
+      </p>
+    </section>
+    <section id="issues">
+      <title>What you need to know when you upgrade!</title>
+      <p>
+        When you use your existing FO files or XML/XSL files which work fine with FOP version
+        0.20.5 against this FOP version some things may not work as expected. The following
+        list will hopefully help you to identify and correct those problems.
+      </p>
+      <ul>
+        <li>
+          Check the <a href="../compliance.html">Compliance page</a> for the feature causing
+          trouble. It may contain the necessary information to understand and resolve the problem.
+        </li>
+        <li>
+          Not all 0.20.5 output formats are supported. PDF and Postscript should be fully supported.
+          See <a href="output.html">Output Targets</a> for a more complete description.
+        </li>
+        <li>
+          As stated above empty table cells <code>&lt;fo:table-cell&gt;&lt;/fo:table-cell&gt;</code>
+          are not allowed.
+        </li>
+        <li>
+          0.20.5 is not XSL-FO compliant with respect to sizing images or <code>instream-foreign-object</code>
+          objects. If images or SVGs are sized differently in your outputs with the new FOP version
+          check <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37136">Bug 37136</a>
+          as it contains some hints on what to.
+        </li>
+        <li>
+          The <code>fox:outline</code> extension not implemented in this version anymore. 
+          It has been superseded by the new bookmark elements from XSL-FO 1.1.
+        </li>
+        <li>
+          The <code>fox:destination</code> extension is also not implemented in this version
+          although it may be added in the future. See also
+          <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37157">Bug 37157</a>.
+        </li>
+      </ul>
+    </section>
+  </body>
+</document>

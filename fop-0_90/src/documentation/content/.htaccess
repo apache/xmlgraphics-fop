@@ -1,0 +1,20 @@
+# redirect moved files
+RedirectMatch Permanent ^/fop/anttask(.*) http://xmlgraphics.apache.org/fop/0.20.5/anttask$1
+RedirectMatch Permanent ^/fop/compiling(.*) http://xmlgraphics.apache.org/fop/0.20.5/compiling$1
+RedirectMatch Permanent ^/fop/configuration(.*) http://xmlgraphics.apache.org/fop/0.20.5/configuration$1
+RedirectMatch Permanent ^/fop/embedding(.*) http://xmlgraphics.apache.org/fop/0.20.5/embedding$1
+RedirectMatch Permanent ^/fop/extensions(.*) http://xmlgraphics.apache.org/fop/0.20.5/extensions$1
+RedirectMatch Permanent ^/fop/fonts(.*) http://xmlgraphics.apache.org/fop/0.20.5/fonts$1
+RedirectMatch Permanent ^/fop/graphics(.*) http://xmlgraphics.apache.org/fop/0.20.5/graphics$1
+RedirectMatch Permanent ^/fop/hyphenation(.*) http://xmlgraphics.apache.org/fop/0.20.5/hyphenation$1
+RedirectMatch Permanent ^/fop/output(.*) http://xmlgraphics.apache.org/fop/0.20.5/output$1
+RedirectMatch Permanent ^/fop/pdfencryption(.*) http://xmlgraphics.apache.org/fop/0.20.5/pdfencryption$1
+RedirectMatch Permanent ^/fop/running(.*) http://xmlgraphics.apache.org/fop/0.20.5/running$1
+RedirectMatch Permanent ^/fop/servlets(.*) http://xmlgraphics.apache.org/fop/0.20.5/servlets$1
+
+# redirect to versioned documentation
+Redirect Temp /fop/stable http://xmlgraphics.apache.org/fop/0.20.5
+Redirect Temp /fop/current http://xmlgraphics.apache.org/fop/0.20.5
+Redirect Temp /fop/0.90alpha1 http://xmlgraphics.apache.org/fop/0.90
+Redirect Temp /fop/unstable http://xmlgraphics.apache.org/fop/0.90
+Redirect Temp /fop/latest http://xmlgraphics.apache.org/fop/0.90
