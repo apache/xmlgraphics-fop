@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.xmlgraphics</groupId>
+  <artifactId>fop</artifactId>
+  <packaging>jar</packaging>
+  <name>Apache FOP</name>
+  <version>@version@</version>
+  <url>http://xmlgraphics.apache.org/fop/</url>
+  <description>Apache FOP (Formatting Objects Processor) is the world's first print formatter driven by XSL formatting objects (XSL-FO) and the world's first output independent formatter. It is a Java application that reads a formatting object (FO) tree and renders the resulting pages to a specified output. Output formats currently supported include PDF, PCL, PS, AFP, TIFF, PNG, SVG, XML (area tree representation), Print, AWT and TXT. The primary output target is PDF.</description>
+  <inceptionYear>1999</inceptionYear>
+  <mailingLists>
+    <mailingList>
+      <name>FOP Users List</name>
+      <subscribe>fop-users-subscribe@xmlgraphics.apache.org</subscribe>
+      <unsubscribe>fop-users-unsubscribe@xmlgraphics.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/</archive>
+    </mailingList>
+    <mailingList>
+      <name>FOP Developer List</name>
+      <subscribe>fop-dev-subscribe@xmlgraphics.apache.org</subscribe>
+      <unsubscribe>fop-dev-unsubscribe@xmlgraphics.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-dev/</archive>
+    </mailingList>
+    <mailingList>
+      <name>FOP Commit List</name>
+      <subscribe>fop-commits-subscribe@xmlgraphics.apache.org</subscribe>
+      <unsubscribe>fop-commits-unsubscribe@xmlgraphics.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-commits/</archive>
+    </mailingList>
+  </mailingLists>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/?root=Apache-SVN</url>
+  </scm>
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org/</url>
+  </organization>
+  <dependencies>
+    <!-- XML Graphics -->
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>xmlgraphics-commons</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>batik</groupId>
+      <artifactId>batik-svg-dom</artifactId>
+      <version>1.6-1</version>
+    </dependency>
+    <dependency>
+      <groupId>batik</groupId>
+      <artifactId>batik-bridge</artifactId>
+      <version>1.6-1</version>
+    </dependency>
+    <dependency>
+      <groupId>batik</groupId>
+      <artifactId>batik-awt-util</artifactId>
+      <version>1.6-1</version>
+    </dependency>
+    <dependency>
+      <groupId>batik</groupId>
+      <artifactId>batik-gvt</artifactId>
+      <version>1.6-1</version>
+    </dependency>
+    <dependency>
+      <groupId>batik</groupId>
+      <artifactId>batik-transcoder</artifactId>
+      <version>1.6-1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>fop</groupId>
+          <artifactId>fop</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>batik</groupId>
+      <artifactId>batik-extension</artifactId>
+      <version>1.6-1</version>
+    </dependency>
+    <dependency>
+      <groupId>batik</groupId>
+      <artifactId>batik-ext</artifactId>
+      <version>1.6-1</version>
+    </dependency>
+    <!-- other dependencies -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.avalon.framework</groupId>
+      <artifactId>avalon-framework-api</artifactId>
+      <version>4.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.avalon.framework</groupId>
+      <artifactId>avalon-framework-impl</artifactId>
+      <version>4.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.3</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>

@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--
+This is the publishing file for ForrestBot.
+
+Running "ant -f publish.xml" will build the FOP site and deploy it using SCP on xmlgraphics.apache.org/fop.
+
+$Id$
+-->
+<project name="forrest-docs" default="main">
+
+  <property name="build.work-dir" location="./build/forrest/work"/>
+  <property name="build.log-dir" location="./build/forrest/log"/>
+
+  <property name="getsrc.local.root-dir" location="."/>
+  <!--property name="getsrc.svn.url" value="http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk"/-->
+  <target name="getsrc" depends="getsrc.clean-workdir, getsrc.local"/>
+  
+  <!-- create this secret file to be an ant project (not stored in CVS or SVN)
+    that sets deploy.scp.user and deploy.scp.keyfile properties.
+    See forrest/etc/publishing_our_site.txt
+
+    Here's an example of such a file (place it one directory above the checkout directory):
+    <project>
+      <property name="deploy.scp.user" value="johndoe"/>
+      <property name="deploy.scp.keyfile" value="/path/to/my/private/key"/>
+    </project>
+   -->
+  <import file="../deploy.settings" optional="true"/>
+
+  <property name="deploy.scp.host" value="people.apache.org"/>
+  <property name="deploy.scp.dest" value="${deploy.scp.user}@${deploy.scp.host}:/www/xmlgraphics.apache.org/fop"/>
+  <target name="deploy.scp-alt" unless="build.failed" description="FB: Deploy to a remote location via scp">
+    <if>
+      <not><isset property="deploy.scp.passphrase"/></not>
+      <then>
+        <input addproperty="deploy.scp.passphrase" message="Enter passphrase for your private key for scp to ${deploy.scp.dest}:"/>
+      </then>
+    </if>
+    <scp todir="${deploy.scp.dest}" keyfile="${deploy.scp.keyfile}" passphrase="${deploy.scp.passphrase}">
+     <fileset dir="${build.site-dir}"/>
+    </scp>
+  </target>
+  <target name="deploy.remote.fix.perms" depends="deploy.scp-alt" unless="build.failed" description="Fixes group permissions on newly uploaded files">
+    <if>
+      <not><isset property="deploy.scp.passphrase"/></not>
+      <then>
+        <input addproperty="deploy.scp.passphrase" message="Enter passphrase for your private key for scp to ${deploy.scp.dest}:"/>
+      </then>
+    </if>
+    <!-- this is necessary because new files are not group writable -->
+    <sshexec host="${deploy.scp.host}" username="${deploy.scp.user}" 
+        keyfile="${deploy.scp.keyfile}" passphrase="${deploy.scp.passphrase}"
+        command="cd /www/xmlgraphics.apache.org/fop;chgrp -R xmlgraphics *;chmod -R g+rw *"/>
+  </target>
+  <target name="deploy" depends="deploy.scp-alt, deploy.remote.fix.perms"/>
+
+  <property environment="env"/>
+  <import file="${env.FORREST_HOME}/tools/forrestbot/core/forrestbot.xml"/>
+</project>

@@ -1,0 +1,1817 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<font-metrics type="TYPE0">
+  <font-name>Verdana</font-name>
+  <embed/>
+  <cap-height>727</cap-height>
+  <x-height>545</x-height>
+  <ascender>764</ascender>
+  <descender>-206</descender>
+  <bbox>
+    <left>-49</left>
+    <bottom>-206</bottom>
+    <right>1446</right>
+    <top>1000</top>
+  </bbox>
+  <flags>33</flags>
+  <stemv>0</stemv>
+  <italicangle>0</italicangle>
+  <subtype>TYPE0</subtype>
+  <multibyte-extras>
+    <cid-type>CIDFontType2</cid-type>
+    <default-width>0</default-width>
+    <bfranges>
+      <bf us="32" ue="126" gi="3"/>
+      <bf us="160" ue="160" gi="3"/>
+      <bf us="161" ue="161" gi="163"/>
+      <bf us="162" ue="163" gi="132"/>
+      <bf us="164" ue="164" gi="892"/>
+      <bf us="165" ue="165" gi="150"/>
+      <bf us="166" ue="166" gi="230"/>
+      <bf us="167" ue="167" gi="134"/>
+      <bf us="168" ue="168" gi="142"/>
+      <bf us="169" ue="169" gi="139"/>
+      <bf us="170" ue="170" gi="157"/>
+      <bf us="171" ue="171" gi="169"/>
+      <bf us="172" ue="172" gi="164"/>
+      <bf us="173" ue="173" gi="16"/>
+      <bf us="174" ue="174" gi="138"/>
+      <bf us="175" ue="175" gi="256"/>
+      <bf us="176" ue="176" gi="131"/>
+      <bf us="177" ue="177" gi="147"/>
+      <bf us="178" ue="179" gi="240"/>
+      <bf us="180" ue="180" gi="141"/>
+      <bf us="181" ue="181" gi="151"/>
+      <bf us="182" ue="182" gi="136"/>
+      <bf us="183" ue="183" gi="257"/>
+      <bf us="184" ue="184" gi="220"/>
+      <bf us="185" ue="185" gi="239"/>
+      <bf us="186" ue="186" gi="158"/>
+      <bf us="187" ue="187" gi="170"/>
+      <bf us="188" ue="188" gi="243"/>
+      <bf us="189" ue="189" gi="242"/>
+      <bf us="190" ue="190" gi="244"/>
+      <bf us="191" ue="191" gi="162"/>
+      <bf us="192" ue="192" gi="172"/>
+      <bf us="193" ue="193" gi="200"/>
+      <bf us="194" ue="194" gi="198"/>
+      <bf us="195" ue="195" gi="173"/>
+      <bf us="196" ue="197" gi="98"/>
+      <bf us="198" ue="198" gi="144"/>
+      <bf us="199" ue="199" gi="100"/>
+      <bf us="200" ue="200" gi="202"/>
+      <bf us="201" ue="201" gi="101"/>
+      <bf us="202" ue="202" gi="199"/>
+      <bf us="203" ue="203" gi="201"/>
+      <bf us="204" ue="204" gi="206"/>
+      <bf us="205" ue="207" gi="203"/>
+      <bf us="208" ue="208" gi="231"/>
+      <bf us="209" ue="209" gi="102"/>
+      <bf us="210" ue="210" gi="209"/>
+      <bf us="211" ue="212" gi="207"/>
+      <bf us="213" ue="213" gi="174"/>
+      <bf us="214" ue="214" gi="103"/>
+      <bf us="215" ue="215" gi="238"/>
+      <bf us="216" ue="216" gi="145"/>
+      <bf us="217" ue="217" gi="212"/>
+      <bf us="218" ue="219" gi="210"/>
+      <bf us="220" ue="220" gi="104"/>
+      <bf us="221" ue="221" gi="233"/>
+      <bf us="222" ue="222" gi="235"/>
+      <bf us="223" ue="223" gi="137"/>
+      <bf us="224" ue="224" gi="106"/>
+      <bf us="225" ue="225" gi="105"/>
+      <bf us="226" ue="226" gi="107"/>
+      <bf us="227" ue="227" gi="109"/>
+      <bf us="228" ue="228" gi="108"/>
+      <bf us="229" ue="229" gi="110"/>
+      <bf us="230" ue="230" gi="160"/>
+      <bf us="231" ue="231" gi="111"/>
+      <bf us="232" ue="232" gi="113"/>
+      <bf us="233" ue="233" gi="112"/>
+      <bf us="234" ue="235" gi="114"/>
+      <bf us="236" ue="236" gi="117"/>
+      <bf us="237" ue="237" gi="116"/>
+      <bf us="238" ue="239" gi="118"/>
+      <bf us="240" ue="240" gi="232"/>
+      <bf us="241" ue="241" gi="120"/>
+      <bf us="242" ue="242" gi="122"/>
+      <bf us="243" ue="243" gi="121"/>
+      <bf us="244" ue="244" gi="123"/>
+      <bf us="245" ue="245" gi="125"/>
+      <bf us="246" ue="246" gi="124"/>
+      <bf us="247" ue="247" gi="183"/>
+      <bf us="248" ue="248" gi="161"/>
+      <bf us="249" ue="249" gi="127"/>
+      <bf us="250" ue="250" gi="126"/>
+      <bf us="251" ue="252" gi="128"/>
+      <bf us="253" ue="253" gi="234"/>
+      <bf us="254" ue="254" gi="236"/>
+      <bf us="255" ue="255" gi="185"/>
+      <bf us="256" ue="257" gi="324"/>
+      <bf us="258" ue="261" gi="258"/>
+      <bf us="262" ue="263" gi="251"/>
+      <bf us="264" ue="267" gi="326"/>
+      <bf us="268" ue="269" gi="253"/>
+      <bf us="270" ue="272" gi="262"/>
+      <bf us="273" ue="273" gi="255"/>
+      <bf us="274" ue="279" gi="330"/>
+      <bf us="280" ue="283" gi="265"/>
+      <bf us="284" ue="285" gi="336"/>
+      <bf us="286" ue="287" gi="246"/>
+      <bf us="288" ue="303" gi="338"/>
+      <bf us="304" ue="304" gi="248"/>
+      <bf us="305" ue="305" gi="213"/>
+      <bf us="306" ue="307" gi="312"/>
+      <bf us="308" ue="312" gi="354"/>
+      <bf us="313" ue="314" gi="269"/>
+      <bf us="315" ue="316" gi="359"/>
+      <bf us="317" ue="320" gi="271"/>
+      <bf us="321" ue="322" gi="224"/>
+      <bf us="323" ue="324" gi="275"/>
+      <bf us="325" ue="326" gi="361"/>
+      <bf us="327" ue="328" gi="277"/>
+      <bf us="329" ue="329" gi="314"/>
+      <bf us="330" ue="335" gi="363"/>
+      <bf us="336" ue="337" gi="279"/>
+      <bf us="338" ue="339" gi="175"/>
+      <bf us="340" ue="341" gi="281"/>
+      <bf us="342" ue="343" gi="369"/>
+      <bf us="344" ue="347" gi="283"/>
+      <bf us="348" ue="349" gi="371"/>
+      <bf us="350" ue="351" gi="249"/>
+      <bf us="352" ue="353" gi="226"/>
+      <bf us="354" ue="357" gi="287"/>
+      <bf us="358" ue="365" gi="373"/>
+      <bf us="366" ue="369" gi="291"/>
+      <bf us="370" ue="375" gi="381"/>
+      <bf us="376" ue="376" gi="186"/>
+      <bf us="377" ue="380" gi="295"/>
+      <bf us="381" ue="382" gi="228"/>
+      <bf us="383" ue="383" gi="387"/>
+      <bf us="402" ue="402" gi="166"/>
+      <bf us="416" ue="417" gi="582"/>
+      <bf us="431" ue="432" gi="584"/>
+      <bf us="506" ue="511" gi="388"/>
+      <bf us="710" ue="710" gi="214"/>
+      <bf us="711" ue="711" gi="223"/>
+      <bf us="713" ue="713" gi="216"/>
+      <bf us="728" ue="730" gi="217"/>
+      <bf us="731" ue="731" gi="222"/>
+      <bf us="732" ue="732" gi="215"/>
+      <bf us="733" ue="733" gi="221"/>
+      <bf us="768" ue="769" gi="588"/>
+      <bf us="771" ue="771" gi="891"/>
+      <bf us="777" ue="777" gi="586"/>
+      <bf us="803" ue="803" gi="587"/>
+      <bf us="894" ue="894" gi="30"/>
+      <bf us="900" ue="902" gi="413"/>
+      <bf us="903" ue="903" gi="394"/>
+      <bf us="904" ue="906" gi="416"/>
+      <bf us="908" ue="908" gi="419"/>
+      <bf us="910" ue="914" gi="420"/>
+      <bf us="915" ue="915" gi="299"/>
+      <bf us="916" ue="919" gi="425"/>
+      <bf us="920" ue="920" gi="300"/>
+      <bf us="921" ue="929" gi="429"/>
+      <bf us="931" ue="933" gi="438"/>
+      <bf us="934" ue="934" gi="301"/>
+      <bf us="935" ue="944" gi="441"/>
+      <bf us="945" ue="945" gi="302"/>
+      <bf us="946" ue="947" gi="451"/>
+      <bf us="948" ue="949" gi="303"/>
+      <bf us="950" ue="959" gi="453"/>
+      <bf us="960" ue="960" gi="570"/>
+      <bf us="961" ue="962" gi="463"/>
+      <bf us="963" ue="964" gi="305"/>
+      <bf us="965" ue="965" gi="465"/>
+      <bf us="966" ue="966" gi="307"/>
+      <bf us="967" ue="974" gi="466"/>
+      <bf us="1025" ue="1036" gi="474"/>
+      <bf us="1038" ue="1103" gi="486"/>
+      <bf us="1105" ue="1116" gi="552"/>
+      <bf us="1118" ue="1119" gi="564"/>
+      <bf us="1168" ue="1169" gi="566"/>
+      <bf us="7808" ue="7813" gi="395"/>
+      <bf us="7840" ue="7883" gi="605"/>
+      <bf us="7884" ue="7921" gi="844"/>
+      <bf us="7922" ue="7923" gi="401"/>
+      <bf us="7924" ue="7929" gi="884"/>
+      <bf us="8211" ue="8212" gi="177"/>
+      <bf us="8213" ue="8213" gi="568"/>
+      <bf us="8215" ue="8215" gi="308"/>
+      <bf us="8216" ue="8217" gi="181"/>
+      <bf us="8218" ue="8218" gi="195"/>
+      <bf us="8219" ue="8219" gi="403"/>
+      <bf us="8220" ue="8221" gi="179"/>
+      <bf us="8222" ue="8222" gi="196"/>
+      <bf us="8224" ue="8224" gi="130"/>
+      <bf us="8225" ue="8225" gi="193"/>
+      <bf us="8226" ue="8226" gi="135"/>
+      <bf us="8230" ue="8230" gi="171"/>
+      <bf us="8240" ue="8240" gi="197"/>
+      <bf us="8242" ue="8243" gi="315"/>
+      <bf us="8249" ue="8250" gi="189"/>
+      <bf us="8252" ue="8252" gi="309"/>
+      <bf us="8254" ue="8254" gi="404"/>
+      <bf us="8260" ue="8260" gi="187"/>
+      <bf us="8319" ue="8319" gi="310"/>
+      <bf us="8355" ue="8355" gi="245"/>
+      <bf us="8356" ue="8356" gi="405"/>
+      <bf us="8359" ue="8359" gi="311"/>
+      <bf us="8363" ue="8363" gi="890"/>
+      <bf us="8364" ue="8364" gi="188"/>
+      <bf us="8453" ue="8453" gi="317"/>
+      <bf us="8467" ue="8467" gi="318"/>
+      <bf us="8470" ue="8470" gi="569"/>
+      <bf us="8482" ue="8482" gi="140"/>
+      <bf us="8486" ue="8486" gi="159"/>
+      <bf us="8494" ue="8494" gi="406"/>
+      <bf us="8539" ue="8542" gi="407"/>
+      <bf us="8706" ue="8706" gi="152"/>
+      <bf us="8710" ue="8710" gi="168"/>
+      <bf us="8719" ue="8719" gi="154"/>
+      <bf us="8721" ue="8721" gi="153"/>
+      <bf us="8722" ue="8722" gi="237"/>
+      <bf us="8725" ue="8725" gi="187"/>
+      <bf us="8729" ue="8729" gi="194"/>
+      <bf us="8730" ue="8730" gi="165"/>
+      <bf us="8734" ue="8734" gi="146"/>
+      <bf us="8747" ue="8747" gi="156"/>
+      <bf us="8776" ue="8776" gi="167"/>
+      <bf us="8800" ue="8800" gi="143"/>
+      <bf us="8804" ue="8805" gi="148"/>
+      <bf us="9633" ue="9633" gi="319"/>
+      <bf us="9642" ue="9643" gi="320"/>
+      <bf us="9674" ue="9674" gi="184"/>
+      <bf us="9679" ue="9679" gi="322"/>
+      <bf us="9702" ue="9702" gi="323"/>
+      <bf us="61441" ue="61442" gi="191"/>
+      <bf us="61444" ue="61445" gi="411"/>
+      <bf us="61446" ue="61453" gi="571"/>
+      <bf us="64257" ue="64258" gi="191"/>
+      <bf us="65535" ue="65535" gi="0"/>
+    </bfranges>
+    <cid-widths start-index="0">
+      <wx w="1000"/>
+      <wx w="0"/>
+      <wx w="351"/>
+      <wx w="351"/>
+      <wx w="393"/>
+      <wx w="458"/>
+      <wx w="818"/>
+      <wx w="635"/>
+      <wx w="1076"/>
+      <wx w="726"/>
+      <wx w="268"/>
+      <wx w="454"/>
+      <wx w="454"/>
+      <wx w="635"/>
+      <wx w="818"/>
+      <wx w="363"/>
+      <wx w="454"/>
+      <wx w="363"/>
+      <wx w="454"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="454"/>
+      <wx w="454"/>
+      <wx w="818"/>
+      <wx w="818"/>
+      <wx w="818"/>
+      <wx w="545"/>
+      <wx w="1000"/>
+      <wx w="683"/>
+      <wx w="685"/>
+      <wx w="698"/>
+      <wx w="770"/>
+      <wx w="632"/>
+      <wx w="574"/>
+      <wx w="775"/>
+      <wx w="751"/>
+      <wx w="420"/>
+      <wx w="454"/>
+      <wx w="692"/>
+      <wx w="556"/>
+      <wx w="842"/>
+      <wx w="748"/>
+      <wx w="787"/>
+      <wx w="603"/>
+      <wx w="787"/>
+      <wx w="695"/>
+      <wx w="683"/>
+      <wx w="616"/>
+      <wx w="731"/>
+      <wx w="683"/>
+      <wx w="988"/>
+      <wx w="685"/>
+      <wx w="615"/>
+      <wx w="685"/>
+      <wx w="454"/>
+      <wx w="454"/>
+      <wx w="454"/>
+      <wx w="818"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="600"/>
+      <wx w="623"/>
+      <wx w="520"/>
+      <wx w="623"/>
+      <wx w="595"/>
+      <wx w="351"/>
+      <wx w="623"/>
+      <wx w="632"/>
+      <wx w="274"/>
+      <wx w="344"/>
+      <wx w="591"/>
+      <wx w="274"/>
+      <wx w="972"/>
+      <wx w="632"/>
+      <wx w="606"/>
+      <wx w="623"/>
+      <wx w="623"/>
+      <wx w="426"/>
+      <wx w="520"/>
+      <wx w="394"/>
+      <wx w="632"/>
+      <wx w="591"/>
+      <wx w="818"/>
+      <wx w="591"/>
+      <wx w="591"/>
+      <wx w="525"/>
+      <wx w="634"/>
+      <wx w="454"/>
+      <wx w="634"/>
+      <wx w="818"/>
+      <wx w="683"/>
+      <wx w="683"/>
+      <wx w="698"/>
+      <wx w="632"/>
+      <wx w="748"/>
+      <wx w="787"/>
+      <wx w="731"/>
+      <wx w="600"/>
+      <wx w="600"/>
+      <wx w="600"/>
+      <wx w="600"/>
+      <wx w="600"/>
+      <wx w="600"/>
+      <wx w="520"/>
+      <wx w="595"/>
+      <wx w="595"/>
+      <wx w="595"/>
+      <wx w="595"/>
+      <wx w="274"/>
+      <wx w="274"/>
+      <wx w="274"/>
+      <wx w="274"/>
+      <wx w="632"/>
+      <wx w="606"/>
+      <wx w="606"/>
+      <wx w="606"/>
+      <wx w="606"/>
+      <wx w="606"/>
+      <wx w="632"/>
+      <wx w="632"/>
+      <wx w="632"/>
+      <wx w="632"/>
+      <wx w="635"/>
+      <wx w="541"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="545"/>
+      <wx w="635"/>
+      <wx w="620"/>
+      <wx w="1000"/>
+      <wx w="1000"/>
+      <wx w="976"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="818"/>
+      <wx w="984"/>
+      <wx w="787"/>
+      <wx w="1000"/>
+      <wx w="818"/>
+      <wx w="818"/>
+      <wx w="818"/>
+      <wx w="635"/>
+      <wx w="641"/>
+      <wx w="635"/>
+      <wx w="727"/>
+      <wx w="818"/>
+      <wx w="707"/>
+      <wx w="635"/>
+      <wx w="545"/>
+      <wx w="545"/>
+      <wx w="818"/>
+      <wx w="955"/>
+      <wx w="606"/>
+      <wx w="545"/>
+      <wx w="393"/>
+      <wx w="818"/>
+      <wx w="818"/>
+      <wx w="635"/>
+      <wx w="818"/>
+      <wx w="727"/>
+      <wx w="644"/>
+      <wx w="644"/>
+      <wx w="818"/>
+      <wx w="683"/>
+      <wx w="683"/>
+      <wx w="787"/>
+      <wx w="1069"/>
+      <wx w="981"/>
+      <wx w="635"/>
+      <wx w="1000"/>
+      <wx w="458"/>
+      <wx w="458"/>
+      <wx w="268"/>
+      <wx w="268"/>
+      <wx w="818"/>
+      <wx w="818"/>
+      <wx w="591"/>
+      <wx w="615"/>
+      <wx w="361"/>
+      <wx w="635"/>
+      <wx w="454"/>
+      <wx w="454"/>
+      <wx w="625"/>
+      <wx w="625"/>
+      <wx w="635"/>
+      <wx w="363"/>
+      <wx w="268"/>
+      <wx w="458"/>
+      <wx w="1521"/>
+      <wx w="683"/>
+      <wx w="632"/>
+      <wx w="683"/>
+      <wx w="632"/>
+      <wx w="632"/>
+      <wx w="420"/>
+      <wx w="420"/>
+      <wx w="420"/>
+      <wx w="420"/>
+      <wx w="787"/>
+      <wx w="787"/>
+      <wx w="787"/>
+      <wx w="731"/>
+      <wx w="731"/>
+      <wx w="731"/>
+      <wx w="274"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="561"/>
+      <wx w="284"/>
+      <wx w="683"/>
+      <wx w="520"/>
+      <wx w="685"/>
+      <wx w="525"/>
+      <wx w="454"/>
+      <wx w="775"/>
+      <wx w="611"/>
+      <wx w="615"/>
+      <wx w="591"/>
+      <wx w="605"/>
+      <wx w="623"/>
+      <wx w="818"/>
+      <wx w="818"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="1000"/>
+      <wx w="1000"/>
+      <wx w="1000"/>
+      <wx w="635"/>
+      <wx w="775"/>
+      <wx w="623"/>
+      <wx w="420"/>
+      <wx w="683"/>
+      <wx w="520"/>
+      <wx w="698"/>
+      <wx w="520"/>
+      <wx w="698"/>
+      <wx w="520"/>
+      <wx w="623"/>
+      <wx w="635"/>
+      <wx w="363"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="770"/>
+      <wx w="647"/>
+      <wx w="775"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="556"/>
+      <wx w="274"/>
+      <wx w="556"/>
+      <wx w="295"/>
+      <wx w="556"/>
+      <wx w="458"/>
+      <wx w="748"/>
+      <wx w="632"/>
+      <wx w="748"/>
+      <wx w="632"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="695"/>
+      <wx w="426"/>
+      <wx w="695"/>
+      <wx w="426"/>
+      <wx w="683"/>
+      <wx w="520"/>
+      <wx w="616"/>
+      <wx w="394"/>
+      <wx w="616"/>
+      <wx w="394"/>
+      <wx w="731"/>
+      <wx w="632"/>
+      <wx w="731"/>
+      <wx w="632"/>
+      <wx w="685"/>
+      <wx w="525"/>
+      <wx w="685"/>
+      <wx w="525"/>
+      <wx w="566"/>
+      <wx w="787"/>
+      <wx w="818"/>
+      <wx w="623"/>
+      <wx w="607"/>
+      <wx w="512"/>
+      <wx w="630"/>
+      <wx w="496"/>
+      <wx w="790"/>
+      <wx w="635"/>
+      <wx w="624"/>
+      <wx w="545"/>
+      <wx w="1163"/>
+      <wx w="870"/>
+      <wx w="613"/>
+      <wx w="730"/>
+      <wx w="361"/>
+      <wx w="557"/>
+      <wx w="1076"/>
+      <wx w="323"/>
+      <wx w="604"/>
+      <wx w="354"/>
+      <wx w="354"/>
+      <wx w="604"/>
+      <wx w="354"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="698"/>
+      <wx w="520"/>
+      <wx w="698"/>
+      <wx w="520"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="775"/>
+      <wx w="623"/>
+      <wx w="775"/>
+      <wx w="623"/>
+      <wx w="775"/>
+      <wx w="623"/>
+      <wx w="751"/>
+      <wx w="632"/>
+      <wx w="751"/>
+      <wx w="632"/>
+      <wx w="420"/>
+      <wx w="274"/>
+      <wx w="420"/>
+      <wx w="274"/>
+      <wx w="420"/>
+      <wx w="274"/>
+      <wx w="420"/>
+      <wx w="274"/>
+      <wx w="454"/>
+      <wx w="344"/>
+      <wx w="692"/>
+      <wx w="591"/>
+      <wx w="591"/>
+      <wx w="556"/>
+      <wx w="274"/>
+      <wx w="748"/>
+      <wx w="632"/>
+      <wx w="748"/>
+      <wx w="632"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="695"/>
+      <wx w="426"/>
+      <wx w="683"/>
+      <wx w="520"/>
+      <wx w="616"/>
+      <wx w="394"/>
+      <wx w="731"/>
+      <wx w="632"/>
+      <wx w="731"/>
+      <wx w="632"/>
+      <wx w="731"/>
+      <wx w="630"/>
+      <wx w="731"/>
+      <wx w="630"/>
+      <wx w="988"/>
+      <wx w="818"/>
+      <wx w="615"/>
+      <wx w="591"/>
+      <wx w="300"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="984"/>
+      <wx w="955"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="454"/>
+      <wx w="988"/>
+      <wx w="818"/>
+      <wx w="988"/>
+      <wx w="818"/>
+      <wx w="988"/>
+      <wx w="818"/>
+      <wx w="615"/>
+      <wx w="591"/>
+      <wx w="268"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="717"/>
+      <wx w="1000"/>
+      <wx w="1000"/>
+      <wx w="1000"/>
+      <wx w="1000"/>
+      <wx w="210"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="683"/>
+      <wx w="750"/>
+      <wx w="870"/>
+      <wx w="539"/>
+      <wx w="880"/>
+      <wx w="753"/>
+      <wx w="907"/>
+      <wx w="274"/>
+      <wx w="683"/>
+      <wx w="685"/>
+      <wx w="703"/>
+      <wx w="632"/>
+      <wx w="685"/>
+      <wx w="751"/>
+      <wx w="420"/>
+      <wx w="692"/>
+      <wx w="685"/>
+      <wx w="842"/>
+      <wx w="748"/>
+      <wx w="648"/>
+      <wx w="787"/>
+      <wx w="751"/>
+      <wx w="603"/>
+      <wx w="672"/>
+      <wx w="616"/>
+      <wx w="615"/>
+      <wx w="685"/>
+      <wx w="870"/>
+      <wx w="818"/>
+      <wx w="420"/>
+      <wx w="615"/>
+      <wx w="623"/>
+      <wx w="512"/>
+      <wx w="632"/>
+      <wx w="274"/>
+      <wx w="631"/>
+      <wx w="620"/>
+      <wx w="591"/>
+      <wx w="457"/>
+      <wx w="632"/>
+      <wx w="624"/>
+      <wx w="274"/>
+      <wx w="591"/>
+      <wx w="591"/>
+      <wx w="639"/>
+      <wx w="591"/>
+      <wx w="502"/>
+      <wx w="606"/>
+      <wx w="625"/>
+      <wx w="507"/>
+      <wx w="631"/>
+      <wx w="589"/>
+      <wx w="821"/>
+      <wx w="813"/>
+      <wx w="274"/>
+      <wx w="631"/>
+      <wx w="606"/>
+      <wx w="631"/>
+      <wx w="813"/>
+      <wx w="632"/>
+      <wx w="792"/>
+      <wx w="566"/>
+      <wx w="700"/>
+      <wx w="683"/>
+      <wx w="420"/>
+      <wx w="420"/>
+      <wx w="454"/>
+      <wx w="1118"/>
+      <wx w="1103"/>
+      <wx w="817"/>
+      <wx w="692"/>
+      <wx w="615"/>
+      <wx w="751"/>
+      <wx w="683"/>
+      <wx w="685"/>
+      <wx w="685"/>
+      <wx w="566"/>
+      <wx w="745"/>
+      <wx w="632"/>
+      <wx w="973"/>
+      <wx w="615"/>
+      <wx w="750"/>
+      <wx w="750"/>
+      <wx w="692"/>
+      <wx w="734"/>
+      <wx w="842"/>
+      <wx w="751"/>
+      <wx w="787"/>
+      <wx w="751"/>
+      <wx w="603"/>
+      <wx w="698"/>
+      <wx w="616"/>
+      <wx w="615"/>
+      <wx w="818"/>
+      <wx w="685"/>
+      <wx w="761"/>
+      <wx w="711"/>
+      <wx w="1030"/>
+      <wx w="1044"/>
+      <wx w="783"/>
+      <wx w="920"/>
+      <wx w="680"/>
+      <wx w="701"/>
+      <wx w="1034"/>
+      <wx w="706"/>
+      <wx w="600"/>
+      <wx w="614"/>
+      <wx w="594"/>
+      <wx w="471"/>
+      <wx w="621"/>
+      <wx w="595"/>
+      <wx w="797"/>
+      <wx w="524"/>
+      <wx w="640"/>
+      <wx w="640"/>
+      <wx w="591"/>
+      <wx w="620"/>
+      <wx w="696"/>
+      <wx w="637"/>
+      <wx w="606"/>
+      <wx w="637"/>
+      <wx w="623"/>
+      <wx w="534"/>
+      <wx w="496"/>
+      <wx w="591"/>
+      <wx w="840"/>
+      <wx w="591"/>
+      <wx w="644"/>
+      <wx w="605"/>
+      <wx w="875"/>
+      <wx w="887"/>
+      <wx w="640"/>
+      <wx w="794"/>
+      <wx w="570"/>
+      <wx w="546"/>
+      <wx w="838"/>
+      <wx w="599"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="471"/>
+      <wx w="546"/>
+      <wx w="520"/>
+      <wx w="274"/>
+      <wx w="274"/>
+      <wx w="344"/>
+      <wx w="914"/>
+      <wx w="914"/>
+      <wx w="632"/>
+      <wx w="591"/>
+      <wx w="591"/>
+      <wx w="637"/>
+      <wx w="566"/>
+      <wx w="471"/>
+      <wx w="1000"/>
+      <wx w="1171"/>
+      <wx w="637"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="806"/>
+      <wx w="606"/>
+      <wx w="756"/>
+      <wx w="659"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="635"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="683"/>
+      <wx w="600"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="632"/>
+      <wx w="595"/>
+      <wx w="420"/>
+      <wx w="274"/>
+      <wx w="420"/>
+      <wx w="274"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="787"/>
+      <wx w="606"/>
+      <wx w="806"/>
+      <wx w="606"/>
+      <wx w="806"/>
+      <wx w="606"/>
+      <wx w="806"/>
+      <wx w="606"/>
+      <wx w="806"/>
+      <wx w="606"/>
+      <wx w="806"/>
+      <wx w="606"/>
+      <wx w="731"/>
+      <wx w="632"/>
+      <wx w="731"/>
+      <wx w="632"/>
+      <wx w="756"/>
+      <wx w="659"/>
+      <wx w="756"/>
+      <wx w="659"/>
+      <wx w="756"/>
+      <wx w="659"/>
+      <wx w="756"/>
+      <wx w="659"/>
+      <wx w="756"/>
+      <wx w="659"/>
+      <wx w="615"/>
+      <wx w="591"/>
+      <wx w="615"/>
+      <wx w="591"/>
+      <wx w="615"/>
+      <wx w="591"/>
+      <wx w="615"/>
+      <wx w="591"/>
+      <wx w="623"/>
+      <wx w="0"/>
+      <wx w="635"/>
+    </cid-widths>
+  </multibyte-extras>
+  <kerning kpx1="93">
+    <pair kpx2="111" kern="-4"/>
+    <pair kpx2="178" kern="-9"/>
+    <pair kpx2="177" kern="-9"/>
+    <pair kpx2="16" kern="-9"/>
+    <pair kpx2="84" kern="-4"/>
+    <pair kpx2="82" kern="-5"/>
+    <pair kpx2="74" kern="-4"/>
+    <pair kpx2="72" kern="-5"/>
+    <pair kpx2="71" kern="-4"/>
+    <pair kpx2="70" kern="-4"/>
+    <pair kpx2="161" kern="-5"/>
+  </kerning>
+  <kerning kpx1="92">
+    <pair kpx2="160" kern="-19"/>
+    <pair kpx2="68" kern="-19"/>
+    <pair kpx2="111" kern="-8"/>
+    <pair kpx2="178" kern="-19"/>
+    <pair kpx2="17" kern="-92"/>
+    <pair kpx2="177" kern="-19"/>
+    <pair kpx2="16" kern="-19"/>
+    <pair kpx2="176" kern="-7"/>
+    <pair kpx2="84" kern="-4"/>
+    <pair kpx2="15" kern="-92"/>
+    <pair kpx2="82" kern="-8"/>
+    <pair kpx2="171" kern="-87"/>
+    <pair kpx2="74" kern="-4"/>
+    <pair kpx2="72" kern="-8"/>
+    <pair kpx2="71" kern="-4"/>
+    <pair kpx2="70" kern="-8"/>
+    <pair kpx2="161" kern="-8"/>
+  </kerning>
+  <kerning kpx1="91">
+    <pair kpx2="111" kern="-9"/>
+    <pair kpx2="178" kern="-24"/>
+    <pair kpx2="177" kern="-24"/>
+    <pair kpx2="16" kern="-24"/>
+    <pair kpx2="176" kern="-9"/>
+    <pair kpx2="82" kern="-11"/>
+    <pair kpx2="74" kern="-4"/>
+    <pair kpx2="72" kern="-11"/>
+    <pair kpx2="71" kern="-4"/>
+    <pair kpx2="70" kern="-9"/>
+    <pair kpx2="161" kern="-11"/>
+  </kerning>
+  <kerning kpx1="90">
+    <pair kpx2="171" kern="-34"/>
+    <pair kpx2="160" kern="-9"/>
+    <pair kpx2="17" kern="-34"/>
+    <pair kpx2="16" kern="-9"/>
+    <pair kpx2="15" kern="-34"/>
+    <pair kpx2="178" kern="-9"/>
+    <pair kpx2="68" kern="-9"/>
+    <pair kpx2="177" kern="-9"/>
+  </kerning>
+  <kerning kpx1="89">
+    <pair kpx2="68" kern="-19"/>
+    <pair kpx2="160" kern="-19"/>
+    <pair kpx2="178" kern="-19"/>
+    <pair kpx2="17" kern="-87"/>
+    <pair kpx2="177" kern="-19"/>
+    <pair kpx2="16" kern="-19"/>
+    <pair kpx2="176" kern="-7"/>
+    <pair kpx2="15" kern="-87"/>
+    <pair kpx2="82" kern="-8"/>
+    <pair kpx2="171" kern="-87"/>
+    <pair kpx2="72" kern="-8"/>
+    <pair kpx2="161" kern="-8"/>
+  </kerning>
+  <kerning kpx1="182">
+    <pair kpx2="87" kern="19"/>
+    <pair kpx2="17" kern="-102"/>
+    <pair kpx2="86" kern="-34"/>
+    <pair kpx2="15" kern="-102"/>
+    <pair kpx2="60" kern="53"/>
+    <pair kpx2="36" kern="-48"/>
+    <pair kpx2="58" kern="29"/>
+    <pair kpx2="57" kern="48"/>
+    <pair kpx2="171" kern="-102"/>
+    <pair kpx2="55" kern="53"/>
+    <pair kpx2="144" kern="-48"/>
+  </kerning>
+  <kerning kpx1="87">
+    <pair kpx2="182" kern="9"/>
+    <pair kpx2="16" kern="-19"/>
+    <pair kpx2="180" kern="9"/>
+    <pair kpx2="92" kern="-4"/>
+    <pair kpx2="178" kern="-19"/>
+    <pair kpx2="177" kern="-19"/>
+  </kerning>
+  <kerning kpx1="181">
+    <pair kpx2="36" kern="-48"/>
+    <pair kpx2="144" kern="-48"/>
+  </kerning>
+  <kerning kpx1="180">
+    <pair kpx2="87" kern="19"/>
+    <pair kpx2="17" kern="-102"/>
+    <pair kpx2="86" kern="-34"/>
+    <pair kpx2="15" kern="-102"/>
+    <pair kpx2="60" kern="53"/>
+    <pair kpx2="36" kern="-48"/>
+    <pair kpx2="58" kern="29"/>
+    <pair kpx2="57" kern="48"/>
+    <pair kpx2="171" kern="-102"/>
+    <pair kpx2="55" kern="53"/>
+    <pair kpx2="144" kern="-48"/>
+  </kerning>
+  <kerning kpx1="85">
+    <pair kpx2="68" kern="-17"/>
+    <pair kpx2="160" kern="-19"/>
+    <pair kpx2="182" kern="14"/>
+    <pair kpx2="180" kern="14"/>
+    <pair kpx2="178" kern="-9"/>
+    <pair kpx2="17" kern="-141"/>
+    <pair kpx2="177" kern="-9"/>
+    <pair kpx2="16" kern="-9"/>
+    <pair kpx2="15" kern="-141"/>
+    <pair kpx2="171" kern="-141"/>
+  </kerning>
+  <kerning kpx1="179">
+    <pair kpx2="36" kern="-48"/>
+    <pair kpx2="144" kern="-48"/>
+  </kerning>
+  <kerning kpx1="178">
+    <pair kpx2="93" kern="-19"/>
+    <pair kpx2="92" kern="-19"/>
+    <pair kpx2="45" kern="-48"/>
+    <pair kpx2="44" kern="-14"/>
+    <pair kpx2="91" kern="-24"/>
+    <pair kpx2="90" kern="-9"/>
+    <pair kpx2="89" kern="-19"/>
+    <pair kpx2="36" kern="-24"/>
+    <pair kpx2="68" kern="-9"/>
+    <pair kpx2="160" kern="-9"/>
+    <pair kpx2="61" kern="-4"/>
+    <pair kpx2="60" kern="-68"/>
+    <pair kpx2="59" kern="-39"/>
+    <pair kpx2="58" kern="-24"/>
+    <pair kpx2="57" kern="-24"/>
+    <pair kpx2="55" kern="-73"/>
+    <pair kpx2="54" kern="-9"/>
+    <pair kpx2="144" kern="-24"/>
+  </kerning>
+  <kerning kpx1="83">
+    <pair kpx2="171" kern="-9"/>
+    <pair kpx2="17" kern="-9"/>
+    <pair kpx2="92" kern="-2"/>
+    <pair kpx2="15" kern="-14"/>
+  </kerning>
+  <kerning kpx1="177">
+    <pair kpx2="93" kern="-19"/>
+    <pair kpx2="92" kern="-19"/>
+    <pair kpx2="45" kern="-48"/>
+    <pair kpx2="44" kern="-14"/>
+    <pair kpx2="91" kern="-24"/>
+    <pair kpx2="90" kern="-9"/>
+    <pair kpx2="89" kern="-19"/>
+    <pair kpx2="36" kern="-24"/>
+    <pair kpx2="68" kern="-9"/>
+    <pair kpx2="160" kern="-9"/>
+    <pair kpx2="61" kern="-4"/>
+    <pair kpx2="60" kern="-68"/>
+    <pair kpx2="59" kern="-39"/>
+    <pair kpx2="58" kern="-24"/>
+    <pair kpx2="57" kern="-24"/>
+    <pair kpx2="55" kern="-73"/>
+    <pair kpx2="54" kern="-9"/>
+    <pair kpx2="144" kern="-24"/>
+  </kerning>
+  <kerning kpx1="82">
+    <pair kpx2="171" kern="-9"/>
+    <pair kpx2="17" kern="-9"/>
+    <pair kpx2="92" kern="-7"/>
+    <pair kpx2="15" kern="-14"/>
+    <pair kpx2="91" kern="-9"/>
+    <pair kpx2="89" kern="-7"/>
+  </kerning>
+  <kerning kpx1="81">
+    <pair kpx2="92" kern="-9"/>
+    <pair kpx2="90" kern="-4"/>
+    <pair kpx2="89" kern="-9"/>
+  </kerning>
+  <kerning kpx1="80">
+    <pair kpx2="92" kern="-9"/>
+    <pair kpx2="90" kern="-4"/>
+    <pair kpx2="89" kern="-9"/>
+  </kerning>
+  <kerning kpx1="78">
+    <pair kpx2="161" kern="-9"/>
+    <pair kpx2="72" kern="-9"/>
+    <pair kpx2="82" kern="-9"/>
+    <pair kpx2="16" kern="-48"/>
+    <pair kpx2="178" kern="-48"/>
+    <pair kpx2="177" kern="-48"/>
+    <pair kpx2="176" kern="-9"/>
+  </kerning>
+  <kerning kpx1="171">
+    <pair kpx2="182" kern="-102"/>
+    <pair kpx2="180" kern="-102"/>
+  </kerning>
+  <kerning kpx1="75">
+    <pair kpx2="92" kern="-9"/>
+    <pair kpx2="90" kern="-4"/>
+    <pair kpx2="89" kern="-9"/>
+  </kerning>
+  <kerning kpx1="73">
+    <pair kpx2="182" kern="24"/>
+    <pair kpx2="180" kern="24"/>
+    <pair kpx2="64" kern="48"/>
+    <pair kpx2="178" kern="-24"/>
+    <pair kpx2="63" kern="48"/>
+    <pair kpx2="17" kern="-58"/>
+    <pair kpx2="177" kern="-24"/>
+    <pair kpx2="16" kern="-24"/>
+    <pair kpx2="15" kern="-63"/>
+    <pair kpx2="13" kern="24"/>
+    <pair kpx2="12" kern="48"/>
+    <pair kpx2="34" kern="53"/>
+    <pair kpx2="171" kern="-58"/>
+    <pair kpx2="10" kern="29"/>
+    <pair kpx2="5" kern="29"/>
+    <pair kpx2="96" kern="48"/>
+    <pair kpx2="92" kern="-4"/>
+  </kerning>
+  <kerning kpx1="72">
+    <pair kpx2="55" kern="-68"/>
+  </kerning>
+  <kerning kpx1="70">
+    <pair kpx2="16" kern="-9"/>
+    <pair kpx2="178" kern="-9"/>
+    <pair kpx2="177" kern="-9"/>
+    <pair kpx2="55" kern="-29"/>
+  </kerning>
+  <kerning kpx1="69">
+    <pair kpx2="171" kern="-9"/>
+    <pair kpx2="17" kern="-9"/>
+    <pair kpx2="92" kern="-2"/>
+    <pair kpx2="15" kern="-14"/>
+  </kerning>
+  <kerning kpx1="68">
+    <pair kpx2="92" kern="-7"/>
+    <pair kpx2="90" kern="-4"/>
+    <pair kpx2="89" kern="-7"/>
+  </kerning>
+  <kerning kpx1="161">
+    <pair kpx2="171" kern="-9"/>
+    <pair kpx2="17" kern="-9"/>
+    <pair kpx2="92" kern="-7"/>
+    <pair kpx2="15" kern="-14"/>
+    <pair kpx2="91" kern="-9"/>
+    <pair kpx2="89" kern="-7"/>
+  </kerning>
+  <kerning kpx1="61">
+    <pair kpx2="92" kern="-31"/>
+    <pair kpx2="90" kern="-19"/>
+    <pair kpx2="42" kern="-9"/>
+    <pair kpx2="38" kern="-9"/>
+    <pair kpx2="178" kern="-24"/>
+    <pair kpx2="177" kern="-24"/>
+    <pair kpx2="82" kern="-29"/>
+    <pair kpx2="176" kern="-29"/>
+    <pair kpx2="175" kern="-9"/>
+    <pair kpx2="72" kern="-29"/>
+    <pair kpx2="68" kern="-24"/>
+    <pair kpx2="161" kern="-29"/>
+    <pair kpx2="160" kern="-24"/>
+    <pair kpx2="16" kern="-29"/>
+    <pair kpx2="61" kern="-4"/>
+    <pair kpx2="100" kern="-9"/>
+    <pair kpx2="145" kern="-9"/>
+    <pair kpx2="50" kern="-9"/>
+  </kerning>
+  <kerning kpx1="60">
+    <pair kpx2="89" kern="-48"/>
+    <pair kpx2="88" kern="-53"/>
+    <pair kpx2="86" kern="-53"/>
+    <pair kpx2="85" kern="-48"/>
+    <pair kpx2="178" kern="-68"/>
+    <pair kpx2="84" kern="-63"/>
+    <pair kpx2="177" kern="-68"/>
+    <pair kpx2="36" kern="-39"/>
+    <pair kpx2="83" kern="-48"/>
+    <pair kpx2="176" kern="-63"/>
+    <pair kpx2="82" kern="-63"/>
+    <pair kpx2="175" kern="-9"/>
+    <pair kpx2="81" kern="-48"/>
+    <pair kpx2="80" kern="-48"/>
+    <pair kpx2="171" kern="-141"/>
+    <pair kpx2="30" kern="-97"/>
+    <pair kpx2="29" kern="-97"/>
+    <pair kpx2="74" kern="-63"/>
+    <pair kpx2="72" kern="-63"/>
+    <pair kpx2="71" kern="-58"/>
+    <pair kpx2="68" kern="-68"/>
+    <pair kpx2="161" kern="-63"/>
+    <pair kpx2="160" kern="-68"/>
+    <pair kpx2="17" kern="-141"/>
+    <pair kpx2="16" kern="-68"/>
+    <pair kpx2="15" kern="-141"/>
+    <pair kpx2="145" kern="-9"/>
+    <pair kpx2="144" kern="-39"/>
+    <pair kpx2="50" kern="-9"/>
+  </kerning>
+  <kerning kpx1="59">
+    <pair kpx2="160" kern="-24"/>
+    <pair kpx2="68" kern="-24"/>
+    <pair kpx2="88" kern="-14"/>
+    <pair kpx2="42" kern="-4"/>
+    <pair kpx2="178" kern="-39"/>
+    <pair kpx2="177" kern="-39"/>
+    <pair kpx2="16" kern="-39"/>
+    <pair kpx2="176" kern="-29"/>
+    <pair kpx2="38" kern="-4"/>
+    <pair kpx2="175" kern="-4"/>
+    <pair kpx2="82" kern="-29"/>
+    <pair kpx2="100" kern="-4"/>
+    <pair kpx2="145" kern="-4"/>
+    <pair kpx2="50" kern="-4"/>
+    <pair kpx2="72" kern="-29"/>
+    <pair kpx2="161" kern="-29"/>
+    <pair kpx2="92" kern="-39"/>
+  </kerning>
+  <kerning kpx1="58">
+    <pair kpx2="92" kern="-31"/>
+    <pair kpx2="88" kern="-29"/>
+    <pair kpx2="85" kern="-29"/>
+    <pair kpx2="178" kern="-24"/>
+    <pair kpx2="177" kern="-24"/>
+    <pair kpx2="36" kern="-24"/>
+    <pair kpx2="82" kern="-48"/>
+    <pair kpx2="176" kern="-48"/>
+    <pair kpx2="30" kern="-39"/>
+    <pair kpx2="171" kern="-107"/>
+    <pair kpx2="29" kern="-39"/>
+    <pair kpx2="72" kern="-48"/>
+    <pair kpx2="68" kern="-48"/>
+    <pair kpx2="161" kern="-48"/>
+    <pair kpx2="160" kern="-48"/>
+    <pair kpx2="17" kern="-107"/>
+    <pair kpx2="16" kern="-24"/>
+    <pair kpx2="15" kern="-141"/>
+    <pair kpx2="144" kern="-29"/>
+  </kerning>
+  <kerning kpx1="57">
+    <pair kpx2="92" kern="-31"/>
+    <pair kpx2="88" kern="-29"/>
+    <pair kpx2="178" kern="-24"/>
+    <pair kpx2="36" kern="-29"/>
+    <pair kpx2="177" kern="-24"/>
+    <pair kpx2="82" kern="-48"/>
+    <pair kpx2="176" kern="-48"/>
+    <pair kpx2="30" kern="-39"/>
+    <pair kpx2="171" kern="-141"/>
+    <pair kpx2="29" kern="-39"/>
+    <pair kpx2="72" kern="-48"/>
+    <pair kpx2="68" kern="-48"/>
+    <pair kpx2="161" kern="-48"/>
+    <pair kpx2="160" kern="-48"/>
+    <pair kpx2="17" kern="-141"/>
+    <pair kpx2="16" kern="-24"/>
+    <pair kpx2="15" kern="-141"/>
+    <pair kpx2="144" kern="-34"/>
+  </kerning>
+  <kerning kpx1="56">
+    <pair kpx2="171" kern="-9"/>
+    <pair kpx2="17" kern="-9"/>
+    <pair kpx2="15" kern="-9"/>
+    <pair kpx2="36" kern="-4"/>
+    <pair kpx2="144" kern="-9"/>
+  </kerning>
+  <kerning kpx1="55">
+    <pair kpx2="93" kern="-83"/>
+    <pair kpx2="92" kern="-97"/>
+    <pair kpx2="90" kern="-97"/>
+    <pair kpx2="89" kern="-97"/>
+    <pair kpx2="42" kern="-19"/>
+    <pair kpx2="88" kern="-97"/>
+    <pair kpx2="86" kern="-87"/>
+    <pair kpx2="85" kern="-97"/>
+    <pair kpx2="38" kern="-19"/>
+    <pair kpx2="178" kern="-73"/>
+    <pair kpx2="177" kern="-73"/>
+    <pair kpx2="36" kern="-58"/>
+    <pair kpx2="176" kern="-107"/>
+    <pair kpx2="82" kern="-107"/>
+    <pair kpx2="175" kern="-24"/>
+    <pair kpx2="34" kern="29"/>
+    <pair kpx2="171" kern="-141"/>
+    <pair kpx2="30" kern="-97"/>
+    <pair kpx2="29" kern="-97"/>
+    <pair kpx2="74" kern="-102"/>
+    <pair kpx2="72" kern="-107"/>
+    <pair kpx2="70" kern="-107"/>
+    <pair kpx2="68" kern="-117"/>
+    <pair kpx2="161" kern="-107"/>
+    <pair kpx2="160" kern="-117"/>
+    <pair kpx2="17" kern="-141"/>
+    <pair kpx2="16" kern="-73"/>
+    <pair kpx2="15" kern="-141"/>
+    <pair kpx2="55" kern="-34"/>
+    <pair kpx2="54" kern="-5"/>
+    <pair kpx2="100" kern="-19"/>
+    <pair kpx2="145" kern="-24"/>
+    <pair kpx2="144" kern="-63"/>
+    <pair kpx2="50" kern="-24"/>
+  </kerning>
+  <kerning kpx1="54">
+    <pair kpx2="90" kern="-9"/>
+    <pair kpx2="89" kern="-14"/>
+    <pair kpx2="17" kern="-9"/>
+    <pair kpx2="15" kern="-9"/>
+    <pair kpx2="36" kern="-9"/>
+    <pair kpx2="171" kern="-9"/>
+    <pair kpx2="54" kern="-10"/>
+    <pair kpx2="144" kern="-9"/>
+    <pair kpx2="92" kern="-14"/>
+  </kerning>
+  <kerning kpx1="53">
+    <pair kpx2="160" kern="-24"/>
+    <pair kpx2="68" kern="-19"/>
+    <pair kpx2="182" kern="-34"/>
+    <pair kpx2="180" kern="-34"/>
+    <pair kpx2="88" kern="-9"/>
+    <pair kpx2="178" kern="-48"/>
+    <pair kpx2="177" kern="-48"/>
+    <pair kpx2="16" kern="-48"/>
+    <pair kpx2="176" kern="-29"/>
+    <pair kpx2="60" kern="-9"/>
+    <pair kpx2="82" kern="-24"/>
+    <pair kpx2="55" kern="-29"/>
+    <pair kpx2="72" kern="-24"/>
+    <pair kpx2="161" kern="-24"/>
+    <pair kpx2="92" kern="-26"/>
+  </kerning>
+  <kerning kpx1="52">
+    <pair kpx2="171" kern="-14"/>
+    <pair kpx2="17" kern="-14"/>
+    <pair kpx2="15" kern="-14"/>
+  </kerning>
+  <kerning kpx1="51">
+    <pair kpx2="160" kern="-24"/>
+    <pair kpx2="68" kern="-24"/>
+    <pair kpx2="17" kern="-146"/>
+    <pair kpx2="176" kern="-24"/>
+    <pair kpx2="15" kern="-146"/>
+    <pair kpx2="60" kern="9"/>
+    <pair kpx2="36" kern="-24"/>
+    <pair kpx2="82" kern="-24"/>
+    <pair kpx2="171" kern="-146"/>
+    <pair kpx2="144" kern="-34"/>
+    <pair kpx2="72" kern="-24"/>
+    <pair kpx2="161" kern="-24"/>
+  </kerning>
+  <kerning kpx1="145">
+    <pair kpx2="171" kern="-14"/>
+    <pair kpx2="61" kern="-9"/>
+    <pair kpx2="17" kern="-14"/>
+    <pair kpx2="60" kern="-9"/>
+    <pair kpx2="59" kern="-4"/>
+    <pair kpx2="15" kern="-14"/>
+    <pair kpx2="55" kern="-24"/>
+  </kerning>
+  <kerning kpx1="50">
+    <pair kpx2="171" kern="-14"/>
+    <pair kpx2="61" kern="-9"/>
+    <pair kpx2="17" kern="-14"/>
+    <pair kpx2="60" kern="-9"/>
+    <pair kpx2="59" kern="-4"/>
+    <pair kpx2="15" kern="-14"/>
+    <pair kpx2="55" kern="-24"/>
+  </kerning>
+  <kerning kpx1="47">
+    <pair kpx2="92" kern="-53"/>
+    <pair kpx2="45" kern="48"/>
+    <pair kpx2="42" kern="-9"/>
+    <pair kpx2="89" kern="-53"/>
+    <pair kpx2="182" kern="-78"/>
+    <pair kpx2="180" kern="-78"/>
+    <pair kpx2="38" kern="-9"/>
+    <pair kpx2="178" kern="-78"/>
+    <pair kpx2="177" kern="-78"/>
+    <pair kpx2="175" kern="-9"/>
+    <pair kpx2="16" kern="-78"/>
+    <pair kpx2="60" kern="-78"/>
+    <pair kpx2="58" kern="-48"/>
+    <pair kpx2="10" kern="-58"/>
+    <pair kpx2="57" kern="-53"/>
+    <pair kpx2="55" kern="-83"/>
+    <pair kpx2="100" kern="-9"/>
+    <pair kpx2="145" kern="-9"/>
+    <pair kpx2="50" kern="-9"/>
+  </kerning>
+  <kerning kpx1="46">
+    <pair kpx2="160" kern="-29"/>
+    <pair kpx2="68" kern="-29"/>
+    <pair kpx2="90" kern="-34"/>
+    <pair kpx2="89" kern="-39"/>
+    <pair kpx2="88" kern="-24"/>
+    <pair kpx2="178" kern="-53"/>
+    <pair kpx2="177" kern="-53"/>
+    <pair kpx2="16" kern="-53"/>
+    <pair kpx2="176" kern="-34"/>
+    <pair kpx2="175" kern="-9"/>
+    <pair kpx2="82" kern="-34"/>
+    <pair kpx2="145" kern="-9"/>
+    <pair kpx2="50" kern="-9"/>
+    <pair kpx2="72" kern="-34"/>
+    <pair kpx2="161" kern="-34"/>
+    <pair kpx2="92" kern="-39"/>
+  </kerning>
+  <kerning kpx1="45">
+    <pair kpx2="171" kern="-9"/>
+    <pair kpx2="17" kern="-9"/>
+    <pair kpx2="15" kern="-9"/>
+    <pair kpx2="36" kern="-4"/>
+    <pair kpx2="144" kern="-4"/>
+  </kerning>
+  <kerning kpx1="44">
+    <pair kpx2="16" kern="-14"/>
+    <pair kpx2="178" kern="-14"/>
+    <pair kpx2="177" kern="-14"/>
+  </kerning>
+  <kerning kpx1="41">
+    <pair kpx2="160" kern="-48"/>
+    <pair kpx2="68" kern="-48"/>
+    <pair kpx2="17" kern="-146"/>
+    <pair kpx2="176" kern="-24"/>
+    <pair kpx2="15" kern="-146"/>
+    <pair kpx2="82" kern="-24"/>
+    <pair kpx2="36" kern="-48"/>
+    <pair kpx2="34" kern="29"/>
+    <pair kpx2="171" kern="-146"/>
+    <pair kpx2="55" kern="14"/>
+    <pair kpx2="30" kern="-29"/>
+    <pair kpx2="144" kern="-53"/>
+    <pair kpx2="29" kern="-29"/>
+    <pair kpx2="72" kern="-24"/>
+    <pair kpx2="161" kern="-24"/>
+  </kerning>
+  <kerning kpx1="39">
+    <pair kpx2="171" kern="-24"/>
+    <pair kpx2="61" kern="-9"/>
+    <pair kpx2="17" kern="-24"/>
+    <pair kpx2="60" kern="-9"/>
+    <pair kpx2="59" kern="-4"/>
+    <pair kpx2="15" kern="-24"/>
+    <pair kpx2="58" kern="-9"/>
+    <pair kpx2="55" kern="-24"/>
+  </kerning>
+  <kerning kpx1="38">
+    <pair kpx2="175" kern="-12"/>
+    <pair kpx2="16" kern="-24"/>
+    <pair kpx2="178" kern="-24"/>
+    <pair kpx2="177" kern="-24"/>
+  </kerning>
+  <kerning kpx1="37">
+    <pair kpx2="171" kern="-9"/>
+    <pair kpx2="17" kern="-9"/>
+    <pair kpx2="16" kern="4"/>
+    <pair kpx2="15" kern="-9"/>
+    <pair kpx2="178" kern="4"/>
+    <pair kpx2="177" kern="4"/>
+    <pair kpx2="55" kern="-29"/>
+  </kerning>
+  <kerning kpx1="36">
+    <pair kpx2="92" kern="-24"/>
+    <pair kpx2="90" kern="-14"/>
+    <pair kpx2="89" kern="-24"/>
+    <pair kpx2="182" kern="-58"/>
+    <pair kpx2="88" kern="-4"/>
+    <pair kpx2="87" kern="-9"/>
+    <pair kpx2="181" kern="-24"/>
+    <pair kpx2="180" kern="-58"/>
+    <pair kpx2="179" kern="-24"/>
+    <pair kpx2="178" kern="-24"/>
+    <pair kpx2="177" kern="-24"/>
+    <pair kpx2="16" kern="-24"/>
+    <pair kpx2="60" kern="-39"/>
+    <pair kpx2="58" kern="-24"/>
+    <pair kpx2="57" kern="-29"/>
+    <pair kpx2="56" kern="-4"/>
+    <pair kpx2="55" kern="-58"/>
+    <pair kpx2="54" kern="-4"/>
+  </kerning>
+  <kerning kpx1="29">
+    <pair kpx2="178" kern="-68"/>
+  </kerning>
+  <kerning kpx1="17">
+    <pair kpx2="182" kern="-102"/>
+    <pair kpx2="16" kern="-78"/>
+    <pair kpx2="180" kern="-102"/>
+    <pair kpx2="15" kern="-63"/>
+    <pair kpx2="178" kern="-58"/>
+    <pair kpx2="177" kern="-58"/>
+  </kerning>
+  <kerning kpx1="111">
+    <pair kpx2="16" kern="-9"/>
+    <pair kpx2="178" kern="-9"/>
+    <pair kpx2="177" kern="-9"/>
+  </kerning>
+  <kerning kpx1="16">
+    <pair kpx2="93" kern="-19"/>
+    <pair kpx2="92" kern="-19"/>
+    <pair kpx2="45" kern="-48"/>
+    <pair kpx2="44" kern="-14"/>
+    <pair kpx2="91" kern="-24"/>
+    <pair kpx2="90" kern="-9"/>
+    <pair kpx2="89" kern="-19"/>
+    <pair kpx2="36" kern="-24"/>
+    <pair kpx2="68" kern="-9"/>
+    <pair kpx2="160" kern="-9"/>
+    <pair kpx2="61" kern="-14"/>
+    <pair kpx2="60" kern="-68"/>
+    <pair kpx2="59" kern="-39"/>
+    <pair kpx2="58" kern="-24"/>
+    <pair kpx2="57" kern="-24"/>
+    <pair kpx2="55" kern="-73"/>
+    <pair kpx2="54" kern="-9"/>
+    <pair kpx2="144" kern="-24"/>
+  </kerning>
+  <kerning kpx1="15">
+    <pair kpx2="182" kern="-102"/>
+    <pair kpx2="180" kern="-102"/>
+  </kerning>
+  <kerning kpx1="10">
+    <pair kpx2="36" kern="-48"/>
+    <pair kpx2="144" kern="-48"/>
+  </kerning>
+  <kerning kpx1="196">
+    <pair kpx2="60" kern="-102"/>
+    <pair kpx2="58" kern="-48"/>
+    <pair kpx2="57" kern="-102"/>
+    <pair kpx2="55" kern="-102"/>
+  </kerning>
+  <kerning kpx1="195">
+    <pair kpx2="60" kern="-102"/>
+    <pair kpx2="58" kern="-48"/>
+    <pair kpx2="57" kern="-102"/>
+    <pair kpx2="55" kern="-102"/>
+  </kerning>
+  <kerning kpx1="100">
+    <pair kpx2="175" kern="-12"/>
+    <pair kpx2="16" kern="-24"/>
+    <pair kpx2="178" kern="-24"/>
+    <pair kpx2="177" kern="-24"/>
+  </kerning>
+  <kerning kpx1="4">
+    <pair kpx2="182" kern="-48"/>
+    <pair kpx2="180" kern="-48"/>
+  </kerning>
+</font-metrics>

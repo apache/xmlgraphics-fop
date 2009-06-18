@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks markers. Regression test which tests a special case.
+    </p>
+    <p>
+      For this test the block containing the fo:markers must remain empty except for the marker element. Not even a space or carriage return!!!
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="2.55in">
+          <fo:region-body margin="0.5in 0in"/>
+          <fo:region-before extent="0.5in"/>
+          <fo:region-after extent="0.5in"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:static-content flow-name="xsl-region-before">
+          <fo:block>
+            page <fo:page-number/>
+          </fo:block>
+          <fo:block>
+            <fo:retrieve-marker retrieve-class-name="previous-total" retrieve-boundary="page-sequence" retrieve-position="first-starting-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:block text-align="end">
+            <fo:retrieve-marker retrieve-class-name="total" retrieve-boundary="page-sequence" retrieve-position="last-ending-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed">
+            <fo:table-column column-width="2in"/>
+            <fo:table-column column-width="2in"/>
+            <fo:table-column column-width="1in"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>5.50</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block><fo:marker marker-class-name="previous-total">0</fo:marker><fo:marker marker-class-name="total">5.50</fo:marker></fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>5.50</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block><fo:marker marker-class-name="previous-total">5.50</fo:marker><fo:marker marker-class-name="total">11.00</fo:marker></fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>5.50</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block><fo:marker marker-class-name="previous-total">11.00</fo:marker><fo:marker marker-class-name="total">16.50</fo:marker></fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="0" xpath="//regionBefore/block[2]/lineArea/text"/>
+    <eval expected="16.50" xpath="//regionAfter/block[1]/lineArea/text"/>
+  </checks>
+</testcase>

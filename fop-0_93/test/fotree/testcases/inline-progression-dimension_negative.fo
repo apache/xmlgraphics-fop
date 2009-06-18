@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="A4" page-height="29.7cm" page-width="21cm" margin="2cm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="A4">
+    <fo:flow flow-name="xsl-region-body">
+      <!-- See 7.14.1, XSL 1.0 -->
+      <!-- Positive values first -->
+      <fo:block-container inline-progression-dimension="10pt">
+        <test:assert property="inline-progression-dimension.minimum" expected="10000mpt"/>
+        <test:assert property="inline-progression-dimension.optimum" expected="10000mpt"/>
+        <test:assert property="inline-progression-dimension.maximum" expected="10000mpt"/>
+        <fo:block>blah</fo:block>
+      </fo:block-container>
+      <fo:block-container inline-progression-dimension.minimum="10pt" inline-progression-dimension.optimum="20pt" inline-progression-dimension.maximum="30pt">
+        <test:assert property="inline-progression-dimension.minimum" expected="10000mpt"/>
+        <test:assert property="inline-progression-dimension.optimum" expected="20000mpt"/>
+        <test:assert property="inline-progression-dimension.maximum" expected="30000mpt"/>
+        <fo:block>blah</fo:block>
+      </fo:block-container>
+      <!-- Negative values -->
+      <fo:block-container inline-progression-dimension="-10pt">
+        <test:assert property="inline-progression-dimension.minimum" expected="0mpt"/>
+        <test:assert property="inline-progression-dimension.optimum" expected="0mpt"/>
+        <test:assert property="inline-progression-dimension.maximum" expected="0mpt"/>
+        <fo:block>blah</fo:block>
+      </fo:block-container>
+      <fo:block-container inline-progression-dimension.minimum="-10pt" inline-progression-dimension.optimum="-20pt" inline-progression-dimension.maximum="-30pt">
+        <test:assert property="inline-progression-dimension.minimum" expected="0mpt"/>
+        <test:assert property="inline-progression-dimension.optimum" expected="0mpt"/>
+        <test:assert property="inline-progression-dimension.maximum" expected="0mpt"/>
+        <fo:block>blah</fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

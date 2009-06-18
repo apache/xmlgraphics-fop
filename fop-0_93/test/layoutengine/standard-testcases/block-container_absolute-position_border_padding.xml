@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks absolutely positioned block-containers with border/padding/indents.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container left="20pt" top="10pt" right="20pt" height="50pt" absolute-position="absolute" background-color="orange" border="solid 5pt" padding="5pt">
+            <fo:block background-color="yellow">absolutely positioned right/width plus border &amp; padding</fo:block>
+          </fo:block-container>
+          <fo:block-container left="20pt" top="90pt" right="20pt" height="50pt" absolute-position="absolute" background-color="orange" margin="0pt" border-right="solid 45pt" border="solid 5pt" padding="5pt">
+            <fo:block background-color="yellow">absolutely positioned right/width plus border &amp; padding, margin=0pt</fo:block>
+          </fo:block-container>
+          <fo:block-container left="20pt" top="170pt" right="20pt" height="50pt" absolute-position="absolute" background-color="orange" margin="0pt" border-right="solid 45pt" border="solid 5pt" padding="5pt">
+            <fo:block background-color="yellow" start-indent="0pt" end-indent="0pt">absolutely positioned right/width plus border &amp; padding, margin=0pt, start|end-indent=0pt</fo:block>
+          </fo:block-container>
+          <fo:block-container left="20pt" top="250pt" right="20pt" height="50pt" absolute-position="absolute" background-color="orange" margin="5pt" border-right="solid 45pt" border="solid 5pt" padding="5pt">
+            <fo:block background-color="yellow" start-indent="0pt" end-indent="0pt">absolutely positioned right/width plus border &amp; padding, margin=5pt, start|end-indent=0pt</fo:block>
+          </fo:block-container>
+          <fo:block color="lightgrey">
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text.
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- *** first block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@positioning"/>
+    <eval expected="320000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipd"/>
+    <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipda"/>
+    <eval expected="50000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpd"/>
+    <eval expected="70000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpda"/>
+    <eval expected="20000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@left-position"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@top-position"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@start-indent)"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@end-indent)"/>
+    <!--   -> reference area -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@is-reference-area"/>
+    <!--   -> containing block -->
+    <eval expected="320000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/@ipd"/>
+    <eval expected="320000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/@ipda"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/@start-indent)"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/@end-indent)"/>
+
+    <!-- *** second block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@positioning"/>
+    <eval expected="260000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipd"/>
+    <eval expected="320000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipda"/>
+    <eval expected="50000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpd"/>
+    <eval expected="70000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpda"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@start-indent"/>
+    <eval expected="50000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@end-indent"/>
+    <eval expected="20000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@left-position"/>
+    <eval expected="90000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@top-position"/>
+    <!--   -> reference area -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@is-reference-area"/>
+    <!--   -> containing block -->
+    <eval expected="200000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="200000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/block[1]/@ipda"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/block[1]/@start-indent"/>
+    <eval expected="50000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/block[1]/@end-indent"/>
+
+    <!-- *** third block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@positioning"/>
+    <eval expected="260000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@ipd"/>
+    <eval expected="320000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@ipda"/>
+    <eval expected="50000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@bpd"/>
+    <eval expected="70000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@bpda"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@start-indent"/>
+    <eval expected="50000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@end-indent"/>
+    <eval expected="20000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@left-position"/>
+    <eval expected="170000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@top-position"/>
+    <!--   -> reference area -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/@is-reference-area"/>
+    <!--   -> containing block -->
+    <eval expected="260000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@ipd"/>
+    <eval expected="260000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@ipda"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@start-indent)"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@end-indent)"/>
+
+    <!-- *** third block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@positioning"/>
+    <eval expected="250000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipd"/>
+    <eval expected="310000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipda"/>
+    <eval expected="50000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bpd"/>
+    <eval expected="70000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bpda"/>
+    <eval expected="15000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@start-indent"/>
+    <eval expected="55000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@end-indent"/>
+    <eval expected="20000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@left-position"/>
+    <eval expected="250000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@top-position"/>
+    <!--   -> reference area -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@is-reference-area"/>
+    <!--   -> containing block -->
+    <eval expected="250000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/block[1]/@ipd"/>
+    <eval expected="250000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/block[1]/@ipda"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/block[1]/@start-indent)"/>
+    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/block[1]/@end-indent)"/>
+
+  </checks>
+</testcase>
